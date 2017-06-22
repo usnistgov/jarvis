@@ -16,7 +16,7 @@ setup(
                     "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"]
                     },
     author="Kamal Choudhary",
-    author_email = "kamal.choudhary@nist.gov"
+    author_email = "kamal.choudhary@nist.gov",
     description=(
         "High throughput computation with density functional theory, molecular dynamics and machine learning"),
     license="MIT",
