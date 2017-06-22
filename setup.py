@@ -23,7 +23,7 @@ setup(
     url="https://github.com/usnistgov/jarvis",
     packages=find_packages(),
     long_description=open(
-        os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
+        os.path.join(os.path.dirname(__file__), 'README.md')).read(),
     classifiers=[
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
