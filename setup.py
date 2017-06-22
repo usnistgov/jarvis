@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 JARVIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 setup(
-    name="JARVIS",
+    name="jarvis",
     version="1.0.0",
     install_requires=["pymatgen>=4.7.0", "FireWorks>=1.4.0",
                       "custodian>=1.0.1", "pymatgen-db>=0.5.1",
@@ -35,5 +35,5 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering",
     ],
-    scripts=glob.glob(os.path.join(JARVIS_DIR,  "*"))
+    #scripts=glob.glob(os.path.join(JARVIS_DIR,  "*"))
 )
