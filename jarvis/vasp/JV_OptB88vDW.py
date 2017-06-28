@@ -58,7 +58,7 @@ import operator
 from monty.json import MontyEncoder, MontyDecoder
 from monty.serialization import loadfn, dumpfn
 
-os.environ["MAPI_KEY"] = "xZwPL7aKBHq3Gehb"
+os.environ["MAPI_KEY"] = ""
 os.environ["VASP_PSP_DIR"] = "/home/knc6/Software/VASP-POTENTIAL"
 
 
