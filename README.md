@@ -1,7 +1,7 @@
 JARVIS 
 =====
 
-Joint Automated Repository for Various Integrated Simulations (JARVIS) is a integrated framework for computational science using density functional theory,
+The NIST Joint Automated Repository for Various Integrated Simulations (JARVIS) is a integrated framework for computational science using density functional theory,
 classical force-field/molecular dynamics and machine-learning. JARVIS heavily uses VASP, LAMMPS, 
 pymatgen, ase, scikit-learn, GROMACS and BPneural packages.
 
