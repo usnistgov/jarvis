@@ -9,7 +9,7 @@ pymatgen, ase, scikit-learn, GROMACS and BPneural.
 How to cite JARVIS 
 -----------------
 https://www.nature.com/articles/sdata2016125
-Still working
+https://www.nature.com/articles/s41598-017-05402-0
 Author
 -----------------
 Kamal Choudhary
