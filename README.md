@@ -7,8 +7,8 @@ pymatgen, ase, scikit-learn, GROMACS and BPneural packages.
 
 How to cite JARVIS 
 -----------------
--https://www.nature.com/articles/sdata2016125
--https://www.nature.com/articles/s41598-017-05402-0
+- https://www.nature.com/articles/sdata2016125
+- https://www.nature.com/articles/s41598-017-05402-0
 
 -----------------
 Author:Kamal Choudhary
