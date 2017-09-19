@@ -6,7 +6,7 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn.ensemble import RandomForestRegressor,GradientBoostingRegressor
 from sklearn.model_selection import learning_curve
 from math import sqrt
-from get_des5 import get_comp_descp
+from get_des import get_comp_descp
 from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
