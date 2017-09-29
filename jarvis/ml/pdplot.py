@@ -2,7 +2,7 @@ import itertools
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 
-from get_des5 import get_comp_descp
+from get_des import get_comp_descp
 import sys
 from pymatgen.matproj.rest import MPRester
 from pymatgen.core.structure import Structure
