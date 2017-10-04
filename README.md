@@ -45,5 +45,6 @@ How to cite JARVIS
 
       Choudhary, K., Kalish, I., Beams, R. and Tavazza, F., 2017. High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory. Scientific Reports, 7.
 
+Author and main-developers
 -----------------
-Author: Kamal Choudhary (Webpage: https://www.nist.gov/people/kamal-choudhary)
+Kamal Choudhary (Webpage: https://www.nist.gov/people/kamal-choudhary) and Francesca Tavazza
