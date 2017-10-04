@@ -11,4 +11,12 @@ How to cite JARVIS
 - https://www.nature.com/articles/s41598-017-05402-0
 
 -----------------
+Installing JARVIS
+-----------------
+-First we recommend installing miniconda environment from https://conda.io/miniconda.html .
+-Then, get jarvis repo using the command::
+                   git clone git@github.com:usnistgov/jarvis.git .
+-
+
+-----------------
 Author:Kamal Choudhary
