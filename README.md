@@ -52,12 +52,6 @@ Author and main-developers
 -----------------
 Kamal Choudhary (Webpage: https://www.nist.gov/people/kamal-choudhary) and Francesca Tavazza (Webpage: https://www.nist.gov/people/francesca-tavazza)
 
-=======
-
-      Choudhary, K. et al. High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory. Scientific Reports, 7.
- - JARVIS-ML:
-        
-        submitted
 
 Author and main-developers
 -----------------
