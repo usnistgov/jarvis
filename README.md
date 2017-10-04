@@ -1,9 +1,9 @@
 JARVIS 
 =====
 
-The NIST Joint Automated Repository for Various Integrated Simulations (JARVIS) is a integrated framework for computational science using density functional theory,
+NIST's Joint Automated Repository for Various Integrated Simulations (JARVIS) is a integrated framework for computational science using density functional theory,
 classical force-field/molecular dynamics and machine-learning. JARVIS heavily uses VASP, LAMMPS, 
-pymatgen, ase, scikit-learn, GROMACS and BPneural packages.
+pymatgen, ase and scikit-learn packages.
 
 
 
@@ -11,7 +11,7 @@ Installing JARVIS
 -----------------
 - First we recommend installing miniconda environment from https://conda.io/miniconda.html .
 - Then, get jarvis repo using the command::
-                   git clone git@github.com:usnistgov/jarvis.git .
+   git clone git@github.com:usnistgov/jarvis.git .
 
 How to cite JARVIS 
 -----------------
