@@ -42,6 +42,7 @@ How to cite JARVIS
     
       Choudhary, K. et al. Evaluation and comparison of classical interatomic potentials through a user-friendly interactive web-interface. Scientific Data, 4, p.160125.
 - JARVIS-DFT:
+<<<<<<< HEAD
 
       Choudhary, K. et al. High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory. Scientific Reports, 7.
  - JARVIS-ML:
@@ -52,3 +53,14 @@ Author and main-developers
 -----------------
 Kamal Choudhary (Webpage: https://www.nist.gov/people/kamal-choudhary) and Francesca Tavazza (Webpage: https://www.nist.gov/people/francesca-tavazza)
 
+=======
+
+      Choudhary, K. et al. High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory. Scientific Reports, 7.
+ - JARVIS-ML:
+        
+        submitted
+
+Author and main-developers
+-----------------
+Kamal Choudhary (Webpage: https://www.nist.gov/people/kamal-choudhary) and Francesca Tavazza (Webpage: https://www.nist.gov/people/francesca-tavazza)
+>>>>>>> 0572672b9051e3f91f8214fbb74cc769a3464d14
