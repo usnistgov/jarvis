@@ -8,11 +8,9 @@ from pymatgen.io.vasp.inputs import Incar, Poscar
 from pymatgen.core.surface import  Slab, SlabGenerator, generate_all_slabs,get_symmetrically_distinct_miller_indices
 from ase.lattice.surface import surface
 from pymatgen.matproj.rest import MPRester
-MAPI_KEY = "xZwPL7aKBHq3Gehb"
 import operator
 from pymatgen.core.lattice import Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from  Surf_Def4 import vac_antisite_def_struct_gen,surfer
 import numpy as np,time,json
 import sys,os,subprocess,socket
 from pymatgen.io.ase import AseAtomsAdaptor

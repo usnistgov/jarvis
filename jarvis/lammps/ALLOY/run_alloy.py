@@ -8,20 +8,16 @@ from pymatgen.io.vasp.inputs import Incar, Poscar
 from pymatgen.core.surface import  Slab, SlabGenerator, generate_all_slabs,get_symmetrically_distinct_miller_indices
 from ase.lattice.surface import surface
 from pymatgen.matproj.rest import MPRester
-MAPI_KEY = "xZwPL7aKBHq3Gehb"
 import operator
 from pymatgen.core.lattice import Lattice
-from mpinterfaces.MP_lammps import MPINTLammps
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from  Surf_Def4 import vac_antisite_def_struct_gen,surfer
 import numpy as np,time,json
 import sys,os,subprocess,socket
 from pymatgen.io.ase import AseAtomsAdaptor
-from ase.calculators.lammpsrun import LAMMPS, prism
+from ase.calculators.lammpsrun import LAMMPS
 import sys,zipfile
 import fortranformat as fform
 from pymatgen.core.structure import Structure
-from mpinterfaces.MP_lammps import MPINTLammps
 import os
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.core.periodic_table import Element
@@ -44,9 +40,6 @@ from pymatgen.phasediagram.entries import PDEntry
 from pymatgen.phasediagram.pdmaker import PhaseDiagram
 from pymatgen.phasediagram.plotter import PDPlotter
 
-#from mpinterfaces import get_struct_from_mp
-from mpinterfaces.MP_lammps import CalibrateLammps
-from mpinterfaces.utils import *
 import glob
 
 ###################MAIN PART############################################
@@ -136,9 +129,9 @@ for file in glob.glob("*.alloy"):
 
                  pair_coeff=str(cwd1)+str("/")+str(file)
                  #pair_coeff=str('/data/knc6/JARVIS-FF-NEW/ALLOY')+str("/")+str(file)
-                 parameters = {'pair_style':'eam/alloy','pair_coeff':pair_coeff,'atom_style': 'charge' ,'control_file':'/users/knc6/inelast.mod'}
+                 parameters = {'exec':'mpirun /cluster/bin/lmp_ctcms-14439-knc6-2 <in.elastic >out','pair_style':'eam/alloy','pair_coeff':pair_coeff,'atom_style': 'charge' ,'control_file':'/users/knc6/inelast.mod'}
                  main_file=open("setup.py","w")
-                 line=str("from NEW_LAMMPS10 import main_func")+'\n'
+                 line=str("from jarvis.lammps.NEW_LAMMPS import main_func")+'\n'
                  main_file.write(line)
                  line=str("from pymatgen.io.vasp.inputs import  Poscar")+'\n'
                  main_file.write(line)

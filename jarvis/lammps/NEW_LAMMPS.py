@@ -110,7 +110,7 @@ def get_struct_from_mp(formula, MAPI_KEY="", all_structs=False):
 
 
 def run_job(mat=None,parameters = {},jobname=''):
-#def run_job(mat=None,parameters = {'pair_style':'comb3 polar_on','pair_coeff':None,'atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'},jobname=''):
+#def run_job(mat=None,parameters = {'exec':'/cluster/bin/lmp_ctcms-14439-knc6-2','pair_style':'comb3 polar_on','pair_coeff':None,'atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'},jobname=''):
     jobname=str(mat.comment)
     #if jobname.startswith('bulk') or jobname.startswith('sbulk'):
     #   parameters['control_file']='/home/kamal/inelast.mod'
@@ -146,13 +146,13 @@ def run_job(mat=None,parameters = {},jobname=''):
         f.write(line)
         line=str("#PBS -l nodes=")+str(nnodes)+str(":")+str("ppn=")+str(int(float(nprocs)/float(nnodes)))+'\n'
         f.write(line)
-    #line=str("#PBS -l pmem=")+str(mem)+'\n'
-    #f.write(line)
+        #line=str("#PBS -l pmem=")+str(mem)+'\n'
+        #f.write(line)
         dir=str(os.getcwd())
         line=str("cd ")+dir+'\n'
         f.write(line)
-        job_bin=str("mpirun /cluster/bin/lmp_ctcms-14439-knc6 <in.elastic >out")
-        #job_bin=str("/home/kamal/bin/lmp_ufhpc<in.elastic >out")
+        job_bin=str(parameters['exec'])#str("mpirun /cluster/bin/lmp_ctcms-14439-knc6 <in.elastic >out")
+        print ('job_bin',job_bin)
         line=str(job_bin)+'\n'
         f.write(line)
         f.close()
@@ -164,25 +164,20 @@ def run_job(mat=None,parameters = {},jobname=''):
                 p = subprocess.Popen(['qsub','-cwd', '-pe', 'nodal', '1', 'submit_job'], stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
                 stdout, stderr = p.communicate()
-                #self.job_id = stdout.rstrip('\n').split()[-1]
-            ##    print ("stdout,stderr",stdout, stderr)
                 job_id = str(stdout.split('Your job')[1].split(' ')[1])
                 f.write(job_id)
            status = True
            while status !=False:
-            ## print ("status=",status, job_id)
              try:
-             #output=subprocess.check_output([str('qstat'), str('-j'), job_id])
                 line=str("qstat -j ")+str(job_id)
                 a=os.system(line)
-            ##    print a
                 if int(a) !=0:
                    status=False
                 else:
                    time.sleep(5)
              except:
                     print "whattyhjkl;'"
-        elif 'ufhpc' in socket.gethostname():
+        elif 'dobby' in socket.gethostname():
            with open('job.out', 'w') as f:
                 p = subprocess.Popen(['qsub', 'submit_job'], stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
@@ -194,7 +189,7 @@ def run_job(mat=None,parameters = {},jobname=''):
            status = True
            while status !=False:
              #print ("status=",status, job_id)
-             #try:
+             try:
                 output = subprocess.check_output(['qstat', '-i', job_id])
                 state = output.rstrip('\n').split('\n')[-1].split()[-2]
                 time.sleep(5)
@@ -206,9 +201,9 @@ def run_job(mat=None,parameters = {},jobname=''):
                 #print a
                 #if int(a) !=0:
                 #   status=False
-             #except:
-             #       print "whattyhjkl;'"
-        
+             except:
+                    print "whattyhjkl;'"
+                 
 
 
         else:
@@ -975,6 +970,10 @@ def main(p=None, parameters={}):
        toten,final_str,forces=run_job(mat=mat_pos,parameters = parameters)
     except:
        pass
+    print "p.comment issssss",p.comment
+    vac=vac_antisite_def_struct_gen(c_size=c_size,struct=final_str)
+    def_list,header_list=def_energy(vac=vac,parameters = parameters)
+    print def_list,header_list
     try:
        print "p.comment issssss",p.comment
        vac=vac_antisite_def_struct_gen(c_size=c_size,struct=final_str)
