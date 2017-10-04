@@ -40,10 +40,10 @@ How to cite JARVIS
 -----------------
 - JARVIS-FF:
     
-    Choudhary, K., Congo, F.Y.P., Liang, T., Becker, C., Hennig, R.G. and Tavazza, F., 2017. Evaluation and comparison of classical interatomic potentials through a user-friendly interactive web-interface. Scientific Data, 4, p.160125.
+      Choudhary, K., Congo, F.Y.P., Liang, T., Becker, C., Hennig, R.G. and Tavazza, F., 2017. Evaluation and comparison of classical interatomic potentials through a user-friendly interactive web-interface. Scientific Data, 4, p.160125.
 - JARVIS-DFT:
 
-     Choudhary, K., Kalish, I., Beams, R. and Tavazza, F., 2017. High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory. Scientific Reports, 7.
+      Choudhary, K., Kalish, I., Beams, R. and Tavazza, F., 2017. High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory. Scientific Reports, 7.
 
 -----------------
-Author:Kamal Choudhary
+Author: Kamal Choudhary (Webpage: https://www.nist.gov/people/kamal-choudhary)
