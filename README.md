@@ -38,8 +38,12 @@ Running the examples
   
 How to cite JARVIS 
 -----------------
-- https://www.nature.com/articles/sdata2016125
-- https://www.nature.com/articles/s41598-017-05402-0
+- JARVIS-FF:
+    
+    Choudhary, K., Congo, F.Y.P., Liang, T., Becker, C., Hennig, R.G. and Tavazza, F., 2017. Evaluation and comparison of classical interatomic potentials through a user-friendly interactive web-interface. Scientific Data, 4, p.160125.
+- JARVIS-DFT:
+
+     Choudhary, K., Kalish, I., Beams, R. and Tavazza, F., 2017. High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory. Scientific Reports, 7.
 
 -----------------
 Author:Kamal Choudhary
