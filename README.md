@@ -30,8 +30,11 @@ Installing JARVIS
       
 Running the examples
 -----------------
--
-
+- An example calculation for Aluminum is given in the lammps folder for running EAM calculation. Untar the example folder using::
+    
+     tar -xvzf Al03.eam.alloy_nist.tgz
+  Change the 'parameters' variable in run_alloy.py to accommodate your lammps executable path, inelast.mod and dsiplace.mod path.
+  
 How to cite JARVIS 
 -----------------
 - https://www.nature.com/articles/sdata2016125
