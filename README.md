@@ -27,7 +27,10 @@ Installing JARVIS
 - Go to the jarvis directory and type::
 
       python setup.py install      
- 
+      
+Running the examples
+-----------------
+-
 
 How to cite JARVIS 
 -----------------
