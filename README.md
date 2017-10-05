@@ -50,9 +50,6 @@ How to cite JARVIS
 
 Author and main-developers
 -----------------
-Kamal Choudhary (Webpage: https://www.nist.gov/people/kamal-choudhary) and Francesca Tavazza (Webpage: https://www.nist.gov/people/francesca-tavazza)
+Kamal Choudhary (Webpage: https://www.nist.gov/people/kamal-choudhary) 
 
 
-Author and main-developers
------------------
-Kamal Choudhary (Webpage: https://www.nist.gov/people/kamal-choudhary) and Francesca Tavazza (Webpage: https://www.nist.gov/people/francesca-tavazza)
