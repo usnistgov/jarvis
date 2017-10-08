@@ -2008,7 +2008,7 @@ def get_smart_surf_def(mat=None):
         print ("Failed Raman")
         pass
 #get_smart_surf_def(mat='POSCAR')
-def main_func(mpid='',mat=None):
+def main_func(mpid='',mat=None,enforc_cvn=False):
     if mpid !='':
        data = loadfn(json_dat, cls=MontyDecoder)
        for d in data:
@@ -2023,7 +2023,7 @@ def main_func(mpid='',mat=None):
        sg_mat = SpacegroupAnalyzer(strt)
        mat_cvn = sg_mat.get_conventional_standard_structure()
        mat_cvn.sort()
-       if int(strt.composition._natoms)==int(mat_cvn.composition._natoms):
+       if int(strt.composition._natoms)==int(mat_cvn.composition._natoms) and enforc_cvn==True:
                mat= Poscar(mat_cvn)
        else:
                 mat=Poscar(strt)
