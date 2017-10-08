@@ -51,14 +51,15 @@ import operator
 from monty.json import MontyEncoder, MontyDecoder
 from monty.serialization import loadfn, dumpfn
 
-os.environ["MAPI_KEY"] = ""
-os.environ["VASP_PSP_DIR"] = "/users/knc6/VASP/VASP-POTENTIAL"
-main_exe="'/users/knc6/VASP/vasp54/src/vasp.5.4.1Dobby/bin/vasp_std'"
-surf_exe= "'/users/knc6/VASP/vasp54/src/vasp.5.4.1Dobbynoz/bin/vasp_std'"
-soc_exe="'/users/knc6/VASP/vasp54/src/vasp.5.4.1Dobby/bin/vasp_ncl'"
-pot_yaml='/users/knc6/bin/Special_POTCAR.yaml'
-vdw_dat="'/users/knc6/bin/vdw_kernel.bindat'"
-json_dat='/home/knc6/bin/MPall_datacopy.json'
+#os.environ["MAPI_KEY"] = ""
+#os.environ["VASP_PSP_DIR"] = "/users/knc6/VASP/VASP-POTENTIAL"
+main_exe=os.environ['vasp_bulk_exe']
+surf_exe= os.environ['vasp_surf_exe']
+nw_exe= os.environ['vasp_nw_exe']
+soc_exe=os.environ['vasp_soc_exe']
+pot_yaml=os.environ['vasp_pot_yaml']
+vdw_dat=os.environ['vasp_vdw_dat']
+json_dat=os.environ['mp_json']
 
 
 
