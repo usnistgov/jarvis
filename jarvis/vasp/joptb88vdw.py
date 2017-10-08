@@ -745,15 +745,15 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
 						   cust_file.write(cline)
 						   cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
 						   cust_file.write(cline)
-                                                   cline=str("shutil.copy2(")+vdw_dat+str(",'./')")+'\n'
+                                                   cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
 						   cust_file.write(cline)
 						   cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
 						   cust_file.write(cline)
-						   cline=str("job=VaspJob(['mpirun', ")+str(main_exe)+str("], final=False, backup=False)")+'\n' 
+						   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
 						   if mat.comment.startswith('Surf'):
-						      cline=str("job=VaspJob(['mpirun',  ")+str(surf_exe)+str("], final=False, backup=False)")+'\n' 
+						      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
 						   if 'SOC' in jobname:
-						      cline=str("job=VaspJob(['mpirun',  ")+str(soc_exe)+str("], final=False, backup=False)")+'\n' 
+						      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
 						   
 						   cust_file.write(cline)
 						   cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
@@ -821,17 +821,17 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
 						   cust_file.write(cline)
 						   cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
 						   cust_file.write(cline)
-                                                   cline=str("shutil.copy2(")+vdw_dat+str(",'./')")+'\n'
+                                                   cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
 						   cust_file.write(cline)
 						   cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
 						   cust_file.write(cline)
 
 
-						   cline=str("job=VaspJob(['mpirun', ")+str(main_exe)+str("], final=False, backup=False)")+'\n' 
+						   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
 						   if mat.comment.startswith('Surf'):
-						      cline=str("job=VaspJob(['mpirun',  ")+str(surf_exe)+str("], final=False, backup=False)")+'\n' 
+						      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
 						   if 'SOC' in jobname:
-						      cline=str("job=VaspJob(['mpirun',  ")+str(soc_exe)+str("], final=False, backup=False)")+'\n' 
+						      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
 
 						   
 						   cust_file.write(cline)
