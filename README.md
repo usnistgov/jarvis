@@ -24,6 +24,12 @@ Installing JARVIS
 - Then, get jarvis repo using the command::
 
       git clone https://github.com/usnistgov/jarvis.git 
+- Install dependencies::
+
+      pip install numpy  
+      pip install scipy 
+      pip install scikit-learn
+      pip install pymategn==3.3.5
 - Go to the jarvis directory and type::
 
       python setup.py install      
