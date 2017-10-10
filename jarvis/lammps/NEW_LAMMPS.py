@@ -151,6 +151,7 @@ def run_job(mat=None,parameters = {},jobname=''):
         dir=str(os.getcwd())
         line=str("cd ")+dir+'\n'
         f.write(line)
+        cluster=parameters['cluster']
         job_bin=str(parameters['exec'])#str("mpirun /cluster/bin/lmp_ctcms-14439-knc6 <in.elastic >out")
         print ('job_bin',job_bin)
         line=str(job_bin)+'\n'
@@ -159,7 +160,8 @@ def run_job(mat=None,parameters = {},jobname=''):
         write_lammps_data(structure=mat.structure, file='data')
         write_lammps_in(structure=mat.structure,lammps_in="init.mod",lammps_in1="potential.mod",lammps_in2="in.elastic", parameters = parameters)
         initial_str=read_data(data="data",ff="potential.mod")
-        if 'ruth' in socket.gethostname() or 'r049' in socket.gethostname():
+        if cluster=='sun': #sungrid engine
+        #if 'ruth' in socket.gethostname() or 'r049' in socket.gethostname():
            with open('job.out', 'w') as f:
                 p = subprocess.Popen(['qsub','-cwd', '-pe', 'nodal', '1', 'submit_job'], stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
@@ -177,7 +179,9 @@ def run_job(mat=None,parameters = {},jobname=''):
                    time.sleep(5)
              except:
                     print "whattyhjkl;'"
-        elif 'dobby' in socket.gethostname():
+        elif cluster=='pbs':
+           print ('cluster=',cluster)
+        #elif 'dobby' in socket.gethostname():
            with open('job.out', 'w') as f:
                 p = subprocess.Popen(['qsub', 'submit_job'], stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
