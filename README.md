@@ -23,7 +23,7 @@ Installing JARVIS
        
 - Then, get jarvis repo using the command::
 
-      git clone git@github.com:usnistgov/jarvis.git 
+      git clone https://github.com/usnistgov/jarvis.git 
 - Go to the jarvis directory and type::
 
       python setup.py install      
