@@ -29,7 +29,7 @@ Installing JARVIS
       pip install numpy  
       pip install scipy 
       pip install scikit-learn
-      pip install pymategn==3.3.5
+      pip install pymatgen==3.3.5
 - Go to the jarvis directory and type::
 
       python setup.py install      

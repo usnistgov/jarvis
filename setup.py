@@ -8,7 +8,7 @@ JARVIS_DIR = os.path.dirname(os.path.abspath(__file__))
 setup(
     name="jarvis",
     version="1.0.0",
-    install_requires=["pymatgen==3.3.5","monty==0.9.6","numpy==1.10.4","spglib==1.9.9.18","pyspglib==1.8.3.1","scipy==0.17.0","phonopy==1.10.9","custodian>=1.0.4","ase==3.13.0","scikit-learn==0.18.1"],
+    install_requires=["monty","custodian>=1.0.4","ase==3.13.0"],
     extras_require={"babel": ["openbabel", "pybel"],
                     "remote": ["fabric"],
                     "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"]
@@ -26,7 +26,7 @@ setup(
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",        
+        "Programming Language :: Python :: 3.6",
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
@@ -34,4 +34,4 @@ setup(
         "Topic :: Scientific/Engineering",
     ],
     #scripts=glob.glob(os.path.join(JARVIS_DIR,  "*"))
-)
+
