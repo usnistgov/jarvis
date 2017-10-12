@@ -57,7 +57,12 @@ def get_rdf(s=None,cutoff=10.0,intvl=0.1):
 def get_comp_descp(struct=''):  
        cat=[]
        try: 
-        s=(struct).get_primitive_structure()
+        if len(struct)<50: #TO AVOID SEG FAULT IN SYMMETRY LIBRARY E.G. mp-686203
+          spg=str(SpacegroupAnalyzer(s).get_spacegroup_number()).split()[0]
+          s=(struct).get_primitive_structure()
+        else:
+          s=(struct)
+          spg=1
         a=s.lattice.abc[0]
         b=s.lattice.abc[1]
         c=s.lattice.abc[2]
@@ -67,7 +72,6 @@ def get_comp_descp(struct=''):
         alph=s.lattice.angles[0]
         bet=s.lattice.angles[1]
         gam=s.lattice.angles[2]
-        spg=str(SpacegroupAnalyzer(s).get_spacegroup_number()).split()[0]
         #print 'spg=',spg
         v_pa=float(s.volume)/float(s.composition.num_atoms)
         logv_pa=log(float(s.volume)/float(s.composition.num_atoms))
