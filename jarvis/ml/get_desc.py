@@ -1,4 +1,5 @@
 from math import pi
+from pymatgen.core.structure import Structure
 from operator import itemgetter
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.outputs import Vasprun
@@ -58,7 +59,7 @@ def get_comp_descp(struct=''):
        cat=[]
        try: 
         if len(struct)<50: #TO AVOID SEG FAULT IN SYMMETRY LIBRARY E.G. mp-686203
-          spg=str(SpacegroupAnalyzer(s).get_spacegroup_number()).split()[0]
+          spg=str(SpacegroupAnalyzer(struct).get_spacegroup_number()).split()[0]
           s=(struct).get_primitive_structure()
         else:
           s=(struct)

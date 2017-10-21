@@ -2,7 +2,7 @@ import itertools
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 
-from get_des import get_comp_descp
+from jarvis.ml.get_desc import get_comp_descp
 import sys
 from pymatgen.matproj.rest import MPRester
 from pymatgen.core.structure import Structure
@@ -27,7 +27,7 @@ def pd_plot(system='Ni-Nb'):
       comb += itertools.combinations(l,i+1)
   comb_list = [ list(t) for t in comb ]
 #  comb_list=['Zn','O','Zn-O']
-  with MPRester("") as m:
+  with MPRester("xZwPL7aKBHq3Gehb") as m:
     for i in    comb_list:
         dd='-'.join(i)
         print dd
@@ -37,6 +37,7 @@ def pd_plot(system='Ni-Nb'):
             x['material_id'] = str(d['material_id'])
             structure = m.get_structure_by_material_id(x['material_id'])
             X=get_comp_descp(struct=structure)
+            print "X",X
             pred=object_file.predict(X)
             print structure.composition.reduced_formula,pred[0],d['formation_energy_per_atom'],str(d['material_id'])
             output.append(PDEntry(Composition(structure.composition),float(pred[0])))
@@ -47,4 +48,4 @@ def pd_plot(system='Ni-Nb'):
   plotter.write_image(name,image_format="png")
 
 
-#pd_plot()
+pd_plot()
