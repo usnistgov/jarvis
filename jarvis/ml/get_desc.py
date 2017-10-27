@@ -1,3 +1,4 @@
+# coding: utf-8
 from math import pi
 from pymatgen.core.structure import Structure
 from operator import itemgetter
@@ -21,14 +22,14 @@ def get_descrp_arr(elm=''):
       arr=[]
       try:     
         tmp=str(os.path.join(os.path.dirname(__file__),'Elements.json'))
-	f=open(tmp,'r')
-	dat=json.load(f)
-	f.close()
-	d=dat[elm]
-	arr=[]
-	for k,v in d.iteritems():
-	    arr.append(v)
-	arr=np.array(arr).astype(float)
+        f=open(tmp,'r')
+        dat=json.load(f)
+        f.close()
+        d=dat[elm]
+        arr=[]
+        for k,v in d.iteritems():
+           arr.append(v)
+        arr=np.array(arr).astype(float)
         #print os.path.join(os.path.dirname(__file__),'Elements.json')
       except:  
          pass
@@ -83,27 +84,27 @@ def get_comp_descp(struct=''):
         #min_erdf=np.array(get_erdf(struct=s,val='min')[0]['distribution'])
         
         comp=s.composition
-	el_dict=comp.get_el_amt_dict()
-	arr=[]
-	for k,v in el_dict.iteritems():
+        el_dict=comp.get_el_amt_dict()
+        arr=[]
+        for k,v in el_dict.iteritems():
 	    #print k,v
-	    des=get_descrp_arr(k)
+            des=get_descrp_arr(k)
 	    #print k,v,des
-	    arr.append(des)
+            arr.append(des)
         #print arr,len(arr)
         #arr=np.array(arr)
         #print len(arr),arr
 	#arr=np.concatenate((arr,cell),axis=0)
         #print 'arr=',arr
-	mean_des=np.mean(arr,axis=0)
+        mean_des=np.mean(arr,axis=0)
         max_des=np.maximum.reduce(arr)
         min_des=np.minimum.reduce(arr)
-	sum_des=np.sum(arr,axis=0)
+        sum_des=np.sum(arr,axis=0)
 	#var_des=np.var(arr,axis=0)
 	#diff_des=np.fabs(np.diff(arr,axis=0))[0]
         #print mean_des,len(mean_des)
 	#cat=np.concatenate((mean_des,cell),axis=0).astype(float)
- 	cat=np.concatenate((mean_des,max_des,min_des,sum_des,cell,pf,rdf),axis=0).astype(float)
+        cat=np.concatenate((mean_des,max_des,min_des,sum_des,cell,pf,rdf),axis=0).astype(float)
 
         #print cat,len(cat)
 
