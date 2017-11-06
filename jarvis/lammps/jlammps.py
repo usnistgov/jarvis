@@ -66,6 +66,46 @@ def ZipDir(inputDir, outputZip,contents=[]):
 
     zipOut.close()
 
+def get_struct_from_mp1(formula, MAPI_KEY="", all_structs=False):
+    """
+    fetches the structure corresponding to the given formula
+    from the materialsproject database.
+
+    Note: Get the api key from materialsproject website. The one used
+    here is nolonger valid.
+
+    Note: for the given formula there are many structures available,
+    this function returns the one with the lowest energy above the hull
+    unless all_structs is set to True
+    """
+    if not MAPI_KEY:
+        MAPI_KEY = os.environ.get("MAPI_KEY", "")
+        if not MAPI_KEY:
+            print('API key not provided')
+            print('get API KEY from materialsproject and set it to the MAPI_KEY environment variable. aborting ... ')
+            sys.exit()
+    with MPRester(MAPI_KEY) as m:
+        data = m.get_data(formula)
+        structures = []
+        x = {}
+        print("\nnumber of structures matching the chemical formula {0} = {1}".format(formula, len(data)))
+        print("The one with the the lowest energy above the hull is returned, unless all_structs is set to True")
+        for d in data:
+            mpid = str(d['material_id'])
+            x[mpid] = d['e_above_hull']
+            if all_structs:
+                structure = m.get_structure_by_material_id(mpid)
+                structure.sort()
+                structures.append(structure)
+        if all_structs:
+            return structures
+        else:
+            mineah_key = sorted(x.items(), key=operator.itemgetter(1))[0][0]
+            print("The id of the material corresponding to the lowest energy above the hull = {0}".format(mineah_key))
+            if mineah_key:
+                return mineah_key,m.get_structure_by_material_id(mineah_key)
+            else:
+                return None
 
 def get_struct_from_mp(symbol):
     tmp=str(os.path.join(os.path.dirname(__file__),'chempot_strt.json'))
@@ -75,7 +115,7 @@ def get_struct_from_mp(symbol):
     for i in dat:
       if i['element']==symbol:
           return i['mpid'],i['structure']
-
+          break
 
 def run_job(mat=None,parameters = {},jobname=''):
 #def run_job(mat=None,parameters = {'exec':'/cluster/bin/lmp_ctcms-14439-knc6-2','pair_style':'comb3 polar_on','pair_coeff':None,'atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'},jobname=''):
@@ -730,12 +770,13 @@ def get_chem_pot(s1=None,s2=None,parameters= {}):
     #             
     #from pymatgen.analysis.structure_matcher import StructureMatcher
     #print "Mather",StructureMatcher().fit(s1, s2)
-    print "s3   is   ",type(s1),type(s2),s3
+    #print "s3   is   ",type(s1),type(s2),s3
     uniq=[]
     for q in s3:
         el=q._species.elements 
         for j in el:
-           print   "j is ",j
+           j=str(j.symbol)
+           print   "j is ",type(j)
            if j not in uniq:   
               uniq.append(j)
               a,b= get_struct_from_mp(j)
