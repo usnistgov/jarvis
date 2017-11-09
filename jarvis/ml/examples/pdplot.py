@@ -27,7 +27,7 @@ def pd_plot(system='Ni-Nb'):
       comb += itertools.combinations(l,i+1)
   comb_list = [ list(t) for t in comb ]
 #  comb_list=['Zn','O','Zn-O']
-  with MPRester("xZwPL7aKBHq3Gehb") as m:
+  with MPRester("") as m:
     for i in    comb_list:
         dd='-'.join(i)
         print dd
