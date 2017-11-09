@@ -27,7 +27,7 @@ def get_descrp_arr(elm=''):
         f.close()
         d=dat[elm]
         arr=[]
-        for k,v in d.iteritems():
+        for k,v in d.items():
            arr.append(v)
         arr=np.array(arr).astype(float)
         #print os.path.join(os.path.dirname(__file__),'Elements.json')
@@ -60,7 +60,7 @@ def get_comp_descp(struct=''):
        cat=[]
        try: 
         if len(struct)<50: #TO AVOID SEG FAULT IN SYMMETRY LIBRARY E.G. mp-686203
-          spg=str(SpacegroupAnalyzer(struct).get_spacegroup_number()).split()[0]
+          spg=str(SpacegroupAnalyzer(struct).get_space_group_number()).split()[0]
           s=(struct).get_primitive_structure()
         else:
           s=(struct)
@@ -86,7 +86,8 @@ def get_comp_descp(struct=''):
         comp=s.composition
         el_dict=comp.get_el_amt_dict()
         arr=[]
-        for k,v in el_dict.iteritems():
+        #print ("eldi",el_dict,type(el_dict))
+        for k,v in el_dict.items():
 	    #print k,v
             des=get_descrp_arr(k)
 	    #print k,v,des
