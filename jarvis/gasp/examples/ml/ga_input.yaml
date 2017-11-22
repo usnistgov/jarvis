@@ -1,0 +1,14 @@
+CompositionSpace: 
+    - Cu
+
+EnergyCode: 
+    jml:
+
+InitialPopulation:
+    from_files:
+        path_to_folder: /rk2/knc6/GASP/Cu/ref_states 
+    random:
+        number: 102
+
+StoppingCriteria: 
+    num_energy_calcs: 3000
