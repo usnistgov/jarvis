@@ -16,7 +16,7 @@ Installing JARVIS
       Download 32/64 bit python 2.7 miniconda exe and install
 - Now, let's make a conda environment just for JARVIS::
 
-      conda create --name my_jarvis python=2.7
+      conda create --name my_jarvis python=3.6
 - The 'my_jarvis' environment can be activated using the command::
 
        source activate my_jarvis
@@ -29,7 +29,9 @@ Installing JARVIS
       pip install numpy  
       pip install scipy 
       pip install scikit-learn
-      pip install pymatgen==3.3.5
+      git clone https://github.com/JARVIS-Unifies/pymatgen.git
+      cd pymatgen
+      python setup.py develop
 - Go to the jarvis directory and type::
 
       python setup.py install      
@@ -56,6 +58,6 @@ How to cite JARVIS
 
 Author and main-developers
 -----------------
-Kamal Choudhary (Webpage: https://www.nist.gov/people/kamal-choudhary) 
+Kamal Choudhary, Francesca Tavazza 
 
 

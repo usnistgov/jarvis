@@ -20,39 +20,32 @@ from custodian.vasp.jobs import VaspJob
 from pymatgen.io.vasp import VaspInput, Vasprun
 from custodian.vasp.jobs import VaspJob
 from pymatgen.io.vasp.outputs import Oszicar
-from pymatgen.io.vaspio.vasp_output import Vasprun
 from subprocess import Popen, PIPE
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import sys,shutil,glob,codecs
-from pymatgen.io.aseio import AseAtomsAdaptor
+from pymatgen.io.ase import AseAtomsAdaptor
 from pymatgen.core.surface import  Slab, SlabGenerator, generate_all_slabs,get_symmetrically_distinct_miller_indices
 from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler, \
     MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler
+from pymatgen.symmetry.bandstructure import HighSymmKpath
 import json,yaml
 from numpy import linalg as LA
 import time
 from collections import OrderedDict
-from pymatgen.io.vaspio.vasp_output import Vasprun
 from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen,surfer
 from pymatgen.matproj.rest import MPRester
 import subprocess
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput
 from pymatgen.io.vasp.inputs import Potcar, Kpoints
-from pymatgen.io.vaspio_set import MPVaspInputSet, MPNonSCFVaspInputSet
+#from pymatgen.io.vasp.sets import MPVaspInputSet, MPNonSCFVaspInputSet
 from numpy import matrix
 import numpy as np
-from pymatgen.io.aseio import AseAtomsAdaptor
-from ase.lattice.cubic import DiamondFactory, SimpleCubicFactory
-from ase.lattice import bulk
-from ase.lattice.compounds import Zincblende,AuCu3,Rocksalt,AuCu,CsCl,TRI_Fe2O3,HEX_Fe2O3,CsClFactory
-from ase.lattice.spacegroup import crystal
+from pymatgen.io.ase import AseAtomsAdaptor
 import operator
 from monty.json import MontyEncoder, MontyDecoder
 from monty.serialization import loadfn, dumpfn
 
-#os.environ["MAPI_KEY"] = ""
-#os.environ["VASP_PSP_DIR"] = "/users/knc6/VASP/VASP-POTENTIAL"
 main_exe=os.environ['vasp_bulk_exe']
 surf_exe= os.environ['vasp_surf_exe']
 nw_exe= os.environ['vasp_nw_exe']
@@ -63,114 +56,6 @@ json_dat=os.environ['mp_json']
 
 
 
-def  make_prototypes(strt=None):
-     strt.sort()
-     symbs=[str(specie.symbol) for specie in strt.types_of_specie]
-     protos=[]
-     if len(symbs)==1:
-     # FCC, BCC,SC,HCP,DIAM
-        hcp = bulk(symbs, 'hcp',a=4.0)
-        hcp1= AseAtomsAdaptor().get_structure(hcp)
-        sg_mat = SpacegroupAnalyzer(hcp1)
-        hcp2 = Poscar(sg_mat.get_conventional_standard_structure())
-        hcp2.comment=("bulk@HCP")
-        print ("HCP",hcp2)
-        protos.append(hcp2)
-        sc = bulk(symbs, 'sc', a=2.8)
-        sc1= AseAtomsAdaptor().get_structure(sc)
-        sg_mat = SpacegroupAnalyzer(sc1)
-        sc2 = Poscar(sg_mat.get_conventional_standard_structure())
-        sc2.comment=("bulk@SC")
-        print ("SC",sc2)
-        protos.append(sc2)
-        fcc = bulk(symbs, 'fcc', a=4.0)
-        fcc1= AseAtomsAdaptor().get_structure(fcc)
-        sg_mat = SpacegroupAnalyzer(fcc1)
-        fcc2 = Poscar(sg_mat.get_conventional_standard_structure())
-        fcc2.comment=("bulk@FCC")
-        print ("FCC",fcc2)
-        protos.append(fcc2)
-        bcc = bulk(symbs, 'bcc', a=3.3)
-        bcc1= AseAtomsAdaptor().get_structure(bcc)
-        sg_mat = SpacegroupAnalyzer(bcc1)
-        bcc2 = Poscar(sg_mat.get_conventional_standard_structure())
-        bcc2.comment=("bulk@BCC")
-        print ("BCC",bcc2)
-        protos.append(bcc2)
-
-
-
-        diam = bulk(symbs[0], 'diamond',a=6.0)
-        diam1= AseAtomsAdaptor().get_structure(diam)
-        sg_mat = SpacegroupAnalyzer(diam1)
-        diam2 = Poscar(sg_mat.get_conventional_standard_structure())
-        diam2.comment=("bulk@DIAM")
-        print ("DIAM",diam2)
-        protos.append(diam2)
-
-     elif len(symbs)==2:
-     # RS,ZB,CsCl,TiO2,CaF2
-        rc=Rocksalt(directions=[[1,0,0], [0,1,0], [0,0,1]],
-            size=(1,1,1),
-            symbol=symbs,
-            latticeconstant=4.50)
-        rc1= AseAtomsAdaptor().get_structure(rc)
-        sg_mat = SpacegroupAnalyzer(rc1)
-        rc2 = Poscar(sg_mat.get_conventional_standard_structure())
-        rc2.comment=("bulk@RS")
-        print (rc2)
-        protos.append(rc2)
-
-        zb=Zincblende(directions=[[1,0,0], [0,1,0], [0,0,1]],
-            size=(1,1,1),
-            symbol=symbs,
-            latticeconstant=4.50)
-        zb1= AseAtomsAdaptor().get_structure(zb)
-        sg_mat = SpacegroupAnalyzer(zb1)
-        zb2 = Poscar(sg_mat.get_conventional_standard_structure())
-        zb2.comment=("bulk@ZB")
-        print (zb2)
-        protos.append(zb2)
-
-        cscl=CsCl(directions=[[1,0,0], [0,1,0], [0,0,1]],
-            size=(1,1,1),
-            symbol=symbs,
-            latticeconstant=4.50)
-        cscl1= AseAtomsAdaptor().get_structure(cscl)
-        sg_mat = SpacegroupAnalyzer(cscl1)
-        cscl2 = Poscar(sg_mat.get_conventional_standard_structure())
-        cscl2.comment=("bulk@CsCl")
-        print (cscl2)
-        protos.append(cscl2)
-
-        rutile =crystal(symbs, basis=[(0, 0, 0), (0.3, 0.3, 0.0)],
-                spacegroup=136, cellpar=[4.6, 4.6, 2.95, 90, 90, 90])
-        rut1= AseAtomsAdaptor().get_structure(rutile)
-        sg_mat = SpacegroupAnalyzer(rut1)
-        rut2 = Poscar(sg_mat.get_conventional_standard_structure())
-        rut2.comment=("bulk@Rutile")
-        print (rut2)
-        protos.append(rut2)
-
-        joined=str(''.join(symbs))+str(2)
-        print (joined)
-        caf2 = bulk((joined), 'fluorite', a=4.0)
-        caf21= AseAtomsAdaptor().get_structure(caf2)
-        sg_mat = SpacegroupAnalyzer(caf21)
-        caf22 = Poscar(sg_mat.get_conventional_standard_structure())
-        rut2.comment=("bulk@Fluorite")
-        print (caf22)
-        protos.append(caf22)
-     else:
-        print ("Add case")
-     return protos
-
-def smart_protos(protos=[]):
-    for p in protos:
-           enp,contc=smart_converge(mat=p)
-           #pass
-def sub_job(file=None):
-    process = Popen(['qsub','-cwd', '-pe', 'nodal', '16', file], stderr=PIPE)
 
       
 def check_polar(file):
@@ -194,389 +79,6 @@ def check_polar(file):
     return polar
 
 
-def getvasp(strt=None,encut=600,kpoints=None):
-#def getvasp(strt):
-    #Get All the INCAR,KPOINTS,POTCAR
-    v = MPVaspInputSet(force_gamma='True')
-    #strt=Structure.from_file('POSCAR')
-    v.write_input(strt,'./')
-    incar_dict = { 'SYSTEM': 'slab',
-                   'ENCUT': encut,
-                   'AlGO': 'accurate',
-                   'ISMEAR': 0,
-                   'ISYM':0,
-                   'ADDGRID': '.TRUE.',
-                   'EDIFF': 1e-09,
-                   'NPAR': 4,
-                   'SIGMA': 0.1,
-                   'LORBIT': 11,
-                   'PREC': 'Accurate',
-                   'LWAVE':  '.FALSE.',
-                   'LCHARG': '.FALSE.',
-               }
-    incar = Incar.from_dict(incar_dict)
-    incar.write_file("INCAR")
-    #num_kpoints = den*strt.lattice.reciprocal_lattice.volume
-    #kpoints = Kpoints.automatic_density(strt, num_kpoints * strt.num_sites,force_gamma=True)
-    kpoints.write_file('KPOINTS')
-def pos2phonts(strt=None,mesh=[35,35,35]):
-    #Getting conventional cell#
-    #strt = Structure.from_file("POSCAR")
-    #strt=strt.structure
-    sg_mat = SpacegroupAnalyzer(strt)
-    strt = sg_mat.get_conventional_standard_structure()
-    f=open('phonons_input.dat','w')
-    #line=str('kpoints 35 35 35 1')+'\n'
-    line=str('kpoints')+str(' ')+str(mesh[0])+str(' ')+str(mesh[1])+str(' ')+str(mesh[2])+str(' 1')+'\n'
-    f.write(line)
-    line=str('phonons_only T')+'\n'
-    f.write(line)
-    line=str('pdos 0 20 300 10')+'\n'
-    f.write(line)
-    #Just to look separated
-    line='\n'
-    f.write(line)
-    line='\n'
-    f.write(line)
-    line='\n'
-    f.write(line)
-    line='\n'
-    f.write(line)
-    line=str('vectors')+'\n'
-    f.write(line)
-    line=str(round(float(strt.lattice.matrix[0][0]),4))+'  '+str(round(float(strt.lattice.matrix[0][1]),4))+'  '+str(round(float(strt.lattice.matrix[0][2]),4))+'\n'
-    f.write(line)
-    line=str(round(float(strt.lattice.matrix[1][0]),4))+'  '+str(round(float(strt.lattice.matrix[1][1]),4))+'  '+str(round(float(strt.lattice.matrix[1][2]),4))+'\n'
-    f.write(line)
-    line=str(round(float(strt.lattice.matrix[2][0]),4))+'  '+str(round(float(strt.lattice.matrix[2][1]),4))+'  '+str(round(float(strt.lattice.matrix[2][2]),4))+'\n'
-    f.write(line)
-#Just to look separated
-    line='\n'
-    f.write(line)
-    line='\n'
-    f.write(line)
-    line='\n'
-    f.write(line)
-    line='\n'
-    f.write(line)
-    line=str('species')+'  '+str(len(strt.composition.elements))+'\n'
-    f.write(line)
-    for i in  range (len(strt.composition.elements)):
-        mass=str(strt.composition.elements[i].atomic_mass)
-        mass = mass.replace('amu', ' 0.0')
-        line=str(strt.composition.elements[i])+'  '+mass+'\n'
-        f.write(line)
-    line=str('Lattice 1.0')+'\n'
-    f.write(line)
-
-    line='\n'
-    f.write(line)
-    line='\n'
-    f.write(line)
-    line=str('AbInitio T F')+'\n'
-    f.write(line)
-    line=str('FP_interface VASP')+'\n'
-    f.write(line)
-    line=str('D3_cutoff 4.0')+'\n'
-    f.write(line)
-    line=str('delta 0.05')+'\n'
-    f.write(line)
-    line=str('numerical_2der T')+'\n'
-    f.write(line)
-    line=str('natoms')+' '+str(int(strt.composition._natoms))+'\n'
-    f.write(line)
-    line=str('fractional')+'\n'
-    f.write(line)
-
-
-    for site in strt:
-#    print site.frac_coords,site.specie,site.specie.number
-        line= str(site.specie)+'  '+str(site.frac_coords[0])+'  '+str(site.frac_coords[1])+'  '+str(site.frac_coords[2])+'\n'
-        f.write(line)
-
-    line=str('end')+'\n'
-    f.write(line)
-
-
-def Raman(strt=None,encut=500,length=50,efield='0.0 0.0 0.0'):
-    kpoints=Auto_Kpoints(mat=strt,length=length)
-    RAMANDIR=str("RAMANDIR-")+str(strt.comment)
-    comm=str(strt.comment)
-    strt=strt.structure
-    if not os.path.exists(RAMANDIR):
-       os.makedirs(RAMANDIR)
-    os.chdir(RAMANDIR)
-    strt.sort()
-
-
-   # v = MPVaspInputSet(force_gamma='True')
-   # v.write_input(s,DOSDIR)
-    incar_dict = { 'SYSTEM': 'PHONON',
-                   'ENCUT': encut,
-                   'AlGO': 'Normal',
-                   'IBRION': 8,
-                   'POTIM': 0.01,
-                   'LPLANE': '.FALSE.',
-                   'LWAVE': '.FALSE.',
-                   'LCHARG': '.FALSE.',
-                   'LELF': '.FALSE.',
-                   'LVTOT': '.FALSE.',
-                   'ISTART': 0,
-                   'GGA' :'BO',
-                   'PARAM1' : 0.1833333333,
-                   'PARAM2' : 0.2200000000,
-                   'LUSE_VDW' : '.TRUE.',
-                   'AGGAC' : 0.0000,
-
-
-                   'NWRITE': 3,
-                   'ISMEAR': 0,
-                   'EDIFF': 1e-08,
-                   'NPAR': 16,
-                   'SIGMA': 0.05,
-                   'LREAL': '.FALSE.',
-                   'ADDGRID': '.TRUE.',
-                   'LEPSILON': '.TRUE.',
-                   'LORBIT': 11,
-                   'PREC': 'Accurate',
-               }
-    incar = Incar.from_dict(incar_dict)
-    #incar.write_file("INCAR")
-    #kpoints=Kpoints.from_file('/scratch/lfs/kamal/VASP/Raman/ZnO-Ang/ZnO222/KPOINTS')
-    #num_kpoints = den*strt.lattice.reciprocal_lattice.volume
-    #kpoints = Kpoints.automatic_density(strt, num_kpoints * strt.num_sites,force_gamma=True)
-    #kpoints.write_file('KPOINTS')
-    c_size=12
-    r1=int(round(float(c_size)/float( max(abs(strt.lattice.matrix[0])))))
-    r2=int(round(float(c_size)/float( max(abs(strt.lattice.matrix[1])))))
-    r3=int(round(float(c_size)/float( max(abs(strt.lattice.matrix[2])))))
-    if r1<1:
-       r1=1
-    if r2<1:
-       r2=1
-    if r3<1:
-       r3=1
-    strt.make_supercell([r1,r2,r3])
-#    strt.make_supercell([dim1,dim2,dim3])
-
-#    if comm.startswith('Surf') and float( max(strt.lattice.matrix[0])) <11.0 and float( max(strt.lattice.matrix[1])) <11.0 :
-#       c_size=12
- #      dim1=int((float(c_size)/float( max(strt.lattice.matrix[0]))))
- #      dim2=int(float(c_size)/float( max(strt.lattice.matrix[1])))
- #      strt.make_supercell([dim1,dim2,1])
- #   elif float( max(strt.lattice.matrix[0])) <11.0 and float( max(strt.lattice.matrix[1])) <11.0 and float( max(strt.lattice.matrix[2])) <11.0:
- #      c_size=12
- #      dim1=int((float(c_size)/float( max(strt.lattice.matrix[0]))))
- #      dim2=int(float(c_size)/float( max(strt.lattice.matrix[1])))
- #      dim3=int(float(c_size)/float( max(strt.lattice.matrix[2])))
- #      strt.make_supercell([dim1,dim2,dim3])
-
-    en,contc=run_job(mat=Poscar(strt),incar=incar,kpoints=kpoints,jobname=str('PHONON'))
-    path=str(contc.split('/CONTCAR')[0])
-    print ("copying files")
-    cmd1=str('rm -f KPOINTS POTCAR OUTCAR OUTCAR.phon POSCAR POSCAR.phon')
-    os.system(cmd1)
-    cmd1=str('ln -s ')+str(path)+'/KPOINTS ./KPOINTS'
-    os.system(cmd1)
-    cmd1=str('ln -s ')+str(path)+'/POTCAR ./POTCAR'
-    os.system(cmd1)
-    cmd1=str('ln -s ')+str(path)+'/POSCAR ./POSCAR.phon'
-    os.system(cmd1)
-    cmd1=str('ln -s ')+str(path)+'/OUTCAR ./OUTCAR.phon'
-    os.system(cmd1)
-
-        #user_incar_settings={"EDIFF":1E-4,"NBANDS":30,"ISIF":2,"NSW":0}
-    #mpvis = MPNonSCFVaspInputSet(user_incar_settings=user_incar_settings)
-    os.environ['VASP_RAMAN_PARAMS'] = '01_18_2_0.01'
-    os.environ['VASP_RAMAN_RUN'] = 'mpirun -np 16 /users/knc6/VASP/vasp54/src/vasp.5.4.1/bin/vasp_std >vasp.out'
-    #mpvis.write_input(s,BANDSDIR)
-    if efield!='0.0 0.0 0.0':
-       incar_dict = { 'SYSTEM': 'PHONON',
-                   'ENCUT': encut,
-                   'AlGO': 'Normal',
-                   'ISYM': 0,
-                   'LPLANE': '.FALSE.',
-                   'LWAVE': '.FALSE.',
-                   'LCHARG': '.FALSE.',
-                   'LELF': '.FALSE.',
-                   'LVTOT': '.FALSE.',
-                   'ISTART': 0,
-                   'NWRITE': 3,
-                   'ISMEAR': 0,
-                   'LEPSILON':'.TRUE.',
-                   'LCALCEPS':'.TRUE.',
-                   'EFIELD_PEAD': efield,
-                   'GGA' :'BO',
-                   'PARAM1' : 0.1833333333,
-                   'PARAM2' : 0.2200000000,
-                   'LUSE_VDW' : '.TRUE.',
-                   'AGGAC' : 0.0000,
-
-                   'EDIFF': 1e-08,
-                   'KPAR': 4,
-                   'SIGMA': 0.05,
-                   'LREAL': '.FALSE.',
-                   'ADDGRID': '.TRUE.',
-                   'LORBIT': 11,
-                   'PREC': 'Accurate',
-               }
-    else:
-       incar_dict = { 'SYSTEM': 'PHONON',
-                   'ENCUT': encut,
-                   'AlGO': 'Normal',
-                   'ISYM': 0,
-                   'LPLANE': '.FALSE.',
-                   'LWAVE': '.FALSE.',
-                   'LCHARG': '.FALSE.',
-                   'LELF': '.FALSE.',
-                   'LVTOT': '.FALSE.',
-                   'ISTART': 0,
-                   'NWRITE': 3,
-                   'ISMEAR': 0,
-                   'LEPSILON':'.TRUE.',
-                   'GGA' :'BO',
-                   'PARAM1' : 0.1833333333,
-                   'PARAM2' : 0.2200000000,
-                   'LUSE_VDW' : '.TRUE.',
-                   'AGGAC' : 0.0000,
-
-                   'EDIFF': 1e-08,
-                   'KPAR': 4,
-                   'SIGMA': 0.05,
-                   'LREAL': '.FALSE.',
-                   'ADDGRID': '.TRUE.',
-                   'LORBIT': 11,
-                   'PREC': 'Accurate',
-               }
- 
-    incar = Incar.from_dict(incar_dict)
-    incar.write_file("INCAR")
-    kpoints.write_file('KPOINTS')
-
-
-    f=open('raman.job','w')
-    try:
-       line=str("#PBS -N Phonon-")+str((Poscar(strt)).comment)+'\n'
-    except:
-       line=str("#PBS -N Phonon")+'\n'
-    f.write(line)
-    line=str("#PBS -m abe")+'\n'
-    f.write(line)
-    line=str("#PBS -W group_list=ssdarpa")+'\n'
-    f.write(line)
-    line=str("#PBS -j oe")+'\n'
-    f.write(line)
-    line=str("#PBS -r n")+'\n'
-    f.write(line)
-    line=str("#PBS -l nodes=4:ppn=8")+'\n'
-    f.write(line)
-    line=str("#PBS -l pmem=1500mb")+'\n'
-    f.write(line)
-    line=str("#PBS -o test.log")+'\n'
-    f.write(line)
-    line=str("#PBS -l walltime=48:10:00")+'\n'
-    f.write(line)
-    dir=str(os.getcwd())
-    line=str("cd ")+dir+'\n'
-    f.write(line)
-    line=str("export VASP_RAMAN_RUN='mpirun -np 16 /users/knc6/VASP/vasp54/src/vasp.5.4.1/bin/vasp_std >vasp.out'")+'\n'
-    f.write(line)
-    nmodes=3*int(strt.num_sites)
-    input=str("'")+str("01_")+str(nmodes)+str("_2_0.01'")
-    line=str("export VASP_RAMAN_PARAMS=")+input+'\n'
-    #line=str("export VASP_RAMAN_PARAMS='01_12_2_0.01'")+'\n'
-    f.write(line)
-    line=str("python /users/knc6/bin/vasp_raman.py > vasp_raman.out")+'\n'
-    f.write(line)
-    
-    f.close()
-    try:
-      shutil.copy2('/home/knc6/bin/vdw_kernel.bindat','./')
-    except:
-
-      
-      #shutil.copy2('/home/knc6/bin/vdw_kernel.bindat','./')
-      pass
-       
-    sub_job(file='raman.job')
-#    strt=get_cvn(strt)
-#    pos2phonts(strt=strt)
-    os.chdir('../')
-def _submit_to_queue(script_file):
-        # submit the job, return process and pid.
-        process = Popen(("/bin/bash", script_file), stderr=PIPE)
-        return SubmitResults(qid=process.pid, out='no out in shell submission', err='no err in shell submission', process=process)
-    
-
-def phonts(strt=None,encut=600,kpoints=None):
-    comm=str(strt.comment)
-    PHONTSDIR=str("PHONTSDIR-")+str(comm)
-    main_json=str("MAIN-RELAX-")+str(comm)
-   # for file in glob.glob("*.json"):
-   #     if file.startswith(main_json):
-   #       den =int(file.split("-")[-1])
-   #       main_file=jobs_from_file(file)
-   #       for job in main_file:
-   #           encut=float(job.vis.incar["ENCUT"])
-    strt=strt.structure
-    os.makedirs(PHONTSDIR)
-    #strt=Structure.from_file('POSCAR')
-    strt.sort()
-
-    os.chdir(PHONTSDIR)
-#    strt=get_cvn(strt)
-    pos2phonts(strt=strt)
-    shutil.copy2('phonons_input.dat','phonons_input.dat_1')
-    exe = str("PhonTS phonons_input.dat")
-    os.system(exe)
-    for b in glob.glob('*.str'):
-        #cnt=cnt+1
-        folder=str(b+'.dir')
-        print (folder)
-        #if not os.path.exists(folder):
-        os.makedirs(folder)
-        shutil.copy2(b,folder)
-        os.chdir(folder)
-        print ("folder===",folder)
-        shutil.copy2('/users/knc6/phonon.job','phonon.job')
-        super=Poscar.from_file(b)
-        getvasp(super.structure,kpoints=kpoints,encut=encut)
-        shutil.copy2(b,'POSCAR')
-        print ("bbbbbbbbbbbbbbbbbbbbbbb=",b)
-        exe = str("qsub -cwd -pe nodal 16 phonon.job")
-        #exe = str("mpiexec vasp")
-        os.system(exe)
-        filename = b
-        (prefix, sep,suff) = filename.rpartition('.str')
-        new_filename = prefix + '.out'
-        status=False
-        while status !=True:
-            try:
-                #file=os.path.join(str(filename)+str('.dir'),'/vasprun.xml')
-                file=str(os.getcwd())+str('/vasprun.xml')
-                print (file)
-                run=Vasprun(file)
-                print ("file=",run)
-                status=run.converged
-                print ("status=",status)
-                time.sleep(5)
-            except:
-                time.sleep(5)
-        inp=str('../')+str(new_filename)
-        shutil.copy2('OUTCAR',inp)
-        os.chdir('../')
-    replceTF()
-    exe = str("PhonTS phonons_input.dat")
-    os.system(exe)
-    os.chdir('../')
-
-def replceTF():
-    f = codecs.open('phonons_input.dat',encoding='utf-8')
-    contents = f.read()
-    newcontents = contents.replace('AbInitio T F','AbInitio F T')
-    f1=open('phonons_input.dat','w')
-    f1.write(newcontents)
-    f1.close()
 def get_lowest_en_from_mp(formula, MAPI_KEY="", all_structs=False):
     """
     fetches the structure corresponding to the given formula
@@ -629,37 +131,7 @@ def sum_chem_pot(strt=None):
         enp=get_lowest_en_from_mp(el)
         sum=float(sum)+float(enp)
     return sum
-#strt=Structure.from_file('/home/kamal/POSCAR')
-#sum=sum_chem_pot(strt)
-#print sum
 
-# all the info/warnings/outputs redirected to the log file: convg.log
-
-poscar_list = []
-
-def run_cal(turn_knobs, qadapter, job_cmd, job_dir, checkpoint_file,
-            incar=None, poscar=None, potcar=None, kpoints=None,
-            Grid_type='G',functional='LDA',is_matrix=True):
-    """
-    setup and run calibrate job
-    """
-    handlers = []
-    outfile=str(os.getcwd())+str('/')+str('vasp.out')
-    handlers = [VaspErrorHandler(output_filename=outfile)] #, MeshSymmetryErrorHandler(),
-    #handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),
-    #            UnconvergedErrorHandler(), NonConvergingErrorHandler(),
-    #            PotimErrorHandler()]
-    cal = Calibrate(incar, poscar, potcar, kpoints,
-                    is_matrix=is_matrix, 
-                    turn_knobs=turn_knobs,handlers=handlers, qadapter=qadapter,
-                    job_cmd = job_cmd, job_dir=job_dir,
-                    Grid_type=Grid_type,functional=functional,
-                    checkpoint_file=checkpoint_file, cal_logger=logger)
-    cal.setup()
-    #c = Custodian(handlers, cal, max_errors=5)
-    #print ("custodian",c,type(c))
-    #c.run()
-    cal.run()
 def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):    
     hostname=str(socket.gethostname()) 
     poscar_list=[(mat)]
@@ -709,141 +181,141 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
             for el in mat.site_symbols:
                new_symb.append(pots[el])
             potcar = Potcar(symbols=new_symb,functional="PBE")
-	    if not os.path.exists(run_dir):
-			                           os.makedirs(jobname)
-			                           os.chdir(jobname)
-					           incar.write_file("INCAR")
-					           potcar.write_file("POTCAR")
-					           kpoints.write_file("KPOINTS")
-					           mat.write_file("POSCAR")
-		       
-	    
+            if not os.path.exists(run_dir):
+                                                   os.makedirs(jobname)
+                                                   os.chdir(jobname)
+                                                   incar.write_file("INCAR")
+                                                   potcar.write_file("POTCAR")
+                                                   kpoints.write_file("KPOINTS")
+                                                   mat.write_file("POSCAR")
+                       
+            
                                                    for i in copy_file:
                                                       print ('copying',i)
                                                       shutil.copy2(i,'./')
-						   #f=open('job.out','w')
-					      
-						   cmd=str('python  first_cust.py >ouuu')+'\n' 
-						   cust_file=open("first_cust.py","w")
-						   cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('import os,shutil')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('from custodian.vasp.validators import VasprunXMLValidator')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('from custodian.custodian import Custodian')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('inc=Incar.from_file("INCAR")')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
-						   cust_file.write(cline)
+                                                   #f=open('job.out','w')
+                                              
+                                                   cmd=str('python  first_cust.py >ouuu')+'\n' 
+                                                   cust_file=open("first_cust.py","w")
+                                                   cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('import os,shutil')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('from custodian.vasp.validators import VasprunXMLValidator')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('from custodian.custodian import Custodian')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('inc=Incar.from_file("INCAR")')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
+                                                   cust_file.write(cline)
                                                    cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
-						   cust_file.write(cline)
-						   cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
-						   cust_file.write(cline)
-						   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
-						   if mat.comment.startswith('Surf'):
-						      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
-						   if 'SOC' in jobname:
-						      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
-						   
-						   cust_file.write(cline)
-						   cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('validators = [VasprunXMLValidator()]')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('c.run()')+'\n' 
-						   cust_file.write(cline)
-						   cust_file.close()
+                                                   cust_file.write(cline)
+                                                   cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
+                                                   if mat.comment.startswith('Surf'):
+                                                      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
+                                                   if 'SOC' in jobname:
+                                                      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
+                                                   
+                                                   cust_file.write(cline)
+                                                   cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('validators = [VasprunXMLValidator()]')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('c.run()')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cust_file.close()
                                                    print ("I AM HERE 2")
                                                    os.system(cmd)
                                                    try:
-		                                      wait=Vasprun("vasprun.xml").converged
+                                                      wait=Vasprun("vasprun.xml").converged
                                                    except:
                                                            pass 
                                                    print ("I AM HERE 3",os.getcwd(),wait)
 
 
-	    else :
+            else :
                   os.chdir(jobname)
                   wait=False
                   if os.path.isfile('vasprun.xml'):
                      try:
-		         wait=Vasprun("vasprun.xml").converged
+                         wait=Vasprun("vasprun.xml").converged
                      except:
                           pass
                   print ("wait os=",wait)
                   if wait==False:
-					           incar.write_file("INCAR")
-					           potcar.write_file("POTCAR")
-					           kpoints.write_file("KPOINTS")
-					           mat.write_file("POSCAR")
-	                                           try:
+                                                   incar.write_file("INCAR")
+                                                   potcar.write_file("POTCAR")
+                                                   kpoints.write_file("KPOINTS")
+                                                   mat.write_file("POSCAR")
+                                                   try:
                                                       print ('FOUND OLD CONTCAR in', os.getcwd())
                                                       old_contcar=Poscar.from_file('CONTCAR')
                                                       old_contcar.write_file('POSCAR')
                                                    except:
-                                                        pass	       
+                                                        pass           
                                                    for i in copy_file:
                                                       print ('copying',i)
                                                       shutil.copy2(i,'./')
-	    
-					      
-						   cmd=str('python  first_cust.py >ouuu')+'\n' 
-						   cust_file=open("first_cust.py","w")
-						   cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('import os,shutil')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('from custodian.vasp.validators import VasprunXMLValidator')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('from custodian.custodian import Custodian')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('inc=Incar.from_file("INCAR")')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
-						   cust_file.write(cline)
+            
+                                              
+                                                   cmd=str('python  first_cust.py >ouuu')+'\n' 
+                                                   cust_file=open("first_cust.py","w")
+                                                   cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('import os,shutil')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('from custodian.vasp.validators import VasprunXMLValidator')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('from custodian.custodian import Custodian')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('inc=Incar.from_file("INCAR")')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
+                                                   cust_file.write(cline)
                                                    cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
-						   cust_file.write(cline)
-						   cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
-						   cust_file.write(cline)
+                                                   cust_file.write(cline)
+                                                   cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
+                                                   cust_file.write(cline)
 
 
-						   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
-						   if mat.comment.startswith('Surf'):
-						      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
-						   if 'SOC' in jobname:
-						      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
+                                                   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
+                                                   if mat.comment.startswith('Surf'):
+                                                      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
+                                                   if 'SOC' in jobname:
+                                                      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
 
-						   
-						   cust_file.write(cline)
-						   cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('validators = [VasprunXMLValidator()]')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
-						   cust_file.write(cline)
-						   cline=str('c.run()')+'\n' 
-						   cust_file.write(cline)
-						   cust_file.close()
+                                                   
+                                                   cust_file.write(cline)
+                                                   cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('validators = [VasprunXMLValidator()]')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cline=str('c.run()')+'\n' 
+                                                   cust_file.write(cline)
+                                                   cust_file.close()
                                                    os.system(cmd)
 
 
@@ -1456,8 +928,11 @@ def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_
            LWAVE = '.FALSE.' )
        incar = Incar.from_dict(incar_dict)
        user_incar_settings={"EDIFF":1E-6,"ISIF":2,"NSW":0,"LORBIT":11,"ENCUT":encut,"LWAVE":'.FALSE.',"PREC":'Accurate'}
-       mpvis = MPNonSCFVaspInputSet(user_incar_settings=incar)
-
+       #mpvis = MPNonSCFVaspInputSet(user_incar_settings=incar)
+       kpath = HighSymmKpath(mat_f.structure)
+       frac_k_points, k_points_labels = kpath.get_kpoints(line_density=20,coords_are_cartesian=False)
+       kpoints = Kpoints(comment="Non SCF run along symmetry lines",style=Kpoints.supported_modes.Reciprocal,num_kpts=len(frac_k_points),kpts=frac_k_points, labels=k_points_labels,kpts_weights=[1] * len(frac_k_points))
+ 
 
        try: 
            print ("running MAIN-BAND")

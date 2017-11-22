@@ -25,10 +25,10 @@ from pymatgen.io.vasp import Poscar
 from monty.serialization import loadfn, dumpfn
 from monty.json import MontyEncoder, MontyDecoder
 from pymatgen.analysis.defects.point_defects import Vacancy
-from pymatgen.io.vasp.sets import MPGGAVaspInputSet
+#from pymatgen.io.vasp.sets import MPGGAVaspInputSet
 from pymatgen.core.surface import Slab, SlabGenerator
 from pymatgen.core.structure import Structure
-from pymatgen.io.aseio import AseAtomsAdaptor
+from pymatgen.io.ase import AseAtomsAdaptor
 from ase.lattice.surface import surface
 from pymatgen.core.surface import  Slab, SlabGenerator, generate_all_slabs,get_symmetrically_distinct_miller_indices
 from pymatgen.io.vasp import Kpoints
@@ -69,25 +69,25 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
     #sc_scale = get_sc_scale(struct,cellmax)
     sc_scale=[dim1,dim2,dim3]
     #sc_scale=[cellmax,cellmax,cellmax]
-    print "sc_scale",sc_scale
-    mpvis = MPGGAVaspInputSet()
+    print ("sc_scale",sc_scale)
+    #mpvis = MPGGAVaspInputSet()
 
     # Begin defaults: All default settings.
-    blk_vasp_incar_param = {'IBRION':-1,'EDIFF':1e-4,'EDIFFG':0.001,'NSW':0,}
-    def_vasp_incar_param = {'ISIF':2,'NELM':99,'IBRION':2,'EDIFF':1e-6, 
-                            'EDIFFG':0.001,'NSW':40,}
-    kpoint_den = 6000
+    #blk_vasp_incar_param = {'IBRION':-1,'EDIFF':1e-4,'EDIFFG':0.001,'NSW':0,}
+    #def_vasp_incar_param = {'ISIF':2,'NELM':99,'IBRION':2,'EDIFF':1e-6, 
+    #                        'EDIFFG':0.001,'NSW':40,}
+    #kpoint_den = 6000
     # End defaults
     
-    ptcr_flag = True
-    try:
-        potcar = mpvis.get_potcar(struct)
-    except:
-        print ("VASP POTCAR folder not detected.\n" \
-              "Only INCAR, POSCAR, KPOINTS are generated.\n" \
-              "If you have VASP installed on this system, \n" \
-              "refer to pymatgen documentation for configuring the settings.")
-        ptcr_flag = False
+    #ptcr_flag = True
+    #try:
+    #    potcar = mpvis.get_potcar(struct)
+    #except:
+    #    print ("VASP POTCAR folder not detected.\n" \
+    #          "Only INCAR, POSCAR, KPOINTS are generated.\n" \
+    #          "If you have VASP installed on this system, \n" \
+    #          "refer to pymatgen documentation for configuring the settings.")
+    #    ptcr_flag = False
 
 
 
@@ -117,8 +117,8 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
         poscar = mpvis.get_poscar(sc)
         kpoints = Kpoints.automatic_density(sc,kpoint_den)
         incar = mpvis.get_incar(sc)
-        if ptcr_flag:
-            potcar = mpvis.get_potcar(sc)
+        #if ptcr_flag:
+        #    potcar = mpvis.get_potcar(sc)
 
         interdir = mpid
         if not i:
@@ -318,14 +318,12 @@ def vac_intl(cellmax=2,mpid='',struct=None):
                pos.comment=str('bulk')+str('.')+str('cellmax')+str(cellmax)
                if count==0:
                    def_str.append(pos)
-                   print pos
                    count=count+1
             else:
                pos=Poscar(scs[i])
                pos.comment=str('vac')+str('cellmax')+str(cellmax)+str('@')+str(vac.get_defectsite_multiplicity(i))+str('Element')+str(el)
                if pos not in def_str:
                    def_str.append(pos)
-                   print pos
     struct_valrad_eval = ValenceIonicRadiusEvaluator(struct)
     val = struct_valrad_eval.valences
     rad = struct_valrad_eval.radii
@@ -340,7 +338,7 @@ def vac_intl(cellmax=2,mpid='',struct=None):
            pos.comment=str('intl')+str('cellmax')+str(cellmax)+str('@')+str(intl.get_defectsite_coordination_number(i-1))+str('Element')+str(el)
            if pos not in def_str:
                    def_str.append(pos)
-    print len(def_str)
+    print (len(def_str))
 
 def main():
     pp=vac_antisite_def_struct_gen(cellmax=2,mpid='mp-134')
