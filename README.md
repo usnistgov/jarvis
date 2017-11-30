@@ -56,8 +56,8 @@ How to cite JARVIS
         
         submitted
 
-Author and main-developers
+Authors and main-developers
 -----------------
-Kamal Choudhary, Francesca Tavazza 
+Kamal Choudhary and Francesca Tavazza 
 
 
