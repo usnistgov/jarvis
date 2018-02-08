@@ -29,9 +29,8 @@ Installing JARVIS
       pip install numpy  
       pip install scipy 
       pip install scikit-learn
-      git clone https://github.com/JARVIS-Unifies/pymatgen.git
-      cd pymatgen
-      python setup.py develop
+      pip install pymatgen
+      pip install monty
 - Go to the jarvis directory and type::
 
       python setup.py install      
