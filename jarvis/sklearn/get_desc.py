@@ -52,7 +52,7 @@ def get_rdf(s=None,cutoff=10.0,intvl=0.1):
     shell_vol = 4.0 / 3.0 * pi * (np.power(dist_bins[1:], 3) \
     - np.power(dist_bins[:-1], 3))
     number_density = s.num_sites / s.volume
-    rdf = dist_hist / shell_vol / number_density
+    rdf = dist_hist / shell_vol / number_density/len(neighbors_lst)
     return [{'distances': dist_bins[:-1], 'distribution': rdf}]
 
 
