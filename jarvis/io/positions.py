@@ -279,9 +279,9 @@ class Pos(object):
      plt.close()
 
 
+"""
 p=Pos() #.read_poscar('POSCAR')
 print p
-"""
 p.verlet([4,4,4])
 #p.write_poscar(fname='pp')
 #print p.supercell([2,2,2]).frac_coords
