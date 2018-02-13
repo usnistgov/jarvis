@@ -38,11 +38,8 @@ def ZipDir(inputDir, outputZip,contents=[]):
     tmp=contents
     rootLen = len(os.path.dirname(inputDir))
     def _ArchiveDirectory(parentDirectory):
-        #contents = os.listdir(parentDirectory)
         contents = tmp#['init.mod', 'potential.mod', 'in.main', 'data',  'log.lammps', 'restart.equil','data0' ]
-        #store empty directories
         if not contents:
-            #http://www.velocityreviews.com/forums/t318840-add-empty-directory-using-zipfile.html
             archiveRoot = parentDirectory[rootLen:].replace('\\', '/').lstrip('/')
             zipInfo = zipfile.ZipInfo(archiveRoot+'/')
             zipOut.writestr(zipInfo, '')
@@ -53,11 +50,8 @@ def ZipDir(inputDir, outputZip,contents=[]):
             else:
                 archiveRoot = fullPath[rootLen:].replace('\\', '/').lstrip('/')
                 if os.path.islink(fullPath):
-                    # http://www.mail-archive.com/python-list@python.org/msg34223.html
                     zipInfo = zipfile.ZipInfo(archiveRoot)
                     zipInfo.create_system = 3
-                    # long type of hex val of '0xA1ED0000L',
-                    # say, symlink attr magic...
                     zipInfo.external_attr = 2716663808L
                     zipOut.writestr(zipInfo, os.readlink(fullPath))
                 else:
@@ -120,10 +114,6 @@ def get_struct_from_mp(symbol):
 def run_job(mat=None,parameters = {},jobname=''):
 #def run_job(mat=None,parameters = {'exec':'/cluster/bin/lmp_ctcms-14439-knc6-2','pair_style':'comb3 polar_on','pair_coeff':None,'atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'},jobname=''):
     jobname=str(mat.comment)
-    #if jobname.startswith('bulk') or jobname.startswith('sbulk'):
-    #   parameters['control_file']='/home/kamal/inelast.mod'
-    #else:
-    #   parameters['control_file']='/home/kamal/inelast_nobox.mod'
        
     folder=str(os.getcwd())+str("/")+str(jobname)
     if not os.path.exists(folder):
@@ -143,7 +133,6 @@ def run_job(mat=None,parameters = {},jobname=''):
         os.system(job_bin)
         time.sleep(10)
         time.sleep(10)
-        #time.sleep(100)
         (en,press,toten,c11,c22,c33,c12,c13,c23,c44,c55,c66,c14,c16,c24,c25,c26,c34,c35,c36,c45,c46,c56)=analyz_loge('./log.lammps')
 
     print "initial,final sr",os.getcwd()
@@ -182,12 +171,9 @@ def write_lammps_data(structure=None, file=''):
         f.write( 'datafile (written by JARVIS-FF) \n\n')
         symbols = atoms.get_chemical_symbols()
         import ase.io.vasp
-        #ase.io.vasp.write_vasp("POSCAR.1x1x1",atoms, label='444supercell',direct=True,sort=False)
         n_atoms = len(symbols)
         f.write('%d \t atoms \n' % n_atoms)
         species = [tos for tos in Poscar(structure).site_symbols]
-        #species = [tos.symbol
-        #               for tos in structure.types_of_specie]
         n_atom_types = len(species)
         print ("species",species)
         f.write('%d  atom types\n' % n_atom_types)
@@ -251,14 +237,10 @@ def write_lammps_in( structure=None,lammps_in=None,lammps_in1=None,lammps_in2=No
             if key in parameters:
                 f.write('%s %s \n' % (key, parameters[key]))
         f.write('\n')
-        # If no_data_file,
-        # write the simulation box and the atoms
         species = [tos for tos in Poscar(structure).site_symbols]
-        #species = [tos.symbol for tos in structure.types_of_specie]
         n_atom_types = len(species)
         species_i = dict([(s,i+1) for i,s in enumerate(species)])
         f.write('read_data %s\n' % "data")
-        # interaction
         f.write('\n### interactions \n')
         if ( 'lib' in parameters ):
             lib = parameters['lib']
@@ -267,8 +249,6 @@ def write_lammps_in( structure=None,lammps_in=None,lammps_in1=None,lammps_in2=No
             pair_style = parameters['pair_style']
             f1.write('pair_style %s \n' % pair_style)
             symbols = atoms.get_chemical_symbols()
-            #species = [tos.symbol.replace("Mo","M") for tos in structure.types_of_specie] #For REBO Mo-S
-            #species = [tos.symbol for tos in structure.types_of_specie]
             print "site symbolss",Poscar(structure).site_symbols
             species = [tos for tos in Poscar(structure).site_symbols]
             if parameters['pair_style']=='rebomos':
@@ -291,7 +271,6 @@ def write_lammps_in( structure=None,lammps_in=None,lammps_in1=None,lammps_in2=No
                 count=count+1
                 f.write('mass'+' '+str(count)+' '+str(i)+'\n')
         else:
-            # default interaction
             f.write('pair_style lj/cut 2.5 \n' +
                     'pair_coeff * * 1 1 \n' +
                     'mass * 1.0 \n')
@@ -302,33 +281,7 @@ def write_lammps_in( structure=None,lammps_in=None,lammps_in1=None,lammps_in2=No
               f1.write('min_modify           dmax ${dmax} line quadratic\n' )
         f1.write('thermo          1\n' )
         f1.write('thermo_style custom step temp press cpu pxx pyy pzz pxy pxz pyz ke pe etotal vol lx ly lz atoms\n' )
-        #f1.write('thermo_style custom step temp pe press pxx pyy pzz pxy pxz pyz lx ly lz vol\n' )
         f1.write('thermo_modify norm no\n' )
-     #   if 'thermo_style' in parameters:
-     #       f.write('thermo_style %s\n' % parameters['thermo_style'])
-     #   else:
-     #       f.write(('thermo_style custom %s\n') %
-     #               (' '.join(self._custom_thermo_args)))
-     #   if 'thermo_modify' in parameters:
-     #       f.write('thermo_modify %s\n' % parameters['thermo_modify'])
-     #   else:
-     #       f.write('thermo_modify flush yes\n')
-     #   if 'thermo' in parameters:
-     #       f.write('thermo %s\n' % parameters['thermo'])
-     #   else:
-     #       f.write('thermo 1\n')            
-     #   if 'minimize' in parameters:
-     #       f.write('minimize %s\n' % parameters['minimize'])
-     #   if 'run' in parameters:
-     #       f.write('run %s\n' % parameters['run'])
-     #   if not (('minimize' in parameters) or ('run' in parameters)):
-     #       f.write('run 0\n')
-     #   if 'dump' in parameters:
-     #       f.write('dump %s\n' % parameters['dump'])
-     #   else:
-     #       f.write('dump dump_all all custom 1 %s id type x y z vx vy vz fx fy fz\n' % lammps_trj)            
-     #   f.write('print __end_of_ase_invoked_calculation__\n')
-     #   f.write('log /dev/stdout\n')
         if 'fix' in parameters:
             if parameters['fix']:
                 for i in parameters['fix']:
@@ -439,10 +392,6 @@ def read_dumpfull(data=None,ff=None):
                for el in sp:
                    try:
                     if Element(el):
-                     #if el=='M':
-                   #    el='Mo'
-                   #count=count+1
-                   #if count >4:
                       symb.append(el)
                    except:
                       pass
@@ -474,7 +423,6 @@ def read_dumpfull(data=None,ff=None):
         if "ITEM: ATOMS" in line:
            for j in range(0,natoms):
                  typ[j]=symb[int(((lines[i+j+1]).split()[1]))-1]
-                 #typ[j]=(lines[i+j+1]).split()[1]
                  x[j]=(lines[i+j+1]).split()[3]
                  y[j]=(lines[i+j+1]).split()[4]
                  z[j]=(lines[i+j+1]).split()[5]
@@ -583,7 +531,6 @@ def read_data(data=None,ff=None):
     for i, line in enumerate(lines):
         if "Atoms" in line.split():
            for j in range(0,natoms):
-                 #print int(((lines[j+2]).split()[1]))-1
                  typ[j]=symb[int(((lines[i+j+2]).split()[1]))-1]
                  q[j]=(lines[i+j+2]).split()[2]
                  x[j]=(lines[i+j+2]).split()[3]
@@ -594,10 +541,8 @@ def read_data(data=None,ff=None):
     print "info",len(typ),len(coords)
     pot_file.close()
     struct=Structure(lat,typ,coords,coords_are_cartesian=True)
-    #print struct
     finder = SpacegroupAnalyzer(struct)
     num=finder.get_spacegroup_symbol()
-    #print(num)
     return struct
 def smart_vac(strt=None,parameters=None):
     parameters['control_file']='/users/knc6/inelast_nobox.mod'
@@ -609,18 +554,12 @@ def smart_vac(strt=None,parameters=None):
     cellmax=2 #int(mat_cvn.composition.num_atoms)+int(mat_cvn.ntypesp)#5
     ase_atoms = AseAtomsAdaptor().get_atoms(mat_cvn)
     ase_atoms=ase_atoms*(cellmax,cellmax,cellmax)
-    #if len(ase_atoms) >200:
-    #   cellmax=1
-    #else:
-    #   cellmax=2
-    #cellmax=int(mat_cvn.composition.num_atoms)+int(mat_cvn.ntypesp)#5
     print ("type of trt is= celmmax",type(strt),cellmax)
     try:
        print ("int(strt.composition.num_atoms)",int(strt.composition.num_atoms))
        print (int(strt.ntypesp))
     except:
        pass
-    #cellmax=int(strt.composition.num_atoms)+int(strt.ntypesp)
     vac_done=0
     tol=0.01   #change 0.1
     try:
@@ -644,7 +583,6 @@ def smart_vac(strt=None,parameters=None):
                diff_arr=np.array(diff).flatten()
                print ("in smart_vac(strt=None diff_arr=",diff_arr)
                print ("sleepig for 5")
-               #time.sleep(5)
            except:
                 print ("Failed for v_3",os.getcwd())
                 pass
@@ -662,7 +600,6 @@ def smart_vac(strt=None,parameters=None):
                    def_list=def_list2
            else:
                vac_done=1
-#        cellmax=cellmax+1
     return def_list,header_list
 def smart_surf(strt=None,parameters=None):
     parameters['control_file']='/users/knc6/inelast_nobox.mod'
@@ -906,12 +843,10 @@ def main(p=None, parameters={}):
        toten,final_str,forces=run_job(mat=mat_pos,parameters = parameters)
     except:
        pass
-    print "p.comment issssss",p.comment
     #vac=vac_antisite_def_struct_gen(c_size=c_size,struct=final_str)
     #def_list,header_list=def_energy(vac=vac,parameters = parameters)
     #print def_list,header_list
     try:
-       print "p.comment issssss",p.comment
        vac=vac_antisite_def_struct_gen(c_size=c_size,struct=final_str)
        def_list,header_list=def_energy(vac=vac,parameters = parameters)
        print def_list,header_list
