@@ -103,7 +103,7 @@ for file in glob.glob("*.alloy"):
                  poscar_file=str(os.getcwd())+str("/POSCAR")
 
                  pair_coeff=str(cwd1)+str("/")+str(file)
-                 parameters = {'json_dat':'/rk2/knc6/JARVIS-DFT/MDCS/all_mp.json','c_size':30,'cluster':'sbatch','exec':'/users/knc6/Software/LAMMPS/lammps-master/src/lmp_serial <in.main >out','pair_style':'eam/alloy','pair_coeff':pair_coeff,'atom_style': 'charge' ,'control_file':'/users/knc6/inelast.mod'}
+                 parameters = {'phonon_control_file':'/users/knc6/in.phonon','surf_control_file':'/users/knc6/inelast_nobox.mod','def_control_file':'/users/knc6/inelast_nobox.mod','json_dat':'/rk2/knc6/JARVIS-DFT/MDCS/all_mp.json','c_size':3,'vac_size':25,'surf_size':25,'phon_size':20,'cluster':'sbatch','exec':'/users/knc6/Software/LAMMPS/lammps-master/src/lmp_serial <in.main >out','pair_style':'eam/alloy','pair_coeff':pair_coeff,'atom_style': 'charge' ,'control_file':'/users/knc6/inelast.mod'}
                  main_file=open("setup.py","w")
                  line=str("from jarvis.lammps.jlammps import main_func")+'\n'
                  main_file.write(line)

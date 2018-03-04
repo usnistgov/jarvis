@@ -85,7 +85,7 @@ def get_struct_from_mp(symbol):
           break
 
 def run_job(mat=None,parameters = {},jobname=''):
-#def run_job(mat=None,parameters = {'exec':'/cluster/bin/lmp_ctcms-14439-knc6-2','pair_style':'comb3 polar_on','pair_coeff':None,'atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'},jobname=''):
+#def run_job(mat=None,parameters = {'exec':'/cluster/bin/lmp_ctcms-14439-knc6-2','pair_style':'comb3 polar_on','pair_coeff':None,'atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod','control_file_extra':'/home/kamal/inelast_nobox.mod'},jobname=''):
     jobname=str(mat.comment)
     cluster=parameters['cluster']
     #head_node,pbs,sbatch
@@ -765,6 +765,7 @@ def surf_energy(surf=[],parameters = {}):
 #def surf_energy(surf=[],parameters = {'pair_style':'eam/alloy','pair_coeff':'/scratch/lfs/kamal/POSMAT/Automatic2/Al03.eam.alloy','atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'}):
     surf_list=[]
     surf_header_list=[]
+    parameters['control_file']=parameters['surf_control_file']
     fi=str('SURF.INFO')
     f=open(fi,'w')
     for s in surf:
@@ -789,23 +790,11 @@ def get_chem_pot(s1=None,s2=None,parameters= {}):
     s1.sort() 
     s2.sort() 
     s3=(set(s2)).symmetric_difference(set(s1))#list(set(s1)-set(s2))
-    #s3=[]
-    #for el1 in s1:
-    #     for el2 in s2:
-    #         if el1 !=el2 and el1 not in s3:
-    #            s3.append(el1)
-    #         if el1 !=el2 and el2 not in s3:
-    #            s3.append(el2)
-    #             
-    #from pymatgen.analysis.structure_matcher import StructureMatcher
-    #print "Mather",StructureMatcher().fit(s1, s2)
-    #print "s3   is   ",type(s1),type(s2),s3
     uniq=[]
     for q in s3:
         el=q._species.elements 
         for j in el:
            j=str(j.symbol)
-           #print   "j is ",type(j)
            if j not in uniq:   
               uniq.append(j)
               a,b= get_struct_from_mp(j)
@@ -824,7 +813,7 @@ def do_phonons(strt=None,parameters=None):
 
         p= get_phonopy_atoms(mat=strt)
         bulk =p
-        c_size=parameters['c_size']
+        c_size=parameters['phon_size']
         dim1=int((float(c_size)/float( max(abs(strt.lattice.matrix[0])))))+1
         dim2=int(float(c_size)/float( max(abs(strt.lattice.matrix[1]))))+1
         dim3=int(float(c_size)/float( max(abs(strt.lattice.matrix[2]))))+1
@@ -833,9 +822,11 @@ def do_phonons(strt=None,parameters=None):
         tmp.make_supercell([dim1,dim2,dim3])
         Poscar(tmp).write_file("POSCAR-Super.vasp")
     
-        phonon = Phonopy(bulk,[[dim1,0,0],[0,dim2,0],[0,0,dim3]])#,
+        print ('supercells',dim1,dim2,dim3)
+        phonon = Phonopy(bulk,[[dim1,0,0],[0,dim2,0],[0,0,dim3]]) 
         print ("[Phonopy] Atomic displacements:")
         disps = phonon.get_displacements()
+
         for d in disps:
             print ("[Phonopy]", d[0], d[1:])
         supercells = phonon.get_supercells_with_displacements()
@@ -853,7 +844,7 @@ def do_phonons(strt=None,parameters=None):
             mat = Poscar(AseAtomsAdaptor().get_structure(cell))
             mat.comment=str("disp-")+str(disp)
             parameters['min']='skip'
-            parameters['control_file']='/users/knc6/in.phonon'
+            parameters['control_file']= parameters['phonon_control_file']  #'/users/knc6/in.phonon'
             #a,b,forces=run_job(mat=mat,parameters={'min':'skip','pair_coeff': '/data/knc6/JARVIS-FF-NEW/ALLOY4/Mishin-Ni-Al-2009.eam.alloy', 'control_file': '/users/knc6/in.phonon', 'pair_style': 'eam/alloy', 'atom_style': 'charge'})
             a,b,forces=run_job(mat=mat,parameters=parameters)
             #print "forces=",forces
@@ -889,6 +880,7 @@ def def_energy(vac=[],parameters={}):
     header_list=[]
     fi=str('DEF.INFO')
     f=open(fi,'w')
+    parameters['control_file']= parameters['def_control_file']  
     for v in vac:
         enp,strt,forces=run_job(mat=v,parameters = parameters)
         #enp,contc=run_job(mat=v,incar=incar,kpoints=kpoints,jobname=str(v.comment))
@@ -916,73 +908,66 @@ def def_energy(vac=[],parameters={}):
     return def_list,header_list
 
 #def main(p=None, parameters={'pair_style':'rebomos','pair_coeff':'/scratch/lfs/kamal/JARVIS/All2/MoS2/MoS.REBO.set5b','atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'}):
-def main(p=None, parameters={}):
+def main(p=None,vac_cal=True,surf_cal=True,phon_cal=True, parameters={}):
 
     #p=Poscar.from_file("POSCAR")
     c_size=parameters['c_size']
+    vac_size=parameters['vac_size']
+    surf_size=parameters['surf_size']
+    phon_size=parameters['phon_size']
     sg_mat = SpacegroupAnalyzer(p.structure)
     mat_cvn = sg_mat.get_conventional_standard_structure()
     dim1=int((float(c_size)/float( max(abs(mat_cvn.lattice.matrix[0])))))+1
     dim2=int(float(c_size)/float( max(abs(mat_cvn.lattice.matrix[1]))))+1
     dim3=int(float(c_size)/float( max(abs(mat_cvn.lattice.matrix[2]))))+1
     cellmax=max(dim1,dim2,dim3)
+    tmp=mat_cvn.copy()
+    mat_cvn.make_supercell([dim1,dim2,dim3])
     #print "dim1 dim2 dim3",dim1,dim2,dim3
     #mat_cvn.make_supercell([dim1,dim2,dim3])
     mat_pos=Poscar(mat_cvn)
     mat_pos.comment=str(p.comment)
-    print ('execcccccc',parameters['exec'])
+    #print ('execcccccc',parameters['exec'])
     #print mat_pos
-    toten,final_str,forces=run_job(mat=mat_pos,parameters = parameters)
+    #toten,final_str,forces=run_job(mat=mat_pos,parameters = parameters)
+    #do_phonons(strt=final_str,parameters=parameters)
     try:
+       print ('in elastic calc')
        toten,final_str,forces=run_job(mat=mat_pos,parameters = parameters)
+       print ('done elastic calc')
     except:
        pass
-    #vac=vac_antisite_def_struct_gen(c_size=c_size,struct=final_str)
-    #def_list,header_list=def_energy(vac=vac,parameters = parameters)
+    vac=vac_antisite_def_struct_gen(c_size=vac_size,struct=final_str)
+    def_list,header_list=def_energy(vac=vac,parameters = parameters)
     #print def_list,header_list
     try:
-       vac=vac_antisite_def_struct_gen(c_size=c_size,struct=final_str)
+     if vac_cal==True:
+       print ('in defect calc')
+       vac=vac_antisite_def_struct_gen(c_size=vac_size,struct=final_str)
        def_list,header_list=def_energy(vac=vac,parameters = parameters)
-       #print def_list,header_list
+       print ('done defect calc',def_list,header_list)
     except:
        pass
     try:
-        surf=pmg_surfer(mat=final_str, min_slab_size=c_size,vacuum=25,max_index=3)
+     if surf_cal==True:
+        print ('in surf calc')
+        surf=pmg_surfer(mat=final_str, min_slab_size=surf_size,vacuum=25,max_index=3)
         surf_list,surf_header_list=surf_energy(surf=surf,parameters = parameters)
-        #print surf_list,surf_header_list
+        print ('done surf calc',surf_list,surf_header_list)
     except:
        pass
     try:
+     if phon_cal==True:
+       print ('in phon calc')
        cwd=str(os.getcwd())
        if not os.path.exists("Phonon"):
           os.mkdir("Phonon")
        os.chdir("Phonon")
        do_phonons(strt=final_str,parameters=parameters)
+       print ('done phon calc')
        os.chdir(cwd)
     except:
        pass
-    """
-    sub_files=[]
-    calc=0
-    for a in glob.glob("*.json"):
-        fold=a.split(".json")[0]
-        cwd=os.getcwd()
-        target_file=str(cwd)+str("/")+str(fold)
-        dest_file=str(cwd)+str("/")+str(fold)+str(".zip")
-        sub_files.append(dest_file)
-        ZipDir(target_file,dest_file,contents=['init.mod', 'potential.mod', 'in.main', 'data',  'log.lammps', 'restart.equil','data0' ])
-    calc=calc+1
-
-    target_file=str(cwd)
-    dest_file=str(cwd)+str("/")+str("Calc-")+str(calc)+str(".zip")
-    ZipDir(target_file,dest_file,contents=sub_files)
-    for a in glob.glob("*.json"):
-        fold=a.split(".json")[0]
-        cwd=os.getcwd()
-        dest_file=str(cwd)+str("/")+str(fold)+str(".zip")
-        line=str("rm ")+str(dest_file)
-        os.system(line)
-    """
 
 def main_func(mpid='',mat=None,parameters={}):
     if mpid !='':
