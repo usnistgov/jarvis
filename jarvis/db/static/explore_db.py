@@ -14,6 +14,7 @@ for i in d:
     print "JARVIS id", i['jid'],"link",str("https://www.ctcms.nist.gov/~knc6/jsmol/")+str(i['jid'])+str(".html")
     print "Materials project id", i['mpid'],"link",str("https://www.materialsproject.org/materials/")+str(i['mpid'])
     print  "final energy eV",i['fin_en']
+    print  "magnetic moment, Bohr Mag.",i['magmom']
     print "optb88vdw bandgap eV", i["op_gap"]
     print "Tran-Blaha MBJ bandgap  eV",i["mbj_gap"]
     print "static dielectric function in x,optb88vdw", i["epsx"] #Careful about 2D
