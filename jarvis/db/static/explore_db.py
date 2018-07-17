@@ -1,9 +1,15 @@
 from monty.json import MontyEncoder, MontyDecoder
 from monty.serialization import loadfn, dumpfn
 
-#https://www.ctcms.nist.gov/~knc6/jdft_3d.json.tgz
-#https://www.ctcms.nist.gov/~knc6/jdft_2d.json.tgz
-#tar -xvzf *.tgz
+
+# Download 3D material data from https://figshare.com/articles/jdft_3d-7-7-2018_json/6815699
+# Download 2D material data from https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705 
+
+# Website: https://jarvis.nist.gov
+# https://www.nature.com/articles/s41598-017-05402-0
+# https://www.nature.com/articles/sdata201882
+# https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107
+
 
 
 d=loadfn('jdft_3d.json',cls=MontyDecoder)

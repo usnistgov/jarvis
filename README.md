@@ -3,7 +3,7 @@ JARVIS
 
 NIST's Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
 classical force-field/molecular dynamics and machine-learning. JARVIS heavily uses VASP, LAMMPS, 
-pymatgen, ase and scikit-learn packages.
+pymatgen, ase and scikit-learn packages. Official website: https://jarvis.nist.gov
 
 
 
@@ -47,16 +47,19 @@ How to cite JARVIS
 -----------------
 - JARVIS-FF:
     
-      Choudhary, K. et al. Evaluation and comparison of classical interatomic potentials through a user-friendly interactive web-interface. Scientific Data, 4, p.160125.
+      https://www.nature.com/articles/sdata2016125 
+      https://arxiv.org/abs/1804.01024
 - JARVIS-DFT:
 
-      Choudhary, K. et al. High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory. Scientific Reports, 7.
+      https://www.nature.com/articles/s41598-017-05402-0
+      https://www.nature.com/articles/sdata201882
+      https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107 
  - JARVIS-ML:
         
-        submitted
+        https://arxiv.org/abs/1805.07325
 
-Authors and main-developers
+Contributors
 -----------------
-Kamal Choudhary and Francesca Tavazza 
+Kamal Choudhary, Kevin Garrity, Brian DeCost, Francesca Tavazza (NIST)
 
 
