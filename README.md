@@ -42,7 +42,15 @@ Running the examples
 - ML example: We trained machine learning models using JARVIS-DFT data on bandgaps, formation energies and elastic modulus properties. We used both chemical and structural descriptors during GradientBoostingRegression training. A final pickle file is provided for prediction of properties. Similar predictions can be done for convex hull plot using our machine learning model.
 - Access to JARVIS database: Our database is freely available at https://www.ctcms.nist.gov/~knc6/JVASP.html and https://www.ctcms.nist.gov/~knc6/periodic.html, https://www.ctcms.nist.gov/~knc6/JLAMMPS.html for JARVIS-DFT and JARVIS-FF. JARVIS-FF and its development version has data for energetics, elastic constants, defect formation energies, surface energies and phonon properties. JARVIS-DFT has 3D and 2D properties of materials such as energetics, X-ray diffraction (for 3D), radial-distribution function, electronic density of states, electrostatic potential and band-structure, MBJ and semi-local dielectric function calculation, elastic properties and allied gamma-point unconverged phonons and thermoelectric properties. JARVIS-DFT can be downloaded in json format also now using the link provided and JARVIS-DFT webpage.
 
-  
+
+Jupyter notebooks
+-----------------
+- JARVIS-DFT:
+
+      https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_dft-explore.ipynb 
+      More coming soon...
+
+ 
 How to cite JARVIS 
 -----------------
 - JARVIS-FF:
