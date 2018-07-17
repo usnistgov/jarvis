@@ -68,6 +68,6 @@ How to cite JARVIS
 
 Contributors
 -----------------
-Kamal Choudhary, Kevin Garrity, Brian DeCost, Francesca Tavazza (NIST)
+Kamal Choudhary, Kevin Garrity, Brian DeCost,Adam Biacchi, Lucas Hale, Andrew Reid, Marcus Newrock, Francesca Tavazza (NIST)
 
 
