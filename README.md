@@ -47,8 +47,11 @@ Jupyter notebooks
 -----------------
 - JARVIS-DFT:
 
-      https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_dft-explore.ipynb 
-      More coming soon...
+      https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_dft-explore.ipynb
+ 
+- JARVIS-ML:
+
+      https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_ml-train.ipynb 
 
  
 How to cite JARVIS 
