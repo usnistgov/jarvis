@@ -1,4 +1,5 @@
 # Make an account at https://jarvis.nist.gov/
+# MDCS Github: https://github.com/faical-yannick-congo/MDCS, https://github.com/ztrautt/MDCS
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from monty.serialization import loadfn, dumpfn
 import os,glob,json,mdcs,sys
@@ -16,8 +17,8 @@ f.close()
 
 user='abc' #your username
 schema='5a7f2a872887d500ab0c0d02'
-# Converting data to xml
 
+# Converting data to xml
 def data_json(energy='na',typ='na',formula='na',sgp='na',name='na',ref='na',func='na',elem='na',encut='na',kpoints='na',el_tens='na',KV='na',GV='na',m_eg='na',b_eg='na',op_eg='na',mbj_eg='na',en_arr='na',realx_arr='na',imagx_arr='na',realy_arr='na',imagy_arr='na',realz_arr='na',imagz_arr='na',men_arr='na',mrealx_arr='na',mimagx_arr='na',mrealy_arr='na',mimagy_arr='na',mrealz_arr='na',mimagz_arr='na',struct='na',other='na'):
     
     top = Element('JARVIS-DFT')
@@ -95,18 +96,21 @@ def data_json(energy='na',typ='na',formula='na',sgp='na',name='na',ref='na',func
 def get_record(file=''):
    r=explore.select('https://jarvis.nist.gov/',user,passd,cert=False,title=file,format='json')
    return r
+
+
 # Delete all record
 def delete_all(file=''):
     r=explore.select_all('https://jarvis.nist.gov/',user,passd,cert=False,format='json')
     for i in r:
       id=i['_id']
-      explore.delete(id,'https://jarvis.nist.gov/','knc6',passd,cert=False)
+      explore.delete(id,'https://jarvis.nist.gov/',user,passd,cert=False)
 
 
 
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-
+# Download 3D material data from https://figshare.com/articles/jdft_3d-7-7-2018_json/6815699
+# Download 2D material data from https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705 
 # Curating JARVIS-DFT data 
+
 d=loadfn('jdft_3d-7-7-2018.json',cls=MontyDecoder)
 
 
