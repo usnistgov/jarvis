@@ -1,3 +1,7 @@
+"""
+Classical Force-field Inspired Descriptors (CFID)
+Find details in: https://arxiv.org/abs/1805.07325
+"""
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 from collections import defaultdict
@@ -24,8 +28,8 @@ from pandas import DataFrame as pd
 from pymatgen.core.lattice import Lattice
 from pymatgen.core import Composition
 
-el_chrg_json=str(os.path.join(os.path.dirname(__file__),'element_charge.json')) #'/data/knc6/DUMP/lgbm/jarvisml-master-8f7749bea5dab3cbc09562b92ada62f06b016475/jarvisml/element_charge.json'
-el_chem_json=str(os.path.join(os.path.dirname(__file__),'Elements.json')) #'/data/knc6/DUMP/lgbm/jarvisml-master-8f7749bea5dab3cbc09562b92ada62f06b016475/jarvisml/Elements10b.json'
+el_chrg_json=str(os.path.join(os.path.dirname(__file__),'element_charge.json')) 
+el_chem_json=str(os.path.join(os.path.dirname(__file__),'Elements.json')) 
 
 def get_effective_structure(s=None,tol=8.0):
   
