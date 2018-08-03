@@ -14,15 +14,14 @@ import sys
 s=Structure.from_file('POSCAR')
 X=get_comp_descp(s)
 print (X,len(X))
+#1557
 
 #STEP-2: Download JARVIS-DFT database for bulk materials
-# wget --no-check-certificate https://www.ctcms.nist.gov/~knc6/jdft_3d.json.tgz
-#tar -xvzf jdft_3d.json.tgz
-#jdft_3d-11-11-2017.json
+#from https://figshare.com/articles/jdft_3d-7-7-2018_json/6815699
 
 #STEP-3: load data 
-data=loadfn('jdft_3d-11-11-2017.json',cls=MontyDecoder)
-print ('data length',len(data)) #12888
+data=loadfn('jdft_3d-7-7-2018.json',cls=MontyDecoder)
+print ('data length',len(data)) 
 print ('available keys',data[0].keys())
 
 def isfloat(value):
@@ -31,10 +30,9 @@ def isfloat(value):
     float(value)
     return True
   except ValueError:
+    return False
 
 #STEP-4:  Let's train a Formation energy ML
-
-    return False
 #for i in data:
 #  print (i['form_enp'],i['mpid'],i['jid'],i['final_str'],type(i['final_str']))
 #  sys.exit()
