@@ -67,7 +67,7 @@ How to cite JARVIS
       https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107 
  - JARVIS-ML:
         
-        https://arxiv.org/abs/1805.07325
+        https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 
 Contributors
 -----------------
