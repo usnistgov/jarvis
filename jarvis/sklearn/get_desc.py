@@ -510,8 +510,8 @@ def packing_fraction(s=None):
 
 
 def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=False,jrdf_adf=True,print_names=False):  
-        cat=[]
-        
+      cat=[]
+      try: 
         s= get_effective_structure(struct)
         cell=[]
         mean_chem=[]
@@ -596,12 +596,9 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
             for ff,dd in enumerate(d):
              cat.append(dd)
          cat=np.array(cat).astype(float) 
-         
-
-
-		    
-        #"""
-        return cat
+      except:
+        pass 
+      return cat
 
 def get_chemonly(string=''):
   comp=Composition(string)
