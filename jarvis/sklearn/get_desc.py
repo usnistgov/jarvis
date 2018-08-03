@@ -1,6 +1,7 @@
 """
 Classical Force-field Inspired Descriptors (CFID)
-Find details in: https://arxiv.org/abs/1805.07325
+Find details in:
+Phys. Rev. Materials 2, 083801 (2018).
 """
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
