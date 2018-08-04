@@ -80,6 +80,10 @@ Kamal Choudhary, Francesca Tavazza (NIST)
 Contributors
 -----------------
 Faical Yannick Congo, Kevin Garrity, Brian DeCost, Adam Biacchi, 
-Lucas Hale, Andrew Reid, Marcus Newrock, Francesca Tavazza (NIST)
+Lucas Hale, Andrew Reid, Marcus Newrock (NIST)
+
+Link to presentation slides
+-----------------
+https://www.slideshare.net/KAMALCHOUDHARY4
 
 
