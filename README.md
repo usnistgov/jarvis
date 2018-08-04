@@ -79,6 +79,7 @@ Kamal Choudhary, Francesca Tavazza (NIST)
 
 Contributors
 -----------------
-Kevin Garrity, Brian DeCost, Adam Biacchi, Lucas Hale, Andrew Reid, Marcus Newrock, Francesca Tavazza (NIST)
+Faical Yannick Congo, Kevin Garrity, Brian DeCost, Adam Biacchi, 
+Lucas Hale, Andrew Reid, Marcus Newrock, Francesca Tavazza (NIST)
 
 
