@@ -45,6 +45,10 @@ Running the examples
 
 Jupyter notebooks
 -----------------
+- JARVIS-FF:
+
+      https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_ff-explore.ipynb
+
 - JARVIS-DFT:
 
       https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_dft-explore.ipynb
