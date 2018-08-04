@@ -73,8 +73,12 @@ How to cite JARVIS
         
         https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 
+Founders
+-----------------
+Kamal Choudhary, Francesca Tavazza (NIST)
+
 Contributors
 -----------------
-Kamal Choudhary, Kevin Garrity, Brian DeCost,Adam Biacchi, Lucas Hale, Andrew Reid, Marcus Newrock, Francesca Tavazza (NIST)
+Kevin Garrity, Brian DeCost, Adam Biacchi, Lucas Hale, Andrew Reid, Marcus Newrock, Francesca Tavazza (NIST)
 
 
