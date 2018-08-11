@@ -123,7 +123,7 @@ for i in d:
    formula=str(i['final_str'].composition.reduced_formula)
    sgp= str(SpacegroupAnalyzer(i['final_str']).get_spacegroup_symbol())
    name=str(i['jid'])
-   print name
+   print (name)
    ref=str(i['mpid'])
    func=str('OptB88vdW')
    elem=''
@@ -152,7 +152,7 @@ for i in d:
 
 #data_json()
 #x=get_record(file='JVASP-48137.xml')[0]['content']['JARVIS-DFT']['structure']
-print Structure.from_str(x,fmt='cif')
+print (Structure.from_str(x,fmt='cif'))
 #delete_all()
 #curate_data()
 #delete_all()
