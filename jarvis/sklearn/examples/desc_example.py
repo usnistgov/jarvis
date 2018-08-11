@@ -10,7 +10,8 @@ import numpy as np
 import sys
 
 
-#STEP-1: Check if the array length for POSCAR is 1866
+#STEP-1: Check if the descriptor array length for POSCAR is 1557 as 
+# mentioned in https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 s=Structure.from_file('POSCAR')
 X=get_comp_descp(s)
 print (X,len(X))
