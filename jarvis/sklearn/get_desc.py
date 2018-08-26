@@ -14,7 +14,7 @@ from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.outputs import Vasprun
 #from pymatgen.analysis.structure_analyzer import VoronoiCoordFinder
 import collections,math,os
-from pymatgen.analysis.defects.point_defects import ValenceIonicRadiusEvaluator
+#from pymatgen.analysis.defects.point_defects import ValenceIonicRadiusEvaluator
 import numpy as np
 from math import log
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -57,16 +57,19 @@ def el_combs(s=[]):
   return comb
 
 def flatten_out(arr=[],tol=0.1):
-    rcut_buffer=tol
+    rcut_buffer=tol 
+    
     io1=0
     io2=1
     io3=2
     delta=arr[io2]-arr[io1]
-    while (delta < rcut_buffer):
+     
+    while delta < rcut_buffer and io3 <len(arr):
       io1=io1+1
       io2=io2+1
       io3=io3+1
       delta=arr[io2]-arr[io1]
+     # print ('arr',len(arr),io1,io2,io3)
     rcut=(arr[io2]+arr[io1])/float(2.0)
     return rcut
 
@@ -511,9 +514,10 @@ def packing_fraction(s=None):
 
 
 def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=False,jrdf_adf=True,print_names=False):  
-      cat=[]
-      try: 
+        cat=[]
+     # try: 
         s= get_effective_structure(struct)
+       #	 print (len(s))
         cell=[]
         mean_chem=[]
         rdf=[]
@@ -597,9 +601,9 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
             for ff,dd in enumerate(d):
              cat.append(dd)
          cat=np.array(cat).astype(float) 
-      except:
-        pass 
-      return cat
+      ##except:
+       # pass 
+        return cat
 
 def get_chemonly(string=''):
   comp=Composition(string)
