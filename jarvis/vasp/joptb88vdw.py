@@ -12,7 +12,9 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
+"""
+Module to run OptB88vdW based High-throughput calculations
+"""
 from __future__ import division, unicode_literals, print_function
 import os,socket,shutil
 from monty.json import MontyEncoder, MontyDecoder
