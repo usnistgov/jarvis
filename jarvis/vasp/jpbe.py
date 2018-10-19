@@ -1,6 +1,6 @@
 """
 Module to run PBE based High-throughput calculations
-""
+"""
 from __future__ import division, unicode_literals, print_function
 import os
 from monty.json import MontyEncoder, MontyDecoder
@@ -539,17 +539,6 @@ def replceTF():
     f1.write(newcontents)
     f1.close()
 def get_lowest_en_from_mp(formula, MAPI_KEY="", all_structs=False):
-    """
-    fetches the structure corresponding to the given formula
-    from the materialsproject database.
-    
-    Note: Get the api key from materialsproject website. The one used
-    here is nolonger valid.
-    
-    Note: for the given formula there are many structures available, 
-    this function returns the one with the lowest energy above the hull
-    unless all_structs is set to True
-    """
     if not MAPI_KEY:
         MAPI_KEY = os.environ.get("MAPI_KEY", "")
         if not MAPI_KEY:
@@ -601,9 +590,6 @@ poscar_list = []
 def run_cal(turn_knobs, qadapter, job_cmd, job_dir, checkpoint_file,
             incar=None, poscar=None, potcar=None, kpoints=None,
             Grid_type='G',functional='LDA',is_matrix=True):
-    """
-    setup and run calibrate job
-    """
     handlers = []
     outfile=str(os.getcwd())+str('/')+str('vasp.out')
     handlers = [VaspErrorHandler(output_filename=outfile)] #, MeshSymmetryErrorHandler(),
@@ -1988,3 +1974,4 @@ def main_func(mpid='',mat=None):
     en,final=smart_converge(mat=mat)
     print (en,contc)
 #main_func(mpid='mp-782')
+

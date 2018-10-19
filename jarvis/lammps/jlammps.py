@@ -1,3 +1,4 @@
+from __future__ import  unicode_literals, print_function
 from monty.json import MontyEncoder
 from numpy import matrix
 import time
@@ -27,13 +28,18 @@ from pymatgen.core.structure import Structure
 from phonopy.structure.atoms import Atoms as PhonopyAtoms
 
 def get_phonopy_atoms(mat=None):
+    """
+    Helper function to convert pymatgen structure object to phonopy atoms
+    """
     symbols = [str(site.specie.symbol) for site in mat]
     positions = [site.coords for site in mat]
     cell = mat.lattice.matrix
     p=PhonopyAtoms(symbols=symbols, positions=positions, pbc=True, cell=cell)
     return p
 def ZipDir(inputDir, outputZip,contents=[]):
-    '''Zip up a directory and preserve symlinks and empty directories'''
+    """
+    Zip up a directory and preserve symlinks and empty directories
+    """
     zipOut = zipfile.ZipFile(outputZip, 'w', compression=zipfile.ZIP_DEFLATED)
     tmp=contents
     rootLen = len(os.path.dirname(inputDir))
@@ -110,6 +116,9 @@ def get_struct_from_mp(formula, MAPI_KEY="", all_structs=False):
 
 
 def run_job(mat=None,parameters = {},jobname=''):
+    """ 
+    Generic  function for running LAMMPS job
+    """
 #def run_job(mat=None,parameters = {'exec':'/cluster/bin/lmp_ctcms-14439-knc6-2','pair_style':'comb3 polar_on','pair_coeff':None,'atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'},jobname=''):
     jobname=str(mat.comment)
     #if jobname.startswith('bulk') or jobname.startswith('sbulk'):
@@ -205,7 +214,7 @@ def run_job(mat=None,parameters = {},jobname=''):
                    status=False
              except:
                     status=False
-                    print "whattyhjkl;'"
+                    print ("Error in job submission")
                  
 
 
@@ -215,14 +224,14 @@ def run_job(mat=None,parameters = {},jobname=''):
         time.sleep(100)
         (en,press,toten,c11,c22,c33,c12,c13,c23,c44,c55,c66,c14,c16,c24,c25,c26,c34,c35,c36,c45,c46,c56)=analyz_loge('./log.lammps')
 
-    print "initial,final sr",os.getcwd()
+    print ("initial,final sr",os.getcwd())
     initial_str=read_data(data="data",ff="potential.mod")
     final_str=read_data(data="data0",ff="potential.mod")
     try:
       forces=read_dump(data='0.dump',ff='potential.mod')
     except:
        pass
-    print "initial,final sr2",os.getcwd()
+    print ("initial,final sr2",os.getcwd())
 
     data_cal=[]
     data_cal.append({'jobname':jobname,'poscar':mat.as_dict(),'initial_pos':initial_str.as_dict(),'pair_style':str(parameters['pair_style']),'pair_coeff':str(parameters['pair_coeff']),'final_energy':float(toten),'en':en,'press':press,'final_str':final_str.as_dict()})
@@ -338,7 +347,7 @@ def write_lammps_in( structure=None,lammps_in=None,lammps_in1=None,lammps_in2=No
             symbols = atoms.get_chemical_symbols()
             #species = [tos.symbol.replace("Mo","M") for tos in structure.types_of_specie] #For REBO Mo-S
             #species = [tos.symbol for tos in structure.types_of_specie]
-            print "site symbolss",Poscar(structure).site_symbols
+            print ("site symbolss",Poscar(structure).site_symbols)
             species = [tos for tos in Poscar(structure).site_symbols]
             if parameters['pair_style']=='rebomos':
                 
@@ -409,7 +418,9 @@ def write_lammps_in( structure=None,lammps_in=None,lammps_in1=None,lammps_in2=No
 
 def analyz_loge(log='log.lammps'):
     import sys
-    """ Analyzes log.lammps file, at present  energy/atom data extraction is implemented"""
+    """ 
+    Analyzes log.lammps file, at present  energy/atom data extraction is implemented
+    """
     en=0
     press=0
     c11=0
@@ -504,7 +515,6 @@ def read_dumpfull(data=None,ff=None):
     for i, line in enumerate(lines):
         if "pair_coeff" in line.split():
                sp=line.split()
-               print "spsplit",sp,os.getcwd()
                for el in sp:
                    try:
                     if Element(el):
@@ -515,7 +525,7 @@ def read_dumpfull(data=None,ff=None):
                       symb.append(el)
                    except:
                       pass
-    print "symb=",symb
+    print ("symb=",symb)
 
     f=open(data,"r")
     lines = f.read().splitlines()
@@ -554,6 +564,9 @@ def read_dumpfull(data=None,ff=None):
     return struct
 
 def read_dump(data=None,ff=None):
+    """ 
+    Read LAMMPS dump file
+    """
     pot_file=open(ff,"r")
     lines = pot_file.read().splitlines()
     symb=[]
@@ -562,7 +575,7 @@ def read_dump(data=None,ff=None):
     for i, line in enumerate(lines):
         if "pair_coeff" in line.split():
                sp=line.split()
-               print "spsplit",sp,os.getcwd()
+               print ("spsplit",sp,os.getcwd())
                for el in sp:
                    try:
                     if Element(el):
@@ -573,7 +586,7 @@ def read_dump(data=None,ff=None):
                       symb.append(el)
                    except:
                       pass
-    print "symb=",symb
+    print ("symb=",symb)
 
     f=open(data,"r")
     lines = f.read().splitlines()
@@ -597,6 +610,9 @@ def read_dump(data=None,ff=None):
     return prop
 
 def read_data(data=None,ff=None):
+    """
+    Read LAMMPS data file
+    """
     pot_file=open(ff,"r")
     lines = pot_file.read().splitlines()
     symb=[]
@@ -605,7 +621,7 @@ def read_data(data=None,ff=None):
     for i, line in enumerate(lines):
         if "pair_coeff" in line.split():
                sp=line.split()
-               print "spsplit",sp,os.getcwd()
+               print ("spsplit",sp,os.getcwd())
                for el in sp:
                    try:
                     if Element(el):
@@ -616,7 +632,7 @@ def read_data(data=None,ff=None):
                       symb.append(el)
                    except:
                       pass
-    print "symb=",symb          
+    print ("symb=",symb) 
             
     f=open(data,"r")
     lines = f.read().splitlines()
@@ -624,7 +640,7 @@ def read_data(data=None,ff=None):
         if "atoms" in line.split():
              natoms=int(line.split()[0])
         if "types" in line.split():
-             print line
+             print (line)
              ntypes=int(line.split()[0])
         if "xlo" in line.split():
              xlo=float(line.split()[0])
@@ -660,7 +676,7 @@ def read_data(data=None,ff=None):
                  z[j]=(lines[i+j+2]).split()[5]
                  coords.append([x[j],y[j],z[j]])
     f.close()
-    print "info",len(typ),len(coords)
+    print ("info",len(typ),len(coords))
     pot_file.close()
     struct=Structure(lat,typ,coords,coords_are_cartesian=True)
     #print struct
@@ -669,6 +685,9 @@ def read_data(data=None,ff=None):
     #print(num)
     return struct
 def smart_vac(strt=None,parameters=None):
+    """
+    Function to get all vacancy formation energies
+    """
     parameters['control_file']='/users/knc6/inelast_nobox.mod'
     vac_arr=[]
     sg_mat = SpacegroupAnalyzer(strt)
@@ -733,7 +752,11 @@ def smart_vac(strt=None,parameters=None):
                vac_done=1
 #        cellmax=cellmax+1
     return def_list,header_list
+
 def smart_surf(strt=None,parameters=None):
+    """
+    Function to get all surface energies
+    """
     parameters['control_file']='/users/knc6/inelast_nobox.mod'
     sg_mat = SpacegroupAnalyzer(strt)
     mat_cvn = sg_mat.get_conventional_standard_structure()
@@ -802,6 +825,9 @@ def smart_surf(strt=None,parameters=None):
     return surf_list,surf_header_list
 
 def surf_energy(surf=[],parameters = {}):
+    """
+    Function to get specific surface energies
+    """
 #def surf_energy(surf=[],parameters = {'pair_style':'eam/alloy','pair_coeff':'/scratch/lfs/kamal/POSMAT/Automatic2/Al03.eam.alloy','atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'}):
     surf_list=[]
     surf_header_list=[]
@@ -824,7 +850,11 @@ def surf_energy(surf=[],parameters = {}):
            f.write(line)
     f.close()
     return surf_list,surf_header_list
+
 def get_chem_pot(s1=None,s2=None,parameters= {}):
+    """
+    Get chemical potential given perfect and defect structures
+    """
 #def get_chem_pot(s1=None,s2=None,parameters= {'pair_style':'eam/alloy','pair_coeff':'/scratch/lfs/kamal/POSMAT/Automatic2/Al03.eam.alloy','atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'}):
     s1.sort() 
     s2.sort() 
@@ -839,12 +869,12 @@ def get_chem_pot(s1=None,s2=None,parameters= {}):
     #             
     #from pymatgen.analysis.structure_matcher import StructureMatcher
     #print "Mather",StructureMatcher().fit(s1, s2)
-    print "s3   is   ",type(s1),type(s2),s3
+    print ("s3   is   ",type(s1),type(s2),s3)
     uniq=[]
     for q in s3:
         el=q._species.elements 
         for j in el:
-           print   "j is ",j
+           print   ("j is ",j)
            if j not in uniq:   
               uniq.append(j)
               a,b= get_struct_from_mp(j)
@@ -852,15 +882,21 @@ def get_chem_pot(s1=None,s2=None,parameters= {}):
               p.comment=str(a)
               enp,strt,forces=run_job(mat=p,parameters = parameters)
     if len(uniq)>1:
-        print "uniq problem",uniq
-    print "uniqqqqqqqqqqqqqqqqqqq=",uniq
+        print ("uniq problem",uniq)
     return enp
+
 def calc_forces(mat=None,parameters={}):
+    """
+    Calculate forces on atoms
+    """
     enp,strt,forces=run_job(mat=mat,parameters = parameters)
     return forces
 
 def do_phonons(strt=None,parameters=None):
-
+        """
+        Setting up phonopy job
+        """
+         
 	p= get_phonopy_atoms(mat=strt)
 	bulk =p
 	c_size=25
@@ -873,10 +909,10 @@ def do_phonons(strt=None,parameters=None):
         Poscar(tmp).write_file("POSCAR-Super.vasp")
     
 	phonon = Phonopy(bulk,[[dim1,0,0],[0,dim2,0],[0,0,dim3]])#,
-	print "[Phonopy] Atomic displacements:"
+	print ("[Phonopy] Atomic displacements:")
 	disps = phonon.get_displacements()
 	for d in disps:
-	    print "[Phonopy]", d[0], d[1:]
+	    print ("[Phonopy]", d[0], d[1:])
 	supercells = phonon.get_supercells_with_displacements()
 
 	# Force calculations by calculator
@@ -895,10 +931,10 @@ def do_phonons(strt=None,parameters=None):
             parameters['control_file']='/users/knc6/in.phonon'
 	    #a,b,forces=run_job(mat=mat,parameters={'min':'skip','pair_coeff': '/data/knc6/JARVIS-FF-NEW/ALLOY4/Mishin-Ni-Al-2009.eam.alloy', 'control_file': '/users/knc6/in.phonon', 'pair_style': 'eam/alloy', 'atom_style': 'charge'})
 	    a,b,forces=run_job(mat=mat,parameters=parameters)
-	    print "forces=",forces
+	    print ("forces=",forces)
 	    drift_force = forces.sum(axis=0)
-	    print "drift forces=",drift_force
-	    print "[Phonopy] Drift force:", "%11.5f"*3 % tuple(drift_force)
+	    print ("drift forces=",drift_force)
+	    print ("[Phonopy] Drift force:", "%11.5f"*3 % tuple(drift_force))
 	    # Simple translational invariance
 	    for force in forces:
 		force -= drift_force / forces.shape[0]
@@ -907,10 +943,10 @@ def do_phonons(strt=None,parameters=None):
 
 	write_FORCE_CONSTANTS(phonon.get_force_constants(),
 			      filename="FORCE_CONSTANTS")
-	print
-	print "[Phonopy] Phonon frequencies at Gamma:"
-	for i, freq in enumerate(phonon.get_frequencies((0, 0, 0))):
-	    print "[Phonopy] %3d: %10.5f THz" %  (i + 1, freq) # THz
+	print ()
+	print ("[Phonopy] Phonon frequencies at Gamma:")
+	#for i, freq in enumerate(phonon.get_frequencies((0, 0, 0))):
+	#    print ("[Phonopy] %3d: %10.5f THz" %  (i + 1, freq) # THz)
 
 
 
@@ -923,6 +959,9 @@ def do_phonons(strt=None,parameters=None):
 
 
 def def_energy(vac=[],parameters={}):
+    """
+    Get specific defect formation energy
+    """
 #def def_energy(vac=[],parameters={'pair_style':'eam/alloy','pair_coeff':'/scratch/lfs/kamal/POSMAT/Automatic2/Al03.eam.alloy','atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'}):
     def_list=[]
     header_list=[]
@@ -940,8 +979,8 @@ def def_energy(vac=[],parameters={}):
            gs_str=strt
            print ("in def_energy gs_energy for",comm, gs_energy)
         else:
-           print strt
-           print gs_str
+           print ('strt',strt)
+           print ('gs_str',gs_str)
            chem_pot=get_chem_pot(gs_str,strt,parameters = parameters)
            if comm.startswith("intl"):
               chem_pot=0.0-float(chem_pot)
@@ -956,7 +995,9 @@ def def_energy(vac=[],parameters={}):
 
 #def main(p=None, parameters={'pair_style':'rebomos','pair_coeff':'/scratch/lfs/kamal/JARVIS/All2/MoS2/MoS.REBO.set5b','atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'}):
 def main(p=None, parameters={}):
-
+    """
+    Master function to run LAMMPS job
+    """
     #p=Poscar.from_file("POSCAR")
     c_size=35
     sg_mat = SpacegroupAnalyzer(p.structure)
@@ -969,26 +1010,26 @@ def main(p=None, parameters={}):
     #mat_cvn.make_supercell([dim1,dim2,dim3])
     mat_pos=Poscar(mat_cvn)
     mat_pos.comment=str(p.comment)
-    print mat_pos
+    print (mat_pos)
     try:
        toten,final_str,forces=run_job(mat=mat_pos,parameters = parameters)
     except:
        pass
-    print "p.comment issssss",p.comment
+    print ("p.comment issssss",p.comment)
     vac=vac_antisite_def_struct_gen(c_size=c_size,struct=final_str)
     def_list,header_list=def_energy(vac=vac,parameters = parameters)
-    print def_list,header_list
+    print (def_list,header_list)
     try:
-       print "p.comment issssss",p.comment
+       print ("p.comment issssss",p.comment)
        vac=vac_antisite_def_struct_gen(c_size=c_size,struct=final_str)
        def_list,header_list=def_energy(vac=vac,parameters = parameters)
-       print def_list,header_list
+       print (def_list,header_list)
     except:
        pass
     try:
         surf=pmg_surfer(mat=final_str, min_slab_size=35,vacuum=35,max_index=3)
 	surf_list,surf_header_list=surf_energy(surf=surf,parameters = parameters)
-        print surf_list,surf_header_list
+        print (surf_list,surf_header_list)
     except:
        pass
     try:
@@ -1022,6 +1063,9 @@ def main(p=None, parameters={}):
         os.system(line)
 
 def main_func(mpid='',mat=None,parameters={}):
+    """
+    Call master job function either using mpid or Poscar object
+    """
     if mpid !='':
        with MPRester() as mp:
          strt = mp.get_structure_by_material_id(mpid)
@@ -1034,6 +1078,9 @@ def main_func(mpid='',mat=None,parameters={}):
     main(p=mat,parameters=parameters)
 #Example
 def main_alloy():
+   """
+   Run alloy FFs job
+   """
    for file in glob.glob("*.alloy"):
     try:
         folder1=str(os.getcwd())+str("/")+str(file)+str("_nist")
@@ -1109,7 +1156,7 @@ def main_alloy():
                  folder2=str(os.getcwd())+str("/")+str(comment)+str("_fold")
                  if not os.path.exists(folder2):
                      os.makedirs(str(folder2))
-                 print "folder2=",folder2
+                 print ("folder2=",folder2)
                  cwd2=str(os.getcwd())
                  os.chdir(str(folder2))
 
@@ -1122,7 +1169,7 @@ def main_alloy():
                  #pair_coeff=str('/data/knc6/JARVIS-FF-NEW/ALLOY')+str("/")+str(file)
                  parameters = {'pair_style':'eam/alloy','pair_coeff':pair_coeff,'atom_style': 'charge' ,'control_file':'/users/knc6/inelast.mod'}
                  main_file=open("setup.py","w")
-                 line=str("from NEW_LAMMPS7 import main_func")+'\n'
+                 line=str("from jlammps import main_func")+'\n'
                  main_file.write(line)
                  line=str("from pymatgen.io.vasp.inputs import  Poscar")+'\n'
                  main_file.write(line)

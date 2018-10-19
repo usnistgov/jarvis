@@ -1,6 +1,6 @@
 """
 Module to run LDA based High-throughput calculations
-""
+"""
 from __future__ import division, unicode_literals, print_function
 import os
 from monty.json import MontyEncoder, MontyDecoder
@@ -10,11 +10,11 @@ from pymatgen.io.vasp import VaspInput, Vasprun
 #from mpinterfaces.instrument import MPINTVaspInputSet, MPINTVaspJob
 from custodian.vasp.jobs import VaspJob
 from pymatgen.io.vasp.outputs import Oszicar
-from pymatgen.io.vaspio.vasp_output import Vasprun
+from pymatgen.io.vasp.outputs import Vasprun
 from subprocess import Popen, PIPE
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import sys,shutil,glob,codecs
-from pymatgen.io.aseio import AseAtomsAdaptor
+from pymatgen.io.ase import AseAtomsAdaptor
 from pymatgen.core.surface import  Slab, SlabGenerator, generate_all_slabs,get_symmetrically_distinct_miller_indices
 from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler, \
     MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler
@@ -22,21 +22,16 @@ import json,yaml
 from numpy import linalg as LA
 import time
 from collections import OrderedDict
-from pymatgen.io.vaspio.vasp_output import Vasprun
-from  Defects import vac_antisite_def_struct_gen,surfer
 #from  gen_def_surf import vac_antisite_def_struct_gen,surfer
 from pymatgen.matproj.rest import MPRester
 import subprocess
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput
 from pymatgen.io.vasp.inputs import Potcar, Kpoints
-from pymatgen.io.vaspio_set import MPVaspInputSet, MPNonSCFVaspInputSet
+#from pymatgen.io.vaspio_set import MPVaspInputSet, MPNonSCFVaspInputSet
 from numpy import matrix
 import numpy as np
-#from mpinterfaces import get_struct_from_mp
-#from mpinterfaces.calibrate import Calibrate
-#from mpinterfaces.utils import *
-from pymatgen.io.aseio import AseAtomsAdaptor
+from pymatgen.io.ase import AseAtomsAdaptor
 from ase.lattice.cubic import DiamondFactory, SimpleCubicFactory
 from ase.lattice import bulk
 from ase.lattice.compounds import Zincblende,AuCu3,Rocksalt,AuCu,CsCl,TRI_Fe2O3,HEX_Fe2O3,CsClFactory
@@ -539,17 +534,6 @@ def replceTF():
     f1.write(newcontents)
     f1.close()
 def get_lowest_en_from_mp(formula, MAPI_KEY="", all_structs=False):
-    """
-    fetches the structure corresponding to the given formula
-    from the materialsproject database.
-    
-    Note: Get the api key from materialsproject website. The one used
-    here is nolonger valid.
-    
-    Note: for the given formula there are many structures available, 
-    this function returns the one with the lowest energy above the hull
-    unless all_structs is set to True
-    """
     if not MAPI_KEY:
         MAPI_KEY = os.environ.get("MAPI_KEY", "")
         if not MAPI_KEY:
@@ -601,9 +585,6 @@ poscar_list = []
 def run_cal(turn_knobs, qadapter, job_cmd, job_dir, checkpoint_file,
             incar=None, poscar=None, potcar=None, kpoints=None,
             Grid_type='G',functional='LDA',is_matrix=True):
-    """
-    setup and run calibrate job
-    """
     handlers = []
     outfile=str(os.getcwd())+str('/')+str('vasp.out')
     handlers = [VaspErrorHandler(output_filename=outfile)] #, MeshSymmetryErrorHandler(),
