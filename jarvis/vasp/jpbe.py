@@ -13,7 +13,7 @@ from pymatgen.io.vasp.outputs import Oszicar
 from subprocess import Popen, PIPE
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import sys,shutil,glob,codecs
-from pymatgen.io.aseio import AseAtomsAdaptor
+from pymatgen.io.ase import AseAtomsAdaptor
 from pymatgen.core.surface import  Slab, SlabGenerator, generate_all_slabs,get_symmetrically_distinct_miller_indices
 from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler, \
     MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler
@@ -21,8 +21,7 @@ import json,yaml
 from numpy import linalg as LA
 import time
 from collections import OrderedDict
-from pymatgen.io.vaspio.vasp_output import Vasprun
-from  Defects import vac_antisite_def_struct_gen,surfer
+from  jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen,surfer
 #from  gen_def_surf import vac_antisite_def_struct_gen,surfer
 from pymatgen.matproj.rest import MPRester
 import subprocess

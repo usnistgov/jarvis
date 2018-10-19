@@ -18,10 +18,10 @@ Subpackages
 Submodules
 ----------
 
-jarvis.lammps.NEW\_LAMMPS module
---------------------------------
+jarvis.lammps.Surf\_Def module
+------------------------------
 
-.. automodule:: jarvis.lammps.NEW_LAMMPS
+.. automodule:: jarvis.lammps.Surf_Def
     :members:
     :undoc-members:
     :show-inheritance:
@@ -30,6 +30,14 @@ jarvis.lammps.chempot\_strt module
 ----------------------------------
 
 .. automodule:: jarvis.lammps.chempot_strt
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+jarvis.lammps.jlammps module
+----------------------------
+
+.. automodule:: jarvis.lammps.jlammps
     :members:
     :undoc-members:
     :show-inheritance:

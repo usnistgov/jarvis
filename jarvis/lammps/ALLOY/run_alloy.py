@@ -37,8 +37,8 @@ matplotlib.use('Agg')
 
 from pymatgen.core.composition import Composition
 from pymatgen.phasediagram.entries import PDEntry
-from pymatgen.phasediagram.pdmaker import PhaseDiagram
-from pymatgen.phasediagram.plotter import PDPlotter
+#from pymatgen.phasediagram.pdmaker import PhaseDiagram
+#from pymatgen.phasediagram.plotter import PDPlotter
 
 import glob
 

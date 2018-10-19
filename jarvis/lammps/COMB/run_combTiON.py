@@ -13,7 +13,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import numpy as np,time,json
 import sys,os,subprocess,socket
 from pymatgen.io.ase import AseAtomsAdaptor
-from ase.calculators.lammpsrun import LAMMPS, prism
+from ase.calculators.lammpsrun import LAMMPS, Prism
 import sys,zipfile
 import fortranformat as fform
 from pymatgen.core.structure import Structure
@@ -36,8 +36,8 @@ matplotlib.use('Agg')
 
 from pymatgen.core.composition import Composition
 from pymatgen.phasediagram.entries import PDEntry
-from pymatgen.phasediagram.pdmaker import PhaseDiagram
-from pymatgen.phasediagram.plotter import PDPlotter
+#from pymatgen.phasediagram.pdmaker import PhaseDiagram
+#from pymatgen.phasediagram.plotter import PDPlotter
 
 import glob
 

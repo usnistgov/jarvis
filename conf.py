@@ -14,19 +14,19 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath('jarvis'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = u'jarvis'
-copyright = u'2018, Kamal Choudhary'
-author = u'Kamal Choudhary'
+project = u'j'
+copyright = u'2018, j'
+author = u'j'
 
 # The short X.Y version
 version = u''
 # The full version, including alpha/beta/rc tags
-release = u'10-11-2019'
+release = u'j'
 
 
 # -- General configuration ---------------------------------------------------
@@ -64,7 +64,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
@@ -102,7 +102,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'jarvisdoc'
+htmlhelp_basename = 'jdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -129,8 +129,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'jarvis.tex', u'jarvis Documentation',
-     u'Kamal Choudhary', 'manual'),
+    (master_doc, 'j.tex', u'j Documentation',
+     u'j', 'manual'),
 ]
 
 
@@ -139,7 +139,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'jarvis', u'jarvis Documentation',
+    (master_doc, 'j', u'j Documentation',
      [author], 1)
 ]
 
@@ -150,8 +150,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'jarvis', u'jarvis Documentation',
-     author, 'jarvis', 'One line description of project.',
+    (master_doc, 'j', u'j Documentation',
+     author, 'j', 'One line description of project.',
      'Miscellaneous'),
 ]
 

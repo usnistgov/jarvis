@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 JARVIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 setup(
-    name="jarvis-pkg",
+    name="jarvis",
     version="8-11-2018",
     install_requires=["custodian>=1.0.4","ase==3.13.0"],
     extras_require={"babel": ["openbabel", "pybel"],
