@@ -10,7 +10,6 @@ from pymatgen.io.vasp import VaspInput, Vasprun
 #from mpinterfaces.instrument import MPINTVaspInputSet, MPINTVaspJob
 from custodian.vasp.jobs import VaspJob
 from pymatgen.io.vasp.outputs import Oszicar
-from pymatgen.io.vaspio.vasp_output import Vasprun
 from subprocess import Popen, PIPE
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import sys,shutil,glob,codecs

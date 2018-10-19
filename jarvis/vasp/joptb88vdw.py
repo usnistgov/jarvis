@@ -20,7 +20,8 @@ import json,yaml
 from numpy import linalg as LA
 import time
 from collections import OrderedDict
-from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen,surfer
+from jarvis.lammps.jlammps import vac_antisite_def_struct_gen,surfer
+#from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen,surfer
 from pymatgen.matproj.rest import MPRester
 import subprocess
 from pymatgen.core.structure import Structure

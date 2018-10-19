@@ -1,3 +1,6 @@
+"""
+Helper function for running LAMMPS
+"""
 from __future__ import  unicode_literals, print_function
 from monty.json import MontyEncoder
 from numpy import matrix

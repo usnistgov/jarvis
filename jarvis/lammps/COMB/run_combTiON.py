@@ -1,5 +1,4 @@
 from numpy import matrix
-# Copyright (c) Kamal Choudhary
 import time
 import numpy as np
 import glob
