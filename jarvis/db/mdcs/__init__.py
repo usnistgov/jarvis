@@ -1,4 +1,0 @@
-"""
-Author: Kamal Choudhary
-TODO
-"""
