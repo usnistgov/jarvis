@@ -1,0 +1,9 @@
+#!/bin/bash
+#PBS -N Cu-jml
+#PBS -o test.log
+#PBS -l nodes=1:ppn=1
+export PATH=/users/knc6/bin:$PATH
+
+source /users/knc6/anaconda2/envs/my_gasp/bin/activate my_gasp
+cd /rk2/knc6/GASP/CuAl
+run.py ga_input.yaml 2>&1 | tee ga_output
