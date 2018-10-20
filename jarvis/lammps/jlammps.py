@@ -1,7 +1,10 @@
+from __future__ import  unicode_literals, print_function
+
 """
 Helper function for running LAMMPS
+Used for defects, surface and phonon calculations
 """
-from __future__ import  unicode_literals, print_function
+
 from monty.json import MontyEncoder
 from numpy import matrix
 import time
@@ -16,7 +19,7 @@ from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Incar, Poscar
 from pymatgen.core.surface import  Slab, SlabGenerator, generate_all_slabs,get_symmetrically_distinct_miller_indices
 from ase.lattice.surface import surface
-from pymatgen.matproj.rest import MPRester
+from pymatgen.ext.matproj import MPRester
 import operator
 from pymatgen.core.lattice import Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -67,7 +70,8 @@ def ZipDir(inputDir, outputZip,contents=[]):
                     zipInfo.create_system = 3
                     # long type of hex val of '0xA1ED0000L',
                     # say, symlink attr magic...
-                    zipInfo.external_attr = 2716663808L
+                    #zipInfo.external_attr = 0777 << 16L
+                    zipInfo.external_attr = '2716663808L'
                     zipOut.writestr(zipInfo, os.readlink(fullPath))
                 else:
                     zipOut.write(fullPath, archiveRoot, zipfile.ZIP_DEFLATED)
@@ -896,58 +900,57 @@ def calc_forces(mat=None,parameters={}):
     return forces
 
 def do_phonons(strt=None,parameters=None):
-        """
-        Setting up phonopy job
-        """
+    """
+    Setting up phonopy job
+    """
          
-	p= get_phonopy_atoms(mat=strt)
-	bulk =p
-	c_size=25
-	dim1=int((float(c_size)/float( max(abs(strt.lattice.matrix[0])))))+1
-	dim2=int(float(c_size)/float( max(abs(strt.lattice.matrix[1]))))+1
-	dim3=int(float(c_size)/float( max(abs(strt.lattice.matrix[2]))))+1
-        Poscar(strt).write_file("POSCAR")
-        tmp=strt.copy()
-        tmp.make_supercell([dim1,dim2,dim3])
-        Poscar(tmp).write_file("POSCAR-Super.vasp")
+    p= get_phonopy_atoms(mat=strt)
+    bulk =p
+    c_size=25
+    dim1=int((float(c_size)/float( max(abs(strt.lattice.matrix[0])))))+1
+    dim2=int(float(c_size)/float( max(abs(strt.lattice.matrix[1]))))+1
+    dim3=int(float(c_size)/float( max(abs(strt.lattice.matrix[2]))))+1
+    Poscar(strt).write_file("POSCAR")
+    tmp=strt.copy()
+    tmp.make_supercell([dim1,dim2,dim3])
+    Poscar(tmp).write_file("POSCAR-Super.vasp")
     
-	phonon = Phonopy(bulk,[[dim1,0,0],[0,dim2,0],[0,0,dim3]])#,
-	print ("[Phonopy] Atomic displacements:")
-	disps = phonon.get_displacements()
-	for d in disps:
-	    print ("[Phonopy]", d[0], d[1:])
-	supercells = phonon.get_supercells_with_displacements()
+    phonon = Phonopy(bulk,[[dim1,0,0],[0,dim2,0],[0,0,dim3]])#,
+    print ("[Phonopy] Atomic displacements:")
+    disps = phonon.get_displacements()
+    for d in disps:
+      print ("[Phonopy]", d[0], d[1:])
+    supercells = phonon.get_supercells_with_displacements()
 
-	# Force calculations by calculator
-	set_of_forces = []
-	disp=0
-	for scell in supercells:
-	    cell = Atoms(symbols=scell.get_chemical_symbols(),
+    # Force calculations by calculator
+    set_of_forces = []
+    disp=0
+    for scell in supercells:
+        cell = Atoms(symbols=scell.get_chemical_symbols(),
 			 scaled_positions=scell.get_scaled_positions(),
 			 cell=scell.get_cell(),
 			 pbc=True)
-	    disp=disp+1
+        disp=disp+1
 
-	    mat = Poscar(AseAtomsAdaptor().get_structure(cell))
-	    mat.comment=str("disp-")+str(disp)
-            parameters['min']='skip'
-            parameters['control_file']='/users/knc6/in.phonon'
-	    #a,b,forces=run_job(mat=mat,parameters={'min':'skip','pair_coeff': '/data/knc6/JARVIS-FF-NEW/ALLOY4/Mishin-Ni-Al-2009.eam.alloy', 'control_file': '/users/knc6/in.phonon', 'pair_style': 'eam/alloy', 'atom_style': 'charge'})
-	    a,b,forces=run_job(mat=mat,parameters=parameters)
-	    print ("forces=",forces)
-	    drift_force = forces.sum(axis=0)
-	    print ("drift forces=",drift_force)
-	    print ("[Phonopy] Drift force:", "%11.5f"*3 % tuple(drift_force))
-	    # Simple translational invariance
-	    for force in forces:
-		force -= drift_force / forces.shape[0]
-	    set_of_forces.append(forces)
-	phonon.produce_force_constants(forces=set_of_forces)
+    mat = Poscar(AseAtomsAdaptor().get_structure(cell))
+    mat.comment=str("disp-")+str(disp)
+    parameters['min']='skip'
+    parameters['control_file']='/users/knc6/in.phonon'
+    #a,b,forces=run_job(mat=mat,parameters={'min':'skip','pair_coeff': '/data/knc6/JARVIS-FF-NEW/ALLOY4/Mishin-Ni-Al-2009.eam.alloy', 'control_file': '/users/knc6/in.phonon', 'pair_style': 'eam/alloy', 'atom_style': 'charge'})
+    a,b,forces=run_job(mat=mat,parameters=parameters)
+    print ("forces=",forces)
+    drift_force = forces.sum(axis=0)
+    print ("drift forces=",drift_force)
+    print ("[Phonopy] Drift force:", "%11.5f"*3 % tuple(drift_force))
+    # Simple translational invariance
+    for force in forces:
+          force -= drift_force / forces.shape[0]
+    set_of_forces.append(forces)
+    phonon.produce_force_constants(forces=set_of_forces)
 
-	write_FORCE_CONSTANTS(phonon.get_force_constants(),
-			      filename="FORCE_CONSTANTS")
-	print ()
-	print ("[Phonopy] Phonon frequencies at Gamma:")
+    write_FORCE_CONSTANTS(phonon.get_force_constants(),filename="FORCE_CONSTANTS")
+    print ()
+    print ("[Phonopy] Phonon frequencies at Gamma:")
 	#for i, freq in enumerate(phonon.get_frequencies((0, 0, 0))):
 	#    print ("[Phonopy] %3d: %10.5f THz" %  (i + 1, freq) # THz)
 
@@ -1031,7 +1034,7 @@ def main(p=None, parameters={}):
        pass
     try:
         surf=pmg_surfer(mat=final_str, min_slab_size=35,vacuum=35,max_index=3)
-	surf_list,surf_header_list=surf_energy(surf=surf,parameters = parameters)
+        surf_list,surf_header_list=surf_energy(surf=surf,parameters = parameters)
         print (surf_list,surf_header_list)
     except:
        pass

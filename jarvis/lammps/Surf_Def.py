@@ -11,14 +11,16 @@ import os
 from pymatgen.core.structure import Structure
 from pymatgen.core.periodic_table import Element
 from pymatgen.io.vasp import Poscar
-from pymatgen.matproj.rest import MPRester
-from pymatgen.analysis.defects.point_defects import Vacancy,Interstitial,ValenceIonicRadiusEvaluator
+from pymatgen.ext.matproj import MPRester
+from pymatgen.analysis.defects.core import Vacancy,Interstitial
+from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
+#from pymatgen.analysis.defects.point_defects import Vacancy,Interstitial,ValenceIonicRadiusEvaluator
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import glob
 from pymatgen.io.vasp import Poscar
 from monty.serialization import loadfn, dumpfn
 from monty.json import MontyEncoder, MontyDecoder
-from pymatgen.analysis.defects.point_defects import Vacancy
+#from pymatgen.analysis.defects.point_defects import Vacancy
 #from pymatgen.io.vasp.sets import MPGGAVaspInputSet
 from pymatgen.core.surface import Slab, SlabGenerator
 from pymatgen.core.structure import Structure
@@ -27,7 +29,6 @@ from ase.lattice.surface import surface
 from pymatgen.core.surface import  Slab, SlabGenerator, generate_all_slabs,get_symmetrically_distinct_miller_indices
 from pymatgen.io.vasp import Kpoints
 from pymatgen.io.vasp import Vasprun
-from pymatgen.matproj.rest import MPRester
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.analysis.defects.dilute_solution_model import \
             compute_defect_density, solute_defect_density

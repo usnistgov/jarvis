@@ -1,5 +1,5 @@
 from __future__ import  unicode_literals, print_function
-from pymatgen.matproj.rest import MPRester
+from pymatgen.ext.matproj import MPRester
 import json,os,operator
 from monty.json import MontyEncoder, MontyDecoder
 from pymatgen.core.periodic_table import get_el_sp, Element
