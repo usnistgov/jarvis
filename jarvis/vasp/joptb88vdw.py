@@ -1,18 +1,6 @@
-# Copyright(C)2016  Kamal Choudhary
-# All rights reserved.
-# THIS SCRIPT IS PROVIDED BY THE COPYRIGHT HOLDER 
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-# COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-
+"""
+Module to run OptB88vdW based High-throughput calculations
+"""
 from __future__ import division, unicode_literals, print_function
 import os,socket,shutil
 from monty.json import MontyEncoder, MontyDecoder
@@ -32,7 +20,8 @@ import json,yaml
 from numpy import linalg as LA
 import time
 from collections import OrderedDict
-from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen,surfer
+from jarvis.lammps.jlammps import vac_antisite_def_struct_gen,surfer
+#from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen,surfer
 from pymatgen.matproj.rest import MPRester
 import subprocess
 from pymatgen.core.structure import Structure

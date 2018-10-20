@@ -1,6 +1,6 @@
 from pymatgen.core.structure import Structure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from jarvis.lammps.NEW_LAMMPS import main_func,write_lammps_data,write_lammps_in
+from jarvis.lammps.jlammps import main_func,write_lammps_data,write_lammps_in
 from pymatgen.io.vasp.inputs import Poscar
 """
 Step-1: writing LAMMPS data file

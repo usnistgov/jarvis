@@ -1,4 +1,5 @@
-from pymatgen.matproj.rest import MPRester
+from __future__ import  unicode_literals, print_function
+from pymatgen.ext.matproj import MPRester
 import json,os,operator
 from monty.json import MontyEncoder, MontyDecoder
 from pymatgen.core.periodic_table import get_el_sp, Element
@@ -33,19 +34,19 @@ def get_struct_from_mp(formula, MAPI_KEY="", all_structs=False):
                 return key,m.get_structure_by_material_id(key)
             else:
                 return None
-
-f=open('chempot_strt.json','w')
-mem=[]
-for i in Element:
- try:
+if __name__=='__main__':
+ f=open('chempot_strt.json','w')
+ mem=[]
+ for i in Element:
+  try:
    key,strt=get_struct_from_mp(i.symbol)
    info={}
    info['element']=str(i.symbol)
    info['mpid']=key
    info['structure']=strt
    mem.append(info)
- except:
+  except:
    pass
-f.write(json.dumps(mem,cls=MontyEncoder))
-f.close()
+ f.write(json.dumps(mem,cls=MontyEncoder))
+ f.close()
      

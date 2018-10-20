@@ -7,7 +7,8 @@ from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Incar, Poscar
 from pymatgen.core.surface import  Slab, SlabGenerator, generate_all_slabs,get_symmetrically_distinct_miller_indices
 from ase.lattice.surface import surface
-from pymatgen.matproj.rest import MPRester
+from pymatgen.ext.matproj import MPRester
+#from pymatgen.matproj.rest import MPRester
 import operator
 from pymatgen.core.lattice import Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -37,8 +38,8 @@ matplotlib.use('Agg')
 
 from pymatgen.core.composition import Composition
 from pymatgen.phasediagram.entries import PDEntry
-from pymatgen.phasediagram.pdmaker import PhaseDiagram
-from pymatgen.phasediagram.plotter import PDPlotter
+#from pymatgen.phasediagram.pdmaker import PhaseDiagram
+#from pymatgen.phasediagram.plotter import PDPlotter
 
 import glob
 
@@ -118,7 +119,7 @@ for file in glob.glob("*.alloy"):
                  folder2=str(os.getcwd())+str("/")+str(comment)+str("_fold")
                  if not os.path.exists(folder2):
                      os.makedirs(str(folder2))
-                 print "folder2=",folder2
+                 print ("folder2=",folder2)
                  cwd2=str(os.getcwd())
                  os.chdir(str(folder2))
 

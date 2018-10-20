@@ -1,3 +1,3 @@
 """
-Author: Kamal Choudhary
+Module to run AIREBO calculations
 """

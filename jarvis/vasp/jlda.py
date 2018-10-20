@@ -1,3 +1,6 @@
+"""
+Module to run LDA based High-throughput calculations
+"""
 from __future__ import division, unicode_literals, print_function
 import os
 from monty.json import MontyEncoder, MontyDecoder
@@ -7,11 +10,11 @@ from pymatgen.io.vasp import VaspInput, Vasprun
 #from mpinterfaces.instrument import MPINTVaspInputSet, MPINTVaspJob
 from custodian.vasp.jobs import VaspJob
 from pymatgen.io.vasp.outputs import Oszicar
-from pymatgen.io.vaspio.vasp_output import Vasprun
+from pymatgen.io.vasp.outputs import Vasprun
 from subprocess import Popen, PIPE
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import sys,shutil,glob,codecs
-from pymatgen.io.aseio import AseAtomsAdaptor
+from pymatgen.io.ase import AseAtomsAdaptor
 from pymatgen.core.surface import  Slab, SlabGenerator, generate_all_slabs,get_symmetrically_distinct_miller_indices
 from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler, \
     MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler
@@ -19,21 +22,16 @@ import json,yaml
 from numpy import linalg as LA
 import time
 from collections import OrderedDict
-from pymatgen.io.vaspio.vasp_output import Vasprun
-from  Defects import vac_antisite_def_struct_gen,surfer
 #from  gen_def_surf import vac_antisite_def_struct_gen,surfer
-from pymatgen.matproj.rest import MPRester
+from pymatgen.ext.matproj import MPRester
 import subprocess
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput
 from pymatgen.io.vasp.inputs import Potcar, Kpoints
-from pymatgen.io.vaspio_set import MPVaspInputSet, MPNonSCFVaspInputSet
+#from pymatgen.io.vaspio_set import MPVaspInputSet, MPNonSCFVaspInputSet
 from numpy import matrix
 import numpy as np
-#from mpinterfaces import get_struct_from_mp
-#from mpinterfaces.calibrate import Calibrate
-#from mpinterfaces.utils import *
-from pymatgen.io.aseio import AseAtomsAdaptor
+from pymatgen.io.ase import AseAtomsAdaptor
 from ase.lattice.cubic import DiamondFactory, SimpleCubicFactory
 from ase.lattice import bulk
 from ase.lattice.compounds import Zincblende,AuCu3,Rocksalt,AuCu,CsCl,TRI_Fe2O3,HEX_Fe2O3,CsClFactory
@@ -536,17 +534,6 @@ def replceTF():
     f1.write(newcontents)
     f1.close()
 def get_lowest_en_from_mp(formula, MAPI_KEY="", all_structs=False):
-    """
-    fetches the structure corresponding to the given formula
-    from the materialsproject database.
-    
-    Note: Get the api key from materialsproject website. The one used
-    here is nolonger valid.
-    
-    Note: for the given formula there are many structures available, 
-    this function returns the one with the lowest energy above the hull
-    unless all_structs is set to True
-    """
     if not MAPI_KEY:
         MAPI_KEY = os.environ.get("MAPI_KEY", "")
         if not MAPI_KEY:
@@ -598,9 +585,6 @@ poscar_list = []
 def run_cal(turn_knobs, qadapter, job_cmd, job_dir, checkpoint_file,
             incar=None, poscar=None, potcar=None, kpoints=None,
             Grid_type='G',functional='LDA',is_matrix=True):
-    """
-    setup and run calibrate job
-    """
     handlers = []
     outfile=str(os.getcwd())+str('/')+str('vasp.out')
     handlers = [VaspErrorHandler(output_filename=outfile)] #, MeshSymmetryErrorHandler(),
@@ -660,68 +644,68 @@ def run_job(mat=None,incar=None,kpoints=None,jobname=''):
     potcar = Potcar(symbols=new_symb,functional="LDA")
     wait=False
     if not os.path.exists(jobname):
-                    need_run = True
-                    os.makedirs(jobname)
-		    os.chdir(jobname)
-		    #shutil.copy2('/data/knc6/Arunima/Arunima/1T_prime/vdw_kernel.bindat','./')
-		    f=open('submit_job','w')
-		    line=str("#!/bin/bash")+'\n'
-		    f.write(line)
-		    line=str("#PBS -N ")+jobname+'\n'
-		    f.write(line)
-		    line=str("#PBS -l walltime=148:10:00")+'\n'
-		    f.write(line)
-		    line=str("#PBS -o test.log")+'\n'
-		    f.write(line)
-		    line=str("#PBS -m abe")+'\n'
-		    f.write(line)
-		    line=str("#PBS -j oe")+'\n'
-		    f.write(line)
-		    line=str("#PBS -r n")+'\n'
-		    f.write(line)
-		    line=str("#PBS -l nodes=")+str(nnodes)+str(":")+str("ppn=")+str(int(float(nprocs)/float(nnodes)))+'\n'
-		    f.write(line)
-		    line=str("#PBS -l pmem=")+str(mem)+'\n'
-		    f.write(line)
-		    dir=str(os.getcwd())
-		    line=str("cd ")+dir+'\n'
-		    f.write(line)
-		    line=str(job_bin)+'\n'
-		    f.write(line)
-		    f.close()
-		    incar.write_file("INCAR")
-		    potcar.write_file("POTCAR")
-		    kpoints.write_file("KPOINTS")
-		    mat.write_file("POSCAR")
-		    import sys
-		    vinput = VaspInput.from_directory(".")
-		    job=VaspJob(['qsub -cwd -pe nodal 16','submit_job'], final=False, backup=False)
-		    #handlers = [VaspErrorHandler(), UnconvergedErrorHandler()]
-		    handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),
-				UnconvergedErrorHandler(), NonConvergingErrorHandler(),
-				PotimErrorHandler()]
-		    ticks=time.time()
-		    print ("job start time for ", jobname,"=",ticks)
-		    #c = Custodian(handlers, [job],max_errors=1)
-		    #c.run()
-		    with open('job.out', 'w') as f:
-				p = subprocess.Popen(['qsub','-cwd', '-pe', 'nodal', '16', 'submit_job'], stdout=subprocess.PIPE,
-						     stderr=subprocess.PIPE)
-				stdout, stderr = p.communicate()
-				#self.job_id = stdout.rstrip('\n').split()[-1]
-				print ("stdout,stderr",stdout, stderr)
-				job_id = str(stdout.split('Your job')[1].split(' ')[1])
-				f.write(job_id)
-		    #output = subprocess.check_output(['qstat', '-j', job_id])
-                    need_subrun=True
-		    while need_subrun !=False:
-			  try:
-			     output=subprocess.check_output([str('qstat'), str('-j'), job_id])
-			     time.sleep(5)
-			  except:
-			     need_subrun=False
-			     pass
-		       
+      need_run = True
+      os.makedirs(jobname)
+      os.chdir(jobname)
+      #shutil.copy2('/data/knc6/Arunima/Arunima/1T_prime/vdw_kernel.bindat','./')
+      f=open('submit_job','w')
+      line=str("#!/bin/bash")+'\n'
+      f.write(line)
+      line=str("#PBS -N ")+jobname+'\n'
+      f.write(line)
+      line=str("#PBS -l walltime=148:10:00")+'\n'
+      f.write(line)
+      line=str("#PBS -o test.log")+'\n'
+      f.write(line)
+      line=str("#PBS -m abe")+'\n'
+      f.write(line)
+      line=str("#PBS -j oe")+'\n'
+      f.write(line)
+      line=str("#PBS -r n")+'\n'
+      f.write(line)
+      line=str("#PBS -l nodes=")+str(nnodes)+str(":")+str("ppn=")+str(int(float(nprocs)/float(nnodes)))+'\n'
+      f.write(line)
+      line=str("#PBS -l pmem=")+str(mem)+'\n'
+      f.write(line)
+      dir=str(os.getcwd())
+      line=str("cd ")+dir+'\n'
+      f.write(line)
+      line=str(job_bin)+'\n'
+      f.write(line)
+      f.close()
+      incar.write_file("INCAR")
+      potcar.write_file("POTCAR")
+      kpoints.write_file("KPOINTS")
+      mat.write_file("POSCAR")
+      import sys
+      vinput = VaspInput.from_directory(".")
+      job=VaspJob(['qsub -cwd -pe nodal 16','submit_job'], final=False, backup=False)
+    #handlers = [VaspErrorHandler(), UnconvergedErrorHandler()]
+      handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),
+		UnconvergedErrorHandler(), NonConvergingErrorHandler(),
+		PotimErrorHandler()]
+      ticks=time.time()
+      print ("job start time for ", jobname,"=",ticks)
+    #c = Custodian(handlers, [job],max_errors=1)
+    #c.run()
+      with open('job.out', 'w') as f:
+                p = subprocess.Popen(['qsub','-cwd', '-pe', 'nodal', '16', 'submit_job'], stdout=subprocess.PIPE,
+				     stderr=subprocess.PIPE)
+                stdout, stderr = p.communicate()
+		#self.job_id = stdout.rstrip('\n').split()[-1]
+                print ("stdout,stderr",stdout, stderr)
+                job_id = str(stdout.split('Your job')[1].split(' ')[1])
+                f.write(job_id)
+    #output = subprocess.check_output(['qstat', '-j', job_id])
+      need_subrun=True
+      while need_subrun !=False:
+         try:
+            output=subprocess.check_output([str('qstat'), str('-j'), job_id])
+            time.sleep(5)
+         except:
+             need_subrun=False
+             pass
+       
     else:
       os.chdir(jobname)
       print ("directory is CUTION",os.getcwd())
@@ -772,219 +756,6 @@ def run_job(mat=None,incar=None,kpoints=None,jobname=''):
     if set(kp_old.kpts[0]) !=set(kpoints.kpts[0]):
                 print ("different kp",set(kpoints.kpts[0]),set(kp_old.kpts[0]))
     attempts=0
-    while wait!=True:
-                           attempts=attempts+1
-                           
-			   if os.path.isfile("OUTCAR"):
-                         
-
-			      f=open("OUTCAR",'r')
-			      for line in f:
-
-			       	   if "General timing and accounting informations for this job" in line:
-                                          wait=True
-                              f.close()
-                           else:
-                              msg.append("unconverged")
-			   if os.path.isfile("vasp.out"):
-			      msg=check_errors("vasp.out")
-			      fi=open('error','w')
-			      fi.write(str(msg))
-			      fi.close()
-			   
-			   while len(msg)>0:
-			      
-
-				  if "zpotrf" in msg:
-				     print ("zpotrf error")
-
-				     try:
-					oszicar = Oszicar('OSZICAR')
-					nsteps = len(oszicar.ionic_steps)
-				     except:
-					  nsteps = 0
-
-				     if nsteps >= 1:
-					potim = float(incar.get("POTIM", 0.5)) / 2.0
-					incar.update({"ISYM": 0,"POTIM":potim})
-					incar.write_file("INCAR")
-				     else:
-					 s = mat.structure
-					 comm=mat.comment
-					 s.apply_strain(0.05)
-					 pos=Poscar(s)
-					 pos.comment=comm+str('corrected')
-					 line=str(pos.comment)+str(' ')+str(s)+'\n'
-					 correc.write(line)
-					 pos.write_file("POSCAR")
-					 try:
-					     cmd=str("rm -rf WAVECAR CHGCAR")
-					     os.system(cmd)
-					 except:
-					     pass
-
-
-				  #if "brions" in msg:
-				  #	potim = float(incar.get("POTIM", 0.5)) +0.1
-				  #	incar.update({"POTIM":potim})
-
-				  if "zbrent" in msg:
-					incar.update({"IBRION":1})
-				  if "too_few_bands" in msg:
-				      with open("OUTCAR") as f:
-					   for line in f:
-					       if "NBANDS" in line:
-						   try:
-						       d = line.split("=")
-						       nbands = int(d[-1].strip())
-						       incar.update({"NBANDS": int(1.1*nbands)})
-						       break
-						   except (IndexError, ValueError):
-						       pass
-
-				  if "pssyevx" in msg:
-					incar.update({"ALGO":"Normal"})
-				  if "edddav" in msg:
-					 incar.update({"LPLANE":"False"})
-					 incar.update({"ALGO":"Damped"})
-					 try:
-					     cmd=str("rm -rf CHGCAR")
-					     os.system(cmd)
-					 except:
-					     pass
-				  if "pricel" in msg:
-					incar.update({"ALGO":"Normal"})
-				  if "subspacematrix" in msg:
-					incar.update({"NPAR":1})
-				  if "rspher" in msg:
-					incar.update({"NPAR":1})
-				  if "real_optlay" in msg:
-					incar.update({"NPAR":1})
-				  if "subspacematrix" in msg:
-					incar.update({"NPAR":1})
-
-				  if "rot_matrix" in msg:
-					incar.update({"ISYM":0})
-				  if "amin" in msg:
-					incar.update({"AMIN":0.01})
-				  if "FrozenJob" in msg:
-                                      try:
-					cmd=str('qdel ')+str(job_id)
-					os.system(cmd)
-                                      except:
-                                         pass
-					#incar.update({"EDIFF":1e-8,"NSW":1,"IBRION":1})
-				  #Unconverged
-				  if "unconverged_electronic" in msg:
-                                      nelm=incar['NELM']
-				      incar.update({"NELM":int(nelm)+100})
-				  incar.write_file("INCAR")
-				  kpoints.write_file("KPOINTS")
-				  potcar.write_file("POTCAR")
-				  mat.write_file("POSCAR")
-				  if "unconverged" in msg and os.path.isfile("OSZICAR"):
-			              oszicar = Oszicar('OSZICAR')
-				      nsteps = len(oszicar.ionic_steps)
-                                              
-				      with open("OUTCAR") as f:
-					   for line in f:
-
-					       if "NSW" in line:
-						   try:
-						      nsw= int(str(line.split("=")[1]).split("number of steps")[0])
-						      incar.update({"EDIFF":1e-8,"NSW":nsw})
-						      shutil.copy2('POSCAR','POSCAR.orig')
-						      #shutil.copy2('CONTCAR','POSCAR')
-						   except:
-							pass
-                                      if nsw >1 and nsteps==nsw:
-					 shutil.copy2('CONTCAR','POSCAR')
-
-				  #if "unconverged ionic" in msg:
-				  #      incar.update({"EDIFF":1e-8,"NSW":200})
-				  #      print ("unconverged") 
-				  #except:
-				  #   pass
-				  msg=[]
-                                  if attempts<3:
-				      with open('job.out', 'w') as f:
-				           p = subprocess.Popen(['qsub','-cwd', '-pe', 'nodal', '16', 'submit_job'], stdout=subprocess.PIPE,
-				    		    stderr=subprocess.PIPE)
-				           stdout, stderr = p.communicate()
-				           job_id = str(stdout.split('Your job')[1].split(' ')[1])
-				           f.write(job_id)
-                                  else: 
-                                           f=open('job.out','w')
-                                           cjob_bin = 'mpirun -np 16 /users/knc6/VASP/vasp54/src/vasp.5.4.1/bin/vasp_std >vasp.out'
-                                           if mat.comment.startswith('Surf'):
-                                               cjob_bin ='mpirun -np 16 /users/knc6/VASP/vasp54/src/vasp.5.4.1noz/bin/vasp_std >vasp.out' 
-                                      
-                                           sub_cust_file=open("submit_cust","w")
-                                           cline=str('/users/knc6/anaconda2/bin/python  first_cust.py >ouuu')+'\n' 
-                                           sub_cust_file.write(cline)
-                                           sub_cust_file.close()
-                                           cust_file=open("first_cust.py","w")
-                                           cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('from custodian.vasp.validators import VasprunXMLValidator')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('from custodian.custodian import Custodian')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('inc=Incar.from_file("INCAR")')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str("job=VaspJob(['mpirun', '-np', '16', '/users/knc6/VASP/vasp54/src/vasp.5.4.1/bin/vasp_std'], final=False, backup=False)")+'\n' 
-                                           if mat.comment.startswith('Surf'):
-                                              cline=str("job=VaspJob(['mpirun', '-np', '16', '/users/knc6/VASP/vasp54/src/vasp.5.4.1noz/bin/vasp_std'], final=False, backup=False)")+'\n' 
-                                           
-                                           cust_file.write(cline)
-                                           cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('validators = [VasprunXMLValidator()]')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
-                                           cust_file.write(cline)
-                                           cline=str('c.run()')+'\n' 
-                                           cust_file.write(cline)
-                                           cust_file.close()
-
-
-				           p = subprocess.Popen(['qsub','-cwd', '-pe', 'nodal', '16', 'submit_cust'], stdout=subprocess.PIPE,
-				    		    stderr=subprocess.PIPE)
-				           stdout, stderr = p.communicate()
-				           job_id = str(stdout.split('Your job')[1].split(' ')[1])
-				           f.write(job_id)
-				           f.close()
-                                           
-				  need_run=True
-				  while need_run !=False:
-					 try:
-					    output=subprocess.check_output([str('qstat'), str('-j'), job_id])
-					    time.sleep(5)
-
-					    #cmd=str('qdel ')+str(job_id)
-					    #os.system(cmd)
-
-					 except:
-					    need_run=False
-					    pass
-
-
-
-
-
-
     #print ("job end time for ", jobname,"=",ticks)
     #print ("job end time for ", jobname,"=",time.localtime(time.time()))
    

@@ -1,4 +1,3 @@
-# Copyright (c) Kamal Choudhary
 import glob
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import  Poscar
