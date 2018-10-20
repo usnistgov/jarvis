@@ -1,0 +1,12 @@
+#!/bin/bash
+#PBS -N Cu-lammps
+#PBS -o test.log
+#PBS -l nodes=1:ppn=1
+export PATH=/users/knc6/bin:$PATH
+export PATH=/rk2/knc6/GASP/Al-ZrAl-CuAl-lammps:$PATH
+
+source /users/knc6/anaconda2/envs/my_gasp/bin/activate my_gasp
+export PATH=/rk2/knc6/GASP/Cu-lammps:$PATH
+
+cd /rk2/knc6/GASP/Cu-lammps
+run.py ga_input.yaml 2>&1 | tee ga_output
