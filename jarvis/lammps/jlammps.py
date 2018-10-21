@@ -1,5 +1,4 @@
 from __future__ import  unicode_literals, print_function
-
 """
 Helper function for running LAMMPS
 Used for defects, surface and phonon calculations
@@ -563,7 +562,8 @@ def read_dumpfull(data=None,ff=None):
     for i, line in enumerate(lines):
         if "ITEM: ATOMS" in line:
            for j in range(0,natoms):
-                 typ[j]=symb[int(((lines[i+j+1]).split()[1]))-1]
+                 typ[j]=str(symb[int(((lines[i+j+1]).split()[1]))-1])
+                 #typ[j]=Element(str(symb[int(((lines[i+j+1]).split()[1]))-1]))
                  #typ[j]=(lines[i+j+1]).split()[1]
                  x[j]=(lines[i+j+1]).split()[3]
                  y[j]=(lines[i+j+1]).split()[4]
@@ -571,7 +571,15 @@ def read_dumpfull(data=None,ff=None):
                  coords.append([x[j],y[j],z[j]])
     f.close()
     pot_file.close()
-    struct=Structure(lat,typ,coords,coords_are_cartesian=True)
+    #print ('lat=',lat)
+   
+    #print ('typ=',typ)
+    #print ('coords=',coords)
+    typ_sp=[str(i,'utf-8') for i in typ]
+
+    struct=Structure(lat,typ_sp,coords,coords_are_cartesian=True)
+    #print ('struct',struct) 
+    #struct=Structure(lat,typ,coords,coords_are_cartesian=True)
     return struct
 
 def read_dump(data=None,ff=None):
@@ -590,11 +598,11 @@ def read_dump(data=None,ff=None):
                for el in sp:
                    try:
                     if Element(el):
-                     #if el=='M':
-                   #    el='Mo'
-                   #count=count+1
-                   #if count >4:
-                      symb.append(el)
+                      if el=='M':
+                         el='Mo'
+                         count=count+1
+                         if count >4:
+                              symb.append(el)
                    except:
                       pass
     print ("symb=",symb)
@@ -680,19 +688,20 @@ def read_data(data=None,ff=None):
         if "Atoms" in line.split():
            for j in range(0,natoms):
                  #print int(((lines[j+2]).split()[1]))-1
-                 typ[j]=symb[int(((lines[i+j+2]).split()[1]))-1]
+                 typ[j]=(symb[int(((lines[i+j+2]).split()[1]))-1])
                  q[j]=(lines[i+j+2]).split()[2]
                  x[j]=(lines[i+j+2]).split()[3]
                  y[j]=(lines[i+j+2]).split()[4]
                  z[j]=(lines[i+j+2]).split()[5]
                  coords.append([x[j],y[j],z[j]])
     f.close()
-    print ("info",len(typ),len(coords))
+    #print ("info",(typ),'coo',(coords),'latt',lat)
     pot_file.close()
-    struct=Structure(lat,typ,coords,coords_are_cartesian=True)
+    typ_sp=[str(i,'utf-8') for i in typ]
+    struct=Structure(lat,typ_sp,coords,coords_are_cartesian=True)
     #print struct
-    finder = SpacegroupAnalyzer(struct)
-    num=finder.get_spacegroup_symbol()
+    #finder = SpacegroupAnalyzer(struct)
+    #num=finder.get_spacegroup_symbol()
     #print(num)
     return struct
 def smart_vac(strt=None,parameters=None):
