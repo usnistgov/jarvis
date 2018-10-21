@@ -1,13 +1,13 @@
-.. jarvis documentation master file, created by
-   sphinx-quickstart on Sat Oct 20 11:33:45 2018.
+.. jarvis-tools documentation master file, created by
+   sphinx-quickstart on Sun Oct 21 18:07:30 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to jarvis's documentation!
-==================================
+Welcome to jarvis-tools's documentation!
+========================================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
    :caption: Contents:
 
 
