@@ -39,6 +39,11 @@ except:
 def get_phonopy_atoms(mat=None):
     """
     Helper function to convert pymatgen structure object to phonopy atoms
+
+    Args:
+         mat: pymatgen structure object
+    Returns:
+            phonopy atoms object
     """
     symbols = [str(site.specie.symbol) for site in mat]
     positions = [site.coords for site in mat]
@@ -85,15 +90,9 @@ def ZipDir(inputDir, outputZip,contents=[]):
 
 def get_struct_from_mp(formula, MAPI_KEY="", all_structs=False):
     """
-    fetches the structure corresponding to the given formula
+    Fetches the structure corresponding to the given formula
     from the materialsproject database.
-
-    Note: Get the api key from materialsproject website. The one used
-    here is nolonger valid.
-
-    Note: for the given formula there are many structures available,
-    this function returns the one with the lowest energy above the hull
-    unless all_structs is set to True
+    Note: Get the api key from materialsproject website. 
     """
     if not MAPI_KEY:
         MAPI_KEY = os.environ.get("MAPI_KEY", "")
@@ -516,7 +515,12 @@ def analyz_loge(log='log.lammps'):
     except:
        pass
     return round(en,2),round(press,2),float(toten),round(float(c11),1),round(float(c22),1),round(float(c33),1),round(float(c12),1),round(float(c13),1),round(float(c23),1),round(float(c44),1),round(float(c55),1),round(float(c66),1),round(float(c14),1),round(float(c16),1),round(float(c24),1),round(float(c25),1),round(float(c26),1),round(float(c34),1),round(float(c35),1),round(float(c36),1),round(float(c45),1),round(float(c46),1),round(float(c56),1)
+
 def read_dumpfull(data=None,ff=None):
+    """
+    Reads LAMMPS dump file
+    """
+
     pot_file=open(ff,"r")
     lines = pot_file.read().splitlines()
     symb=[]
@@ -704,6 +708,7 @@ def read_data(data=None,ff=None):
     #num=finder.get_spacegroup_symbol()
     #print(num)
     return struct
+
 def smart_vac(strt=None,parameters=None):
     """
     Function to get all vacancy formation energies
