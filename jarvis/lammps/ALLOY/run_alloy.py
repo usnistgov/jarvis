@@ -137,7 +137,7 @@ for file in glob.glob("*.alloy"):
                  #pair_coeff=str('/data/knc6/JARVIS-FF-NEW/ALLOY')+str("/")+str(file)
                  parameters = {'exec':'mpirun /cluster/bin/lmp_ctcms-14439-knc6-2 <in.elastic >out','pair_style':'eam/alloy','pair_coeff':pair_coeff,'atom_style': 'charge' ,'control_file':'/users/knc6/inelast.mod'}
                  main_file=open("setup.py","w")
-                 line=str("from jarvis.lammps.NEW_LAMMPS import main_func")+'\n'
+                 line=str("from jarvis.lammps.jlammps import main_func")+'\n'
                  main_file.write(line)
                  line=str("from pymatgen.io.vasp.inputs import  Poscar")+'\n'
                  main_file.write(line)

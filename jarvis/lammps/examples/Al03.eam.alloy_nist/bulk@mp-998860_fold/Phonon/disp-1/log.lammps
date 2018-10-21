@@ -1,0 +1,77 @@
+LAMMPS (13 Jan 2016)
+include /users/knc6/in.phonon
+include init.mod
+variable dump_file string "None"
+variable up  equal 1.0e-6
+variable cfac  equal 1.0e-4
+variable cunits  string GPa
+variable etol  equal 0
+variable ftol  equal 1.0e-10
+variable maxiter equal 1000
+variable maxeval equal 10000
+variable dmax equal 1.0e-2
+variable data_file string "data"
+units metal
+atom_style charge
+boundary p p p
+atom_modify sort 0 0.0
+
+read_data data
+  triclinic box = (0 0 0) to (16.2 17.1827 17.1827) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  288 atoms
+
+### interactions
+mass 1 26.98154
+include potential.mod
+pair_style eam/alloy
+pair_coeff * * /users/knc6/Software/jarvis/jarvis/lammps/examples/Al03.eam.alloy  Al
+neighbor 1.0 nsq
+neigh_modify once no every 1 delay 0 check yes
+thermo          1
+thermo_style custom step temp press cpu pxx pyy pzz pxy pxz pyz ke pe etotal vol lx ly lz atoms
+thermo_modify norm no
+
+dump 1 all custom 1 *.dump id  fx fy fz
+dump_modify 1 format "%d %30.20f %30.20f %30.20f"
+write_data data0
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 7.72488
+  ghost atom cutoff = 7.72488
+
+run 0
+WARNING: No fixes defined, atoms won't move (../verlet.cpp:55)
+Memory usage per processor = 3.51154 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+       0            0   0.16444943            0   0.15373802   0.22702907    0.1125812    0.1078513 6.9304346e-09 5.1544996e-10            0   -967.67976   -967.67976    4782.9689         16.2    17.182695    17.182695      288 
+Loop time of 9.53674e-07 on 1 procs for 0 steps with 288 atoms
+
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0          | 0          | 0          |   0.0 |  0.00
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0          | 0          | 0          |   0.0 |  0.00
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 9.537e-07  |            |       |100.00
+
+Nlocal:    288 ave 288 max 288 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1832 ave 1832 max 1832 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    19296 ave 19296 max 19296 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 19296
+Ave neighs/atom = 67
+Neighbor list builds = 0
+Dangerous builds = 0
+
+Total wall time: 0:00:00
