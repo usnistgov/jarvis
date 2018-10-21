@@ -14,7 +14,6 @@ from  jarvis.lammps.jlammps import vac_antisite_def_struct_gen,surfer
 import numpy as np,time,json
 import sys,os,subprocess,socket
 from pymatgen.io.ase import AseAtomsAdaptor
-from ase.calculators.lammpsrun import LAMMPS, Prism
 import sys,zipfile
 import fortranformat as fform
 from pymatgen.core.structure import Structure
@@ -22,12 +21,12 @@ import os
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.core.periodic_table import Element
 import sys,shutil
-import urllib2
-import urllib
-from BeautifulSoup import BeautifulSoup
+#import urllib2
+#import urllib
+#from BeautifulSoup import BeautifulSoup
 import json
 MAPI_KEY = os.environ.get("MAPI_KEY", "")
-from pymatgen.matproj.rest import MPRester
+#from pymatgen.matproj.rest import MPRester
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from math import ceil
 from collections import OrderedDict
@@ -36,11 +35,17 @@ import matplotlib
 matplotlib.use('Agg')
 
 from pymatgen.core.composition import Composition
-from pymatgen.phasediagram.entries import PDEntry
+#from pymatgen.phasediagram.entries import PDEntry
 #from pymatgen.phasediagram.pdmaker import PhaseDiagram
 #from pymatgen.phasediagram.plotter import PDPlotter
 
 import glob
+
+try:
+  from ase.calculators.lammpsrun import LAMMPS, Prism
+except:
+   print ('Please install ase')
+   pass
 
 ###################MAIN PART############################################
 for file in glob.glob("CH.airebo"):

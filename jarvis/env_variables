@@ -1,0 +1,6 @@
+mainn_exe="'/users/knc6/VASP/vasp54/src/vasp.5.4.1Dobby/bin/vasp_std'"
+surf_exe= "'/users/knc6/VASP/vasp54/src/vasp.5.4.1Dobbynoz/bin/vasp_std'"
+soc_exe="'/users/knc6/VASP/vasp54/src/vasp.5.4.1Dobby/bin/vasp_ncl'"
+pot_yaml='/users/knc6/bin/Special_POTCAR.yaml'
+vdw_dat="'/users/knc6/bin/vdw_kernel.bindat'"
+json_dat='/users/knc6/bin/all_mp.json'
