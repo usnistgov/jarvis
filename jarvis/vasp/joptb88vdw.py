@@ -51,6 +51,10 @@ json_dat=os.environ['mp_json']
 
       
 def check_polar(file):
+    """
+    Check if the surface structure is polar
+    by comparing atom types at top and bottom
+    """
     up=0
     dn=0
     coords = np.array(file.frac_coords)
@@ -73,15 +77,9 @@ def check_polar(file):
 
 def get_lowest_en_from_mp(formula, MAPI_KEY="", all_structs=False):
     """
-    fetches the structure corresponding to the given formula
+    Fetches the structure corresponding to the given formula
     from the materialsproject database.
-    
-    Note: Get the api key from materialsproject website. The one used
-    here is nolonger valid.
-    
-    Note: for the given formula there are many structures available, 
-    this function returns the one with the lowest energy above the hull
-    unless all_structs is set to True
+    Note: Get the api key from materialsproject website. 
     """
     if not MAPI_KEY:
         MAPI_KEY = os.environ.get("MAPI_KEY", "")
@@ -117,6 +115,9 @@ def get_lowest_en_from_mp(formula, MAPI_KEY="", all_structs=False):
                 return None
 
 def sum_chem_pot(strt=None):
+    """
+    Helper function for sump of chemical potential
+    """
     sum=0
     symb=strt.symbol_set
     for el in symb:
@@ -124,7 +125,11 @@ def sum_chem_pot(strt=None):
         sum=float(sum)+float(enp)
     return sum
 
-def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):    
+def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):   
+    """
+    Generic function to run a VASP job
+    """
+ 
     hostname=str(socket.gethostname()) 
     poscar_list=[(mat)]
     nprocs = 16
@@ -174,68 +179,68 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                new_symb.append(pots[el])
             potcar = Potcar(symbols=new_symb,functional="PBE")
             if not os.path.exists(run_dir):
-                                                   os.makedirs(jobname)
-                                                   os.chdir(jobname)
-                                                   incar.write_file("INCAR")
-                                                   potcar.write_file("POTCAR")
-                                                   kpoints.write_file("KPOINTS")
-                                                   mat.write_file("POSCAR")
-                       
+                   os.makedirs(jobname)
+                   os.chdir(jobname)
+                   incar.write_file("INCAR")
+                   potcar.write_file("POTCAR")
+                   kpoints.write_file("KPOINTS")
+                   mat.write_file("POSCAR")
+                   
             
-                                                   for i in copy_file:
-                                                      print ('copying',i)
-                                                      shutil.copy2(i,'./')
-                                                   #f=open('job.out','w')
-                                              
-                                                   cmd=str('python  first_cust.py >ouuu')+'\n' 
-                                                   cust_file=open("first_cust.py","w")
-                                                   cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('import os,shutil')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('from custodian.vasp.validators import VasprunXMLValidator')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('from custodian.custodian import Custodian')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('inc=Incar.from_file("INCAR")')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
-                                                   cust_file.write(cline)
-                                                   cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
-                                                   if mat.comment.startswith('Surf'):
-                                                      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
-                                                   if 'SOC' in jobname:
-                                                      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
-                                                   
-                                                   cust_file.write(cline)
-                                                   cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('validators = [VasprunXMLValidator()]')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('c.run()')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cust_file.close()
-                                                   print ("I AM HERE 2")
-                                                   os.system(cmd)
-                                                   try:
-                                                      wait=Vasprun("vasprun.xml").converged
-                                                   except:
-                                                           pass 
-                                                   print ("I AM HERE 3",os.getcwd(),wait)
+                   for i in copy_file:
+                      print ('copying',i)
+                      shutil.copy2(i,'./')
+                   #f=open('job.out','w')
+                   
+                   cmd=str('python  first_cust.py >ouuu')+'\n' 
+                   cust_file=open("first_cust.py","w")
+                   cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('import os,shutil')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('from custodian.vasp.validators import VasprunXMLValidator')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('from custodian.custodian import Custodian')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('inc=Incar.from_file("INCAR")')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
+                   cust_file.write(cline)
+                   cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
+                   cust_file.write(cline)
+                   cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
+                   cust_file.write(cline)
+                   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
+                   if mat.comment.startswith('Surf'):
+                      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
+                   if 'SOC' in jobname:
+                      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
+                   
+                   cust_file.write(cline)
+                   cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('validators = [VasprunXMLValidator()]')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
+                   cust_file.write(cline)
+                   cline=str('c.run()')+'\n' 
+                   cust_file.write(cline)
+                   cust_file.close()
+                   print ("I AM HERE 2")
+                   os.system(cmd)
+                   try:
+                      wait=Vasprun("vasprun.xml").converged
+                   except:
+                           pass 
+                   print ("I AM HERE 3",os.getcwd(),wait)
 
 
             else :
@@ -248,67 +253,67 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                           pass
                   print ("wait os=",wait)
                   if wait==False:
-                                                   incar.write_file("INCAR")
-                                                   potcar.write_file("POTCAR")
-                                                   kpoints.write_file("KPOINTS")
-                                                   mat.write_file("POSCAR")
-                                                   try:
-                                                      print ('FOUND OLD CONTCAR in', os.getcwd())
-                                                      old_contcar=Poscar.from_file('CONTCAR')
-                                                      old_contcar.write_file('POSCAR')
-                                                   except:
-                                                        pass           
-                                                   for i in copy_file:
-                                                      print ('copying',i)
-                                                      shutil.copy2(i,'./')
+                      incar.write_file("INCAR")
+                      potcar.write_file("POTCAR")
+                      kpoints.write_file("KPOINTS")
+                      mat.write_file("POSCAR")
+                      try:
+                         print ('FOUND OLD CONTCAR in', os.getcwd())
+                         old_contcar=Poscar.from_file('CONTCAR')
+                         old_contcar.write_file('POSCAR')
+                      except:
+                           pass           
+                      for i in copy_file:
+                         print ('copying',i)
+                         shutil.copy2(i,'./')
             
-                                              
-                                                   cmd=str('python  first_cust.py >ouuu')+'\n' 
-                                                   cust_file=open("first_cust.py","w")
-                                                   cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('import os,shutil')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('from custodian.vasp.validators import VasprunXMLValidator')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('from custodian.custodian import Custodian')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('inc=Incar.from_file("INCAR")')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
-                                                   cust_file.write(cline)
-                                                   cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
-                                                   cust_file.write(cline)
+                      
+                      cmd=str('python  first_cust.py >ouuu')+'\n' 
+                      cust_file=open("first_cust.py","w")
+                      cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('import os,shutil')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('from custodian.vasp.validators import VasprunXMLValidator')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('from custodian.custodian import Custodian')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('inc=Incar.from_file("INCAR")')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
+                      cust_file.write(cline)
+                      cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
+                      cust_file.write(cline)
+                      cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
+                      cust_file.write(cline)
 
 
-                                                   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
-                                                   if mat.comment.startswith('Surf'):
-                                                      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
-                                                   if 'SOC' in jobname:
-                                                      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
+                      cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
+                      if mat.comment.startswith('Surf'):
+                         cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
+                      if 'SOC' in jobname:
+                         cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
 
-                                                   
-                                                   cust_file.write(cline)
-                                                   cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('validators = [VasprunXMLValidator()]')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cline=str('c.run()')+'\n' 
-                                                   cust_file.write(cline)
-                                                   cust_file.close()
-                                                   os.system(cmd)
+                      
+                      cust_file.write(cline)
+                      cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('validators = [VasprunXMLValidator()]')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
+                      cust_file.write(cline)
+                      cline=str('c.run()')+'\n' 
+                      cust_file.write(cline)
+                      cust_file.close()
+                      os.system(cmd)
 
 
 
@@ -517,6 +522,10 @@ def check_errors(logfile='vasp.out',timeout=18000):
     return set(errors)
 
 def check_errorss(logfile='log'):
+    """
+    Helper function to check errors
+    Deprecated now
+    """
     errors = []
     with open(logfile, "r") as f:
         for line in f:
@@ -532,7 +541,13 @@ def check_errorss(logfile='log'):
                             continue
                         errors.append(err)
     return set(errors)
+
 def check_error(logfile='log'):
+    """
+    Helper function to check errors
+    Deprecated now
+    """
+    errors = []
     errors = set()
     with open(logfile, "r") as f:
         for line in f:
@@ -560,18 +575,11 @@ def check_error(logfile='log'):
 #n2=max(1,length*b2+0.5)
 #n3=max(1,length*b3+0.5)
 #print n1,n2,n3
+
 def Auto_Kpoints(mat=None,length=20):
-    #kp_file=open("KPOINTS","w")
-    #line=str(mat.comment)+'\n'
-    #kp_file.write(line)
-    #line=str(0)+'\n'
-    #kp_file.write(line)
-    #line=str("Auto")+'\n'
-    #kp_file.write(line)
-    #line=str(length)+'\n'
-    #kp_file.write(line)
-    #kp_file.close()
-    #pym_kp=Kpoints.from_file("KPOINTS")
+    """
+    Geting Kpoints object from structure and line-density
+    """
 
     b1=LA.norm(np.array(mat.structure.lattice.reciprocal_lattice_crystallographic.matrix[0]))
     b2=LA.norm(np.array(mat.structure.lattice.reciprocal_lattice_crystallographic.matrix[1]))
@@ -583,10 +591,11 @@ def Auto_Kpoints(mat=None,length=20):
     kpp=Kpoints.gamma_automatic(kpts=(n1,n2,n3))
     return kpp
 
-### kpp=Kpoints.gamma_automatic(kpts=(1,1,1))
-### kpp.write_file("KPP")
 
 def converg_encut(encut=500,mat=None):
+    """
+    Function to converg plane-wave cut-off
+    """
     en1=-10000
     encut1=encut
     convg_encut1=False
@@ -650,7 +659,7 @@ def converg_encut(encut=500,mat=None):
         convg_encut1=True
 
 
-# Some extra points to check
+        # Some extra points to check
         print ("Some extra points to check for ENCUT")
         
         encut2=encut1+50
@@ -692,6 +701,10 @@ def converg_encut(encut=500,mat=None):
 
     
 def converg_kpoints(length=0,mat=None):
+    """
+    Function to converg K-points
+    """
+
     en1=-10000
     encut=550
     convg_kp1=False
@@ -726,8 +739,6 @@ def converg_kpoints(length=0,mat=None):
         if mesh not in kp_list:
            kp_list.append(mesh)
            en2,contc=run_job(mat=mat,incar=incar,kpoints=kpoints,jobname=str('KPOINTS')+str(mat.comment)+str('-')+str(length1))
-
-
 
            while abs(en2-en1)>tol:
               en1=en2
@@ -771,7 +782,7 @@ def converg_kpoints(length=0,mat=None):
            convg_kp1=True
 
 
-# Some extra points to check
+           # Some extra points to check
            print ("Some extra points to check for KPOINTS")
            length3=length1+5
            kpoints=Auto_Kpoints(mat=mat,length=length3)
@@ -832,6 +843,11 @@ def converg_kpoints(length=0,mat=None):
     return length1
 
 def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_prop=True,spin_orb=False,Raman_calc=False,surf_en=False,def_en=False):
+    """
+    Main function to converge k-points/cut-off
+    optimize structure, and run subsequent property calculations
+    """
+
     encut=converg_encut(encut=500,mat=mat)
     leng= converg_kpoints(length=0,mat=mat)
     kpoints=Auto_Kpoints(mat=mat,length=leng)
@@ -1191,87 +1207,11 @@ def bandstr(contc=None,kpoints=None,encut=500):
        except:
            pass
 
-def elastic_prop(mat_f=None,kpoints=None,encut=500):
-
-
-       path=str(mat_f.split('/CONTCAR')[0])+str('/vasprun.xml')
-       v=open(path,"r").readlines()
-       for line in v:
-           if "NBANDS" in  line:
-               nbands=int(line.split(">")[1].split("<")[0])
-               print ("nbands=",nbands)
-               break
-       incar_dict = dict(
-           PREC = 'Accurate',
-           ENCUT = encut,
-           ISMEAR = 0,
-           ISIF = 3,
-           GGA = 'BO',
-           PARAM1 = 0.1833333333,
-           PARAM2 = 0.2200000000,
-           LUSE_VDW = '.TRUE.',
-           AGGAC = 0.0000,
-
-
-           POTIM = 0.015,
-           NEDOS = 5000,
-           EDIFF = '1E-6',
-           IBRION = 6,
-           NELM = 400,
-           NPAR = 16,
-           LWAVE = '.FALSE.' )
-       incar = Incar.from_dict(incar_dict)
-       #v.close()
-       final_str=Structure.from_file(contc)
-       
-       #num_kpoints = (den)*mat.structure.lattice.reciprocal_lattice.volume
-       #kpoints = Kpoints.automatic_density(mat.structure, num_kpoints * mat.structure.num_sites,force_gamma=True)
-       #kpoints = Kpoints.gamma_automatic(kpts=kpts)
-       print ("running smart_converge for",str(mat_f.comment)+str('-')+str('ELASTIC'))
-       sg_mat = SpacegroupAnalyzer(mat_f.structure)
-       mat_cvn = sg_mat.get_conventional_standard_structure()
-       mat_cvn.sort()
-       en2E,contcE=run_job(mat=Poscar(mat_cvn),incar=incar,kpoints=kpoints,jobname=str('MAIN-ELASTIC')+str('-')+str(mat_f.comment))  
-       #try:
-       #   phonts(mat_f)
-       #except:
-       #   pass
-
-
-
-
-
-def optical_prop(mat_f=None,kpoints=None,encut=500,nbands=100):
-       incar_dict = dict(
-           PREC = 'Accurate',
-           ENCUT = encut,
-           NBANDS = 3*int(nbands),
-           LOPTICS = '.TRUE.',
-           ISMEAR = 0,
-           EDIFF = '1E-4',
-
-           NEDOS = 5000,
-           LCHARG = '.FALSE.',
-           ISIF = 2,
-           GGA = 'BO',
-           PARAM1 = 0.1833333333,
-           PARAM2 = 0.2200000000,
-           LUSE_VDW = '.TRUE.',
-           AGGAC = 0.0000,
-
-
-           IBRION = 1,
-           NELM = 400,
-           LORBIT = 11,
-           NPAR = 4,
-           LWAVE = '.FALSE.' )
-       incar = Incar.from_dict(incar_dict)
-       #num_kpoints = (den)*mat.structure.lattice.reciprocal_lattice.volume
-       #kpoints = Kpoints.automatic_density(mat.structure, num_kpoints * mat.structure.num_sites,force_gamma=True)
-       kpoints = Kpoints.gamma_automatic(kpts=kpts)
-       en2OP,contcOP=run_job(mat=mat_f,incar=incar,kpoints=kpoints,jobname=str('MAIN-OPTICS')+str('-')+str(mat_f.comment))  
 
 def smart_vac(strt=None):
+    """
+    Umbrell function for vacancy formation energies
+    """
     vac_arr=[]
     sg_mat = SpacegroupAnalyzer(strt)
     mat_cvn = sg_mat.get_conventional_standard_structure()
@@ -1322,6 +1262,10 @@ def smart_vac(strt=None):
     return def_list,header_list
 
 def def_energy(vac=[]):
+    """
+    Calculation of vacancy formation energies
+    """
+
     def_list=[]
     header_list=[]
     fi=str('DEF.INFO')
@@ -1350,6 +1294,9 @@ def def_energy(vac=[]):
     return def_list,header_list
 
 def smart_surf(strt=None):
+    """
+    Umbrell function for surface energies
+    """
     sg_mat = SpacegroupAnalyzer(strt)
     mat_cvn = sg_mat.get_conventional_standard_structure()
     mat_cvn.sort()
@@ -1395,7 +1342,12 @@ def smart_surf(strt=None):
            else:
                 surf_done=1
     return surf_list,surf_header_list
+
 def surf_energy(surf=[]):
+    """
+    Helper function for surface energies
+    """
+
     surf_list=[]
     surf_header_list=[]
     fi=str('SURF.INFO')
@@ -1418,64 +1370,24 @@ def surf_energy(surf=[]):
     f.close()
     return surf_list,surf_header_list
 
-def make_big(poscar=None):
+def make_big(poscar=None,size=11.0):
+    """
+    Helper function to make supercell 
+    """
     struct=poscar.structure
     comm=poscar.comment
     a, b, c = struct.lattice.abc
-    size=11
     struct.make_supercell([int(float(size)/float(a))+1,int(float(size)/float(b))+1,int(float(size)/float(c))+1])
     big=Poscar(struct)
     big.comment=str(comm)
     return big
 
 
-def get_smart_surf_def(mat=None):
-    #with MPRester() as mp:
-    #     strt = mp.get_structure_by_material_id(mpid)
-    mat=Poscar.from_file("POSCAR")
-#
-    #     mpid=mpid.replace('-','_')
-    #     mpid=str('bulk@')+str(mpid)
-    #     mat.comment=mpid
-
-    print ("Running Main Relax")
-    en,contc=smart_converge(mat=mat)
-    relaxed_str=Poscar.from_file(contc)
-    commen=str(relaxed_str.comment)
-    kpfile=str("MAIN-RELAX-")+str(commen)+str('/KPOINTS')
-    kp=Kpoints.from_file(kpfile)
-    incfile=str("MAIN-RELAX-")+str(commen)+str('/INCAR')
-    inc=Incar.from_file(incfile)
-    encut=inc['ENCUT']
-
-    #pos1=Poscar.from_file("POSCAR")
-    #kp1=Kpoints.from_file("KPOINTS")
-    #print kp1.kpts
-    tag=True
-    kppa=1
-    while tag:
-      kpoints = Kpoints.automatic_density(relaxed_str.structure, kppa,force_gamma=True)
-      #print kpoints.kpts[0],kp1.kpts[0]
-      kppa=kppa+1
-      if (kpoints.kpts[0])>=(kp1.kpts[0]):
-         print (kpoints.kpts,kp1.kpts)
-         tag=False
-      print ("kpp=",kpp)
-
-    kpoints = Kpoints.automatic_density(relaxed_str.structure, kppa,force_gamma=True)
-    elastic_prop(mat_f=relaxed_str,kpoints=kpoints,encut=encut)
-
-
-    bandstr(contc=relaxed_str,encut=encut)
-    optical_prop(mat_f=relaxed_str,kpoints=kpoints,encut=encut,nbands=40)
-    big=make_big(relaxed_str)
-    try:
-        Raman(strt=big,encut=encut,kpoints=kp)
-    except:
-        print ("Failed Raman")
-        pass
-#get_smart_surf_def(mat='POSCAR')
 def main_func(mpid='',mat=None,enforc_cvn=False):
+    """
+    Main function to carry out property calculations
+    """
+
     if mpid !='':
        data = loadfn(json_dat, cls=MontyDecoder)
        for d in data:
@@ -1503,10 +1415,9 @@ def main_func(mpid='',mat=None,enforc_cvn=False):
 
     en,final=smart_converge(mat=mat)
     print (en,final)
-#struct=Structure.from_file("POSCAR")
-#pos=Poscar.from_file('POSCAR')
-#pos.comment='Surf-mp-C'
-#main_func(mat=pos)
+if __name__ == '__main__':
+ struct=Structure.from_file("POSCAR")
+ pos=Poscar.from_file('POSCAR')
+ #pos.comment='Surf-mp-C'
+ main_func(mat=pos)
 
-#main_func(mpid='mp-149')
-#main_func(mpid='mp-605')

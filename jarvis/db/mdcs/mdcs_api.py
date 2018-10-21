@@ -2,7 +2,12 @@
 # MDCS Github: https://github.com/faical-yannick-congo/MDCS, https://github.com/ztrautt/MDCS
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from monty.serialization import loadfn, dumpfn
-import os,glob,json,mdcs,sys
+import os,glob,json,sys
+try:
+   import mdcs
+except:
+   print ("Please install MDCS")
+   pass
 from monty.json import MontyEncoder, MontyDecoder
 import numpy as np
 from pymatgen.io.vasp.outputs import Vasprun
