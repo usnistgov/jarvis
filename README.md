@@ -21,7 +21,8 @@ Installing JARVIS
 
        source activate my_jarvis
 
-- pip install::
+- Simple pip install::
+
        pip install jarvis-tools
        
 - git clone install, get jarvis repo using the command::
