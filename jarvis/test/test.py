@@ -22,9 +22,10 @@ class jlammps(unittest.TestCase):
         self.assertEqual(len(poscar), 1)
 
     def test_read_data(self):
-        dat=(str('../lammps/examples//Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/data'))
-        ff=str('../lammps/examples//Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/potential.mod')
-        #print (read_data(data=dat,ff=ff))
+        dat=(str('../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/data'))
+        ff=str('../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/potential.mod')
+        data= (read_data(data=dat,ff=ff))
+        self.assertEqual(len(data), 1)
 
 class jsklearn(unittest.TestCase):
     def test_read_poscar(self):
