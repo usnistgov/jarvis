@@ -27,11 +27,15 @@ from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen,pmg_surfer,surfer
 import numpy as np,time,json
 import sys,os,subprocess,socket
 from pymatgen.io.ase import AseAtomsAdaptor
-from ase.calculators.lammpsrun import LAMMPS, Prism
 import sys,zipfile
 import fortranformat as fform
 from pymatgen.core.structure import Structure
 from phonopy.structure.atoms import Atoms as PhonopyAtoms
+try:
+  from ase.calculators.lammpsrun import LAMMPS, Prism
+except:
+   print ('Please install ase')
+   pass
 
 def get_phonopy_atoms(mat=None):
     """

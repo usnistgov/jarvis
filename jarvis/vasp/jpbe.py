@@ -28,17 +28,24 @@ import subprocess
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput
 from pymatgen.io.vasp.inputs import Potcar, Kpoints
-from pymatgen.io.vaspio_set import MPVaspInputSet, MPNonSCFVaspInputSet
+try:
+ from pymatgen.io.vaspio_set import MPVaspInputSet, MPNonSCFVaspInputSet
+except:
+  pass
 from numpy import matrix
 import numpy as np
 #from mpinterfaces import get_struct_from_mp
 #from mpinterfaces.calibrate import Calibrate
 #from mpinterfaces.utils import *
-from pymatgen.io.aseio import AseAtomsAdaptor
-from ase.lattice.cubic import DiamondFactory, SimpleCubicFactory
-from ase.lattice import bulk
-from ase.lattice.compounds import Zincblende,AuCu3,Rocksalt,AuCu,CsCl,TRI_Fe2O3,HEX_Fe2O3,CsClFactory
-from ase.lattice.spacegroup import crystal
+from pymatgen.io.ase import AseAtomsAdaptor
+try:
+  from ase.lattice.cubic import DiamondFactory, SimpleCubicFactory
+  from ase.lattice import bulk
+  from ase.lattice.compounds import Zincblende,AuCu3,Rocksalt,AuCu,CsCl,TRI_Fe2O3,HEX_Fe2O3,CsClFactory
+  from ase.lattice.spacegroup import crystal
+except:
+   print ('Please install ase')
+   pass
 import operator
 
 

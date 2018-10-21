@@ -22,7 +22,7 @@ import time
 from collections import OrderedDict
 from jarvis.lammps.jlammps import vac_antisite_def_struct_gen,surfer
 #from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen,surfer
-from pymatgen.matproj.rest import MPRester
+from pymatgen.ext.matproj import MPRester
 import subprocess
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput
@@ -35,6 +35,8 @@ import operator
 from monty.json import MontyEncoder, MontyDecoder
 from monty.serialization import loadfn, dumpfn
 
+"""
+Define in enenv_variable file
 main_exe=os.environ['vasp_bulk_exe']
 surf_exe= os.environ['vasp_surf_exe']
 nw_exe= os.environ['vasp_nw_exe']
@@ -42,6 +44,7 @@ soc_exe=os.environ['vasp_soc_exe']
 pot_yaml=os.environ['vasp_pot_yaml']
 vdw_dat=os.environ['vasp_vdw_dat']
 json_dat=os.environ['mp_json']
+"""
 
 
 

@@ -32,10 +32,15 @@ from pymatgen.io.vasp.inputs import Potcar, Kpoints
 from numpy import matrix
 import numpy as np
 from pymatgen.io.ase import AseAtomsAdaptor
-from ase.lattice.cubic import DiamondFactory, SimpleCubicFactory
-from ase.lattice import bulk
-from ase.lattice.compounds import Zincblende,AuCu3,Rocksalt,AuCu,CsCl,TRI_Fe2O3,HEX_Fe2O3,CsClFactory
-from ase.lattice.spacegroup import crystal
+try:
+  from ase.lattice.cubic import DiamondFactory, SimpleCubicFactory
+  from ase.lattice import bulk
+  from ase.lattice.compounds import Zincblende,AuCu3,Rocksalt,AuCu,CsCl,TRI_Fe2O3,HEX_Fe2O3,CsClFactory
+  from ase.lattice.spacegroup import crystal
+except:
+   print ('Please install ase')
+   pass
+
 import operator
 
 
