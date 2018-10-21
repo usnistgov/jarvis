@@ -19,14 +19,14 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'jarvis'
-copyright = '2018, KC'
-author = 'KC'
+project = 'jarvis-tools'
+copyright = '2018, Kamal Choudhary'
+author = 'Kamal Choudhary'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '2018'
+release = '2018.20.21'
 
 
 # -- General configuration ---------------------------------------------------
@@ -102,7 +102,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'jarvisdoc'
+htmlhelp_basename = 'jarvis-toolsdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -129,8 +129,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'jarvis.tex', 'jarvis Documentation',
-     'KC', 'manual'),
+    (master_doc, 'jarvis-tools.tex', 'jarvis-tools Documentation',
+     'Kamal Choudhary', 'manual'),
 ]
 
 
@@ -139,7 +139,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'jarvis', 'jarvis Documentation',
+    (master_doc, 'jarvis-tools', 'jarvis-tools Documentation',
      [author], 1)
 ]
 
@@ -150,8 +150,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'jarvis', 'jarvis Documentation',
-     author, 'jarvis', 'One line description of project.',
+    (master_doc, 'jarvis-tools', 'jarvis-tools Documentation',
+     author, 'jarvis-tools', 'One line description of project.',
      'Miscellaneous'),
 ]
 
