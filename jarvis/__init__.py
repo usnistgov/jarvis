@@ -8,5 +8,6 @@ lines=f.read().splitlines()
 f.close()
 for i in lines:
   tmp=(i.split('='))
-  print (tmp[0],tmp[1])
-  os.environ[tmp[0]]=tmp[1]
+  if len(tmp)>1:
+   print (tmp[0],tmp[1])
+   os.environ[tmp[0]]=tmp[1]

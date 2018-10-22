@@ -3,10 +3,8 @@ Module to run OptB88vdW based High-throughput calculations
 """
 from __future__ import division, unicode_literals, print_function
 import os,socket,shutil
-from monty.json import MontyEncoder, MontyDecoder
 from custodian.vasp.jobs import VaspJob
 from pymatgen.io.vasp import VaspInput, Vasprun
-from custodian.vasp.jobs import VaspJob
 from pymatgen.io.vasp.outputs import Oszicar
 from subprocess import Popen, PIPE
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
@@ -25,35 +23,101 @@ from jarvis.lammps.jlammps import vac_antisite_def_struct_gen,surfer
 from pymatgen.ext.matproj import MPRester
 import subprocess
 from pymatgen.core.structure import Structure
-from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput
-from pymatgen.io.vasp.inputs import Potcar, Kpoints
+from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar,Kpoints
 #from pymatgen.io.vasp.sets import MPVaspInputSet, MPNonSCFVaspInputSet
 from numpy import matrix
 import numpy as np
 from pymatgen.io.ase import AseAtomsAdaptor
 import operator
-from monty.json import MontyEncoder, MontyDecoder
 from monty.serialization import loadfn, dumpfn
+from monty.json import MontyEncoder, MontyDecoder
 
-"""
-Define in enenv_variable file
+
+#Define in enenv_variable file
 main_exe=os.environ['vasp_bulk_exe']
 surf_exe= os.environ['vasp_surf_exe']
 nw_exe= os.environ['vasp_nw_exe']
 soc_exe=os.environ['vasp_soc_exe']
-pot_yaml=os.environ['vasp_pot_yaml']
+pot_yaml=str(os.path.join(os.path.dirname(__file__),'Special_POTCAR.yaml'))
 vdw_dat=os.environ['vasp_vdw_dat']
-json_dat=os.environ['mp_json']
+json_dat=os.environ['data_json']
+ncores=int(os.environ['ncores'])
+nnodes=int(os.environ['nnodes'])
+mem=str(os.environ['mem'])
+walltime=str(os.environ['walltime'])
+mp_cmd=str(os.environ['mp_cmd'])
+
+
+optb88dict = dict(
+            PREC = 'Accurate',
+            ISMEAR = 0,
+            IBRION=2,
+
+            GGA = 'BO',
+            PARAM1 = 0.1833333333,
+            PARAM2 = 0.2200000000,
+            LUSE_VDW = '.TRUE.',
+            AGGAC = 0.0000,
+
+            EDIFF = '1E-7',
+            NSW = 1,
+            NELM = 400,
+            ISIF = 2,
+            NPAR = np.sqrt(ncores),
+            LCHARG = '.FALSE.',
+            LWAVE = '.FALSE.' )
+functional='PBE'
+use_incar_dict=optb88dict
+
+"""
+Change use_incar_dict based on a functional,
+examples given for LDA and PBE
+
+functional='LDA'
+ldadict = dict(
+            PREC = 'Accurate',
+            ISMEAR = 0,
+            IBRION=2,
+
+            EDIFF = '1E-7',
+            NSW = 1,
+            NELM = 400,
+            ISIF = 2,
+            NPAR = np.sqrt(ncores),
+            LCHARG = '.FALSE.',
+            LWAVE = '.FALSE.' )
+
+use_incar_dict=ldadict
+
+functional='PBE'
+pbedict = dict(
+            PREC = 'Accurate',
+            ISMEAR = 0,
+            IBRION=2,
+
+            GGA = 'PE',
+
+            EDIFF = '1E-7',
+            NSW = 1,
+            NELM = 400,
+            ISIF = 2,
+            NPAR = np.sqrt(ncores),
+            LCHARG = '.FALSE.',
+            LWAVE = '.FALSE.' )
+
+use_incar_dict=pbedict
 """
 
 
 
-
-      
 def check_polar(file):
     """
     Check if the surface structure is polar
     by comparing atom types at top and bottom
+    Args:
+         file:Structure object (surface with vacuum)
+    Returns:
+           polar:True/False   
     """
     up=0
     dn=0
@@ -77,9 +141,16 @@ def check_polar(file):
 
 def get_lowest_en_from_mp(formula, MAPI_KEY="", all_structs=False):
     """
-    Fetches the structure corresponding to the given formula
-    from the materialsproject database.
-    Note: Get the api key from materialsproject website. 
+    Lowest energy/chemical potential of an element
+    from the materialsproject/jarvis database.
+    Note: Get the api key from materialsproject/jarvis website. 
+    Args:
+        formula: say Al, Ni etc.
+        MAPI_KEY: should be defines in the environment
+        all_structs: all structures or just stable ones (True/False)
+    Returns:
+         enp: energy per atom
+
     """
     if not MAPI_KEY:
         MAPI_KEY = os.environ.get("MAPI_KEY", "")
@@ -117,6 +188,10 @@ def get_lowest_en_from_mp(formula, MAPI_KEY="", all_structs=False):
 def sum_chem_pot(strt=None):
     """
     Helper function for sump of chemical potential
+    Args:
+        strt: Structure object
+    Returns:
+           sum: sum of energy
     """
     sum=0
     symb=strt.symbol_set
@@ -127,24 +202,30 @@ def sum_chem_pot(strt=None):
 
 def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):   
     """
-    Generic function to run a VASP job
+    Generic function to run a VASP job, error correction implemented using
+    custodian package
+    A jobname+.json file is produced after successful completion of the job
+    A first_cust.py file is generated which is invoked using python command
+    Args:
+        mat: Poscar object with structure information
+        incar: Incar object with control information
+        kpoints: Kpoints object with mesh information
+        jobname: a uniq name for a job-type, say MAIN-ELAST for elastic properties
+        copy_file: copy file from previous runs, say CHGCAR for Non-SCF bandstructure calculations 
+    Returns:
+        f_energy: final energy
+        contcar: path to final relaxed structure
     """
- 
-    hostname=str(socket.gethostname()) 
+    #hostname=str(socket.gethostname()) 
     poscar_list=[(mat)]
-    nprocs = 16
-    nnodes = 8
-    mem='1500'
     cwd=str(os.getcwd())
     job_name=str(mat.comment)
-    walltime = '148:12:00'
     job_dir=str(jobname)
     run_file = str(os.getcwd())+str('/')+str(jobname)+str('.json')
     run_dir = str(os.getcwd())+str('/')+str(jobname)
     if mat.comment.startswith('Surf'):
        [a,b,c]=kpoints.kpts[0]
        kpoints.kpts=[[a,b,1]]
-       
        try:
            pol=check_polar(mat.structure)
            if pol==True:
@@ -158,17 +239,6 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
     wait=False
     json_file=str(jobname)+str('.json')
     print ('json should be=',json_file,run_file,os.getcwd())
-    if hostname!='ratan.hpc.nist.gov':
-       print ('raritan.hpc.nist.gov 1 ')
-       try:  
-         if os.path.isfile(run_file):
-            d=loadfn(run_file,cls=MontyDecoder)
-            f_energy=d[0]['final_energy']      
-            contcar=run_file.split('.json')[0]+str("/CONTCAR") 
-            wait=True 
-            print ('raritan.hpc.nist.gov 2 ',f_energy)
-       except:
-           pass  
     if wait==False:
             print ("I AM HERE 2")
             with open(pot_yaml, 'r') as f:
@@ -177,7 +247,7 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
             new_symb=[]
             for el in mat.site_symbols:
                new_symb.append(pots[el])
-            potcar = Potcar(symbols=new_symb,functional="PBE")
+            potcar = Potcar(symbols=new_symb,functional=functional)
             if not os.path.exists(run_dir):
                    os.makedirs(jobname)
                    os.chdir(jobname)
@@ -185,13 +255,10 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                    potcar.write_file("POTCAR")
                    kpoints.write_file("KPOINTS")
                    mat.write_file("POSCAR")
-                   
-            
                    for i in copy_file:
                       print ('copying',i)
                       shutil.copy2(i,'./')
                    #f=open('job.out','w')
-                   
                    cmd=str('python  first_cust.py >ouuu')+'\n' 
                    cust_file=open("first_cust.py","w")
                    cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
@@ -218,12 +285,11 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                    cust_file.write(cline)
                    cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
                    cust_file.write(cline)
-                   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
+                   cline=str("job=VaspJob([mp_cmd, '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
                    if mat.comment.startswith('Surf'):
-                      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
+                      cline=str("job=VaspJob([mp_cmd,  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
                    if 'SOC' in jobname:
-                      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
-                   
+                      cline=str("job=VaspJob([mp_cmd,  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
                    cust_file.write(cline)
                    cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
                    cust_file.write(cline)
@@ -294,15 +360,11 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                       cust_file.write(cline)
                       cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
                       cust_file.write(cline)
-
-
-                      cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
+                      cline=str("job=VaspJob([mp_cmd, '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
                       if mat.comment.startswith('Surf'):
-                         cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
+                         cline=str("job=VaspJob([mp_cmd,  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
                       if 'SOC' in jobname:
-                         cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
-
-                      
+                         cline=str("job=VaspJob([mp_cmd,  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
                       cust_file.write(cline)
                       cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
                       cust_file.write(cline)
@@ -314,10 +376,6 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                       cust_file.write(cline)
                       cust_file.close()
                       os.system(cmd)
-
-
-
-
 
             contcar=str(os.getcwd())+str('/')+str('CONTCAR')
             oszicar = Oszicar("OSZICAR")
@@ -337,248 +395,15 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
 
 
 
-##########################################################
-def check_errors(logfile='vasp.out',timeout=18000):
-    errors = []
-    #print ("going here 12")
-    try:
-      run=Vasprun("vasprun.xml")
-      if run.converged_electronic == False:
-          errors.append("unconverged_electronic")
-      if run.converged_ionic == False:
-          errors.append("unconverged")
-    except:
-        pass
-    #f=open("OUTCAR",'r')
-    try:
-       oszicar = Oszicar("OSZICAR")
-       ionic_steps=len(oszicar.ionic_steps)
-       with open("OUTCAR") as f:
-             for line in f:
-
-                 if "NSW" in line:
-                     try:
-                         #nbands = int(d[-1].strip())
-                         nsw= int(str(line.split("=")[1]).split("number of steps")[0])
-                         if nsw >1 and ionic_steps==nsw:
-                            errors.append("unconverged") 
-                     except:
-                        pass
-
-                 if "NELM" in line:
-                     try:
-                         #nbands = int(d[-1].strip())
-                         #nsw= int(str(line.split("=")[1]).split("number of steps")[0])
-                         nelm= int(str(line.split("=")[1]).split(";")[0])
-                         electronic_steps=len(os.electronic_steps[-1])
-                         if electronic_steps <nelm:
-                             print("Electronically converged")
-                         else:
-                            errors.append("unconverged_electronic") 
-            
-                     except:
-                        pass
-
- 
-
-    except:
-          
-         pass
-              
-
-    with open(logfile, "r") as f:
-        for line in f:
-            l = line.strip()
-
-            if "WARNING: Sub-Space-Matrix is not hermitian in" in  line:
-                     err="subspacematrix"
-                     if err not  in errors:
-                        errors.append(err)
-            if "Tetrahedron method fails for NKPT<" in  line:
-                     err="tet"
-                     if err not  in errors:
-                        errors.append(err)
-            if "Fatal error detecting k-mesh" in  line:
-                     err="tet"
-                     if err not  in errors:
-                        errors.append(err)
-            if "Fatal error: unable to match k-point" in  line:
-                     err="tet"
-                     if err not  in errors:
-                        errors.append(err)
-            if "Routine TETIRR needs special values" in  line:
-                     err="tet"
-                     if err not  in errors:
-                        errors.append(err)
-            if "Tetrahedron method fails for NKPT<" in  line:
-                     err="tet"
-                     if err not  in errors:
-                        errors.append(err)
-            if "inverse of rotation matrix was not found (increase" in  line:
-                     err="inv_rot_ma"
-                     if err not  in errors:
-                        errors.append(err)
-            if "SYMPREC" in  line:
-                     err="inv_rot_ma"
-                     if err not  in errors:
-                        errors.append(err)
-            if "Routine TETIRR needs special values" in  line:
-                     err="tetirr"
-                     if err not  in errors:
-                        errors.append(err)
-            if "Could not get correct shift" in  line:
-                     err="incorrect_shift"
-                     if err not  in errors:
-                        errors.append(err)
-            if "REAL_OPTLAY: internal error" in  line:
-                     err="real_optlay"
-                     if err not  in errors:
-                        errors.append(err)
-            if "REAL_OPT: internal ERROR" in  line:
-                     err="real_optlay"
-                     if err not  in errors:
-                        errors.append(err)
-            if "ERROR RSPHER" in  line:
-                     err="rspher"
-                     if err not  in errors:
-                        errors.append(err)
-            if "DENTET" in  line:
-                     err="dentet"
-                     if err not  in errors:
-                        errors.append(err)
-            if "TOO FEW BAND" in  line:
-                     err="too_few_bands"
-                     if err not  in errors:
-                        errors.append(err)
-            if "ERROR: the triple product of the basis vectors" in  line:
-                     err="triple_product"
-                     if err not  in errors:
-                        errors.append(err)
-            if "Found some non-integer element in rotation matrix" in  line:
-                     err="rot_matrix"
-                     if err not  in errors:
-                        errors.append(err)
-            if "BRIONS problems: POTIM should be increased" in  line:
-                     err="brions"
-                     if err not  in errors:
-                        errors.append(err)
-            if "internal error in subroutine PRICEL" in  line:
-                     err="pricel"
-                     if err not  in errors:
-                        errors.append(err)
-            if "LAPACK: Routine ZPOTRF failed" in  line:
-                     err="zpotrf"
-                     if err not  in errors:
-                        errors.append(err)
-            if "One of the lattice vectors is very long (>50 A), but AMIN" in  line:
-                     err="amin"
-                     if err not  in errors:
-                        errors.append(err)
-            if "ZBRENT: fatal internal in" in  line:
-                     err="zbrent"
-                     if err not  in errors:
-                        errors.append(err)
-            if "ZBRENT: fatal error in bracketing" in  line:
-                     err="zrbent"
-                     if err not  in errors:
-                        errors.append(err)
-
-            if "ERROR in subspace rotation PSSYEVX" in  line:
-                     err="pssyevx"
-                     if err not  in errors:
-                        errors.append(err)
-            if "WARNING in EDDRMM: call to ZHEGV failed" in  line:
-                     err="eddrmm"
-                     if err not  in errors:
-                        errors.append(err)
-            if "Error EDDDAV: Call to ZHEGV failed" in  line:
-                     err="edddav"
-                     if err not  in errors:
-                        errors.append(err)
-            if "Your FFT grids (NGX,NGY,NGZ) are not sufficient" in  line:
-                     err="aliasing_incar"
-                     if err not  in errors:
-                        errors.append(err)
-
-
-#    with open(logfile, "r") as f:
-#        for line in f:
-#            l = line.strip()
-#            for err, msgs in VaspErrorHandler.error_msgs.items():
-#                for msg in msgs:
-#                    if l.find(msg) != -1:
-#                        # this checks if we want to run a charged
-#                        # computation (e.g., defects) if yes we don't
-#                        # want to kill it because there is a change in e-
-#                        # density (brmix error)
-#                        if err == "brmix" and 'NELECT' in incar:
-#                            continue
-                        errors.append(err)
-    #UNCONVERGED
-    st = os.stat('vasp.out')
-    if time.time() - st.st_mtime > timeout:
-           errors.append('Frozenjob')
-
-    return set(errors)
-
-def check_errorss(logfile='log'):
-    """
-    Helper function to check errors
-    Deprecated now
-    """
-    errors = []
-    with open(logfile, "r") as f:
-        for line in f:
-            l = line.strip()
-            for err, msgs in VaspErrorHandler.error_msgs.items():
-                for msg in msgs:
-                    if l.find(msg) != -1:
-                        # this checks if we want to run a charged
-                        # computation (e.g., defects) if yes we don't
-                        # want to kill it because there is a change in e-
-                        # density (brmix error)
-                        if err == "brmix" and 'NELECT' in incar:
-                            continue
-                        errors.append(err)
-    return set(errors)
-
-def check_error(logfile='log'):
-    """
-    Helper function to check errors
-    Deprecated now
-    """
-    errors = []
-    errors = set()
-    with open(logfile, "r") as f:
-        for line in f:
-            l = line.strip()
-            for err, msgs in VaspErrorHandler.error_msgs.items():
-                for msg in msgs:
-                    if l.find(msg) != -1:
-                        # this checks if we want to run a charged
-                        # computation (e.g., defects) if yes we don't
-                        # want to kill it because there is a change in e-
-                        # density (brmix error)
-                        if err == "brmix" and 'NELECT' in incar:
-                            continue
-                        errors.add(err)
-    return len(errors) > 0
-
-
-#b1=LA.norm(np.array(mat.lattice.reciprocal_lattice_crystallographic.matrix[0]))
-#b2=LA.norm(np.array(mat.lattice.reciprocal_lattice_crystallographic.matrix[1]))
-#b3=LA.norm(np.array(mat.lattice.reciprocal_lattice_crystallographic.matrix[2]))
-#print b1,b2,b3
-
-#length=20
-#n1=max(1,length*b1+0.5)
-#n2=max(1,length*b2+0.5)
-#n3=max(1,length*b3+0.5)
-#print n1,n2,n3
 
 def Auto_Kpoints(mat=None,length=20):
     """
     Geting Kpoints object from structure and line-density
+    Args:
+         mat: Poscar object with structure information
+         length: line-density
+    Returns:
+         kpp: Kpoint object
     """
 
     b1=LA.norm(np.array(mat.structure.lattice.reciprocal_lattice_crystallographic.matrix[0]))
@@ -595,6 +420,11 @@ def Auto_Kpoints(mat=None,length=20):
 def converg_encut(encut=500,mat=None):
     """
     Function to converg plane-wave cut-off
+    Args:
+        encut: intial cutoff
+        mat: Poscar object
+    Returns:
+           encut: converged cut-off
     """
     en1=-10000
     encut1=encut
@@ -608,24 +438,7 @@ def converg_encut(encut=500,mat=None):
         encut_list.append(encut)
         length=10
         encut1=encut+50
-        incar_dict = dict(
-            PREC = 'Accurate',
-            ENCUT = encut,
-            ISMEAR = 0,
-            IBRION=2,
-
-            GGA = 'BO',
-            PARAM1 = 0.1833333333,
-            PARAM2 = 0.2200000000,
-            LUSE_VDW = '.TRUE.',
-            AGGAC = 0.0000,
-
-            EDIFF = '1E-7',
-            NSW = 1,
-            NELM = 400,
-            NPAR = 4,
-            LCHARG = '.FALSE.',
-            LWAVE = '.FALSE.' )
+        incar_dict = use_incar_dict.update({"ENCUT":encut})
         incar = Incar.from_dict(incar_dict)
         kpoints=Auto_Kpoints(mat=mat,length=length)
         print ("running smart_converge for",str(mat.comment)+str('-')+str('ENCUT')+str('-')+str(encut))
@@ -635,24 +448,7 @@ def converg_encut(encut=500,mat=None):
            encut1=encut+50
            encut_list.append(encut)
            print("Incrementing encut",encut)
-           incar_dict = dict(
-               PREC = 'Accurate',
-               IBRION=2,
-               ENCUT = encut1,
-               ISMEAR = 0,
-               EDIFF = '1E-7',
-               NSW = 1,
-               GGA = 'BO',
-               PARAM1 = 0.1833333333,
-               PARAM2 = 0.2200000000,
-               LUSE_VDW = '.TRUE.',
-               AGGAC = 0.0000,
-               NELM = 400,
-
-
-               NPAR = 4,
-               LCHARG = '.FALSE.',
-               LWAVE = '.FALSE.' )
+           incar_dict = use_incar_dict.update({"ENCUT":encut1})
            incar = Incar.from_dict(incar_dict)
            print ("running smart_converge for",str(mat.comment)+str('-')+str('ENCUT')+str('-')+str(encut))
            en2,contc=run_job(mat=mat,incar=incar,kpoints=kpoints,jobname=str('ENCUT')+str(mat.comment)+str('-')+str(encut))
@@ -703,6 +499,11 @@ def converg_encut(encut=500,mat=None):
 def converg_kpoints(length=0,mat=None):
     """
     Function to converg K-points
+    Args:
+        lenght: K-point line density
+        mat: Poscar object with structure information
+    Returns:
+           length1: K-point line density
     """
 
     en1=-10000
@@ -714,23 +515,7 @@ def converg_kpoints(length=0,mat=None):
     while   convg_kp2 !=True:
     #while convg_kp1 !=True and  convg_kp2 !=True:
         tol=0.001          #change 0.001
-        incar_dict = dict(
-            PREC = 'Accurate',
-            ENCUT = encut,
-            ISMEAR = 0,
-            IBRION=2,
-            EDIFF = '1E-7',
-            NSW = 1,
-            NELM = 400,
-            GGA = 'BO',
-            PARAM1 = 0.1833333333,
-            PARAM2 = 0.2200000000,
-            LUSE_VDW = '.TRUE.',
-            AGGAC = 0.0000,
-
-            NPAR = 4,
-            LCHARG = '.FALSE.',
-            LWAVE = '.FALSE.' )
+        incar_dict = use_incar_dict.update({"ENCUT":encut})
         incar = Incar.from_dict(incar_dict)
         length1=length1+5
         print ("Incrementing length",length1)
@@ -743,23 +528,7 @@ def converg_kpoints(length=0,mat=None):
            while abs(en2-en1)>tol:
               en1=en2
               print ("Incrementing length",length1)
-              incar_dict = dict(
-                  PREC = 'Accurate',
-                  IBRION=2,
-                  ENCUT = encut,
-                  ISMEAR = 0,
-                  EDIFF = '1E-7',
-                  NSW = 1,
-                  GGA = 'BO',
-                  PARAM1 = 0.1833333333,
-                  PARAM2 = 0.2200000000,
-                  LUSE_VDW = '.TRUE.',
-                  AGGAC = 0.0000,
-
-                  NELM = 400,
-                  NPAR = 4,
-                  LCHARG = '.FALSE.',
-                  LWAVE = '.FALSE.' )
+              incar_dict = use_incar_dict.update({"ENCUT":encut})
               incar = Incar.from_dict(incar_dict)
               while mesh in kp_list:
                  length1=length1+5
@@ -842,14 +611,32 @@ def converg_kpoints(length=0,mat=None):
 
     return length1
 
-def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_prop=True,spin_orb=False,Raman_calc=False,surf_en=False,def_en=False):
+def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optical_prop=True,mbj_prop=True,spin_orb=False,phonon=False,surf_en=False,def_en=False):
     """
     Main function to converge k-points/cut-off
     optimize structure, and run subsequent property calculations
+    Args:
+         mat: Poscar object with structure information
+         encut: if '' then automataic convergence, else use defined fixed-cutoff
+         leng: if '' then automataic convergence, else use defined fixed-line density
+         band_str: if True then do band-structure calculations along high-symmetry points
+         elast_prop: if True then do elastic property calculations using finite-difference
+         optical_prop: if True do frequency dependent dielectric function calculations using he independent-particle (IP) approximation
+         mbj_prop: if True do METAGGA-TBmBJ optical property calculations with IP approximation
+         spin_orb: if True do spin-orbit calculations
+         phonon: if True do phonon calculations using DFPT
+         surf_en: if True do surface enrgy calculations 
+         def_en: if True do defect enrgy calculations 
+    Returns:
+         en2: final energy
+         mat_f: final structure
     """
+    if encut=="":
+      encut=converg_encut(encut=500,mat=mat)
 
-    encut=converg_encut(encut=500,mat=mat)
-    leng= converg_kpoints(length=0,mat=mat)
+    if leng=="":
+       leng= converg_kpoints(length=0,mat=mat)
+
     kpoints=Auto_Kpoints(mat=mat,length=leng)
     isif=2
     commen=str(mat.comment)
@@ -859,31 +646,7 @@ def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_
        lcharg='.TRUE.' 
     if commen.split('@')[0] == 'sbulk':
        isif=3
-    incar_dict = dict(
-        PREC = 'Accurate',
-        ENCUT = encut,
-        ISMEAR = 0,
-        EDIFF = '1E-7',
-        EDIFFG = '-1E-3',
-        ISIF = 3,
-        GGA = 'BO',
-        PARAM1 = 0.1833333333,
-        PARAM2 = 0.2200000000,
-        LUSE_VDW = '.TRUE.',
-        AGGAC = 0.0000,
-
-
-        NEDOS = 5000,
-        IBRION = 2,
-        NSW = 500,   #change 400
-        NELM = 500,  #change 400
-        LORBIT = 11,
-        LVTOT = '.TRUE.',
-        LVHAR = '.TRUE.',
-        ISPIN = 2,
-        NPAR = 4,
-        LCHARG = lcharg,
-        LWAVE = '.FALSE.' )
+    incar_dict = use_incar_dict.update({"ENCUT":encut,"EDIFFG":-1E-3,"ISIF":3,"NEDOS":5000,"NSW":500,"NELM":500,"LORBIT":11,"LVTOT":'.TRUE.',"LVHAR":'.TRUE.',"ISPIN":2,"LCHARG":'.TRUE.'})
     incar = Incar.from_dict(incar_dict)
     try:
        if mat.comment.startswith('Mol'):
@@ -912,36 +675,12 @@ def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_
     mat_f=Poscar(strt)
     mat_f.comment=str(mat.comment)
     if band_str==True:
-       incar_dict = dict(
-           PREC = 'Accurate',
-           ENCUT = encut,
-           NBANDS=int(nbands)+10,
-           ISMEAR = 0,
-           EDIFF = '1E-7',
-           GGA = 'BO',
-           PARAM1 = 0.1833333333,
-           PARAM2 = 0.2200000000,
-           LUSE_VDW = '.TRUE.',
-           AGGAC = 0.0000,
-
-
-           LCHARG = '.FALSE.',
-           NEDOS = 5000,
-           ISPIN = 2,
-           ISIF = 2,
-           IBRION = 1,
-           NELM = 400,
-           LORBIT = 11,
-           NPAR = 4,
-           LWAVE = '.FALSE.' )
+       incar_dict = use_incar_dict.update({"ISPIN":2,"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":int(nbands)+10})
        incar = Incar.from_dict(incar_dict)
-       user_incar_settings={"EDIFF":1E-6,"ISIF":2,"NSW":0,"LORBIT":11,"ENCUT":encut,"LWAVE":'.FALSE.',"PREC":'Accurate'}
-       #mpvis = MPNonSCFVaspInputSet(user_incar_settings=incar)
        kpath = HighSymmKpath(mat_f.structure)
        frac_k_points, k_points_labels = kpath.get_kpoints(line_density=20,coords_are_cartesian=False)
        kpoints = Kpoints(comment="Non SCF run along symmetry lines",style=Kpoints.supported_modes.Reciprocal,num_kpts=len(frac_k_points),kpts=frac_k_points, labels=k_points_labels,kpts_weights=[1] * len(frac_k_points))
  
-
        try: 
            print ("running MAIN-BAND")
            kpoints=mpvis.get_kpoints(mat_f.structure)
@@ -959,70 +698,30 @@ def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_
            pass
     os.chdir(cwd)
     if surf_en==True:
-       incar_dict = dict(
-           PREC = 'Accurate',
-           ENCUT = encut,
-           ISMEAR = 0,
-           EDIFF = '1E-7',
-           GGA = 'BO',
-           PARAM1 = 0.1833333333,
-           PARAM2 = 0.2200000000,
-           LUSE_VDW = '.TRUE.',
-           AGGAC = 0.0000,
-
-
-           LCHARG = '.FALSE.',
-           NEDOS = 5000,
-           ISIF = 2,
-           IBRION = 1,
-           NELM = 400,
-           NSW = 200,
-           LORBIT = 11,
-           NPAR = 4,
-           LWAVE = '.FALSE.' )
+       incar_dict = use_incar_dict.update({"ENCUT":encut,"NEDOS":5000,"IBRION":1,"NSW":500,"LORBIT":11})
        incar = Incar.from_dict(incar_dict)
        surf=surfer(mat=mat_f.structure,layers=3)
        for i in surf:
 
-
          try: 
            print ("running MAIN-BAND")
+           #NSCF
+           #chg_file=str(contc).replace('CONTCAR','CHGCAR')
+           #print ('chrfile',chg_file)
+           #shutil.copy2(chg_file,'./')
            kpoints=Auto_Kpoints(mat=i,length=leng)
            en2s,contcs=run_job(mat=i,incar=incar,kpoints=kpoints,jobname=str('Surf_en-')+str(i.comment)+str('-')+str(mat_f.comment))  
-          # kpoints=mpvis.get_kpoints(mat_f.structure)
-          # en2B,contcB=run_job(mat=mat_f,incar=incar,kpoints=kpoints,jobname=str('MAIN-BAND')+str('-')+str(mat_f.comment))  
+           #kpoints=mpvis.get_kpoints(mat_f.structure)
+           #en2B,contcB=run_job(mat=mat_f,incar=incar,kpoints=kpoints,jobname=str('MAIN-BAND')+str('-')+str(mat_f.comment))  
          except:
-
            pass
     os.chdir(cwd)
     if def_en==True:
-       incar_dict = dict(
-           PREC = 'Accurate',
-           ENCUT = encut,
-           ISMEAR = 0,
-           EDIFF = '1E-7',
-           GGA = 'BO',
-           PARAM1 = 0.1833333333,
-           PARAM2 = 0.2200000000,
-           LUSE_VDW = '.TRUE.',
-           AGGAC = 0.0000,
-
-
-           LCHARG = '.FALSE.',
-           NEDOS = 5000,
-           ISIF = 2,
-           IBRION = 1,
-           NELM = 400,
-           NSW = 200,
-           LORBIT = 11,
-           NPAR = 4,
-           LWAVE = '.FALSE.' )
+       incar_dict = use_incar_dict.update({"ENCUT":encut,"NEDOS":5000,"IBRION":1,"NSW":500,"LORBIT":11})
        incar = Incar.from_dict(incar_dict)
        #surf=surfer(mat=mat_f.structure,layers=3)
        vac=vac_antisite_def_struct_gen(cellmax=3,struct=mat_f.structure)
        for i in vac:
-
-
          try: 
            print ("running MAIN-vac")
            kpoints=Auto_Kpoints(mat=i,length=leng)
@@ -1030,7 +729,6 @@ def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_
           # kpoints=mpvis.get_kpoints(mat_f.structure)
           # en2B,contcB=run_job(mat=mat_f,incar=incar,kpoints=kpoints,jobname=str('MAIN-BAND')+str('-')+str(mat_f.comment))  
          except:
-
            pass
     os.chdir(cwd)
     #surf=surfer(mat=strt,layers=layers)
@@ -1039,25 +737,7 @@ def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_
        #chg_file=str(contc).replace('CONTCAR','CHGCAR')
        #print ('chrfile',chg_file)
        #shutil.copy2(chg_file,'./')
-       incar_dict = dict(
-           PREC = 'Accurate',
-           ENCUT = encut,
-
-           GGA_COMPAT = '.FALSE.',
-           LWANNIER90 = '.TRUE.',
-           LSORBIT = '.TRUE.',
-           ISIF = 2,
-           IBRION = 1,
-           ISMEAR = 0,
-           ISYM = 0,
-           EDIFF = '1E-7',
-
-           NEDOS = 5000,
-           LCHARG = '.FALSE.',
-           NELM = 400,
-           LORBIT = 11,
-           NPAR = 4,
-           LWAVE = '.FALSE.' )
+       incar_dict = use_incar_dict.update({"ENCUT":encut,"NPAR":ncores,"GGA_COMPAT":'.FALSE.',"LSORBIT":'.TRUE.',"IBRION":1,"ISYM":0,"NEDOS":5000,"IBRION":1,"NSW":500,"LORBIT":11})
        incar = Incar.from_dict(incar_dict)
        sg_mat = SpacegroupAnalyzer(mat_f.structure)
        mat_cvn = sg_mat.get_conventional_standard_structure()
@@ -1069,30 +749,7 @@ def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_
            pass 
     os.chdir(cwd)
     if optical_prop==True:
-
-       incar_dict = dict(
-           PREC = 'Accurate',
-           ENCUT = encut,
-           NBANDS = 3*int(nbands),
-           GGA = 'BO',
-           PARAM1 = 0.1833333333,
-           PARAM2 = 0.2200000000,
-           LUSE_VDW = '.TRUE.',
-           AGGAC = 0.0000,
-
-
-           LOPTICS = '.TRUE.',
-           ISMEAR = 0,
-           EDIFF = '1E-7',
-
-           NEDOS = 5000,
-           LCHARG = '.FALSE.',
-           ISIF = 2,
-           IBRION = 1,
-           NELM = 400,
-           LORBIT = 11,
-           NPAR = 4,
-           LWAVE = '.FALSE.' )
+       incar_dict = use_incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":3*int(nbands),"LOPTICS":'.TRUE.'})
        incar = Incar.from_dict(incar_dict)
        kpoints=Auto_Kpoints(mat=mat_f,length=leng)
        try:
@@ -1101,26 +758,7 @@ def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_
            pass 
     os.chdir(cwd)
     if mbj_prop==True:
-
-       incar_dict = dict(
-           PREC = 'Accurate',
-           ENCUT = encut,
-           NBANDS = 3*int(nbands),
-           METAGGA = 'MBJ',
-
-
-           LOPTICS = '.TRUE.',
-           ISMEAR = 0,
-           EDIFF = '1E-6',
-
-           NEDOS = 5000,
-           LCHARG = '.FALSE.',
-           ISYM = 0,
-           SIGMA = 0.1,
-           NELM = 500,
-           LORBIT = 11,
-           NPAR = 4,
-           LWAVE = '.FALSE.' )
+       incar_dict = use_incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":3*int(nbands),"LOPTICS":'.TRUE.','METAGGA':'MBJ','ISYM':0,"SIGMA":0.1})
        incar = Incar.from_dict(incar_dict)
        kpoints=Auto_Kpoints(mat=mat_f,length=leng)
        try:
@@ -1130,25 +768,7 @@ def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_
     os.chdir(cwd)
 
     if elast_prop==True:
-       incar_dict = dict(
-           PREC = 'Accurate',
-           ENCUT = float(encut)*1.3,
-           ISMEAR = 0,
-           GGA = 'BO',
-           PARAM1 = 0.1833333333,
-           PARAM2 = 0.2200000000,
-           LUSE_VDW = '.TRUE.',
-           AGGAC = 0.0000,
-
-
-           ISIF = 3,
-           POTIM = 0.015,
-           NEDOS = 5000,
-           EDIFF = '1E-7',
-           IBRION = 6,
-           NELM = 400,
-           NPAR = 24,
-           LWAVE = '.FALSE.' )
+       incar_dict = use_incar_dict.update({"NEDOS":5000,"IBRION":6,"ENCUT":1.3*float(encut),"ISIF":3,"POTIM":0.015,"NPAR":ncores})
        incar = Incar.from_dict(incar_dict)
        sg_mat = SpacegroupAnalyzer(mat_f.structure)
        mat_cvn = sg_mat.get_conventional_standard_structure()
@@ -1159,58 +779,37 @@ def smart_converge(mat=None,band_str=True,elast_prop=True,optical_prop=True,mbj_
        except:
            pass 
     os.chdir(cwd)
-    if Raman_calc==True:
-        Raman(strt=mat_f,encut=encut,length=leng)
+
+
+    if phonon==True:
+       incar_dict = use_incar_dict.update({"IBRION":8,"ENCUT":float(encut),"ISYM":0,"ADDGRID":'.TRUE.','EDIFF': 1e-09,'LORBIT': 11})
+       incar = Incar.from_dict(incar_dict)
+       kpoints=Auto_Kpoints(mat=mat_f,length=leng)
+       mat_pho=make_big(poscar=mat_f,size=11.0)
+       try:
+          en2P,contcP=run_job(mat=mat_pho,incar=incar,kpoints=kpoints,jobname=str('MAIN-PHO8')+str('-')+str(mat_f.comment)) 
+       except:
+           pass 
+    os.chdir(cwd)
+
+
+    #if Raman_calc==True:
+    #    Raman(strt=mat_f,encut=encut,length=leng)
     os.chdir(cwd)
     return en2,mat_f
-#####################################################
 
 
 
-
-def bandstr(contc=None,kpoints=None,encut=500):
-    #if commen.split('@')[0] =='bulk' :
-       incar_dict = dict(
-           PREC = 'Accurate',
-           ENCUT = encut,
-
-           ISMEAR = 0,
-           EDIFF = '1E-4',
-           LCHARG = lcharg,
-           NEDOS = 5000,
-           ISPIN = 2,
-           ISIF = 2,
-           IBRION = 1,
-           NELM = 400,
-           GGA = 'BO',
-           PARAM1 = 0.1833333333,
-           PARAM2 = 0.2200000000,
-           LUSE_VDW = '.TRUE.',
-           AGGAC = 0.0000,
-
-
-           LORBIT = 11,
-           NPAR = 4,
-           LWAVE = '.FALSE.' )
-       incar = Incar.from_dict(incar_dict)
-       user_incar_settings={"EDIFF":1E-6,"ISIF":2,"NSW":0,"LORBIT":11,"ENCUT":encut,"LWAVE":'.FALSE.',"PREC":'Accurate'}
-       mpvis = MPNonSCFVaspInputSet(user_incar_settings=incar)
-       final_str=Structure.from_file(contc)
-       if kpoints!=None:
-          print ("Band structure calculation for user input")
-       else:
-
-           kpoints=mpvis.get_kpoints(final_str)
-       print ("running smart_converge for",str(mat_f.comment)+str('-')+str('BAND')+str('-')+str(den))
-       try:
-          en2B,contcB=run_job(mat=mat_f,incar=incar,kpoints=kpoints,jobname=str('MAIN-BAND')+str('-')+str(mat_f.comment))  
-       except:
-           pass
-
-
-def smart_vac(strt=None):
+def smart_vac(strt=None,tol=0.1):
     """
-    Umbrell function for vacancy formation energies
+    Umbrell function for vacancy formation energies with convergence
+    Args:
+       strt: Structure object
+       tol: defect energy convergence tolerance in eV
+    Returns:
+          def_list: list of defect energies
+          def_header_list: list of defect names
+           
     """
     vac_arr=[]
     sg_mat = SpacegroupAnalyzer(strt)
@@ -1233,7 +832,6 @@ def smart_vac(strt=None):
        pass
     #cellmax=int(strt.composition.num_atoms)+int(strt.ntypesp)
     vac_done=0
-    tol=0.1   #change 0.1
     vac=vac_antisite_def_struct_gen(cellmax=cellmax,struct=strt)
     def_list=[100000  for y in range(len(vac)-1)]
     while vac_done !=1:
@@ -1264,6 +862,11 @@ def smart_vac(strt=None):
 def def_energy(vac=[]):
     """
     Calculation of vacancy formation energies
+    Args:
+        vac: list of Poscar vacancy structure objects
+    Returns:
+          def_list: list of defect energies
+          def_header_list: list of defect names
     """
 
     def_list=[]
@@ -1293,9 +896,16 @@ def def_energy(vac=[]):
     f.close()
     return def_list,header_list
 
-def smart_surf(strt=None):
+def smart_surf(strt=None,tol=0.1):
     """
-    Umbrell function for surface energies
+    Umbrell function for surface energies with convergence
+    Args:
+       strt: Structure object
+       tol: surface energy convergence tolerance in eV
+    Returns:
+          surf_list: list of surface energies
+          surf_header_list: list of surface names
+           
     """
     sg_mat = SpacegroupAnalyzer(strt)
     mat_cvn = sg_mat.get_conventional_standard_structure()
@@ -1310,7 +920,6 @@ def smart_surf(strt=None):
            layers=3
     surf_arr=[]
     surf_done=0
-    tol=0.1 #change 0.01
     surf=surfer(mat=strt,layers=layers)
     surf_list=[100000  for y in range(len(surf)-1)]
     print ("in smart_surf :surf,surf_list=",surf, surf_list)
@@ -1346,6 +955,12 @@ def smart_surf(strt=None):
 def surf_energy(surf=[]):
     """
     Helper function for surface energies
+    Args:
+        surf: list of Poscar surface objects
+    Returns:
+          surf_list: list of surface energies
+          surf_header_list: list of surface names
+          
     """
 
     surf_list=[]
@@ -1373,6 +988,11 @@ def surf_energy(surf=[]):
 def make_big(poscar=None,size=11.0):
     """
     Helper function to make supercell 
+    Args:
+      poscar: Poscar object
+      size: simulation size in Angstrom
+    Returns:
+       big: Poscar supercell object
     """
     struct=poscar.structure
     comm=poscar.comment
@@ -1383,22 +1003,32 @@ def make_big(poscar=None,size=11.0):
     return big
 
 
-def main_func(mpid='',mat=None,enforc_cvn=False):
+def main_func(mpid='',jid='',mat=None,enforc_cvn=False):
     """
     Main function to carry out property calculations
+    Args:
+        mpid: materialsproject id
+        jid: jarvis-dft id
+        mat: Poscar object
+        enforc_cvn:  whether or not enforce conventional cell input structure
+    Returns:
+       en: final energy
+       final: final structure
     """
 
-    if mpid !='':
+    if mpid !='' or jid!='':
        data = loadfn(json_dat, cls=MontyDecoder)
        for d in data:
-            mmpid= str(d['mp_id'])
+            mmpid= str(d['mpid'])
+            jjid= str(d['mpid'])
             if mmpid==mpid: 
-               ini= (d['ini_structure'])
-               fin= (d['fin_structure'])
-
+               fin= (d['structure'])
+               break
+            if jjpid==jid: 
+               fin= (d['structure'])
                break
 
-       strt = fin#mp.get_structure_by_material_id(mpid)
+       strt = fin
        sg_mat = SpacegroupAnalyzer(strt)
        mat_cvn = sg_mat.get_conventional_standard_structure()
        mat_cvn.sort()
@@ -1407,17 +1037,17 @@ def main_func(mpid='',mat=None,enforc_cvn=False):
        else:
                 mat=Poscar(strt)
 
-
-
        mpid=mpid.replace('-','_')
        mpid=str('bulk@')+str(mpid)
        mat.comment=mpid
 
     en,final=smart_converge(mat=mat)
     print (en,final)
-if __name__ == '__main__':
- struct=Structure.from_file("POSCAR")
- pos=Poscar.from_file('POSCAR')
- #pos.comment='Surf-mp-C'
- main_func(mat=pos)
+
+
+#if __name__ == '__main__':
+# struct=Structure.from_file("POSCAR")
+# pos=Poscar.from_file('POSCAR')
+# #pos.comment='Surf-mp-C'
+# main_func(mat=pos)
 
