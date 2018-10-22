@@ -3,6 +3,7 @@ Integration of JARVIS-FF/DFT/ML with genetic algorithm.
 """
 import os
 env=str(os.path.join(os.path.dirname(__file__),'env_variables'))
+#env=str('env_variables'))
 f=open(env,'r')
 lines=f.read().splitlines()
 f.close()
