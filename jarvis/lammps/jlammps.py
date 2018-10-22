@@ -30,11 +30,7 @@ import sys,zipfile
 import fortranformat as fform
 from pymatgen.core.structure import Structure
 from phonopy.structure.atoms import Atoms as PhonopyAtoms
-try:
-  from ase.calculators.lammpsrun import LAMMPS, Prism
-except:
-   print ('Please install ase')
-   pass
+from ase.calculators.lammpsrun import LAMMPS, prism
 
 input_nobox=os.environ['input_nobox']
 input_box=os.environ['input_box']

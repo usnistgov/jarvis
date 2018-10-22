@@ -7,5 +7,5 @@ s=Structure.from_file('POSCAR')
 p=Poscar(s)
 p.comment='bulk@ATAT'
 en,final=smart_converge(mat=p,elast_prop=False)
-print "en,finel",en,final
+print ("en,finel",en,final)
 

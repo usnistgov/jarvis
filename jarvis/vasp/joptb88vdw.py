@@ -285,11 +285,11 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                    cust_file.write(cline)
                    cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
                    cust_file.write(cline)
-                   cline=str("job=VaspJob([mp_cmd, '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
+                   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
                    if mat.comment.startswith('Surf'):
-                      cline=str("job=VaspJob([mp_cmd,  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
+                      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
                    if 'SOC' in jobname:
-                      cline=str("job=VaspJob([mp_cmd,  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
+                      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
                    cust_file.write(cline)
                    cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
                    cust_file.write(cline)
@@ -360,11 +360,11 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                       cust_file.write(cline)
                       cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
                       cust_file.write(cline)
-                      cline=str("job=VaspJob([mp_cmd, '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
+                      cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
                       if mat.comment.startswith('Surf'):
-                         cline=str("job=VaspJob([mp_cmd,  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
+                         cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
                       if 'SOC' in jobname:
-                         cline=str("job=VaspJob([mp_cmd,  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
+                         cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
                       cust_file.write(cline)
                       cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
                       cust_file.write(cline)
@@ -438,7 +438,9 @@ def converg_encut(encut=500,mat=None):
         encut_list.append(encut)
         length=10
         encut1=encut+50
-        incar_dict = use_incar_dict.update({"ENCUT":encut})
+        incar_dict = use_incar_dict
+        incar_dict.update({"ENCUT":encut})
+        #print (use_incar_dict)
         incar = Incar.from_dict(incar_dict)
         kpoints=Auto_Kpoints(mat=mat,length=length)
         print ("running smart_converge for",str(mat.comment)+str('-')+str('ENCUT')+str('-')+str(encut))
@@ -448,7 +450,8 @@ def converg_encut(encut=500,mat=None):
            encut1=encut+50
            encut_list.append(encut)
            print("Incrementing encut",encut)
-           incar_dict = use_incar_dict.update({"ENCUT":encut1})
+           incar_dict = use_incar_dict
+           incar_dict.update({"ENCUT":encut1})
            incar = Incar.from_dict(incar_dict)
            print ("running smart_converge for",str(mat.comment)+str('-')+str('ENCUT')+str('-')+str(encut))
            en2,contc=run_job(mat=mat,incar=incar,kpoints=kpoints,jobname=str('ENCUT')+str(mat.comment)+str('-')+str(encut))
@@ -515,7 +518,8 @@ def converg_kpoints(length=0,mat=None):
     while   convg_kp2 !=True:
     #while convg_kp1 !=True and  convg_kp2 !=True:
         tol=0.001          #change 0.001
-        incar_dict = use_incar_dict.update({"ENCUT":encut})
+        incar_dict = use_incar_dict
+        incar_dict.update({"ENCUT":encut})
         incar = Incar.from_dict(incar_dict)
         length1=length1+5
         print ("Incrementing length",length1)
@@ -528,7 +532,8 @@ def converg_kpoints(length=0,mat=None):
            while abs(en2-en1)>tol:
               en1=en2
               print ("Incrementing length",length1)
-              incar_dict = use_incar_dict.update({"ENCUT":encut})
+              incar_dict = use_incar_dict
+              incar_dict.update({"ENCUT":encut})
               incar = Incar.from_dict(incar_dict)
               while mesh in kp_list:
                  length1=length1+5
@@ -646,7 +651,8 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
        lcharg='.TRUE.' 
     if commen.split('@')[0] == 'sbulk':
        isif=3
-    incar_dict = use_incar_dict.update({"ENCUT":encut,"EDIFFG":-1E-3,"ISIF":3,"NEDOS":5000,"NSW":500,"NELM":500,"LORBIT":11,"LVTOT":'.TRUE.',"LVHAR":'.TRUE.',"ISPIN":2,"LCHARG":'.TRUE.'})
+    incar_dict = use_incar_dict
+    incar_dict.update({"ENCUT":encut,"EDIFFG":-1E-3,"ISIF":3,"NEDOS":5000,"NSW":500,"NELM":500,"LORBIT":11,"LVTOT":'.TRUE.',"LVHAR":'.TRUE.',"ISPIN":2,"LCHARG":'.TRUE.'})
     incar = Incar.from_dict(incar_dict)
     try:
        if mat.comment.startswith('Mol'):
@@ -675,7 +681,8 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
     mat_f=Poscar(strt)
     mat_f.comment=str(mat.comment)
     if band_str==True:
-       incar_dict = use_incar_dict.update({"ISPIN":2,"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":int(nbands)+10})
+       incar_dict = use_incar_dict
+       incar_dict.update({"ISPIN":2,"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":int(nbands)+10})
        incar = Incar.from_dict(incar_dict)
        kpath = HighSymmKpath(mat_f.structure)
        frac_k_points, k_points_labels = kpath.get_kpoints(line_density=20,coords_are_cartesian=False)
@@ -698,7 +705,8 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
            pass
     os.chdir(cwd)
     if surf_en==True:
-       incar_dict = use_incar_dict.update({"ENCUT":encut,"NEDOS":5000,"IBRION":1,"NSW":500,"LORBIT":11})
+       incar_dict = use_incar_dict
+       incar_dict.update({"ENCUT":encut,"NEDOS":5000,"IBRION":1,"NSW":500,"LORBIT":11})
        incar = Incar.from_dict(incar_dict)
        surf=surfer(mat=mat_f.structure,layers=3)
        for i in surf:
@@ -717,7 +725,8 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
            pass
     os.chdir(cwd)
     if def_en==True:
-       incar_dict = use_incar_dict.update({"ENCUT":encut,"NEDOS":5000,"IBRION":1,"NSW":500,"LORBIT":11})
+       incar_dict = use_incar_dict
+       incar_dict.update({"ENCUT":encut,"NEDOS":5000,"IBRION":1,"NSW":500,"LORBIT":11})
        incar = Incar.from_dict(incar_dict)
        #surf=surfer(mat=mat_f.structure,layers=3)
        vac=vac_antisite_def_struct_gen(cellmax=3,struct=mat_f.structure)
@@ -737,7 +746,8 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
        #chg_file=str(contc).replace('CONTCAR','CHGCAR')
        #print ('chrfile',chg_file)
        #shutil.copy2(chg_file,'./')
-       incar_dict = use_incar_dict.update({"ENCUT":encut,"NPAR":ncores,"GGA_COMPAT":'.FALSE.',"LSORBIT":'.TRUE.',"IBRION":1,"ISYM":0,"NEDOS":5000,"IBRION":1,"NSW":500,"LORBIT":11})
+       incar_dict = use_incar_dict
+       incar_dict.update({"ENCUT":encut,"NPAR":ncores,"GGA_COMPAT":'.FALSE.',"LSORBIT":'.TRUE.',"IBRION":1,"ISYM":0,"NEDOS":5000,"IBRION":1,"NSW":500,"LORBIT":11})
        incar = Incar.from_dict(incar_dict)
        sg_mat = SpacegroupAnalyzer(mat_f.structure)
        mat_cvn = sg_mat.get_conventional_standard_structure()
@@ -749,7 +759,8 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
            pass 
     os.chdir(cwd)
     if optical_prop==True:
-       incar_dict = use_incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":3*int(nbands),"LOPTICS":'.TRUE.'})
+       incar_dict = use_incar_dict
+       incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":3*int(nbands),"LOPTICS":'.TRUE.'})
        incar = Incar.from_dict(incar_dict)
        kpoints=Auto_Kpoints(mat=mat_f,length=leng)
        try:
@@ -758,7 +769,8 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
            pass 
     os.chdir(cwd)
     if mbj_prop==True:
-       incar_dict = use_incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":3*int(nbands),"LOPTICS":'.TRUE.','METAGGA':'MBJ','ISYM':0,"SIGMA":0.1})
+       incar_dict = use_incar_dict
+       incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":3*int(nbands),"LOPTICS":'.TRUE.','METAGGA':'MBJ','ISYM':0,"SIGMA":0.1})
        incar = Incar.from_dict(incar_dict)
        kpoints=Auto_Kpoints(mat=mat_f,length=leng)
        try:
@@ -768,7 +780,8 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
     os.chdir(cwd)
 
     if elast_prop==True:
-       incar_dict = use_incar_dict.update({"NEDOS":5000,"IBRION":6,"ENCUT":1.3*float(encut),"ISIF":3,"POTIM":0.015,"NPAR":ncores})
+       incar_dict = use_incar_dict
+       incar_dict.update({"NEDOS":5000,"IBRION":6,"ENCUT":1.3*float(encut),"ISIF":3,"POTIM":0.015,"NPAR":ncores})
        incar = Incar.from_dict(incar_dict)
        sg_mat = SpacegroupAnalyzer(mat_f.structure)
        mat_cvn = sg_mat.get_conventional_standard_structure()
@@ -782,7 +795,8 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
 
 
     if phonon==True:
-       incar_dict = use_incar_dict.update({"IBRION":8,"ENCUT":float(encut),"ISYM":0,"ADDGRID":'.TRUE.','EDIFF': 1e-09,'LORBIT': 11})
+       incar_dict = use_incar_dict
+       incar_dict.update({"IBRION":8,"ENCUT":float(encut),"ISYM":0,"ADDGRID":'.TRUE.','EDIFF': 1e-09,'LORBIT': 11})
        incar = Incar.from_dict(incar_dict)
        kpoints=Auto_Kpoints(mat=mat_f,length=leng)
        mat_pho=make_big(poscar=mat_f,size=11.0)
