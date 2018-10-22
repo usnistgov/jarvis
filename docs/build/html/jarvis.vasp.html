@@ -1,0 +1,450 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.vasp package &#8212; jarvis-tools v2018.10.22 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2018.10.22 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">jarvis.vasp package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-jarvis.vasp.joptb88vdw">jarvis.vasp.joptb88vdw module</a></li>
+<li><a class="reference internal" href="#module-jarvis.vasp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/jarvis.vasp.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="jarvis-vasp-package">
+<h1>jarvis.vasp package<a class="headerlink" href="#jarvis-vasp-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jarvis.vasp.joptb88vdw">
+<span id="jarvis-vasp-joptb88vdw-module"></span><h2>jarvis.vasp.joptb88vdw module<a class="headerlink" href="#module-jarvis.vasp.joptb88vdw" title="Permalink to this headline">¶</a></h2>
+<p>Module to run OptB88vdW based High-throughput calculations</p>
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.Auto_Kpoints">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">Auto_Kpoints</code><span class="sig-paren">(</span><em>mat=None</em>, <em>length=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#Auto_Kpoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.Auto_Kpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Geting Kpoints object from structure and line-density</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mat</strong> – Poscar object with structure information</li>
+<li><strong>length</strong> – line-density</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Kpoint object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">kpp</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.check_polar">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">check_polar</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#check_polar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.check_polar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the surface structure is polar
+by comparing atom types at top and bottom</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> – Structure object (surface with vacuum)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True/False</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">polar</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.converg_encut">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">converg_encut</code><span class="sig-paren">(</span><em>encut=500</em>, <em>mat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#converg_encut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.converg_encut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to converg plane-wave cut-off</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>encut</strong> – intial cutoff</li>
+<li><strong>mat</strong> – Poscar object</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">converged cut-off</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">encut</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.converg_kpoints">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">converg_kpoints</code><span class="sig-paren">(</span><em>length=0</em>, <em>mat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#converg_kpoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.converg_kpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to converg K-points</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lenght</strong> – K-point line density</li>
+<li><strong>mat</strong> – Poscar object with structure information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">K-point line density</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">length1</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.def_energy">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">def_energy</code><span class="sig-paren">(</span><em>vac=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#def_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.def_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculation of vacancy formation energies</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vac</strong> – list of Poscar vacancy structure objects</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of defect energies
+def_header_list: list of defect names</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">def_list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.get_lowest_en_from_mp">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">get_lowest_en_from_mp</code><span class="sig-paren">(</span><em>formula</em>, <em>MAPI_KEY=''</em>, <em>all_structs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#get_lowest_en_from_mp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.get_lowest_en_from_mp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lowest energy/chemical potential of an element
+from the materialsproject/jarvis database.
+Note: Get the api key from materialsproject/jarvis website.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>formula</strong> – say Al, Ni etc.</li>
+<li><strong>MAPI_KEY</strong> – should be defines in the environment</li>
+<li><strong>all_structs</strong> – all structures or just stable ones (True/False)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">energy per atom</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">enp</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.main_func">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">main_func</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>jid=''</em>, <em>mat=None</em>, <em>enforc_cvn=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#main_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.main_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function to carry out property calculations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mpid</strong> – materialsproject id</li>
+<li><strong>jid</strong> – jarvis-dft id</li>
+<li><strong>mat</strong> – Poscar object</li>
+<li><strong>enforc_cvn</strong> – whether or not enforce conventional cell input structure</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">final energy
+final: final structure</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">en</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.make_big">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">make_big</code><span class="sig-paren">(</span><em>poscar=None</em>, <em>size=11.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#make_big"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.make_big" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to make supercell</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>poscar</strong> – Poscar object</li>
+<li><strong>size</strong> – simulation size in Angstrom</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Poscar supercell object</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">big</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.run_job">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">run_job</code><span class="sig-paren">(</span><em>mat=None</em>, <em>incar=None</em>, <em>kpoints=None</em>, <em>jobname=''</em>, <em>copy_file=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#run_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.run_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic function to run a VASP job, error correction implemented using
+custodian package
+A jobname+.json file is produced after successful completion of the job
+A first_cust.py file is generated which is invoked using python command</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mat</strong> – Poscar object with structure information</li>
+<li><strong>incar</strong> – Incar object with control information</li>
+<li><strong>kpoints</strong> – Kpoints object with mesh information</li>
+<li><strong>jobname</strong> – a uniq name for a job-type, say MAIN-ELAST for elastic properties</li>
+<li><strong>copy_file</strong> – copy file from previous runs, say CHGCAR for Non-SCF bandstructure calculations</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">final energy
+contcar: path to final relaxed structure</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">f_energy</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.smart_converge">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_converge</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=''</em>, <em>leng=''</em>, <em>band_str=True</em>, <em>elast_prop=True</em>, <em>optical_prop=True</em>, <em>mbj_prop=True</em>, <em>spin_orb=False</em>, <em>phonon=False</em>, <em>surf_en=False</em>, <em>def_en=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#smart_converge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_converge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function to converge k-points/cut-off
+optimize structure, and run subsequent property calculations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mat</strong> – Poscar object with structure information</li>
+<li><strong>encut</strong> – if ‘’ then automataic convergence, else use defined fixed-cutoff</li>
+<li><strong>leng</strong> – if ‘’ then automataic convergence, else use defined fixed-line density</li>
+<li><strong>band_str</strong> – if True then do band-structure calculations along high-symmetry points</li>
+<li><strong>elast_prop</strong> – if True then do elastic property calculations using finite-difference</li>
+<li><strong>optical_prop</strong> – if True do frequency dependent dielectric function calculations using he independent-particle (IP) approximation</li>
+<li><strong>mbj_prop</strong> – if True do METAGGA-TBmBJ optical property calculations with IP approximation</li>
+<li><strong>spin_orb</strong> – if True do spin-orbit calculations</li>
+<li><strong>phonon</strong> – if True do phonon calculations using DFPT</li>
+<li><strong>surf_en</strong> – if True do surface enrgy calculations</li>
+<li><strong>def_en</strong> – if True do defect enrgy calculations</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">final energy
+mat_f: final structure</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">en2</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.smart_surf">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_surf</code><span class="sig-paren">(</span><em>strt=None</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#smart_surf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_surf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Umbrell function for surface energies with convergence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>strt</strong> – Structure object</li>
+<li><strong>tol</strong> – surface energy convergence tolerance in eV</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of surface energies
+surf_header_list: list of surface names</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">surf_list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.smart_vac">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_vac</code><span class="sig-paren">(</span><em>strt=None</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#smart_vac"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_vac" title="Permalink to this definition">¶</a></dt>
+<dd><p>Umbrell function for vacancy formation energies with convergence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>strt</strong> – Structure object</li>
+<li><strong>tol</strong> – defect energy convergence tolerance in eV</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of defect energies
+def_header_list: list of defect names</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">def_list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.sum_chem_pot">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">sum_chem_pot</code><span class="sig-paren">(</span><em>strt=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#sum_chem_pot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.sum_chem_pot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for sump of chemical potential</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>strt</strong> – Structure object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">sum of energy</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">sum</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.surf_energy">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">surf_energy</code><span class="sig-paren">(</span><em>surf=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#surf_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.surf_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for surface energies</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>surf</strong> – list of Poscar surface objects</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of surface energies
+surf_header_list: list of surface names</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">surf_list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.vasp">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.vasp" title="Permalink to this headline">¶</a></h2>
+<p>Module to run DFT particularly VASP calculations with JARVIS-DFT</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2018.10.22 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
