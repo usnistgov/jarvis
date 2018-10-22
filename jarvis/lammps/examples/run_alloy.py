@@ -11,7 +11,6 @@ import matplotlib,subprocess
 matplotlib.use('Agg')
 
 from pymatgen.core.composition import Composition
-from pymatgen.analysis.phase_diagram import PhaseDiagram,PDEntry,PDPlotter
 
 def your_job(name=''):
         nprocs=1
