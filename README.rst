@@ -9,7 +9,7 @@ pymatgen, ase and scikit-learn packages. Official website: https://jarvis.nist.g
 
 Installing JARVIS
 -----------------
-- First we recommend installing miniconda environment from https://conda.io/miniconda.html .
+- We recommend installing miniconda environment from https://conda.io/miniconda.html .
   
       bash Miniconda3-latest-Linux-x86_64.sh (for linux)
       bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
@@ -19,11 +19,11 @@ Installing JARVIS
       conda create --name my_jarvis python=3.6
 - The 'my_jarvis' environment can be activated using the command::
 
-       source activate my_jarvis
+      source activate my_jarvis
 
 - Simple pip install::
 
-       pip install jarvis-tools
+      pip install jarvis-tools
        
 - git clone install, get jarvis repo using the command::
 
@@ -69,7 +69,7 @@ How to cite JARVIS
       https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107 
  - JARVIS-ML:
         
-        https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
+      https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 
 Pypi
 -----------------
