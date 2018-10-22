@@ -1,9 +1,8 @@
 JARVIS 
 =====
 
-NIST's Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
-classical force-field/molecular dynamics and machine-learning. JARVIS heavily uses VASP, LAMMPS, 
-pymatgen, ase and scikit-learn packages. Official website: https://jarvis.nist.gov
+Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
+classical force-field/molecular dynamics and machine-learning. Official website: https://jarvis.nist.gov
 
 
 
@@ -29,6 +28,9 @@ Installing JARVIS
 
       pip install jarvis-tools
        
+- Windows OS users::
+
+      Install MS Visua studio buildtools
 
 
 Jupyter notebooks
