@@ -30,7 +30,7 @@ Installing JARVIS
        
 - Windows OS users::
 
-      Install MS Visua studio buildtools
+      Install MS Visual studio buildtools
 
 
 Jupyter notebooks
@@ -67,6 +67,7 @@ How to cite JARVIS
  - JARVIS-ML:
         
       https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
+
 
 Pypi
 -----------------
