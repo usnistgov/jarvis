@@ -42,223 +42,279 @@
 <p>Module to run OptB88vdW based High-throughput calculations</p>
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.Auto_Kpoints">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">Auto_Kpoints</code><span class="sig-paren">(</span><em>mat=None</em>, <em>length=20</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.Auto_Kpoints" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">Auto_Kpoints</code><span class="sig-paren">(</span><em>mat=None</em>, <em>length=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#Auto_Kpoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.Auto_Kpoints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Geting Kpoints object from structure and line-density
-Args:</p>
-<blockquote>
-<div>mat: Poscar object with structure information
-length: line-density</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>kpp: Kpoint object</dd>
-</dl>
+:param mat: Poscar object with structure information
+:param length: line-density</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Kpoint object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">kpp</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.check_polar">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">check_polar</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.check_polar" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">check_polar</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#check_polar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.check_polar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the surface structure is polar
 by comparing atom types at top and bottom
-Args:</p>
-<blockquote>
-<div><a class="reference external" href="file:Structure">file:Structure</a> object (surface with vacuum)</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>polar:True/False</dd>
-</dl>
+:param file: Structure object (surface with vacuum)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True/False</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">polar</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.converg_encut">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">converg_encut</code><span class="sig-paren">(</span><em>encut=500</em>, <em>mat=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.converg_encut" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">converg_encut</code><span class="sig-paren">(</span><em>encut=500</em>, <em>mat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#converg_encut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.converg_encut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to converg plane-wave cut-off
-Args:</p>
-<blockquote>
-<div>encut: intial cutoff
-mat: Poscar object</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>encut: converged cut-off</dd>
-</dl>
+:param encut: intial cutoff
+:param mat: Poscar object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">converged cut-off</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">encut</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.converg_kpoints">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">converg_kpoints</code><span class="sig-paren">(</span><em>length=0</em>, <em>mat=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.converg_kpoints" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">converg_kpoints</code><span class="sig-paren">(</span><em>length=0</em>, <em>mat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#converg_kpoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.converg_kpoints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to converg K-points
-Args:</p>
-<blockquote>
-<div>lenght: K-point line density
-mat: Poscar object with structure information</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>length1: K-point line density</dd>
-</dl>
+:param lenght: K-point line density
+:param mat: Poscar object with structure information</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">K-point line density</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">length1</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.def_energy">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">def_energy</code><span class="sig-paren">(</span><em>vac=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.def_energy" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">def_energy</code><span class="sig-paren">(</span><em>vac=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#def_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.def_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculation of vacancy formation energies
-Args:</p>
-<blockquote>
-<div>vac: list of Poscar vacancy structure objects</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>def_list: list of defect energies
-def_header_list: list of defect names</dd>
-</dl>
+:param vac: list of Poscar vacancy structure objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of defect energies
+def_header_list: list of defect names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">def_list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.get_lowest_en_from_mp">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">get_lowest_en_from_mp</code><span class="sig-paren">(</span><em>formula</em>, <em>MAPI_KEY=''</em>, <em>all_structs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.get_lowest_en_from_mp" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">get_lowest_en_from_mp</code><span class="sig-paren">(</span><em>formula</em>, <em>MAPI_KEY=''</em>, <em>all_structs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#get_lowest_en_from_mp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.get_lowest_en_from_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lowest energy/chemical potential of an element
 from the materialsproject/jarvis database.
-Note: Get the api key from materialsproject/jarvis website. 
-Args:</p>
-<blockquote>
-<div>formula: say Al, Ni etc.
-MAPI_KEY: should be defines in the environment
-all_structs: all structures or just stable ones (True/False)</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>enp: energy per atom</dd>
-</dl>
+Note: Get the api key from materialsproject/jarvis website.
+:param formula: say Al, Ni etc.
+:param MAPI_KEY: should be defines in the environment
+:param all_structs: all structures or just stable ones (True/False)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">energy per atom</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">enp</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.main_func">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">main_func</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>jid=''</em>, <em>mat=None</em>, <em>enforc_cvn=False</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.main_func" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">main_func</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>jid=''</em>, <em>mat=None</em>, <em>enforc_cvn=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#main_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.main_func" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main function to carry out property calculations
-Args:</p>
-<blockquote>
-<div>mpid: materialsproject id
-jid: jarvis-dft id
-mat: Poscar object
-enforc_cvn:  whether or not enforce conventional cell input structure</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>en: final energy
-final: final structure</dd>
-</dl>
+:param mpid: materialsproject id
+:param jid: jarvis-dft id
+:param mat: Poscar object
+:param enforc_cvn: whether or not enforce conventional cell input structure</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">final energy
+final: final structure</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">en</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.make_big">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">make_big</code><span class="sig-paren">(</span><em>poscar=None</em>, <em>size=11.0</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.make_big" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper function to make supercell 
-Args:</p>
-<blockquote>
-<div>poscar: Poscar object
-size: simulation size in Angstrom</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>big: Poscar supercell object</dd>
-</dl>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">make_big</code><span class="sig-paren">(</span><em>poscar=None</em>, <em>size=11.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#make_big"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.make_big" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to make supercell
+:param poscar: Poscar object
+:param size: simulation size in Angstrom</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Poscar supercell object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">big</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.run_job">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">run_job</code><span class="sig-paren">(</span><em>mat=None</em>, <em>incar=None</em>, <em>kpoints=None</em>, <em>jobname=''</em>, <em>copy_file=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.run_job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">run_job</code><span class="sig-paren">(</span><em>mat=None</em>, <em>incar=None</em>, <em>kpoints=None</em>, <em>jobname=''</em>, <em>copy_file=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#run_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.run_job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generic function to run a VASP job, error correction implemented using
 custodian package
 A jobname+.json file is produced after successful completion of the job
 A first_cust.py file is generated which is invoked using python command
-Args:</p>
-<blockquote>
-<div>mat: Poscar object with structure information
-incar: Incar object with control information
-kpoints: Kpoints object with mesh information
-jobname: a uniq name for a job-type, say MAIN-ELAST for elastic properties
-copy_file: copy file from previous runs, say CHGCAR for Non-SCF bandstructure calculations</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>f_energy: final energy
-contcar: path to final relaxed structure</dd>
-</dl>
+:param mat: Poscar object with structure information
+:param incar: Incar object with control information
+:param kpoints: Kpoints object with mesh information
+:param jobname: a uniq name for a job-type, say MAIN-ELAST for elastic properties
+:param copy_file: copy file from previous runs, say CHGCAR for Non-SCF bandstructure calculations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">final energy
+contcar: path to final relaxed structure</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">f_energy</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.smart_converge">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_converge</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=''</em>, <em>leng=''</em>, <em>band_str=True</em>, <em>elast_prop=True</em>, <em>optical_prop=True</em>, <em>mbj_prop=True</em>, <em>spin_orb=False</em>, <em>phonon=False</em>, <em>surf_en=False</em>, <em>def_en=False</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_converge" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_converge</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=''</em>, <em>leng=''</em>, <em>band_str=True</em>, <em>elast_prop=True</em>, <em>optical_prop=True</em>, <em>mbj_prop=True</em>, <em>spin_orb=False</em>, <em>phonon=False</em>, <em>surf_en=False</em>, <em>def_en=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#smart_converge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_converge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main function to converge k-points/cut-off
 optimize structure, and run subsequent property calculations
-Args:</p>
-<blockquote>
-<div>mat: Poscar object with structure information
-encut: if ‘’ then automataic convergence, else use defined fixed-cutoff
-leng: if ‘’ then automataic convergence, else use defined fixed-line density
-band_str: if True then do band-structure calculations along high-symmetry points
-elast_prop: if True then do elastic property calculations using finite-difference
-optical_prop: if True do frequency dependent dielectric function calculations using he independent-particle (IP) approximation
-mbj_prop: if True do METAGGA-TBmBJ optical property calculations with IP approximation
-spin_orb: if True do spin-orbit calculations
-phonon: if True do phonon calculations using DFPT
-surf_en: if True do surface enrgy calculations 
-def_en: if True do defect enrgy calculations</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>en2: final energy
-mat_f: final structure</dd>
-</dl>
+:param mat: Poscar object with structure information
+:param encut: if ‘’ then automataic convergence, else use defined fixed-cutoff
+:param leng: if ‘’ then automataic convergence, else use defined fixed-line density
+:param band_str: if True then do band-structure calculations along high-symmetry points
+:param elast_prop: if True then do elastic property calculations using finite-difference
+:param optical_prop: if True do frequency dependent dielectric function calculations using he independent-particle (IP) approximation
+:param mbj_prop: if True do METAGGA-TBmBJ optical property calculations with IP approximation
+:param spin_orb: if True do spin-orbit calculations
+:param phonon: if True do phonon calculations using DFPT
+:param surf_en: if True do surface enrgy calculations
+:param def_en: if True do defect enrgy calculations</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">final energy
+mat_f: final structure</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">en2</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.smart_surf">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_surf</code><span class="sig-paren">(</span><em>strt=None</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_surf" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_surf</code><span class="sig-paren">(</span><em>strt=None</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#smart_surf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_surf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Umbrell function for surface energies with convergence
-Args:</p>
-<blockquote>
-<div>strt: Structure object
-tol: surface energy convergence tolerance in eV</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>surf_list: list of surface energies
-surf_header_list: list of surface names</dd>
-</dl>
+:param strt: Structure object
+:param tol: surface energy convergence tolerance in eV</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of surface energies
+surf_header_list: list of surface names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">surf_list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.smart_vac">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_vac</code><span class="sig-paren">(</span><em>strt=None</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_vac" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_vac</code><span class="sig-paren">(</span><em>strt=None</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#smart_vac"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_vac" title="Permalink to this definition">¶</a></dt>
 <dd><p>Umbrell function for vacancy formation energies with convergence
-Args:</p>
-<blockquote>
-<div>strt: Structure object
-tol: defect energy convergence tolerance in eV</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>def_list: list of defect energies
-def_header_list: list of defect names</dd>
-</dl>
+:param strt: Structure object
+:param tol: defect energy convergence tolerance in eV</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of defect energies
+def_header_list: list of defect names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">def_list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.sum_chem_pot">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">sum_chem_pot</code><span class="sig-paren">(</span><em>strt=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.sum_chem_pot" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">sum_chem_pot</code><span class="sig-paren">(</span><em>strt=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#sum_chem_pot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.sum_chem_pot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function for sump of chemical potential
-Args:</p>
-<blockquote>
-<div>strt: Structure object</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>sum: sum of energy</dd>
-</dl>
+:param strt: Structure object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">sum of energy</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">sum</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.vasp.joptb88vdw.surf_energy">
-<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">surf_energy</code><span class="sig-paren">(</span><em>surf=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.surf_energy" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">surf_energy</code><span class="sig-paren">(</span><em>surf=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/vasp/joptb88vdw.html#surf_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.vasp.joptb88vdw.surf_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function for surface energies
-Args:</p>
-<blockquote>
-<div>surf: list of Poscar surface objects</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>surf_list: list of surface energies
-surf_header_list: list of surface names</dd>
-</dl>
+:param surf: list of Poscar surface objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of surface energies
+surf_header_list: list of surface names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">surf_list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="data">

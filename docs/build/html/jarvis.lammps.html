@@ -96,82 +96,100 @@
 <span id="jarvis-lammps-surf-def-module"></span><h2>jarvis.lammps.Surf_Def module<a class="headerlink" href="#module-jarvis.lammps.Surf_Def" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.get_sc_scale">
-<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">get_sc_scale</code><span class="sig-paren">(</span><em>inp_struct</em>, <em>final_site_no</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.Surf_Def.get_sc_scale" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">get_sc_scale</code><span class="sig-paren">(</span><em>inp_struct</em>, <em>final_site_no</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/Surf_Def.html#get_sc_scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.Surf_Def.get_sc_scale" title="Permalink to this definition">¶</a></dt>
 <dd><p>scale up structure
-Args:</p>
-<blockquote>
-<div>inp_struct: initial input structure
-final_site_no: final number of atoms</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>number of multipliers</dd>
-</dl>
+:param inp_struct: initial input structure
+:param final_site_no: final number of atoms</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">number of multipliers</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.main">
-<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.Surf_Def.main" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/Surf_Def.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.Surf_Def.main" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.pmg_surfer">
-<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">pmg_surfer</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>vacuum=15</em>, <em>mat=None</em>, <em>max_index=1</em>, <em>min_slab_size=15</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.Surf_Def.pmg_surfer" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">pmg_surfer</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>vacuum=15</em>, <em>mat=None</em>, <em>max_index=1</em>, <em>min_slab_size=15</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/Surf_Def.html#pmg_surfer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.Surf_Def.pmg_surfer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pymatgen surface builder for a Poscar
-Args:</p>
-<blockquote>
-<div>vacuum: vacuum region
-mat: Structure object
-max_index: maximum miller index
-min_slab_size: minimum slab size</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>structures: list of surface Structure objects</dd>
-</dl>
+:param vacuum: vacuum region
+:param mat: Structure object
+:param max_index: maximum miller index
+:param min_slab_size: minimum slab size</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of surface Structure objects</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">structures</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.surfer">
-<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">surfer</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>vacuum=15</em>, <em>layers=2</em>, <em>mat=None</em>, <em>max_index=1</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.Surf_Def.surfer" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">surfer</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>vacuum=15</em>, <em>layers=2</em>, <em>mat=None</em>, <em>max_index=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/Surf_Def.html#surfer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.Surf_Def.surfer" title="Permalink to this definition">¶</a></dt>
 <dd><p>ASE surface bulder
-Args:</p>
-<blockquote>
-<div>vacuum: vacuum region
-mat: Structure object
-max_index: maximum miller index
-min_slab_size: minimum slab size</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>structures: list of surface Structure objects</dd>
-</dl>
+:param vacuum: vacuum region
+:param mat: Structure object
+:param max_index: maximum miller index
+:param min_slab_size: minimum slab size</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of surface Structure objects</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">structures</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.vac_antisite_def_struct_gen">
-<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">vac_antisite_def_struct_gen</code><span class="sig-paren">(</span><em>c_size=15</em>, <em>mpid=''</em>, <em>struct=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.Surf_Def.vac_antisite_def_struct_gen" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">vac_antisite_def_struct_gen</code><span class="sig-paren">(</span><em>c_size=15</em>, <em>mpid=''</em>, <em>struct=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/Surf_Def.html#vac_antisite_def_struct_gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.Surf_Def.vac_antisite_def_struct_gen" title="Permalink to this definition">¶</a></dt>
 <dd><p>Vacancy, antisite generator
-Args:</p>
-<blockquote>
-<div>c_size: cell size
-struct: Structure object or
-mpid: materials project id</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>def_str: defect structures in Poscar object format</dd>
-</dl>
+:param c_size: cell size
+:param struct: Structure object or
+:param mpid: materials project id</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">defect structures in Poscar object format</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">def_str</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.vac_intl">
-<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">vac_intl</code><span class="sig-paren">(</span><em>cellmax=2</em>, <em>mpid=''</em>, <em>struct=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.Surf_Def.vac_intl" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">vac_intl</code><span class="sig-paren">(</span><em>cellmax=2</em>, <em>mpid=''</em>, <em>struct=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/Surf_Def.html#vac_intl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.Surf_Def.vac_intl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Vacancy and interstitial generator
-Args:</p>
-<blockquote>
-<div>cellmax: maximum cell size
-struct: Structure object</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>def_str: defect structures</dd>
-</dl>
+:param cellmax: maximum cell size
+:param struct: Structure object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">defect structures</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">def_str</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -179,7 +197,7 @@ struct: Structure object</div></blockquote>
 <span id="jarvis-lammps-chempot-strt-module"></span><h2>jarvis.lammps.chempot_strt module<a class="headerlink" href="#module-jarvis.lammps.chempot_strt" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jarvis.lammps.chempot_strt.get_struct_from_mp">
-<code class="descclassname">jarvis.lammps.chempot_strt.</code><code class="descname">get_struct_from_mp</code><span class="sig-paren">(</span><em>formula</em>, <em>MAPI_KEY=''</em>, <em>all_structs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.chempot_strt.get_struct_from_mp" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.chempot_strt.</code><code class="descname">get_struct_from_mp</code><span class="sig-paren">(</span><em>formula</em>, <em>MAPI_KEY=''</em>, <em>all_structs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/chempot_strt.html#get_struct_from_mp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.chempot_strt.get_struct_from_mp" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -187,240 +205,279 @@ struct: Structure object</div></blockquote>
 <span id="jarvis-lammps-jlammps-module"></span><h2>jarvis.lammps.jlammps module<a class="headerlink" href="#module-jarvis.lammps.jlammps" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.ZipDir">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">ZipDir</code><span class="sig-paren">(</span><em>inputDir</em>, <em>outputZip</em>, <em>contents=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.ZipDir" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">ZipDir</code><span class="sig-paren">(</span><em>inputDir</em>, <em>outputZip</em>, <em>contents=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#ZipDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.ZipDir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Zip up a directory and preserve symlinks and empty directories</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.analyz_loge">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">analyz_loge</code><span class="sig-paren">(</span><em>log='log.lammps'</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.analyz_loge" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">analyz_loge</code><span class="sig-paren">(</span><em>log='log.lammps'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#analyz_loge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.analyz_loge" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.calc_forces">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">calc_forces</code><span class="sig-paren">(</span><em>mat=None</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.calc_forces" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">calc_forces</code><span class="sig-paren">(</span><em>mat=None</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#calc_forces"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.calc_forces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate forces on atoms</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.def_energy">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">def_energy</code><span class="sig-paren">(</span><em>vac=[]</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.def_energy" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">def_energy</code><span class="sig-paren">(</span><em>vac=[]</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#def_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.def_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get specific defect formation energy
-Args:</p>
-<blockquote>
-<div>vac: vacancy structures
-parameters: LAMMPS input parameters</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>def_list: defect energy list
-header_list: defect names</dd>
-</dl>
+:param vac: vacancy structures
+:param parameters: LAMMPS input parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">defect energy list
+header_list: defect names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">def_list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.do_phonons">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">do_phonons</code><span class="sig-paren">(</span><em>strt=None</em>, <em>parameters=None</em>, <em>c_size=25</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.do_phonons" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">do_phonons</code><span class="sig-paren">(</span><em>strt=None</em>, <em>parameters=None</em>, <em>c_size=25</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#do_phonons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.do_phonons" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setting up phonopy job using LAMMPS
-Args:</p>
-<blockquote>
-<div>strt: Structure object
-parameters: LAMMPS input file parameters
-c_size: cell-size</div></blockquote>
+:param strt: Structure object
+:param parameters: LAMMPS input file parameters
+:param c_size: cell-size</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.get_chem_pot">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">get_chem_pot</code><span class="sig-paren">(</span><em>s1=None</em>, <em>s2=None</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.get_chem_pot" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">get_chem_pot</code><span class="sig-paren">(</span><em>s1=None</em>, <em>s2=None</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#get_chem_pot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.get_chem_pot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get chemical potential given perfect and defect structures
-Args:</p>
-<blockquote>
-<div>s1: perfect Structure object
-s2: defect Structure object
-parameters: LAMMPS input parameter</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>enp: energy per atom</dd>
-</dl>
+:param s1: perfect Structure object
+:param s2: defect Structure object
+:param parameters: LAMMPS input parameter</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">energy per atom</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">enp</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.get_phonopy_atoms">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">get_phonopy_atoms</code><span class="sig-paren">(</span><em>mat=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.get_phonopy_atoms" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">get_phonopy_atoms</code><span class="sig-paren">(</span><em>mat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#get_phonopy_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.get_phonopy_atoms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function to convert pymatgen structure object to phonopy atoms</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>mat: pymatgen structure object</dd>
-<dt>Returns:</dt>
-<dd>p: phonopy atoms object</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mat</strong> – pymatgen structure object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">phonopy atoms object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">p</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.get_struct_from_mp">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">get_struct_from_mp</code><span class="sig-paren">(</span><em>formula</em>, <em>MAPI_KEY=''</em>, <em>all_structs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.get_struct_from_mp" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">get_struct_from_mp</code><span class="sig-paren">(</span><em>formula</em>, <em>MAPI_KEY=''</em>, <em>all_structs=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#get_struct_from_mp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.get_struct_from_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetches the structure corresponding to the given formula
 from the materialsproject database.
 Note: Get the api key from materialsproject website.
-Args:</p>
-<blockquote>
-<div>formula: Example Al-Ni, Al, Al2O3 etc.
-MAPI_KEY: key for database
-all_structs: if all structures or only stable structures</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>structures</dd>
-</dl>
+:param formula: Example Al-Ni, Al, Al2O3 etc.
+:param MAPI_KEY: key for database
+:param all_structs: if all structures or only stable structures</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">structures</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.main">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">main</code><span class="sig-paren">(</span><em>p=None</em>, <em>parameters={}</em>, <em>c_size=35</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.main" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">main</code><span class="sig-paren">(</span><em>p=None</em>, <em>parameters={}</em>, <em>c_size=35</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Master function to run LAMMPS job
-Args:</p>
-<blockquote>
-<div>p: Poscar object
-parameters: LAMMPS input parameters
-c_size:cell size</div></blockquote>
+:param p: Poscar object
+:param parameters: LAMMPS input parameters
+:param c_size: cell size</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.main_alloy">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">main_alloy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.main_alloy" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">main_alloy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#main_alloy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.main_alloy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run alloy FFs job</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.main_func">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">main_func</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>mat=None</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.main_func" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">main_func</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>mat=None</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#main_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.main_func" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call master job function either using mpid or Poscar object</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.read_data">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">read_data</code><span class="sig-paren">(</span><em>data=None</em>, <em>ff=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.read_data" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">read_data</code><span class="sig-paren">(</span><em>data=None</em>, <em>ff=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#read_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.read_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read LAMMPS data file
-Args:</p>
-<blockquote>
-<div>data: data file path
-ff: potential.mod/potential information file path</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>struct: Structure object</dd>
-</dl>
+:param data: data file path
+:param ff: potential.mod/potential information file path</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Structure object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">struct</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.read_dump">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">read_dump</code><span class="sig-paren">(</span><em>data=None</em>, <em>ff=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.read_dump" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">read_dump</code><span class="sig-paren">(</span><em>data=None</em>, <em>ff=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#read_dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.read_dump" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read LAMMPS dump file
-Args:</p>
-<blockquote>
-<div>data: dump file path
-ff: potential.mod/potential information file path</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>struct: Structure object</dd>
-</dl>
+:param data: dump file path
+:param ff: potential.mod/potential information file path</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Structure object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">struct</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.read_dumpfull">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">read_dumpfull</code><span class="sig-paren">(</span><em>data=None</em>, <em>ff=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.read_dumpfull" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">read_dumpfull</code><span class="sig-paren">(</span><em>data=None</em>, <em>ff=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#read_dumpfull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.read_dumpfull" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads LAMMPS dump file
-Args:</p>
-<blockquote>
-<div>data: dump file path
-ff: potential.mod/potential information file path</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>struct: Structure object</dd>
-</dl>
+:param data: dump file path
+:param ff: potential.mod/potential information file path</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Structure object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">struct</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.run_job">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">run_job</code><span class="sig-paren">(</span><em>mat=None</em>, <em>parameters={}</em>, <em>jobname=''</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.run_job" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">run_job</code><span class="sig-paren">(</span><em>mat=None</em>, <em>parameters={}</em>, <em>jobname=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#run_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.run_job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generic  function for running LAMMPS job
-Args:</p>
-<blockquote>
-<div>mat: Poscar object
-parameters: parameters with LAMMPS input information
-jobname: a user-defined jobname</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>en: final enery
+:param mat: Poscar object
+:param parameters: parameters with LAMMPS input information
+:param jobname: a user-defined jobname</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">final enery
 final_str: final structure
-forces: forces on final structure</dd>
-</dl>
+forces: forces on final structure</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">en</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.smart_surf">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">smart_surf</code><span class="sig-paren">(</span><em>strt=None</em>, <em>parameters=None</em>, <em>layers=3</em>, <em>tol=0.5</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.smart_surf" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">smart_surf</code><span class="sig-paren">(</span><em>strt=None</em>, <em>parameters=None</em>, <em>layers=3</em>, <em>tol=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#smart_surf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.smart_surf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to get all surface energies
-Args:</p>
-<blockquote>
-<div>strt: Structure object
-parameters: parameters with LAMMPS inputs
-layers: starting number of layers
-tol: surface energy tolerance for convergence</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>surf_list: list of surface energies
-surf_header_list: list of surface names</dd>
-</dl>
+:param strt: Structure object
+:param parameters: parameters with LAMMPS inputs
+:param layers: starting number of layers
+:param tol: surface energy tolerance for convergence</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of surface energies
+surf_header_list: list of surface names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">surf_list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.smart_vac">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">smart_vac</code><span class="sig-paren">(</span><em>strt=None</em>, <em>parameters=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.smart_vac" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">smart_vac</code><span class="sig-paren">(</span><em>strt=None</em>, <em>parameters=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#smart_vac"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.smart_vac" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to get all vacancy formation energies
-Args:</p>
-<blockquote>
-<div>strt: Structure object
-parameters: parameters with LAMMPS inputs</div></blockquote>
+:param strt: Structure object
+:param parameters: parameters with LAMMPS inputs</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.surf_energy">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">surf_energy</code><span class="sig-paren">(</span><em>surf=[]</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.surf_energy" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">surf_energy</code><span class="sig-paren">(</span><em>surf=[]</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#surf_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.surf_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to get specific surface energies
-Args:</p>
-<blockquote>
-<div>surf: list of syrfaces
-parameters: LAMMPS input parameters</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>surf_list: list of surface energies
-surf_header_list: list of surface names</dd>
-</dl>
+:param surf: list of syrfaces
+:param parameters: LAMMPS input parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of surface energies
+surf_header_list: list of surface names</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">surf_list</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.write_lammps_data">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">write_lammps_data</code><span class="sig-paren">(</span><em>structure=None</em>, <em>file=''</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.write_lammps_data" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">write_lammps_data</code><span class="sig-paren">(</span><em>structure=None</em>, <em>file=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#write_lammps_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.write_lammps_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>write lammps structure data
 from ase with custom modifications
-Args:</p>
-<blockquote>
-<div>structure: Structure object
-file:  intended file to write in</div></blockquote>
+:param structure: Structure object
+:param file: intended file to write in</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.jlammps.write_lammps_in">
-<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">write_lammps_in</code><span class="sig-paren">(</span><em>structure=None</em>, <em>lammps_in=None</em>, <em>lammps_in1=None</em>, <em>lammps_in2=None</em>, <em>lammps_trj=None</em>, <em>lammps_data=None</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.jlammps.write_lammps_in" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.lammps.jlammps.</code><code class="descname">write_lammps_in</code><span class="sig-paren">(</span><em>structure=None</em>, <em>lammps_in=None</em>, <em>lammps_in1=None</em>, <em>lammps_in2=None</em>, <em>lammps_trj=None</em>, <em>lammps_data=None</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/lammps/jlammps.html#write_lammps_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.lammps.jlammps.write_lammps_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>write lammps input file
 from ase with custom modifications
 LAMMPS input is devided into three parts</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>structure: Structure object
-lammps_in: generally”init.mod”, with unit and conversion factor information
-lammps_in1: generally “potential.mod”, with force-field/potential style and element tyoe information
-lammps_in2: generally “in.elastic”, a generic main input file to be fed in LAMMPS usin lmp_*&lt;…,parameters[‘exec’]
-parameters: input parameters</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>structure</strong> – Structure object</li>
+<li><strong>lammps_in</strong> – generally”init.mod”, with unit and conversion factor information</li>
+<li><strong>lammps_in1</strong> – generally “potential.mod”, with force-field/potential style and element tyoe information</li>
+<li><strong>lammps_in2</strong> – generally “in.elastic”, a generic main input file to be fed in LAMMPS usin lmp_*&lt;…,parameters[‘exec’]</li>
+<li><strong>parameters</strong> – input parameters</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
