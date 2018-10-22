@@ -1,0 +1,239 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>JARVIS &#8212; jarvis-tools v2018.10.22 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to jarvis-tools’s documentation!" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to jarvis-tools’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2018.10.22 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">JARVIS</a><ul>
+<li><a class="reference internal" href="#installing-jarvis">Installing JARVIS</a></li>
+<li><a class="reference internal" href="#jupyter-notebooks">Jupyter notebooks</a></li>
+<li><a class="reference internal" href="#how-to-cite-jarvis">How to cite JARVIS</a></li>
+<li><a class="reference internal" href="#pypi">Pypi</a></li>
+<li><a class="reference internal" href="#readthedocs-page">Readthedocs page</a></li>
+<li><a class="reference internal" href="#running-the-examples">Running the examples</a></li>
+<li><a class="reference internal" href="#founders">Founders</a></li>
+<li><a class="reference internal" href="#contributors">Contributors</a></li>
+<li><a class="reference internal" href="#link-to-presentation-slides">Link to presentation slides</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to jarvis-tools’s documentation!</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/includeme.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="jarvis">
+<h1>JARVIS<a class="headerlink" href="#jarvis" title="Permalink to this headline">¶</a></h1>
+<p>Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
+classical force-field/molecular dynamics and machine-learning. Official website: <a class="reference external" href="https://jarvis.nist.gov">https://jarvis.nist.gov</a></p>
+<div class="section" id="installing-jarvis">
+<h2>Installing JARVIS<a class="headerlink" href="#installing-jarvis" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">We recommend installing miniconda environment from <a class="reference external" href="https://conda.io/miniconda.html">https://conda.io/miniconda.html</a> .</p>
+<blockquote>
+<div><p>bash Miniconda3-latest-Linux-x86_64.sh (for linux)</p>
+<p>bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)</p>
+<p>Download 32/64 bit python 3.6 miniconda exe and install (for windows)</p>
+</div></blockquote>
+</li>
+<li><p class="first">Now, let’s make a conda environment just for JARVIS:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">--</span><span class="n">name</span> <span class="n">my_jarvis</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.6</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">The ‘my_jarvis’ environment can be activated using the command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">activate</span> <span class="n">my_jarvis</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Simple pip install:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">jarvis</span><span class="o">-</span><span class="n">tools</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Windows OS users:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Install</span> <span class="n">MS</span> <span class="n">Visual</span> <span class="n">studio</span> <span class="n">buildtools</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="jupyter-notebooks">
+<h2>Jupyter notebooks<a class="headerlink" href="#jupyter-notebooks" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">JARVIS-FF:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_ff-explore.ipynb">https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_ff-explore.ipynb</a></p>
+</div></blockquote>
+</li>
+<li><p class="first">JARVIS-DFT:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_dft-explore.ipynb">https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_dft-explore.ipynb</a></p>
+</div></blockquote>
+</li>
+<li><p class="first">JARVIS-ML:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_ml-train.ipynb">https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_ml-train.ipynb</a></p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="how-to-cite-jarvis">
+<h2>How to cite JARVIS<a class="headerlink" href="#how-to-cite-jarvis" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">JARVIS-FF:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://www.nature.com/articles/sdata2016125">https://www.nature.com/articles/sdata2016125</a></p>
+<p><a class="reference external" href="http://iopscience.iop.org/article/10.1088/1361-648X/aadaff/meta">http://iopscience.iop.org/article/10.1088/1361-648X/aadaff/meta</a></p>
+</div></blockquote>
+</li>
+<li><p class="first">JARVIS-DFT:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://www.nature.com/articles/s41598-017-05402-0">https://www.nature.com/articles/s41598-017-05402-0</a></p>
+<p><a class="reference external" href="https://www.nature.com/articles/sdata201882">https://www.nature.com/articles/sdata201882</a></p>
+<p><a class="reference external" href="https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107">https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107</a></p>
+</div></blockquote>
+</li>
+</ul>
+<blockquote>
+<div><ul>
+<li><p class="first">JARVIS-ML:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801">https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801</a></p>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="pypi">
+<h2>Pypi<a class="headerlink" href="#pypi" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">jarvis-tools:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://pypi.org/project/jarvis-tools">https://pypi.org/project/jarvis-tools</a></p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="readthedocs-page">
+<h2>Readthedocs page<a class="headerlink" href="#readthedocs-page" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">jarvis-tools:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://jarvis-tools.readthedocs.io/en/latest/">https://jarvis-tools.readthedocs.io/en/latest/</a></p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="running-the-examples">
+<h2>Running the examples<a class="headerlink" href="#running-the-examples" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Set HPC/system related information in env_variables</li>
+<li>Run test.py in test folder to ensure basic setup</li>
+<li>LAMMPS example: An example calculation for Aluminum is given in the lammps folder for running EAM calculation (<a class="reference external" href="https://github.com/usnistgov/jarvis/blob/master/jarvis/lammps/examples/basic_input_output.py">https://github.com/usnistgov/jarvis/blob/master/jarvis/lammps/examples/basic_input_output.py</a>). Untar the example folder using tar -xvzf Al03.eam.alloy_nist.tgz . Change the ‘parameters’ variable in run_alloy.py to accommodate your lammps executable path, inelast.mod and dsiplace.mod path according to your system. Right now, crystal structures are obtained from materials-project, so MAPI_KEY needs to be adjusted also. Then, type python run_alloy.py which will launch jobs on your cluster. A json file is created as any lammps calculation get created. First, the geometry is optimized using LAMMPS. Then, symmetrically distinct vacancies are created and their energetics is determined. Reference elements are also downloaded from MP and their energies are calculated for measuring the chemical potemtial used in defect calculation. Afterthat, surfaces with miller index upto 3 is created and their energies are calculated. Perfect cell is used as reference to calculate surface energies. Finally, phonons are calculated using phonopy package. We use ASE to make interface between phonopy and LAMMPS.</li>
+<li>VASP example: Similarly, an example calculation for Silicon is given in vasp folder (<a class="reference external" href="https://github.com/usnistgov/jarvis/blob/master/jarvis/vasp/examples/runstruct_pyvasp.py">https://github.com/usnistgov/jarvis/blob/master/jarvis/vasp/examples/runstruct_pyvasp.py</a>). The input is a POSCAR file, which is already provided. executable paths, pseudopotential directory path and Special_POTCAR.yaml path needs to be adjusted in joptb88vdw.py top section. The master.py can be submitted to the queuing system with qsub sub.sh. Adjust path and your cluster specifics in sub.sh. The contents of master.py and joptb88vdw.py should be independent of PBS/SLURM or any other cluster. After successful submission of the sub.sh script a series of ENCUT- and KPOINTS- files are produced for plane wave convergence and kpoint convergence. After that, geometry is optimized with force-convergence criteria in MAIN-RELAX file. The crystal structure used in MAIN-RELAX calculation is then used for subsequent band-structure, dielectric function, MBJ calculation and elastic property calculations. Each complete calculation is notified with generation of respective json file.</li>
+<li>ML example: We trained machine learning models using JARVIS-DFT data on bandgaps, formation energies and elastic modulus and other properties. We used both chemical and structural descriptors during GradientBoostingRegression training. Example of getting 1557 descriptors for a system is given at: <a class="reference external" href="https://github.com/usnistgov/jarvis/blob/master/jarvis/sklearn/examples/desc_example.py">https://github.com/usnistgov/jarvis/blob/master/jarvis/sklearn/examples/desc_example.py</a></li>
+<li>Access to JARVIS database: Our database is freely available at <a class="reference external" href="https://www.ctcms.nist.gov/~knc6/JVASP.html">https://www.ctcms.nist.gov/~knc6/JVASP.html</a> and <a class="reference external" href="https://www.ctcms.nist.gov/~knc6/periodic.html">https://www.ctcms.nist.gov/~knc6/periodic.html</a>, <a class="reference external" href="https://www.ctcms.nist.gov/~knc6/JLAMMPS.html">https://www.ctcms.nist.gov/~knc6/JLAMMPS.html</a> for JARVIS-DFT and JARVIS-FF. JARVIS-FF and its development version has data for energetics, elastic constants, defect formation energies, surface energies and phonon properties. JARVIS-DFT has 3D and 2D properties of materials such as energetics, X-ray diffraction (for 3D), radial-distribution function, electronic density of states, electrostatic potential and band-structure, MBJ and semi-local dielectric function calculation, elastic properties and allied gamma-point unconverged phonons and thermoelectric properties. JARVIS-DFT can be downloaded in json format also now using the link provided and JARVIS-DFT webpage.</li>
+</ul>
+</div>
+<div class="section" id="founders">
+<h2>Founders<a class="headerlink" href="#founders" title="Permalink to this headline">¶</a></h2>
+<p>Kamal Choudhary, Francesca Tavazza (NIST)</p>
+</div>
+<div class="section" id="contributors">
+<h2>Contributors<a class="headerlink" href="#contributors" title="Permalink to this headline">¶</a></h2>
+<p>Faical Yannick Congo, Kevin Garrity, Brian DeCost, Adam Biacchi,
+Lucas Hale, Andrew Reid, Marcus Newrock (NIST)</p>
+</div>
+<div class="section" id="link-to-presentation-slides">
+<h2>Link to presentation slides<a class="headerlink" href="#link-to-presentation-slides" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.slideshare.net/KAMALCHOUDHARY4">https://www.slideshare.net/KAMALCHOUDHARY4</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to jarvis-tools’s documentation!"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2018.10.22 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
