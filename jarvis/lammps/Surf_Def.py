@@ -1,8 +1,8 @@
 from __future__ import division, unicode_literals
 
 """
-A script with tools for computing point defect concentrations.
-Manual and citation for the script, DOI: 10.1016/j.cpc.2015.03.015
+Surface abd defect structure generator
+See DOI: 10.1016/j.cpc.2015.03.015
 """
 
 
@@ -36,6 +36,14 @@ from pymatgen.analysis.defects.dilute_solution_model import \
 
 
 def get_sc_scale(inp_struct, final_site_no):
+    """
+    scale up structure
+    Args:
+        inp_struct: initial input structure
+        final_site_no: final number of atoms
+    Returns:
+           number of multipliers
+    """
     lengths = inp_struct.lattice.abc
     no_sites = inp_struct.num_sites
     mult = (final_site_no/no_sites*lengths[0]*lengths[1]*lengths[2]) ** (1/3)
@@ -45,6 +53,15 @@ def get_sc_scale(inp_struct, final_site_no):
 
 
 def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
+    """
+    Vacancy, antisite generator
+    Args:
+         c_size: cell size
+         struct: Structure object or
+         mpid: materials project id
+    Returns:
+            def_str: defect structures in Poscar object format
+    """     
     def_str=[]
     if struct ==None:
         with MPRester() as mp:
@@ -210,7 +227,20 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
     #      pass
 
     return def_str
+
 def pmg_surfer(mpid='',vacuum=15,mat=None,max_index=1,min_slab_size=15):
+    """
+    Pymatgen surface builder for a Poscar
+    Args:
+        vacuum: vacuum region
+        mat: Structure object
+        max_index: maximum miller index
+        min_slab_size: minimum slab size
+
+    Returns:
+           structures: list of surface Structure objects
+    """
+
     if mat == None:
         with MPRester() as mp:
                mat = mp.get_structure_by_material_id(mpid)
@@ -252,7 +282,20 @@ def pmg_surfer(mpid='',vacuum=15,mat=None,max_index=1,min_slab_size=15):
         structures.append(pos)
 
     return structures
+
 def surfer(mpid='',vacuum=15,layers=2,mat=None,max_index=1):
+    """
+    ASE surface bulder
+    Args:
+        vacuum: vacuum region
+        mat: Structure object
+        max_index: maximum miller index
+        min_slab_size: minimum slab size
+
+    Returns:
+           structures: list of surface Structure objects
+    """
+        
     if mat == None:
         with MPRester() as mp:
                mat = mp.get_structure_by_material_id(mpid)
@@ -292,6 +335,14 @@ def surfer(mpid='',vacuum=15,layers=2,mat=None,max_index=1):
 
 def vac_intl(cellmax=2,mpid='',struct=None):
 
+    """
+    Vacancy and interstitial generator
+    Args:
+        cellmax: maximum cell size
+        struct: Structure object
+    Returns:
+            def_str: defect structures
+    """
 
     if struct ==None:
         with MPRester() as mp:
@@ -334,7 +385,7 @@ def vac_intl(cellmax=2,mpid='',struct=None):
            if pos not in def_str:
                    def_str.append(pos)
     print (len(def_str))
-
+    return def_str
 def main():
     pp=vac_antisite_def_struct_gen(cellmax=2,mpid='mp-134')
     #pp=vac_intl(cellmax=128,mpid='mp-134')
