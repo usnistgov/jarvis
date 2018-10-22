@@ -2,7 +2,7 @@ numpy==1.15.2
 scipy==1.1.0
 pymatgen==2017.8.4
 ase==3.11.0
-sphinx==1.81
+sphinx==1.8.1
 pybtex==0.21
 custodian==2018.8.10
 phonopy==1.10.8
