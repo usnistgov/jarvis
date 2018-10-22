@@ -12,7 +12,9 @@ Installing JARVIS
 - We recommend installing miniconda environment from https://conda.io/miniconda.html .
   
       bash Miniconda3-latest-Linux-x86_64.sh (for linux)
+
       bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
+
       Download 32/64 bit python 3.6 miniconda exe and install (for windows)
 
 - Now, let's make a conda environment just for JARVIS::
@@ -27,22 +29,6 @@ Installing JARVIS
 
       pip install jarvis-tools
        
-- git clone install, get jarvis repo using the command::
-
-      git clone https://github.com/usnistgov/jarvis.git 
-
-- Install dependencies::
-
-      pip install numpy  
-      pip install scipy 
-      pip install scikit-learn
-      pip install pymatgen
-      pip install monty
-
-- Go to the jarvis directory and type::
-
-      python setup.py install      
-      
 
 
 Jupyter notebooks
@@ -65,12 +51,15 @@ How to cite JARVIS
 - JARVIS-FF:
     
       https://www.nature.com/articles/sdata2016125 
+
       http://iopscience.iop.org/article/10.1088/1361-648X/aadaff/meta
  
 - JARVIS-DFT:
 
       https://www.nature.com/articles/s41598-017-05402-0
+
       https://www.nature.com/articles/sdata201882
+
       https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107 
 
  - JARVIS-ML:
