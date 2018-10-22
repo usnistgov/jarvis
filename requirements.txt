@@ -1,5 +1,5 @@
 pymatgen==2017.8.4
-ase==3.16.2
+ase==3.11.0
 sphinx==1.81
 pybtex==0.21
 custodian==2018.8.10
