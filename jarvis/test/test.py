@@ -5,6 +5,7 @@ from pymatgen.io.vasp.inputs import Poscar
 from jarvis.vasp.joptb88vdw import Auto_Kpoints
 from jarvis.lammps.jlammps import read_data
 from jarvis.sklearn.get_desc import get_comp_descp
+from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen
 
 class jvasp(unittest.TestCase):
     def test_read_poscar(self):
@@ -26,6 +27,13 @@ class jlammps(unittest.TestCase):
         ff=str('../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/potential.mod')
         data= (read_data(data=dat,ff=ff))
         self.assertEqual(len(data), 1)
+
+    def test_vac_antisite_def_struct_gen(self):
+        dat=(str('../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/data'))
+        ff=str('../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/potential.mod')
+        data= (read_data(data=dat,ff=ff))
+        vacs=vac_antisite_def_struct_gen(struct=data,c_size=0)
+        self.assertEqual(len(vacs), 2)
 
 class jsklearn(unittest.TestCase):
     def test_read_poscar(self):
