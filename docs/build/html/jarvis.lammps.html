@@ -97,7 +97,16 @@
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.get_sc_scale">
 <code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">get_sc_scale</code><span class="sig-paren">(</span><em>inp_struct</em>, <em>final_site_no</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.Surf_Def.get_sc_scale" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>scale up structure
+Args:</p>
+<blockquote>
+<div>inp_struct: initial input structure
+final_site_no: final number of atoms</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>number of multipliers</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.main">
@@ -107,22 +116,63 @@
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.pmg_surfer">
 <code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">pmg_surfer</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>vacuum=15</em>, <em>mat=None</em>, <em>max_index=1</em>, <em>min_slab_size=15</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.Surf_Def.pmg_surfer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Pymatgen surface builder for a Poscar
+Args:</p>
+<blockquote>
+<div>vacuum: vacuum region
+mat: Structure object
+max_index: maximum miller index
+min_slab_size: minimum slab size</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>structures: list of surface Structure objects</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.surfer">
 <code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">surfer</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>vacuum=15</em>, <em>layers=2</em>, <em>mat=None</em>, <em>max_index=1</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.Surf_Def.surfer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>ASE surface bulder
+Args:</p>
+<blockquote>
+<div>vacuum: vacuum region
+mat: Structure object
+max_index: maximum miller index
+min_slab_size: minimum slab size</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>structures: list of surface Structure objects</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.vac_antisite_def_struct_gen">
 <code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">vac_antisite_def_struct_gen</code><span class="sig-paren">(</span><em>c_size=15</em>, <em>mpid=''</em>, <em>struct=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.Surf_Def.vac_antisite_def_struct_gen" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Vacancy, antisite generator
+Args:</p>
+<blockquote>
+<div>c_size: cell size
+struct: Structure object or
+mpid: materials project id</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>def_str: defect structures in Poscar object format</dd>
+</dl>
+</dd></dl>
 
 <dl class="function">
 <dt id="jarvis.lammps.Surf_Def.vac_intl">
 <code class="descclassname">jarvis.lammps.Surf_Def.</code><code class="descname">vac_intl</code><span class="sig-paren">(</span><em>cellmax=2</em>, <em>mpid=''</em>, <em>struct=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.lammps.Surf_Def.vac_intl" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Vacancy and interstitial generator
+Args:</p>
+<blockquote>
+<div>cellmax: maximum cell size
+struct: Structure object</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>def_str: defect structures</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.lammps.chempot_strt">
