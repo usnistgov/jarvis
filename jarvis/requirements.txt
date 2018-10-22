@@ -1,0 +1,8 @@
+pymatgen==2017.8.4
+ase==3.16.2
+sphinx==1.81
+pybtex==0.21
+custodian==2018.8.10
+phonopy==1.10.8
+fortranformat==0.2.5
+pandas==0.23.4

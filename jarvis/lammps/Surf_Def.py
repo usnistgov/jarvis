@@ -11,17 +11,14 @@ import os
 from pymatgen.core.structure import Structure
 from pymatgen.core.periodic_table import Element
 from pymatgen.io.vasp import Poscar
-from pymatgen.ext.matproj import MPRester
-from pymatgen.analysis.defects.core import Vacancy,Interstitial
-from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
-#from pymatgen.analysis.defects.point_defects import Vacancy,Interstitial,ValenceIonicRadiusEvaluator
+from pymatgen.analysis.defects.point_defects import ValenceIonicRadiusEvaluator,Vacancy,Interstitial
+#from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import glob
 from pymatgen.io.vasp import Poscar
 from monty.serialization import loadfn, dumpfn
 from monty.json import MontyEncoder, MontyDecoder
 #from pymatgen.analysis.defects.point_defects import Vacancy
-#from pymatgen.io.vasp.sets import MPGGAVaspInputSet
 from pymatgen.core.surface import Slab, SlabGenerator
 from pymatgen.core.structure import Structure
 from pymatgen.io.ase import AseAtomsAdaptor
@@ -32,8 +29,16 @@ from pymatgen.io.vasp import Vasprun
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.analysis.defects.dilute_solution_model import \
             compute_defect_density, solute_defect_density
+try:
+  from pymatgen.analysis.defects.point_defects import Vacancy,Interstitial,ValenceIonicRadiusEvaluator
+except:
+  from pymatgen.analysis.defects.core import Vacancy,Interstitial
+  pass
 
-
+try: 
+  from pymatgen.ext.matproj import MPRester
+except:
+    pass
 
 def get_sc_scale(inp_struct, final_site_no):
     """
@@ -82,7 +87,7 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
     sc_scale=[dim1,dim2,dim3]
     #sc_scale=[cellmax,cellmax,cellmax]
     print ("sc_scale",sc_scale)
-    #mpvis = MPGGAVaspInputSet()
+    #mpvis = MITRelaxSet #MPGGAVaspInputSet()
 
     # Begin defaults: All default settings.
     #blk_vasp_incar_param = {'IBRION':-1,'EDIFF':1e-4,'EDIFFG':0.001,'NSW':0,}
@@ -113,7 +118,6 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
 
 
 
-
     vac = Vacancy(struct, {}, {})
     scs = vac.make_supercells_with_defects(sc_scale)
     #site_no = scs[0].num_sites
@@ -122,13 +126,15 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
     #    i = sc_scale.index(max_sc_dim)
     #    sc_scale[i] -= 1
     #    scs = vac.make_supercells_with_defects(sc_scale)
+    #print ('struct',scs)
 
 
     for i in range(len(scs)):
         sc = scs[i]
-        poscar = mpvis.get_poscar(sc)
-        kpoints = Kpoints.automatic_density(sc,kpoint_den)
-        incar = mpvis.get_incar(sc)
+        #print (type(sc))
+        poscar = Poscar(sc) #mpvis.get_poscar(sc)
+        #kpoints = Kpoints.automatic_density(sc,kpoint_den)
+        #incar = mpvis.get_incar(sc)
         #if ptcr_flag:
         #    potcar = mpvis.get_potcar(sc)
 
@@ -190,9 +196,10 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
                 subspecie_symbol = specie.symbol
                 anti_struct = sc.copy()
                 anti_struct.append(specie, vac_site.frac_coords)
-                poscar = mpvis.get_poscar(anti_struct)
-                incar = mpvis.get_incar(anti_struct)
-                incar.update(def_vasp_incar_param)
+                
+                poscar = Poscar(anti_struct)
+                #incar = mpvis.get_incar(anti_struct)
+                #incar.update(def_vasp_incar_param)
                 as_dir ='antisite_{}_mult-{}_sitespecie-{}_subspecie-{}'.format(
                         str(i), site_mult, vac_symbol, subspecie_symbol)
                 fin_dir = os.path.join(interdir,as_dir)
