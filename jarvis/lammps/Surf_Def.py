@@ -43,6 +43,7 @@ except:
 def get_sc_scale(inp_struct, final_site_no):
     """
     scale up structure
+
     Args:
         inp_struct: initial input structure
         final_site_no: final number of atoms
@@ -60,6 +61,7 @@ def get_sc_scale(inp_struct, final_site_no):
 def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
     """
     Vacancy, antisite generator
+
     Args:
          c_size: cell size
          struct: Structure object or
@@ -238,6 +240,7 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
 def pmg_surfer(mpid='',vacuum=15,mat=None,max_index=1,min_slab_size=15):
     """
     Pymatgen surface builder for a Poscar
+
     Args:
         vacuum: vacuum region
         mat: Structure object
@@ -293,6 +296,7 @@ def pmg_surfer(mpid='',vacuum=15,mat=None,max_index=1,min_slab_size=15):
 def surfer(mpid='',vacuum=15,layers=2,mat=None,max_index=1):
     """
     ASE surface bulder
+
     Args:
         vacuum: vacuum region
         mat: Structure object
@@ -344,6 +348,7 @@ def vac_intl(cellmax=2,mpid='',struct=None):
 
     """
     Vacancy and interstitial generator
+
     Args:
         cellmax: maximum cell size
         struct: Structure object

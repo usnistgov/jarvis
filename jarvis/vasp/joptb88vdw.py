@@ -69,44 +69,42 @@ optb88dict = dict(
 functional='PBE'
 use_incar_dict=optb88dict
 
-"""
-Change use_incar_dict based on a functional,
-examples given for LDA and PBE
+#Change use_incar_dict based on a functional,
+#examples given for LDA and PBE
 
-functional='LDA'
-ldadict = dict(
-            PREC = 'Accurate',
-            ISMEAR = 0,
-            IBRION=2,
-
-            EDIFF = '1E-7',
-            NSW = 1,
-            NELM = 400,
-            ISIF = 2,
-            NPAR = np.sqrt(ncores),
-            LCHARG = '.FALSE.',
-            LWAVE = '.FALSE.' )
-
-use_incar_dict=ldadict
-
-functional='PBE'
-pbedict = dict(
-            PREC = 'Accurate',
-            ISMEAR = 0,
-            IBRION=2,
-
-            GGA = 'PE',
-
-            EDIFF = '1E-7',
-            NSW = 1,
-            NELM = 400,
-            ISIF = 2,
-            NPAR = np.sqrt(ncores),
-            LCHARG = '.FALSE.',
-            LWAVE = '.FALSE.' )
-
-use_incar_dict=pbedict
-"""
+#functional='LDA'
+#ldadict = dict(
+#            PREC = 'Accurate',
+#            ISMEAR = 0,
+#            IBRION=2,
+#
+#            EDIFF = '1E-7',
+#            NSW = 1,
+#            NELM = 400,
+#            ISIF = 2,
+#            NPAR = np.sqrt(ncores),
+#            LCHARG = '.FALSE.',
+#            LWAVE = '.FALSE.' )
+#
+#use_incar_dict=ldadict
+#
+#functional='PBE'
+#pbedict = dict(
+#            PREC = 'Accurate',
+#            ISMEAR = 0,
+#            IBRION=2,
+#
+#            GGA = 'PE',
+#
+#            EDIFF = '1E-7',
+#            NSW = 1,
+#            NELM = 400,
+#            ISIF = 2,
+#            NPAR = np.sqrt(ncores),
+#            LCHARG = '.FALSE.',
+#            LWAVE = '.FALSE.' )
+#
+#use_incar_dict=pbedict
 
 
 
@@ -114,6 +112,7 @@ def check_polar(file):
     """
     Check if the surface structure is polar
     by comparing atom types at top and bottom
+
     Args:
          file:Structure object (surface with vacuum)
     Returns:
@@ -143,7 +142,8 @@ def get_lowest_en_from_mp(formula, MAPI_KEY="", all_structs=False):
     """
     Lowest energy/chemical potential of an element
     from the materialsproject/jarvis database.
-    Note: Get the api key from materialsproject/jarvis website. 
+    Note: Get the api key from materialsproject/jarvis website.
+ 
     Args:
         formula: say Al, Ni etc.
         MAPI_KEY: should be defines in the environment
@@ -188,6 +188,7 @@ def get_lowest_en_from_mp(formula, MAPI_KEY="", all_structs=False):
 def sum_chem_pot(strt=None):
     """
     Helper function for sump of chemical potential
+
     Args:
         strt: Structure object
     Returns:
@@ -206,6 +207,7 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
     custodian package
     A jobname+.json file is produced after successful completion of the job
     A first_cust.py file is generated which is invoked using python command
+
     Args:
         mat: Poscar object with structure information
         incar: Incar object with control information
@@ -399,6 +401,7 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
 def Auto_Kpoints(mat=None,length=20):
     """
     Geting Kpoints object from structure and line-density
+
     Args:
          mat: Poscar object with structure information
          length: line-density
@@ -420,6 +423,7 @@ def Auto_Kpoints(mat=None,length=20):
 def converg_encut(encut=500,mat=None):
     """
     Function to converg plane-wave cut-off
+
     Args:
         encut: intial cutoff
         mat: Poscar object
@@ -502,6 +506,7 @@ def converg_encut(encut=500,mat=None):
 def converg_kpoints(length=0,mat=None):
     """
     Function to converg K-points
+
     Args:
         lenght: K-point line density
         mat: Poscar object with structure information
@@ -620,6 +625,7 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
     """
     Main function to converge k-points/cut-off
     optimize structure, and run subsequent property calculations
+
     Args:
          mat: Poscar object with structure information
          encut: if '' then automataic convergence, else use defined fixed-cutoff
@@ -817,6 +823,7 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
 def smart_vac(strt=None,tol=0.1):
     """
     Umbrell function for vacancy formation energies with convergence
+
     Args:
        strt: Structure object
        tol: defect energy convergence tolerance in eV
@@ -876,6 +883,7 @@ def smart_vac(strt=None,tol=0.1):
 def def_energy(vac=[]):
     """
     Calculation of vacancy formation energies
+
     Args:
         vac: list of Poscar vacancy structure objects
     Returns:
@@ -913,6 +921,7 @@ def def_energy(vac=[]):
 def smart_surf(strt=None,tol=0.1):
     """
     Umbrell function for surface energies with convergence
+
     Args:
        strt: Structure object
        tol: surface energy convergence tolerance in eV
@@ -969,6 +978,7 @@ def smart_surf(strt=None,tol=0.1):
 def surf_energy(surf=[]):
     """
     Helper function for surface energies
+
     Args:
         surf: list of Poscar surface objects
     Returns:
@@ -1001,7 +1011,8 @@ def surf_energy(surf=[]):
 
 def make_big(poscar=None,size=11.0):
     """
-    Helper function to make supercell 
+    Helper function to make supercell
+ 
     Args:
       poscar: Poscar object
       size: simulation size in Angstrom
@@ -1020,6 +1031,7 @@ def make_big(poscar=None,size=11.0):
 def main_func(mpid='',jid='',mat=None,enforc_cvn=False):
     """
     Main function to carry out property calculations
+
     Args:
         mpid: materialsproject id
         jid: jarvis-dft id
