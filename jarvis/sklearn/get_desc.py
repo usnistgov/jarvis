@@ -34,7 +34,16 @@ el_chrg_json=str(os.path.join(os.path.dirname(__file__),'element_charge.json'))
 el_chem_json=str(os.path.join(os.path.dirname(__file__),'Elements.json')) 
 
 def get_effective_structure(s=None,tol=8.0):
-  
+  """
+  Check if there is vacuum, if so get actual size of the structure
+  and the add vaccum of size tol to make sure structures
+  are independent of user defined vacuum
+  Args:
+       s: Structure object
+       tol: vacuum tolerance
+  Returns:
+         s: re-structure structure with tol vacuum
+  """
   coords=s.cart_coords
   range_x=max(coords[:,0])-min(coords[:,0])
   range_y=max(coords[:,1])-min(coords[:,1])
@@ -52,14 +61,30 @@ def get_effective_structure(s=None,tol=8.0):
   return s
 
 def el_combs(s=[]):
+  """
+  Get element combinations for a Structure object
+  Args:
+      s: Structure object
+  Returns: 
+         comb: combinations
+    """
   symb=s.symbol_set
   tmp=map('-'.join, itertools.product(symb, repeat=2))
   comb=list(set([str('-'.join(sorted(i.split('-')))) for i in tmp]))
   return comb
 
 def flatten_out(arr=[],tol=0.1):
-    rcut_buffer=tol 
+    """
+    Determine first cut-off 
+    Args:
+         arr: array
+         tol: toelrance
+    Return:
+          rcut: cut-off for a given tolerance tol, 
+          because sometimes RDF peaks could be very close
+    """
     
+    rcut_buffer=tol 
     io1=0
     io2=1
     io3=2
@@ -75,6 +100,9 @@ def flatten_out(arr=[],tol=0.1):
     return rcut
 
 def smooth_kde(x,y):
+    """
+    For making smooth distributions
+    """
     denn=gaussian_kde(y)
     denn.covariance_factor = lambda : .25
     denn._compute_covariance()
@@ -82,8 +110,19 @@ def smooth_kde(x,y):
     kde=denn(xs)
     return kde
 
-def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,rdf_tol=0.1,plot_prdf=False,filename='prdf.png'):
-    
+def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,filename='prdf.png'):
+    """
+    Get partial radial distribution function
+    Args:
+         s: Structure object
+         cutoff: maximum cutoff in Angstrom
+         intvl: bin-size
+         plot_prdf: whether to plot PRDF
+         filename: if plotted the name of the output file
+    Returns:
+          max-cutoff to ensure all the element-combinations are included
+    """
+  
     neighbors_lst = s.get_all_neighbors(cutoff)
     comb=el_combs(s=s)   #[str(i[0])+str('-')+str(i[1]) for i in list(itertools.product(sps, repeat=2))]
     info={}
@@ -129,6 +168,15 @@ def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,rdf_tol=0.1,plot_prdf=False,fi
 
 
 def get_rdf(s=None,cutoff=10.0,intvl=0.1):
+    """
+    Get total radial distribution function
+    Args:
+         s: Structure object
+         cutoff: maximum distance for binning
+         intvl: bin-size
+    Returns:
+           bins, distribution
+    """
     neighbors_lst = s.get_all_neighbors(cutoff)
     all_distances = np.concatenate(tuple(map(lambda x: \
      [itemgetter(1)(e) for e in x], neighbors_lst)))
@@ -143,6 +191,21 @@ def get_rdf(s=None,cutoff=10.0,intvl=0.1):
     #bins,rdf,nearest neighbour
 
 def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
+    """
+    Get radial and angular distribution functions
+    Args:
+        s: Structure object
+        c_size: max. cell size
+        plot: whether to plot distributions
+        max_cut: max. bond cut-off for angular distribution
+    Retruns:
+         adfa,adfb,ddf,rdf,bondo
+         Angular distribution upto first cut-off
+         Angular distribution upto second cut-off
+         Dihedral angle distribution upto first cut-off
+         Radial distribution funcion
+         Bond order distribution
+    """
     x,y,z=get_rdf(s)
     arr=[]
     for i,j in zip(x,z):
@@ -463,6 +526,13 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
 
 
 def get_chgdescrp_arr(elm=''):
+      """
+      Get charge descriptors for an element
+      Args:
+           elm: element name
+      Returns:
+             arr: array value
+      """
       arr=[]
       try:      
         f=open(el_chrg_json,'r')
@@ -475,6 +545,13 @@ def get_chgdescrp_arr(elm=''):
 
 
 def get_descrp_arr_name(elm='Al'):
+      """
+      Get chemical descriptors for an element
+      Args:
+           elm: element name
+      Returns:
+             arr: array value
+      """
       arr=[]
       try:      
         f=open(el_chem_json,'r')
@@ -490,6 +567,13 @@ def get_descrp_arr_name(elm='Al'):
       return arr
 
 def get_descrp_arr(elm=''):
+      """
+      Get chemical descriptors for an element
+      Args:
+           elm: element name
+      Returns:
+             arr: array value
+      """
       arr=[]
       try:      
         f=open(el_chem_json,'r')
@@ -506,6 +590,13 @@ def get_descrp_arr(elm=''):
       return arr
 
 def packing_fraction(s=None):
+    """
+    Get packing fraction
+    Args:
+         s: Structure object
+    Returns:
+           packing fraction
+    """
     total_rad = 0
     for site in s:
        total_rad += site.specie.atomic_radius ** 3
@@ -515,6 +606,19 @@ def packing_fraction(s=None):
 
 
 def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=False,jrdf_adf=True,print_names=False):  
+        """
+        Get chemo-structural CFID decriptors
+        Args:
+            struct: Structure object
+            jcell: whether to use cell-size descriptors
+            jmean_chem: whether to use average chemical descriptors
+            jmean_chg: whether to use average charge distribution descriptors
+            jmean_rdf: whether to use radial distribution descriptors
+            jrdf_adf: whether to use radial as well as angle distribution descriptors
+            print_names: whether to print names of descriptors
+        Returns:
+              cat: catenated final descriptors
+        """
         cat=[]
      # try: 
         s= get_effective_structure(struct)
@@ -607,6 +711,13 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
         return cat
 
 def get_chemonly(string=''):
+  """
+  Get only mean chemical descriptors for a chemical formula, say Al2O3
+  Args:
+       string: chemical formula, say Al2O3, NaCl etc.
+  Returns:
+         mean_chem: average chemical descriptors
+  """
   comp=Composition(string)
   el_dict=comp.get_el_amt_dict()
   arr=[]

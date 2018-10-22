@@ -36,6 +36,10 @@ except:
    print ('Please install ase')
    pass
 
+input_nobox=os.environ['input_nobox']
+input_box=os.environ['input_box']
+lammps_exec=os.environ['lammps_exec']
+
 def get_phonopy_atoms(mat=None):
     """
     Helper function to convert pymatgen structure object to phonopy atoms
@@ -43,7 +47,7 @@ def get_phonopy_atoms(mat=None):
     Args:
          mat: pymatgen structure object
     Returns:
-            phonopy atoms object
+            p: phonopy atoms object
     """
     symbols = [str(site.specie.symbol) for site in mat]
     positions = [site.coords for site in mat]
@@ -92,7 +96,13 @@ def get_struct_from_mp(formula, MAPI_KEY="", all_structs=False):
     """
     Fetches the structure corresponding to the given formula
     from the materialsproject database.
-    Note: Get the api key from materialsproject website. 
+    Note: Get the api key from materialsproject website.
+    Args:
+        formula: Example Al-Ni, Al, Al2O3 etc.
+        MAPI_KEY: key for database
+        all_structs: if all structures or only stable structures 
+    Returns:
+         structures
     """
     if not MAPI_KEY:
         MAPI_KEY = os.environ.get("MAPI_KEY", "")
@@ -127,6 +137,14 @@ def get_struct_from_mp(formula, MAPI_KEY="", all_structs=False):
 def run_job(mat=None,parameters = {},jobname=''):
     """ 
     Generic  function for running LAMMPS job
+    Args:
+        mat: Poscar object
+        parameters: parameters with LAMMPS input information
+        jobname: a user-defined jobname
+    Returns:
+          en: final enery
+          final_str: final structure
+          forces: forces on final structure
     """
 #def run_job(mat=None,parameters = {'exec':'/cluster/bin/lmp_ctcms-14439-knc6-2','pair_style':'comb3 polar_on','pair_coeff':None,'atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'},jobname=''):
     jobname=str(mat.comment)
@@ -260,6 +278,9 @@ def write_lammps_data(structure=None, file=''):
         """
         write lammps structure data
         from ase with custom modifications
+        Args:
+            structure: Structure object
+            file:  intended file to write in
         """
         structure.sort()
         structure.to(fmt= "poscar", filename= "new_pymatgen_slab.vasp")
@@ -301,6 +322,15 @@ def write_lammps_in( structure=None,lammps_in=None,lammps_in1=None,lammps_in2=No
         """
         write lammps input file
         from ase with custom modifications
+        LAMMPS input is devided into three parts
+
+        Args:
+            structure: Structure object
+            lammps_in: generally"init.mod", with unit and conversion factor information
+            lammps_in1: generally "potential.mod", with force-field/potential style and element tyoe information
+            lammps_in2: generally "in.elastic", a generic main input file to be fed in LAMMPS usin lmp_*<...,parameters['exec']
+            parameters: input parameters
+            
         """     
         structure.sort()   
         f = open(lammps_in,"w")
@@ -428,7 +458,16 @@ def write_lammps_in( structure=None,lammps_in=None,lammps_in1=None,lammps_in2=No
 def analyz_loge(log='log.lammps'):
     import sys
     """ 
-    Analyzes log.lammps file, at present  energy/atom data extraction is implemented
+    Analyzes log.lammps file,
+    Please note, the output format heavily depends on the input file
+    A generic inpu is taken here
+    Args:
+        log: path to log.lammps file
+    Returns:
+          en: energy/atom
+          press: pressure
+          toten: total energy
+          cij: elastic constants
     """
     en=0
     press=0
@@ -519,6 +558,11 @@ def analyz_loge(log='log.lammps'):
 def read_dumpfull(data=None,ff=None):
     """
     Reads LAMMPS dump file
+    Args:
+        data: dump file path
+        ff: potential.mod/potential information file path
+    Returns:
+          struct: Structure object
     """
 
     pot_file=open(ff,"r")
@@ -589,6 +633,11 @@ def read_dumpfull(data=None,ff=None):
 def read_dump(data=None,ff=None):
     """ 
     Read LAMMPS dump file
+    Args:
+        data: dump file path
+        ff: potential.mod/potential information file path
+    Returns:
+          struct: Structure object
     """
     pot_file=open(ff,"r")
     lines = pot_file.read().splitlines()
@@ -635,6 +684,11 @@ def read_dump(data=None,ff=None):
 def read_data(data=None,ff=None):
     """
     Read LAMMPS data file
+    Args:
+        data: data file path
+        ff: potential.mod/potential information file path
+    Returns:
+          struct: Structure object
     """
     pot_file=open(ff,"r")
     lines = pot_file.read().splitlines()
@@ -712,8 +766,11 @@ def read_data(data=None,ff=None):
 def smart_vac(strt=None,parameters=None):
     """
     Function to get all vacancy formation energies
+    Args:
+        strt: Structure object
+        parameters: parameters with LAMMPS inputs
     """
-    parameters['control_file']='/users/knc6/inelast_nobox.mod'
+    parameters['control_file']=input_nobox #'/users/knc6/inelast_nobox.mod'
     vac_arr=[]
     sg_mat = SpacegroupAnalyzer(strt)
     mat_cvn = sg_mat.get_conventional_standard_structure()
@@ -778,11 +835,20 @@ def smart_vac(strt=None,parameters=None):
 #        cellmax=cellmax+1
     return def_list,header_list
 
-def smart_surf(strt=None,parameters=None):
+def smart_surf(strt=None,parameters=None,layers=3,tol=0.5):
     """
     Function to get all surface energies
+    Args:
+        strt: Structure object
+        parameters: parameters with LAMMPS inputs
+        layers: starting number of layers
+        tol: surface energy tolerance for convergence
+    Returns:
+          surf_list: list of surface energies
+          surf_header_list: list of surface names
+
     """
-    parameters['control_file']='/users/knc6/inelast_nobox.mod'
+    parameters['control_file']=input_nobox #'/users/knc6/inelast_nobox.mod'
     sg_mat = SpacegroupAnalyzer(strt)
     mat_cvn = sg_mat.get_conventional_standard_structure()
     mat_cvn.sort()
@@ -796,7 +862,6 @@ def smart_surf(strt=None,parameters=None):
            layers=3
     surf_arr=[]
     surf_done=True
-    tol=0.5 #change 0.01
     try:
         surf=surfer(mat=strt,layers=layers)
         surf_list=[100000  for y in range(len(surf)-1)]
@@ -852,6 +917,12 @@ def smart_surf(strt=None,parameters=None):
 def surf_energy(surf=[],parameters = {}):
     """
     Function to get specific surface energies
+    Args:
+        surf: list of syrfaces
+        parameters: LAMMPS input parameters
+    Returns:
+          surf_list: list of surface energies
+          surf_header_list: list of surface names
     """
 #def surf_energy(surf=[],parameters = {'pair_style':'eam/alloy','pair_coeff':'/scratch/lfs/kamal/POSMAT/Automatic2/Al03.eam.alloy','atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'}):
     surf_list=[]
@@ -879,6 +950,12 @@ def surf_energy(surf=[],parameters = {}):
 def get_chem_pot(s1=None,s2=None,parameters= {}):
     """
     Get chemical potential given perfect and defect structures
+    Args:
+        s1: perfect Structure object
+        s2: defect Structure object
+        parameters: LAMMPS input parameter
+    Returns:
+           enp: energy per atom
     """
 #def get_chem_pot(s1=None,s2=None,parameters= {'pair_style':'eam/alloy','pair_coeff':'/scratch/lfs/kamal/POSMAT/Automatic2/Al03.eam.alloy','atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'}):
     s1.sort() 
@@ -913,18 +990,24 @@ def get_chem_pot(s1=None,s2=None,parameters= {}):
 def calc_forces(mat=None,parameters={}):
     """
     Calculate forces on atoms
+   
     """
     enp,strt,forces=run_job(mat=mat,parameters = parameters)
     return forces
 
-def do_phonons(strt=None,parameters=None):
+def do_phonons(strt=None,parameters=None,c_size=25):
     """
-    Setting up phonopy job
+    Setting up phonopy job using LAMMPS
+    Args:
+        strt: Structure object
+        parameters: LAMMPS input file parameters
+        c_size: cell-size 
+    
     """
          
     p= get_phonopy_atoms(mat=strt)
     bulk =p
-    c_size=25
+    
     dim1=int((float(c_size)/float( max(abs(strt.lattice.matrix[0])))))+1
     dim2=int(float(c_size)/float( max(abs(strt.lattice.matrix[1]))))+1
     dim3=int(float(c_size)/float( max(abs(strt.lattice.matrix[2]))))+1
@@ -985,6 +1068,12 @@ def do_phonons(strt=None,parameters=None):
 def def_energy(vac=[],parameters={}):
     """
     Get specific defect formation energy
+    Args:
+         vac: vacancy structures
+         parameters: LAMMPS input parameters
+    Returns:
+           def_list: defect energy list
+           header_list: defect names
     """
 #def def_energy(vac=[],parameters={'pair_style':'eam/alloy','pair_coeff':'/scratch/lfs/kamal/POSMAT/Automatic2/Al03.eam.alloy','atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'}):
     def_list=[]
@@ -1017,10 +1106,15 @@ def def_energy(vac=[],parameters={}):
     f.close()
     return def_list,header_list
 
+
 #def main(p=None, parameters={'pair_style':'rebomos','pair_coeff':'/scratch/lfs/kamal/JARVIS/All2/MoS2/MoS.REBO.set5b','atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'}):
-def main(p=None, parameters={}):
+def main(p=None, parameters={},c_size=35):
     """
     Master function to run LAMMPS job
+    Args:
+        p: Poscar object
+        parameters: LAMMPS input parameters
+        c_size:cell size
     """
     #p=Poscar.from_file("POSCAR")
     c_size=35
@@ -1100,6 +1194,7 @@ def main_func(mpid='',mat=None,parameters={}):
          mat.comment=mpid
 
     main(p=mat,parameters=parameters)
+
 #Example
 def main_alloy():
    """
@@ -1191,7 +1286,7 @@ def main_alloy():
 
                  pair_coeff=str(cwd1)+str("/")+str(file)
                  #pair_coeff=str('/data/knc6/JARVIS-FF-NEW/ALLOY')+str("/")+str(file)
-                 parameters = {'pair_style':'eam/alloy','pair_coeff':pair_coeff,'atom_style': 'charge' ,'control_file':'/users/knc6/inelast.mod'}
+                 parameters = {'pair_style':'eam/alloy','exec':lammps_exec,'pair_coeff':pair_coeff,'atom_style': 'charge' ,'control_file':input_box}
                  main_file=open("setup.py","w")
                  line=str("from jlammps import main_func")+'\n'
                  main_file.write(line)
