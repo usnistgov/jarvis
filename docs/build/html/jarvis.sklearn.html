@@ -44,174 +44,210 @@ Find details in:
 <a class="reference external" href="https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801">https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801</a></p>
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.el_combs">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">el_combs</code><span class="sig-paren">(</span><em>s=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.el_combs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">el_combs</code><span class="sig-paren">(</span><em>s=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#el_combs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.el_combs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get element combinations for a Structure object
-Args:</p>
-<blockquote>
-<div>s: Structure object</div></blockquote>
-<dl class="docutils">
-<dt>Returns: </dt>
-<dd>comb: combinations</dd>
-</dl>
+:param s: Structure object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">combinations</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">comb</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.flatten_out">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">flatten_out</code><span class="sig-paren">(</span><em>arr=[]</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.flatten_out" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine first cut-off 
-Args:</p>
-<blockquote>
-<div>arr: array
-tol: toelrance</div></blockquote>
-<dl class="docutils">
-<dt>Return:</dt>
-<dd>rcut: cut-off for a given tolerance tol, 
-because sometimes RDF peaks could be very close</dd>
-</dl>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">flatten_out</code><span class="sig-paren">(</span><em>arr=[]</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#flatten_out"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.flatten_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine first cut-off
+:param arr: array
+:param tol: toelrance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">cut-off for a given tolerance tol,
+because sometimes RDF peaks could be very close</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">rcut</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.get_chemonly">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_chemonly</code><span class="sig-paren">(</span><em>string=''</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.get_chemonly" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_chemonly</code><span class="sig-paren">(</span><em>string=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#get_chemonly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.get_chemonly" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get only mean chemical descriptors for a chemical formula, say Al2O3
-Args:</p>
-<blockquote>
-<div>string: chemical formula, say Al2O3, NaCl etc.</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>mean_chem: average chemical descriptors</dd>
-</dl>
+:param string: chemical formula, say Al2O3, NaCl etc.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">average chemical descriptors</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">mean_chem</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.get_chgdescrp_arr">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_chgdescrp_arr</code><span class="sig-paren">(</span><em>elm=''</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.get_chgdescrp_arr" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_chgdescrp_arr</code><span class="sig-paren">(</span><em>elm=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#get_chgdescrp_arr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.get_chgdescrp_arr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get charge descriptors for an element
-Args:</p>
-<blockquote>
-<div>elm: element name</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>arr: array value</dd>
-</dl>
+:param elm: element name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">array value</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">arr</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.get_comp_descp">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_comp_descp</code><span class="sig-paren">(</span><em>struct=''</em>, <em>jcell=True</em>, <em>jmean_chem=True</em>, <em>jmean_chg=True</em>, <em>jrdf=False</em>, <em>jrdf_adf=True</em>, <em>print_names=False</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.get_comp_descp" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_comp_descp</code><span class="sig-paren">(</span><em>struct=''</em>, <em>jcell=True</em>, <em>jmean_chem=True</em>, <em>jmean_chg=True</em>, <em>jrdf=False</em>, <em>jrdf_adf=True</em>, <em>print_names=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#get_comp_descp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.get_comp_descp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get chemo-structural CFID decriptors
-Args:</p>
-<blockquote>
-<div>struct: Structure object
-jcell: whether to use cell-size descriptors
-jmean_chem: whether to use average chemical descriptors
-jmean_chg: whether to use average charge distribution descriptors
-jmean_rdf: whether to use radial distribution descriptors
-jrdf_adf: whether to use radial as well as angle distribution descriptors
-print_names: whether to print names of descriptors</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>cat: catenated final descriptors</dd>
-</dl>
+:param struct: Structure object
+:param jcell: whether to use cell-size descriptors
+:param jmean_chem: whether to use average chemical descriptors
+:param jmean_chg: whether to use average charge distribution descriptors
+:param jmean_rdf: whether to use radial distribution descriptors
+:param jrdf_adf: whether to use radial as well as angle distribution descriptors
+:param print_names: whether to print names of descriptors</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">catenated final descriptors</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">cat</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.get_descrp_arr">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_descrp_arr</code><span class="sig-paren">(</span><em>elm=''</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.get_descrp_arr" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_descrp_arr</code><span class="sig-paren">(</span><em>elm=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#get_descrp_arr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.get_descrp_arr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get chemical descriptors for an element
-Args:</p>
-<blockquote>
-<div>elm: element name</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>arr: array value</dd>
-</dl>
+:param elm: element name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">array value</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">arr</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.get_descrp_arr_name">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_descrp_arr_name</code><span class="sig-paren">(</span><em>elm='Al'</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.get_descrp_arr_name" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_descrp_arr_name</code><span class="sig-paren">(</span><em>elm='Al'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#get_descrp_arr_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.get_descrp_arr_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get chemical descriptors for an element
-Args:</p>
-<blockquote>
-<div>elm: element name</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>arr: array value</dd>
-</dl>
+:param elm: element name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">array value</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">arr</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.get_effective_structure">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_effective_structure</code><span class="sig-paren">(</span><em>s=None</em>, <em>tol=8.0</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.get_effective_structure" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_effective_structure</code><span class="sig-paren">(</span><em>s=None</em>, <em>tol=8.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#get_effective_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.get_effective_structure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if there is vacuum, if so get actual size of the structure
 and the add vaccum of size tol to make sure structures
 are independent of user defined vacuum
-Args:</p>
-<blockquote>
-<div>s: Structure object
-tol: vacuum tolerance</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>s: re-structure structure with tol vacuum</dd>
-</dl>
+:param s: Structure object
+:param tol: vacuum tolerance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">re-structure structure with tol vacuum</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">s</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.get_prdf">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_prdf</code><span class="sig-paren">(</span><em>s=None</em>, <em>comb=''</em>, <em>cutoff=10.0</em>, <em>intvl=0.1</em>, <em>plot_prdf=False</em>, <em>filename='prdf.png'</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.get_prdf" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_prdf</code><span class="sig-paren">(</span><em>s=None</em>, <em>comb=''</em>, <em>cutoff=10.0</em>, <em>intvl=0.1</em>, <em>plot_prdf=False</em>, <em>filename='prdf.png'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#get_prdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.get_prdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get partial radial distribution function
-Args:</p>
-<blockquote>
-<div>s: Structure object
-cutoff: maximum cutoff in Angstrom
-intvl: bin-size
-plot_prdf: whether to plot PRDF
-filename: if plotted the name of the output file</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>max-cutoff to ensure all the element-combinations are included</dd>
-</dl>
+:param s: Structure object
+:param cutoff: maximum cutoff in Angstrom
+:param intvl: bin-size
+:param plot_prdf: whether to plot PRDF
+:param filename: if plotted the name of the output file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">max-cutoff to ensure all the element-combinations are included</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.get_rdf">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_rdf</code><span class="sig-paren">(</span><em>s=None</em>, <em>cutoff=10.0</em>, <em>intvl=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.get_rdf" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">get_rdf</code><span class="sig-paren">(</span><em>s=None</em>, <em>cutoff=10.0</em>, <em>intvl=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#get_rdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.get_rdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get total radial distribution function
-Args:</p>
-<blockquote>
-<div>s: Structure object
-cutoff: maximum distance for binning
-intvl: bin-size</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>bins, distribution</dd>
-</dl>
+:param s: Structure object
+:param cutoff: maximum distance for binning
+:param intvl: bin-size</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">bins, distribution</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.packing_fraction">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">packing_fraction</code><span class="sig-paren">(</span><em>s=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.packing_fraction" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">packing_fraction</code><span class="sig-paren">(</span><em>s=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#packing_fraction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.packing_fraction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get packing fraction
-Args:</p>
-<blockquote>
-<div>s: Structure object</div></blockquote>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>packing fraction</dd>
-</dl>
+:param s: Structure object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">packing fraction</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.rdf_ang_dist">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">rdf_ang_dist</code><span class="sig-paren">(</span><em>s=''</em>, <em>c_size=10.0</em>, <em>plot=True</em>, <em>max_cut=5.0</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.rdf_ang_dist" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">rdf_ang_dist</code><span class="sig-paren">(</span><em>s=''</em>, <em>c_size=10.0</em>, <em>plot=True</em>, <em>max_cut=5.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#rdf_ang_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.rdf_ang_dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get radial and angular distribution functions
-Args:</p>
-<blockquote>
-<div>s: Structure object
-c_size: max. cell size
-plot: whether to plot distributions
-max_cut: max. bond cut-off for angular distribution</div></blockquote>
+:param s: Structure object
+:param c_size: max. cell size
+:param plot: whether to plot distributions
+:param max_cut: max. bond cut-off for angular distribution</p>
 <dl class="docutils">
 <dt>Retruns:</dt>
 <dd>adfa,adfb,ddf,rdf,bondo
@@ -225,7 +261,7 @@ Bond order distribution</dd>
 
 <dl class="function">
 <dt id="jarvis.sklearn.get_desc.smooth_kde">
-<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">smooth_kde</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.sklearn.get_desc.smooth_kde" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.sklearn.get_desc.</code><code class="descname">smooth_kde</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/sklearn/get_desc.html#smooth_kde"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.sklearn.get_desc.smooth_kde" title="Permalink to this definition">¶</a></dt>
 <dd><p>For making smooth distributions</p>
 </dd></dl>
 
