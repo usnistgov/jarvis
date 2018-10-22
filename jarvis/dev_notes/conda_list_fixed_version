@@ -1,3 +1,4 @@
+#source ~/anaconda2/envs/minisphinx/bin/activate minisphinx
 # packages in environment at /users/knc6/anaconda2/envs/minisphinx:
 #
 alabaster                 0.7.12                    <pip>
