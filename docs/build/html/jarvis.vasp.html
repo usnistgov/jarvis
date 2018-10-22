@@ -1,0 +1,374 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.vasp package &#8212; jarvis-tools 2018.10.22 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="jarvis-vasp-package">
+<h1>jarvis.vasp package<a class="headerlink" href="#jarvis-vasp-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jarvis.vasp.joptb88vdw">
+<span id="jarvis-vasp-joptb88vdw-module"></span><h2>jarvis.vasp.joptb88vdw module<a class="headerlink" href="#module-jarvis.vasp.joptb88vdw" title="Permalink to this headline">¶</a></h2>
+<p>Module to run OptB88vdW based High-throughput calculations</p>
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.Auto_Kpoints">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">Auto_Kpoints</code><span class="sig-paren">(</span><em>mat=None</em>, <em>length=20</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.Auto_Kpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Geting Kpoints object from structure and line-density
+Args:</p>
+<blockquote>
+<div>mat: Poscar object with structure information
+length: line-density</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>kpp: Kpoint object</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.check_polar">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">check_polar</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.check_polar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the surface structure is polar
+by comparing atom types at top and bottom
+Args:</p>
+<blockquote>
+<div><a class="reference external" href="file:Structure">file:Structure</a> object (surface with vacuum)</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>polar:True/False</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.converg_encut">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">converg_encut</code><span class="sig-paren">(</span><em>encut=500</em>, <em>mat=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.converg_encut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to converg plane-wave cut-off
+Args:</p>
+<blockquote>
+<div>encut: intial cutoff
+mat: Poscar object</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>encut: converged cut-off</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.converg_kpoints">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">converg_kpoints</code><span class="sig-paren">(</span><em>length=0</em>, <em>mat=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.converg_kpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to converg K-points
+Args:</p>
+<blockquote>
+<div>lenght: K-point line density
+mat: Poscar object with structure information</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>length1: K-point line density</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.def_energy">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">def_energy</code><span class="sig-paren">(</span><em>vac=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.def_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculation of vacancy formation energies
+Args:</p>
+<blockquote>
+<div>vac: list of Poscar vacancy structure objects</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>def_list: list of defect energies
+def_header_list: list of defect names</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.get_lowest_en_from_mp">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">get_lowest_en_from_mp</code><span class="sig-paren">(</span><em>formula</em>, <em>MAPI_KEY=''</em>, <em>all_structs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.get_lowest_en_from_mp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lowest energy/chemical potential of an element
+from the materialsproject/jarvis database.
+Note: Get the api key from materialsproject/jarvis website. 
+Args:</p>
+<blockquote>
+<div>formula: say Al, Ni etc.
+MAPI_KEY: should be defines in the environment
+all_structs: all structures or just stable ones (True/False)</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>enp: energy per atom</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.main_func">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">main_func</code><span class="sig-paren">(</span><em>mpid=''</em>, <em>jid=''</em>, <em>mat=None</em>, <em>enforc_cvn=False</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.main_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function to carry out property calculations
+Args:</p>
+<blockquote>
+<div>mpid: materialsproject id
+jid: jarvis-dft id
+mat: Poscar object
+enforc_cvn:  whether or not enforce conventional cell input structure</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>en: final energy
+final: final structure</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.make_big">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">make_big</code><span class="sig-paren">(</span><em>poscar=None</em>, <em>size=11.0</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.make_big" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to make supercell 
+Args:</p>
+<blockquote>
+<div>poscar: Poscar object
+size: simulation size in Angstrom</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>big: Poscar supercell object</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.run_job">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">run_job</code><span class="sig-paren">(</span><em>mat=None</em>, <em>incar=None</em>, <em>kpoints=None</em>, <em>jobname=''</em>, <em>copy_file=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.run_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic function to run a VASP job, error correction implemented using
+custodian package
+A jobname+.json file is produced after successful completion of the job
+A first_cust.py file is generated which is invoked using python command
+Args:</p>
+<blockquote>
+<div>mat: Poscar object with structure information
+incar: Incar object with control information
+kpoints: Kpoints object with mesh information
+jobname: a uniq name for a job-type, say MAIN-ELAST for elastic properties
+copy_file: copy file from previous runs, say CHGCAR for Non-SCF bandstructure calculations</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>f_energy: final energy
+contcar: path to final relaxed structure</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.smart_converge">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_converge</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=''</em>, <em>leng=''</em>, <em>band_str=True</em>, <em>elast_prop=True</em>, <em>optical_prop=True</em>, <em>mbj_prop=True</em>, <em>spin_orb=False</em>, <em>phonon=False</em>, <em>surf_en=False</em>, <em>def_en=False</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_converge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function to converge k-points/cut-off
+optimize structure, and run subsequent property calculations
+Args:</p>
+<blockquote>
+<div>mat: Poscar object with structure information
+encut: if ‘’ then automataic convergence, else use defined fixed-cutoff
+leng: if ‘’ then automataic convergence, else use defined fixed-line density
+band_str: if True then do band-structure calculations along high-symmetry points
+elast_prop: if True then do elastic property calculations using finite-difference
+optical_prop: if True do frequency dependent dielectric function calculations using he independent-particle (IP) approximation
+mbj_prop: if True do METAGGA-TBmBJ optical property calculations with IP approximation
+spin_orb: if True do spin-orbit calculations
+phonon: if True do phonon calculations using DFPT
+surf_en: if True do surface enrgy calculations 
+def_en: if True do defect enrgy calculations</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>en2: final energy
+mat_f: final structure</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.smart_surf">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_surf</code><span class="sig-paren">(</span><em>strt=None</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_surf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Umbrell function for surface energies with convergence
+Args:</p>
+<blockquote>
+<div>strt: Structure object
+tol: surface energy convergence tolerance in eV</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>surf_list: list of surface energies
+surf_header_list: list of surface names</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.smart_vac">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">smart_vac</code><span class="sig-paren">(</span><em>strt=None</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.smart_vac" title="Permalink to this definition">¶</a></dt>
+<dd><p>Umbrell function for vacancy formation energies with convergence
+Args:</p>
+<blockquote>
+<div>strt: Structure object
+tol: defect energy convergence tolerance in eV</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>def_list: list of defect energies
+def_header_list: list of defect names</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.sum_chem_pot">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">sum_chem_pot</code><span class="sig-paren">(</span><em>strt=None</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.sum_chem_pot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for sump of chemical potential
+Args:</p>
+<blockquote>
+<div>strt: Structure object</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>sum: sum of energy</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.vasp.joptb88vdw.surf_energy">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">surf_energy</code><span class="sig-paren">(</span><em>surf=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#jarvis.vasp.joptb88vdw.surf_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for surface energies
+Args:</p>
+<blockquote>
+<div>surf: list of Poscar surface objects</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>surf_list: list of surface energies
+surf_header_list: list of surface names</dd>
+</dl>
+</dd></dl>
+
+<dl class="data">
+<dt id="jarvis.vasp.joptb88vdw.use_incar_dict">
+<code class="descclassname">jarvis.vasp.joptb88vdw.</code><code class="descname">use_incar_dict</code><em class="property"> = {'AGGAC': 0.0, 'EDIFF': '1E-7', 'GGA': 'BO', 'IBRION': 2, 'ISIF': 2, 'ISMEAR': 0, 'LCHARG': '.FALSE.', 'LUSE_VDW': '.TRUE.', 'LWAVE': '.FALSE.', 'NELM': 400, 'NPAR': 4.898979485566356, 'NSW': 1, 'PARAM1': 0.1833333333, 'PARAM2': 0.22, 'PREC': 'Accurate'}</em><a class="headerlink" href="#jarvis.vasp.joptb88vdw.use_incar_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change use_incar_dict based on a functional,
+examples given for LDA and PBE</p>
+<p>functional=’LDA’
+ldadict = dict(</p>
+<blockquote>
+<div><p>PREC = ‘Accurate’,
+ISMEAR = 0,
+IBRION=2,</p>
+<p>EDIFF = ‘1E-7’,
+NSW = 1,
+NELM = 400,
+ISIF = 2,
+NPAR = np.sqrt(ncores),
+LCHARG = ‘.FALSE.’,
+LWAVE = ‘.FALSE.’ )</p>
+</div></blockquote>
+<p>use_incar_dict=ldadict</p>
+<p>functional=’PBE’
+pbedict = dict(</p>
+<blockquote>
+<div><p>PREC = ‘Accurate’,
+ISMEAR = 0,
+IBRION=2,</p>
+<p>GGA = ‘PE’,</p>
+<p>EDIFF = ‘1E-7’,
+NSW = 1,
+NELM = 400,
+ISIF = 2,
+NPAR = np.sqrt(ncores),
+LCHARG = ‘.FALSE.’,
+LWAVE = ‘.FALSE.’ )</p>
+</div></blockquote>
+<p>use_incar_dict=pbedict</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.vasp">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.vasp" title="Permalink to this headline">¶</a></h2>
+<p>Module to run DFT particularly VASP calculations with JARVIS-DFT</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">jarvis-tools</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Kamal Choudhary.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/jarvis.vasp.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
