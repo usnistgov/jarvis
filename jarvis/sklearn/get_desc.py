@@ -38,6 +38,7 @@ def get_effective_structure(s=None,tol=8.0):
   Check if there is vacuum, if so get actual size of the structure
   and the add vaccum of size tol to make sure structures
   are independent of user defined vacuum
+
   Args:
        s: Structure object
        tol: vacuum tolerance
@@ -63,6 +64,7 @@ def get_effective_structure(s=None,tol=8.0):
 def el_combs(s=[]):
   """
   Get element combinations for a Structure object
+
   Args:
       s: Structure object
   Returns: 
@@ -75,7 +77,8 @@ def el_combs(s=[]):
 
 def flatten_out(arr=[],tol=0.1):
     """
-    Determine first cut-off 
+    Determine first cut-off
+ 
     Args:
          arr: array
          tol: toelrance
@@ -113,6 +116,7 @@ def smooth_kde(x,y):
 def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,filename='prdf.png'):
     """
     Get partial radial distribution function
+
     Args:
          s: Structure object
          cutoff: maximum cutoff in Angstrom
@@ -170,6 +174,7 @@ def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,filename='prdf
 def get_rdf(s=None,cutoff=10.0,intvl=0.1):
     """
     Get total radial distribution function
+
     Args:
          s: Structure object
          cutoff: maximum distance for binning
@@ -193,6 +198,7 @@ def get_rdf(s=None,cutoff=10.0,intvl=0.1):
 def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
     """
     Get radial and angular distribution functions
+
     Args:
         s: Structure object
         c_size: max. cell size
@@ -528,6 +534,7 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
 def get_chgdescrp_arr(elm=''):
       """
       Get charge descriptors for an element
+
       Args:
            elm: element name
       Returns:
@@ -547,6 +554,7 @@ def get_chgdescrp_arr(elm=''):
 def get_descrp_arr_name(elm='Al'):
       """
       Get chemical descriptors for an element
+
       Args:
            elm: element name
       Returns:
@@ -569,6 +577,7 @@ def get_descrp_arr_name(elm='Al'):
 def get_descrp_arr(elm=''):
       """
       Get chemical descriptors for an element
+
       Args:
            elm: element name
       Returns:
@@ -592,6 +601,7 @@ def get_descrp_arr(elm=''):
 def packing_fraction(s=None):
     """
     Get packing fraction
+
     Args:
          s: Structure object
     Returns:
@@ -608,6 +618,7 @@ def packing_fraction(s=None):
 def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=False,jrdf_adf=True,print_names=False):  
         """
         Get chemo-structural CFID decriptors
+
         Args:
             struct: Structure object
             jcell: whether to use cell-size descriptors
@@ -713,6 +724,7 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
 def get_chemonly(string=''):
   """
   Get only mean chemical descriptors for a chemical formula, say Al2O3
+
   Args:
        string: chemical formula, say Al2O3, NaCl etc.
   Returns:

@@ -41,9 +41,9 @@ def get_phonopy_atoms(mat=None):
     Helper function to convert pymatgen structure object to phonopy atoms
 
     Args:
-         mat: pymatgen structure object
+        mat: pymatgen structure object
     Returns:
-            p: phonopy atoms object
+           phonopy atoms object
     """
     symbols = [str(site.specie.symbol) for site in mat]
     positions = [site.coords for site in mat]
@@ -93,6 +93,7 @@ def get_struct_from_mp(formula, MAPI_KEY="", all_structs=False):
     Fetches the structure corresponding to the given formula
     from the materialsproject database.
     Note: Get the api key from materialsproject website.
+
     Args:
         formula: Example Al-Ni, Al, Al2O3 etc.
         MAPI_KEY: key for database
@@ -133,6 +134,7 @@ def get_struct_from_mp(formula, MAPI_KEY="", all_structs=False):
 def run_job(mat=None,parameters = {},jobname=''):
     """ 
     Generic  function for running LAMMPS job
+
     Args:
         mat: Poscar object
         parameters: parameters with LAMMPS input information
@@ -274,6 +276,7 @@ def write_lammps_data(structure=None, file=''):
         """
         write lammps structure data
         from ase with custom modifications
+
         Args:
             structure: Structure object
             file:  intended file to write in
@@ -457,6 +460,7 @@ def analyz_loge(log='log.lammps'):
     Analyzes log.lammps file,
     Please note, the output format heavily depends on the input file
     A generic inpu is taken here
+
     Args:
         log: path to log.lammps file
     Returns:
@@ -554,6 +558,7 @@ def analyz_loge(log='log.lammps'):
 def read_dumpfull(data=None,ff=None):
     """
     Reads LAMMPS dump file
+
     Args:
         data: dump file path
         ff: potential.mod/potential information file path
@@ -629,6 +634,7 @@ def read_dumpfull(data=None,ff=None):
 def read_dump(data=None,ff=None):
     """ 
     Read LAMMPS dump file
+
     Args:
         data: dump file path
         ff: potential.mod/potential information file path
@@ -680,6 +686,7 @@ def read_dump(data=None,ff=None):
 def read_data(data=None,ff=None):
     """
     Read LAMMPS data file
+
     Args:
         data: data file path
         ff: potential.mod/potential information file path
@@ -762,6 +769,7 @@ def read_data(data=None,ff=None):
 def smart_vac(strt=None,parameters=None):
     """
     Function to get all vacancy formation energies
+
     Args:
         strt: Structure object
         parameters: parameters with LAMMPS inputs
@@ -834,6 +842,7 @@ def smart_vac(strt=None,parameters=None):
 def smart_surf(strt=None,parameters=None,layers=3,tol=0.5):
     """
     Function to get all surface energies
+
     Args:
         strt: Structure object
         parameters: parameters with LAMMPS inputs
@@ -913,6 +922,7 @@ def smart_surf(strt=None,parameters=None,layers=3,tol=0.5):
 def surf_energy(surf=[],parameters = {}):
     """
     Function to get specific surface energies
+
     Args:
         surf: list of syrfaces
         parameters: LAMMPS input parameters
@@ -946,6 +956,7 @@ def surf_energy(surf=[],parameters = {}):
 def get_chem_pot(s1=None,s2=None,parameters= {}):
     """
     Get chemical potential given perfect and defect structures
+
     Args:
         s1: perfect Structure object
         s2: defect Structure object
@@ -994,6 +1005,7 @@ def calc_forces(mat=None,parameters={}):
 def do_phonons(strt=None,parameters=None,c_size=25):
     """
     Setting up phonopy job using LAMMPS
+
     Args:
         strt: Structure object
         parameters: LAMMPS input file parameters
@@ -1064,6 +1076,7 @@ def do_phonons(strt=None,parameters=None,c_size=25):
 def def_energy(vac=[],parameters={}):
     """
     Get specific defect formation energy
+
     Args:
          vac: vacancy structures
          parameters: LAMMPS input parameters
@@ -1107,6 +1120,7 @@ def def_energy(vac=[],parameters={}):
 def main(p=None, parameters={},c_size=35):
     """
     Master function to run LAMMPS job
+
     Args:
         p: Poscar object
         parameters: LAMMPS input parameters
