@@ -71,6 +71,18 @@ How to cite JARVIS
         
         https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 
+Pypi
+-----------------
+- jarvis-tools: 
+
+      https://pypi.org/project/jarvis-tools
+
+Readthedocs page
+-----------------
+- jarvis-tools: 
+
+      https://jarvis-tools.readthedocs.io/en/latest/
+
 Running the examples
 -----------------
 - Set HPC/system related information in env_variables
