@@ -13,7 +13,7 @@ setup(
 
     extras_require={"babel": ["openbabel", "pybel"],
                     "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
-                    "pymatgen_related": ["pymatgen==2017.8.4", "custodian==1.0.4","phonopy==1.10.8","ase==3.11.0","pybtex==0.21","fortranformat==0.2.5","lightgbm==2.1.0","scikit-learn==0.18.1","pandas==0.23.4",]
+                    "pymatgen_related": ["pymatgen==2017.8.4", "custodian==1.0.4","phonopy==1.11.2","ase==3.11.0","pybtex==0.21","fortranformat==0.2.5","lightgbm==2.1.0","scikit-learn==0.18.1","pandas==0.23.4",]
                     },
     author="Kamal Choudhary",
     author_email = "kamal.choudhary@nist.gov",

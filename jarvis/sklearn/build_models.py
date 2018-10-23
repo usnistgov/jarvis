@@ -5,7 +5,6 @@ from sklearn.metrics import mean_absolute_error,r2_score,mean_squared_error
 import lightgbm as lgb
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
-%matplotlib inline
 import pandas as pd
 from sklearn.datasets import load_boston
 from sklearn.model_selection import train_test_split,learning_curve,cross_val_score,cross_val_predict,GridSearchCV,RandomizedSearchCV
