@@ -11,6 +11,7 @@ Subpackages
     jarvis.gasp
     jarvis.lammps
     jarvis.sklearn
+    jarvis.tools
     jarvis.vasp
 
 Module contents

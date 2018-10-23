@@ -81,7 +81,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="jarvis">
+  <dl class="class">
+<dt id="center">
+<em class="property">class </em><code class="descname">center</code><a class="headerlink" href="#center" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<a class="reference external image-reference" href="https://circleci.com/gh/usnistgov/jarvis/tree/master"><img alt="https://circleci.com/gh/usnistgov/jarvis/tree/master.svg?style=shield" src="https://circleci.com/gh/usnistgov/jarvis/tree/master.svg?style=shield" /></a>
+<a class="reference external image-reference" href="https://circleci.com/gh/usnistgov/jarvis/tree/master"><img alt="https://readthedocs.org/projects/jarvis-tools/badge/?version=latest&amp;style=plastic" src="https://readthedocs.org/projects/jarvis-tools/badge/?version=latest&amp;style=plastic" /></a>
+<div class="section" id="jarvis">
 <h1>JARVIS<a class="headerlink" href="#jarvis" title="Permalink to this headline">¶</a></h1>
 <p>Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
 classical force-field/molecular dynamics and machine-learning. Official website: <a class="reference external" href="https://jarvis.nist.gov">https://jarvis.nist.gov</a></p>
@@ -90,28 +97,26 @@ classical force-field/molecular dynamics and machine-learning. Official website:
 <ul>
 <li><p class="first">We recommend installing miniconda environment from <a class="reference external" href="https://conda.io/miniconda.html">https://conda.io/miniconda.html</a> .</p>
 <blockquote>
-<div><p>bash Miniconda3-latest-Linux-x86_64.sh (for linux)</p>
-<p>bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)</p>
-<p>Download 32/64 bit python 3.6 miniconda exe and install (for windows)</p>
+<div><p>bash Miniconda3-latest-Linux-x86_64.sh (for linux)
+bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
+Download 32/64 bit python 3.6 miniconda exe and install (for windows)</p>
+<p>Now, let’s make a conda environment just for JARVIS:</p>
+<p>conda create –name my_jarvis python=3.6</p>
+<p>The ‘my_jarvis’ environment can be activated using the command:</p>
+<p>source activate my_jarvis</p>
 </div></blockquote>
-</li>
-<li><p class="first">Now, let’s make a conda environment just for JARVIS:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">create</span> <span class="o">--</span><span class="n">name</span> <span class="n">my_jarvis</span> <span class="n">python</span><span class="o">=</span><span class="mf">3.6</span>
-</pre></div>
-</div>
-</li>
-<li><p class="first">The ‘my_jarvis’ environment can be activated using the command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">activate</span> <span class="n">my_jarvis</span>
-</pre></div>
-</div>
 </li>
 <li><p class="first">Simple pip install:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">jarvis</span><span class="o">-</span><span class="n">tools</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Windows OS users:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Install</span> <span class="n">MS</span> <span class="n">Visual</span> <span class="n">studio</span> <span class="n">buildtools</span>
+<li><p class="first">Or git clone install:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">numpy</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">scip</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">usnistgov</span><span class="o">/</span><span class="n">jarvis</span><span class="o">.</span><span class="n">git</span> <span class="o">.</span>
+<span class="n">cd</span> <span class="n">jarvis</span>
+<span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
 </pre></div>
 </div>
 </li>
