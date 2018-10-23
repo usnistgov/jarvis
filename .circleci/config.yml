@@ -30,9 +30,13 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
+            export PATH=$HOME/miniconda3/bin:$PATH
+            if [ ! -d "/root/miniconda3/envs/test_env" ]; then conda create --quiet --yes --name my_jarvis python=3.6; fi
+            source activate my_jarvis
+            conda install --quiet --yes numpy scipy matplotlib sympy pandas cython
+            conda install --quiet --yes cmake
+            pip install --upgrade pip
+            pip install --quiet --ignore-installed -r requirements.txt 
 
       - save_cache:
           paths:
@@ -47,7 +51,8 @@ jobs:
       - run:
           name: run tests
           command: |
-            . venv/bin/activate
+            export PATH=$HOME/miniconda3/bin:$PATH
+            source activate my_jarvis
             python test.py test
 
       - store_artifacts:
