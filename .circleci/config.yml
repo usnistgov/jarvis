@@ -34,8 +34,12 @@ jobs:
             . venv/bin/activate
             pip install --upgrade pip
             pip install numpy 
-            pip install scipy 
-            pip install -U jarvis-tools 
+            pip install scipy
+            rm -rf jarvis
+            git clone https://github.com/usnistgov/jarvis.git
+            cd jarvis
+            python setup.py install 
+            #pip install -U jarvis-tools 
 
       - save_cache:
           paths:
@@ -51,7 +55,6 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python jarvis/tests/test_getdesc.py 
 
       - store_artifacts:
           path: test-reports
