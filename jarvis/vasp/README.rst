@@ -11,7 +11,7 @@ examples
 
 joptb88vdw.py
 
-    high-throughput script for OptB88vdW functional, change the user_incar_dict on top to integrate any pther functional, examples given for LDA and PBE
+    high-throughput script for OptB88vdW functional, change the user_incar_dict on top to integrate any other functional, examples given for LDA and PBE
 
 
 tools
