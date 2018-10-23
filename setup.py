@@ -9,13 +9,11 @@ setup(
     name="jarvis-tools",
     version="2018.10.22.3",
     setup_requires=['numpy==1.15.2','scipy==1.1.0'],
-    install_requires=["custodian>=1.0.4","ase==3.11.0","pymatgen==2017.8.4",
-                 "pybtex==0.21","phonopy==1.10.8","fortranformat==0.2.5",
-                 "pandas==0.23.4","scikit-learn==0.18.1","lightgbm==2.1.0",],
+    install_requires=["numpy==1.15.2","scipy==1.1.0",],
 
     extras_require={"babel": ["openbabel", "pybel"],
-                    "remote": ["fabric"],
-                    "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"]
+                    "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
+                    "pymatgen_related": ["pymatgen==2017.8.4", "custodian==1.0.4","phonopy==1.10.8","ase==3.11.0","pybtex==0.21","fortranformat==0.2.5","lightgbm==2.1.0","scikit-learn==0.18.1","pandas==0.23.4",]
                     },
     author="Kamal Choudhary",
     author_email = "kamal.choudhary@nist.gov",
