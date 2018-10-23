@@ -1,4 +1,4 @@
-Files to run a machine learning on materials data
+Files to run a machine learning model on materials data
 
 
 Description of files
@@ -21,4 +21,4 @@ get_desc
 
 examples 
 
-    folder with an example POSCAR file and an example file to get descriptors
+    folder with an example POSCAR file and an example script to get descriptors
