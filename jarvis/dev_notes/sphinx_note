@@ -3,5 +3,10 @@ sphinx-quickstart docs
 Separate source and build directories (y/n) [n]: y
 autodoc: automatically insert docstrings from modules (y/n) [n]: y
 sys.path.insert(0, os.path.abspath('../..')) in source/conf.py
-sphinx-apidoc -f -o source/ ../jarvis/ in docs folder
-https://github.com/daler/sphinxdoc-test/blob/master/README.rst
+
+in docs folder:
+cp ../jarvis/dev_notes/conf.py source/
+cp ../jarvis/dev_notes/index.rst source/index.rst
+sphinx-apidoc -f -o source/ ../jarvis/ 
+make html
+
