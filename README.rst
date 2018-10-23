@@ -1,6 +1,8 @@
+.. class:: center
 .. image:: https://circleci.com/gh/usnistgov/jarvis/tree/master.svg?style=shield
     :target: https://circleci.com/gh/usnistgov/jarvis/tree/master
-
+.. image:: https://readthedocs.org/projects/jarvis-tools/badge/?version=latest&style=plastic
+    :target: https://circleci.com/gh/usnistgov/jarvis/tree/master
 
 JARVIS 
 =====
