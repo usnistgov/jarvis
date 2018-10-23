@@ -14,7 +14,7 @@ try:
       tmp=(i.split('='))
       if len(tmp)>1:
        print (tmp[0],tmp[1])
-        os.environ[tmp[0]]=tmp[1]
+       os.environ[tmp[0]]=tmp[1]
 except:
-   print ('Cannot find env_variable in site-packages')
+   print ('Cannot find env_variables in site-packages/path')
    pass
