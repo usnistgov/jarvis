@@ -38,6 +38,12 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .coverage
+.json
+.vasp
+.dat
+.INFO
+.elastic
+.mod
 .coverage.*
 .cache
 nosetests.xml
