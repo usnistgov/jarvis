@@ -34,7 +34,10 @@ jobs:
             . venv/bin/activate
             pip install numpy 
             pip install scipy 
-            pip install -U jarvis-tools 
+            git clone https://github.com/usnistgov/jarvis.git
+            cd jarvis
+            python setup.py install
+            #pip install -U jarvis-tools 
 
       - save_cache:
           paths:
