@@ -34,7 +34,7 @@ jobs:
             . venv/bin/activate
             pip install numpy 
             pip install scipy 
-            pip install --quiet --ignore-installed -r requirements.txt 
+            pip install -U jarvis-tools 
 
       - save_cache:
           paths:
