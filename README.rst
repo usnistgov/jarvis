@@ -32,12 +32,12 @@ Installing JARVIS
 
 - Simple pip install::
 
+      pip install numpy scipy
       pip install jarvis-tools
        
 - Or git clone install::
 
-      pip install numpy
-      pip install scipy
+      pip install numpy scipy
       git clone https://github.com/usnistgov/jarvis.git 
       cd jarvis
       python setup.py install 
