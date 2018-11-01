@@ -8,8 +8,18 @@ JARVIS_DIR = os.path.dirname(os.path.abspath(__file__))
 setup(
     name="jarvis-tools",
     version="2018.10.23.2",
-    install_requires=["numpy==1.15.2","scipy==1.1.0","phonopy==1.11.2","pymatgen==2017.8.4","custodian==1.0.4","ase==3.11.0","pybtex==0.21","fortranformat==0.2.5","scikit-learn==0.18.1","pandas==0.23.4",],
-
+    install_requires = [
+        "numpy>=1.15.1,<=1.15.2",
+        "scipy==1.1.0",
+        "pymatgen==2017.8.4",
+        "custodian==2018.8.10",
+        "ase==3.11.0",
+        "pybtex==0.21",
+        "fortranformat==0.2.5",
+        "scikit-learn>=0.18.1",
+        "pandas==0.23.4",
+        "phonopy>=1.11.2"
+    ],
     extras_require={"babel": ["openbabel", "pybel"],
                     "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
                     },
@@ -35,4 +45,3 @@ setup(
     ],
     #scripts=glob.glob(os.path.join(JARVIS_DIR,  "*"))
 )
-
