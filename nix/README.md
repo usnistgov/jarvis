@@ -19,16 +19,18 @@ are a succinct steps that I use when setting up a new system with
 
 ## Installing
 
-Once you have a working [Nix] installation use,
+Once you have a working [Nix] installation use the
+[Nix-shell](https://www.sam.today/blog/environments-with-nix-shell-learning-nix-pt-1/)
+to create the environment,
 
     $ nix-shell --pure
 
-in the base Jarvis directory to install Jarvis.
+in the base Jarvis directory to create an environment to use Jarvis.
 
 `nix-shell` drops the user into a shell with a working version of
 Jarvis. To test your installation use
 
-    $ nix-shell --pure --command "cd jarvis/tests; py.test ----ignore=test_vasp.py"
+    $ nix-shell --pure --command "cd jarvis/tests; py.test --ignore=test_vasp.py"
 
 ## Additional Packages
 
