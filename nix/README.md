@@ -43,7 +43,7 @@ Packages unavailable from [Nix] can be installed using `pip`. In this
 case, the installation has been set up so that the [Nix] shell knows
 about a `.local` directory in the base Jarvis directory used by `pip`
 for installation.  So, for example, to install the `toolz` package
-from within the [Nix] shell use::
+from within the [Nix] shell use:
 
     $ pip install --user toolz
 
