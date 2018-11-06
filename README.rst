@@ -35,7 +35,7 @@ Installing JARVIS
       pip install numpy scipy
       pip install jarvis-tools
        
-- Or git clone install::
+- Git clone install::
 
       pip install numpy scipy
       git clone https://github.com/usnistgov/jarvis.git 
@@ -43,7 +43,10 @@ Installing JARVIS
       python setup.py install 
 
 
+- Nix install::
 
+      Nix allows a robust and reproducible package for Linux. For nix-install, follow the instructions at https://github.com/usnistgov/jarvis/tree/master/nix .
+   
 Jupyter notebooks
 -----------------
 - JARVIS-FF:
