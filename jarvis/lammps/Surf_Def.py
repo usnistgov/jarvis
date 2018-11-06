@@ -58,7 +58,7 @@ def get_sc_scale(inp_struct, final_site_no):
     return num_mult
 
 
-def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
+def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None,write_file=True):
     """
     Vacancy, antisite generator
 
@@ -80,37 +80,12 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
     dim2=int(float(c_size)/float( max(abs(struct.lattice.matrix[1]))))+1
     dim3=int(float(c_size)/float( max(abs(struct.lattice.matrix[2]))))+1
     cellmax=max(dim1,dim2,dim3)
-    #print ("in vac_def cellmax=",cell
     prim_struct_sites = len(struct.sites)
     struct = SpacegroupAnalyzer(struct).get_conventional_standard_structure()
     conv_struct_sites = len(struct.sites)
     conv_prim_rat = int(conv_struct_sites/prim_struct_sites)
-    #sc_scale = get_sc_scale(struct,cellmax)
     sc_scale=[dim1,dim2,dim3]
-    #sc_scale=[cellmax,cellmax,cellmax]
     print ("sc_scale",sc_scale)
-    #mpvis = MITRelaxSet #MPGGAVaspInputSet()
-
-    # Begin defaults: All default settings.
-    #blk_vasp_incar_param = {'IBRION':-1,'EDIFF':1e-4,'EDIFFG':0.001,'NSW':0,}
-    #def_vasp_incar_param = {'ISIF':2,'NELM':99,'IBRION':2,'EDIFF':1e-6, 
-    #                        'EDIFFG':0.001,'NSW':40,}
-    #kpoint_den = 6000
-    # End defaults
-    
-    #ptcr_flag = True
-    #try:
-    #    potcar = mpvis.get_potcar(struct)
-    #except:
-    #    print ("VASP POTCAR folder not detected.\n" \
-    #          "Only INCAR, POSCAR, KPOINTS are generated.\n" \
-    #          "If you have VASP installed on this system, \n" \
-    #          "refer to pymatgen documentation for configuring the settings.")
-    #    ptcr_flag = False
-
-
-
-
 
     struct_valrad_eval = ValenceIonicRadiusEvaluator(struct)
     val = struct_valrad_eval.valences
@@ -118,81 +93,41 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
     struct_val = val
     struct_rad = rad
 
-
-
     vac = Vacancy(struct, {}, {})
     scs = vac.make_supercells_with_defects(sc_scale)
-    #site_no = scs[0].num_sites
-    #if site_no > cellmax:
-    #    max_sc_dim = max(sc_scale)
-    #    i = sc_scale.index(max_sc_dim)
-    #    sc_scale[i] -= 1
-    #    scs = vac.make_supercells_with_defects(sc_scale)
-    #print ('struct',scs)
 
 
     for i in range(len(scs)):
         sc = scs[i]
-        #print (type(sc))
         poscar = Poscar(sc) #mpvis.get_poscar(sc)
-        #kpoints = Kpoints.automatic_density(sc,kpoint_den)
-        #incar = mpvis.get_incar(sc)
-        #if ptcr_flag:
-        #    potcar = mpvis.get_potcar(sc)
 
         interdir = mpid
         if not i:
             fin_dir = os.path.join(interdir,'bulk')
-            #try:
-            #    os.makedirs(fin_dir)
-            #except:
-            #    pass
-            #incar.update(blk_vasp_incar_param)
-            #incar.write_file(os.path.join(fin_dir,'INCAR'))
-            #poscar.write_file(os.path.join(fin_dir,'POSCAR'))
             poscar.comment=str('bulk')+str('@')+str('cellmax')+str(cellmax)
             def_str.append(poscar)
-            poscar.write_file('POSCAR-'+str('bulk')+str(".vasp"))
-            #if ptcr_flag:
-            #    potcar.write_file(os.path.join(fin_dir,'POTCAR'))
-            #kpoints.write_file(os.path.join(fin_dir,'KPOINTS'))
+            if write_file==True:
+                poscar.write_file('POSCAR-'+str('bulk')+str(".vasp"))
         else:
             blk_str_sites = set(scs[0].sites)
             vac_str_sites = set(sc.sites)
             vac_sites = blk_str_sites - vac_str_sites
             vac_site = list(vac_sites)[0]
             site_mult = int(vac.get_defectsite_multiplicity(i-1)/conv_prim_rat)
-            #try:
-            #   site_mult = int(vac.get_defectsite_multiplicity(i-1)/conv_prim_rat)
-            #except:
-            #   site_mult=1
-            #   pass
             vac_site_specie = vac_site.specie
             vac_symbol = vac_site.specie.symbol
 
             vac_dir ='vacancy_{}_mult-{}_sitespecie-{}'.format(str(i),
                     site_mult, vac_symbol)
             fin_dir = os.path.join(interdir,vac_dir)
-            #try:
-            #    os.makedirs(fin_dir)
-            #except:
-            #    pass
-            #incar.update(def_vasp_incar_param)
             try:
                 poscar.comment=str(vac_dir)+str('@')+str('cellmax')+str(cellmax)
             except:
                 pass
             pos=poscar
-            #pos=poscar.structure
             def_str.append(pos)
-            #poscar.write_file(os.path.join(fin_dir,'POSCAR'))
-            poscar.write_file('POSCAR-'+str(vac_dir)+str(".vasp"))
-            #incar.write_file(os.path.join(fin_dir,'INCAR'))
-            #if ptcr_flag:
-            #    potcar.write_file(os.path.join(fin_dir,'POTCAR'))
-            #kpoints.write_file(os.path.join(fin_dir,'KPOINTS'))
-
-            # Antisite generation at all vacancy sites
+            if write_file==True:
+                poscar.write_file('POSCAR-'+str(vac_dir)+str(".vasp"))
             struct_species = scs[0].types_of_specie
             for specie in set(struct_species)-set([vac_site_specie]):
                 subspecie_symbol = specie.symbol
@@ -200,44 +135,18 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None):
                 anti_struct.append(specie, vac_site.frac_coords)
                 
                 poscar = Poscar(anti_struct)
-                #incar = mpvis.get_incar(anti_struct)
-                #incar.update(def_vasp_incar_param)
                 as_dir ='antisite_{}_mult-{}_sitespecie-{}_subspecie-{}'.format(
                         str(i), site_mult, vac_symbol, subspecie_symbol)
                 fin_dir = os.path.join(interdir,as_dir)
-                #try:
-                #    os.makedirs(fin_dir)
-                #except:
-                #    pass
                 poscar.comment=str(as_dir)+str('@')+str('cellmax')+str(cellmax)
                 pos=poscar
-                #pos=poscar.structure
                 def_str.append(pos)
-                #poscar.write_file(os.path.join(fin_dir,'POSCAR'))
-                poscar.write_file('POSCAR-'+str(as_dir)+str(".vasp"))
-                #incar.write_file(os.path.join(fin_dir,'INCAR'))
-                #if ptcr_flag:
-                #        potcar.write_file(os.path.join(fin_dir,'POTCAR'))
-                #kpoints.write_file(os.path.join(fin_dir,'KPOINTS'))
-    #try:
-    #    struct.make_supercell(sc_scale) 
-    #    intl = Interstitial(struct, val, rad)
-    #    cell_arr=sc_scale
-    #    for el in struct.composition.elements:
-    #        scs = intl.make_supercells_with_defects(1,el)
-    #        #scs = intl.make_supercells_with_defects(cell_arr,el)
-    #        for i in range(1,len(scs)):
-    #           pos=Poscar(scs[i])
-    #           pos.comment=str('intl_')+str('cellmax')+str(cellmax)+str('@')+str(intl.get_defectsite_coordination_number(i-1))+str('Element')+str(el)
-    #           def_str.append(pos)
-    #           pos.write_file('POSCAR-'+str('intl_')+str('cellmax')+str(cellmax)+str('@')+str(intl.get_defectsite_coordination_number(i-1))+str('Element')+str(el))
-
-    #except:
-    #      pass
+                if write_file==True:
+                    poscar.write_file('POSCAR-'+str(as_dir)+str(".vasp"))
 
     return def_str
 
-def pmg_surfer(mpid='',vacuum=15,mat=None,max_index=1,min_slab_size=15):
+def pmg_surfer(mpid='',vacuum=15,mat=None,max_index=1,min_slab_size=15,write_file=True):
     """
     Pymatgen surface builder for a Poscar
 
@@ -270,7 +179,8 @@ def pmg_surfer(mpid='',vacuum=15,mat=None,max_index=1,min_slab_size=15):
     except:
        pass
     structures.append(pos)
-    mat_cvn.to(fmt='poscar',filename=str('POSCAR-')+str('cvn')+str('.vasp'))
+    if write_file==True:
+        mat_cvn.to(fmt='poscar',filename=str('POSCAR-')+str('cvn')+str('.vasp'))
     for i in indices:
         slab=SlabGenerator(initial_structure = mat_cvn, miller_index=i, min_slab_size= min_slab_size, min_vacuum_size=vacuum , lll_reduce=False, center_slab=True, primitive=False).get_slab()
         normal_slab = slab.get_orthogonal_c_slab()
@@ -288,12 +198,13 @@ def pmg_surfer(mpid='',vacuum=15,mat=None,max_index=1,min_slab_size=15):
            pos.comment=str("Surf-")+str(surf_name)+str('@')+str('vac')+str(vacuum)+str('@')+str('size')+str(min_slab_size)
         except:
            pass
-        pos.write_file(filename=str('POSCAR-')+str("Surf-")+str(surf_name)+str('.vasp'))
+        if write_file==True:
+             pos.write_file(filename=str('POSCAR-')+str("Surf-")+str(surf_name)+str('.vasp'))
         structures.append(pos)
 
     return structures
 
-def surfer(mpid='',vacuum=15,layers=2,mat=None,max_index=1):
+def surfer(mpid='',vacuum=15,layers=2,mat=None,max_index=1,write_file=True):
     """
     ASE surface bulder
 
@@ -326,7 +237,8 @@ def surfer(mpid='',vacuum=15,layers=2,mat=None,max_index=1):
     except:
        pass
     structures.append(pos)
-    mat_cvn.to(fmt='poscar',filename=str('POSCAR-')+str('cvn')+str('.vasp'))
+    if write_file==True:
+        mat_cvn.to(fmt='poscar',filename=str('POSCAR-')+str('cvn')+str('.vasp'))
     for i in indices:
         ase_slab = surface(ase_atoms, i, layers)
         ase_slab.center(vacuum=vacuum, axis=2)
@@ -338,7 +250,8 @@ def surfer(mpid='',vacuum=15,layers=2,mat=None,max_index=1):
            pos.comment=str("Surf-")+str(surf_name)+str('@')+str('vac')+str(vacuum)+str('@')+str('layers')+str(layers)
         except:
            pass
-        pos.write_file(filename=str('POSCAR-')+str("Surf-")+str(surf_name)+str('.vasp'))
+        if write_file==True:
+            pos.write_file(filename=str('POSCAR-')+str("Surf-")+str(surf_name)+str('.vasp'))
         structures.append(pos)
 
     return structures
