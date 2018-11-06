@@ -272,7 +272,7 @@ def run_job(mat=None,parameters = {},jobname=''):
 
 
 
-def write_lammps_data(structure=None, file=''):
+def write_lammps_data(structure=None, file='',write_tmp_file=True):
         """
         write lammps structure data
         from ase with custom modifications
@@ -282,7 +282,8 @@ def write_lammps_data(structure=None, file=''):
             file:  intended file to write in
         """
         structure.sort()
-        structure.to(fmt= "poscar", filename= "new_pymatgen_slab.vasp")
+        if write_tmp_file==True:
+            structure.to(fmt= "poscar", filename= "new_pymatgen_slab.vasp")
         atoms = AseAtomsAdaptor().get_atoms(structure)
 
         f=open(file,"w")

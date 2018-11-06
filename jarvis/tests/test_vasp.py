@@ -29,7 +29,7 @@ def test_Auto_kpoints():
 
 def test_check_polar():
     p=sample_structure().structure
-    surfaces=surfer(mat=p)
+    surfaces=surfer(mat=p,write_file=False)
     s=(surfaces[0]).structure
     print (check_polar(s))
     assert check_polar(s)==False

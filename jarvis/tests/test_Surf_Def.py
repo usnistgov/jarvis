@@ -15,11 +15,11 @@ def sample_strt():
 
 def test_vac_antisite_def_struct_gen():
     data= (read_data(data=dat,ff=ff))
-    vacs=vac_antisite_def_struct_gen(struct=data,c_size=0)
+    vacs=vac_antisite_def_struct_gen(struct=data,c_size=0,write_file=False)
     assert len(vacs)== 2
 
 def test_pmg_surfer():
     s=sample_strt()
-    surf=len(pmg_surfer(mat=s))
+    surf=len(pmg_surfer(mat=s,write_file=False))
     assert surf==4
 
