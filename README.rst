@@ -45,7 +45,8 @@ Installing JARVIS
 
 - Nix install::
 
-      Nix allows a robust and reproducible package for Linux. For nix-install, follow the instructions at https://github.com/usnistgov/jarvis/tree/master/nix .
+      Nix allows a robust and reproducible package for Linux. 
+      For nix-install, follow the instructions at https://github.com/usnistgov/jarvis/tree/master/nix .
    
 Jupyter notebooks
 -----------------
