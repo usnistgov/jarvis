@@ -8,16 +8,22 @@ from jarvis.sklearn.get_desc import get_comp_descp
 from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen,surfer
 from jarvis.tools.vasp import *
 
+pos=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/POSCAR')
+dir=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88')
+run=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-BAND-bulk@mp_149/vasprun.xml')
+kpfile=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-BAND-bulk@mp_149/KPOINTS')
+out=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-ELASTIC-bulk@mp_149/OUTCAR')
+
 def sample_structure():
-    poscar=Poscar.from_file(str('../vasp/examples/SiOptb88/POSCAR'))
+    poscar=Poscar.from_file(pos)
     return poscar
 
 def test_read_poscar():
-    poscar=Structure.from_file(str('../vasp/examples/SiOptb88/POSCAR'))
+    poscar=Structure.from_file(pos)
     assert len(poscar)== 2
 
 def test_Auto_kpoints():
-    poscar=Poscar.from_file(str('../vasp/examples/SiOptb88/POSCAR'))
+    poscar=Poscar.from_file(pos)
     kp=list(Auto_Kpoints(mat=poscar,length=20).kpts[0])
     assert kp == [6,6,6]
 
@@ -41,7 +47,7 @@ def test_make_big():
 def test_converg_encut():
     p=sample_structure()
     cwd=str(os.getcwd())
-    os.chdir('../vasp/examples/SiOptb88')
+    os.chdir(dir)
     final_enc=converg_encut(mat=p)    
     os.chdir(cwd)
     assert final_enc == 500
@@ -49,7 +55,7 @@ def test_converg_encut():
 def test_converg_kpoints():
     p=sample_structure()
     cwd=str(os.getcwd())
-    os.chdir('../vasp/examples/SiOptb88')
+    os.chdir(dir)
     final_kp=converg_kpoints(mat=p)    
     os.chdir(cwd)
     assert final_kp == 35
@@ -57,71 +63,64 @@ def test_converg_kpoints():
 def test_smart_converge():
     p=sample_structure()
     cwd=str(os.getcwd())
-    os.chdir('../vasp/examples/SiOptb88')
+    os.chdir(dir)
     en,mat_f=smart_converge(mat=p)
     assert float(en)==float(-8.3381172)
 
 
 def test_bandgap1():
-    vrun='../vasp/examples/SiOptb88/MAIN-BAND-bulk@mp_149/vasprun.xml'
-    eg,dir=bandgap(vrun=vrun)
+    eg,dir=bandgap(vrun=run)
     assert eg==0.006000000000000227
 
 def test_bandgap2():
-    vrun='../vasp/examples/SiOptb88/MAIN-RELAX-bulk@mp_149/vasprun.xml'
+    vrun= str(run).replace('BAND','RELAX') 
     eg,dir=bandgap(vrun=vrun)
     #print (eg,dir)
     assert eg==0.14800000000000058
 
 def test_bandstr():
-    vrun='../vasp/examples/SiOptb88/MAIN-BAND-bulk@mp_149/vasprun.xml'
-    kpfile='../vasp/examples/SiOptb88/MAIN-BAND-bulk@mp_149/KPOINTS'
-    bplot=bandstr(vrun=vrun,kpfile=kpfile)
+    bplot=bandstr(vrun=run,kpfile=kpfile)
     #bplot.savefig('pp.png')
     assert (bplot.xlim()[0])==0
     bplot.close()
 
 def test_plot_dos():
-   vrun='../vasp/examples/SiOptb88/MAIN-BAND-bulk@mp_149/vasprun.xml'
-   plt1,plt2,plt3= plot_dos(vrun=vrun)
-   assert (plt1.xlim())==-5
+   plt1,plt2,plt3= plot_dos(vrun=run)
+   assert (plt1.xlim()[0])==-5
    plt1.close()
    plt2.close()
    plt3.close()
 
 def test_plot_kp_convergence():
-    dir='../vasp/examples/SiOptb88'
     _,kp=plot_kp_convergence(dir)
     assert kp=='19x19x19'
 
 def test_plot_enc_convergence():
-    dir='../vasp/examples/SiOptb88'
     _,enc=plot_enc_convergence(dir)
     assert enc==500
 
 def test_IP_optics():
-   vrun='../vasp/examples/SiOptb88/MAIN-OPTICS-bulk@mp_149/vasprun.xml'
-   op=optics(vrun)
+   vrun=str(run).replace('BAND','OPTICS')
+   op=IP_optics(vrun)
    val=op['real_part'][0][0]
    assert val==13.4865
 
 def test_elastic_props():
-   out='../vasp/examples/SiOptb88/MAIN-ELASTIC-bulk@mp_149/OUTCAR'
-   info=elastic_props(out)
+   info=elastic_props(outcar=out)
    assert  (info['KV'])==87.267
 
 def test_magnetic_moment():
-   osz='../vasp/examples/SiOptb88/MAIN-ELASTIC-bulk@mp_149/OSZICAR'
+   osz=str(run).replace('BAND','RELAX').replace('vasprun.xml','OSZICAR') 
    m=magnetic_moment(osz)
    assert m==0
 
 def test_get_spacegroup():
-   strt=Structure.from_file('../vasp/examples/SiOptb88/MAIN-ELASTIC-bulk@mp_149/POSCAR')
+   strt=Structure.from_file(pos) 
    num,symb=get_spacegroup(strt)
    assert symb=='Fd-3m'
 
 def test_get_aea():
-   strt=Structure.from_file('../vasp/examples/SiOptb88/MAIN-ELASTIC-bulk@mp_149/POSCAR')
+   strt=Structure.from_file(pos) 
    ar=get_area(strt)
-   assert ar==30.180025513225004
+   assert ar==12.950104933895442
 
