@@ -5,22 +5,19 @@ from pymatgen.io.vasp.inputs import Poscar
 from jarvis.lammps.jlammps import *
 from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen,surfer
 
+dat=os.path.join(os.path.dirname(__file__), '../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/data')
+ff=os.path.join(os.path.dirname(__file__), '../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/potential.mod')
+
 def test_read_data():
-    dat=(str('../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/data'))
-    ff=str('../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/potential.mod')
     data= (read_data(data=dat,ff=ff))
     assert len(data)== 1
 
 def test_vac_antisite_def_struct_gen():
-    dat=(str('../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/data'))
-    ff=str('../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/potential.mod')
     data= (read_data(data=dat,ff=ff))
     vacs=vac_antisite_def_struct_gen(struct=data,c_size=0)
     assert len(vacs)== 2
 
 def sample_strt():
-    dat=(str('../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/data'))
-    ff=str('../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/potential.mod')
     data= (read_data(data=dat,ff=ff))
     return (data)
 
@@ -41,7 +38,7 @@ def test_write_lammps_data():
     assert success==True 
 
 def test_analyz_loge():
-    log='../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/log.lammps'
+    log=os.path.join(os.path.dirname(__file__), '../lammps/examples/Al03.eam.alloy_nist/bulk@mp-134_fold/mp-134/log.lammps') 
     x=len(analyz_loge(log))
     assert x==23
 

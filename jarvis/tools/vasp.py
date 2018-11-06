@@ -574,7 +574,7 @@ def elastic_props(outcar='',vacuum=False):
     spin='na'
     info={}
     ratio_c=1.0
-    v=open(out,"r")
+    v=open(outcar,"r")
     lines = v.read().splitlines()
     for i,line in enumerate(lines):
      if "TOTAL ELASTIC MODULI (kBar)" in  line:
