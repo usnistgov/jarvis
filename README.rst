@@ -43,7 +43,7 @@ Installing JARVIS
       python setup.py install 
 
 
-- Nix install::
+- Nix install:
 
       Nix allows a robust and reproducible package for Linux. 
       For nix-install, follow the instructions at https://github.com/usnistgov/jarvis/tree/master/nix .
