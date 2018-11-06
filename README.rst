@@ -43,10 +43,9 @@ Installing JARVIS
       python setup.py install 
 
 
-- Nix install:
+- Nix allows a robust and reproducible package for Linux. To generate a Nix environment for using JARVIS, follow the `Nix instructions`_.
 
-      Nix allows a robust and reproducible package for Linux. 
-      For nix-install, follow the instructions at https://github.com/usnistgov/jarvis/tree/master/nix .
+.. _`Nix instructions`: ./nix/README.md
    
 Jupyter notebooks
 -----------------
