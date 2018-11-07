@@ -2,7 +2,9 @@
 .. image:: https://circleci.com/gh/usnistgov/jarvis/tree/master.svg?style=shield
     :target: https://circleci.com/gh/usnistgov/jarvis/tree/master
 .. image:: https://readthedocs.org/projects/jarvis-tools/badge/?version=latest&style=plastic
-    :target: https://circleci.com/gh/usnistgov/jarvis/tree/master
+    :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest
+.. image:: https://api.codacy.com/project/badge/Grade/be8fa78b1c0a49c280415ce061163e77   
+    :target: https://www.codacy.com/app/knc6/jarvisutm_source=github.com&amp;utm_medium=referral&amp;utm_content=usnistgov/jarvis&amp;utm_campaign=Badge_Grade
 
 JARVIS 
 =====
