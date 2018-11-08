@@ -60,7 +60,7 @@ jobs:
       - run:
           command: |
             . venv/bin/activate
-            py.test --cov=proj --cov-config .coveragerc
+            py.test --cov=jarvis 
             ./cc-test-reporter format-coverage -t coverage.py -o ./.coverage
             ./cc-test-reporter upload-coverage
       - run:
