@@ -91,9 +91,9 @@ def test_plot_dos():
    plt2.close()
    plt3.close()
 
-def test_plot_kp_convergence():
-    _,kp=plot_kp_convergence(dir)
-    assert kp=='11x11x11'
+#def test_plot_kp_convergence():
+#    _,kp=plot_kp_convergence(dir)
+#    assert kp=='11x11x11'
 
 def test_plot_enc_convergence():
     _,enc=plot_enc_convergence(dir)
