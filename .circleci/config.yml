@@ -44,8 +44,8 @@ jobs:
             rm -rf jarvis
             git clone https://github.com/knc6/jarvis.git 
             cd jarvis
-            python setup.py install 
             pip install -r requirements.txt
+            python setup.py install 
       - run: python --version ; pip --version ; pwd ; ls
       - run: flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
       - run: flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
