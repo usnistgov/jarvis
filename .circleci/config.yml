@@ -40,14 +40,16 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install --upgrade pip
-            pip install numpy 
-            pip install scipy
+            pip install numpy scipy coverage flake8 pytest 
             rm -rf jarvis
             git clone https://github.com/knc6/jarvis.git 
             cd jarvis
-            pip install -r requirements.txt
             python setup.py install 
-            #pip install -U jarvis-tools 
+            pip install -r requirements.txt
+      - run: python --version ; pip --version ; pwd ; ls
+      - run: flake8 . --count --select=E901,E999,F821,F822,F823 --show-source --statistics
+      - run: flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - run: pytest
 
       - save_cache:
           paths:
@@ -60,8 +62,13 @@ jobs:
       - run:
           command: |
             . venv/bin/activate
-            py.test  
+            py.test 
+
+
+      - run: mkdir test-reports
+      - run: coverage report && coverage xml -o test-reports/coverage.xml
+      - store_test_results:
+         path: test-reports
       - store_artifacts:
-          path: test-reports
-          destination: test-reports
+         path: test-reports 
           
