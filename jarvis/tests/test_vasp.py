@@ -34,9 +34,9 @@ def test_check_polar():
     print (check_polar(s))
     assert check_polar(s)==False
 
-def test_get_lowest_en_from_mp():
-    en_atom=get_lowest_en_from_mp('Al')
-    assert round(float(en_atom),4) == round(float(-3.74810318),4)
+#def test_get_lowest_en_from_mp():
+#    en_atom=get_lowest_en_from_mp('Al')
+#    assert round(float(en_atom),4) == round(float(-3.74810318),4)
 
 def test_make_big():
     p=sample_structure()
@@ -93,7 +93,7 @@ def test_plot_dos():
 
 def test_plot_kp_convergence():
     _,kp=plot_kp_convergence(dir)
-    assert kp=='19x19x19'
+    assert kp=='11x11x11'
 
 def test_plot_enc_convergence():
     _,enc=plot_enc_convergence(dir)
