@@ -35,10 +35,10 @@ jobs:
             pip install --upgrade pip
             pip install numpy 
             pip install scipy
-            pip install pytest
             rm -rf jarvis
-            git clone https://github.com/usnistgov/jarvis.git
+            git clone https://github.com/knc6/jarvis.git 
             cd jarvis
+            pip install -r requirements.txt
             python setup.py install 
             #pip install -U jarvis-tools 
 
@@ -56,8 +56,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            #cd jarvis/tests/
-            #py.test -vv tests/test_getdesc.py
+            py.test 
       - store_artifacts:
           path: test-reports
           destination: test-reports

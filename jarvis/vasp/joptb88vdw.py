@@ -249,7 +249,11 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
             new_symb=[]
             for el in mat.site_symbols:
                new_symb.append(pots[el])
-            potcar = Potcar(symbols=new_symb,functional=functional)
+            try:
+                potcar = Potcar(symbols=new_symb,functional=functional)
+            except:
+                 print ('No POTCAR')
+                 pass
             if not os.path.exists(run_dir):
                    os.makedirs(jobname)
                    os.chdir(jobname)
