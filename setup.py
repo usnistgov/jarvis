@@ -18,7 +18,6 @@ setup(
         "fortranformat==0.2.5",
         "scikit-learn==0.18.1",
         "pandas==0.23.4",
-        "phonopy==1.11.2",
     ],
     extras_require={"babel": ["openbabel", "pybel"],
                     "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
