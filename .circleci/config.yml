@@ -61,11 +61,6 @@ jobs:
           command: |
             . venv/bin/activate
             py.test  
-            ./cc-test-reporter xml -t coverage.py -o ./.coverage
-            ./cc-test-reporter upload-coverage
-      - run:
-          command: |
-            ./cc-test-reporter after-build --exit-code $?
       - store_artifacts:
           path: test-reports
           destination: test-reports
