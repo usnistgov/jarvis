@@ -63,7 +63,7 @@ jobs:
 
 
       - run: mkdir test-reports
-      - run: coverage report && coverage xml -o test-reports/coverage.xml
+      #- run: coverage report && coverage xml -o test-reports/coverage.xml
       - store_test_results:
          path: test-reports
       - store_artifacts:
