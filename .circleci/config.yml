@@ -40,7 +40,7 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install --upgrade pip
-            pip install numpy scipy coverage flake8 pytest 
+            pip install numpy scipy coverage  pytest 
             rm -rf jarvis
             git clone https://github.com/knc6/jarvis.git 
             cd jarvis
