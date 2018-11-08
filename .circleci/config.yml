@@ -6,7 +6,7 @@ version: 2
 jobs:
   build:
     environment:
-      CC_TEST_REPORTER_ID: f70262a98f1af05a17a23d0c29911f27669a9895b9a47f66fd7e7854014352e5
+      CC_TEST_REPORTER_ID: "f70262a98f1af05a17a23d0c29911f27669a9895b9a47f66fd7e7854014352e5"
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
@@ -31,9 +31,9 @@ jobs:
       - run:
           name: Setup Code Climate test-reporter
           command: |
-          # download test reporter as a static binary
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
+            # download test reporter as a static binary
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > "./cc-test-reporter"
+            chmod +x "./cc-test-reporter"
       - run:
           name: install dependencies
           command: |
