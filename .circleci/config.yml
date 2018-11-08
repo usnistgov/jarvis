@@ -56,8 +56,8 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            #cd jarvis/tests/
-            #py.test -vv tests/test_getdesc.py
+            cd ~/jarvis/tests/
+            py.test 
       - store_artifacts:
           path: test-reports
           destination: test-reports
