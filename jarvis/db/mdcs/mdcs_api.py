@@ -1,5 +1,14 @@
-# Make an account at https://jarvis.nist.gov/
-# MDCS Github: https://github.com/faical-yannick-congo/MDCS, https://github.com/ztrautt/MDCS
+"""
+To access data in JARVIS-API, you do not need to request an account
+However, to upload your data, please request an account at https://jarvis.nist.gov/
+
+Then install MDCS-api-tools by:
+
+git clone https://github.com/knc6/MDCS-api-tools.git
+cd MDCS-api-tools
+python setup.py develop
+"""
+
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from monty.serialization import loadfn, dumpfn
 import os,glob,json,sys
@@ -25,7 +34,14 @@ schema='5a7f2a872887d500ab0c0d02'
 
 # Converting data to xml
 def data_json(energy='na',typ='na',formula='na',sgp='na',name='na',ref='na',func='na',elem='na',encut='na',kpoints='na',el_tens='na',KV='na',GV='na',m_eg='na',b_eg='na',op_eg='na',mbj_eg='na',en_arr='na',realx_arr='na',imagx_arr='na',realy_arr='na',imagy_arr='na',realz_arr='na',imagz_arr='na',men_arr='na',mrealx_arr='na',mimagx_arr='na',mrealy_arr='na',mimagy_arr='na',mrealz_arr='na',mimagz_arr='na',struct='na',other='na'):
-    
+    """
+    This is an example of how to upload jarvis data to the API
+    Args:
+        string key value pairs
+    Returns:
+          curate data at the API
+    """
+  
     top = Element('JARVIS-DFT')
     child = SubElement(top, 'energy-ev')
     child.text = str(energy)
@@ -99,12 +115,23 @@ def data_json(energy='na',typ='na',formula='na',sgp='na',name='na',ref='na',func
 
 # Get a particular record
 def get_record(file=''):
+   """
+   This is an example of how to get a particular jarvis-id document, say JVASP-1002.xml
+   Args:
+       file: name of the file
+   Returns:
+         data in json format
+   """
+
    r=explore.select('https://jarvis.nist.gov/',user,passd,cert=False,title=file,format='json')
    return r
 
 
 # Delete all record
 def delete_all(file=''):
+    """
+    Caution, this deletes your documents
+    """
     r=explore.select_all('https://jarvis.nist.gov/',user,passd,cert=False,format='json')
     for i in r:
       id=i['_id']
@@ -114,7 +141,7 @@ def delete_all(file=''):
 
 # Download 3D material data from https://figshare.com/articles/jdft_3d-7-7-2018_json/6815699
 # Download 2D material data from https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705 
-# Curating JARVIS-DFT data 
+# Example of curating/uploading JARVIS-DFT data  is given below
 
 d=loadfn('jdft_3d-7-7-2018.json',cls=MontyDecoder)
 
@@ -155,9 +182,12 @@ for i in d:
 
 
 
+
+# Some examples
+
 #data_json()
 #x=get_record(file='JVASP-48137.xml')[0]['content']['JARVIS-DFT']['structure']
-print (Structure.from_str(x,fmt='cif'))
+#print (Structure.from_str(x,fmt='cif'))
 #delete_all()
 #curate_data()
 #delete_all()
