@@ -249,6 +249,7 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
             new_symb=[]
             for el in mat.site_symbols:
                new_symb.append(pots[el])
+            potcar = Potcar(symbols=new_symb,functional=functional)
             try:
                 potcar = Potcar(symbols=new_symb,functional=functional)
             except:
@@ -323,7 +324,7 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                          wait=Vasprun("vasprun.xml").converged
                      except:
                           pass
-                  print ("wait os=",wait)
+                  print ("wait os is here=",wait)
                   if wait==False:
                       incar.write_file("INCAR")
                       potcar.write_file("POTCAR")
@@ -382,21 +383,26 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                       cust_file.write(cline)
                       cust_file.close()
                       os.system(cmd)
-
+            f_energy='na'
+            enp='na'
             contcar=str(os.getcwd())+str('/')+str('CONTCAR')
-            oszicar = Oszicar("OSZICAR")
+            try:
+                oszicar = Oszicar("OSZICAR")
+                f_energy=float(oszicar.final_energy)
+                enp=float(oszicar.final_energy)/float(final_str.composition.num_atoms)
+            except:
+                  print ('Error in OSZICAR file during re-run jpb')
+                  pass
             final_str=Structure.from_file(contcar)
-            f_energy=float(oszicar.final_energy)
             natoms=final_str.composition.num_atoms
-            enp=float(oszicar.final_energy)/float(final_str.composition.num_atoms)
             os.chdir('../')
             data_cal=[]
-            data_cal.append({'jobname':jobname,'poscar_initial':mat.as_dict(),'poscar_final':final_str.as_dict(),'incar':incar.as_dict(),'kpoints':kpoints.as_dict(),'final_energy':float(oszicar.final_energy),'contcar':final_str.as_dict()})
+            data_cal.append({'jobname':jobname,'poscar_initial':mat.as_dict(),'poscar_final':final_str.as_dict(),'incar':incar.as_dict(),'kpoints':kpoints.as_dict(),'final_energy':(f_energy),'contcar':final_str.as_dict()})
             json_file=str(jobname)+str('.json')
             f_json=open(json_file,'w')
             f_json.write(json.dumps(data_cal,indent=4,cls=MontyEncoder))
             f_json.close()
-    print ('I AM HEREEEE',contcar)
+    print ('I AM HERE',contcar)
     return f_energy,contcar
 
 
