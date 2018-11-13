@@ -1,5 +1,5 @@
 numpy>=1.15.1
-phonopy==1.11.2
+phonopy
 pymatgen==2017.8.4
 ase==3.11.0
 pybtex==0.21
