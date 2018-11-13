@@ -249,7 +249,7 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
             new_symb=[]
             for el in mat.site_symbols:
                new_symb.append(pots[el])
-            potcar = Potcar(symbols=new_symb,functional=functional)
+            #potcar = Potcar(symbols=new_symb,functional=functional)
             try:
                 potcar = Potcar(symbols=new_symb,functional=functional)
             except:
