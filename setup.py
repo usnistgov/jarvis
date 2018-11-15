@@ -11,7 +11,7 @@ setup(
     install_requires = [
         "numpy>=1.15.1",
         "scipy>=1.1.0",
-        "phonopy==1.11.2",
+        "phonopy>=1.11.2",
         "pymatgen==2017.8.4",
         "custodian==2018.8.10",
         "ase==3.11.0",
