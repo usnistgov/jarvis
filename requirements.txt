@@ -1,4 +1,3 @@
-phonopy==1.11.2
 pymatgen==2017.8.4
 ase==3.11.0
 pybtex==0.21
