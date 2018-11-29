@@ -9,10 +9,15 @@ from numpy import matrix
 import time
 from ase import *
 import numpy as np
-from phonopy import Phonopy
-from phonopy.file_IO import parse_FORCE_CONSTANTS, write_FORCE_CONSTANTS
-from phonopy.structure.atoms import Atoms as PhonopyAtoms
 
+try:
+    from phonopy import Phonopy
+    from phonopy.file_IO import parse_FORCE_CONSTANTS, write_FORCE_CONSTANTS
+    from phonopy.structure.atoms import Atoms as PhonopyAtoms
+    from phonopy.structure.atoms import Atoms as PhonopyAtoms
+except:
+    print ('Install phonopy==1.11.2')
+    pass
 import glob
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Incar, Poscar
@@ -29,7 +34,6 @@ from pymatgen.io.ase import AseAtomsAdaptor
 import sys,zipfile
 import fortranformat as fform
 from pymatgen.core.structure import Structure
-from phonopy.structure.atoms import Atoms as PhonopyAtoms
 from ase.calculators.lammpsrun import LAMMPS, prism
 
 input_nobox=os.environ['input_nobox']
