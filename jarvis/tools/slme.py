@@ -139,51 +139,8 @@ def optics(ru=''):
     dirgap,indirgap=get_dir_indir_gap(ru)
 
     run = Vasprun(ru,occu_tol=1e-2, )
-    kpfile=str(ru.split("/vasprun.xml")[0])+str("/KPOINTS")
     new_en,new_abs=absorption_coefficient(run.dielectric)
-    bands = run.get_band_structure(kpfile, line_mode = False, efermi = run.efermi)
-    bandgap=run.eigenvalue_band_properties[0]  #bands.get_band_gap()['energy'] #float(round(bands.get_band_gap()['energy'],3))
-    erange=len(run.dielectric[0])
-    #new_en,new_abs=absorption_coefficient(run.dielectric)
-    en=[]
-    realx=[]
-    imagx=[]
-    absorpx=[]
-    refrx=[]
-    reflx=[]
-    eelsx=[]
-    extcx=[]
-    opt_conx=[]
-    realy=[]
-    imagy=[]
-    absorpy=[]
-    refry=[]
-    refly=[]
-    eelsy=[]
-    extcy=[]
-    opt_cony=[]
-    realz=[]
-    imagz=[]
-    absorpz=[]
-    refrz=[]
-    reflz=[]
-    eelsz=[]
-    extcz=[]
-    opt_conz=[]
-    H=4.13566733*(10**(-15))
-    #H=6.582119*(10**(-16))
-    #c0=2.99792458
-    c0=2.99792458*(math.pow(10,8))
-    for i in range(0,erange-1):
-        en.append(run.dielectric[0][i])
-        realx.append(run.dielectric[1][i][0])
-        imagx.append(run.dielectric[2][i][0])
-
-        ab_valx=1.4142*((float(run.dielectric[0][i])/float(H))*(float(math.sqrt(-run.dielectric[1][i][0]+math.sqrt((run.dielectric[2][i][0])*(run.dielectric[2][i][0])+(run.dielectric[1][i][0])*(run.dielectric[1][i][0]))))/float(float(c0)*100.0)))
-        #ab_valx=1.4142*((float(run.dielectric[0][i])/float(H))*(float(math.sqrt(-run.dielectric[1][i][0]+math.sqrt((run.dielectric[2][i][0])*(run.dielectric[2][i][0])+(run.dielectric[1][i][0])*(run.dielectric[1][i][0]))))/float(float(c0)/100.0)))
-        absorpx.append(ab_valx)
-    #return np.array(en,dtype=np.float64),np.array(absorpx,dtype=np.float64),bandgap
-    return np.array(new_en,dtype=np.float64),np.array(new_abs,dtype=np.float64),bandgap,dirgap,indirgap
+    return np.array(new_en,dtype=np.float64),np.array(new_abs,dtype=np.float64),dirgap,indirgap
 
 
 
@@ -193,9 +150,10 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
                  plot_current_voltage=False):
     """
     Args:
-        bandgap_ev:
-        temperature:
+        bandgap_ev: bandga in electron-volt
+        temperature: temperature in K
     Returns:
+         
     """
 
     # Defining constants for tidy equations
@@ -224,8 +182,8 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
     ### Calculation of total solar power incoming
     power_in = simps(solar_spectra_irradiance, solar_spectra_wavelength)
 
-    ### calculation of blackbody irradiance spectra
-    ## units of W/(m**3), different than solar_spectra_irradiance!!! (This
+    # calculation of blackbody irradiance spectra
+    # units of W/(m**3), different than solar_spectra_irradiance!!! (This
     # is intentional, it is for convenience)
     blackbody_irradiance = (2.0 * h * c ** 2 /
                             (solar_spectra_wavelength_meters ** 5)) \
@@ -234,11 +192,11 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
 
     # I've removed a pi in the equation above - Marnik Bercx
 
-    ## now to convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)
+    # now to convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)
     blackbody_photon_flux = blackbody_irradiance * (
         solar_spectra_wavelength_meters / (h * c))
 
-    ### absorbance interpolation onto each solar spectrum wavelength
+    # absorbance interpolation onto each solar spectrum wavelength
     from numpy import interp
 
     # Get the bandgap in wavelength in meters
@@ -275,15 +233,15 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
          axis=0
     )
 
-    ###  Numerically integrating irradiance over wavelength array
-    ## Note: elementary charge, not math e!  ## units of A/m**2   W/(V*m**2)
+    #  Numerically integrating irradiance over wavelength array
+    # Note: elementary charge, not math e!  ## units of A/m**2   W/(V*m**2)
     J_0_r = e * np.pi * simps(integration_blackbody,
                               integration_wavelength)
 
     J_0 = J_0_r / fr
 
-    ###  Numerically integrating irradiance over wavelength array
-    ## elementary charge, not math e!  ### units of A/m**2   W/(V*m**2)
+    #  Numerically integrating irradiance over wavelength array
+    # elementary charge, not math e!  ### units of A/m**2   W/(V*m**2)
     J_sc = e * simps(integration_solar_flux*1e9, integration_wavelength)
 
     #    J[i] = J_sc - J_0*(1 - exp( e*V[i]/(k*T) ) )
@@ -397,11 +355,11 @@ def slme(material_energy_for_absorbance_data,
     solar_spectra_photon_flux = solar_spectra_irradiance * (
         solar_spectra_wavelength_meters / (h * c))
 
-    ### Calculation of total solar power incoming
+    # Calculation of total solar power incoming
     power_in = simps(solar_spectra_irradiance, solar_spectra_wavelength)
 
-    ### calculation of blackbody irradiance spectra
-    ## units of W/(m**3), different than solar_spectra_irradiance!!! (This
+    # calculation of blackbody irradiance spectra
+    # units of W/(m**3), different than solar_spectra_irradiance!!! (This
     # is intentional, it is for convenience)
     blackbody_irradiance = (2.0 * h * c ** 2 /
                             (solar_spectra_wavelength_meters ** 5)) \
@@ -410,17 +368,17 @@ def slme(material_energy_for_absorbance_data,
 
     # I've removed a pi in the equation above - Marnik Bercx
 
-    ## now to convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)
+    # now to convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)
     blackbody_photon_flux = blackbody_irradiance * (
         solar_spectra_wavelength_meters / (h * c))
 
-    ## units of nm
+    # units of nm
     material_wavelength_for_absorbance_data = ((c * h_e) / (
         material_energy_for_absorbance_data + 0.00000001)) * 10 ** 9
 
-    ### absorbance interpolation onto each solar spectrum wavelength
+    # absorbance interpolation onto each solar spectrum wavelength
     from scipy.interpolate import interp1d
-    ## creates cubic spline interpolating function, set up to use end values
+    # creates cubic spline interpolating function, set up to use end values
     #  as the guesses if leaving the region where data exists
     material_absorbance_data_function = interp1d(
         material_wavelength_for_absorbance_data, material_absorbance_data,
@@ -447,15 +405,15 @@ def slme(material_energy_for_absorbance_data,
                                           material_interpolated_absorbance
                                           * thickness)
 
-    ###  Numerically integrating irradiance over wavelength array
-    ## Note: elementary charge, not math e!  ## units of A/m**2   W/(V*m**2)
+    #  Numerically integrating irradiance over wavelength array
+    # Note: elementary charge, not math e!  ## units of A/m**2   W/(V*m**2)
     J_0_r = e * np.pi * simps(blackbody_photon_flux * absorbed_by_wavelength,
                               solar_spectra_wavelength_meters)
 
     J_0 = J_0_r / fr
 
-    ###  Numerically integrating irradiance over wavelength array
-    ## elementary charge, not math e!  ### units of A/m**2   W/(V*m**2)
+    #  Numerically integrating irradiance over wavelength array
+    # elementary charge, not math e!  ### units of A/m**2   W/(V*m**2)
     J_sc = e * simps(solar_spectra_photon_flux * absorbed_by_wavelength,
                      solar_spectra_wavelength)
 
@@ -499,7 +457,7 @@ def slme(material_energy_for_absorbance_data,
 
 if __name__ == '__main__':
     path=str(os.path.join(os.path.dirname(__file__),'../vasp/examples/SiOptb88/MAIN-MBJ-bulk@mp_149/vasprun.xml')) 
-    en,abz,bg,dirgap,indirgap=optics(path)
+    en,abz,dirgap,indirgap=optics(path)
     abz=abz*100.0
     eff=slme(en,abz,indirgap,indirgap,plot_current_voltage=False)
     print ('SLME',100*eff)
