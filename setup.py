@@ -13,8 +13,6 @@ setup(
         "scipy>=1.1.0",
         "pymatgen==2017.8.4",
         "custodian==2018.8.10",
-        "BoltzTraP2",
-        "cmake",
         "ase==3.11.0",
         "pybtex==0.21",
         "fortranformat==0.2.5",
