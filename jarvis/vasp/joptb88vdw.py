@@ -255,8 +255,15 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
             pass
     wait=False
     json_file=str(jobname)+str('.json')
-    print ('json should be=',json_file,run_file,os.getcwd())
-    while wait==False:
+    print ('json should be here=',str(os.getcwd())+str('/')+str(json_file))
+    #print ('json should be=',json_file,run_file,os.getcwd())
+    if os.path.exists(str(os.getcwd())+str('/')+str(json_file)):
+       data_cal=loadfn(str(os.getcwd())+str('/')+str(json_file),cls=MontyDecoder)
+       wait=True
+       f_energy=data_cal[0]['final_energy']
+       contcar=str(os.getcwd())+str('/')+str(json_file.split('.json')[0])+str('/CONTCAR')
+       return f_energy,contcar
+    if wait==False:
             print ("I AM HERE 2")
             with open(pot_yaml, 'r') as f:
                  doc = yaml.load(f)
