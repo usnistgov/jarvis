@@ -16,7 +16,6 @@ setup(
         "ase==3.11.0",
         "pybtex==0.21",
         "fortranformat==0.2.5",
-        "scikit-learn==0.18.1",
         "pandas==0.23.4",
     ],
     extras_require={"babel": ["openbabel", "pybel"],
