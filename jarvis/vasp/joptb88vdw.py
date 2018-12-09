@@ -345,10 +345,10 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                   print ("wait os is here=",wait)
                   if wait==False:
                       incar.write_file("INCAR")
-                      potcar.write_file("POTCAR")
                       kpoints.write_file("KPOINTS")
                       mat.write_file("POSCAR")
                       try:
+                         potcar.write_file("POTCAR")
                          print ('FOUND OLD CONTCAR in', os.getcwd())
                          old_contcar=Poscar.from_file('CONTCAR')
                          #old_contcar.write_file('POSCAR')
