@@ -42,7 +42,7 @@ jobs:
             pip install --upgrade pip
             pip install numpy scipy coverage  pytest 
             rm -rf jarvis
-            git clone https://github.com/usnistgov/jarvis 
+            git clone https://github.com/knc6/jarvis.git 
             cd jarvis
             pip install -r requirements.txt
             python setup.py install 
