@@ -1,9 +1,11 @@
 from __future__ import  unicode_literals, print_function
 
-# Encoding: UTF-8
-# Copyright (c) Marnik Bercx, University of Antwerp
-# Distributed under the terms of the GNU License
+# Author: Marnik Bercx (University of Antwerp), Kamal Choudhary (NIST)
 # Forked and adjusted from https://github.com/ldwillia/SL3ME
+
+"""
+Core classes and methods of the SLME package.
+"""
 
 import os
 import numpy as np
@@ -18,9 +20,6 @@ from numpy import loadtxt, arange, logspace
 from math import pi, sqrt
 from scipy.constants import physical_constants, speed_of_light
 
-"""
-Core classes and methods of the SL3ME package.
-"""
 
 
 
