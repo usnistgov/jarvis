@@ -265,9 +265,10 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
        print ('outcar is',tmp_outcar)
        wait=main_outcar(tmp_outcar) #True
        print ('outcar status',wait)
-       f_energy=data_cal[0]['final_energy']
-       contcar=str(os.getcwd())+str('/')+str(json_file.split('.json')[0])+str('/CONTCAR')
-       return f_energy,contcar
+       if wait==True:
+         f_energy=data_cal[0]['final_energy']
+         contcar=str(os.getcwd())+str('/')+str(json_file.split('.json')[0])+str('/CONTCAR')
+         return f_energy,contcar
      except:
         pass
     while wait==False:
