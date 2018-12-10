@@ -258,11 +258,14 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
     print ('json should be here=',str(os.getcwd())+str('/')+str(json_file))
     #print ('json should be=',json_file,run_file,os.getcwd())
     if os.path.exists(str(os.getcwd())+str('/')+str(json_file)):
+     try:
        data_cal=loadfn(str(os.getcwd())+str('/')+str(json_file),cls=MontyDecoder)
        wait=True
        f_energy=data_cal[0]['final_energy']
        contcar=str(os.getcwd())+str('/')+str(json_file.split('.json')[0])+str('/CONTCAR')
        return f_energy,contcar
+     except:
+        pass
     if wait==False:
             print ("I AM HERE 2")
             with open(pot_yaml, 'r') as f:
