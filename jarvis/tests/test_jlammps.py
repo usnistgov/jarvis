@@ -22,10 +22,10 @@ def sample_strt():
     data= (read_data(data=dat,ff=ff))
     return (data)
 
-def test_get_get_phonopy_atoms():
-    s=sample_strt()
-    phn=get_phonopy_atoms(mat=s)
-    assert phn.symbols==['Al']
+#def test_get_get_phonopy_atoms():
+#    s=sample_strt()
+#    phn=get_phonopy_atoms(mat=s)
+#    assert phn.symbols==['Al']
 
 def test_write_lammps_data():
     success=False
