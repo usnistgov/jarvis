@@ -114,7 +114,7 @@ class DielTensor(MSONable):
         """
 
         E = self.energies
-        k = cmath.sqrt(self.dielectric_function).imag
+        k = np.array([cmath.sqrt(v).imag for v in self.dielectric_function])
 
         return 2.0 * E * k / (constants.hbar / constants.e * constants.c)
 
