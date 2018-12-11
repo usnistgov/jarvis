@@ -7,12 +7,16 @@ from jarvis.lammps.jlammps import read_data
 from jarvis.sklearn.get_desc import get_comp_descp
 from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen,surfer
 from jarvis.tools.vasp import *
+from jarvis.tools.slme import *
+from jarvis.tools.boltztrap import *
 
 pos=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/POSCAR')
 dir=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88')
 run=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-BAND-bulk@mp_149/vasprun.xml')
 kpfile=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-BAND-bulk@mp_149/KPOINTS')
 out=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-ELASTIC-bulk@mp_149/OUTCAR')
+mbjrun=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-MBJ-bulk@mp_149/vasprun.xml')
+mainrun=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-RELAX-bulk@mp_149/vasprun.xml')
 
 def sample_structure():
     poscar=Poscar.from_file(pos)
@@ -119,8 +123,20 @@ def test_get_spacegroup():
    num,symb=get_spacegroup(strt)
    assert symb=='Fd-3m'
 
-def test_get_aea():
+def test_get_area():
    strt=Structure.from_file(pos) 
    ar=get_area(strt)
    assert ar==12.950104933895442
+
+def test_slme():
+   en,abz,dirgap,indirgap=optics(mbjrun)
+   abz=abz*100.0
+   SLME=slme(en,abz,indirgap,indirgap,plot_current_voltage=False)
+   SQ=calculate_SQ(indirgap)
+   assert SLME==0.3323125002699776
+
+def test_boltztrap():
+   b=boltz_run(mainrun)
+   val=get_prop(b,prop='zt')
+   assert val[0]==1.5913528701329165
 
