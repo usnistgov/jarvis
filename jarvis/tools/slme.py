@@ -1,27 +1,125 @@
 from __future__ import  unicode_literals, print_function
 
 # Encoding: UTF-8
-# Copyright (c) Marnik Bercx, University of Antwerp
+# Copyright (c) Marnik Bercx, University of Antwerp; Kamal Choudhary, National Institute of Standards and Technology
 # Distributed under the terms of the GNU License
-# Forked and adjusted from https://github.com/ldwillia/SL3ME
+# Initially forked and adjusted from https://github.com/ldwillia/SL3ME
 
-import os
+import glob, os, cmath
+
 import numpy as np
-import matplotlib as plt
+import matplotlib as plt; plt.switch_backend('agg')
 import scipy.constants as constants
+
 from scipy.integrate import simps
-import matplotlib.pyplot as plt
-plt.switch_backend('agg')
-import glob,os,math
+
+from monty.json import MSONable
 from pymatgen.io.vasp.outputs import Vasprun
 from numpy import loadtxt, arange, logspace
 from math import pi, sqrt
 from scipy.constants import physical_constants, speed_of_light
 
 """
-Core classes and methods of the SL3ME package.
+Module for calculating the SLME metric, including several classes that represent the optical properties of 
+the material.
 """
 
+class DielTensor(MSONable):
+    """
+    Class that represents the frequency-dependent dielectric tensor of a solid state material.
+
+    """
+
+    def __init__(self, dielectric_data):
+        """
+        Initializes a DielTensor instance from the dielectric data.
+
+        Args:
+            dielectric_data:
+        """
+        self._dielectric_data = dielectric_data
+        self._energies, self._dielectric_tensor = self.parse_dielectric_data()
+
+    @property
+    def energies(self):
+        return self._energies
+
+    @property
+    def dielectric_tensor(self):
+        return self._dielectric_tensor
+
+    def parse_dielectric_data(self):
+        """
+        Convert a set of 2D vasprun formatted dielectric data to
+        the eigenvalues of each corresponding 3x3 symmetric numpy matrices.
+        Args:
+            data (list): length N list of dielectric data. Each entry should be
+                         a list of ``[xx, yy, zz, xy, xz, yz ]`` dielectric
+                         tensor elements.
+        Returns:
+            (np.array):  a Nx3 numpy array. Each row contains the eigenvalues
+                         for the corresponding row in `data`.
+        """
+
+        # Check if the provided dielectric data is in the Vasprun tuple format
+        if type(self._dielectric_data) is tuple:
+
+            energies = np.array(self._dielectric_data[0])
+
+            dielectric_tensor = [to_matrix(real_data) + 1j * to_matrix(imag_data)
+                                 for real_data, imag_data in zip(self._dielectric_data[1],
+                                                                 self._dielectric_data[2])]
+
+            return energies, dielectric_tensor
+
+    @classmethod
+    def from_file(cls, filename, fmt="vasprun"):
+        """
+        Initialize a DielTensor instance from a file.
+
+        Args:
+            filename:
+            fmt:
+
+        Returns:
+
+        """
+        if fmt == "vasprun":
+            dielectric_data = Vasprun(filename).dielectric
+            return cls(dielectric_data)
+
+        else:
+            raise NotImplementedError
+
+
+
+
+class AbsSpec(MSONable):
+    """
+    Class that represents an absorption spectrum of a solid state material.
+
+    """
+
+    def __init__(self, dielectric_tensor, average_diagonal=True):
+        pass
+
+
+def to_matrix( xx, yy, zz, xy, yz, xz ):
+    """
+    Convert a list of matrix components to a symmetric 3x3 matrix.
+    Inputs should be in the order xx, yy, zz, xy, yz, xz.
+    Args:
+        xx (float): xx component of the matrix.
+        yy (float): yy component of the matrix.
+        zz (float): zz component of the matrix.
+        xy (float): xy component of the matrix.
+        yz (float): yz component of the matrix.
+        xz (float): xz component of the matrix.
+    Returns:
+        (np.array): The matrix, as a 3x3 numpy array.
+    """
+    matrix = np.array( [[xx, xy, xz], [xy, yy, yz], [xz, yz, zz]] )
+    return matrix
 
 
 eV_to_recip_cm = 1.0/(physical_constants['Planck constant in eV s'][0]*speed_of_light*1e2)
@@ -77,23 +175,6 @@ def matrix_eigvals(matrix):
     """
     eigvals, eigvecs = np.linalg.eig(matrix)
     return eigvals
-
-def to_matrix( xx, yy, zz, xy, yz, xz ):
-    """
-    Convert a list of matrix components to a symmetric 3x3 matrix.
-    Inputs should be in the order xx, yy, zz, xy, yz, xz.
-    Args:
-        xx (float): xx component of the matrix.
-        yy (float): yy component of the matrix.
-        zz (float): zz component of the matrix.
-        xy (float): xy component of the matrix.
-        yz (float): yz component of the matrix.
-        xz (float): xz component of the matrix.
-    Returns:
-        (np.array): The matrix, as a 3x3 numpy array.
-    """
-    matrix = np.array( [[xx, xy, xz], [xy, yy, yz], [xz, yz, zz]] )
-    return matrix
 
 def parse_dielectric_data( data ):
     """
