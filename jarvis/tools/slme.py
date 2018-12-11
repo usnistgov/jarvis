@@ -1,14 +1,15 @@
-from __future__ import  unicode_literals, print_function
+from __future__ import unicode_literals, print_function
 
 # Encoding: UTF-8
-# Copyright (c) Marnik Bercx, University of Antwerp; Kamal Choudhary, National Institute of Standards and Technology
+# Copyright (c) Marnik Bercx, University of Antwerp;
+#               Kamal Choudhary, National Institute of Standards and Technology
 # Distributed under the terms of the GNU License
-# Initially forked and adjusted from https://github.com/ldwillia/SL3ME
+# Initially forked and (extensively) adjusted from https://github.com/ldwillia/SL3ME
 
 import glob, os, cmath
 
 import numpy as np
-import matplotlib as plt; plt.switch_backend('agg')
+import matplotlib.pyplot as plt  # ; plt.switch_backend('agg') TODO Figure out what's wrong here
 import scipy.constants as constants
 
 from scipy.integrate import simps
@@ -20,9 +21,10 @@ from math import pi, sqrt
 from scipy.constants import physical_constants, speed_of_light
 
 """
-Module for calculating the SLME metric, including several classes that represent the optical properties of 
-the material.
+Module for calculating the SLME metric, including several classes that represent the optical 
+properties of the material.
 """
+
 
 class DielTensor(MSONable):
     """
@@ -40,14 +42,6 @@ class DielTensor(MSONable):
         self._dielectric_data = dielectric_data
         self._energies, self._dielectric_tensor = self.parse_dielectric_data()
 
-    @property
-    def energies(self):
-        return self._energies
-
-    @property
-    def dielectric_tensor(self):
-        return self._dielectric_tensor
-
     def parse_dielectric_data(self):
         """
         Convert a set of 2D vasprun formatted dielectric data to
@@ -63,14 +57,45 @@ class DielTensor(MSONable):
 
         # Check if the provided dielectric data is in the Vasprun tuple format
         if type(self._dielectric_data) is tuple:
-
             energies = np.array(self._dielectric_data[0])
 
-            dielectric_tensor = [to_matrix(real_data) + 1j * to_matrix(imag_data)
+            dielectric_tensor = [to_matrix(*real_data) + 1j * to_matrix(*imag_data)
                                  for real_data, imag_data in zip(self._dielectric_data[1],
                                                                  self._dielectric_data[2])]
 
             return energies, dielectric_tensor
+
+    @property
+    def energies(self):
+        return self._energies
+
+    @property
+    def dielectric_tensor(self):
+        return self._dielectric_tensor
+
+    @property
+    def dielectric_function(self):
+        """
+        The averaged dielectric function, derived from the tensor components by first
+        diagonalizing the dielectric tensor for every energy and then averaging the diagonal
+        elements.
+
+        Returns:
+            (np.array):
+        """
+        return np.array([np.mean(np.linalg.eigvals(tensor))
+                         for tensor in self.dielectric_tensor])
+
+    def plot(self, part="all"):
+        """
+        Plot the real and/or imaginary part of the dielectric function.
+
+        Returns:
+
+        """
+        plt.plot(self.energies, self.dielectric_function.real)
+        plt.plot(self.energies, self.dielectric_function.imag)
+        plt.show()
 
     @classmethod
     def from_file(cls, filename, fmt="vasprun"):
@@ -85,13 +110,13 @@ class DielTensor(MSONable):
 
         """
         if fmt == "vasprun":
-            dielectric_data = Vasprun(filename).dielectric
+            dielectric_data = Vasprun(filename, parse_potcar_file=False).dielectric
             return cls(dielectric_data)
 
+        elif fmt == "outcar":
+            raise NotImplementedError("OUTCAR files are not supported yet.")
         else:
-            raise NotImplementedError
-
-
+            raise IOError("Format not recognized.")
 
 
 class AbsSpec(MSONable):
@@ -104,7 +129,7 @@ class AbsSpec(MSONable):
         pass
 
 
-def to_matrix( xx, yy, zz, xy, yz, xz ):
+def to_matrix(xx, yy, zz, xy, yz, xz):
     """
     Convert a list of matrix components to a symmetric 3x3 matrix.
     Inputs should be in the order xx, yy, zz, xy, yz, xz.
@@ -118,51 +143,52 @@ def to_matrix( xx, yy, zz, xy, yz, xz ):
     Returns:
         (np.array): The matrix, as a 3x3 numpy array.
     """
-    matrix = np.array( [[xx, xy, xz], [xy, yy, yz], [xz, yz, zz]] )
+    matrix = np.array([[xx, xy, xz], [xy, yy, yz], [xz, yz, zz]])
     return matrix
 
 
-eV_to_recip_cm = 1.0/(physical_constants['Planck constant in eV s'][0]*speed_of_light*1e2)
+eV_to_recip_cm = 1.0 / (physical_constants['Planck constant in eV s'][0] * speed_of_light * 1e2)
+
 
 def nelec_out(out=''):
- f=open(out,'r')
- lines=f.read().splitlines()
- f.close()
- for i in lines:
-   if 'NELECT =' in i:
-      nelec= int(float(i.split()[2])) #int(i.split('NELECT =')[1].split('total number of electrons')[0])
- return nelec
-
+    f = open(out, 'r')
+    lines = f.read().splitlines()
+    f.close()
+    for i in lines:
+        if 'NELECT =' in i:
+            nelec = int(
+                float(i.split()[
+                          2]))  # int(i.split('NELECT =')[1].split('total number of electrons')[0])
+    return nelec
 
 
 def get_dir_indir_gap(run=''):
- ispin=1
- v=Vasprun(run)
- outcar=run.replace('vasprun.xml','OUTCAR')
- nbands=len(v.eigenvalues.items()[0][1])
- nelec= nelec_out(outcar) #ispin*len(v.eigenvalues.items()[0][1])
- nkpts=len(v.eigenvalues.items())/ispin
- eigvals=np.zeros((ispin,nkpts,nbands))
- kp=[]
- for spin, d in v.eigenvalues.items():
-     count=0
-     for k, val in enumerate(d):
-            spinn=(str(spin[0]))
-            if spinn=='1':
-                spinn=0
+    ispin = 1
+    v = Vasprun(run)
+    outcar = run.replace('vasprun.xml', 'OUTCAR')
+    nbands = len(v.eigenvalues.items()[0][1])
+    nelec = nelec_out(outcar)  # ispin*len(v.eigenvalues.items()[0][1])
+    nkpts = len(v.eigenvalues.items()) / ispin
+    eigvals = np.zeros((ispin, nkpts, nbands))
+    kp = []
+    for spin, d in v.eigenvalues.items():
+        count = 0
+        for k, val in enumerate(d):
+            spinn = (str(spin[0]))
+            if spinn == '1':
+                spinn = 0
             else:
-                spinn=1
-            #print spin[1],k,count
+                spinn = 1
+            # print spin[1],k,count
             kp.append(spin[1])
-            eigvals[spinn,spin[1],count]=val[0]
-            count=count+1
- noso_homo = np.max(eigvals[0,:,nelec//2-1])
- noso_lumo = np.min(eigvals[0,:,nelec//2])
- noso_indir= np.min(eigvals[0,:,nelec//2])-np.max(eigvals[0,:,nelec//2-1])
- noso_direct = np.min(eigvals[0,:,nelec//2] - eigvals[0,:,nelec//2-1])
- print ('noso_direct,noso_indir',noso_direct,noso_indir)
- return noso_direct,noso_indir
-
+            eigvals[spinn, spin[1], count] = val[0]
+            count = count + 1
+    noso_homo = np.max(eigvals[0, :, nelec // 2 - 1])
+    noso_lumo = np.min(eigvals[0, :, nelec // 2])
+    noso_indir = np.min(eigvals[0, :, nelec // 2]) - np.max(eigvals[0, :, nelec // 2 - 1])
+    noso_direct = np.min(eigvals[0, :, nelec // 2] - eigvals[0, :, nelec // 2 - 1])
+    print('noso_direct,noso_indir', noso_direct, noso_indir)
+    return noso_direct, noso_indir
 
 
 def matrix_eigvals(matrix):
@@ -176,7 +202,8 @@ def matrix_eigvals(matrix):
     eigvals, eigvecs = np.linalg.eig(matrix)
     return eigvals
 
-def parse_dielectric_data( data ):
+
+def parse_dielectric_data(data):
     """
     Convert a set of 2D vasprun formatted dielectric data to
     the eigenvalues of each corresponding 3x3 symmetric numpy matrices.
@@ -188,9 +215,10 @@ def parse_dielectric_data( data ):
         (np.array):  a Nx3 numpy array. Each row contains the eigenvalues
                      for the corresponding row in `data`.
     """
-    return np.array( [ matrix_eigvals( to_matrix( *e ) ) for e in data ] )
+    return np.array([matrix_eigvals(to_matrix(*e)) for e in data])
 
-def absorption_coefficient( dielectric ):
+
+def absorption_coefficient(dielectric):
     """
     Calculate the optical absorption coefficient from an input set of
     pymatgen vasprun dielectric constant data.
@@ -207,24 +235,21 @@ def absorption_coefficient( dielectric ):
         The absorption coefficient is calculated as
         .. math:: \\alpha = \\frac{2\sqrt{2} \pi}{\lambda} \sqrt{-\epsilon_1+\sqrt{\epsilon_1^2+\epsilon_2^2}}
     """
-    energies_in_eV = np.array( dielectric[0] )
-    real_dielectric = parse_dielectric_data( dielectric[1] )
-    imag_dielectric = parse_dielectric_data( dielectric[2] )
-    epsilon_1 = np.mean( real_dielectric, axis=1 )
-    epsilon_2 = np.mean( imag_dielectric, axis=1 )
-    return energies_in_eV,( 2.0 * np.sqrt(2.0)*pi*eV_to_recip_cm*energies_in_eV
-                 * np.sqrt( -epsilon_1 + np.sqrt( epsilon_1**2 + epsilon_2**2 ) ) )
+    energies_in_eV = np.array(dielectric[0])
+    real_dielectric = parse_dielectric_data(dielectric[1])
+    imag_dielectric = parse_dielectric_data(dielectric[2])
+    epsilon_1 = np.mean(real_dielectric, axis=1)
+    epsilon_2 = np.mean(imag_dielectric, axis=1)
+    return energies_in_eV, (2.0 * np.sqrt(2.0) * pi * eV_to_recip_cm * energies_in_eV
+                            * np.sqrt(-epsilon_1 + np.sqrt(epsilon_1 ** 2 + epsilon_2 ** 2)))
 
 
 def optics(ru=''):
-    dirgap,indirgap=get_dir_indir_gap(ru)
+    dirgap, indirgap = get_dir_indir_gap(ru)
 
-    run = Vasprun(ru,occu_tol=1e-2, )
-    new_en,new_abs=absorption_coefficient(run.dielectric)
-    return np.array(new_en,dtype=np.float64),np.array(new_abs,dtype=np.float64),dirgap,indirgap
-
-
-
+    run = Vasprun(ru, occu_tol=1e-2, )
+    new_en, new_abs = absorption_coefficient(run.dielectric)
+    return np.array(new_en, dtype=np.float64), np.array(new_abs, dtype=np.float64), dirgap, indirgap
 
 
 def calculate_SQ(bandgap_ev, temperature=300, fr=1,
@@ -246,7 +271,7 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
     e = constants.e  # Coulomb
 
     # Load the Air Mass 1.5 Global tilt solar spectrum
-    solar_spectrum_data_file=str(os.path.join(os.path.dirname(__file__),"am1.5G.dat")) 
+    solar_spectrum_data_file = str(os.path.join(os.path.dirname(__file__), "am1.5G.dat"))
     solar_spectra_wavelength, solar_spectra_irradiance = np.loadtxt(
         solar_spectrum_data_file, usecols=[0, 1], unpack=True, skiprows=2
     )
@@ -258,7 +283,7 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
     # E = hc/wavelength
     # at each wavelength, Power * (wavelength(m)/(h(Js)*c(m/s))) = ph#/s
     solar_spectra_photon_flux = solar_spectra_irradiance * (
-        solar_spectra_wavelength_meters / (h * c))
+            solar_spectra_wavelength_meters / (h * c))
 
     ### Calculation of total solar power incoming
     power_in = simps(solar_spectra_irradiance, solar_spectra_wavelength)
@@ -269,13 +294,13 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
     blackbody_irradiance = (2.0 * h * c ** 2 /
                             (solar_spectra_wavelength_meters ** 5)) \
                            * (1.0 / ((np.exp(h * c / (
-        solar_spectra_wavelength_meters * k * temperature))) - 1.0))
+            solar_spectra_wavelength_meters * k * temperature))) - 1.0))
 
     # I've removed a pi in the equation above - Marnik Bercx
 
     # now to convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)
     blackbody_photon_flux = blackbody_irradiance * (
-        solar_spectra_wavelength_meters / (h * c))
+            solar_spectra_wavelength_meters / (h * c))
 
     # absorbance interpolation onto each solar spectrum wavelength
     from numpy import interp
@@ -288,30 +313,30 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
     bandgap_index = np.searchsorted(solar_spectra_wavelength_meters, bandgap_wavelength)
 
     bandgap_irradiance = interp(
-        np.array([bandgap_wavelength,]), solar_spectra_wavelength_meters,
+        np.array([bandgap_wavelength, ]), solar_spectra_wavelength_meters,
         solar_spectra_photon_flux)
 
     bandgap_blackbody = (2.0 * h * c ** 2 /
-                            (bandgap_wavelength ** 5)) \
-                           * (1.0 / ((np.exp(h * c / (
-        bandgap_wavelength * k * temperature))) - 1.0)) * (
-        bandgap_wavelength / (h * c))
+                         (bandgap_wavelength ** 5)) \
+                        * (1.0 / ((np.exp(h * c / (
+            bandgap_wavelength * k * temperature))) - 1.0)) * (
+                                bandgap_wavelength / (h * c))
 
     integration_wavelength = np.concatenate(
         (solar_spectra_wavelength_meters[:bandgap_index],
-         np.array([bandgap_wavelength,])),
+         np.array([bandgap_wavelength, ])),
         axis=0
     )
 
     integration_solar_flux = np.concatenate(
         (solar_spectra_photon_flux[:bandgap_index],
-            bandgap_irradiance),
+         bandgap_irradiance),
         axis=0
     )
 
     integration_blackbody = np.concatenate(
         (blackbody_photon_flux[:bandgap_index], np.array([bandgap_blackbody])),
-         axis=0
+        axis=0
     )
 
     #  Numerically integrating irradiance over wavelength array
@@ -323,7 +348,7 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
 
     #  Numerically integrating irradiance over wavelength array
     # elementary charge, not math e!  ### units of A/m**2   W/(V*m**2)
-    J_sc = e * simps(integration_solar_flux*1e9, integration_wavelength)
+    J_sc = e * simps(integration_solar_flux * 1e9, integration_wavelength)
 
     #    J[i] = J_sc - J_0*(1 - exp( e*V[i]/(k*T) ) )
     #   #This formula from the original paper has a typo!!
@@ -342,7 +367,7 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
     # estimate for the maximum power.
     test_voltage = 0
     voltage_step = 0.001
-    while power(test_voltage+voltage_step) > power(test_voltage):
+    while power(test_voltage + voltage_step) > power(test_voltage):
         test_voltage += voltage_step
 
     max_power = power(test_voltage)
@@ -361,8 +386,6 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
         print(max_power)
 
     return efficiency
-
-
 
 
 def slme(material_energy_for_absorbance_data,
@@ -434,7 +457,7 @@ def slme(material_energy_for_absorbance_data,
     # E = hc/wavelength
     # at each wavelength, Power * (wavelength(m)/(h(Js)*c(m/s))) = ph#/s
     solar_spectra_photon_flux = solar_spectra_irradiance * (
-        solar_spectra_wavelength_meters / (h * c))
+            solar_spectra_wavelength_meters / (h * c))
 
     # Calculation of total solar power incoming
     power_in = simps(solar_spectra_irradiance, solar_spectra_wavelength)
@@ -445,17 +468,17 @@ def slme(material_energy_for_absorbance_data,
     blackbody_irradiance = (2.0 * h * c ** 2 /
                             (solar_spectra_wavelength_meters ** 5)) \
                            * (1.0 / ((np.exp(h * c / (
-        solar_spectra_wavelength_meters * k * temperature))) - 1.0))
+            solar_spectra_wavelength_meters * k * temperature))) - 1.0))
 
     # I've removed a pi in the equation above - Marnik Bercx
 
     # now to convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)
     blackbody_photon_flux = blackbody_irradiance * (
-        solar_spectra_wavelength_meters / (h * c))
+            solar_spectra_wavelength_meters / (h * c))
 
     # units of nm
     material_wavelength_for_absorbance_data = ((c * h_e) / (
-        material_energy_for_absorbance_data + 0.00000001)) * 10 ** 9
+            material_energy_for_absorbance_data + 0.00000001)) * 10 ** 9
 
     # absorbance interpolation onto each solar spectrum wavelength
     from scipy.interpolate import interp1d
@@ -474,9 +497,8 @@ def slme(material_energy_for_absorbance_data,
         ## Cutting off absorption data below the gap. This is done to deal
         # with VASPs broadening of the calculated absorption data
 
-
         if solar_spectra_wavelength[i] < 1e9 * ((c * h_e) /
-                                                    material_direct_allowed_gap) \
+                                                material_direct_allowed_gap) \
                 or cut_off_absorbance_below_direct_allowed_gap == False:
             material_interpolated_absorbance[
                 i] = material_absorbance_data_function(
@@ -515,7 +537,7 @@ def slme(material_energy_for_absorbance_data,
     # estimate for the maximum power.
     test_voltage = 0
     voltage_step = 0.001
-    while power(test_voltage+voltage_step) > power(test_voltage):
+    while power(test_voltage + voltage_step) > power(test_voltage):
         test_voltage += voltage_step
 
     max_power = power(test_voltage)
@@ -532,15 +554,18 @@ def slme(material_energy_for_absorbance_data,
         plt.plot(V, power(V), linestyle='--')
         plt.savefig('pp.png')
         plt.close()
-        #print(power(V_Pmax))
+        # print(power(V_Pmax))
 
     return efficiency
 
+
 if __name__ == '__main__':
-    path=str(os.path.join(os.path.dirname(__file__),'../vasp/examples/SiOptb88/MAIN-MBJ-bulk@mp_149/vasprun.xml')) 
-    en,abz,dirgap,indirgap=optics(path)
-    abz=abz*100.0
-    eff=slme(en,abz,indirgap,indirgap,plot_current_voltage=False)
-    print ('SLME',100*eff)
-    eff=calculate_SQ(indirgap)
-    print ('SQ',100*eff)
+    path = str(
+        os.path.join(os.path.dirname(__file__),
+                     '../vasp/examples/SiOptb88/MAIN-MBJ-bulk@mp_149/vasprun.xml'))
+    en, abz, dirgap, indirgap = optics(path)
+    abz = abz * 100.0
+    eff = slme(en, abz, indirgap, indirgap, plot_current_voltage=False)
+    print('SLME', 100 * eff)
+    eff = calculate_SQ(indirgap)
+    print('SQ', 100 * eff)
