@@ -15,7 +15,7 @@ import scipy.constants as constants
 from scipy.integrate import simps
 
 from monty.json import MSONable
-from pymatgen.io.vasp.outputs import Vasprun
+from pymatgen.io.vasp.outputs import Vasprun, Outcar
 from numpy import loadtxt, arange, logspace
 from math import pi, sqrt
 from scipy.constants import physical_constants, speed_of_light
@@ -37,33 +37,44 @@ class DielTensor(MSONable):
         Initializes a DielTensor instance from the dielectric data.
 
         Args:
-            dielectric_data:
+            dielectric_data (tuple): tuple of length N lists of dielectric data. The first
+                tuple element contains the energies, the second/third the real/imaginary part of
+                the dielectric tensor.  Each dielectric entry should be a list of
+                ``[xx, yy, zz, xy, xz, yz ]`` dielectric tensor elements.
         """
         self._dielectric_data = dielectric_data
         self._energies, self._dielectric_tensor = self.parse_dielectric_data()
 
     def parse_dielectric_data(self):
         """
-        Convert a set of 2D vasprun formatted dielectric data to
-        the eigenvalues of each corresponding 3x3 symmetric numpy matrices.
-        Args:
-            data (list): length N list of dielectric data. Each entry should be
-                         a list of ``[xx, yy, zz, xy, xz, yz ]`` dielectric
-                         tensor elements.
+        Convert the set of - currently exclusively - vasprun formatted dielectric data to
+        the corresponding 3x3 symmetric numpy matrices.
+
         Returns:
-            (np.array):  a Nx3 numpy array. Each row contains the eigenvalues
-                         for the corresponding row in `data`.
+            (np.array), (np.array):  a Nx1 and Nx3 numpy array. The first array contains the
+                energies corresponding to the dielectric tensor in the second.
         """
 
-        # Check if the provided dielectric data is in the Vasprun tuple format
-        if type(self._dielectric_data) is tuple:
+        # Check if the provided dielectric data is in the Vasprun tuple format (len == 3)
+        if type(self._dielectric_data) is tuple and len(self._dielectric_data) == 3:
             energies = np.array(self._dielectric_data[0])
 
-            dielectric_tensor = [to_matrix(*real_data) + 1j * to_matrix(*imag_data)
-                                 for real_data, imag_data in zip(self._dielectric_data[1],
-                                                                 self._dielectric_data[2])]
+            dielectric_tensor = np.array(
+                [to_matrix(*real_data) + 1j * to_matrix(*imag_data)
+                 for real_data, imag_data in zip(self._dielectric_data[1],
+                                                 self._dielectric_data[2])]
+            )
 
             return energies, dielectric_tensor
+
+        # Check if the provided dielectric data is in the Outcar tuple format (len == 2)
+        elif type(self._dielectric_data) is tuple and len(self._dielectric_data) == 2:
+            energies = self._dielectric_data[0]
+            dielectric_tensor = self._dielectric_data[1]
+            return energies, dielectric_tensor
+
+        else:
+            raise ImportError("Format of dielectric data not recognized.")
 
     @property
     def energies(self):
@@ -86,11 +97,38 @@ class DielTensor(MSONable):
         return np.array([np.mean(np.linalg.eigvals(tensor))
                          for tensor in self.dielectric_tensor])
 
-    def plot(self, part="all"):
+    def absorption_coefficient(self):
         """
-        Plot the real and/or imaginary part of the dielectric function.
+        Calculate the optical absorption coefficient from the dielectric data. For now the script
+        only calculates the averaged absorption coefficient, i.e. by first averaging the diagonal
+        elements and then using this dielectric function to calculate the absorption coefficient.
+
+        Notes:
+            The absorption coefficient is calculated as
+            .. math:: \\alpha = \\frac{2 E}{ \hbar c} k(E)
+            with $k(E)$ the imaginary part of the square root of the dielectric function
 
         Returns:
+            (np.array): Energy (eV) dependent absorption coefficient in m^{-1}, where the
+                energies correspond to self.energies.
+        """
+
+        E = self.energies
+        k = cmath.sqrt(self.dielectric_function).imag
+
+        return 2.0 * E * k / (constants.hbar / constants.e * constants.c)
+
+    def plot(self, part="all"):
+        """
+        Plot the real and/or imaginary part of the dielectric function. Still a very rough first
+        draft.
+
+        Args:
+            part (str): Which part of the dielectric function to plot, i.e. either "real",
+            "imag" or "all".
+
+        Returns:
+            None
 
         """
         plt.plot(self.energies, self.dielectric_function.real)
@@ -114,18 +152,25 @@ class DielTensor(MSONable):
             return cls(dielectric_data)
 
         elif fmt == "outcar":
-            raise NotImplementedError("OUTCAR files are not supported yet.")
+             outcar = Outcar(filename)
+             outcar.read_freq_dielectric()
+             dielectric_data = (outcar.frequencies, outcar.dielectric_tensor)
+             return cls(dielectric_data)
+
         else:
             raise IOError("Format not recognized.")
 
 
-class AbsSpec(MSONable):
+class RadSpectrum(MSONable):
     """
-    Class that represents an absorption spectrum of a solid state material.
+    Class that represents a electromagnetic radiation spectrum.
 
     """
 
-    def __init__(self, dielectric_tensor, average_diagonal=True):
+    def __init__(self, energies, intensity, units):
+        self._energies = energies
+        self._intensity = intensity
+        self._units = units
         pass
 
 
@@ -145,9 +190,6 @@ def to_matrix(xx, yy, zz, xy, yz, xz):
     """
     matrix = np.array([[xx, xy, xz], [xy, yy, yz], [xz, yz, zz]])
     return matrix
-
-
-eV_to_recip_cm = 1.0 / (physical_constants['Planck constant in eV s'][0] * speed_of_light * 1e2)
 
 
 def nelec_out(out=''):
@@ -191,18 +233,6 @@ def get_dir_indir_gap(run=''):
     return noso_direct, noso_indir
 
 
-def matrix_eigvals(matrix):
-    """
-    Calculate the eigenvalues of a matrix.
-    Args:
-        matrix (np.array): The matrix to diagonalise.
-    Returns:
-        (np.array): Array of the matrix eigenvalues.
-    """
-    eigvals, eigvecs = np.linalg.eig(matrix)
-    return eigvals
-
-
 def parse_dielectric_data(data):
     """
     Convert a set of 2D vasprun formatted dielectric data to
@@ -216,32 +246,6 @@ def parse_dielectric_data(data):
                      for the corresponding row in `data`.
     """
     return np.array([matrix_eigvals(to_matrix(*e)) for e in data])
-
-
-def absorption_coefficient(dielectric):
-    """
-    Calculate the optical absorption coefficient from an input set of
-    pymatgen vasprun dielectric constant data.
-    Args:
-        dielectric (list): A list containing the dielectric response function
-                           in the pymatgen vasprun format.
-                           | element 0: list of energies
-                           | element 1: real dielectric tensors, in ``[xx, yy, zz, xy, xz, yz]`` format.
-                           | element 2: imaginary dielectric tensors, in ``[xx, yy, zz, xy, xz, yz]`` format.
-
-    Returns:
-        (np.array): absorption coefficient using eV as frequency units (cm^-1).
-    Notes:
-        The absorption coefficient is calculated as
-        .. math:: \\alpha = \\frac{2\sqrt{2} \pi}{\lambda} \sqrt{-\epsilon_1+\sqrt{\epsilon_1^2+\epsilon_2^2}}
-    """
-    energies_in_eV = np.array(dielectric[0])
-    real_dielectric = parse_dielectric_data(dielectric[1])
-    imag_dielectric = parse_dielectric_data(dielectric[2])
-    epsilon_1 = np.mean(real_dielectric, axis=1)
-    epsilon_2 = np.mean(imag_dielectric, axis=1)
-    return energies_in_eV, (2.0 * np.sqrt(2.0) * pi * eV_to_recip_cm * energies_in_eV
-                            * np.sqrt(-epsilon_1 + np.sqrt(epsilon_1 ** 2 + epsilon_2 ** 2)))
 
 
 def optics(ru=''):
