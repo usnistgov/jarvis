@@ -163,7 +163,8 @@ class DielTensor(MSONable):
 
 class RadSpectrum(MSONable):
     """
-    Class that represents a electromagnetic radiation spectrum.
+    Class that represents a electromagnetic radiation spectrum, e.g. the solar spectrum
+    or the black body spectrum.
 
     """
 
