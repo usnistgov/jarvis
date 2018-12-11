@@ -73,12 +73,12 @@ def get_prop(bzana,prop='seebeck',dop_type='n',temp=700,dop=1e+20,output='eigs')
           val=bzana.get_thermal_conductivity(output=output)[dop_type][temp][index]
           return val
        if prop=='zt':
-          val=bzana.zt(output=output)[dop_type][temp][index]
+          val=bzana.get_zt(output=output)[dop_type][temp][index]
           return val
     else:
        print ('Value not available in the analyzer, run boltztrap with appropriate settings')
 if __name__ == '__main__':
     vrun=path=str(os.path.join(os.path.dirname(__file__),'../vasp/examples/SiOptb88/MAIN-RELAX-bulk@mp_149/vasprun.xml'))
     b=boltz_run(vrun) 
-    val=get_prop(b,prop='power_factor')
+    val=get_prop(b,prop='zt')
     print (val)
