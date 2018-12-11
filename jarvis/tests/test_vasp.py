@@ -135,8 +135,8 @@ def test_slme():
    SQ=calculate_SQ(indirgap)
    assert SLME==0.3323125002699776
 
-def test_boltztrap():
-   b=boltz_run(mainrun)
-   val=get_prop(b,prop='zt')
-   assert val[0]==1.5913528701329165
+#def test_boltztrap():
+#   b=boltz_run(mainrun)
+#   val=get_prop(b,prop='zt')
+#   assert val[0]==1.5913528701329165
 
