@@ -171,10 +171,10 @@ class DielTensor(MSONable):
             return cls(dielectric_data)
 
         elif fmt == "outcar":
-             outcar = Outcar(filename)
-             outcar.read_freq_dielectric()
-             dielectric_data = (outcar.frequencies, outcar.dielectric_tensor_function)
-             return cls(dielectric_data)
+            outcar = Outcar(filename)
+            outcar.read_freq_dielectric()
+            dielectric_data = (outcar.frequencies, outcar.dielectric_tensor_function)
+            return cls(dielectric_data)
 
         else:
             raise IOError("Format not recognized.")
@@ -192,6 +192,7 @@ class RadSpectrum(MSONable):
         self._intensity = intensity
         self._units = units
         pass
+
 
 class EfficiencyCalculator(MSONable):
     """
@@ -220,39 +221,36 @@ def to_matrix(xx, yy, zz, xy, yz, xz):
     return matrix
 
 
+# Old code, kept for comparison
+
+eV_to_recip_cm = 1.0 / (physical_constants['Planck constant in eV s'][0] * speed_of_light * 1e2)
+
+
 def nelec_out(out=''):
     f = open(out, 'r')
     lines = f.read().splitlines()
     f.close()
     for i in lines:
         if 'NELECT =' in i:
-            nelec = int(
-                float(i.split()[
-                          2]))  # int(i.split('NELECT =')[1].split('total number of electrons')[0])
+            nelec = int(float(
+                i.split()[2]))  # int(i.split('NELECT =')[1].split('total number of electrons')[0])
     return nelec
 
 
-def get_dir_indir_gap(run=''):
-    ispin = 1
+def get_dir_indir_gap(run='', ispin=1):
+    """
+    Get direct and indirect bandgaps
+    Implemented for non-spin polarized case only right now
+    """
     v = Vasprun(run)
     outcar = run.replace('vasprun.xml', 'OUTCAR')
-    nbands = len(v.eigenvalues.items()[0][1])
+    nbands = len(v.eigenvalues[Spin.up][1])
     nelec = nelec_out(outcar)  # ispin*len(v.eigenvalues.items()[0][1])
-    nkpts = len(v.eigenvalues.items()) / ispin
+    nkpts = int(len(v.eigenvalues[Spin.up]))
     eigvals = np.zeros((ispin, nkpts, nbands))
-    kp = []
-    for spin, d in v.eigenvalues.items():
-        count = 0
-        for k, val in enumerate(d):
-            spinn = (str(spin[0]))
-            if spinn == '1':
-                spinn = 0
-            else:
-                spinn = 1
-            # print spin[1],k,count
-            kp.append(spin[1])
-            eigvals[spinn, spin[1], count] = val[0]
-            count = count + 1
+    for kp, i in enumerate(v.eigenvalues[Spin.up]):
+        for band, j in enumerate(i):
+            eigvals[0, kp, band] = j[0]
     noso_homo = np.max(eigvals[0, :, nelec // 2 - 1])
     noso_lumo = np.min(eigvals[0, :, nelec // 2])
     noso_indir = np.min(eigvals[0, :, nelec // 2]) - np.max(eigvals[0, :, nelec // 2 - 1])
@@ -261,6 +259,56 @@ def get_dir_indir_gap(run=''):
     return noso_direct, noso_indir
 
 
+def matrix_eigvals(matrix):
+    """
+    Calculate the eigenvalues of a matrix.
+    Args:
+        matrix (np.array): The matrix to diagonalise.
+    Returns:
+        (np.array): Array of the matrix eigenvalues.
+    """
+    eigvals, eigvecs = np.linalg.eig(matrix)
+    return eigvals
+
+
+def parse_dielectric_data(data):
+    """
+    Convert a set of 2D vasprun formatted dielectric data to
+    the eigenvalues of each corresponding 3x3 symmetric numpy matrices.
+    Args:
+        data (list): length N list of dielectric data. Each entry should be
+                     a list of ``[xx, yy, zz, xy, xz, yz ]`` dielectric
+                     tensor elements.
+    Returns:
+        (np.array):  a Nx3 numpy array. Each row contains the eigenvalues
+                     for the corresponding row in `data`.
+    """
+    return np.array([matrix_eigvals(to_matrix(*e)) for e in data])
+
+
+def absorption_coefficient(dielectric):
+    """
+    Calculate the optical absorption coefficient from an input set of
+    pymatgen vasprun dielectric constant data.
+    Args:
+        dielectric (list): A list containing the dielectric response function
+                           in the pymatgen vasprun format.
+                           | element 0: list of energies
+                           | element 1: real dielectric tensors, in ``[xx, yy, zz, xy, xz, yz]`` format.
+                           | element 2: imaginary dielectric tensors, in ``[xx, yy, zz, xy, xz, yz]`` format.
+    Returns:
+        (np.array): absorption coefficient using eV as frequency units (cm^-1).
+    Notes:
+        The absorption coefficient is calculated as
+        .. math:: \\alpha = \\frac{2\sqrt{2} \pi}{\lambda} \sqrt{-\epsilon_1+\sqrt{\epsilon_1^2+\epsilon_2^2}}
+    """
+    energies_in_eV = np.array(dielectric[0])
+    real_dielectric = parse_dielectric_data(dielectric[1])
+    imag_dielectric = parse_dielectric_data(dielectric[2])
+    epsilon_1 = np.mean(real_dielectric, axis=1)
+    epsilon_2 = np.mean(imag_dielectric, axis=1)
+    return energies_in_eV, (2.0 * np.sqrt(2.0) * pi * eV_to_recip_cm * energies_in_eV
+                            * np.sqrt(-epsilon_1 + np.sqrt(epsilon_1 ** 2 + epsilon_2 ** 2)))
 
 
 def optics(ru=''):
@@ -278,7 +326,7 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
         bandgap_ev: bandga in electron-volt
         temperature: temperature in K
     Returns:
-         
+
     """
 
     # Defining constants for tidy equations
@@ -407,33 +455,37 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
     return efficiency
 
 
-def slme(energies, abs_coefficient, material_direct_allowed_gap,
+def slme(material_energy_for_absorbance_data,
+         material_absorbance_data,
+         material_direct_allowed_gap,
          material_indirect_gap, thickness=50E-6, temperature=293.15,
+         absorbance_in_inverse_centimeters=False,
          cut_off_absorbance_below_direct_allowed_gap=True,
          plot_current_voltage=False):
     """
-    Calculate the SLME metric from the optical data and band gaps.
-
+    Calculate the
     IMPORTANT NOTES:
-    1) Material calculated absorption coefficient is assumed to be in m^{-1}, not cm^{-1}!
-        (Some sources will provide absorbance in cm^{-1}, so be careful.)
-
-    2) We can calculate at different thicknesses/temperatures if we want to, but 500 nm /
-        293.15 K is the standard temperature assumed if not specified.
-
+    1) Material calculated absorbance is assumed to be in m^-1, not cm^-1!
+        (Most sources will provide absorbance in cm^-1, so be careful.)
+    2) The default is to remove absorbance below the direct allowed gap.
+        This is for dealing with broadening applied in DFT absorbance
+        calculations. Probably not desired for experimental data.
+    3) We can calculate at different temperatures if we want to, but 25 C /
+        293.15 K is the standard temperature assumed if not specified
+    4) If absorbance is in cm^-1, multiply values by 100 to match units
+        assumed in code
     Args:
-        energies:
-        abs_coefficient:
+        material_energy_for_absorbance_data:
+        material_absorbance_data:
         material_direct_allowed_gap:
         material_indirect_gap:
         thickness:
         temperature:
+        absorbance_in_inverse_centimeters:
         cut_off_absorbance_below_direct_allowed_gap:
         plot_current_voltage:
-
     Returns:
         The calculated maximum efficiency.
-
     """
 
     # Defining constants for tidy equations
@@ -444,8 +496,12 @@ def slme(energies, abs_coefficient, material_direct_allowed_gap,
     k_e = constants.k / constants.e  # Boltzmann's constant eV/K
     e = constants.e  # Coulomb
 
+    # Make sure the absorption coefficient has the right units (m^{-1})
+    if absorbance_in_inverse_centimeters:
+        material_absorbance_data = material_absorbance_data * 100
+
     # Load the Air Mass 1.5 Global tilt solar spectrum
-    solar_spectrum_data_file = os.path.join(os.path.dirname(__file__), "am1.5G.dat")
+    solar_spectrum_data_file = str(os.path.join(os.path.dirname(__file__), "am1.5G.dat"))
 
     solar_spectra_wavelength, solar_spectra_irradiance = np.loadtxt(
         solar_spectrum_data_file, usecols=[0, 1], unpack=True, skiprows=2
@@ -482,16 +538,16 @@ def slme(energies, abs_coefficient, material_direct_allowed_gap,
 
     # units of nm
     material_wavelength_for_absorbance_data = ((c * h_e) / (
-            energies + 0.00000001)) * 10 ** 9
+            material_energy_for_absorbance_data + 0.00000001)) * 10 ** 9
 
     # absorbance interpolation onto each solar spectrum wavelength
     from scipy.interpolate import interp1d
     # creates cubic spline interpolating function, set up to use end values
     #  as the guesses if leaving the region where data exists
     material_absorbance_data_function = interp1d(
-        material_wavelength_for_absorbance_data, abs_coefficient,
+        material_wavelength_for_absorbance_data, material_absorbance_data,
         kind='cubic',
-        fill_value=(abs_coefficient[0], abs_coefficient[-1]),
+        fill_value=(material_absorbance_data[0], material_absorbance_data[-1]),
         bounds_error=False
     )
 
@@ -564,9 +620,8 @@ def slme(energies, abs_coefficient, material_direct_allowed_gap,
 
 
 if __name__ == '__main__':
-    path = str(
-        os.path.join(os.path.dirname(__file__),
-                     '../vasp/examples/SiOptb88/MAIN-MBJ-bulk@mp_149/vasprun.xml'))
+    path = str(os.path.join(os.path.dirname(__file__),
+                            '../vasp/examples/SiOptb88/MAIN-MBJ-bulk@mp_149/vasprun.xml'))
     en, abz, dirgap, indirgap = optics(path)
     abz = abz * 100.0
     eff = slme(en, abz, indirgap, indirgap, plot_current_voltage=False)
