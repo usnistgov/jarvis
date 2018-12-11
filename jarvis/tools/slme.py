@@ -154,7 +154,7 @@ class DielTensor(MSONable):
         elif fmt == "outcar":
              outcar = Outcar(filename)
              outcar.read_freq_dielectric()
-             dielectric_data = (outcar.frequencies, outcar.dielectric_tensor)
+             dielectric_data = (outcar.frequencies, outcar.dielectric_tensor_function)
              return cls(dielectric_data)
 
         else:
