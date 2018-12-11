@@ -28,7 +28,7 @@ properties of the material.
 
 class DielTensor(MSONable):
     """
-    Class that represents the frequency-dependent dielectric tensor of a solid state material.
+    Class that represents the energy-dependent dielectric tensor of a solid state material.
 
     """
 
@@ -78,10 +78,25 @@ class DielTensor(MSONable):
 
     @property
     def energies(self):
+        """
+        Energy grid for which the dielectric tensor is defined in the original data.
+
+        Returns:
+            (numpy.array): (N,) shaped array with the energies of the grid in eV.
+
+        """
         return self._energies
 
     @property
     def dielectric_tensor(self):
+        """
+        Dielectric tensor of the material, calculated for each energy in the energy grid.
+
+        Returns:
+            (numpy.array): (N, 3, 3) shaped array, where N corresponds to the number of energy
+            grid points, and 3 to the different directions x,y,z.
+
+        """
         return self._dielectric_tensor
 
     @property
@@ -122,7 +137,7 @@ class DielTensor(MSONable):
     def plot(self, part="all"):
         """
         Plot the real and/or imaginary part of the dielectric function. Still a very rough first
-        draft.
+        version.
 
         Args:
             part (str): Which part of the dielectric function to plot, i.e. either "real",
@@ -142,10 +157,13 @@ class DielTensor(MSONable):
         Initialize a DielTensor instance from a file.
 
         Args:
-            filename:
-            fmt:
+            filename (str): Path to file from which the dielectric data will be loaded. Can (so
+            far) either be a vasprun.xml or Outcar file.
+            fmt (str): Format of the file that contains the dielectric function data. Is
+            currently either "vasprun" or "outcar".
 
         Returns:
+            (DielTensor): Dielectric tensor object from the dielectric data.
 
         """
         if fmt == "vasprun":
