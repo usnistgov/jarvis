@@ -97,6 +97,7 @@ class DielTensor(MSONable):
         return np.array([np.mean(np.linalg.eigvals(tensor))
                          for tensor in self.dielectric_tensor])
 
+    @property
     def absorption_coefficient(self):
         """
         Calculate the optical absorption coefficient from the dielectric data. For now the script
@@ -174,6 +175,14 @@ class RadSpectrum(MSONable):
         self._units = units
         pass
 
+class EfficiencyCalculator(MSONable):
+    """
+    Class that aid the calculation of the efficiency using various metrics based on the
+    optical properties and electronic structure (e.g. band gap) of the material.
+
+    """
+    pass
+
 
 def to_matrix(xx, yy, zz, xy, yz, xz):
     """
@@ -234,19 +243,6 @@ def get_dir_indir_gap(run=''):
     return noso_direct, noso_indir
 
 
-def parse_dielectric_data(data):
-    """
-    Convert a set of 2D vasprun formatted dielectric data to
-    the eigenvalues of each corresponding 3x3 symmetric numpy matrices.
-    Args:
-        data (list): length N list of dielectric data. Each entry should be
-                     a list of ``[xx, yy, zz, xy, xz, yz ]`` dielectric
-                     tensor elements.
-    Returns:
-        (np.array):  a Nx3 numpy array. Each row contains the eigenvalues
-                     for the corresponding row in `data`.
-    """
-    return np.array([matrix_eigvals(to_matrix(*e)) for e in data])
 
 
 def optics(ru=''):
@@ -393,38 +389,27 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
     return efficiency
 
 
-def slme(material_energy_for_absorbance_data,
-         material_absorbance_data,
-         material_direct_allowed_gap,
+def slme(energies, abs_coefficient, material_direct_allowed_gap,
          material_indirect_gap, thickness=50E-6, temperature=293.15,
-         absorbance_in_inverse_centimeters=False,
          cut_off_absorbance_below_direct_allowed_gap=True,
          plot_current_voltage=False):
     """
-    Calculate the
+    Calculate the SLME metric from the optical data and band gaps.
 
     IMPORTANT NOTES:
-    1) Material calculated absorbance is assumed to be in m^-1, not cm^-1!
-        (Most sources will provide absorbance in cm^-1, so be careful.)
+    1) Material calculated absorption coefficient is assumed to be in m^{-1}, not cm^{-1}!
+        (Some sources will provide absorbance in cm^{-1}, so be careful.)
 
-    2) The default is to remove absorbance below the direct allowed gap.
-        This is for dealing with broadening applied in DFT absorbance
-        calculations. Probably not desired for experimental data.
-
-    3) We can calculate at different temperatures if we want to, but 25 C /
-        293.15 K is the standard temperature assumed if not specified
-
-    4) If absorbance is in cm^-1, multiply values by 100 to match units
-        assumed in code
+    2) We can calculate at different thicknesses/temperatures if we want to, but 500 nm /
+        293.15 K is the standard temperature assumed if not specified.
 
     Args:
-        material_energy_for_absorbance_data:
-        material_absorbance_data:
+        energies:
+        abs_coefficient:
         material_direct_allowed_gap:
         material_indirect_gap:
         thickness:
         temperature:
-        absorbance_in_inverse_centimeters:
         cut_off_absorbance_below_direct_allowed_gap:
         plot_current_voltage:
 
@@ -441,12 +426,8 @@ def slme(material_energy_for_absorbance_data,
     k_e = constants.k / constants.e  # Boltzmann's constant eV/K
     e = constants.e  # Coulomb
 
-    # Make sure the absorption coefficient has the right units (m^{-1})
-    if absorbance_in_inverse_centimeters:
-        material_absorbance_data = material_absorbance_data * 100
-
     # Load the Air Mass 1.5 Global tilt solar spectrum
-    solar_spectrum_data_file = "am1.5G.dat"
+    solar_spectrum_data_file = os.path.join(os.path.dirname(__file__), "am1.5G.dat")
 
     solar_spectra_wavelength, solar_spectra_irradiance = np.loadtxt(
         solar_spectrum_data_file, usecols=[0, 1], unpack=True, skiprows=2
@@ -483,16 +464,16 @@ def slme(material_energy_for_absorbance_data,
 
     # units of nm
     material_wavelength_for_absorbance_data = ((c * h_e) / (
-            material_energy_for_absorbance_data + 0.00000001)) * 10 ** 9
+            energies + 0.00000001)) * 10 ** 9
 
     # absorbance interpolation onto each solar spectrum wavelength
     from scipy.interpolate import interp1d
     # creates cubic spline interpolating function, set up to use end values
     #  as the guesses if leaving the region where data exists
     material_absorbance_data_function = interp1d(
-        material_wavelength_for_absorbance_data, material_absorbance_data,
+        material_wavelength_for_absorbance_data, abs_coefficient,
         kind='cubic',
-        fill_value=(material_absorbance_data[0], material_absorbance_data[-1]),
+        fill_value=(abs_coefficient[0], abs_coefficient[-1]),
         bounds_error=False
     )
 
