@@ -4,7 +4,7 @@ from __future__ import  unicode_literals, print_function
 # Forked and adjusted from https://github.com/ldwillia/SL3ME
 
 """
-Core classes and methods of the SLME package.
+Calculate spectroscopy limited maximum efficiency (SLME) given dielectric function data
 """
 
 import os
