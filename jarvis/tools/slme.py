@@ -4,7 +4,7 @@ from __future__ import  unicode_literals, print_function
 # Forked and adjusted from https://github.com/ldwillia/SL3ME
 
 """
-Core classes and methods of the SLME package.
+Calculate spectroscopy limited maximum efficiency (SLME) given dielectric function data
 """
 
 import os
@@ -19,7 +19,7 @@ from pymatgen.io.vasp.outputs import Vasprun
 from numpy import loadtxt, arange, logspace
 from math import pi, sqrt
 from scipy.constants import physical_constants, speed_of_light
-
+from pymatgen.electronic_structure.core import Spin
 
 
 
@@ -36,27 +36,20 @@ def nelec_out(out=''):
 
 
 
-def get_dir_indir_gap(run=''):
- ispin=1
+def get_dir_indir_gap(run='',ispin=1):
+ """
+ Get direct and indirect bandgaps
+ Implemented for non-spin polarized case only right now
+ """
  v=Vasprun(run)
  outcar=run.replace('vasprun.xml','OUTCAR')
- nbands=len(v.eigenvalues.items()[0][1])
+ nbands=len(v.eigenvalues[Spin.up][1]) 
  nelec= nelec_out(outcar) #ispin*len(v.eigenvalues.items()[0][1])
- nkpts=len(v.eigenvalues.items())/ispin
+ nkpts=int( len(v.eigenvalues[Spin.up]))
  eigvals=np.zeros((ispin,nkpts,nbands))
- kp=[]
- for spin, d in v.eigenvalues.items():
-     count=0
-     for k, val in enumerate(d):
-            spinn=(str(spin[0]))
-            if spinn=='1':
-                spinn=0
-            else:
-                spinn=1
-            #print spin[1],k,count
-            kp.append(spin[1])
-            eigvals[spinn,spin[1],count]=val[0]
-            count=count+1
+ for kp,i in enumerate(v.eigenvalues[Spin.up]):
+   for band,j in enumerate(i):
+      eigvals[0,kp,band]=j[0]
  noso_homo = np.max(eigvals[0,:,nelec//2-1])
  noso_lumo = np.min(eigvals[0,:,nelec//2])
  noso_indir= np.min(eigvals[0,:,nelec//2])-np.max(eigvals[0,:,nelec//2-1])
@@ -336,7 +329,7 @@ def slme(material_energy_for_absorbance_data,
         material_absorbance_data = material_absorbance_data * 100
 
     # Load the Air Mass 1.5 Global tilt solar spectrum
-    solar_spectrum_data_file = "am1.5G.dat"
+    solar_spectrum_data_file = str(os.path.join(os.path.dirname(__file__),"am1.5G.dat"))
 
     solar_spectra_wavelength, solar_spectra_irradiance = np.loadtxt(
         solar_spectrum_data_file, usecols=[0, 1], unpack=True, skiprows=2
