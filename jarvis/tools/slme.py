@@ -27,6 +27,13 @@ Module for calculating the SLME metric, including several classes that represent
 properties of the material.
 """
 
+# Defining constants for tidy equations
+c = constants.c  # speed of light, m/s
+h = constants.h  # Planck's constant J*s (W)
+h_e = constants.h / constants.e  # Planck's constant eV*s
+k = constants.k  # Boltzmann's constant J/K
+k_e = constants.k / constants.e  # Boltzmann's constant eV/K
+e = constants.e  # Coulomb
 
 class DielTensor(MSONable):
     """
@@ -203,32 +210,71 @@ class EMRadSpectrum(MSONable):
         self._energies = energies
         self._photon_flux = photon_flux
 
+    @classmethod
     def from_file(self, filename):
         """
 
         Args:
-            filename:
+            filename (str):
 
         Returns:
 
         """
-        pass
+        if filename.endswith(".json"):
+            raise NotImplementedError
 
-    def from_data(self, data, variable="energy", units="s^{-1}m^{-2}"):
+    @classmethod
+    def from_data(cls, data, variable="energy", spectrum_units="flux"):
         """
 
         Args:
-            data:
+            data (tuple): Tuple with length 2 that contains the data from which to
+                construct the radiation spectrum. data[0] must contain a (N,) shaped
+                numpy.array with the grid of the variable (e.g. energy, wavelength),
+                data[1] should contain the spectral distribution.
+            variable (str):
+            units (str):
+
+        Returns:
+
+        """
+        if variable == "energy":
+            energies = data[0]
+            spectrum = data[1]
+
+        elif variable == "wavelength":
+            energies = h_e * c / data[0]
+            spectrum = data[1] * h_e * c / energies**2
+
+        else:
+            raise NotImplementedError
+
+        if spectrum_units == "flux":
+            photon_flux = spectrum
+            return cls(energies, photon_flux)
+
+        elif spectrum_units == "power":
+            photon_flux = spectrum / (e * energies)
+            return cls(energies, photon_flux)
+
+        else:
+            raise NotImplementedError
+
+    @classmethod
+    def get_blackbody(cls, temperature, variable="energy", units="flux"):
+        """
+        Construct the blackbody spectrum of a specific temperature.
+
+        Args:
+            temperature:
             variable:
             units:
 
         Returns:
 
         """
-        pass # test
+        pass
 
-    @classmethod
-    def
 
 
 class EfficiencyCalculator(MSONable):
@@ -300,14 +346,6 @@ class EfficiencyCalculator(MSONable):
         Returns:
 
         """
-
-        # Defining constants for tidy equations
-        c = constants.c  # speed of light, m/s
-        h = constants.h  # Planck's constant J*s (W)
-        h_e = constants.h / constants.e  # Planck's constant eV*s
-        k = constants.k  # Boltzmann's constant J/K
-        k_e = constants.k / constants.e  # Boltzmann's constant eV/K
-        e = constants.e  # Coulomb
 
         pdb.set_trace()
 
