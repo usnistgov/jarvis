@@ -195,7 +195,7 @@ class EMRadSpectrum(MSONable):
     Class that represents a electromagnetic radiation spectrum, e.g. the solar spectrum
     or the black body spectrum. The standard form we choose to express the spectrum is
     as the energy-dependent photon flux per square meter, where the energy is expressed
-    in electronvolt (Units ~ m^{-2} s^{-1} eV^{-2}).
+    in electronvolts (Units ~ m^{-2} s^{-1} eV^{-1}).
 
     """
 
@@ -243,6 +243,24 @@ class EMRadSpectrum(MSONable):
         """
         return simps(self.photon_flux * self.energy * e, self.energy)
 
+    def get_interp_function(self, variable="energy", spectrum="flux"):
+        """
+        Obtain the 1D interpolation function using the scipy.interpolate.interp1d
+        method.
+
+        Still have to implement the option to change the variable and type of
+        spectrum.
+
+        Args:
+            variable (str):
+            spectrum (str):
+
+        Returns:
+
+        """
+        return interp1d(self._energy, self._photon_flux, kind='cubic',
+                        fill_value=0.0, bounds_error=False)
+
     def to(self, filename):
         """
 
@@ -250,7 +268,7 @@ class EMRadSpectrum(MSONable):
 
         """
         with zopen(filename, "w") as f:
-            return f.write(self.to_json())
+            f.write(self.to_json())
 
     @classmethod
     def from_file(cls, filename):
@@ -345,13 +363,19 @@ class EMRadSpectrum(MSONable):
         Returns:
 
         """
+        if variable == "energy":
+            energy = grid
+        else:
+            raise NotImplementedError
+
         # Calculation of energy-dependent blackbody spectrum (~ W m^{-2})
-        blackbody_photon_flux = 2 * energy ** 2 / h_e ** 3 / c ** 2 * (
-                1 / (np.array([math.exp(energy / k_e / temperature) for energy in
-                               energy]) - 1)
-        )
+        if units == "flux":
+            photon_flux = 2 * energy**2 / (h_e**3 * c**2) * (
+                    1 / (np.array([math.exp(energy / (k_e * temperature)) - 1
+                                   for energy in energy]))
+            )
 
-
+        return cls(energy, photon_flux)
 
 
 class EfficiencyCalculator(MSONable):
@@ -377,6 +401,14 @@ class EfficiencyCalculator(MSONable):
         """
         self._dieltensor = dieltensor
         self._bandgaps = bandgaps
+
+    @property
+    def dieltensor(self):
+        return self._dieltensor
+
+    @property
+    def bandgaps(self):
+        return self._bandgaps
 
     @classmethod
     def from_file(cls, filename):
@@ -412,7 +444,7 @@ class EfficiencyCalculator(MSONable):
         """
         pass
 
-    def slme(self, temperature, thickness):
+    def slme(self, temperature, thickness, interp_mesh=0.001):
         """
         Calculate the Spectroscopic Limited Maximum Efficiency.
 
@@ -423,55 +455,33 @@ class EfficiencyCalculator(MSONable):
         Returns:
 
         """
-
-        pdb.set_trace()
-
-        # Load the Air Mass 1.5 Global tilt solar spectrum
-        solar_spectrum_data_file = str(os.path.join(os.path.dirname(__file__), "am1.5g.dat"))
-
-        solar_spectrum_wavelength, solar_spectrum_irradiance = np.loadtxt(
-            solar_spectrum_data_file, usecols=[0, 1], unpack=True, skiprows=2
-        )
-        # Transfer units to m instead of nm
-        solar_spectrum_wavelength *= 1e-9
-        solar_spectrum_irradiance *= 1e9
-
-        # Change units of wavelength in original NREL data to eV
-        solar_spectrum_energy = np.flip(h_e * c / solar_spectrum_wavelength)
-        # Change irradiance spectrum to energy dependent photon flux
-        solar_spectrum_photon_flux = np.flip(solar_spectrum_irradiance) * h_e * c / \
-                                     solar_spectrum_energy ** 3 / constants.e
-
-        # Calculation of total solar power incoming
-        power_in = simps(solar_spectrum_photon_flux * solar_spectrum_energy * constants.e,
-                         solar_spectrum_energy)
-
-        print(power_in)
-
-        # Calculation of energy-dependent blackbody spectrum, in units of W / m**2
-        blackbody_photon_flux = 2 * solar_spectrum_energy ** 2 / h_e ** 3 / c ** 2 * (
-                1 / (np.array([math.exp(energy / k_e / temperature) for energy in
-                               solar_spectrum_energy]) - 1)
+        # Set up the energy grid for the calculation
+        energy = self.dieltensor.energies
+        energy = np.linspace(
+            np.min(energy), np.max(energy),
+            np.ceil((np.max(energy) - np.min(energy))/interp_mesh)
         )
 
-        # Interpolation of the absorption coefficient onto each solar spectrum wavelength
-        # creates cubic spline interpolating function, set up to use end values
-        # as the guesses if leaving the region where data exists
-        abs_coeff_function = interp1d(
+        # Interpolation of the absorption coefficient to the new energy grid
+        abs_coeff = interp1d(
             self._dieltensor.energies, self._dieltensor.absorption_coefficient,
             kind='cubic',
-            fill_value=(self._dieltensor.absorption_coefficient[0],
-                        self._dieltensor.absorption_coefficient[-1]),
+            fill_value=0,
             bounds_error=False
-        )
+        )(energy)
 
-        abs_coeff = abs_coeff_function(solar_spectrum_energy)
-
+        # Calculate the absorption coefficient (Beer-Lambert for SLME)
         absorptivity = 1.0 - np.exp(-2.0 * abs_coeff * thickness)
+
+        # Get total solar_spectrum
+        solar_spectrum = EMRadSpectrum.get_solar_spectrum("am1.5g")
+
+        # Calculation of energy-dependent blackbody spectrum, in units of W / m**2
+        blackbody_spectrum = EMRadSpectrum.get_blackbody()
 
         # Numerically integrating irradiance over energy grid ~ A/m**2
         J_0_r = e * np.pi * simps(
-            blackbody_photon_flux * absorptivity, solar_spectrum_energy
+            blackbody_spectrum.get_interp_function()(energy) * absorptivity, energy
         )
 
         # Calculate the fraction of radiative recombination
@@ -482,10 +492,8 @@ class EfficiencyCalculator(MSONable):
 
         # Numerically integrating irradiance over wavelength array ~ A/m**2
         J_sc = e * simps(
-            solar_spectrum_photon_flux * absorptivity, solar_spectrum_energy
+            solar_spectrum.get_interp_function()(energy) * absorptivity, energy
         )
-
-        pdb.set_trace()
 
         # Calculate the current density J for a specified voltage V
         def J(V):
@@ -505,6 +513,11 @@ class EfficiencyCalculator(MSONable):
             test_voltage += voltage_step
 
         max_power = power(test_voltage)
+
+        # Calculation of integrated solar spectrum
+        power_in = solar_spectrum.get_total_power_density()
+
+        print(power_in)
 
         # Calculate the maximized efficiency
         efficiency = max_power / power_in
