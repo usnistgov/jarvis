@@ -6,12 +6,13 @@ from __future__ import unicode_literals, print_function
 # Distributed under the terms of the GNU License
 # Initially forked and (extensively) adjusted from https://github.com/ldwillia/SL3ME
 
-import os, math, cmath
+import os, math, cmath, pdb
 
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.constants as constants
 
+from scipy.interpolate import interp1d
 from scipy.integrate import simps
 from scipy.constants import physical_constants, speed_of_light
 
@@ -280,6 +281,8 @@ class EfficiencyCalculator(MSONable):
         k_e = constants.k / constants.e  # Boltzmann's constant eV/K
         e = constants.e  # Coulomb
 
+        pdb.set_trace()
+
         # Load the Air Mass 1.5 Global tilt solar spectrum
         solar_spectrum_data_file = str(os.path.join(os.path.dirname(__file__), "am1.5G.dat"))
 
@@ -288,62 +291,42 @@ class EfficiencyCalculator(MSONable):
         )
 
         # Change units of wavelength in original NREL data to eV
-        solar_spectrum_energy = h_e * c / solar_spectrum_wavelength
+        solar_spectrum_energy = np.flip(h_e * c / (solar_spectrum_wavelength * 1e-9))
         # Change irradiance spectrum to energy dependent photon flux
-        solar_spectrum_photon_flux = solar_spectrum_irradiance * h_e * c / solar_spectrum_energy**3
+        solar_spectrum_photon_flux = np.flip(solar_spectrum_irradiance) * h_e * c / \
+                                     solar_spectrum_energy ** 3 * 1e9 / constants.e
 
         # Calculation of total solar power incoming
-        power_in = simps(solar_spectrum_energy, solar_spectrum_photon_flux * solar_spectrum_energy)
+        power_in = simps(solar_spectrum_photon_flux * solar_spectrum_energy * constants.e,
+                         solar_spectrum_energy)
 
         print(power_in)
 
         # Calculation of energy-dependent blackbody spectrum, in units of W / m**2
-        blackbody_irradiance = 2 * solar_spectrum_energy**3 / h_e**3 / c**3 * (
-            1 / (math.exp())
+        blackbody_photon_flux = 2 * solar_spectrum_energy ** 2 / h_e ** 3 / c ** 2 * (
+                1 / (np.array([math.exp(energy / k_e / temperature) for energy in
+                               solar_spectrum_energy]) - 1)
         )
 
-        # I've removed a pi in the equation above - Marnik Bercx
-
-        # now to convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)
-        blackbody_photon_flux = blackbody_irradiance * (
-                solar_spectrum_wavelength / (h * c))
-
-        # units of nm
-        material_wavelength_for_absorbance_data = ((c * h_e) / (
-                material_energy_for_absorbance_data + 0.00000001)) * 10 ** 9
-
-        # absorbance interpolation onto each solar spectrum wavelength
-        from scipy.interpolate import interp1d
+        # Interpolation of the absorption coefficient onto each solar spectrum wavelength
         # creates cubic spline interpolating function, set up to use end values
-        #  as the guesses if leaving the region where data exists
-        material_absorbance_data_function = interp1d(
-            material_wavelength_for_absorbance_data, material_absorbance_data,
+        # as the guesses if leaving the region where data exists
+        abs_coeff_function = interp1d(
+            self._dieltensor.energies, self._dieltensor.absorption_coefficient,
             kind='cubic',
-            fill_value=(material_absorbance_data[0], material_absorbance_data[-1]),
+            fill_value=(self._dieltensor.absorption_coefficient[0],
+                        self._dieltensor.absorption_coefficient[-1]),
             bounds_error=False
         )
 
-        material_interpolated_absorbance = np.zeros(
-            len(solar_spectra_wavelength_meters))
-        for i in range(0, len(solar_spectra_wavelength_meters)):
-            ## Cutting off absorption data below the gap. This is done to deal
-            # with VASPs broadening of the calculated absorption data
+        abs_coeff = abs_coeff_function(solar_spectrum_energy)
 
-            if solar_spectrum_wavelength[i] < 1e9 * ((c * h_e) /
-                                                     material_direct_allowed_gap) \
-                    or cut_off_absorbance_below_direct_allowed_gap == False:
-                material_interpolated_absorbance[
-                    i] = material_absorbance_data_function(
-                    solar_spectrum_wavelength[i])
+        absorptivity = 1.0 - np.exp(-2.0 * abs_coeff * thickness)
 
-        absorbed_by_wavelength = 1.0 - np.exp(-2.0 *
-                                              material_interpolated_absorbance
-                                              * thickness)
-
-        #  Numerically integrating irradiance over wavelength array
-        # Note: elementary charge, not math e!  ## units of A/m**2   W/(V*m**2)
-        J_0_r = e * np.pi * simps(blackbody_photon_flux * absorbed_by_wavelength,
-                                  solar_spectra_wavelength_meters)
+        # Numerically integrating irradiance over energy grid ~ A/m**2
+        J_0_r = e * np.pi * simps(
+            blackbody_photon_flux * absorptivity, solar_spectrum_energy
+        )
 
         # Calculate the fraction of radiative recombination
         delta = self._bandgaps[1] - self._bandgaps[0]
@@ -351,25 +334,24 @@ class EfficiencyCalculator(MSONable):
 
         J_0 = J_0_r / fr
 
-        #  Numerically integrating irradiance over wavelength array
-        # elementary charge, not math e!  ### units of A/m**2   W/(V*m**2)
-        J_sc = e * simps(solar_spectrum_photon_flux * absorbed_by_wavelength,
-                         solar_spectrum_wavelength)
+        # Numerically integrating irradiance over wavelength array ~ A/m**2
+        J_sc = e * simps(
+            solar_spectrum_photon_flux * absorptivity, solar_spectrum_energy
+        )
 
-        #    J[i] = J_sc - J_0*(1 - exp( e*V[i]/(k*T) ) )
-        #   #This formula from the original paper has a typo!!
-        #    J[i] = J_sc - J_0*(exp( e*V[i]/(k*T) ) - 1)
-        #   #Bercx chapter and papers have the correct formula (well,
-        #   the correction on one paper)
+        pdb.set_trace()
+
+        # Calculate the current density J for a specified voltage V
         def J(V):
             J = J_sc - J_0 * (np.exp(e * V / (k * temperature)) - 1.0)
             return J
 
+        # Calculate the corresponding power density P
         def power(V):
             p = J(V) * V
             return p
 
-        # A more primitive, but perfectly robust way of getting a reasonable
+        # A somewhat primitive, but perfectly robust way of getting a reasonable
         # estimate for the maximum power.
         test_voltage = 0
         voltage_step = 0.001
@@ -378,21 +360,23 @@ class EfficiencyCalculator(MSONable):
 
         max_power = power(test_voltage)
 
-        # Calculate the maximized efficience
+        # Calculate the maximized efficiency
         efficiency = max_power / power_in
 
-        # This segment isn't needed for functionality at all, but can display a
-        # plot showing how the maximization of power by choosing the optimal
-        # voltage value works
-        if plot_current_voltage:
-            V = np.linspace(0, 2, 200)
-            plt.plot(V, J(V))
-            plt.plot(V, power(V), linestyle='--')
-            plt.savefig('pp.png')
-            plt.close()
-            # print(power(V_Pmax))
-
         return efficiency
+
+    def plot_current_voltage(self):
+        """
+
+        Returns:
+
+        """
+        # V = np.linspace(0, 2, 200)
+        # plt.plot(V, J(V))
+        # plt.plot(V, power(V), linestyle='--')
+        # plt.savefig('pp.png')
+        # plt.close()
+        pass
 
 
 def to_matrix(xx, yy, zz, xy, yz, xz):
