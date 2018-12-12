@@ -47,10 +47,12 @@ class DielTensor(MSONable):
         Initializes a DielTensor instance from the dielectric data.
 
         Args:
-            dielectric_data (tuple): tuple of length N lists of dielectric data. The first
-                tuple element contains the energies, the second/third the real/imaginary part of
-                the dielectric tensor.  Each dielectric entry should be a list of
-                ``[xx, yy, zz, xy, xz, yz ]`` dielectric tensor elements.
+            dielectric_data (tuple): tuple of length N lists of dielectric data.
+
+                - vasprun: The first tuple element contains the energies, the
+                    second/third the real/imaginary part of the dielectric tensor.
+                    Each dielectric entry should be a list of ``[xx, yy, zz, xy, xz,
+                    yz ]`` dielectric tensor elements.
         """
         self._dielectric_data = dielectric_data
         self._energies, self._dielectric_tensor = self.parse_dielectric_data()
@@ -201,12 +203,13 @@ class EMRadSpectrum(MSONable):
 
     def __init__(self, energy, photon_flux):
         """
-        Initialize the Radiation Spectrum object.
+        Initialize the Radiation Spectrum object from the energy and the photon
+        flux.
 
         Args:
-            energy:
-            intensity:
-            units:
+            energy (numpy.array):
+            photon_flux (numpy.array):
+
         """
         self._energy = energy
         self._photon_flux = photon_flux
