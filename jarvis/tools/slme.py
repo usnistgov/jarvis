@@ -368,12 +368,21 @@ class EMRadSpectrum(MSONable):
         else:
             raise NotImplementedError
 
+        # Define a exponential function that does not cause a range overflow
+        def exponential(x):
+            try:
+                return math.exp(x)
+            except OverflowError:
+                return math.exp(700)  # ~= 1e304
+
         # Calculation of energy-dependent blackbody spectrum (~ W m^{-2})
         if units == "flux":
             photon_flux = 2 * energy**2 / (h_e**3 * c**2) * (
-                    1 / (np.array([math.exp(energy / (k_e * temperature)) - 1
+                    1 / (np.array([exponential(energy / (k_e * temperature)) - 1
                                    for energy in energy]))
             )
+        else:
+            raise NotImplementedError
 
         return cls(energy, photon_flux)
 
@@ -420,9 +429,10 @@ class EfficiencyCalculator(MSONable):
         try:
             vasprun = Vasprun(filename)
         except ParseError:
-            raise IOError("Error while parsing the input file. Currently the EfficiencyCalculator "
-                          "can only be constructed from the vasprun.xml file. If you have "
-                          "provided this file, check if the run has completed.")
+            raise IOError("Error while parsing the input file. Currently the "
+                          "EfficiencyCalculator can only be constructed from "
+                          "the vasprun.xml file. If you have provided this "
+                          "file, check if the run has completed.")
 
         diel_tensor = DielTensor(vasprun.dielectric)
 
@@ -432,7 +442,7 @@ class EfficiencyCalculator(MSONable):
 
         return cls(diel_tensor, bandgaps)
 
-    def sq(self, temperature):
+    def sq(self, temperature, interp_mesh=0.001):
         """
         Calculate the Shockley-Queisser limit of the corresponding fundamental band gap.
 
@@ -442,47 +452,28 @@ class EfficiencyCalculator(MSONable):
         Returns:
 
         """
-        pass
-
-    def slme(self, temperature, thickness, interp_mesh=0.001):
-        """
-        Calculate the Spectroscopic Limited Maximum Efficiency.
-
-        Args:
-            temperature:
-            thickness:
-
-        Returns:
-
-        """
         # Set up the energy grid for the calculation
         energy = self.dieltensor.energies
         energy = np.linspace(
-            np.min(energy), np.max(energy),
+            np.min(energy)+interp_mesh, np.max(energy),
             np.ceil((np.max(energy) - np.min(energy))/interp_mesh)
         )
 
-        # Interpolation of the absorption coefficient to the new energy grid
-        abs_coeff = interp1d(
-            self._dieltensor.energies, self._dieltensor.absorption_coefficient,
-            kind='cubic',
-            fill_value=0,
-            bounds_error=False
-        )(energy)
-
-        # Calculate the absorption coefficient (Beer-Lambert for SLME)
-        absorptivity = 1.0 - np.exp(-2.0 * abs_coeff * thickness)
+        #
+        # Set up the absorption coefficient (Step function for SQ)
+        absorptivity = np.array(
+            [float(en > self.bandgaps[0]) for en in energy]
+        )
 
         # Get total solar_spectrum
-        solar_spectrum = EMRadSpectrum.get_solar_spectrum("am1.5g")
+        solar_spectrum = \
+            EMRadSpectrum.get_solar_spectrum("am1.5g").get_interp_function()(energy)
 
         # Calculation of energy-dependent blackbody spectrum, in units of W / m**2
-        blackbody_spectrum = EMRadSpectrum.get_blackbody()
+        blackbody_spectrum = EMRadSpectrum.get_blackbody(temperature, energy).photon_flux
 
         # Numerically integrating irradiance over energy grid ~ A/m**2
-        J_0_r = e * np.pi * simps(
-            blackbody_spectrum.get_interp_function()(energy) * absorptivity, energy
-        )
+        J_0_r = e * np.pi * simps(blackbody_spectrum * absorptivity, energy)
 
         # Calculate the fraction of radiative recombination
         delta = self._bandgaps[1] - self._bandgaps[0]
@@ -491,9 +482,7 @@ class EfficiencyCalculator(MSONable):
         J_0 = J_0_r / fr
 
         # Numerically integrating irradiance over wavelength array ~ A/m**2
-        J_sc = e * simps(
-            solar_spectrum.get_interp_function()(energy) * absorptivity, energy
-        )
+        J_sc = e * simps(solar_spectrum * absorptivity, energy)
 
         # Calculate the current density J for a specified voltage V
         def J(V):
@@ -515,7 +504,84 @@ class EfficiencyCalculator(MSONable):
         max_power = power(test_voltage)
 
         # Calculation of integrated solar spectrum
-        power_in = solar_spectrum.get_total_power_density()
+        power_in = EMRadSpectrum.get_solar_spectrum().get_total_power_density()
+
+        print(power_in)
+
+        # Calculate the maximized efficiency
+        efficiency = max_power / power_in
+
+        return efficiency
+
+    def slme(self, temperature, thickness, interp_mesh=0.001):
+        """
+        Calculate the Spectroscopic Limited Maximum Efficiency.
+
+        Args:
+            temperature:
+            thickness:
+
+        Returns:
+
+        """
+        # Set up the energy grid for the calculation
+        energy = self.dieltensor.energies
+        energy = np.linspace(
+            np.min(energy)+interp_mesh, np.max(energy),
+            np.ceil((np.max(energy) - np.min(energy))/interp_mesh)
+        )
+
+        # Interpolation of the absorption coefficient to the new energy grid
+        abs_coeff = interp1d(
+            self._dieltensor.energies, self._dieltensor.absorption_coefficient,
+            kind='cubic',
+            fill_value=0,
+            bounds_error=False
+        )(energy)
+
+        # Calculate the absorption coefficient (Beer-Lambert for SLME)
+        absorptivity = 1.0 - np.exp(-2.0 * abs_coeff * thickness)
+
+        # Get total solar_spectrum
+        solar_spectrum = \
+            EMRadSpectrum.get_solar_spectrum("am1.5g").get_interp_function()(energy)
+
+        # Calculation of energy-dependent blackbody spectrum, in units of W / m**2
+        blackbody_spectrum = EMRadSpectrum.get_blackbody(temperature, energy).photon_flux
+
+        # Numerically integrating irradiance over energy grid ~ A/m**2
+        J_0_r = e * np.pi * simps(blackbody_spectrum * absorptivity, energy)
+
+        # Calculate the fraction of radiative recombination
+        delta = self._bandgaps[1] - self._bandgaps[0]
+        fr = np.exp(-delta / (k_e * temperature))
+
+        J_0 = J_0_r / fr
+
+        # Numerically integrating irradiance over wavelength array ~ A/m**2
+        J_sc = e * simps(solar_spectrum * absorptivity, energy)
+
+        # Calculate the current density J for a specified voltage V
+        def J(V):
+            J = J_sc - J_0 * (np.exp(e * V / (k * temperature)) - 1.0)
+            return J
+
+        # Calculate the corresponding power density P
+        def power(V):
+            p = J(V) * V
+            return p
+
+        # A somewhat primitive, but perfectly robust way of getting a reasonable
+        # estimate for the maximum power.
+        test_voltage = 0
+        voltage_step = 0.001
+        while power(test_voltage + voltage_step) > power(test_voltage):
+            test_voltage += voltage_step
+
+        max_power = power(test_voltage)
+
+        # Calculation of integrated solar spectrum
+        power_in = EMRadSpectrum.get_solar_spectrum().get_total_power_density()
 
         print(power_in)
 
