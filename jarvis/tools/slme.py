@@ -182,14 +182,16 @@ class DielTensor(MSONable):
             raise IOError("Format not recognized.")
 
 
-class RadSpectrum(MSONable):
+class EMRadSpectrum(MSONable):
     """
     Class that represents a electromagnetic radiation spectrum, e.g. the solar spectrum
-    or the black body spectrum.
+    or the black body spectrum. The standard form we choose to express the spectrum is
+    as the energy-dependent photon flux per square meter, where the energy is expressed
+    in electronvolt (Units ~ m^{-2} s^{-1} eV^{-2}).
 
     """
 
-    def __init__(self, energies, intensity, units):
+    def __init__(self, energies, photon_flux):
         """
         Initialize the Radiation Spectrum object.
 
@@ -199,13 +201,39 @@ class RadSpectrum(MSONable):
             units:
         """
         self._energies = energies
-        self._intensity = intensity
-        self._units = units
+        self._photon_flux = photon_flux
+
+    def from_file(self, filename):
+        """
+
+        Args:
+            filename:
+
+        Returns:
+
+        """
+        pass
+
+    def from_data(self, data, variable="energy", units="s^{-1}m^{-2}"):
+        """
+
+        Args:
+            data:
+            variable:
+            units:
+
+        Returns:
+
+        """
+        pass # test
+
+    @classmethod
+    def
 
 
 class EfficiencyCalculator(MSONable):
     """
-    Class that aids the calculation of the maximum theoretical efficiency using various metrics
+    Class that performs the calculation of the theoretical efficiency using various metrics
     based on the optical properties and electronic structure (e.g. band gap) of the material
     being considered as the absorber layer.
 
@@ -289,12 +317,15 @@ class EfficiencyCalculator(MSONable):
         solar_spectrum_wavelength, solar_spectrum_irradiance = np.loadtxt(
             solar_spectrum_data_file, usecols=[0, 1], unpack=True, skiprows=2
         )
+        # Transfer units to m instead of nm
+        solar_spectrum_wavelength *= 1e-9
+        solar_spectrum_irradiance *= 1e9
 
         # Change units of wavelength in original NREL data to eV
-        solar_spectrum_energy = np.flip(h_e * c / (solar_spectrum_wavelength * 1e-9))
+        solar_spectrum_energy = np.flip(h_e * c / (solar_spectrum_wavelength))
         # Change irradiance spectrum to energy dependent photon flux
         solar_spectrum_photon_flux = np.flip(solar_spectrum_irradiance) * h_e * c / \
-                                     solar_spectrum_energy ** 3 * 1e9 / constants.e
+                                     solar_spectrum_energy ** 3 / constants.e
 
         # Calculation of total solar power incoming
         power_in = simps(solar_spectrum_photon_flux * solar_spectrum_energy * constants.e,
