@@ -6,7 +6,7 @@ from __future__ import unicode_literals, print_function
 # Distributed under the terms of the GNU License
 # Initially forked and (extensively) adjusted from https://github.com/ldwillia/SL3ME
 
-import os, math, cmath, pdb
+import os, math, cmath, pdb, json
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,6 +18,7 @@ from scipy.constants import physical_constants, speed_of_light
 
 from math import pi
 from monty.json import MSONable
+from monty.io import zopen
 from pymatgen.io.vasp.outputs import Vasprun, Outcar
 from pymatgen.electronic_structure.core import Spin
 from xml.etree.ElementTree import ParseError
@@ -210,8 +211,49 @@ class EMRadSpectrum(MSONable):
         self._energy = energy
         self._photon_flux = photon_flux
 
+    @property
+    def energy(self):
+        """
+        Energy grid for which the electromagnetic radiation spectrum is defined.
+
+        Returns:
+            (numpy.array)
+
+        """
+        return self._energy
+
+    @property
+    def photon_flux(self):
+        """
+        Electromagnetic radiation spectrum expressed in photon flux.
+
+        Returns:
+            (numpy.array)
+
+        """
+        return self._photon_flux
+
+    def get_total_power_density(self):
+        """
+        Get the total power density in W m^{-2}.
+
+        Returns:
+            (float)
+
+        """
+        return simps(self.photon_flux * self.energy * e, self.energy)
+
+    def to(self, filename):
+        """
+
+        Returns:
+
+        """
+        with zopen(filename, "w") as f:
+            return f.write(self.to_json())
+
     @classmethod
-    def from_file(self, filename):
+    def from_file(cls, filename):
         """
 
         Args:
@@ -221,7 +263,8 @@ class EMRadSpectrum(MSONable):
 
         """
         if filename.endswith(".json"):
-            raise NotImplementedError
+            with zopen(filename, "r") as f:
+                return cls.from_dict(json.loads(f.read()))
 
     @classmethod
     def from_data(cls, data, variable="energy", spectrum_units="flux"):
@@ -290,7 +333,7 @@ class EMRadSpectrum(MSONable):
 
 
     @classmethod
-    def get_blackbody(cls, temperature, variable="energy", units="flux"):
+    def get_blackbody(cls, temperature, grid, variable="energy", units="flux"):
         """
         Construct the blackbody spectrum of a specific temperature.
 
@@ -302,7 +345,12 @@ class EMRadSpectrum(MSONable):
         Returns:
 
         """
-        pass
+        # Calculation of energy-dependent blackbody spectrum (~ W m^{-2})
+        blackbody_photon_flux = 2 * energy ** 2 / h_e ** 3 / c ** 2 * (
+                1 / (np.array([math.exp(energy / k_e / temperature) for energy in
+                               energy]) - 1)
+        )
+
 
 
 
