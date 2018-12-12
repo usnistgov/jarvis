@@ -244,7 +244,7 @@ class EMRadSpectrum(MSONable):
 
         elif variable == "wavelength":
             energy = np.flip(h_e * c / data[0])
-            spectrum = np.flip(data[1] * h_e * c / energy**2)
+            spectrum = np.flip(data[1]) * h_e * c / energy**2
 
         else:
             raise NotImplementedError
@@ -389,7 +389,7 @@ class EfficiencyCalculator(MSONable):
         solar_spectrum_irradiance *= 1e9
 
         # Change units of wavelength in original NREL data to eV
-        solar_spectrum_energy = np.flip(h_e * c / (solar_spectrum_wavelength))
+        solar_spectrum_energy = np.flip(h_e * c / solar_spectrum_wavelength)
         # Change irradiance spectrum to energy dependent photon flux
         solar_spectrum_photon_flux = np.flip(solar_spectrum_irradiance) * h_e * c / \
                                      solar_spectrum_energy ** 3 / constants.e
