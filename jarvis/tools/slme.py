@@ -198,16 +198,16 @@ class EMRadSpectrum(MSONable):
 
     """
 
-    def __init__(self, energies, photon_flux):
+    def __init__(self, energy, photon_flux):
         """
         Initialize the Radiation Spectrum object.
 
         Args:
-            energies:
+            energy:
             intensity:
             units:
         """
-        self._energies = energies
+        self._energy = energy
         self._photon_flux = photon_flux
 
     @classmethod
@@ -239,26 +239,55 @@ class EMRadSpectrum(MSONable):
 
         """
         if variable == "energy":
-            energies = data[0]
+            energy = data[0]
             spectrum = data[1]
 
         elif variable == "wavelength":
-            energies = h_e * c / data[0]
-            spectrum = data[1] * h_e * c / energies**2
+            energy = np.flip(h_e * c / data[0])
+            spectrum = np.flip(data[1] * h_e * c / energy**2)
 
         else:
             raise NotImplementedError
 
         if spectrum_units == "flux":
             photon_flux = spectrum
-            return cls(energies, photon_flux)
+            return cls(energy, photon_flux)
 
         elif spectrum_units == "power":
-            photon_flux = spectrum / (e * energies)
-            return cls(energies, photon_flux)
+            photon_flux = spectrum / (e * energy)
+            return cls(energy, photon_flux)
 
         else:
             raise NotImplementedError
+
+    @classmethod
+    def get_solar_spectrum(cls, spectrum="am1.5g"):
+        """
+
+        Args:
+            spectrum:
+
+        Returns:
+
+        """
+
+        data_file = os.path.join(os.path.dirname(__file__), spectrum + ".dat")
+
+        wavelength, irradiance = np.loadtxt(
+            data_file, usecols=[0, 1], unpack=True, skiprows=2
+        )
+
+        # Transfer units to m instead of nm
+        wavelength *= 1e-9; irradiance *= 1e9
+
+        # # Change units of wavelength in original NREL data to eV
+        # energy = np.flip(h_e * c / (wavelength))
+        # # Change irradiance spectrum to energy dependent photon flux
+        # photon_flux = np.flip(irradiance) * h_e * c / (energy ** 3 * constants.e)
+
+        return cls.from_data((wavelength, irradiance), variable="wavelength",
+                             spectrum_units="power")
+
 
     @classmethod
     def get_blackbody(cls, temperature, variable="energy", units="flux"):
@@ -350,7 +379,7 @@ class EfficiencyCalculator(MSONable):
         pdb.set_trace()
 
         # Load the Air Mass 1.5 Global tilt solar spectrum
-        solar_spectrum_data_file = str(os.path.join(os.path.dirname(__file__), "am1.5G.dat"))
+        solar_spectrum_data_file = str(os.path.join(os.path.dirname(__file__), "am1.5g.dat"))
 
         solar_spectrum_wavelength, solar_spectrum_irradiance = np.loadtxt(
             solar_spectrum_data_file, usecols=[0, 1], unpack=True, skiprows=2
@@ -583,7 +612,7 @@ def calculate_SQ(bandgap_ev, temperature=300, fr=1,
     e = constants.e  # Coulomb
 
     # Load the Air Mass 1.5 Global tilt solar spectrum
-    solar_spectrum_data_file = str(os.path.join(os.path.dirname(__file__), "am1.5G.dat"))
+    solar_spectrum_data_file = str(os.path.join(os.path.dirname(__file__), "am1.5g.dat"))
     solar_spectra_wavelength, solar_spectra_irradiance = np.loadtxt(
         solar_spectrum_data_file, usecols=[0, 1], unpack=True, skiprows=2
     )
@@ -746,7 +775,7 @@ def slme(material_energy_for_absorbance_data,
         material_absorbance_data = material_absorbance_data * 100
 
     # Load the Air Mass 1.5 Global tilt solar spectrum
-    solar_spectrum_data_file = str(os.path.join(os.path.dirname(__file__), "am1.5G.dat"))
+    solar_spectrum_data_file = str(os.path.join(os.path.dirname(__file__), "am1.5g.dat"))
 
     solar_spectra_wavelength, solar_spectra_irradiance = np.loadtxt(
         solar_spectrum_data_file, usecols=[0, 1], unpack=True, skiprows=2
