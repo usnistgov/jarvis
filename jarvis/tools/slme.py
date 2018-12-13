@@ -323,7 +323,7 @@ class EMRadSpectrum(MSONable):
             photon_flux = spectrum
             return cls(energy, photon_flux)
 
-        elif spectrum_units == "power":
+        elif spectrum_units == "irradiance":
             photon_flux = spectrum / (e * energy)
             return cls(energy, photon_flux)
 
@@ -352,7 +352,7 @@ class EMRadSpectrum(MSONable):
         irradiance *= 1e9
 
         return cls.from_data((wavelength, irradiance), variable="wavelength",
-                             spectrum_units="power")
+                             spectrum_units="irradiance")
 
     @classmethod
     def get_blackbody(cls, temperature, grid, variable="energy",
@@ -493,7 +493,7 @@ class EfficiencyCalculator(MSONable):
         # Numerically integrating irradiance over wavelength array ~ A/m**2
         j_sc = e * simps(solar_spectrum * absorptivity, energy)
 
-        # Maximize the power versus the voltage
+        # Maximize the power density versus the voltage
         max_power = self.maximize_power(j_sc, j_0, temperature)
 
         # Calculation of integrated solar spectrum
@@ -504,11 +504,18 @@ class EfficiencyCalculator(MSONable):
 
         return efficiency
 
-    def plot_slme_vs_thickness(self):
-        thickness = np.linspace(1e-9, 1e-3, 40)
-        efficiency = np.array([self.slme(thickness=d) for d in thickness])
+    def plot_slme_vs_thickness(self, temperature=298.15, add_sq_limit=True):
+        thickness = 10**np.linspace(-9, -3, 40)
+        efficiency = np.array([self.slme(thickness=d, temperature=temperature)
+                               for d in thickness])
 
         plt.plot(thickness, efficiency)
+        if add_sq_limit:
+            plt.plot(thickness, np.ones(thickness.shape)
+                     * self.calculate_bandap_sq(temperature=temperature), 'k--')
+        plt.xlabel("Thicknesss (m)")
+        plt.ylabel("Efficiency")
+        plt.xscale("log")
         plt.show()
 
     def plot_current_voltage(self):
