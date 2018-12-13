@@ -504,6 +504,13 @@ class EfficiencyCalculator(MSONable):
 
         return efficiency
 
+    def plot_slme_vs_thickness(self):
+        thickness = np.linspace(1e-9, 1e-3, 40)
+        efficiency = np.array([self.slme(thickness=d) for d in thickness])
+
+        plt.plot(thickness, efficiency)
+        plt.show()
+
     def plot_current_voltage(self):
         """
 
