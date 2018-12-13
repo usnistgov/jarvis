@@ -485,30 +485,13 @@ class EfficiencyCalculator(MSONable):
         # Calculate the fraction of radiative recombination
         delta = self._bandgaps[1] - self._bandgaps[0]
         fr = np.exp(-delta / (k_e * temperature))
-
         j_0 = j_0_r / fr
 
         # Numerically integrating irradiance over wavelength array ~ A/m**2
         j_sc = e * simps(solar_spectrum * absorptivity, energy)
 
-        # Calculate the current density J for a specified voltage V
-        def current_density(voltage):
-            j = j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
-            return j
-
-        # Calculate the corresponding power density P
-        def power(voltage):
-            p = current_density(voltage) * voltage
-            return p
-
-        # A somewhat primitive, but perfectly robust way of getting a reasonable
-        # estimate for the maximum power.
-        test_voltage = 0
-        voltage_step = 0.001
-        while power(test_voltage + voltage_step) > power(test_voltage):
-            test_voltage += voltage_step
-
-        max_power = power(test_voltage)
+        # Maximize the power versus the voltage
+        max_power = self.optimize_pn_power(j_sc, j_0)
 
         # Calculation of integrated solar spectrum
         power_in = EMRadSpectrum.get_solar_spectrum().get_total_power_density()
@@ -558,6 +541,36 @@ class EfficiencyCalculator(MSONable):
         return cls(diel_tensor, bandgaps)
 
     @staticmethod
+    def optimize_pn_power(j_sc, j_0):
+        """
+
+        Args:
+            j_sc:
+            j_0:
+
+        Returns:
+
+        """
+        # Calculate the current density J for a specified voltage V
+        def current_density(voltage):
+            j = j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
+            return j
+
+        # Calculate the corresponding power density P
+        def power(voltage):
+            p = current_density(voltage) * voltage
+            return p
+
+        # A somewhat primitive, but perfectly robust way of getting a reasonable
+        # estimate for the maximum power.
+        test_voltage = 0
+        voltage_step = 0.001
+        while power(test_voltage + voltage_step) > power(test_voltage):
+            test_voltage += voltage_step
+
+        return power(test_voltage)
+
+    @staticmethod
     def calculate_slme_from_vasprun(filename, temperature=293.15, thickness=5e-7):
         return EfficiencyCalculator.from_file(filename).slme(temperature, thickness)
 
@@ -601,29 +614,11 @@ class EfficiencyCalculator(MSONable):
         # Numerically integrating irradiance over wavelength array ~ A/m**2
         j_sc = e * simps(solar_spectrum * absorptivity, energy)
 
-        # Calculate the current density J for a specified voltage V
-        def current_density(voltage):
-            j = j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
-            return j
-
-        # Calculate the corresponding power density P
-        def power(voltage):
-            p = current_density(voltage) * voltage
-            return p
-
-        # A somewhat primitive, but perfectly robust way of getting a reasonable
-        # estimate for the maximum power.
-        test_voltage = 0
-        voltage_step = 0.001
-        while power(test_voltage + voltage_step) > power(test_voltage):
-            test_voltage += voltage_step
-
-        max_power = power(test_voltage)
+        # Maximize the power versus the voltage
+        max_power = EfficiencyCalculator.optimize_pn_power(j_sc, j_0)
 
         # Calculation of integrated solar spectrum
         power_in = EMRadSpectrum.get_solar_spectrum().get_total_power_density()
-
-        print(power_in)
 
         # Calculate the maximized efficiency
         efficiency = max_power / power_in
