@@ -426,31 +426,7 @@ class EfficiencyCalculator(MSONable):
     def bandgaps(self):
         return self._bandgaps
 
-    @classmethod
-    def from_file(cls, filename):
-        """
-
-        Returns:
-
-        """
-        try:
-            vasprun = Vasprun(filename)
-        except ParseError:
-            raise IOError("Error while parsing the input file. Currently the "
-                          "EfficiencyCalculator can only be constructed from "
-                          "the vasprun.xml file. If you have provided this "
-                          "file, check if the run has completed.")
-
-        diel_tensor = DielTensor(vasprun.dielectric)
-
-        # Extract the information on the direct and indirect band gap
-        bandstructure = vasprun.get_band_structure()
-        bandgaps = (bandstructure.get_band_gap()["energy"],
-                    bandstructure.get_direct_band_gap())
-
-        return cls(diel_tensor, bandgaps)
-
-    def sq(self, temperature, interp_mesh=0.001):
+    def sq(self, temperature=298.15, interp_mesh=0.001):
         """
         Calculate the Shockley-Queisser limit of the corresponding fundamental band gap.
 
@@ -522,7 +498,7 @@ class EfficiencyCalculator(MSONable):
 
         return efficiency
 
-    def slme(self, temperature, thickness, interp_mesh=0.001):
+    def slme(self, temperature=298.15, thickness=5e-7, interp_mesh=0.001):
         """
         Calculate the Spectroscopic Limited Maximum Efficiency.
 
@@ -612,6 +588,34 @@ class EfficiencyCalculator(MSONable):
         # plt.savefig('pp.png')
         # plt.close()
         pass
+
+    @classmethod
+    def from_file(cls, filename):
+        """
+
+        Returns:
+
+        """
+        try:
+            vasprun = Vasprun(filename)
+        except ParseError:
+            raise IOError("Error while parsing the input file. Currently the "
+                          "EfficiencyCalculator can only be constructed from "
+                          "the vasprun.xml file. If you have provided this "
+                          "file, check if the run has completed.")
+
+        diel_tensor = DielTensor(vasprun.dielectric)
+
+        # Extract the information on the direct and indirect band gap
+        bandstructure = vasprun.get_band_structure()
+        bandgaps = (bandstructure.get_band_gap()["energy"],
+                    bandstructure.get_direct_band_gap())
+
+        return cls(diel_tensor, bandgaps)
+
+    @staticmethod
+    def calculate_slme_from_vasprun(filename, temperature=293.15):
+        EfficiencyCalculator.from_file(filename).slme()
 
 
 def to_matrix(xx, yy, zz, xy, yz, xz):
