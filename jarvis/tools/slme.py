@@ -15,7 +15,6 @@ import scipy.constants as constants
 from scipy.interpolate import interp1d
 from scipy.integrate import simps
 from scipy.constants import physical_constants, speed_of_light
-
 from math import pi
 from monty.json import MSONable
 from monty.io import zopen
@@ -432,11 +431,15 @@ class EfficiencyCalculator(MSONable):
         band gap.
 
         Args:
-            temperature (float):
+            temperature (float): Temperature of the solar cell. Defaults to 25 °C,
+                 or 298.15 K.
             fr (float): Fraction of radiative recombination.
-            interp_mesh (float):
+            interp_mesh (float): Distance between two energy points in the grid
+                used for the interpolation.
 
         Returns:
+            (float): Shockley-Queisser detailed balance limit of the band gap of
+                the material.
 
         """
         return self.sq(self._bandgaps[0], temperature, fr, interp_mesh,
@@ -447,8 +450,8 @@ class EfficiencyCalculator(MSONable):
         Calculate the Spectroscopic Limited Maximum Efficiency.
 
         Args:
-            temperature (float):
-            thickness (float):
+            temperature (float): Temperature of the solar cell.
+            thickness (float): Thickness of the absorber layer.
             interp_mesh (float):
 
         Returns:
@@ -491,12 +494,10 @@ class EfficiencyCalculator(MSONable):
         j_sc = e * simps(solar_spectrum * absorptivity, energy)
 
         # Maximize the power versus the voltage
-        max_power = self.optimize_pn_power(j_sc, j_0, temperature)
+        max_power = self.maximize_power(j_sc, j_0, temperature)
 
         # Calculation of integrated solar spectrum
         power_in = EMRadSpectrum.get_solar_spectrum().get_total_power_density()
-
-        print(power_in)
 
         # Calculate the maximized efficiency
         efficiency = max_power / power_in
@@ -541,12 +542,15 @@ class EfficiencyCalculator(MSONable):
         return cls(diel_tensor, bandgaps)
 
     @staticmethod
-    def optimize_pn_power(j_sc, j_0, temperature):
+    def maximize_power(j_sc, j_0, temperature):
         """
+        Maximize the power density based on the short-circuit current j_sc, the
+        recombination current j_0 and the temperature of the solar cell.
 
         Args:
-            j_sc:
-            j_0:
+            j_sc (float): Short-Circuit current density.
+            j_0 (float): Recombination current density.
+            temperature (float): Temperature of the solar cell.
 
         Returns:
 
@@ -571,23 +575,26 @@ class EfficiencyCalculator(MSONable):
         return power(test_voltage)
 
     @staticmethod
-    def calculate_slme_from_vasprun(filename, temperature=293.15, thickness=5e-7):
+    def calculate_slme_from_vasprun(filename, temperature=298.15, thickness=5e-7):
         return EfficiencyCalculator.from_file(filename).slme(temperature, thickness)
 
     @staticmethod
-    def sq(bandgap, temperature=298.15, fr=1.0, interp_mesh=0.001, max_energy=20):
+    def sq(bandgap, temperature=298.15, fr=1.0, interp_mesh=0.001, max_energy=20.0):
         """
         Calculate the Shockley-Queisser limit for a specified bandgap, temperature
         and fraction of radiative recombination.
 
         Args:
-            bandgap:
-            temperature:
-            fr:
-            interp_mesh:
-            max_energy:
+            bandgap (float): Band gap of the absorber material in eV.
+            temperature (float): Temperature of the solar cell. Defaults to 25 °C,
+                 or 298.15 K.
+            fr (float): Fraction of radiative recombination.
+            interp_mesh (float): Distance between two energy points in the grid
+                used for the interpolation.
+            max_energy (float): Maximum energy in the energy grid.
 
         Returns:
+            (float): Shockley-Queisser detailed balance limit.
 
         """
         # Set up the energy grid for the calculation
@@ -615,7 +622,7 @@ class EfficiencyCalculator(MSONable):
         j_sc = e * simps(solar_spectrum * absorptivity, energy)
 
         # Maximize the power versus the voltage
-        max_power = EfficiencyCalculator.optimize_pn_power(j_sc, j_0, temperature)
+        max_power = EfficiencyCalculator.maximize_power(j_sc, j_0, temperature)
 
         # Calculation of integrated solar spectrum
         power_in = EMRadSpectrum.get_solar_spectrum().get_total_power_density()
