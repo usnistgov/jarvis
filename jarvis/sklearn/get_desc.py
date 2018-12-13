@@ -31,6 +31,8 @@ from pymatgen.core.lattice import Lattice
 from pymatgen.core import Composition
 from interruptingcow import timeout
 
+#Note time limit for angular part is hardcoded
+
 el_chrg_json=str(os.path.join(os.path.dirname(__file__),'element_charge.json')) 
 el_chem_json=str(os.path.join(os.path.dirname(__file__),'Elements.json')) 
 
@@ -204,7 +206,7 @@ def get_rdf(s=None,cutoff=10.0,intvl=0.1):
     return dist_bins[:-1],[round(i,4) for i in rdf],dist_hist/float(len(s)) #[{'distances': dist_bins[:-1], 'distribution': rdf}]
     #bins,rdf,nearest neighbour
 
-@timeout(60)
+@timeout(180)
 def ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
     """
     Get  angular distribution functions
