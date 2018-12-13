@@ -36,6 +36,7 @@ k = constants.k  # Boltzmann's constant J/K
 k_e = constants.k / constants.e  # Boltzmann's constant eV/K
 e = constants.e  # Coulomb
 
+
 class DielTensor(MSONable):
     """
     Class that represents the energy-dependent dielectric tensor of a solid state material.
@@ -114,9 +115,9 @@ class DielTensor(MSONable):
     @property
     def dielectric_function(self):
         """
-        The averaged dielectric function, derived from the tensor components by first
-        diagonalizing the dielectric tensor for every energy and then averaging the diagonal
-        elements.
+        The averaged dielectric function, derived from the tensor components by
+        first diagonalizing the dielectric tensor for every energy and then
+        averaging the diagonal elements.
 
         Returns:
             (np.array):
@@ -127,9 +128,10 @@ class DielTensor(MSONable):
     @property
     def absorption_coefficient(self):
         """
-        Calculate the optical absorption coefficient from the dielectric data. For now the script
-        only calculates the averaged absorption coefficient, i.e. by first averaging the diagonal
-        elements and then using this dielectric function to calculate the absorption coefficient.
+        Calculate the optical absorption coefficient from the dielectric data.
+        For now the script only calculates the averaged absorption coefficient,
+        i.e. by first averaging the diagonal elements and then using this
+        dielectric function to calculate the absorption coefficient.
 
         Notes:
             The absorption coefficient is calculated as
@@ -141,10 +143,10 @@ class DielTensor(MSONable):
                 energies correspond to self.energies.
         """
 
-        E = self.energies
-        k = np.array([cmath.sqrt(v).imag for v in self.dielectric_function])
+        energy = self.energies
+        ext_coeff = np.array([cmath.sqrt(v).imag for v in self.dielectric_function])
 
-        return 2.0 * E * k / (constants.hbar / constants.e * constants.c)
+        return 2.0 * energy * ext_coeff / (constants.hbar / constants.e * constants.c)
 
     def plot(self, part="all"):
         """
@@ -159,6 +161,7 @@ class DielTensor(MSONable):
             None
 
         """
+        # TODO complete method
         plt.plot(self.energies, self.dielectric_function.real)
         plt.plot(self.energies, self.dielectric_function.imag)
         plt.show()
@@ -178,6 +181,7 @@ class DielTensor(MSONable):
             (DielTensor): Dielectric tensor object from the dielectric data.
 
         """
+        # TODO Make method recognize filetype automatically
         if fmt == "vasprun":
             dielectric_data = Vasprun(filename, parse_potcar_file=False).dielectric
             return cls(dielectric_data)
@@ -246,7 +250,7 @@ class EMRadSpectrum(MSONable):
         """
         return simps(self.photon_flux * self.energy * e, self.energy)
 
-    def get_interp_function(self, variable="energy", spectrum="flux"):
+    def get_interp_function(self, variable="energy", spectrum_units="flux"):
         """
         Obtain the 1D interpolation function using the scipy.interpolate.interp1d
         method.
@@ -256,11 +260,12 @@ class EMRadSpectrum(MSONable):
 
         Args:
             variable (str):
-            spectrum (str):
+            spectrum_units (str):
 
         Returns:
 
         """
+        # TODO complete for other variables and spectrum choices
         return interp1d(self._energy, self._photon_flux, kind='cubic',
                         fill_value=0.0, bounds_error=False)
 
@@ -286,6 +291,8 @@ class EMRadSpectrum(MSONable):
         if filename.endswith(".json"):
             with zopen(filename, "r") as f:
                 return cls.from_dict(json.loads(f.read()))
+        else:
+            raise IOError("Filename does not have .json extension.")
 
     @classmethod
     def from_data(cls, data, variable="energy", spectrum_units="flux"):
@@ -297,7 +304,7 @@ class EMRadSpectrum(MSONable):
                 numpy.array with the grid of the variable (e.g. energy, wavelength),
                 data[1] should contain the spectral distribution.
             variable (str):
-            units (str):
+            spectrum_units (str):
 
         Returns:
 
@@ -308,7 +315,7 @@ class EMRadSpectrum(MSONable):
 
         elif variable == "wavelength":
             energy = np.flip(h_e * c / data[0])
-            spectrum = np.flip(data[1]) * h_e * c / energy**2
+            spectrum = np.flip(data[1]) * h_e * c / energy ** 2
 
         else:
             raise NotImplementedError
@@ -342,26 +349,23 @@ class EMRadSpectrum(MSONable):
         )
 
         # Transfer units to m instead of nm
-        wavelength *= 1e-9; irradiance *= 1e9
-
-        # # Change units of wavelength in original NREL data to eV
-        # energy = np.flip(h_e * c / (wavelength))
-        # # Change irradiance spectrum to energy dependent photon flux
-        # photon_flux = np.flip(irradiance) * h_e * c / (energy ** 3 * constants.e)
+        wavelength *= 1e-9
+        irradiance *= 1e9
 
         return cls.from_data((wavelength, irradiance), variable="wavelength",
                              spectrum_units="power")
 
-
     @classmethod
-    def get_blackbody(cls, temperature, grid, variable="energy", units="flux"):
+    def get_blackbody(cls, temperature, grid, variable="energy",
+                      spectrum_units="flux"):
         """
         Construct the blackbody spectrum of a specific temperature.
 
         Args:
-            temperature:
-            variable:
-            units:
+            temperature (float):
+            grid (numpy.array):
+            variable (str):
+            spectrum_units (str):
 
         Returns:
 
@@ -379,8 +383,8 @@ class EMRadSpectrum(MSONable):
                 return math.exp(700)  # ~= 1e304
 
         # Calculation of energy-dependent blackbody spectrum (~ W m^{-2})
-        if units == "flux":
-            photon_flux = 2 * energy**2 / (h_e**3 * c**2) * (
+        if spectrum_units == "flux":
+            photon_flux = 2 * energy ** 2 / (h_e ** 3 * c ** 2) * (
                     1 / (np.array([exponential(energy / (k_e * temperature)) - 1
                                    for energy in energy]))
             )
@@ -441,7 +445,8 @@ class EfficiencyCalculator(MSONable):
 
         # Extract the information on the direct and indirect band gap
         bandstructure = vasprun.get_band_structure()
-        bandgaps = (bandstructure.get_band_gap()["energy"], bandstructure.get_direct_band_gap())
+        bandgaps = (bandstructure.get_band_gap()["energy"],
+                    bandstructure.get_direct_band_gap())
 
         return cls(diel_tensor, bandgaps)
 
@@ -450,7 +455,8 @@ class EfficiencyCalculator(MSONable):
         Calculate the Shockley-Queisser limit of the corresponding fundamental band gap.
 
         Args:
-            temperature:
+            temperature (float):
+            interp_mesh (float):
 
         Returns:
 
@@ -458,14 +464,14 @@ class EfficiencyCalculator(MSONable):
         # Set up the energy grid for the calculation
         energy = self.dieltensor.energies
         energy = np.linspace(
-            np.min(energy)+interp_mesh, np.max(energy),
-            np.ceil((np.max(energy) - np.min(energy))/interp_mesh)
+            np.min(energy) + interp_mesh, np.max(energy),
+            np.ceil((np.max(energy) - np.min(energy)) / interp_mesh)
         )
 
         #
         # Set up the absorption coefficient (Step function for SQ)
         absorptivity = np.array(
-            [float(en > self.bandgaps[0]) for en in energy]
+            [float(ener > self.bandgaps[0]) for ener in energy]
         )
 
         # Get total solar_spectrum
@@ -476,25 +482,25 @@ class EfficiencyCalculator(MSONable):
         blackbody_spectrum = EMRadSpectrum.get_blackbody(temperature, energy).photon_flux
 
         # Numerically integrating irradiance over energy grid ~ A/m**2
-        J_0_r = e * np.pi * simps(blackbody_spectrum * absorptivity, energy)
+        j_0_r = e * np.pi * simps(blackbody_spectrum * absorptivity, energy)
 
         # Calculate the fraction of radiative recombination
         delta = self._bandgaps[1] - self._bandgaps[0]
         fr = np.exp(-delta / (k_e * temperature))
 
-        J_0 = J_0_r / fr
+        j_0 = j_0_r / fr
 
         # Numerically integrating irradiance over wavelength array ~ A/m**2
-        J_sc = e * simps(solar_spectrum * absorptivity, energy)
+        j_sc = e * simps(solar_spectrum * absorptivity, energy)
 
         # Calculate the current density J for a specified voltage V
-        def J(V):
-            J = J_sc - J_0 * (np.exp(e * V / (k * temperature)) - 1.0)
-            return J
+        def current_density(voltage):
+            j = j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
+            return j
 
         # Calculate the corresponding power density P
-        def power(V):
-            p = J(V) * V
+        def power(voltage):
+            p = current_density(voltage) * voltage
             return p
 
         # A somewhat primitive, but perfectly robust way of getting a reasonable
@@ -521,8 +527,9 @@ class EfficiencyCalculator(MSONable):
         Calculate the Spectroscopic Limited Maximum Efficiency.
 
         Args:
-            temperature:
-            thickness:
+            temperature (float):
+            thickness (float):
+            interp_mesh (float):
 
         Returns:
 
@@ -530,8 +537,8 @@ class EfficiencyCalculator(MSONable):
         # Set up the energy grid for the calculation
         energy = self.dieltensor.energies
         energy = np.linspace(
-            np.min(energy)+interp_mesh, np.max(energy),
-            np.ceil((np.max(energy) - np.min(energy))/interp_mesh)
+            np.min(energy) + interp_mesh, np.max(energy),
+            np.ceil((np.max(energy) - np.min(energy)) / interp_mesh)
         )
 
         # Interpolation of the absorption coefficient to the new energy grid
@@ -553,25 +560,25 @@ class EfficiencyCalculator(MSONable):
         blackbody_spectrum = EMRadSpectrum.get_blackbody(temperature, energy).photon_flux
 
         # Numerically integrating irradiance over energy grid ~ A/m**2
-        J_0_r = e * np.pi * simps(blackbody_spectrum * absorptivity, energy)
+        j_0_r = e * np.pi * simps(blackbody_spectrum * absorptivity, energy)
 
         # Calculate the fraction of radiative recombination
         delta = self._bandgaps[1] - self._bandgaps[0]
         fr = np.exp(-delta / (k_e * temperature))
 
-        J_0 = J_0_r / fr
+        j_0 = j_0_r / fr
 
         # Numerically integrating irradiance over wavelength array ~ A/m**2
-        J_sc = e * simps(solar_spectrum * absorptivity, energy)
+        j_sc = e * simps(solar_spectrum * absorptivity, energy)
 
         # Calculate the current density J for a specified voltage V
-        def J(V):
-            J = J_sc - J_0 * (np.exp(e * V / (k * temperature)) - 1.0)
-            return J
+        def current_density(voltage):
+            j = j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
+            return j
 
         # Calculate the corresponding power density P
-        def power(V):
-            p = J(V) * V
+        def power(voltage):
+            p = current_density(voltage) * voltage
             return p
 
         # A somewhat primitive, but perfectly robust way of getting a reasonable
