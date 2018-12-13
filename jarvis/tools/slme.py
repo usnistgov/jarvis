@@ -491,7 +491,7 @@ class EfficiencyCalculator(MSONable):
         j_sc = e * simps(solar_spectrum * absorptivity, energy)
 
         # Maximize the power versus the voltage
-        max_power = self.optimize_pn_power(j_sc, j_0)
+        max_power = self.optimize_pn_power(j_sc, j_0, temperature)
 
         # Calculation of integrated solar spectrum
         power_in = EMRadSpectrum.get_solar_spectrum().get_total_power_density()
@@ -541,7 +541,7 @@ class EfficiencyCalculator(MSONable):
         return cls(diel_tensor, bandgaps)
 
     @staticmethod
-    def optimize_pn_power(j_sc, j_0):
+    def optimize_pn_power(j_sc, j_0, temperature):
         """
 
         Args:
@@ -615,7 +615,7 @@ class EfficiencyCalculator(MSONable):
         j_sc = e * simps(solar_spectrum * absorptivity, energy)
 
         # Maximize the power versus the voltage
-        max_power = EfficiencyCalculator.optimize_pn_power(j_sc, j_0)
+        max_power = EfficiencyCalculator.optimize_pn_power(j_sc, j_0, temperature)
 
         # Calculation of integrated solar spectrum
         power_in = EMRadSpectrum.get_solar_spectrum().get_total_power_density()
