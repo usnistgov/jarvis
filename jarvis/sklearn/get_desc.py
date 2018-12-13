@@ -113,7 +113,7 @@ def smooth_kde(x,y):
     kde=denn(xs)
     return kde
 
-def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,filename='prdf.png'):
+def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,std_tol=0.25,filename='prdf.png'):
     """
     Get partial radial distribution function
 
@@ -122,6 +122,9 @@ def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,filename='prdf
          cutoff: maximum cutoff in Angstrom
          intvl: bin-size
          plot_prdf: whether to plot PRDF
+         std_tol: when calculating the dihedral angles, the code got stuck for some N-containing compounds
+         so we averaged all the first neghbors and added a fraction of the standard deviation as a tolerance
+         this new tolerance is used for dihedral part only, while angular and RDF part remains intact
          filename: if plotted the name of the output file
     Returns:
           max-cutoff to ensure all the element-combinations are included
@@ -168,7 +171,12 @@ def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,filename='prdf
    #   print
    #   print i,sorted(set(j))
    #   print
-    return max(cut_off.items(), key=itemgetter(1))[1]
+    #print ('prdf max', cut_off.items()) #max(cut_off.items(), key=itemgetter(1))[1])
+    vals=np.array([float(i) for i in cut_off.values()])
+    #print ('avg=',np.mean(vals))
+    #print ('std=',np.std(vals))
+    #print ('avg_std=',np.mean(vals)+std_tol*np.std(vals))
+    return max(cut_off.items(), key=itemgetter(1))[1],np.mean(vals)+0.25*np.std(vals)
 
 
 def get_rdf(s=None,cutoff=10.0,intvl=0.1):
@@ -222,7 +230,7 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
     io1=0
     io2=1
     io3=2
-    #print 'here1'
+    #print ('here1')
     delta=arr[io2]-arr[io1]
     #while (delta < rcut_buffer and io2<len(arr)-2):
     while (delta < rcut_buffer and arr[io2]<max_cut):
@@ -230,10 +238,10 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
       io2=io2+1
       io3=io3+1
       delta=arr[io2]-arr[io1]
-    #print 'here2'
+    #print ('here2')
     rcut1=(arr[io2]+arr[io1])/float(2.0)
     #print "arr=",arr[0],arr[1],arr[2],arr[3]
-    rcut=get_prdf(s=s) # (arr[io2]+arr[io1])/float(2.0)
+    rcut,rcut_dihed=get_prdf(s=s) # (arr[io2]+arr[io1])/float(2.0)
     #print "rcut=",rcut,"rcut1=",rcut1
     #print io3,io2,len(arr)
     delta=arr[io3]-arr[io2]
@@ -246,7 +254,7 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
     rcut2=float(arr[io3]+arr[io2])/float(2.0)
     #print "rcut2=",rcut2
 
-    #print 'here3'
+    #print ('here3')
     dim1=int(float(c_size)/float( max(abs(box[0]))))+1
     dim2=int(float(c_size)/float( max(abs(box[1]))))+1
     dim3=int(float(c_size)/float( max(abs(box[2]))))+1
@@ -286,7 +294,7 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
           new_symbs.append(all_symbs[i])
           count=count+1
 
-    #print 'here4'
+    #print ('here4')
     nat=new_nat
     coords=new_coords
     znm=0
@@ -325,6 +333,7 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
            bondx[nn_index1][j]=-new_diff[0]
            bondy[nn_index1][j]=-new_diff[1]
            bondz[nn_index1][j]=-new_diff[2]
+    print ('maxnn',max(nn))
 
 
     ang_at={}
@@ -358,7 +367,7 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
     #print ('norm',norm.shape,angs.shape) 
     ang_hist1, ang_bins1 = np.histogram(angs,weights=norm,bins=np.arange(1, 181.0, 1), density=False)
 
-    #print 'here5'
+    #print ('here in Dihedral')
 
     #print "rcut1=",rcut1
     # Dihedral angle distribution
@@ -366,7 +375,7 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
     bond_arr=[]
     deg_arr=[]
     nn=np.zeros((nat),dtype='int')
-    max_n=500 #maximum number of neighbors
+    #max_n=50 #maximum number of neighbors
     dist=np.zeros((max_n,nat))
     nn_id=np.zeros((max_n,nat),dtype='int')
     bondx=np.zeros((max_n,nat))
@@ -381,7 +390,8 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
            diff[v]=diff[v]-np.sign(diff[v])
        new_diff=np.dot(diff,lat)
        dd=np.linalg.norm(new_diff)
-       if dd<rcut1 and dd>=0.1:
+       if dd<rcut_dihed and dd>=0.1:
+       #if dd<rcut1 and dd>=0.1:
            nn_index=nn[i] #index of the neighbor
            nn[i]=nn[i]+1
            #print nn_index
