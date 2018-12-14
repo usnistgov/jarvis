@@ -536,7 +536,7 @@ class SolarCell(MSONable):
             v_oc += voltage_step
 
         if plot_iv_curve:
-            voltage = np.linspace(0, v_oc + 0.2, 2000)
+            voltage = np.linspace(0, v_oc, 2000)
 
             current = j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
             power = current * voltage
