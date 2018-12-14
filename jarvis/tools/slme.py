@@ -479,7 +479,8 @@ class SolarCell(MSONable):
         return self.sq(self._bandgaps[0], temperature, fr, interp_mesh,
                        np.max(self.dieltensor.energies))
 
-    def slme(self, temperature=298.15, thickness=5e-7, interp_mesh=0.001):
+    def slme(self, temperature=298.15, thickness=5e-7, interp_mesh=0.001,
+             plot_iv_curve=False):
         """
         Calculate the Spectroscopic Limited Maximum Efficiency.
 
@@ -528,6 +529,22 @@ class SolarCell(MSONable):
         # Numerically integrating irradiance over wavelength array ~ A/m**2
         j_sc = e * simps(solar_spectrum * absorptivity, energy)
 
+        # Determine the open circuit voltage.
+        v_oc = 0
+        voltage_step = 0.001
+        while j_sc - j_0 * (np.exp(e * v_oc / (k * temperature)) - 1.0) > 0:
+            v_oc += voltage_step
+
+        if plot_iv_curve:
+            voltage = np.linspace(0, v_oc + 0.2, 2000)
+
+            current = j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
+            power = j * voltage
+
+            plt.plot(voltage, current)
+            plt.plot(voltage, power)
+            plt.show()
+
         # Maximize the power density versus the voltage
         max_power = self.maximize_power(j_sc, j_0, temperature)
 
@@ -536,6 +553,7 @@ class SolarCell(MSONable):
 
         # Calculate the maximized efficiency
         efficiency = max_power / power_in
+
         return efficiency, j_sc, j_0
 
     def plot_slme_vs_thickness(self, temperature=298.15, add_sq_limit=True):
@@ -564,6 +582,9 @@ class SolarCell(MSONable):
         plt.ylabel("Efficiency")
         plt.xscale("log")
         plt.show()
+
+    def get_currents(self, temperature):
+        pass
 
 
     def get_current_voltage(self, j_sc, j_0, temperature):
@@ -643,7 +664,7 @@ class SolarCell(MSONable):
         while power(test_voltage + voltage_step) > power(test_voltage):
             test_voltage += voltage_step
 
-        return power(test_voltage), j_sc, j_0
+        return power(test_voltage)
 
     @staticmethod
     def calculate_slme_from_vasprun(filename, temperature=298.15, thickness=5e-7):
