@@ -147,10 +147,19 @@ class DielTensor(MSONable):
 
         return 2.0 * energy * ext_coeff / (constants.hbar / constants.e * constants.c)
 
+    def get_absorptivity(self, thickness, method="beer-lambert"):
+        """
+        Calculate the absorptivity for an absorber layer with a specified thickness.
+
+        Returns:
+
+        """
+        return 1.0 - np.exp(-2.0 * self.absorption_coefficient * thickness)
+
+
     def plot(self, part="all"):
         """
-        Plot the real and/or imaginary part of the dielectric function. Still a very rough first
-        version.
+        Plot the real and/or imaginary part of the dielectric function.
 
         Args:
             part (str): Which part of the dielectric function to plot, i.e. either "real",
@@ -160,10 +169,20 @@ class DielTensor(MSONable):
             None
 
         """
-        # TODO complete method
-        plt.plot(self.energies, self.dielectric_function.real)
-        plt.plot(self.energies, self.dielectric_function.imag)
-        plt.show()
+        if part == "all":
+            f, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
+
+            ax1.plot(self.energies, self.dielectric_function.real)
+            ax1.set(ylabel=r"$\varepsilon_1$")
+            ax2.plot(self.energies, self.dielectric_function.imag)
+            ax2.set(xlabel="Energy (eV)", ylabel=r"$\varepsilon_2$")
+            f.subplots_adjust(hspace=0.1)
+            plt.show()
+
+        elif part == "real":
+
+
+            plt.plot(self.energies, self.dielectric_function)
 
     @classmethod
     def from_file(cls, filename, fmt="vasprun"):
@@ -214,7 +233,7 @@ class EMRadSpectrum(MSONable):
             energy (numpy.array): Energy grid for which the photon flux is given.
                 Has to be given in electronvolt (eV).
             photon_flux (numpy.array): Number of photons per square meter per
-                second per electronvolt. (~
+                second per electronvolt. (~ m^{-2} s^{-1} eV^{-1})
 
         """
         self._energy = energy
@@ -373,12 +392,15 @@ class EMRadSpectrum(MSONable):
         Construct the blackbody spectrum of a specific temperature.
 
         Args:
-            temperature (float):
-            grid (numpy.array):
-            variable (str):
-            spectrum_units (str):
+            temperature (float): Temperature of the black body.
+            grid (numpy.array): Grid of the spectral variable which the black
+                body is dependent on.
+            variable (str): Spectral variable of the distribution.
+            spectrum_units (str): Units in which the spectrum should be expressed.
+                Currently only support expressing the black body as a photon flux.
 
         Returns:
+            (EMRadSpectrum)
 
         """
         if variable == "energy":
@@ -405,11 +427,12 @@ class EMRadSpectrum(MSONable):
         return cls(energy, photon_flux)
 
 
-class EfficiencyCalculator(MSONable):
+class SolarCell(MSONable):
     """
-    Class that performs the calculation of the theoretical efficiency using various metrics
-    based on the optical properties and electronic structure (e.g. band gap) of the material
-    being considered as the absorber layer.
+    Class that represents a single p-n junction solar cell. Contains several modeling
+    techniques for the calculation of the theoretical efficiency using metrics
+    based on the optical properties and electronic structure (e.g. band gap)
+    of the material being considered as the absorber layer.
 
     """
 
@@ -418,12 +441,12 @@ class EfficiencyCalculator(MSONable):
         Initialize an instance of the EfficiencyCalculator class.
 
         Args:
-            dieltensor (DielTensor): Dielectric tensor of the material
-            bandgaps (tuple): Tuple that contains the fundamental and direct allowed band gap,
-            in that order.
+            dieltensor (DielTensor): Dielectric tensor of the absorber material.
+            bandgaps (tuple): Tuple that contains the fundamental and direct
+                allowed band gap of the absorber material, in that order.
 
         Returns:
-            EfficiencyCalculator instance
+            (SolarCell)
 
         """
         self._dieltensor = dieltensor
@@ -437,7 +460,7 @@ class EfficiencyCalculator(MSONable):
     def bandgaps(self):
         return self._bandgaps
 
-    def calculate_bandap_sq(self, temperature=298.15, fr=1.0, interp_mesh=0.001):
+    def calculate_bandgap_sq(self, temperature=298.15, fr=1.0, interp_mesh=0.001):
         """
         Calculate the Shockley-Queisser limit of the corresponding fundamental
         band gap.
@@ -517,6 +540,19 @@ class EfficiencyCalculator(MSONable):
         return efficiency
 
     def plot_slme_vs_thickness(self, temperature=298.15, add_sq_limit=True):
+        """
+        Make a plot of the calculated SLME for a large range of thickness values,
+        for a specific temperature.
+
+        Args:
+            temperature (float): Temperature of the solar cell. Defaults to 298.15 K.
+            add_sq_limit (bool): Specifies whether the user would like to add a
+                line representing the Shockley-Queisser limit that corresponds to
+                the band gap of the absorber material at the temperature specified.
+
+        Returns:
+
+        """
         thickness = 10**np.linspace(-9, -3, 40)
         efficiency = np.array([self.slme(thickness=d, temperature=temperature)
                                for d in thickness])
@@ -524,7 +560,7 @@ class EfficiencyCalculator(MSONable):
         plt.plot(thickness, efficiency)
         if add_sq_limit:
             plt.plot(thickness, np.ones(thickness.shape)
-                     * self.calculate_bandap_sq(temperature=temperature), 'k--')
+                     * self.calculate_bandgap_sq(temperature=temperature), 'k--')
         plt.xlabel("Thicknesss (m)")
         plt.ylabel("Efficiency")
         plt.xscale("log")
@@ -602,7 +638,7 @@ class EfficiencyCalculator(MSONable):
 
     @staticmethod
     def calculate_slme_from_vasprun(filename, temperature=298.15, thickness=5e-7):
-        return EfficiencyCalculator.from_file(filename).slme(temperature, thickness)
+        return SolarCell.from_file(filename).slme(temperature, thickness)
 
     @staticmethod
     def sq(bandgap, temperature=298.15, fr=1.0, interp_mesh=0.001, max_energy=20.0):
@@ -648,7 +684,7 @@ class EfficiencyCalculator(MSONable):
         j_sc = e * simps(solar_spectrum * absorptivity, energy)
 
         # Maximize the power versus the voltage
-        max_power = EfficiencyCalculator.maximize_power(j_sc, j_0, temperature)
+        max_power = SolarCell.maximize_power(j_sc, j_0, temperature)
 
         # Calculation of integrated solar spectrum
         power_in = EMRadSpectrum.get_solar_spectrum().get_total_power_density()
