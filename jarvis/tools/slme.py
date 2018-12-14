@@ -154,8 +154,8 @@ class DielTensor(MSONable):
         Returns:
 
         """
-        return 1.0 - np.exp(-2.0 * self.absorption_coefficient * thickness)
-
+        if method == "beer-lambert":
+            return 1.0 - np.exp(-2.0 * self.absorption_coefficient * thickness)
 
     def plot(self, part="all"):
         """
@@ -180,7 +180,6 @@ class DielTensor(MSONable):
             plt.show()
 
         elif part == "real":
-
 
             plt.plot(self.energies, self.dielectric_function)
 
@@ -487,7 +486,8 @@ class SolarCell(MSONable):
         Args:
             temperature (float): Temperature of the solar cell.
             thickness (float): Thickness of the absorber layer.
-            interp_mesh (float):
+            interp_mesh (float): Distance between two energy points in the grid
+                used for the interpolation.
 
         Returns:
 
@@ -536,8 +536,7 @@ class SolarCell(MSONable):
 
         # Calculate the maximized efficiency
         efficiency = max_power / power_in
-
-        return efficiency
+        return efficiency, j_sc, j_0
 
     def plot_slme_vs_thickness(self, temperature=298.15, add_sq_limit=True):
         """
@@ -553,7 +552,7 @@ class SolarCell(MSONable):
         Returns:
 
         """
-        thickness = 10**np.linspace(-9, -3, 40)
+        thickness = 10 ** np.linspace(-9, -3, 40)
         efficiency = np.array([self.slme(thickness=d, temperature=temperature)
                                for d in thickness])
 
@@ -566,18 +565,26 @@ class SolarCell(MSONable):
         plt.xscale("log")
         plt.show()
 
-    def plot_current_voltage(self):
+
+    def get_current_voltage(self, j_sc, j_0, temperature):
         """
 
         Returns:
 
         """
-        # V = np.linspace(0, 2, 200)
-        # plt.plot(V, J(V))
-        # plt.plot(V, power(V), linestyle='--')
-        # plt.savefig('pp.png')
-        # plt.close()
-        pass
+
+        # Find the open circuit voltage
+        v_oc = 0
+        voltage_step = 0.001
+        while j_sc - j_0 * (np.exp(e * v_oc / (k * temperature)) - 1.0) > 0:
+            v_oc += voltage_step
+
+        voltage = np.linspace(0, v_oc + 0.2, 2000)
+
+        current= j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
+        power = j * voltage
+
+        plt.plot(voltage, power)
 
     @classmethod
     def from_file(cls, filename):
@@ -590,7 +597,7 @@ class SolarCell(MSONable):
             vasprun = Vasprun(filename)
         except ParseError:
             raise IOError("Error while parsing the input file. Currently the "
-                          "EfficiencyCalculator can only be constructed from "
+                          "SolarCell class can only be constructed from "
                           "the vasprun.xml file. If you have provided this "
                           "file, check if the run has completed.")
 
@@ -615,8 +622,10 @@ class SolarCell(MSONable):
             temperature (float): Temperature of the solar cell.
 
         Returns:
+            (float),
 
         """
+
         # Calculate the current density J for a specified voltage V
         def current_density(voltage):
             j = j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
@@ -634,7 +643,7 @@ class SolarCell(MSONable):
         while power(test_voltage + voltage_step) > power(test_voltage):
             test_voltage += voltage_step
 
-        return power(test_voltage)
+        return power(test_voltage), j_sc, j_0
 
     @staticmethod
     def calculate_slme_from_vasprun(filename, temperature=298.15, thickness=5e-7):
@@ -692,7 +701,8 @@ class SolarCell(MSONable):
         # Calculate the maximized efficiency
         efficiency = max_power / power_in
 
-        return efficiency
+        return efficiency, j_sc, j_0
+
 
 # Utility method
 def to_matrix(xx, yy, zz, xy, yz, xz):
