@@ -105,7 +105,8 @@ class DielTensor(MSONable):
         Dielectric tensor of the material, calculated for each energy in the energy grid.
 
         Returns:
-            (numpy.array): (N, 3, 3) shaped array, where N corresponds to the number of energy
+            (numpy.array): (N, 3, 3) shaped array, where N corresponds to the number
+                of energy
             grid points, and 3 to the different directions x,y,z.
 
         """
@@ -329,7 +330,7 @@ class EMRadSpectrum(MSONable):
                 be loaded.
 
         Returns:
-            None
+            (EMRadSpectrum)
 
         """
         if filename.endswith(".json"):
@@ -506,6 +507,7 @@ class SolarCell(MSONable):
                 used for the interpolation.
 
         Returns:
+            (tuple) efficiency, v_oc, j_sc, j_0
 
         """
         # Set up the energy grid for the calculation
@@ -515,25 +517,23 @@ class SolarCell(MSONable):
             np.ceil((np.max(energy) - np.min(energy)) / interp_mesh)
         )
 
-        # Interpolation of the absorption coefficient to the new energy grid
-        abs_coeff = interp1d(
-            self._dieltensor.energies, self._dieltensor.absorption_coefficient,
+        # Interpolation of the absorptivity to the new energy grid
+        absorptivity = interp1d(
+            self._dieltensor.energies,
+            self._dieltensor.get_absorptivity(thickness, "beer-lambert"),
             kind='cubic',
             fill_value=0,
             bounds_error=False
         )(energy)
 
-        # Calculate the absorption coefficient (Beer-Lambert for SLME)
-        absorptivity = 1.0 - np.exp(-2.0 * abs_coeff * thickness)
-
-        # Get total solar_spectrum
+        # Load total solar_spectrum
         solar_spectrum = \
             EMRadSpectrum.get_solar_spectrum("am1.5g").get_interp_function()(energy)
 
-        # Calculation of energy-dependent blackbody spectrum, in units of W / m**2
+        # Calculation of energy-dependent blackbody spectrum
         blackbody_spectrum = EMRadSpectrum.get_blackbody(temperature, energy).photon_flux
 
-        # Numerically integrating irradiance over energy grid ~ A/m**2
+        # Numerically integrating photon flux over energy grid
         j_0_r = e * np.pi * simps(blackbody_spectrum * absorptivity, energy)
 
         # Calculate the fraction of radiative recombination
@@ -583,6 +583,7 @@ class SolarCell(MSONable):
                 the band gap of the absorber material at the temperature specified.
 
         Returns:
+            None
 
         """
         thickness = 10 ** np.linspace(-9, -3, 40)
@@ -601,32 +602,16 @@ class SolarCell(MSONable):
     def get_currents(self, temperature):
         pass
 
-
-    def get_current_voltage(self, j_sc, j_0, temperature):
-        """
-
-        Returns:
-
-        """
-        #
-        # # Find the open circuit voltage
-        # v_oc = 0
-        # voltage_step = 0.001
-        # while j_sc - j_0 * (np.exp(e * v_oc / (k * temperature)) - 1.0) > 0:
-        #     v_oc += voltage_step
-        #
-        # voltage = np.linspace(0, v_oc + 0.2, 2000)
-        #
-        # current= j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
-        # power = j * voltage
-        #
-        # plt.plot(voltage, power)
+    def get_iv_curve(self, j_sc, j_0, temperature):
+        pass
 
     @classmethod
     def from_file(cls, filename):
         """
+        Loads a SolarCell instance from a vasprun.xml. # TODO extend
 
         Returns:
+            (SolarCell)
 
         """
         try:
@@ -658,7 +643,7 @@ class SolarCell(MSONable):
             temperature (float): Temperature of the solar cell.
 
         Returns:
-            (float),
+            (float): The calculated maximum power.
 
         """
 
@@ -745,6 +730,7 @@ def to_matrix(xx, yy, zz, xy, yz, xz):
     """
     Convert a list of matrix components to a symmetric 3x3 matrix.
     Inputs should be in the order xx, yy, zz, xy, yz, xz.
+
     Args:
         xx (float): xx component of the matrix.
         yy (float): yy component of the matrix.
@@ -752,14 +738,18 @@ def to_matrix(xx, yy, zz, xy, yz, xz):
         xy (float): xy component of the matrix.
         yz (float): yz component of the matrix.
         xz (float): xz component of the matrix.
+
     Returns:
         (np.array): The matrix, as a 3x3 numpy array.
+
     """
     matrix = np.array([[xx, xy, xz], [xy, yy, yz], [xz, yz, zz]])
     return matrix
 
 
-# Old code, kept for comparison
+######################################
+# Previous code, kept for comparison #
+######################################
 
 eV_to_recip_cm = 1.0 / (physical_constants['Planck constant in eV s'][0] * speed_of_light * 1e2)
 
