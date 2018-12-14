@@ -726,7 +726,7 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
          try:
             adfa=np.zeros(179)
             adfb=np.zeros(179)
-            adfa,adfb=ang_dist(s=s,plot=Falsee)
+            adfa,adfb=ang_dist(s=s,plot=False)
          except:
               print ('Angular distribution part is taking too long a time,setting it to zero')
               pass
