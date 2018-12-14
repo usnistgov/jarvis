@@ -149,7 +149,12 @@ class DielTensor(MSONable):
 
     def get_absorptivity(self, thickness, method="beer-lambert"):
         """
-        Calculate the absorptivity for an absorber layer with a specified thickness.
+        Calculate the absorptivity for an absorber layer with a specified thickness
+        and cell construction.
+
+        Args:
+            thickness (float): Thickness of the absorber layer.
+            method (str): Method for calculating the absorptibity.
 
         Returns:
 
@@ -181,7 +186,17 @@ class DielTensor(MSONable):
 
         elif part == "real":
 
-            plt.plot(self.energies, self.dielectric_function)
+            plt.plot(self.energies, self.dielectric_function.real)
+            plt.xlabel("Energy (eV)")
+            plt.ylabel(r"$\varepsilon_1$")
+            plt.show()
+
+        elif part == "imag":
+
+            plt.plot(self.energies, self.dielectric_function.real)
+            plt.xlabel("Energy (eV)")
+            plt.ylabel(r"$\varepsilon_1$")
+            plt.show()
 
     @classmethod
     def from_file(cls, filename, fmt="vasprun"):
@@ -554,7 +569,7 @@ class SolarCell(MSONable):
         # Calculate the maximized efficiency
         efficiency = max_power / power_in
 
-        return efficiency, j_sc, j_0
+        return efficiency, v_oc, j_sc, j_0
 
     def plot_slme_vs_thickness(self, temperature=298.15, add_sq_limit=True):
         """
@@ -593,19 +608,19 @@ class SolarCell(MSONable):
         Returns:
 
         """
-
-        # Find the open circuit voltage
-        v_oc = 0
-        voltage_step = 0.001
-        while j_sc - j_0 * (np.exp(e * v_oc / (k * temperature)) - 1.0) > 0:
-            v_oc += voltage_step
-
-        voltage = np.linspace(0, v_oc + 0.2, 2000)
-
-        current= j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
-        power = j * voltage
-
-        plt.plot(voltage, power)
+        #
+        # # Find the open circuit voltage
+        # v_oc = 0
+        # voltage_step = 0.001
+        # while j_sc - j_0 * (np.exp(e * v_oc / (k * temperature)) - 1.0) > 0:
+        #     v_oc += voltage_step
+        #
+        # voltage = np.linspace(0, v_oc + 0.2, 2000)
+        #
+        # current= j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
+        # power = j * voltage
+        #
+        # plt.plot(voltage, power)
 
     @classmethod
     def from_file(cls, filename):
