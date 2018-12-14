@@ -36,7 +36,7 @@ from interruptingcow import timeout
 el_chrg_json=str(os.path.join(os.path.dirname(__file__),'element_charge.json')) 
 el_chem_json=str(os.path.join(os.path.dirname(__file__),'Elements.json')) 
 
-timelimit=240 #4 minutes
+timelimit=300 #5 minutes
 def get_effective_structure(s=None,tol=8.0):
   """
   Check if there is vacuum, if so get actual size of the structure
@@ -166,6 +166,7 @@ def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,std_tol=0.25,f
     for i,j in info.items():
         cut_off[i]=flatten_out(arr=j,tol=0.1)
     vals=np.array([float(i) for i in cut_off.values()])
+    #print (cut_off.items(),' fwfwf',np.mean(vals)+0.25*np.std(vals))
     return max(cut_off.items(), key=itemgetter(1))[1],np.mean(vals)+0.25*np.std(vals)
 
 
@@ -228,7 +229,7 @@ def get_dist_cutoffs(s='',max_cut=5.0):
       delta=arr[io3]-arr[io2]
     rcut2=float(arr[io3]+arr[io2])/float(2.0)
     rcut,rcut_dihed=get_prdf(s=s) 
-    rcut_dihed=min(rcut_dihed,3.0)
+    #rcut_dihed=min(rcut_dihed,max_dihed)
     return rcut,rcut1,rcut2,rcut_dihed
 
 
@@ -293,10 +294,11 @@ def get_structure_data(s='',c_size=10.0):
 @timeout(timelimit)
 def ang_dist1(struct_info={},c_size=10.0,max_n=500,plot=True,max_cut=5.0,rcut=''):
     """
-    Get  angular distribution functions
+    Get  angular distribution function upto first neighbor
 
     Args:
-        s: Structure object
+        struct_info: struct information
+        max_n: maximum number of neigbors
         c_size: max. cell size
         plot: whether to plot distributions
         max_cut: max. bond cut-off for angular distribution
@@ -687,12 +689,13 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
 
         if jrdf_adf==True:
          rcut,rcut1,rcut2,rcut_dihed=get_dist_cutoffs(s=s)
+         #print ('rcut,rcut1,rcut2,rcut_dihed',rcut,rcut1,rcut2,rcut_dihed)
          struct_info=get_structure_data(s=s)
          #print ('struct_info',struct_info)
          bins,rdf,nn=get_rdf(s=s)
          try:
             adfa=np.zeros(179)
-            adfa,_=ang_dist1(struct_info=struct_info,plot=False,rcut=rcut)
+            adfa,_=ang_dist1(struct_info=struct_info,plot=False,rcut=rcut_dihed)
          except:
               print ('Angular distribution1 part is taking too long a time,setting it to zero')
               pass
