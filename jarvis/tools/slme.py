@@ -539,7 +539,7 @@ class SolarCell(MSONable):
             voltage = np.linspace(0, v_oc + 0.2, 2000)
 
             current = j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
-            power = j * voltage
+            power = current * voltage
 
             plt.plot(voltage, current)
             plt.plot(voltage, power)
