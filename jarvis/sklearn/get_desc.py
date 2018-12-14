@@ -647,9 +647,7 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
               cat: catenated final descriptors
         """
         cat=[]
-     # try: 
         s= get_effective_structure(struct)
-       #	 print (len(s))
         cell=[]
         mean_chem=[]
         rdf=[]
@@ -694,19 +692,19 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
          bins,rdf,nn=get_rdf(s=s)
          try:
             adfa=np.zeros(179)
-            adfa,_=ang_dist1(struct_info=struct_info,plot=True,rcut=rcut)
+            adfa,_=ang_dist1(struct_info=struct_info,plot=False,rcut=rcut)
          except:
               print ('Angular distribution1 part is taking too long a time,setting it to zero')
               pass
          try:
             adfb=np.zeros(179)
-            adfb,_=ang_dist2(struct_info=struct_info,plot=True,rcut2=rcut2)
+            adfb,_=ang_dist2(struct_info=struct_info,plot=False,rcut2=rcut2)
          except:
               print ('Angular distribution2 part is taking too long a time,setting it to zero')
               pass
          try:
             ddf=np.zeros(179)
-            ddf,_=dihedrals(struct_info=struct_info,plot=True,rcut_dihed=rcut_dihed)
+            ddf,_=dihedrals(struct_info=struct_info,plot=False,rcut_dihed=rcut_dihed)
          except:
              print ('Dihedral distribution part is taking too long a time,setting it to zero')
              pass
