@@ -36,6 +36,8 @@ from interruptingcow import timeout
 el_chrg_json=str(os.path.join(os.path.dirname(__file__),'element_charge.json')) 
 el_chem_json=str(os.path.join(os.path.dirname(__file__),'Elements.json')) 
 
+timelimit=240 #4 minutes
+
 def get_effective_structure(s=None,tol=8.0):
   """
   Check if there is vacuum, if so get actual size of the structure
@@ -206,7 +208,7 @@ def get_rdf(s=None,cutoff=10.0,intvl=0.1):
     return dist_bins[:-1],[round(i,4) for i in rdf],dist_hist/float(len(s)) #[{'distances': dist_bins[:-1], 'distribution': rdf}]
     #bins,rdf,nearest neighbour
 
-@timeout(180)
+@timeout(timelimit)
 def ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
     """
     Get  angular distribution functions
@@ -217,10 +219,9 @@ def ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
         plot: whether to plot distributions
         max_cut: max. bond cut-off for angular distribution
     Retruns:
-         adfa,adfb,ddf
+         adfa,adfb
          Angular distribution upto first cut-off
          Angular distribution upto second cut-off
-         Dihedral angle distribution upto first cut-off
     """
     x,y,z=get_rdf(s)
     arr=[]
@@ -439,7 +440,6 @@ def ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
     ang_hist2, ang_bins2 = np.histogram(angs,weights=norm,bins=np.arange(1, 181.0, 1), density=False)
     #print ('ang at done')
    
-    dih_hist1,dih_bins1=dihedrals(coords=coords,nat=nat,max_n=max_n,dim=dim,lat=lat,rcut_dihed=rcut_dihed,plot=plot)
     if plot==True:
      plt.bar(ang_bins1[:-1],ang_hist1)
      plt.savefig('ang1.png')
@@ -451,19 +451,61 @@ def ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
      plt.savefig('angrdf.png')
      plt.close()
 
-    return ang_hist1,ang_hist2,dih_hist1 #adfa,adfb,ddf,rdf,bondo
+    return ang_hist1,ang_hist2
 
-def dihedrals(coords=[],nat='',max_n='',dim=[],lat=[],rcut_dihed='',plot=False):
+@timeout(timelimit)
+def dihedrals(s,max_n=500,c_size=10.0,plot=False):
 
     #print ('here in Dihedral.................')
 
+    coords= s.frac_coords 
+    box=s.lattice.matrix
+    dim1=int(float(c_size)/float( max(abs(box[0]))))+1
+    dim2=int(float(c_size)/float( max(abs(box[1]))))+1
+    dim3=int(float(c_size)/float( max(abs(box[2]))))+1
+    dim=[dim1,dim2,dim3]
+    dim=np.array(dim)
+    all_symbs=[i.symbol for i in s.species]
+    nat=len(coords)
+
+    new_nat=nat*dim[0]*dim[1]*dim[2]
+    new_coords=np.zeros((new_nat,3))
+    new_symbs= [] #np.chararray((new_nat))
+
+    count=0
+    for i in range(nat):
+      for j in range(dim[0]):
+       for k in range(dim[1]):
+        for l in range(dim[2]):
+          new_coords[count][0]=(coords[i][0]+j)/float(dim[0])
+          new_coords[count][1]=(coords[i][1]+k)/float(dim[1])
+          new_coords[count][2]=(coords[i][2]+l)/float(dim[2])
+          new_symbs.append(all_symbs[i])
+          count=count+1
+
+    #print ('here4')
+    nat=new_nat
+    coords=new_coords
+
+    nat=len(coords) #int(s.composition.num_atoms)
+    lat=np.zeros((3,3))
+    lat[0][0]=dim[0]*box[0][0]
+    lat[0][1]=dim[0]*box[0][1]
+    lat[0][2]=dim[0]*box[0][2]
+    lat[1][0]=dim[1]*box[1][0]
+    lat[1][1]=dim[1]*box[1][1]
+    lat[1][2]=dim[1]*box[1][2]
+    lat[2][0]=dim[2]*box[2][0]
+    lat[2][1]=dim[2]*box[2][1]
+    lat[2][2]=dim[2]*box[2][2]
+    rcut,rcut_dihed=get_prdf(s=s) 
+    rcut_dihed=min(rcut_dihed,3.0)
     #print "rcut1=",rcut1
     # Dihedral angle distribution
     znm=0
     bond_arr=[]
     deg_arr=[]
     nn=np.zeros((nat),dtype='int')
-    #max_n=50 #maximum number of neighbors
     dist=np.zeros((max_n,nat))
     nn_id=np.zeros((max_n,nat),dtype='int')
     bondx=np.zeros((max_n,nat))
@@ -684,21 +726,26 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
          try:
             adfa=np.zeros(179)
             adfb=np.zeros(179)
-            ddf=np.zeros(179)
-            adfa,adfb,ddf=ang_dist(s=s,plot=True)
+            adfa,adfb=ang_dist(s=s,plot=Falsee)
          except:
               print ('Angular distribution part is taking too long a time,setting it to zero')
               pass
+         try:
+            ddf=np.zeros(179)
+            ddf,bins=dihedrals(s=s,plot=False)
+         except:
+             print ('Dihedral distribution part is taking too long a time,setting it to zero')
+             pass
          adfa=np.array(adfa)
          adfb=np.array(adfb)
          rdf=np.array(rdf)
          ddf=np.array(ddf)
          nn=np.array(nn)
-         #print ('adfa',len(adfa))
-         #print ('ddf',len(ddf))
-         #print ('adfb',len(adfb))
-         #print ('rdf',len(rdf))
-         #print ('nn',len(nn))
+         print ('adfa',len(adfa))
+         print ('ddf',len(ddf))
+         print ('adfb',len(adfb))
+         print ('rdf',len(rdf))
+         print ('nn',len(nn))
 
 
 
