@@ -206,12 +206,15 @@ class EMRadSpectrum(MSONable):
 
     def __init__(self, energy, photon_flux):
         """
-        Initialize the Radiation Spectrum object from the energy and the photon
-        flux.
+        Initialize the Radiation Spectrum object from the energy grid and the
+        photon flux. The input is expected to be provided in the units described
+        below.
 
         Args:
-            energy (numpy.array):
-            photon_flux (numpy.array):
+            energy (numpy.array): Energy grid for which the photon flux is given.
+                Has to be given in electronvolt (eV).
+            photon_flux (numpy.array): Number of photons per square meter per
+                second per electronvolt. (~
 
         """
         self._energy = energy
@@ -270,8 +273,14 @@ class EMRadSpectrum(MSONable):
 
     def to(self, filename):
         """
+        Write the EMRadSpectrum to a JSON file.
+
+        Args:
+            filename (str): Path to the file in which the EMRadSpectrum should
+                be written.
 
         Returns:
+            None
 
         """
         with zopen(filename, "w") as f:
@@ -280,11 +289,14 @@ class EMRadSpectrum(MSONable):
     @classmethod
     def from_file(cls, filename):
         """
+        Load the EMRadSpectrum from a file.
 
         Args:
-            filename (str):
+            filename (str): Path to the file from which the EMRadSpectrum should
+                be loaded.
 
         Returns:
+            None
 
         """
         if filename.endswith(".json"):
