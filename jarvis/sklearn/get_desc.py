@@ -37,7 +37,6 @@ el_chrg_json=str(os.path.join(os.path.dirname(__file__),'element_charge.json'))
 el_chem_json=str(os.path.join(os.path.dirname(__file__),'Elements.json')) 
 
 timelimit=240 #4 minutes
-
 def get_effective_structure(s=None,tol=8.0):
   """
   Check if there is vacuum, if so get actual size of the structure
@@ -57,11 +56,9 @@ def get_effective_structure(s=None,tol=8.0):
   a=s.lattice.matrix[0][0]
   b=s.lattice.matrix[1][1]
   c=s.lattice.matrix[2][2]
-  #print 'range_x=max',range_x
   if abs(a-range_x)>tol:a=range_x+tol
   if abs(b-range_y)>tol:b=range_y+tol
   if abs(c-range_z)>tol:c=range_z+tol
-  #print 'abc',a,b,c
   arr=Lattice([[a,s.lattice.matrix[0][1],s.lattice.matrix[0][2]],[s.lattice.matrix[1][0],b,s.lattice.matrix[1][2]],[s.lattice.matrix[2][0],s.lattice.matrix[2][1],c]])
   s=Structure(arr,s.species,coords,coords_are_cartesian=True)
   return s
@@ -103,7 +100,6 @@ def flatten_out(arr=[],tol=0.1):
       io2=io2+1
       io3=io3+1
       delta=arr[io2]-arr[io1]
-     # print ('arr',len(arr),io1,io2,io3)
     rcut=(arr[io2]+arr[io1])/float(2.0)
     return rcut
 
@@ -152,9 +148,7 @@ def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,std_tol=0.25,f
       shell_vol = 4.0 / 3.0 * pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
       number_density = s.num_sites / s.volume
       rdf = dist_hist / shell_vol / number_density/len(neighbors_lst)
-      #newy=smooth_kde(dist_bins[:-1],rdf)
       if plot_prdf==True:
-      #plt.plot(newy,rdf,label=i[0],linewidth=2)
         plt.plot(dist_bins[:-1],rdf,label=i[0],linewidth=2)
     
     if plot_prdf==True:
@@ -171,16 +165,7 @@ def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,std_tol=0.25,f
 
     for i,j in info.items():
         cut_off[i]=flatten_out(arr=j,tol=0.1)
-   # print 'cut_off',cut_off
-   # for i,j in info.items():
-   #   print
-   #   print i,sorted(set(j))
-   #   print
-    #print ('prdf max', cut_off.items()) #max(cut_off.items(), key=itemgetter(1))[1])
     vals=np.array([float(i) for i in cut_off.values()])
-    #print ('avg=',np.mean(vals))
-    #print ('std=',np.std(vals))
-    #print ('avg_std=',np.mean(vals)+std_tol*np.std(vals))
     return max(cut_off.items(), key=itemgetter(1))[1],np.mean(vals)+0.25*np.std(vals)
 
 
@@ -195,6 +180,7 @@ def get_rdf(s=None,cutoff=10.0,intvl=0.1):
     Returns:
            bins, RDF, bond-order distribution
     """
+
     neighbors_lst = s.get_all_neighbors(cutoff)
     all_distances = np.concatenate(tuple(map(lambda x: \
      [itemgetter(1)(e) for e in x], neighbors_lst)))
@@ -206,83 +192,66 @@ def get_rdf(s=None,cutoff=10.0,intvl=0.1):
     number_density = s.num_sites / s.volume
     rdf = dist_hist / shell_vol / number_density/len(neighbors_lst)
     return dist_bins[:-1],[round(i,4) for i in rdf],dist_hist/float(len(s)) #[{'distances': dist_bins[:-1], 'distribution': rdf}]
-    #bins,rdf,nearest neighbour
 
-@timeout(timelimit)
-def ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
+def get_dist_cutoffs(s='',max_cut=5.0):
     """
-    Get  angular distribution functions
-
+    Helper function to get dufferent type of distance cut-offs
     Args:
         s: Structure object
-        c_size: max. cell size
-        plot: whether to plot distributions
-        max_cut: max. bond cut-off for angular distribution
-    Retruns:
-         adfa,adfb
-         Angular distribution upto first cut-off
-         Angular distribution upto second cut-off
+    Returns:
+           rcut: max-cutoff to ensure all the element-combinations are included, used in calculating angluar distribution upto first neighbor
+           rcut1: decide first cut-off based on total RDF and a buffer (previously used in dihedrals, but not used now in the code)
+           rcut2: second neighbor cut-off
+           rcut_dihed: specialized cut-off for dihedrals to avaoid large bonds such as N-N, uses average bond-distance and standard deviations
     """
+
     x,y,z=get_rdf(s)
     arr=[]
     for i,j in zip(x,z):
       if j>0.0:
         arr.append(i)
-    box=s.lattice.matrix
     rcut_buffer=0.11
     io1=0
     io2=1
     io3=2
-    #print ('here1')
     delta=arr[io2]-arr[io1]
-    #while (delta < rcut_buffer and io2<len(arr)-2):
     while (delta < rcut_buffer and arr[io2]<max_cut):
       io1=io1+1
       io2=io2+1
       io3=io3+1
       delta=arr[io2]-arr[io1]
-    #print ('here2')
     rcut1=(arr[io2]+arr[io1])/float(2.0)
-    #print "arr=",arr[0],arr[1],arr[2],arr[3]
-    rcut,rcut_dihed=get_prdf(s=s) # (arr[io2]+arr[io1])/float(2.0)
-    rcut_dihed=min(rcut_dihed,3.0)
-    #print "rcut=",rcut,"rcut1=",rcut1
-    #print io3,io2,len(arr)
     delta=arr[io3]-arr[io2]
     while (delta < rcut_buffer and arr[io3]<max_cut and arr[io2]<max_cut):
       io2=io2+1
       io3=io3+1
-      #print arr[io3],arr[io2],io3,io2
-      #print arr[io3],arr[io2]
       delta=arr[io3]-arr[io2]
     rcut2=float(arr[io3]+arr[io2])/float(2.0)
-    #print "rcut2=",rcut2
+    rcut,rcut_dihed=get_prdf(s=s) 
+    rcut_dihed=min(rcut_dihed,3.0)
+    return rcut,rcut1,rcut2,rcut_dihed
 
-    #print ('here3')
+
+def get_structure_data(s='',c_size=10.0):
+    """
+    Convert Structure object to a represnetation where only unique sites are keps
+    Used for angular distribution terms
+    Args:
+        s: Structure object
+    Returns:
+          info with coords,dim,nat,lat,new_symbs
+    """
+    info={}
+    coords= s.frac_coords 
+    box=s.lattice.matrix
     dim1=int(float(c_size)/float( max(abs(box[0]))))+1
     dim2=int(float(c_size)/float( max(abs(box[1]))))+1
     dim3=int(float(c_size)/float( max(abs(box[2]))))+1
     dim=[dim1,dim2,dim3]
-    #rcut2=(arr[2]+arr[3])/2.0
     dim=np.array(dim)
-    coords= s.frac_coords #get_frac(s.cart_coords,s.lattice.matrix) #s.frac_coords
-
-    lat=np.zeros((3,3))
-    lat[0][0]=dim[0]*box[0][0]
-    lat[0][1]=dim[0]*box[0][1]
-    lat[0][2]=dim[0]*box[0][2]
-    lat[1][0]=dim[1]*box[1][0]
-    lat[1][1]=dim[1]*box[1][1]
-    lat[1][2]=dim[1]*box[1][2]
-    lat[2][0]=dim[2]*box[2][0]
-    lat[2][1]=dim[2]*box[2][1]
-    lat[2][2]=dim[2]*box[2][2]
-    #print "lat="
-    #print lat
-    #print ""  
-
     all_symbs=[i.symbol for i in s.species]
     nat=len(coords)
+
     new_nat=nat*dim[0]*dim[1]*dim[2]
     new_coords=np.zeros((new_nat,3))
     new_symbs= [] #np.chararray((new_nat))
@@ -301,19 +270,55 @@ def ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
     #print ('here4')
     nat=new_nat
     coords=new_coords
+
+    nat=len(coords) #int(s.composition.num_atoms)
+    lat=np.zeros((3,3))
+    lat[0][0]=dim[0]*box[0][0]
+    lat[0][1]=dim[0]*box[0][1]
+    lat[0][2]=dim[0]*box[0][2]
+    lat[1][0]=dim[1]*box[1][0]
+    lat[1][1]=dim[1]*box[1][1]
+    lat[1][2]=dim[1]*box[1][2]
+    lat[2][0]=dim[2]*box[2][0]
+    lat[2][1]=dim[2]*box[2][1]
+    lat[2][2]=dim[2]*box[2][2]
+    
+    info['coords']=coords
+    info['dim']=dim
+    info['nat']=nat
+    info['lat']=lat
+    info['new_symbs']=new_symbs
+    return info
+
+@timeout(timelimit)
+def ang_dist1(struct_info={},c_size=10.0,max_n=500,plot=True,max_cut=5.0,rcut=''):
+    """
+    Get  angular distribution functions
+
+    Args:
+        s: Structure object
+        c_size: max. cell size
+        plot: whether to plot distributions
+        max_cut: max. bond cut-off for angular distribution
+    Retruns:
+         adfa,adfb
+         Angular distribution upto first cut-off
+         Angular distribution upto second cut-off
+    """
+    coords=struct_info['coords']
+    dim=struct_info['dim']
+    nat=struct_info['nat']
+    lat=struct_info['lat']
     znm=0
     bond_arr=[]
     deg_arr=[]
     nn=np.zeros((nat),dtype='int')
-    max_n=500 #maximum number of neighbors
     dist=np.zeros((max_n,nat))
     nn_id=np.zeros((max_n,nat),dtype='int')
     bondx=np.zeros((max_n,nat))
     bondy=np.zeros((max_n,nat))
     bondz=np.zeros((max_n,nat))
     dim05=[float(1/2.) for i in dim]
-    #print "dim",dim
-    #print "dim05",dim05
     for i in range(nat):
      for j in range(i+1,nat):
        diff=coords[i]-coords[j]
@@ -358,28 +363,35 @@ def ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
           if cos>=1.0:
            cos=cos-0.000001
           deg=math.degrees(math.acos(cos))
-          #ang_at.setdefault(deg, []).append(i)
           ang_at.setdefault(round(deg,3), []).append(i)
          else:
            znm=znm+1
     angs=np.array([float(i) for i in ang_at.keys()])
-    #print "Angs",angs
     norm=np.array([float(len(i))/float(len(set(i))) for i in ang_at.values()])
-    #print ('angs',angs,len(angs))
-    #angs_np=np.array(angs)
-    #print ('angs',angs_np,len(angs_np))
-    #print ('norm',norm.shape,angs.shape) 
     ang_hist1, ang_bins1 = np.histogram(angs,weights=norm,bins=np.arange(1, 181.0, 1), density=False)
 
     
-    #print ('ang at1 done')
+   
+    if plot==True:
+     plt.bar(ang_bins1[:-1],ang_hist1)
+     plt.savefig('ang1.png')
+     plt.close()
 
-### 2nd neighbors 
+    return ang_hist1,ang_bins1
+
+
+@timeout(timelimit)
+def ang_dist2(struct_info={},c_size=10.0,max_n=500,max_cut=5.0,rcut2='',plot=True):
+    coords=struct_info['coords']
+    dim=struct_info['dim']
+    nat=struct_info['nat']
+    lat=struct_info['lat']
+
+    ### 2nd neighbors 
     znm=0
     bond_arr=[]
     deg_arr=[]
     nn=np.zeros((nat),dtype='int')
-    #max_n=250 #maximum number of neighbors
     dist=np.zeros((max_n,nat))
     nn_id=np.zeros((max_n,nat),dtype='int')
     bondx=np.zeros((max_n,nat))
@@ -438,70 +450,26 @@ def ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
  
 
     ang_hist2, ang_bins2 = np.histogram(angs,weights=norm,bins=np.arange(1, 181.0, 1), density=False)
-    #print ('ang at done')
-   
     if plot==True:
-     plt.bar(ang_bins1[:-1],ang_hist1)
-     plt.savefig('ang1.png')
-     plt.close()
      plt.bar(ang_bins2[:-1],ang_hist2)
      plt.savefig('ang2.png')
      plt.close()
-     plt.bar(x,y)
-     plt.savefig('angrdf.png')
-     plt.close()
+    return ang_hist2,ang_bins2
 
-    return ang_hist1,ang_hist2
+
+   
 
 @timeout(timelimit)
-def dihedrals(s,max_n=500,c_size=10.0,plot=False):
+def dihedrals(struct_info={},new_symbs=[],max_n=500,c_size=10.0,rcut_dihed='',plot=False):
+    """
+    Get dihedral angle distribution
+    """
 
-    #print ('here in Dihedral.................')
+    coords=struct_info['coords']
+    dim=struct_info['dim']
+    nat=struct_info['nat']
+    lat=struct_info['lat']
 
-    coords= s.frac_coords 
-    box=s.lattice.matrix
-    dim1=int(float(c_size)/float( max(abs(box[0]))))+1
-    dim2=int(float(c_size)/float( max(abs(box[1]))))+1
-    dim3=int(float(c_size)/float( max(abs(box[2]))))+1
-    dim=[dim1,dim2,dim3]
-    dim=np.array(dim)
-    all_symbs=[i.symbol for i in s.species]
-    nat=len(coords)
-
-    new_nat=nat*dim[0]*dim[1]*dim[2]
-    new_coords=np.zeros((new_nat,3))
-    new_symbs= [] #np.chararray((new_nat))
-
-    count=0
-    for i in range(nat):
-      for j in range(dim[0]):
-       for k in range(dim[1]):
-        for l in range(dim[2]):
-          new_coords[count][0]=(coords[i][0]+j)/float(dim[0])
-          new_coords[count][1]=(coords[i][1]+k)/float(dim[1])
-          new_coords[count][2]=(coords[i][2]+l)/float(dim[2])
-          new_symbs.append(all_symbs[i])
-          count=count+1
-
-    #print ('here4')
-    nat=new_nat
-    coords=new_coords
-
-    nat=len(coords) #int(s.composition.num_atoms)
-    lat=np.zeros((3,3))
-    lat[0][0]=dim[0]*box[0][0]
-    lat[0][1]=dim[0]*box[0][1]
-    lat[0][2]=dim[0]*box[0][2]
-    lat[1][0]=dim[1]*box[1][0]
-    lat[1][1]=dim[1]*box[1][1]
-    lat[1][2]=dim[1]*box[1][2]
-    lat[2][0]=dim[2]*box[2][0]
-    lat[2][1]=dim[2]*box[2][1]
-    lat[2][2]=dim[2]*box[2][2]
-    rcut,rcut_dihed=get_prdf(s=s) 
-    rcut_dihed=min(rcut_dihed,3.0)
-    #print "rcut1=",rcut1
-    # Dihedral angle distribution
     znm=0
     bond_arr=[]
     deg_arr=[]
@@ -524,7 +492,6 @@ def dihedrals(s,max_n=500,c_size=10.0,plot=False):
        #if dd<rcut1 and dd>=0.1:
            nn_index=nn[i] #index of the neighbor
            nn[i]=nn[i]+1
-           #print nn_index
            dist[nn_index][i]=dd #nn_index counter id
            nn_id[nn_index][i]=j #exact id
            bondx[nn_index,i]=new_diff[0]
@@ -537,7 +504,6 @@ def dihedrals(s,max_n=500,c_size=10.0,plot=False):
            bondx[nn_index1,j]=-new_diff[0]
            bondy[nn_index1,j]=-new_diff[1]
            bondz[nn_index1,j]=-new_diff[2]
-    #print 'here6',rcut2
 
     dih_at={}
     for i in range(nat):
@@ -722,17 +688,25 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
          #print ('rdf',len(rdf))
 
         if jrdf_adf==True:
+         rcut,rcut1,rcut2,rcut_dihed=get_dist_cutoffs(s=s)
+         struct_info=get_structure_data(s=s)
+         #print ('struct_info',struct_info)
          bins,rdf,nn=get_rdf(s=s)
          try:
             adfa=np.zeros(179)
-            adfb=np.zeros(179)
-            adfa,adfb=ang_dist(s=s,plot=False)
+            adfa,_=ang_dist1(struct_info=struct_info,plot=True,rcut=rcut)
          except:
-              print ('Angular distribution part is taking too long a time,setting it to zero')
+              print ('Angular distribution1 part is taking too long a time,setting it to zero')
+              pass
+         try:
+            adfb=np.zeros(179)
+            adfb,_=ang_dist2(struct_info=struct_info,plot=True,rcut2=rcut2)
+         except:
+              print ('Angular distribution2 part is taking too long a time,setting it to zero')
               pass
          try:
             ddf=np.zeros(179)
-            ddf,bins=dihedrals(s=s,plot=False)
+            ddf,_=dihedrals(struct_info=struct_info,plot=True,rcut_dihed=rcut_dihed)
          except:
              print ('Dihedral distribution part is taking too long a time,setting it to zero')
              pass
@@ -741,16 +715,15 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
          rdf=np.array(rdf)
          ddf=np.array(ddf)
          nn=np.array(nn)
-         print ('adfa',len(adfa))
-         print ('ddf',len(ddf))
-         print ('adfb',len(adfb))
-         print ('rdf',len(rdf))
-         print ('nn',len(nn))
+         #print ('adfa',len(adfa))
+         #print ('ddf',len(ddf))
+         #print ('adfb',len(adfb))
+         #print ('rdf',len(rdf))
+         #print ('nn',len(nn))
 
 
 
         if jmean_chg==True:
-  
          chgarr=[]
          for k,v in el_dict.items():
             chg=get_chgdescrp_arr(k)
