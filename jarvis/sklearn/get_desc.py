@@ -29,10 +29,14 @@ from monty.serialization import loadfn
 from pandas import DataFrame as pd
 from pymatgen.core.lattice import Lattice
 from pymatgen.core import Composition
+from interruptingcow import timeout
+
+#Note time limit for angular part is hardcoded
 
 el_chrg_json=str(os.path.join(os.path.dirname(__file__),'element_charge.json')) 
 el_chem_json=str(os.path.join(os.path.dirname(__file__),'Elements.json')) 
 
+timelimit=240 #4 minutes
 def get_effective_structure(s=None,tol=8.0):
   """
   Check if there is vacuum, if so get actual size of the structure
@@ -52,11 +56,9 @@ def get_effective_structure(s=None,tol=8.0):
   a=s.lattice.matrix[0][0]
   b=s.lattice.matrix[1][1]
   c=s.lattice.matrix[2][2]
-  #print 'range_x=max',range_x
   if abs(a-range_x)>tol:a=range_x+tol
   if abs(b-range_y)>tol:b=range_y+tol
   if abs(c-range_z)>tol:c=range_z+tol
-  #print 'abc',a,b,c
   arr=Lattice([[a,s.lattice.matrix[0][1],s.lattice.matrix[0][2]],[s.lattice.matrix[1][0],b,s.lattice.matrix[1][2]],[s.lattice.matrix[2][0],s.lattice.matrix[2][1],c]])
   s=Structure(arr,s.species,coords,coords_are_cartesian=True)
   return s
@@ -98,7 +100,6 @@ def flatten_out(arr=[],tol=0.1):
       io2=io2+1
       io3=io3+1
       delta=arr[io2]-arr[io1]
-     # print ('arr',len(arr),io1,io2,io3)
     rcut=(arr[io2]+arr[io1])/float(2.0)
     return rcut
 
@@ -113,7 +114,7 @@ def smooth_kde(x,y):
     kde=denn(xs)
     return kde
 
-def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,filename='prdf.png'):
+def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,std_tol=0.25,filename='prdf.png'):
     """
     Get partial radial distribution function
 
@@ -122,6 +123,9 @@ def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,filename='prdf
          cutoff: maximum cutoff in Angstrom
          intvl: bin-size
          plot_prdf: whether to plot PRDF
+         std_tol: when calculating the dihedral angles, the code got stuck for some N-containing compounds
+         so we averaged all the first neghbors and added a fraction of the standard deviation as a tolerance
+         this new tolerance is used for dihedral part only, while angular and RDF part remains intact
          filename: if plotted the name of the output file
     Returns:
           max-cutoff to ensure all the element-combinations are included
@@ -144,9 +148,7 @@ def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,filename='prdf
       shell_vol = 4.0 / 3.0 * pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
       number_density = s.num_sites / s.volume
       rdf = dist_hist / shell_vol / number_density/len(neighbors_lst)
-      #newy=smooth_kde(dist_bins[:-1],rdf)
       if plot_prdf==True:
-      #plt.plot(newy,rdf,label=i[0],linewidth=2)
         plt.plot(dist_bins[:-1],rdf,label=i[0],linewidth=2)
     
     if plot_prdf==True:
@@ -163,12 +165,8 @@ def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,filename='prdf
 
     for i,j in info.items():
         cut_off[i]=flatten_out(arr=j,tol=0.1)
-   # print 'cut_off',cut_off
-   # for i,j in info.items():
-   #   print
-   #   print i,sorted(set(j))
-   #   print
-    return max(cut_off.items(), key=itemgetter(1))[1]
+    vals=np.array([float(i) for i in cut_off.values()])
+    return max(cut_off.items(), key=itemgetter(1))[1],np.mean(vals)+0.25*np.std(vals)
 
 
 def get_rdf(s=None,cutoff=10.0,intvl=0.1):
@@ -180,8 +178,9 @@ def get_rdf(s=None,cutoff=10.0,intvl=0.1):
          cutoff: maximum distance for binning
          intvl: bin-size
     Returns:
-           bins, distribution
+           bins, RDF, bond-order distribution
     """
+
     neighbors_lst = s.get_all_neighbors(cutoff)
     all_distances = np.concatenate(tuple(map(lambda x: \
      [itemgetter(1)(e) for e in x], neighbors_lst)))
@@ -193,84 +192,66 @@ def get_rdf(s=None,cutoff=10.0,intvl=0.1):
     number_density = s.num_sites / s.volume
     rdf = dist_hist / shell_vol / number_density/len(neighbors_lst)
     return dist_bins[:-1],[round(i,4) for i in rdf],dist_hist/float(len(s)) #[{'distances': dist_bins[:-1], 'distribution': rdf}]
-    #bins,rdf,nearest neighbour
 
-def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
+def get_dist_cutoffs(s='',max_cut=5.0):
     """
-    Get radial and angular distribution functions
-
+    Helper function to get dufferent type of distance cut-offs
     Args:
         s: Structure object
-        c_size: max. cell size
-        plot: whether to plot distributions
-        max_cut: max. bond cut-off for angular distribution
-    Retruns:
-         adfa,adfb,ddf,rdf,bondo
-         Angular distribution upto first cut-off
-         Angular distribution upto second cut-off
-         Dihedral angle distribution upto first cut-off
-         Radial distribution funcion
-         Bond order distribution
+    Returns:
+           rcut: max-cutoff to ensure all the element-combinations are included, used in calculating angluar distribution upto first neighbor
+           rcut1: decide first cut-off based on total RDF and a buffer (previously used in dihedrals, but not used now in the code)
+           rcut2: second neighbor cut-off
+           rcut_dihed: specialized cut-off for dihedrals to avaoid large bonds such as N-N, uses average bond-distance and standard deviations
     """
+
     x,y,z=get_rdf(s)
     arr=[]
     for i,j in zip(x,z):
       if j>0.0:
         arr.append(i)
-    box=s.lattice.matrix
     rcut_buffer=0.11
     io1=0
     io2=1
     io3=2
-    #print 'here1'
     delta=arr[io2]-arr[io1]
-    #while (delta < rcut_buffer and io2<len(arr)-2):
     while (delta < rcut_buffer and arr[io2]<max_cut):
       io1=io1+1
       io2=io2+1
       io3=io3+1
       delta=arr[io2]-arr[io1]
-    #print 'here2'
     rcut1=(arr[io2]+arr[io1])/float(2.0)
-    #print "arr=",arr[0],arr[1],arr[2],arr[3]
-    rcut=get_prdf(s=s) # (arr[io2]+arr[io1])/float(2.0)
-    #print "rcut=",rcut,"rcut1=",rcut1
-    #print io3,io2,len(arr)
     delta=arr[io3]-arr[io2]
     while (delta < rcut_buffer and arr[io3]<max_cut and arr[io2]<max_cut):
       io2=io2+1
       io3=io3+1
-      #print arr[io3],arr[io2],io3,io2
-      #print arr[io3],arr[io2]
       delta=arr[io3]-arr[io2]
     rcut2=float(arr[io3]+arr[io2])/float(2.0)
-    #print "rcut2=",rcut2
+    rcut,rcut_dihed=get_prdf(s=s) 
+    rcut_dihed=min(rcut_dihed,3.0)
+    return rcut,rcut1,rcut2,rcut_dihed
 
-    #print 'here3'
+
+def get_structure_data(s='',c_size=10.0):
+    """
+    Convert Structure object to a represnetation where only unique sites are keps
+    Used for angular distribution terms
+    Args:
+        s: Structure object
+    Returns:
+          info with coords,dim,nat,lat,new_symbs
+    """
+    info={}
+    coords= s.frac_coords 
+    box=s.lattice.matrix
     dim1=int(float(c_size)/float( max(abs(box[0]))))+1
     dim2=int(float(c_size)/float( max(abs(box[1]))))+1
     dim3=int(float(c_size)/float( max(abs(box[2]))))+1
     dim=[dim1,dim2,dim3]
-    #rcut2=(arr[2]+arr[3])/2.0
     dim=np.array(dim)
-    coords= s.frac_coords #get_frac(s.cart_coords,s.lattice.matrix) #s.frac_coords
-
-    lat=np.zeros((3,3))
-    lat[0][0]=dim[0]*box[0][0]
-    lat[0][1]=dim[0]*box[0][1]
-    lat[0][2]=dim[0]*box[0][2]
-    lat[1][0]=dim[1]*box[1][0]
-    lat[1][1]=dim[1]*box[1][1]
-    lat[1][2]=dim[1]*box[1][2]
-    lat[2][0]=dim[2]*box[2][0]
-    lat[2][1]=dim[2]*box[2][1]
-    lat[2][2]=dim[2]*box[2][2]
-    #print "lat="
-    #print lat
-    #print ""  
-
     all_symbs=[i.symbol for i in s.species]
     nat=len(coords)
+
     new_nat=nat*dim[0]*dim[1]*dim[2]
     new_coords=np.zeros((new_nat,3))
     new_symbs= [] #np.chararray((new_nat))
@@ -286,22 +267,58 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
           new_symbs.append(all_symbs[i])
           count=count+1
 
-    #print 'here4'
+    #print ('here4')
     nat=new_nat
     coords=new_coords
+
+    nat=len(coords) #int(s.composition.num_atoms)
+    lat=np.zeros((3,3))
+    lat[0][0]=dim[0]*box[0][0]
+    lat[0][1]=dim[0]*box[0][1]
+    lat[0][2]=dim[0]*box[0][2]
+    lat[1][0]=dim[1]*box[1][0]
+    lat[1][1]=dim[1]*box[1][1]
+    lat[1][2]=dim[1]*box[1][2]
+    lat[2][0]=dim[2]*box[2][0]
+    lat[2][1]=dim[2]*box[2][1]
+    lat[2][2]=dim[2]*box[2][2]
+    
+    info['coords']=coords
+    info['dim']=dim
+    info['nat']=nat
+    info['lat']=lat
+    info['new_symbs']=new_symbs
+    return info
+
+@timeout(timelimit)
+def ang_dist1(struct_info={},c_size=10.0,max_n=500,plot=True,max_cut=5.0,rcut=''):
+    """
+    Get  angular distribution functions
+
+    Args:
+        s: Structure object
+        c_size: max. cell size
+        plot: whether to plot distributions
+        max_cut: max. bond cut-off for angular distribution
+    Retruns:
+         adfa,adfb
+         Angular distribution upto first cut-off
+         Angular distribution upto second cut-off
+    """
+    coords=struct_info['coords']
+    dim=struct_info['dim']
+    nat=struct_info['nat']
+    lat=struct_info['lat']
     znm=0
     bond_arr=[]
     deg_arr=[]
     nn=np.zeros((nat),dtype='int')
-    max_n=500 #maximum number of neighbors
     dist=np.zeros((max_n,nat))
     nn_id=np.zeros((max_n,nat),dtype='int')
     bondx=np.zeros((max_n,nat))
     bondy=np.zeros((max_n,nat))
     bondz=np.zeros((max_n,nat))
     dim05=[float(1/2.) for i in dim]
-    #print "dim",dim
-    #print "dim05",dim05
     for i in range(nat):
      for j in range(i+1,nat):
        diff=coords[i]-coords[j]
@@ -325,6 +342,7 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
            bondx[nn_index1][j]=-new_diff[0]
            bondy[nn_index1][j]=-new_diff[1]
            bondz[nn_index1][j]=-new_diff[2]
+    #print ('maxnn',max(nn))
 
 
     ang_at={}
@@ -345,122 +363,35 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
           if cos>=1.0:
            cos=cos-0.000001
           deg=math.degrees(math.acos(cos))
-          #ang_at.setdefault(deg, []).append(i)
           ang_at.setdefault(round(deg,3), []).append(i)
          else:
            znm=znm+1
     angs=np.array([float(i) for i in ang_at.keys()])
-    #print "Angs",angs
     norm=np.array([float(len(i))/float(len(set(i))) for i in ang_at.values()])
-    #print ('angs',angs,len(angs))
-    #angs_np=np.array(angs)
-    #print ('angs',angs_np,len(angs_np))
-    #print ('norm',norm.shape,angs.shape) 
     ang_hist1, ang_bins1 = np.histogram(angs,weights=norm,bins=np.arange(1, 181.0, 1), density=False)
 
-    #print 'here5'
+    
+   
+    if plot==True:
+     plt.bar(ang_bins1[:-1],ang_hist1)
+     plt.savefig('ang1.png')
+     plt.close()
 
-    #print "rcut1=",rcut1
-    # Dihedral angle distribution
+    return ang_hist1,ang_bins1
+
+
+@timeout(timelimit)
+def ang_dist2(struct_info={},c_size=10.0,max_n=500,max_cut=5.0,rcut2='',plot=True):
+    coords=struct_info['coords']
+    dim=struct_info['dim']
+    nat=struct_info['nat']
+    lat=struct_info['lat']
+
+    ### 2nd neighbors 
     znm=0
     bond_arr=[]
     deg_arr=[]
     nn=np.zeros((nat),dtype='int')
-    max_n=500 #maximum number of neighbors
-    dist=np.zeros((max_n,nat))
-    nn_id=np.zeros((max_n,nat),dtype='int')
-    bondx=np.zeros((max_n,nat))
-    bondy=np.zeros((max_n,nat))
-    bondz=np.zeros((max_n,nat))
-    dim05=[float(1/2.) for i in dim]
-    for i in range(nat):
-     for j in range(i+1,nat):
-       diff=coords[i]-coords[j]
-       for v in range(3):
-         if np.fabs(diff[v])>=dim05[v]:
-           diff[v]=diff[v]-np.sign(diff[v])
-       new_diff=np.dot(diff,lat)
-       dd=np.linalg.norm(new_diff)
-       if dd<rcut1 and dd>=0.1:
-           nn_index=nn[i] #index of the neighbor
-           nn[i]=nn[i]+1
-           #print nn_index
-           dist[nn_index][i]=dd #nn_index counter id
-           nn_id[nn_index][i]=j #exact id
-           bondx[nn_index,i]=new_diff[0]
-           bondy[nn_index,i]=new_diff[1]
-           bondz[nn_index,i]=new_diff[2]
-           nn_index1=nn[j] #index of the neighbor
-           nn[j]=nn[j]+1
-           dist[nn_index1][j]=dd #nn_index counter id
-           nn_id[nn_index1][j]=i #exact id
-           bondx[nn_index1,j]=-new_diff[0]
-           bondy[nn_index1,j]=-new_diff[1]
-           bondz[nn_index1,j]=-new_diff[2]
-    #print 'here6',rcut2
-
-    dih_at={}
-    for i in range(nat):
-     for in1 in range(nn[i]):
-     #for in1 in range(1):
-       j1=nn_id[in1][i]
-       if (j1 > i):
-        """
-        # angles between i,j, k=nn(i), l=nn(i)
-        for in2 in range(nn[i]):    # all other nn of i that are not j
-            j2=nn_id[in2][i]
-            if (j2 != j1):
-               for in3 in range(in2+1,nn[i]):  
-                   j3=nn_id[in3][i]
-                   if (j3 != j1):
-                      
-        # angles between i,j, k=nn(j), l=nn(j)
-        for in2 in range(nn[j1]):    # all other nn of j that are not i
-            j2=nn_id[in2][j1]
-            if (j2 != i):
-               for in3 in range(in2+1,nn[j1]):    
-                   j3=nn_id[in3][j1]
-                   if (j3 != i):
-        """
-        # angles between i,j, k=nn(i), l=nn(j)
-        for in2 in range(nn[i]):    # all other nn of i that are not j
-            j2=nn_id[in2][i]
-            if (j2 != j1):          
-               for in3 in range(nn[j1]):    # all other nn of j that are not i
-                   j3=nn_id[in3][j1]
-                   if (j3 != i):
-                      v1=[] 
-                      v2=[]  
-                      v3=[]  
-                      v1.append(bondx[in2][i])
-                      v1.append(bondy[in2][i])
-                      v1.append(bondz[in2][i])
-                      v2.append(-bondx[in1][i])
-                      v2.append(-bondy[in1][i])
-                      v2.append(-bondz[in1][i])
-                      v3.append(-bondx[in3][j1])
-                      v3.append(-bondy[in3][j1])
-                      v3.append(-bondz[in3][j1])
-                      v23 = np.cross(v2, v3)
-                      v12 = np.cross(v1, v2)
-                      theta = math.degrees(math.atan2(np.linalg.norm(v2)*np.dot(v1, v23),np.dot(v12, v23)))
-                      if theta < 0.00001: theta = - theta
-                      #print "theta=",theta
-                      dih_at.setdefault(round(theta,3), []).append(i) 
-    dih=np.array([float(i) for i in dih_at.keys()])
-    dih1=set(dih)
-    #print "dih",dih1
-    norm=np.array([float(len(i))/float(len(set(i))) for i in dih_at.values()])
-    
-    dih_hist1, dih_bins1 = np.histogram(dih,weights=norm,bins=np.arange(1, 181.0, 1), density=False)
-    
-
-### 2nd neighbors 
-    znm=0
-    bond_arr=[]
-    deg_arr=[]
-    nn=np.zeros((nat),dtype='int')
-    max_n=250 #maximum number of neighbors
     dist=np.zeros((max_n,nat))
     nn_id=np.zeros((max_n,nat),dtype='int')
     bondx=np.zeros((max_n,nat))
@@ -491,7 +422,7 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
            bondy[nn_index1,j]=-new_diff[1]
            bondz[nn_index1,j]=-new_diff[2]
 
-
+    #print ('ang at2')
     ang_at={}
 
     for i in range(nat):
@@ -519,16 +450,101 @@ def rdf_ang_dist(s='',c_size=10.0,plot=True,max_cut=5.0):
  
 
     ang_hist2, ang_bins2 = np.histogram(angs,weights=norm,bins=np.arange(1, 181.0, 1), density=False)
-
     if plot==True:
-     plt.plot(ang_bins2[:-1],ang_hist2)
-     plt.savefig('ang.png')
+     plt.bar(ang_bins2[:-1],ang_hist2)
+     plt.savefig('ang2.png')
      plt.close()
-     plt.plot(x,y)
-     plt.savefig('angrdf.png')
-     plt.close()
+    return ang_hist2,ang_bins2
 
-    return ang_hist1,ang_hist2,dih_hist1,y,z #adfa,adfb,ddf,rdf,bondo
+
+   
+
+@timeout(timelimit)
+def dihedrals(struct_info={},new_symbs=[],max_n=500,c_size=10.0,rcut_dihed='',plot=False):
+    """
+    Get dihedral angle distribution
+    """
+
+    coords=struct_info['coords']
+    dim=struct_info['dim']
+    nat=struct_info['nat']
+    lat=struct_info['lat']
+
+    znm=0
+    bond_arr=[]
+    deg_arr=[]
+    nn=np.zeros((nat),dtype='int')
+    dist=np.zeros((max_n,nat))
+    nn_id=np.zeros((max_n,nat),dtype='int')
+    bondx=np.zeros((max_n,nat))
+    bondy=np.zeros((max_n,nat))
+    bondz=np.zeros((max_n,nat))
+    dim05=[float(1/2.) for i in dim]
+    for i in range(nat):
+     for j in range(i+1,nat):
+       diff=coords[i]-coords[j]
+       for v in range(3):
+         if np.fabs(diff[v])>=dim05[v]:
+           diff[v]=diff[v]-np.sign(diff[v])
+       new_diff=np.dot(diff,lat)
+       dd=np.linalg.norm(new_diff)
+       if dd<rcut_dihed and dd>=0.1:
+       #if dd<rcut1 and dd>=0.1:
+           nn_index=nn[i] #index of the neighbor
+           nn[i]=nn[i]+1
+           dist[nn_index][i]=dd #nn_index counter id
+           nn_id[nn_index][i]=j #exact id
+           bondx[nn_index,i]=new_diff[0]
+           bondy[nn_index,i]=new_diff[1]
+           bondz[nn_index,i]=new_diff[2]
+           nn_index1=nn[j] #index of the neighbor
+           nn[j]=nn[j]+1
+           dist[nn_index1][j]=dd #nn_index counter id
+           nn_id[nn_index1][j]=i #exact id
+           bondx[nn_index1,j]=-new_diff[0]
+           bondy[nn_index1,j]=-new_diff[1]
+           bondz[nn_index1,j]=-new_diff[2]
+
+    dih_at={}
+    for i in range(nat):
+     for in1 in range(nn[i]):
+       j1=nn_id[in1][i]
+       if (j1 > i):
+        for in2 in range(nn[i]):    # all other nn of i that are not j
+            j2=nn_id[in2][i]
+            if (j2 != j1):          
+               for in3 in range(nn[j1]):    # all other nn of j that are not i
+                   j3=nn_id[in3][j1]
+                   if (j3 != i):
+                      v1=[] 
+                      v2=[]  
+                      v3=[]  
+                      v1.append(bondx[in2][i])
+                      v1.append(bondy[in2][i])
+                      v1.append(bondz[in2][i])
+                      v2.append(-bondx[in1][i])
+                      v2.append(-bondy[in1][i])
+                      v2.append(-bondz[in1][i])
+                      v3.append(-bondx[in3][j1])
+                      v3.append(-bondy[in3][j1])
+                      v3.append(-bondz[in3][j1])
+                      v23 = np.cross(v2, v3)
+                      v12 = np.cross(v1, v2)
+                      theta = math.degrees(math.atan2(np.linalg.norm(v2)*np.dot(v1, v23),np.dot(v12, v23)))
+                      if theta < 0.00001: theta = - theta
+                      #print "theta=",theta
+                      dih_at.setdefault(round(theta,3), []).append(i) 
+    dih=np.array([float(i) for i in dih_at.keys()])
+    dih1=set(dih)
+    #print "dih",dih1
+    norm=np.array([float(len(i))/float(len(set(i))) for i in dih_at.values()])
+    
+    dih_hist1, dih_bins1 = np.histogram(dih,weights=norm,bins=np.arange(1, 181.0, 1), density=False)
+    if plot==True:
+     plt.bar(dih_bins1[:-1],dih_hist1)
+     plt.savefig('dihedrals.png')
+     plt.close()
+    return dih_hist1,dih_bins1
 
 
 def get_chgdescrp_arr(elm=''):
@@ -631,9 +647,7 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
               cat: catenated final descriptors
         """
         cat=[]
-     # try: 
         s= get_effective_structure(struct)
-       #	 print (len(s))
         cell=[]
         mean_chem=[]
         rdf=[]
@@ -672,7 +686,28 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
          #print ('rdf',len(rdf))
 
         if jrdf_adf==True:
-         adfa,adfb,ddf,rdf,nn=rdf_ang_dist(s=s,plot=False)
+         rcut,rcut1,rcut2,rcut_dihed=get_dist_cutoffs(s=s)
+         struct_info=get_structure_data(s=s)
+         #print ('struct_info',struct_info)
+         bins,rdf,nn=get_rdf(s=s)
+         try:
+            adfa=np.zeros(179)
+            adfa,_=ang_dist1(struct_info=struct_info,plot=False,rcut=rcut)
+         except:
+              print ('Angular distribution1 part is taking too long a time,setting it to zero')
+              pass
+         try:
+            adfb=np.zeros(179)
+            adfb,_=ang_dist2(struct_info=struct_info,plot=False,rcut2=rcut2)
+         except:
+              print ('Angular distribution2 part is taking too long a time,setting it to zero')
+              pass
+         try:
+            ddf=np.zeros(179)
+            ddf,_=dihedrals(struct_info=struct_info,plot=False,rcut_dihed=rcut_dihed)
+         except:
+             print ('Dihedral distribution part is taking too long a time,setting it to zero')
+             pass
          adfa=np.array(adfa)
          adfb=np.array(adfb)
          rdf=np.array(rdf)
@@ -687,7 +722,6 @@ def get_comp_descp(struct='',jcell=True,jmean_chem=True,jmean_chg=True,jrdf=Fals
 
 
         if jmean_chg==True:
-  
          chgarr=[]
          for k,v in el_dict.items():
             chg=get_chgdescrp_arr(k)
