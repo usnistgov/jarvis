@@ -14,6 +14,7 @@ setup(
         "pymatgen==2017.8.4",
         "custodian==2018.8.10",
         "ase==3.11.0",
+        "interruptingcow",
         "pybtex==0.21",
         "fortranformat==0.2.5",
         "pandas==0.23.4",
