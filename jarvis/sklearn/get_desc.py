@@ -303,9 +303,8 @@ def ang_dist1(struct_info={},c_size=10.0,max_n=500,plot=True,max_cut=5.0,rcut=''
         plot: whether to plot distributions
         max_cut: max. bond cut-off for angular distribution
     Retruns:
-         adfa,adfb
-         Angular distribution upto first cut-off
-         Angular distribution upto second cut-off
+         ang_hist1: Angular distribution upto first cut-off
+         ang_bins1: angle bins
     """
     coords=struct_info['coords']
     dim=struct_info['dim']
@@ -384,6 +383,20 @@ def ang_dist1(struct_info={},c_size=10.0,max_n=500,plot=True,max_cut=5.0,rcut=''
 
 @timeout(timelimit)
 def ang_dist2(struct_info={},c_size=10.0,max_n=500,max_cut=5.0,rcut2='',plot=True):
+    """
+    Get  angular distribution function upto second neighbor
+
+    Args:
+        struct_info: struct information
+        max_n: maximum number of neigbors
+        c_size: max. cell size
+        plot: whether to plot distributions
+        max_cut: max. bond cut-off for angular distribution
+    Retruns:
+         ang_hist2: Angular distribution upto secondt cut-off
+         ang_bins2: angle bins
+    """
+    coords=struct_info['coords']
     coords=struct_info['coords']
     dim=struct_info['dim']
     nat=struct_info['nat']
