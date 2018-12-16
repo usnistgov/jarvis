@@ -88,6 +88,18 @@ class DielTensor(MSONable):
         else:
             raise ImportError("Format of dielectric data not recognized.")
 
+    def check_dielectric_data(self):
+        """
+        Function that performs some tests on the dielectric data, to make sure
+        input satisfies some constrains based on what we know about the dielectric
+        tensor.
+
+        Returns:
+            None
+
+        """
+        pass #TODO
+
     @property
     def energies(self):
         """
@@ -475,26 +487,6 @@ class SolarCell(MSONable):
     def bandgaps(self):
         return self._bandgaps
 
-    def calculate_bandgap_sq(self, temperature=298.15, fr=1.0, interp_mesh=0.001):
-        """
-        Calculate the Shockley-Queisser limit of the corresponding fundamental
-        band gap.
-
-        Args:
-            temperature (float): Temperature of the solar cell. Defaults to 25 °C,
-                 or 298.15 K.
-            fr (float): Fraction of radiative recombination.
-            interp_mesh (float): Distance between two energy points in the grid
-                used for the interpolation.
-
-        Returns:
-            (float): Shockley-Queisser detailed balance limit of the band gap of
-                the material.
-
-        """
-        return self.sq(self._bandgaps[0], temperature, fr, interp_mesh,
-                       np.max(self.dieltensor.energies))
-
     def slme(self, temperature=298.15, thickness=5e-7, interp_mesh=0.001,
              plot_iv_curve=False):
         """
@@ -526,11 +518,11 @@ class SolarCell(MSONable):
             bounds_error=False
         )(energy)
 
-        # Load total solar_spectrum
+        # Load energy-dependent total solar spectrum photon flux (~m^{-2}s^{-1}eV^{-1})
         solar_spectrum = \
             EMRadSpectrum.get_solar_spectrum("am1.5g").get_interp_function()(energy)
 
-        # Calculation of energy-dependent blackbody spectrum
+        # Calculation of energy-dependent blackbody spectrum (~m^{-2}s^{-1}eV^{-1})
         blackbody_spectrum = EMRadSpectrum.get_blackbody(temperature, energy).photon_flux
 
         # Numerically integrating photon flux over energy grid
@@ -669,6 +661,26 @@ class SolarCell(MSONable):
     @staticmethod
     def calculate_slme_from_vasprun(filename, temperature=298.15, thickness=5e-7):
         return SolarCell.from_file(filename).slme(temperature, thickness)
+
+    def calculate_bandgap_sq(self, temperature=298.15, fr=1.0, interp_mesh=0.001):
+        """
+        Calculate the Shockley-Queisser limit of the corresponding fundamental
+        band gap.
+
+        Args:
+            temperature (float): Temperature of the solar cell. Defaults to 25 °C,
+                 or 298.15 K.
+            fr (float): Fraction of radiative recombination.
+            interp_mesh (float): Distance between two energy points in the grid
+                used for the interpolation.
+
+        Returns:
+            (float): Shockley-Queisser detailed balance limit of the band gap of
+                the material.
+
+        """
+        return self.sq(self._bandgaps[0], temperature, fr, interp_mesh,
+                       np.max(self.dieltensor.energies))
 
     @staticmethod
     def sq(bandgap, temperature=298.15, fr=1.0, interp_mesh=0.001, max_energy=20.0):
