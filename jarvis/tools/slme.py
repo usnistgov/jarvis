@@ -586,9 +586,13 @@ class SolarCell(MSONable):
         if add_sq_limit:
             plt.plot(thickness, np.ones(thickness.shape)
                      * self.calculate_bandgap_sq(temperature=temperature)[0], 'k--')
+            plt.legend(("SLME", "SQ"))
+        else:
+            plt.legend(("SLME",))
         plt.xlabel("Thicknesss (m)")
         plt.ylabel("Efficiency")
         plt.xscale("log")
+
         plt.show()
 
     def get_currents(self, temperature):
