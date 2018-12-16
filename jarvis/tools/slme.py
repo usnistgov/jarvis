@@ -301,7 +301,7 @@ class EMRadSpectrum(MSONable):
     def get_interp_function(self, variable="energy", spectrum_units="flux"):
         """
         Obtain the 1D interpolation function using the scipy.interpolate.interp1d
-        method.
+        method. Linear interpolation is chosen, as it is more robust.
 
         Still have to implement the option to change the variable and type of
         spectrum.
@@ -314,7 +314,7 @@ class EMRadSpectrum(MSONable):
 
         """
         # TODO complete for other variables and spectrum choices
-        return interp1d(self._energy, self._photon_flux, kind='cubic',
+        return interp1d(self._energy, self._photon_flux, kind='linear',
                         fill_value=0.0, bounds_error=False)
 
     def to(self, filename):
@@ -513,7 +513,7 @@ class SolarCell(MSONable):
         absorptivity = interp1d(
             self._dieltensor.energies,
             self._dieltensor.get_absorptivity(thickness, "beer-lambert"),
-            kind='cubic',
+            kind='linear',
             fill_value=0,
             bounds_error=False
         )(energy)
@@ -579,13 +579,13 @@ class SolarCell(MSONable):
 
         """
         thickness = 10 ** np.linspace(-9, -3, 40)
-        efficiency = np.array([self.slme(thickness=d, temperature=temperature)
+        efficiency = np.array([self.slme(thickness=d, temperature=temperature)[0]
                                for d in thickness])
 
         plt.plot(thickness, efficiency)
         if add_sq_limit:
             plt.plot(thickness, np.ones(thickness.shape)
-                     * self.calculate_bandgap_sq(temperature=temperature), 'k--')
+                     * self.calculate_bandgap_sq(temperature=temperature)[0], 'k--')
         plt.xlabel("Thicknesss (m)")
         plt.ylabel("Efficiency")
         plt.xscale("log")
