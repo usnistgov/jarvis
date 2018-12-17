@@ -234,6 +234,7 @@ class DielTensor(MSONable):
             if diel_range:
                 plt.ylim(diel_range)
             plt.ylabel(r"$\alpha(E)$")
+            plt.yscale("log")
             plt.show()
 
     @classmethod
