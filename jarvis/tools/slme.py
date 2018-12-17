@@ -216,13 +216,13 @@ class DielTensor(MSONable):
 
         elif part == "imag":
 
-            plt.plot(self.energies, self.dielectric_function.real)
+            plt.plot(self.energies, self.dielectric_function.imag)
             plt.xlabel("Energy (eV)")
             if variable_range:
                 plt.xlim(variable_range)
             if diel_range:
                 plt.ylim(diel_range)
-            plt.ylabel(r"$\varepsilon_1$")
+            plt.ylabel(r"$\varepsilon_2$")
             plt.show()
 
     @classmethod
