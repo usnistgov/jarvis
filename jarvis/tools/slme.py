@@ -636,7 +636,7 @@ class SolarCell(MSONable):
 
         """
         try:
-            vasprun = Vasprun(filename)
+            vasprun = Vasprun(filename, parse_potcar_file=False)
         except ParseError:
             raise IOError("Error while parsing the input file. Currently the "
                           "SolarCell class can only be constructed from "
