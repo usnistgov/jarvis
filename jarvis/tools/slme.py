@@ -175,7 +175,7 @@ class DielTensor(MSONable):
         if method == "beer-lambert":
             return 1.0 - np.exp(-2.0 * self.absorption_coefficient * thickness)
 
-    def plot(self, part="all"):
+    def plot(self, part="all", variable_range=None):
         """
         Plot the real and/or imaginary part of the dielectric function.
 
@@ -201,6 +201,8 @@ class DielTensor(MSONable):
 
             plt.plot(self.energies, self.dielectric_function.real)
             plt.xlabel("Energy (eV)")
+            if variable_range:
+                plt.xlim(variable_range)
             plt.ylabel(r"$\varepsilon_1$")
             plt.show()
 
