@@ -514,7 +514,7 @@ class SolarCell(MSONable):
         return self._bandgaps
 
     def slme(self, temperature=298.15, thickness=5e-7, interp_mesh=0.001,
-             plot_iv_curve=False):
+             plot_iv_curve=False, cut_abs_below_bandgap=False):
         """
         Calculate the Spectroscopic Limited Maximum Efficiency.
 
@@ -544,6 +544,12 @@ class SolarCell(MSONable):
             bounds_error=False
         )(energy)
 
+        # If the user has requested the onset below the band gap to be removed
+        if cut_abs_below_bandgap:
+            # Set the absorptivity to zero for energies below the *direct* band gap
+            cut_array = np.array([int(el) for el in energy > self.bandgaps[1]])
+            absorptivity *= cut_array
+
         # Load energy-dependent total solar spectrum photon flux (~m^{-2}s^{-1}eV^{-1})
         solar_spectrum = \
             EMRadSpectrum.get_solar_spectrum("am1.5g").get_interp_function()(energy)
@@ -568,7 +574,7 @@ class SolarCell(MSONable):
         while j_sc - j_0 * (np.exp(e * v_oc / (k * temperature)) - 1.0) > 0:
             v_oc += voltage_step
 
-        if plot_iv_curve:
+        if plot_iv_curve: #TODO Add some more details.
             voltage = np.linspace(0, v_oc, 2000)
 
             current = j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
