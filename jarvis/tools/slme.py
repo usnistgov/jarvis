@@ -595,7 +595,8 @@ class SolarCell(MSONable):
 
         return efficiency, v_oc, j_sc, j_0
 
-    def plot_slme_vs_thickness(self, temperature=298.15, add_sq_limit=True):
+    def plot_slme_vs_thickness(self, temperature=298.15, add_sq_limit=True,
+                               cut_abs_below_bandgap=False):
         """
         Make a plot of the calculated SLME for a large range of thickness values,
         for a specific temperature.
@@ -611,7 +612,8 @@ class SolarCell(MSONable):
 
         """
         thickness = 10 ** np.linspace(-9, -3, 40)
-        efficiency = np.array([self.slme(thickness=d, temperature=temperature)[0]
+        efficiency = np.array([self.slme(thickness=d, temperature=temperature,
+                                         cut_abs_below_bandgap=False)[0]
                                for d in thickness])
 
         plt.plot(thickness, efficiency)
