@@ -191,8 +191,11 @@ class DielTensor(MSONable):
             f, (ax1, ax2) = plt.subplots(2, 1, sharex=True)
 
             ax1.plot(self.energies, self.dielectric_function.real)
-            ax1.set(ylabel=r"$\varepsilon_1$")
             ax2.plot(self.energies, self.dielectric_function.imag)
+            if variable_range:
+                ax1.set(xlim=variable_range)
+                ax2.set(xlim=variable_range)
+            ax1.set(ylabel=r"$\varepsilon_1$")
             ax2.set(xlabel="Energy (eV)", ylabel=r"$\varepsilon_2$")
             f.subplots_adjust(hspace=0.1)
             plt.show()
@@ -210,6 +213,8 @@ class DielTensor(MSONable):
 
             plt.plot(self.energies, self.dielectric_function.real)
             plt.xlabel("Energy (eV)")
+            if variable_range:
+                plt.xlim(variable_range)
             plt.ylabel(r"$\varepsilon_1$")
             plt.show()
 
