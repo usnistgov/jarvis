@@ -23,8 +23,8 @@ from pymatgen.electronic_structure.core import Spin
 from xml.etree.ElementTree import ParseError
 
 """
-Module for calculating the SLME metric, including several classes that represent the optical 
-properties of the material.
+Module for calculating the SLME metric, including several classes for representing 
+the optical properties of the material or an electromagnetic absorption spectrum.
 """
 
 # Defining constants for tidy equations
@@ -38,7 +38,8 @@ e = constants.e  # Coulomb
 
 class DielTensor(MSONable):
     """
-    Class that represents the energy-dependent dielectric tensor of a solid state material.
+    Class that represents the energy-dependent dielectric tensor of a solid
+    state material.
 
     """
 
@@ -53,6 +54,7 @@ class DielTensor(MSONable):
                     second/third the real/imaginary part of the dielectric tensor.
                     Each dielectric entry should be a list of ``[xx, yy, zz, xy, xz,
                     yz ]`` dielectric tensor elements.
+                - outcar: The first tuple element
         """
         self._dielectric_data = dielectric_data
         self._energies, self._dielectric_tensor = self.parse_dielectric_data()
@@ -98,7 +100,7 @@ class DielTensor(MSONable):
             None
 
         """
-        pass #TODO
+        pass  # TODO
 
     @property
     def energies(self):
@@ -167,7 +169,7 @@ class DielTensor(MSONable):
 
         Args:
             thickness (float): Thickness of the absorber layer.
-            method (str): Method for calculating the absorptibity.
+            method (str): Method for calculating the absorptivity.
 
         Returns:
 
@@ -252,19 +254,22 @@ class DielTensor(MSONable):
             (DielTensor): Dielectric tensor object from the dielectric data.
 
         """
-        # TODO Make method recognize filetype automatically
-        if fmt == "vasprun":
+        # Start by trying to open the file as a vasprun.xml type file
+        try:
             dielectric_data = Vasprun(filename, parse_potcar_file=False).dielectric
             return cls(dielectric_data)
 
-        elif fmt == "outcar":
-            outcar = Outcar(filename)
-            outcar.read_freq_dielectric()
-            dielectric_data = (outcar.frequencies, outcar.dielectric_tensor_function)
-            return cls(dielectric_data)
+        except ParseError:
+            try:
+                outcar = Outcar(filename)
+                outcar.read_freq_dielectric()
+                dielectric_data = (outcar.frequencies,
+                                   outcar.dielectric_tensor_function)
+                return cls(dielectric_data)
 
-        else:
-            raise IOError("Format not recognized.")
+            except:
+                raise IOError("Format of file not recognized. Note: Currently "
+                              "only vasprun.xml and OUTCAR files are supported.")
 
 
 class EMRadSpectrum(MSONable):
@@ -523,6 +528,7 @@ class SolarCell(MSONable):
             thickness (float): Thickness of the absorber layer.
             interp_mesh (float): Distance between two energy points in the grid
                 used for the interpolation.
+            plot_iv_curve (bool): Defaults to False. If set to true,
 
         Returns:
             (tuple) efficiency, v_oc, j_sc, j_0
@@ -574,7 +580,7 @@ class SolarCell(MSONable):
         while j_sc - j_0 * (np.exp(e * v_oc / (k * temperature)) - 1.0) > 0:
             v_oc += voltage_step
 
-        if plot_iv_curve: #TODO Add some more details.
+        if plot_iv_curve:  # TODO Add some more details.
             voltage = np.linspace(0, v_oc, 2000)
 
             current = j_sc - j_0 * (np.exp(e * voltage / (k * temperature)) - 1.0)
