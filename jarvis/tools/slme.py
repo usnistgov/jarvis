@@ -57,10 +57,11 @@ class DielTensor(MSONable):
                     yz ]`` dielectric tensor elements.
                 - outcar: The first tuple element
         """
-        self._dielectric_data = dielectric_data
-        self._energies, self._dielectric_tensor = self.parse_dielectric_data()
+        self._energies, self._dielectric_tensor = self.parse_dielectric_data(
+            dielectric_data
+        )
 
-    def parse_dielectric_data(self):
+    def parse_dielectric_data(self, dielectric_data):
         """
         Convert the set of - currently exclusively - vasprun formatted dielectric data to
         the corresponding 3x3 symmetric numpy matrices.
@@ -71,27 +72,27 @@ class DielTensor(MSONable):
         """
 
         # Check if the provided dielectric data is in the Vasprun tuple format (len == 3)
-        if type(self._dielectric_data) is tuple and len(self._dielectric_data) == 3:
-            energies = np.array(self._dielectric_data[0])
+        if type(dielectric_data) is tuple and len(dielectric_data) == 3:
+            energies = np.array(dielectric_data[0])
 
             dielectric_tensor = np.array(
                 [to_matrix(*real_data) + 1j * to_matrix(*imag_data)
-                 for real_data, imag_data in zip(self._dielectric_data[1],
-                                                 self._dielectric_data[2])]
+                 for real_data, imag_data in zip(dielectric_data[1],
+                                                 dielectric_data[2])]
             )
 
             return energies, dielectric_tensor
 
         # Check if the provided dielectric data is in the Outcar tuple format (len == 2)
-        elif type(self._dielectric_data) is tuple and len(self._dielectric_data) == 2:
-            energies = self._dielectric_data[0]
-            dielectric_tensor = self._dielectric_data[1]
+        elif type(dielectric_data) is tuple and len(dielectric_data) == 2:
+            energies = dielectric_data[0]
+            dielectric_tensor = dielectric_data[1]
             return energies, dielectric_tensor
 
         else:
             raise ImportError("Format of dielectric data not recognized.")
 
-    def check_dielectric_data(self):
+    def check_dielectric_data(self, dielectric_data):
         """
         Function that performs some tests on the dielectric data, to make sure
         input satisfies some constrains based on what we know about the dielectric
@@ -261,10 +262,11 @@ class DielTensor(MSONable):
         Initialize a DielTensor instance from a file.
 
         Args:
-            filename (str): Path to file from which the dielectric data will be loaded. Can (so
-            far) either be a vasprun.xml or Outcar file.
-            fmt (str): Format of the file that contains the dielectric function data. Is
-            currently either "vasprun" or "outcar".
+            filename (str): Path to file from which the dielectric data will be
+                loaded. Can (so far) either be a vasprun.xml, OUTCAR or json file.
+            fmt (str): Format of the file that contains the dielectric function
+                data. Is optional, as the method can also figure out the format
+                based on the filename.
 
         Returns:
             (DielTensor): Dielectric tensor object from the dielectric data.
@@ -283,10 +285,10 @@ class DielTensor(MSONable):
                                outcar.dielectric_tensor_function)
             return cls(dielectric_data)
 
-        # JSON format: DielTensor directly constructed from MSONable.from_dict()
+        # JSON format: Requires tuple transformation for proper parsing
         if format == "json" or filename.endswith(".json"):
             with zopen(filename, "r") as f:
-                return cls.from_dict(json.loads(f.read()))
+                return cls(tuple(json.loads(f.read())["dielectric_data"]))
 
         else:
             raise IOError("Format of file not recognized. Note: Currently "
