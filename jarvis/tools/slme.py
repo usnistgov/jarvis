@@ -51,7 +51,7 @@ class DielTensor(MSONable):
         Args:
             energies (numpy.array): (N,) array with the energy grid in eV.
             dielectric_tensor (numpy.array): (N, 3, 3) array with the dielectric
-                tensor. lalla
+                tensor.
 
         """
         self._energies = energies
