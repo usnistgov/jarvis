@@ -18,6 +18,7 @@ from scipy.constants import physical_constants, speed_of_light
 from math import pi
 from monty.json import MSONable
 from monty.io import zopen
+from fnmatch import fnmatch
 from pymatgen.io.vasp.outputs import Vasprun, Outcar
 from pymatgen.electronic_structure.core import Spin
 from xml.etree.ElementTree import ParseError
@@ -239,8 +240,23 @@ class DielTensor(MSONable):
             plt.yscale("log")
             plt.show()
 
+    def to(self, filename):
+        """
+        Write the DielTensor to a JSON file.
+
+        Args:
+            filename (str): Path to the file in which the DielTensor should
+                be written.
+
+        Returns:
+            None
+
+        """
+        with zopen(filename, "w") as f:
+            f.write(self.to_json())
+
     @classmethod
-    def from_file(cls, filename, fmt="vasprun"):
+    def from_file(cls, filename, format=None):
         """
         Initialize a DielTensor instance from a file.
 
@@ -254,22 +270,27 @@ class DielTensor(MSONable):
             (DielTensor): Dielectric tensor object from the dielectric data.
 
         """
-        # Start by trying to open the file as a vasprun.xml type file
-        try:
+        # Vasprun format: dielectric data is length 3 tuple
+        if format == "vasprun" or filename.endswith(".xml"):
             dielectric_data = Vasprun(filename, parse_potcar_file=False).dielectric
             return cls(dielectric_data)
 
-        except ParseError:
-            try:
-                outcar = Outcar(filename)
-                outcar.read_freq_dielectric()
-                dielectric_data = (outcar.frequencies,
-                                   outcar.dielectric_tensor_function)
-                return cls(dielectric_data)
+        # OUTCAR format: dielectric data is length 2 tuple
+        elif format == "outcar" or fnmatch(filename, "*OUTCAR*"):
+            outcar = Outcar(filename)
+            outcar.read_freq_dielectric()
+            dielectric_data = (outcar.frequencies,
+                               outcar.dielectric_tensor_function)
+            return cls(dielectric_data)
 
-            except:
-                raise IOError("Format of file not recognized. Note: Currently "
-                              "only vasprun.xml and OUTCAR files are supported.")
+        # JSON format: DielTensor directly constructed from MSONable.from_dict()
+        if format == "json" or filename.endswith(".json"):
+            with zopen(filename, "r") as f:
+                return cls.from_dict(json.loads(f.read()))
+
+        else:
+            raise IOError("Format of file not recognized. Note: Currently "
+                          "only vasprun.xml and OUTCAR files are supported.")
 
 
 class EMRadSpectrum(MSONable):
