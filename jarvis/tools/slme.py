@@ -55,20 +55,24 @@ class DielTensor(MSONable):
                     second/third the real/imaginary part of the dielectric tensor.
                     Each dielectric entry should be a list of ``[xx, yy, zz, xy, xz,
                     yz ]`` dielectric tensor elements.
-                - outcar: The first tuple element
+                - outcar: The first tuple element contains a (N,) numpy.array with
+                    the energies, the second contains a (N, 3, 3) numpy.array with
+                    the dielectric tensor.
         """
         self._energies, self._dielectric_tensor = self.parse_dielectric_data(
             dielectric_data
         )
 
-    def parse_dielectric_data(self, dielectric_data):
+    @staticmethod
+    def parse_dielectric_data(dielectric_data):
         """
-        Convert the set of - currently exclusively - vasprun formatted dielectric data to
-        the corresponding 3x3 symmetric numpy matrices.
+        Convert the set of formatted dielectric data to the corresponding energies
+        and dielectric tensor.
 
         Returns:
-            (np.array), (np.array):  a Nx1 and Nx3 numpy array. The first array contains the
-                energies corresponding to the dielectric tensor in the second.
+            tuple: a tuple with a (N,) and (N,3,3) array. The first array
+                contains the energies corresponding to the dielectric tensor in
+                the second.
         """
 
         # Check if the provided dielectric data is in the Vasprun tuple format (len == 3)
@@ -110,7 +114,7 @@ class DielTensor(MSONable):
         Energy grid for which the dielectric tensor is defined in the original data.
 
         Returns:
-            (numpy.array): (N,) shaped array with the energies of the grid in eV.
+            numpy.array: (N,) shaped array with the energies of the grid in eV.
 
         """
         return self._energies
@@ -118,13 +122,12 @@ class DielTensor(MSONable):
     @property
     def dielectric_tensor(self):
         """
-        Dielectric tensor of the material, calculated for each energy in the energy grid.
+        Dielectric tensor of the material, calculated for each energy in the energy
+        grid.
 
         Returns:
-            (numpy.array): (N, 3, 3) shaped array, where N corresponds to the number
-                of energy
-            grid points, and 3 to the different directions x,y,z.
-
+            numpy.array: (N, 3, 3) shaped array, where N corresponds to the number
+                of energy grid points, and 3 to the different directions x,y,z.
         """
         return self._dielectric_tensor
 
@@ -136,7 +139,7 @@ class DielTensor(MSONable):
         averaging the diagonal elements.
 
         Returns:
-            (np.array):
+            np.array: (N,) shaped array with the dielectric function.
         """
         return np.array([np.mean(np.linalg.eigvals(tensor))
                          for tensor in self.dielectric_tensor])
@@ -152,11 +155,12 @@ class DielTensor(MSONable):
         Notes:
             The absorption coefficient is calculated as
             .. math:: \\alpha = \\frac{2 E}{ \hbar c} k(E)
-            with $k(E)$ the imaginary part of the square root of the dielectric function
+            with $k(E)$ the imaginary part of the square root of the dielectric
+            function
 
         Returns:
-            (np.array): Energy (eV) dependent absorption coefficient in m^{-1}, where the
-                energies correspond to self.energies.
+            np.array: (N,) shaped array with the energy (eV) dependent absorption
+                coefficient in m^{-1}, where the energies correspond to self.energies.
         """
 
         energy = self.energies
@@ -174,18 +178,25 @@ class DielTensor(MSONable):
             method (str): Method for calculating the absorptivity.
 
         Returns:
+            np.array: (N,) shaped array with the energy (eV) dependent absorptivity,
+                where the energies correspond to self.energies.
 
         """
         if method == "beer-lambert":
             return 1.0 - np.exp(-2.0 * self.absorption_coefficient * thickness)
+        else:
+            raise NotImplementedError("Unrecognized method for calculating the "
+                                      "absorptivity.")
 
     def plot(self, part="diel", variable_range=None, diel_range=None):
         """
         Plot the real and/or imaginary part of the dielectric function.
 
         Args:
-            part (str): Which part of the dielectric function to plot, i.e. either "real",
-            "imag" or "all".
+            part (str): Which part of the dielectric function to plot, i.e. either
+                "real", "imag" or "all".
+            variable_range (tuple):
+            diel_range (tuple):
 
         Returns:
             None
@@ -278,7 +289,7 @@ class DielTensor(MSONable):
             f.write(self.to_json())
 
     @classmethod
-    def from_file(cls, filename, format=None):
+    def from_file(cls, filename, fmt=None):
         """
         Initialize a DielTensor instance from a file.
 
@@ -294,12 +305,12 @@ class DielTensor(MSONable):
 
         """
         # Vasprun format: dielectric data is length 3 tuple
-        if format == "vasprun" or filename.endswith(".xml"):
+        if fmt == "vasprun" or filename.endswith(".xml"):
             dielectric_data = Vasprun(filename, parse_potcar_file=False).dielectric
             return cls(dielectric_data)
 
         # OUTCAR format: dielectric data is length 2 tuple
-        elif format == "outcar" or fnmatch(filename, "*OUTCAR*"):
+        elif fmt == "outcar" or fnmatch(filename, "*OUTCAR*"):
             outcar = Outcar(filename)
             outcar.read_freq_dielectric()
             dielectric_data = (outcar.frequencies,
@@ -307,7 +318,7 @@ class DielTensor(MSONable):
             return cls(dielectric_data)
 
         # JSON format
-        if format == "json" or filename.endswith(".json"):
+        if fmt == "json" or filename.endswith(".json"):
             with zopen(filename, "r") as f:
                 return cls.from_dict(json.loads(f.read()))
 
