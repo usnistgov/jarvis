@@ -332,7 +332,7 @@ class EMRadSpectrum(MSONable):
     Class that represents a electromagnetic radiation spectrum, e.g. the solar spectrum
     or the black body spectrum. The standard form we choose to express the spectrum is
     as the energy-dependent photon flux per square meter, where the energy is expressed
-    in electronvolts (Units ~ m^{-2} s^{-1} eV^{-1}).
+    in electron volts (Units ~ m^{-2} s^{-1} eV^{-1}).
 
     """
 
@@ -344,9 +344,9 @@ class EMRadSpectrum(MSONable):
 
         Args:
             energy (numpy.array): Energy grid for which the photon flux is given.
-                Has to be given in electronvolt (eV).
+                Has to be given in electron volt (eV).
             photon_flux (numpy.array): Number of photons per square meter per
-                second per electronvolt. (~ m^{-2} s^{-1} eV^{-1})
+                second per electron volt. (~ m^{-2} s^{-1} eV^{-1})
 
         """
         self._energy = energy
