@@ -6,7 +6,7 @@ from __future__ import unicode_literals, print_function
 # Distributed under the terms of the GNU License
 # Initially forked and (extensively) adjusted from https://github.com/ldwillia/SL3ME
 
-import os, math, cmath, pdb, json
+import os, math, cmath, json
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,7 +16,7 @@ from scipy.interpolate import interp1d
 from scipy.integrate import simps
 from scipy.constants import physical_constants, speed_of_light
 from math import pi
-from monty.json import MSONable, MontyDecoder, MontyEncoder
+from monty.json import MSONable
 from monty.io import zopen
 from fnmatch import fnmatch
 from pymatgen.io.vasp.outputs import Vasprun, Outcar
@@ -57,7 +57,7 @@ class DielTensor(MSONable):
         self._energies = energies
         self._dielectric_tensor = dielectric_tensor
 
-    def check_dielectric_data(self, dielectric_data):
+    def check_dielectric_data(self):
         """
         Function that performs some tests on the dielectric data, to make sure
         input satisfies some constrains based on what we know about the dielectric
