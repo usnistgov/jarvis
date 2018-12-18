@@ -49,15 +49,10 @@ class DielTensor(MSONable):
         Initializes a DielTensor instance from the dielectric data.
 
         Args:
-            #TODO
+            energies (numpy.array): (N,) array with the energy grid in eV.
+            dielectric_tensor (numpy.array): (N, 3, 3) array with the dielectric
+                tensor.
 
-                - vasprun: The first tuple element contains the energies, the
-                    second/third the real/imaginary part of the dielectric tensor.
-                    Each dielectric entry should be a list of ``[xx, yy, zz, xy, xz,
-                    yz ]`` dielectric tensor elements.
-                - outcar: The first tuple element contains a (N,) numpy.array with
-                    the energies, the second contains a (N, 3, 3) numpy.array with
-                    the dielectric tensor.
         """
         self._energies = energies
         self._dielectric_tensor = dielectric_tensor
