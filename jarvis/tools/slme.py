@@ -16,7 +16,7 @@ from scipy.interpolate import interp1d
 from scipy.integrate import simps
 from scipy.constants import physical_constants, speed_of_light
 from math import pi
-from monty.json import MSONable
+from monty.json import MSONable, MontyDecoder, MontyEncoder
 from monty.io import zopen
 from fnmatch import fnmatch
 from pymatgen.io.vasp.outputs import Vasprun, Outcar
@@ -241,6 +241,27 @@ class DielTensor(MSONable):
             plt.yscale("log")
             plt.show()
 
+    def as_dict(self):
+        """
+        Note: stores the real and imaginary part of the dielectric tensor
+        separately, due to issues with JSON serializing complex numbers.
+
+        Returns:
+            dict:
+        """
+        d = dict()
+        d["energies"] = self.energies
+        d["real_diel"] = self.dielectric_tensor.real
+        d["imag_diel"] = self.dielectric_tensor.imag
+        return d
+
+    @classmethod
+    def from_dict(cls, d):
+        energies = np.array(d["energies"]["data"])
+        real_diel = np.array(d["real_diel"]["data"])
+        imag_diel = np.array(d["imag_diel"]["data"])
+        return cls((energies, real_diel + 1j*imag_diel))
+
     def to(self, filename):
         """
         Write the DielTensor to a JSON file.
@@ -285,10 +306,10 @@ class DielTensor(MSONable):
                                outcar.dielectric_tensor_function)
             return cls(dielectric_data)
 
-        # JSON format: Requires tuple transformation for proper parsing
+        # JSON format
         if format == "json" or filename.endswith(".json"):
             with zopen(filename, "r") as f:
-                return cls(tuple(json.loads(f.read())["dielectric_data"]))
+                return cls.from_dict(json.loads(f.read()))
 
         else:
             raise IOError("Format of file not recognized. Note: Currently "
