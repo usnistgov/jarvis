@@ -157,7 +157,7 @@ class DielTensor(MSONable):
             part (str): Which part of the dielectric function to plot, i.e. either
                 "real", "imag" or "all".
             variable_range (tuple):
-            diel_range (tuple):
+            diel_range (tuple): todo
 
         Returns:
             None
@@ -552,7 +552,7 @@ class SolarCell(MSONable):
             plot_iv_curve (bool): Defaults to False. If set to true,
 
         Returns:
-            (tuple) efficiency, v_oc, j_sc, j_0
+            tuple: efficiency, v_oc, j_sc, j_0
 
         """
         # Set up the energy grid for the calculation
