@@ -825,7 +825,7 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
     os.chdir(cwd)
     if optical_prop==True:
        incar_dict = use_incar_dict
-       incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":3*int(nbands),"LOPTICS":'.TRUE.'})
+       incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NBANDS":3*int(nbands),"LOPTICS":'.TRUE.'})
        incar = Incar.from_dict(incar_dict)
        kpoints=Auto_Kpoints(mat=mat_f,length=leng)
        try:
@@ -835,7 +835,7 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
     os.chdir(cwd)
     if mbj_prop==True:
        incar_dict = use_incar_dict
-       incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":3*int(nbands),"LOPTICS":'.TRUE.','METAGGA':'MBJ','ISYM':0,"SIGMA":0.1})
+       incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NBANDS":3*int(nbands),"LOPTICS":'.TRUE.','METAGGA':'MBJ','ISYM':0,"SIGMA":0.1})
        incar = Incar.from_dict(incar_dict)
        kpoints=Auto_Kpoints(mat=mat_f,length=leng)
        try:
