@@ -22,4 +22,3 @@ def test_pmg_surfer():
     s=sample_strt()
     surf=len(pmg_surfer(mat=s,write_file=False))
     assert surf==4
-
