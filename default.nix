@@ -4,6 +4,14 @@ let
   custodian = import ./nix/custodian.nix { inherit pypkgs; };
   fortranformat = import ./nix/fortranformat.nix { inherit pypkgs; };
   phonopy = import ./nix/phonopy.nix { inherit pypkgs; };
+  pymatgen = pypkgs.pymatgen.overrideDerivation ( oldAttrs: rec {
+    version = "2017.8.4";
+    pname = "pymatgen";
+    src = pypkgs.fetchPypi {
+      inherit pname version;
+      sha256 = "0m191gmb0rszyz1qglc1icjxac62dczwyxv6lrzjxjnc18bfqmmg";
+    };
+  });
   ase = pypkgs.ase.overrideDerivation ( oldAttrs: rec {
     version = "3.11.0";
     pname = "ase";
@@ -25,7 +33,7 @@ in
        nixpkgs.pkgs.git
        pypkgs.matplotlib
        pypkgs.tkinter
-       pypkgs.pymatgen
+       pymatgen
        ase
        pypkgs.pybtex
        custodian
