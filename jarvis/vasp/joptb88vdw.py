@@ -747,7 +747,7 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
     mat_f.comment=str(mat.comment)
     if band_str==True:
        incar_dict = use_incar_dict
-       incar_dict.update({"ISPIN":2,"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":int(nbands)+10})
+       incar_dict.update({"ISPIN":2,"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NBANDS":int(nbands)+10})
        incar = Incar.from_dict(incar_dict)
        kpath = HighSymmKpath(mat_f.structure)
        frac_k_points, k_points_labels = kpath.get_kpoints(line_density=20,coords_are_cartesian=False)
