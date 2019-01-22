@@ -1,7 +1,8 @@
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.electronic_structure.core import Spin, OrbitalType
 from pymatgen.io.vasp.outputs import Oszicar,Outcar,Vasprun
-from pymatgen.util.plotting_utils import get_publication_quality_plot
+from pymatgen.util.plotting import pretty_plot as get_publication_quality_plot
+#from pymatgen.util.plotting_utils import get_publication_quality_plot
 import matplotlib,yaml,os
 from pymatgen.core.periodic_table import Element
 from pymatgen.io.vasp.inputs import Potcar,Incar, Kpoints
