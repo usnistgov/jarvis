@@ -12,4 +12,5 @@ install:
 before_script:
   - python setup.py --quiet develop
 
-
+script:
+  - pytest
