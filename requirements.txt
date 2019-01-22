@@ -1,4 +1,4 @@
-pymatgen==2017.8.4
+pymatgen>=2018.12.12
 ase==3.11.0
 pybtex==0.21
 fortranformat==0.2.5
