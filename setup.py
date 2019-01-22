@@ -11,8 +11,8 @@ setup(
     install_requires = [
         "numpy>=1.15.1",
         "scipy>=1.1.0",
-        "pymatgen==2017.8.4",
-        "custodian==2018.8.10",
+        "pymatgen",
+        "custodian",
         "ase==3.11.0",
         "interruptingcow",
         "pybtex==0.21",
