@@ -5,7 +5,7 @@ let
   fortranformat = import ./nix/fortranformat.nix { inherit pypkgs; };
   phonopy = import ./nix/phonopy.nix { inherit pypkgs; };
   pymatgen = pypkgs.pymatgen.overrideDerivation ( oldAttrs: rec {
-    version = "2017.8.4";
+    version = "2019.1.13";
     pname = "pymatgen";
     src = pypkgs.fetchPypi {
       inherit pname version;
