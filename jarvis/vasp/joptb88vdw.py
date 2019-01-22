@@ -757,8 +757,8 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
            print ("running MAIN-BAND")
            kpoints=mpvis.get_kpoints(mat_f.structure)
            en2B,contcB=run_job(mat=mat_f,incar=incar,kpoints=kpoints,jobname=str('MAIN-BAND')+str('-')+str(mat_f.comment))  
-          # kpoints=mpvis.get_kpoints(mat_f.structure)
-          # en2B,contcB=run_job(mat=mat_f,incar=incar,kpoints=kpoints,jobname=str('MAIN-BAND')+str('-')+str(mat_f.comment))  
+          #  kpoints=mpvis.get_kpoints(mat_f.structure)
+          #  en2B,contcB=run_job(mat=mat_f,incar=incar,kpoints=kpoints,jobname=str('MAIN-BAND')+str('-')+str(mat_f.comment))  
        except:
            print ("No band str calc.")
            if str(os.getcwd)!=cwd:
