@@ -114,7 +114,7 @@ def smooth_kde(x,y):
     kde=denn(xs)
     return kde
 
-def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,std_tol=0.25,filename='prdf.png'):
+def get_prdf(s=None,cutoff=10.0,intvl=0.1,plot_prdf=False,std_tol=0.25,filename='prdf.png'):
     """
     Get partial radial distribution function
 
@@ -158,8 +158,9 @@ def get_prdf(s=None,comb='',cutoff=10.0,intvl=0.1,plot_prdf=False,std_tol=0.25,f
      plt.ylabel('g(r)')
      plt.ylim(ymin=0)
      plt.tight_layout()
-     plt.savefig(filename)
-     plt.close()
+     return plt
+     #plt.savefig(filename)
+     #plt.close()
 
     cut_off={}
 
