@@ -63,10 +63,13 @@ Jupyter notebooks
 - JARVIS-DFT:
 
       https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_dft-explore.ipynb
+      
 
 - JARVIS-ML:
 
       https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_ml-train.ipynb
+      
+- See more in the plot-gallery
 
 
 How to cite JARVIS
@@ -85,7 +88,8 @@ How to cite JARVIS
 
       https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107
 
- - JARVIS-ML:
+
+- JARVIS-ML:
 
       https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 
@@ -125,7 +129,7 @@ Link to presentation slides
 https://www.slideshare.net/KAMALCHOUDHARY4
 
 
-Gallery
+Plot-gallery with additional jupyter notebooks
 -----------------
 .. class:: center
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF.png
