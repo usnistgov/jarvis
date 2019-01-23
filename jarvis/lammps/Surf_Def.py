@@ -11,34 +11,17 @@ See DOI: 10.1016/j.cpc.2015.03.015
 import argparse
 import os
 from pymatgen.core.structure import Structure
-#from pymatgen.core.periodic_table import Element
 from pymatgen.io.vasp import Poscar
 from pymatgen.analysis.defects.generators import VacancyGenerator
-
-#from pymatgen.analysis.defects.core import Vacancy, Interstitial
-#from pymatgen.analysis.defects.point_defects import ValenceIonicRadiusEvaluator,Vacancy,Interstitial
-#from pymatgen.analysis.local_env import ValenceIonicRadiusEvaluator
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 import glob
 from pymatgen.io.vasp import Poscar
-#from monty.serialization import loadfn, dumpfn
-#from monty.json import MontyEncoder, MontyDecoder
-#from pymatgen.analysis.defects.point_defects import Vacancy
 from pymatgen.core.surface import Slab, SlabGenerator
 from pymatgen.core.structure import Structure
 from pymatgen.io.ase import AseAtomsAdaptor
 from ase.lattice.surface import surface
 from pymatgen.core.surface import  Slab, SlabGenerator, generate_all_slabs,get_symmetrically_distinct_miller_indices
 from pymatgen.io.vasp import Kpoints
-#from pymatgen.io.vasp import Vasprun
-#from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-#from pymatgen.analysis.defects.dilute_solution_model import \
-#            compute_defect_density, solute_defect_density
-#try:
-#  from pymatgen.analysis.defects.point_defects import Vacancy,Interstitial,ValenceIonicRadiusEvaluator
-#except:
-#  from pymatgen.analysis.defects.core import Vacancy,Interstitial
-#  pass
 
 try: 
   from pymatgen.ext.matproj import MPRester
@@ -80,22 +63,11 @@ def vac_antisite_def_struct_gen(c_size=15,mpid='',struct=None,write_file=True):
     tmp.make_supercell(sc_scale)
     sc_tmp=tmp #Poscar(tmp).structure .make_supercell(list(sc_scale))
     scs = list(VacancyGenerator(struct))
-    #print ('tmp=',sc_tmp,sc_scale)
     supercell=Poscar(sc_tmp)
     supercell.comment=str('bulk')+str('@')+str('cellmax')+str(cellmax)
     def_str.append(supercell)
     if write_file==True:
          supercell.write_file('POSCAR-'+str('bulk')+str(".vasp"))
-
-    #struct_valrad_eval = ValenceIonicRadiusEvaluator(struct)
-    #val = struct_valrad_eval.valences
-    #rad = struct_valrad_eval.radii
-    #struct_val = val
-    #struct_rad = rad
-
-    #vac = Vacancy(struct, {}, {})
-    #scs = vac.make_supercells_with_defects(sc_scale)
-
 
     for i in range(len(scs)):
         sc = scs[i].generate_defect_structure(sc_scale)
@@ -136,7 +108,6 @@ def pmg_surfer(mpid='',vacuum=15,mat=None,max_index=1,min_slab_size=15,write_fil
     mat_cvn = sg_mat.get_conventional_standard_structure()
     mat_cvn.sort()
     indices = get_symmetrically_distinct_miller_indices(mat_cvn, max_index)
-    #ase_atoms = AseAtomsAdaptor().get_atoms(mat_cvn)
 
     structures=[]
     pos=Poscar(mat_cvn)
@@ -151,8 +122,6 @@ def pmg_surfer(mpid='',vacuum=15,mat=None,max_index=1,min_slab_size=15,write_fil
         slab=SlabGenerator(initial_structure = mat_cvn, miller_index=i, min_slab_size= min_slab_size, min_vacuum_size=vacuum , lll_reduce=False, center_slab=True, primitive=False).get_slab()
         normal_slab = slab.get_orthogonal_c_slab()
         slab_pymatgen = Poscar(normal_slab).structure
-        #ase_slab.center(vacuum=vacuum, axis=2)
-        #slab_pymatgen = AseAtomsAdaptor().get_structure(ase_slab)
         xy_size=min_slab_size
         dim1=int((float(xy_size)/float( max(abs(slab_pymatgen.lattice.matrix[0])))))+1
         dim2=int(float(xy_size)/float( max(abs(slab_pymatgen.lattice.matrix[1]))))+1
