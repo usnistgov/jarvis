@@ -242,7 +242,12 @@ def plot_enc_convergence(directory='../vasp/examples/SiOptb88/',plot=False,filen
     return plt,convg_encut
 
 
-def plot_kp_convergence(directory='../vasp/examples/SiOptb88/',plot=False,filename='.'):
+
+
+
+def IP_optics(vrun='',filename='.',extra='',plot=False):
+    return plt,k_convg
+t_kp_convergence(directory='../vasp/examples/SiOptb88/',plot=False,filename='.'):
     """
     Plot convergence for k-points data
     Works only if jobs run through jarvis-tools framework
@@ -292,7 +297,7 @@ def plot_kp_convergence(directory='../vasp/examples/SiOptb88/',plot=False,filena
     #print "xs,ys=",xs,ys
     #print "xs1,ys1=",xs1,ys1
     left, bottom, width, height = [0.5, 0.5, 0.35, 0.35]
-    plt = get_publication_quality_plot(14, 10)
+    #plt = get_publication_quality_plot(14, 10)
     fig, ax1 = plt.subplots()
     plt.xlabel('Increment in K point',fontsize=20)
     plt.ylabel('Energy (eV)',fontsize=20)
@@ -319,10 +324,6 @@ def plot_kp_convergence(directory='../vasp/examples/SiOptb88/',plot=False,filena
       plt.savefig(filename)
       plt.close()
     return plt,k_convg
-
-
-
-def IP_optics(vrun='',filename='.',extra='',plot=False):
     """
     Optoelectronic properties derived from dielectric function 
 
