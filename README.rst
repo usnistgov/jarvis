@@ -1,12 +1,12 @@
 .. class:: center
-   .. image:: https://circleci.com/gh/usnistgov/jarvis.svg?style=shield
-          :target: https://circleci.com/gh/usnistgov/jarvis
+.. image:: https://circleci.com/gh/usnistgov/jarvis.svg?style=shield
+    :target: https://circleci.com/gh/usnistgov/jarvis
 .. image:: https://travis-ci.org/usnistgov/jarvis.svg?branch=master
-       :target: https://travis-ci.org/usnistgov/jarvis
+    :target: https://travis-ci.org/usnistgov/jarvis
 .. image:: https://ci.appveyor.com/api/projects/status/d8na8vyfm7ulya9p/branch/master?svg=true
-       :target: https://ci.appveyor.com/project/knc6/jarvis-63tl9
+    :target: https://ci.appveyor.com/project/knc6/jarvis-63tl9
 .. image:: https://api.codacy.com/project/badge/Grade/be8fa78b1c0a49c280415ce061163e77
-       :target: https://www.codacy.com/app/knc6/jarvisutm_source=github.com&amp;utm_medium=referral&amp;utm_content=usnistgov/jarvis&amp;utm_campaign=Badge_Grade
+    :target: https://www.codacy.com/app/knc6/jarvisutm_source=github.com&amp;utm_medium=referral&amp;utm_content=usnistgov/jarvis&amp;utm_campaign=Badge_Grade
 
 
 
@@ -128,33 +128,33 @@ https://www.slideshare.net/KAMALCHOUDHARY4
 Gallery
 -----------------
 .. class:: center
-   .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF.png
-      :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/ADF-a.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/ADF-b.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/DDF.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/bandstr.jpg
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Dos.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
 
     
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/BoltzTrap.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Boltztrap.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Boltztrap.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/kp_converg.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/en_converg.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
