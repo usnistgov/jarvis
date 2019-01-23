@@ -63,10 +63,13 @@ Jupyter notebooks
 - JARVIS-DFT:
 
       https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_dft-explore.ipynb
+      
 
 - JARVIS-ML:
 
       https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_ml-train.ipynb
+      
+- See more in the plot-gallery
 
 
 How to cite JARVIS
@@ -85,7 +88,8 @@ How to cite JARVIS
 
       https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107
 
- - JARVIS-ML:
+
+- JARVIS-ML:
 
       https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 
@@ -123,3 +127,38 @@ Lucas Hale, Andrew Reid, Marcus Newrock (NIST)
 Link to presentation slides
 -----------------
 https://www.slideshare.net/KAMALCHOUDHARY4
+
+
+Plot-gallery with additional jupyter notebooks
+-----------------
+.. class:: center
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/ADF-a.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/ADF-b.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/DDF.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/bandstr.jpg
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
+
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Dos.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
+
+    
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.ipynb
+
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/BoltzTrap.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Boltztrap.ipynb
+
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/kp_converg.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
+
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/en_converg.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
