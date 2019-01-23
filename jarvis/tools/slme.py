@@ -156,8 +156,10 @@ class DielTensor(MSONable):
         Args:
             part (str): Which part of the dielectric function to plot, i.e. either
                 "real", "imag" or "all".
-            variable_range (tuple):
-            diel_range (tuple): todo
+            variable_range (tuple): Lower and upper limits of the variable which
+                the requested function is plotted against.
+            diel_range (tuple): Lower and upper limits of the range of the requested
+                function in the plotted figure.
 
         Returns:
             None
@@ -219,7 +221,7 @@ class DielTensor(MSONable):
         separately, due to issues with JSON serializing complex numbers.
 
         Returns:
-            dict:
+            dict: Dictionary representation of the DielTensor instance.
         """
         d = dict()
         d["energies"] = self.energies
@@ -229,6 +231,16 @@ class DielTensor(MSONable):
 
     @classmethod
     def from_dict(cls, d):
+        """
+        Initializes a DielTensor object from a dictionary.
+
+        Args:
+            d (dict): Dictionary from which the DielTensor should be initialized.
+
+        Returns:
+            DielTensor
+
+        """
         energies = np.array(d["energies"]["data"])
         real_diel = np.array(d["real_diel"]["data"])
         imag_diel = np.array(d["imag_diel"]["data"])
@@ -262,7 +274,7 @@ class DielTensor(MSONable):
                 based on the filename.
 
         Returns:
-            (DielTensor): Dielectric tensor object from the dielectric data.
+            DielTensor: Dielectric tensor object from the dielectric data.
 
         """
         # Vasprun format: dielectric data is length 3 tuple
@@ -324,7 +336,7 @@ class EMRadSpectrum(MSONable):
         Energy grid for which the electromagnetic radiation spectrum is defined.
 
         Returns:
-            (numpy.array)
+            numpy.array: (N,) shaped array
 
         """
         return self._energy
@@ -335,7 +347,7 @@ class EMRadSpectrum(MSONable):
         Electromagnetic radiation spectrum expressed in photon flux.
 
         Returns:
-            (numpy.array)
+            numpy.array: (N,) shaped array
 
         """
         return self._photon_flux
@@ -345,7 +357,7 @@ class EMRadSpectrum(MSONable):
         Get the total power density in W m^{-2}.
 
         Returns:
-            (float)
+            float: Total calculated power density.
 
         """
         return simps(self.photon_flux * self.energy * e, self.energy)
@@ -359,10 +371,14 @@ class EMRadSpectrum(MSONable):
         spectrum.
 
         Args:
-            variable (str):
-            spectrum_units (str):
+            variable (str): Choice of the variable which the EMRadSpectrum is
+                dependent upon. Currently only allows the default: "energy".
+            spectrum_units (str): Units in which the spectrum should be expressed.
+                Currently only allows the default: "flux", which corresponds to
+                the photon flux.
 
         Returns:
+            scipy.interpolate.interpolate.interp1d
 
         """
         # TODO complete for other variables and spectrum choices
@@ -394,7 +410,7 @@ class EMRadSpectrum(MSONable):
                 be loaded.
 
         Returns:
-            (EMRadSpectrum)
+            EMRadSpectrum
 
         """
         if filename.endswith(".json"):
@@ -406,16 +422,21 @@ class EMRadSpectrum(MSONable):
     @classmethod
     def from_data(cls, data, variable="energy", spectrum_units="flux"):
         """
+        Initialize an EMRadSpectrum from a tuple that contains the data of the
+        spectrum.
 
         Args:
             data (tuple): Tuple with length 2 that contains the data from which to
                 construct the radiation spectrum. data[0] must contain a (N,) shaped
                 numpy.array with the grid of the variable (e.g. energy, wavelength),
                 data[1] should contain the spectral distribution.
-            variable (str):
-            spectrum_units (str):
+            variable (str): Variable which the spectrum is dependent on in the data
+                that is provided. Currently allows "energy" or "wavelength".
+            spectrum_units (str): Units in which the spectrum is expressed. Currently
+                has two options: "flux" or "irradiance".
 
         Returns:
+            EMRadSpectrum
 
         """
         if variable == "energy":
@@ -443,11 +464,15 @@ class EMRadSpectrum(MSONable):
     @classmethod
     def get_solar_spectrum(cls, spectrum="am1.5g"):
         """
+        Load a solar spectrum based on a data file that is stored in the jarvis
+        package.
 
         Args:
-            spectrum:
+            spectrum: Chosen spectrum to load. Currently, only the Air Mass 1.5
+                global tilt spectrum ("am1.5g") is available.
 
         Returns:
+            EMRadSpectrum:
 
         """
 
@@ -479,7 +504,7 @@ class EMRadSpectrum(MSONable):
                 Currently only support expressing the black body as a photon flux.
 
         Returns:
-            (EMRadSpectrum)
+            EMRadSpectrum
 
         """
         if variable == "energy":
@@ -525,7 +550,7 @@ class SolarCell(MSONable):
                 allowed band gap of the absorber material, in that order.
 
         Returns:
-            (SolarCell)
+            SolarCell
 
         """
         self._dieltensor = dieltensor
@@ -667,8 +692,11 @@ class SolarCell(MSONable):
         """
         Loads a SolarCell instance from a vasprun.xml. # TODO extend
 
+        Args:
+            filename (str): vasprum.xml file from which to load the SolarCell object.
+
         Returns:
-            (SolarCell)
+            SolarCell
 
         """
         try:
@@ -700,7 +728,7 @@ class SolarCell(MSONable):
             temperature (float): Temperature of the solar cell.
 
         Returns:
-            (float): The calculated maximum power.
+            float: The calculated maximum power.
 
         """
 
@@ -725,6 +753,18 @@ class SolarCell(MSONable):
 
     @staticmethod
     def calculate_slme_from_vasprun(filename, temperature=298.15, thickness=5e-7):
+        """
+        Calculate the SLME straight from a vasprun.xml file.
+
+        Args:
+            filename (str):
+            temperature (float):
+            thickness (float):
+
+        Returns:
+            float: Calculated SLME.
+
+        """
         return SolarCell.from_file(filename).slme(temperature, thickness)
 
     def calculate_bandgap_sq(self, temperature=298.15, fr=1.0, interp_mesh=0.001):
