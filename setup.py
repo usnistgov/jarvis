@@ -7,7 +7,7 @@ JARVIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 setup(
     name="jarvis-tools",
-    version="2019.01.22",
+    version="2019.01.23",
     install_requires = [
         "numpy>=1.15.1",
         "scipy>=1.1.0",
