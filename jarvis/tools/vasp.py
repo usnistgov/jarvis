@@ -292,7 +292,7 @@ def plot_kp_convergence(directory='../vasp/examples/SiOptb88/',plot=False,filena
     #print "xs,ys=",xs,ys
     #print "xs1,ys1=",xs1,ys1
     left, bottom, width, height = [0.5, 0.5, 0.35, 0.35]
-    #plt = get_publication_quality_plot(14, 10)
+    plt = get_publication_quality_plot(14, 10)
     fig, ax1 = plt.subplots()
     plt.xlabel('Increment in K point',fontsize=20)
     plt.ylabel('Energy (eV)',fontsize=20)
