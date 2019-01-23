@@ -137,6 +137,21 @@ def check_polar(file):
        polar=False
     return polar
 
+def main_outcar(fil=''):
+  cnvg=False
+  try:
+   f=open(fil,'r')
+   lines=f.read().splitlines()
+   f.close()
+   cnvg=False
+   for i in lines:
+     if 'General timing and accounting informations for this job' in i:
+        cnvg=True
+   #print fil,cnvg
+  except:
+   pass
+  return cnvg
+
 
 def get_lowest_en_from_mp(formula, MAPI_KEY="", all_structs=False):
     """
@@ -234,176 +249,210 @@ def run_job(mat=None,incar=None,kpoints=None,jobname='',copy_file=[]):
                 ase_atoms = AseAtomsAdaptor().get_atoms(mat.structure)
                 COM=ase_atoms.get_center_of_mass(scaled=True)
                 print ("COM=",COM)
+                print ('Found polar surface, will be setting dipole corrections')
                 incar.update({"LDIPOL": '.TRUE.',"IDIPOL":3,"ISYM": 0,"DIPOL":str(COM[0])+str(" ")+str(COM[2])+str(" ")+str(COM[2])})
                 print ("Polar surface encountered in run_job",mat.comment)
        except:
             pass
     wait=False
     json_file=str(jobname)+str('.json')
-    print ('json should be=',json_file,run_file,os.getcwd())
-    if wait==False:
-            print ("I AM HERE 2")
-            with open(pot_yaml, 'r') as f:
-                 doc = yaml.load(f)
-                 pots=doc['POTCAR']
-            new_symb=[]
-            for el in mat.site_symbols:
-               new_symb.append(pots[el])
-            #potcar = Potcar(symbols=new_symb,functional=functional)
-            try:
-                potcar = Potcar(symbols=new_symb,functional=functional)
-            except:
-                 print ('No POTCAR')
-                 pass
-            if not os.path.exists(run_dir):
-                   os.makedirs(jobname)
-                   os.chdir(jobname)
-                   incar.write_file("INCAR")
-                   potcar.write_file("POTCAR")
-                   kpoints.write_file("KPOINTS")
-                   mat.write_file("POSCAR")
-                   for i in copy_file:
-                      print ('copying',i)
-                      shutil.copy2(i,'./')
-                   #f=open('job.out','w')
-                   cmd=str('python  first_cust.py >ouuu')+'\n' 
-                   cust_file=open("first_cust.py","w")
-                   cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('import os,shutil')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('from custodian.vasp.validators import VasprunXMLValidator')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('from custodian.custodian import Custodian')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('inc=Incar.from_file("INCAR")')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
-                   cust_file.write(cline)
-                   cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
-                   cust_file.write(cline)
-                   cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
-                   cust_file.write(cline)
-                   cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
-                   if mat.comment.startswith('Surf'):
-                      cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
-                   if 'SOC' in jobname:
-                      cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
-                   cust_file.write(cline)
-                   cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('validators = [VasprunXMLValidator()]')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
-                   cust_file.write(cline)
-                   cline=str('c.run()')+'\n' 
-                   cust_file.write(cline)
-                   cust_file.close()
-                   print ("I AM HERE 2")
-                   os.system(cmd)
-                   try:
-                      wait=Vasprun("vasprun.xml").converged
-                   except:
-                           pass 
-                   print ("I AM HERE 3",os.getcwd(),wait)
+    print ('json should be here=',str(os.getcwd())+str('/')+str(json_file))
+    #print ('json should be=',json_file,run_file,os.getcwd())
+    if os.path.exists(str(os.getcwd())+str('/')+str(json_file)):
+     try:
+       data_cal=loadfn(str(os.getcwd())+str('/')+str(json_file),cls=MontyDecoder)
+       tmp_outcar=str(os.getcwd())+str('/')+str(json_file.split('.json')[0])+str('/OUTCAR')
+       print ('outcar is',tmp_outcar)
+       wait=main_outcar(tmp_outcar) #True
+       print ('outcar status',wait)
+       if wait==True:
+         f_energy=data_cal[0]['final_energy']
+         contcar=str(os.getcwd())+str('/')+str(json_file.split('.json')[0])+str('/CONTCAR')
+         return f_energy,contcar
+     except:
+        pass
+    while wait==False:
+       print ("Setting up POTCAR")
+       with open(pot_yaml, 'r') as f:
+            doc = yaml.load(f)
+            pots=doc['POTCAR']
+       new_symb=[]
+       for el in mat.site_symbols:
+          new_symb.append(pots[el])
+       #potcar = Potcar(symbols=new_symb,functional=functional)
+       try:
+           potcar = Potcar(symbols=new_symb,functional=functional)
+       except:
+            print ('JARVIS-ERROR: Could not set POTCAR, check POTCAR yaml file and VASP_PSP_DIR')
+            pass
+       if not os.path.exists(run_dir):
+         print ('Starting new job')
+         os.makedirs(run_dir)
+         os.chdir(run_dir)
+         incar.write_file("INCAR")
+         potcar.write_file("POTCAR")
+         kpoints.write_file("KPOINTS")
+         mat.write_file("POSCAR")
+         for i in copy_file:
+            print ('copying',i)
+            shutil.copy2(i,'./')
+         #f=open('job.out','w')
+         cmd=str('python  first_cust.py >out_dat')+'\n' 
+         cust_file=open("first_cust.py","w")
+         cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
+         cust_file.write(cline)
+         cline=str('import os,shutil')+'\n' 
+         cust_file.write(cline)
+         cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
+         cust_file.write(cline)
+         cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
+         cust_file.write(cline)
+         cline=str('from custodian.vasp.validators import VaspFilesValidator,VasprunXMLValidator')+'\n' 
+         cust_file.write(cline)
+         cline=str('from custodian.custodian import Custodian')+'\n' 
+         cust_file.write(cline)
+         cline=str('inc=Incar.from_file("INCAR")')+'\n' 
+         cust_file.write(cline)
+         cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
+         cust_file.write(cline)
+         cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
+         cust_file.write(cline)
+         cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
+         cust_file.write(cline)
+         cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
+         cust_file.write(cline)
+         cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
+         cust_file.write(cline)
+         cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
+         if mat.comment.startswith('Surf'):
+            cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
+         if 'SOC' in jobname:
+            cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
+         cust_file.write(cline)
+         cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
+         cust_file.write(cline)
+         cline=str('validators = [VasprunXMLValidator()]')+'\n' 
+         #cline=str('validators = [VaspFilesValidator()]')+'\n' 
+         cust_file.write(cline)
+         cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
+         cust_file.write(cline)
+         cline=str('c.run()')+'\n' 
+         cust_file.write(cline)
+         cust_file.close()
+         print ("I AM HERE 2")
+         os.system(cmd)
+         if os.path.isfile('OUTCAR'):
+          try:
+            wait=main_outcar('OUTCAR') #Vasprun("vasprun.xml").converged
+          except:
+                 pass 
+         print ("End of the first loop",os.getcwd(),wait)
 
 
-            else :
-                  os.chdir(jobname)
-                  wait=False
-                  if os.path.isfile('vasprun.xml'):
-                     try:
-                         wait=Vasprun("vasprun.xml").converged
-                     except:
-                          pass
-                  print ("wait os is here=",wait)
-                  if wait==False:
-                      incar.write_file("INCAR")
-                      potcar.write_file("POTCAR")
-                      kpoints.write_file("KPOINTS")
-                      mat.write_file("POSCAR")
-                      try:
-                         print ('FOUND OLD CONTCAR in', os.getcwd())
-                         old_contcar=Poscar.from_file('CONTCAR')
-                         old_contcar.write_file('POSCAR')
-                      except:
-                           pass           
-                      for i in copy_file:
-                         print ('copying',i)
-                         shutil.copy2(i,'./')
-            
-                      
-                      cmd=str('python  first_cust.py >ouuu')+'\n' 
-                      cust_file=open("first_cust.py","w")
-                      cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('import os,shutil')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('from custodian.vasp.validators import VasprunXMLValidator')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('from custodian.custodian import Custodian')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('inc=Incar.from_file("INCAR")')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
-                      cust_file.write(cline)
-                      cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
-                      cust_file.write(cline)
-                      cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
-                      cust_file.write(cline)
-                      cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
-                      if mat.comment.startswith('Surf'):
-                         cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
-                      if 'SOC' in jobname:
-                         cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
-                      cust_file.write(cline)
-                      cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('validators = [VasprunXMLValidator()]')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
-                      cust_file.write(cline)
-                      cline=str('c.run()')+'\n' 
-                      cust_file.write(cline)
-                      cust_file.close()
-                      os.system(cmd)
-            f_energy='na'
-            enp='na'
-            contcar=str(os.getcwd())+str('/')+str('CONTCAR')
-            try:
-                oszicar = Oszicar("OSZICAR")
-                f_energy=float(oszicar.final_energy)
-                enp=float(oszicar.final_energy)/float(final_str.composition.num_atoms)
-            except:
-                  print ('Error in OSZICAR file during re-run jpb')
-                  pass
-            final_str=Structure.from_file(contcar)
-            natoms=final_str.composition.num_atoms
-            os.chdir('../')
-            data_cal=[]
-            data_cal.append({'jobname':jobname,'poscar_initial':mat.as_dict(),'poscar_final':final_str.as_dict(),'incar':incar.as_dict(),'kpoints':kpoints.as_dict(),'final_energy':(f_energy),'contcar':final_str.as_dict()})
-            json_file=str(jobname)+str('.json')
-            f_json=open(json_file,'w')
-            f_json.write(json.dumps(data_cal,indent=4,cls=MontyEncoder))
-            f_json.close()
-    print ('I AM HERE',contcar)
-    return f_energy,contcar
+       else :
+        print ('Jobs seens to have started before')
+        os.chdir(run_dir)
+        wait=False
+        if os.path.isfile('OUTCAR'):
+           try:
+               wait=main_outcar('OUTCAR') #Vasprun("vasprun.xml").converged
+               #wait=Vasprun("vasprun.xml").converged
+           except:
+                pass
+        print ("Tried to find OUTCAR, wait is=",wait)
+        if wait==False:
+          incar.write_file("INCAR")
+          kpoints.write_file("KPOINTS")
+          mat.write_file("POSCAR")
+          try:
+             potcar.write_file("POTCAR")
+             print ('FOUND OLD CONTCAR in', os.getcwd())
+             old_contcar=Poscar.from_file('CONTCAR')
+             #old_contcar.write_file('POSCAR')
+             copy_cmd=str('cp CONTCAR POSCAR')
+             print ('copy_cmd=',copy_cmd)
+             if 'ELAST' not in jobname:
+                 #Because in ELASTIC calculations structures are deformed
+                 os.system(copy_cmd)
+             #time.sleep(3)
+          except:
+               pass           
+          for i in copy_file:
+             print ('copying',i)
+             shutil.copy2(i,'./')
+       
+          
+          cmd=str('python  first_cust.py >out_dat')+'\n' 
+          cust_file=open("first_cust.py","w")
+          cline=str('from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints')+'\n' 
+          cust_file.write(cline)
+          cline=str('import os,shutil')+'\n' 
+          cust_file.write(cline)
+          cline=str('from custodian.vasp.jobs import VaspJob')+'\n' 
+          cust_file.write(cline)
+          cline=str('from custodian.vasp.handlers import VaspErrorHandler, UnconvergedErrorHandler,MeshSymmetryErrorHandler, NonConvergingErrorHandler, PotimErrorHandler')+'\n' 
+          cust_file.write(cline)
+          cline=str('from custodian.vasp.validators import VaspFilesValidator,VasprunXMLValidator')+'\n' 
+          cust_file.write(cline)
+          cline=str('from custodian.custodian import Custodian')+'\n' 
+          cust_file.write(cline)
+          cline=str('inc=Incar.from_file("INCAR")')+'\n' 
+          cust_file.write(cline)
+          cline=str('pot=Potcar.from_file("POTCAR")')+'\n' 
+          cust_file.write(cline)
+          cline=str('pos=Poscar.from_file("POSCAR")')+'\n' 
+          cust_file.write(cline)
+          cline=str('kp=Kpoints.from_file("KPOINTS")')+'\n' 
+          cust_file.write(cline)
+          cline=str("shutil.copy2('")+vdw_dat+str("','./')")+'\n'
+          cust_file.write(cline)
+          cline=str('vinput = VaspInput.from_directory(".")')+'\n' 
+          cust_file.write(cline)
+          cline=str("job=VaspJob(['mpirun', '")+str(main_exe)+str("'], final=False, backup=False)")+'\n' 
+          if mat.comment.startswith('Surf'):
+             cline=str("job=VaspJob(['mpirun',  '")+str(surf_exe)+str("'], final=False, backup=False)")+'\n' 
+          if 'SOC' in jobname:
+             cline=str("job=VaspJob(['mpirun',  '")+str(soc_exe)+str("'], final=False, backup=False)")+'\n' 
+          cust_file.write(cline)
+          cline=str('handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandler(), NonConvergingErrorHandler(),PotimErrorHandler()]')+'\n' 
+          cust_file.write(cline)
+          #cline=str('validators = [VaspFilesValidator()]')+'\n' 
+          cline=str('validators = [VasprunXMLValidator()]')+'\n' 
+          cust_file.write(cline)
+          cline=str('c = Custodian(handlers, [job],max_errors=5,validators=validators)')+'\n' 
+          cust_file.write(cline)
+          cline=str('c.run()')+'\n' 
+          cust_file.write(cline)
+          cust_file.close()
+          os.system(cmd)
+          if os.path.isfile('OUTCAR'):
+           try:
+             wait=main_outcar('OUTCAR') #Vasprun("vasprun.xml").converged
+             #wait=Vasprun("vasprun.xml").converged
+           except:
+              pass
+    f_energy='na'
+    enp='na'
+    contcar=str(os.getcwd())+str('/')+str('CONTCAR')
+    final_str=Structure.from_file(contcar)
+    try:
+        oszicar = Oszicar("OSZICAR")
+        f_energy=float(oszicar.final_energy)
+        enp=float(oszicar.final_energy)/float(final_str.composition.num_atoms)
+    except:
+          print ('Error in OSZICAR file during re-run jpb')
+          pass
+    natoms=final_str.composition.num_atoms
+    os.chdir('../')
+    if wait==True:
+      data_cal=[]
+      data_cal.append({'jobname':jobname,'poscar_initial':mat.as_dict(),'poscar_final':final_str.as_dict(),'incar':incar.as_dict(),'kpoints':kpoints.as_dict(),'final_energy':(f_energy),'contcar':final_str.as_dict()})
+      json_file=str(jobname)+str('.json')
+      f_json=open(json_file,'w')
+      f_json.write(json.dumps(data_cal,indent=4,cls=MontyEncoder))
+      f_json.close()
+      print ('Wrote json file',contcar)
+      return f_energy,contcar
 
 
 
@@ -698,7 +747,7 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
     mat_f.comment=str(mat.comment)
     if band_str==True:
        incar_dict = use_incar_dict
-       incar_dict.update({"ISPIN":2,"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":int(nbands)+10})
+       incar_dict.update({"ISPIN":2,"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NBANDS":int(nbands)+10})
        incar = Incar.from_dict(incar_dict)
        kpath = HighSymmKpath(mat_f.structure)
        frac_k_points, k_points_labels = kpath.get_kpoints(line_density=20,coords_are_cartesian=False)
@@ -776,7 +825,7 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
     os.chdir(cwd)
     if optical_prop==True:
        incar_dict = use_incar_dict
-       incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":3*int(nbands),"LOPTICS":'.TRUE.'})
+       incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NBANDS":3*int(nbands),"LOPTICS":'.TRUE.'})
        incar = Incar.from_dict(incar_dict)
        kpoints=Auto_Kpoints(mat=mat_f,length=leng)
        try:
@@ -786,7 +835,7 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
     os.chdir(cwd)
     if mbj_prop==True:
        incar_dict = use_incar_dict
-       incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NABNDS":3*int(nbands),"LOPTICS":'.TRUE.','METAGGA':'MBJ','ISYM':0,"SIGMA":0.1})
+       incar_dict.update({"NEDOS":5000,"LORBIT":11,"IBRION":1,"ENCUT":encut,"NBANDS":3*int(nbands),"LOPTICS":'.TRUE.','METAGGA':'MBJ','ISYM':0,"SIGMA":0.1})
        incar = Incar.from_dict(incar_dict)
        kpoints=Auto_Kpoints(mat=mat_f,length=leng)
        try:
@@ -797,7 +846,7 @@ def smart_converge(mat=None,encut='',leng='',band_str=True,elast_prop=True,optic
 
     if elast_prop==True:
        incar_dict = use_incar_dict
-       incar_dict.update({"NEDOS":5000,"IBRION":6,"ENCUT":1.3*float(encut),"ISIF":3,"POTIM":0.015,"NPAR":ncores})
+       incar_dict.update({"NEDOS":5000,"IBRION":6,"ENCUT":1.3*float(encut),"ISIF":3,"POTIM":0.015,"NPAR":ncores,"ISPIN":2})
        incar = Incar.from_dict(incar_dict)
        sg_mat = SpacegroupAnalyzer(mat_f.structure)
        mat_cvn = sg_mat.get_conventional_standard_structure()

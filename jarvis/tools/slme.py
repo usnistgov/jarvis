@@ -37,6 +37,7 @@ k_e = constants.k / constants.e  # Boltzmann's constant eV/K
 e = constants.e  # Coulomb
 
 
+
 class DielTensor(MSONable):
     """
     Class that represents the energy-dependent dielectric tensor of a solid
