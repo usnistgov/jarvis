@@ -10,13 +10,14 @@ from jarvis.tools.vasp import *
 from jarvis.tools.slme import *
 from jarvis.tools.boltztrap import *
 
-pos=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/POSCAR')
-dir=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88')
-run=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-BAND-bulk@mp_149/vasprun.xml')
-kpfile=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-BAND-bulk@mp_149/KPOINTS')
-out=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-ELASTIC-bulk@mp_149/OUTCAR')
-mbjrun=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-MBJ-bulk@mp_149/vasprun.xml')
-mainrun=os.path.join(os.path.dirname(__file__), '../vasp/examples/SiOptb88/MAIN-RELAX-bulk@mp_149/vasprun.xml')
+pos=os.path.join(os.path.dirname(__file__), '..','vasp','examples','SiOptb88','POSCAR')
+dir=os.path.join(os.path.dirname(__file__), '..','vasp','examples','SiOptb88')
+run=os.path.join(os.path.dirname(__file__), '..','vasp','examples','SiOptb88','MAIN-BAND-bulk@mp_149','vasprun.xml')
+kpfile=os.path.join(os.path.dirname(__file__), '..','vasp','examples','SiOptb88','MAIN-BAND-bulk@mp_149','KPOINTS')
+out=os.path.join(os.path.dirname(__file__), '..','vasp','examples','SiOptb88','MAIN-ELASTIC-bulk@mp_149','OUTCAR')
+mbjrun=os.path.join(os.path.dirname(__file__), '..','vasp','examples','SiOptb88','MAIN-MBJ-bulk@mp_149','vasprun.xml')
+mainrun=os.path.join(os.path.dirname(__file__), '..','vasp','examples','SiOptb88','MAIN-RELAX-bulk@mp_149','vasprun.xml')
+
 
 def sample_structure():
     poscar=Poscar.from_file(pos)

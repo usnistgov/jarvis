@@ -36,26 +36,16 @@ def nelec_out(out=''):
 
 
 
-def get_dir_indir_gap(run='',ispin=1):
+def get_dir_indir_gap(run=''):
  """
- Get direct and indirect bandgaps
- Implemented for non-spin polarized case only right now
+ Get direct and indirect bandgaps for a vasprun.xml
  """
+ 
  v=Vasprun(run)
- outcar=run.replace('vasprun.xml','OUTCAR')
- nbands=len(v.eigenvalues[Spin.up][1]) 
- nelec= nelec_out(outcar) #ispin*len(v.eigenvalues.items()[0][1])
- nkpts=int( len(v.eigenvalues[Spin.up]))
- eigvals=np.zeros((ispin,nkpts,nbands))
- for kp,i in enumerate(v.eigenvalues[Spin.up]):
-   for band,j in enumerate(i):
-      eigvals[0,kp,band]=j[0]
- noso_homo = np.max(eigvals[0,:,nelec//2-1])
- noso_lumo = np.min(eigvals[0,:,nelec//2])
- noso_indir= np.min(eigvals[0,:,nelec//2])-np.max(eigvals[0,:,nelec//2-1])
- noso_direct = np.min(eigvals[0,:,nelec//2] - eigvals[0,:,nelec//2-1])
- print ('noso_direct,noso_indir',noso_direct,noso_indir)
- return noso_direct,noso_indir
+ bandstructure = v.get_band_structure()
+ dir_gap=bandstructure.get_direct_band_gap()
+ indir_gap=bandstructure.get_band_gap()["energy"]
+ return dir_gap,indir_gap
 
 
 
@@ -448,7 +438,7 @@ def slme(material_energy_for_absorbance_data,
     return efficiency
 
 if __name__ == '__main__':
-    path=str(os.path.join(os.path.dirname(__file__),'../vasp/examples/SiOptb88/MAIN-MBJ-bulk@mp_149/vasprun.xml')) 
+    path = str(os.path.join(os.path.dirname(__file__),'..','vasp','examples','SiOptb88','MAIN-MBJ-bulk@mp_149','vasprun.xml'))
     en,abz,dirgap,indirgap=optics(path)
     abz=abz*100.0
     eff=slme(en,abz,indirgap,indirgap,plot_current_voltage=False)
