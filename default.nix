@@ -38,7 +38,6 @@ in
        pypkgs.pybtex
        custodian
        fortranformat
-       pypkgs.pandas
        pypkgs.networkx
        pypkgs.scikitlearn
        pypkgs.pytest
