@@ -5,11 +5,11 @@ let
   fortranformat = import ./nix/fortranformat.nix { inherit pypkgs; };
   phonopy = import ./nix/phonopy.nix { inherit pypkgs; };
   pymatgen = pypkgs.pymatgen.overrideDerivation ( oldAttrs: rec {
-    version = "2017.8.4";
+    version = "2018.12.12";
     pname = "pymatgen";
     src = pypkgs.fetchPypi {
       inherit pname version;
-      sha256 = "0m191gmb0rszyz1qglc1icjxac62dczwyxv6lrzjxjnc18bfqmmg";
+      sha256 = "1isgwqxp24rd5i1z8w8cfj48bcx068g0h3jrk75n5p95dwrdy32j";
     };
   });
   ase = pypkgs.ase.overrideDerivation ( oldAttrs: rec {
@@ -42,8 +42,9 @@ in
        pypkgs.networkx
        pypkgs.scikitlearn
        pypkgs.pytest
-       phonopy
        pypkgs.h5py
+       pypkgs.interruptingcow
+       pypkgs.pybtex
      ];
      src=./.;
      doCheck=false;
