@@ -44,6 +44,8 @@ in
        pypkgs.h5py
        pypkgs.interruptingcow
        pypkgs.pybtex
+       pypkgs.black
+       pypkgs.pandas
      ];
      src=./.;
      doCheck=false;

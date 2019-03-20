@@ -7,6 +7,7 @@ cache:
   directories:
     - $STORE
 before_install:
+  - sudo rm -f /etc/boto.cfg # see https://github.com/travis-ci/travis-ci/issues/7940 and https://api.travis-ci.org/v3/job/508575291/log.txt
   - sudo mkdir -p /etc/nix
   - echo "binary-caches = https://cache.nixos.org/ file://$STORE" | sudo tee -a /etc/nix/nix.conf > /dev/null
   - echo 'require-sigs = false' | sudo tee -a /etc/nix/nix.conf > /dev/null
