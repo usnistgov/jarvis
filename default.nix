@@ -47,7 +47,7 @@ in
        pypkgs.black
        pypkgs.pandas
      ];
-     src=./.;
+     src=if nixpkgs.lib.inNixShell then null else ./.;
      doCheck=false;
      meta = {
        homepage = "https://github.com/usnistgov/jarvis";
