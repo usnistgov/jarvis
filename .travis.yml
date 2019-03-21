@@ -15,6 +15,6 @@ before_cache:
   - mkdir -p $STORE
   - nix copy --to file://$STORE -f default.nix buildInputs
 install:
-  - nix-shell --pure --command "echo 'run nix-shell and exit'" 2> /dev/null
+  - travis_wait 40 nix-shell --pure --command "echo 'run nix-shell and exit'" 2> /dev/null
 script:
   - nix-shell --pure --command "py.test"
