@@ -45,7 +45,6 @@ in
        pypkgs.interruptingcow
        pypkgs.pybtex
        pypkgs.black
-       pypkgs.pandas
      ];
      src=if nixpkgs.lib.inNixShell then null else ./.;
      doCheck=false;
