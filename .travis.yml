@@ -15,6 +15,9 @@ before_cache:
   - mkdir -p $STORE
   - nix copy --to file://$STORE -f default.nix buildInputs
 install:
+  - nix-shell --no-build-output --pure -p python36Packages.numpy --command "echo 'built numpy'"
+  - nix-shell --no-build-output --pure -p python36Packages.scipy --command "echo 'built scipy'"
+  - nix-shell --no-build-output --pure -p python36Packages.pandas --command "echo 'built pandas'"
   - nix-shell --pure --no-build-output --command "echo 'run nix-shell and exit'"
 script:
   - nix-shell --pure --command "py.test"
