@@ -17,7 +17,7 @@ setup(
         "interruptingcow>=0.8",
         "pybtex>=0.21",
         "fortranformat>=0.2.5",
-        "pandas>=0.23.4",
+        # "pandas>=0.23.4",
     ],
     extras_require={"babel": ["openbabel", "pybel"],
                     "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
