@@ -30,7 +30,6 @@ in
        pypkgs.python
        pypkgs.numpy
        pypkgs.scipy
-       nixpkgs.pkgs.git
        pypkgs.matplotlib
        pypkgs.tkinter
        pymatgen
