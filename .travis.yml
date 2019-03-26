@@ -15,9 +15,13 @@ before_cache:
   - mkdir -p $STORE
   - nix copy --to file://$STORE -f default.nix buildInputs
 install:
-  - nix-shell --no-build-output --pure -p python36Packages.numpy --command "echo 'built numpy'"
-  - travis_wait nix-shell --no-build-output --pure -p python36Packages.scipy --command "echo 'built scipy'"
-  - nix-shell --no-build-output --pure --command "echo 'built pymatgen'" ./nix/pymatgen.nix
-  - travis_wait nix-shell --no-build-output --pure --command "echo 'run nix-shell and exit'"
+  - nix-shell --pure -p python36Packages.pip --command "echo 'built pip'"
+  - nix-shell --pure -p python36Packages.python --command "echo 'built python'"
+  - nix-shell --pure -p python36Packages.numpy --command "echo 'built numpy'"
+  - nix-shell --pure -p python36Packages.scipy --command "echo 'built scipy'"
+  - nix-shell --pure -p python36Packages.matplotlib --command "echo 'built matplotlib'"
+  - nix-shell --pure -p python36Packages.tkinter --command "echo 'built tkinter'"
+  - nix-shell --pure --command "echo 'built pymatgen'" ./nix/pymatgen.nix
+  - nix-shell --pure --command "echo 'run nix-shell and exit'"
 script:
   - nix-shell --pure --command "py.test"
