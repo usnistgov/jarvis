@@ -17,6 +17,7 @@ before_cache:
 install:
   - nix-shell --no-build-output --pure -p python36Packages.numpy --command "echo 'built numpy'"
   - travis_wait nix-shell --no-build-output --pure -p python36Packages.scipy --command "echo 'built scipy'"
+  - nix-shell --no-build-output --pure --command "echo 'built pymatgen'" ./nix/pymatgen.nix
   - travis_wait nix-shell --no-build-output --pure --command "echo 'run nix-shell and exit'"
 script:
   - nix-shell --pure --command "py.test"
