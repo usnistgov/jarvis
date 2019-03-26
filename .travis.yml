@@ -3,6 +3,7 @@ language: nix
 env:
   global:
     - STORE=$HOME/nix-store
+    - NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/7f35ed9df40f12a79a242e6ea79b8a472cf74d42.tar.gz
 cache:
   directories:
     - $STORE
@@ -15,12 +16,12 @@ before_cache:
   - mkdir -p $STORE
   - nix copy --to file://$STORE -f default.nix buildInputs
 install:
-  - nix-shell --pure -p python36Packages.pip --command "echo 'built pip'"
-  - nix-shell --pure -p python36Packages.python --command "echo 'built python'"
-  - nix-shell --pure -p python36Packages.numpy --command "echo 'built numpy'"
-  - travis_wait nix-shell --pure --no-build-output -p python36Packages.scipy --command "echo 'built scipy'"
-  - nix-shell --pure -p python36Packages.matplotlib --command "echo 'built matplotlib'"
-  - nix-shell --pure -p python36Packages.tkinter --command "echo 'built tkinter'"
+  - nix-shell -I $NIXPKGS --pure -p python36Packages.pip --command "echo 'built pip'"
+  - nix-shell -I $NIXPKGS --pure -p python36Packages.python --command "echo 'built python'"
+  - nix-shell -I $NIXPKGS --pure -p python36Packages.numpy --command "echo 'built numpy'"
+  - travis_wait nix-shell -I $NIXPKGS -pure --no-build-output -p python36Packages.scipy --command "echo 'built scipy'"
+  - nix-shell -I $NIXPKGS --pure -p python36Packages.matplotlib --command "echo 'built matplotlib'"
+  - nix-shell -I $NIXPKGS --pure -p python36Packages.tkinter --command "echo 'built tkinter'"
   - nix-shell --pure --command "echo 'built pymatgen'" ./nix/pymatgen.nix
   - nix-shell --pure --command "echo 'run nix-shell and exit'"
 script:
