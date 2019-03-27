@@ -19,7 +19,7 @@ install:
   - nix-shell -I $NIXPKGS --pure -p python36Packages.pip --command "echo 'built pip'"
   - nix-shell -I $NIXPKGS --pure -p python36Packages.python --command "echo 'built python'"
   - nix-shell -I $NIXPKGS --pure -p python36Packages.numpy --command "echo 'built numpy'"
-  - travis_wait 30 nix-shell -I $NIXPKGS -pure --no-build-output -p python36Packages.scipy --command "echo 'built scipy'"
+  - travis_wait nix-shell -I $NIXPKGS --pure --no-build-output -p python36Packages.scipy --command "echo 'built scipy'"
   - nix-shell -I $NIXPKGS --pure -p python36Packages.matplotlib --command "echo 'built matplotlib'"
   - nix-shell -I $NIXPKGS --pure -p python36Packages.tkinter --command "echo 'built tkinter'"
   - nix-shell --pure --command "echo 'built pymatgen'" ./nix/pymatgen.nix
