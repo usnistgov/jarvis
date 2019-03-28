@@ -25,7 +25,8 @@ install:
   - # packages used by pymatgen: numpy pydispatcher sympy requests monty ruamel_yaml six scipy tabulate enum34 matplotlib palettable spglib pandas networkx
   - nix-shell -I $NIXPKGS --pure -p python36Packages.pandas --command "echo 'built pandas'"
   - nix-shell -I $NIXPKGS --pure -p python36Packages.networkx --command "echo 'built networkx'"
-  - travis_wait nix-shell --pure --command "echo 'built pymatgen'" ./nix/pymatgen.nix
+  - nix-shell -I $NIXPKGS --pure -p python36Packages.matplotlib --command "echo 'built matplotlib'"
+  - nix-shell --pure --command "echo 'built pymatgen'" ./nix/pymatgen.nix
   - nix-shell --pure --command "echo 'run nix-shell and exit'"
 script:
   - nix-shell --pure --command "py.test"
