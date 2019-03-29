@@ -3,8 +3,9 @@ language: nix
 env:
   global:
     - STORE=$HOME/nix-store
-    - NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/6a3f5bcb061e1822f50e299f5616a0731636e4e7.tar.gz
-    - #NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/7f35ed9df40f12a79a242e6ea79b8a472cf74d42.tar.gz
+    - #NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/6a3f5bcb061e1822f50e299f5616a0731636e4e7.tar.gz # stable
+    - #NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/7f35ed9df40f12a79a242e6ea79b8a472cf74d42.tar.gz # stable (beta)
+    - NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/84067b7ef1f35a405f1201e8372f62e876e22ab6.tar.gz # unstable
 cache:
   directories:
     - $STORE
@@ -25,9 +26,10 @@ install:
   - nix-shell -I $NIXPKGS --pure -p python36Packages.tkinter --command "echo 'built tkinter'"
   - # packages used by pymatgen: numpy pydispatcher sympy requests monty ruamel_yaml six scipy tabulate enum34 matplotlib palettable spglib pandas networkx
   - nix-shell -I $NIXPKGS --pure -p python36Packages.pandas --command "echo 'built pandas'"
-  - nix-shell -I $NIXPKGS --pure -p python36Packages.networkx --command "echo 'built networkx'"
-  - nix-shell -I $NIXPKGS --pure -p python36Packages.matplotlib --command "echo 'built matplotlib'"
-  - nix-shell --pure --command "echo 'built pymatgen'" ./nix/pymatgen.nix
-  - nix-shell --pure --command "echo 'run nix-shell and exit'"
+  - #nix-shell -I $NIXPKGS --pure -p python36Packages.networkx --command "echo 'built networkx'"
+  - #nix-shell -I $NIXPKGS --pure -p python36Packages.matplotlib --command "echo 'built matplotlib'"
+  - #nix-shell --pure --command "echo 'built pymatgen'" ./nix/pymatgen.nix
+  - #nix-shell --pure --command "echo 'run nix-shell and exit'"
 script:
-  - nix-shell --pure --command "py.test"
+  - #nix-shell --pure --command "py.test"
+  - echo "hello"
