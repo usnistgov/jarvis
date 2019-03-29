@@ -3,9 +3,9 @@ language: nix
 env:
   global:
     - STORE=$HOME/nix-store
-    - #NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/6a3f5bcb061e1822f50e299f5616a0731636e4e7.tar.gz # stable
+    - NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/6a3f5bcb061e1822f50e299f5616a0731636e4e7.tar.gz # stable
     - #NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/7f35ed9df40f12a79a242e6ea79b8a472cf74d42.tar.gz # stable (beta)
-    - NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/84067b7ef1f35a405f1201e8372f62e876e22ab6.tar.gz # unstable
+    - #NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/84067b7ef1f35a405f1201e8372f62e876e22ab6.tar.gz # unstable
 cache:
   directories:
     - $STORE
