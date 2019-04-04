@@ -29,7 +29,7 @@ install:
   - #nix-shell -I $NIXPKGS --pure -p python36Packages.networkx --command "echo 'built networkx'"
   - #nix-shell -I $NIXPKGS --pure -p python36Packages.matplotlib --command "echo 'built matplotlib'"
   - #nix-shell --pure --command "echo 'built pymatgen'" ./nix/pymatgen.nix
-  - #nix-shell --pure --command "echo 'run nix-shell and exit'"
+  - nix-shell --pure --command "echo 'run nix-shell and exit'"
 script:
   - #nix-shell --pure --command "py.test"
   - echo "hello"
