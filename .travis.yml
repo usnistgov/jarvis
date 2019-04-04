@@ -31,5 +31,4 @@ install:
   - #nix-shell --pure --command "echo 'built pymatgen'" ./nix/pymatgen.nix
   - nix-shell --pure --command "echo 'run nix-shell and exit'"
 script:
-  - #nix-shell --pure --command "py.test"
-  - echo "hello"
+  - nix-shell --pure --command "py.test"
