@@ -4,14 +4,7 @@ let
   custodian = import ./nix/custodian.nix { inherit pypkgs; };
   fortranformat = import ./nix/fortranformat.nix { inherit pypkgs; };
   phonopy = import ./nix/phonopy.nix { inherit pypkgs; };
-  pymatgen = pypkgs.pymatgen.overrideDerivation ( oldAttrs: rec {
-    version = "2017.8.4";
-    pname = "pymatgen";
-    src = pypkgs.fetchPypi {
-      inherit pname version;
-      sha256 = "0m191gmb0rszyz1qglc1icjxac62dczwyxv6lrzjxjnc18bfqmmg";
-    };
-  });
+  pymatgen = import ./nix/pymatgen.nix { inherit nixpkgs; };
   ase = pypkgs.ase.overrideDerivation ( oldAttrs: rec {
     version = "3.11.0";
     pname = "ase";
@@ -30,7 +23,6 @@ in
        pypkgs.python
        pypkgs.numpy
        pypkgs.scipy
-       nixpkgs.pkgs.git
        pypkgs.matplotlib
        pypkgs.tkinter
        pymatgen
@@ -38,14 +30,15 @@ in
        pypkgs.pybtex
        custodian
        fortranformat
-       pypkgs.pandas
        pypkgs.networkx
        pypkgs.scikitlearn
        pypkgs.pytest
-       phonopy
        pypkgs.h5py
+       pypkgs.interruptingcow
+       pypkgs.pybtex
+       pypkgs.black
      ];
-     src=./.;
+     src=if nixpkgs.lib.inNixShell then null else ./.;
      doCheck=false;
      meta = {
        homepage = "https://github.com/usnistgov/jarvis";
