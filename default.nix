@@ -5,14 +5,6 @@ let
   fortranformat = import ./nix/fortranformat.nix { inherit pypkgs; };
   phonopy = import ./nix/phonopy.nix { inherit pypkgs; };
   pymatgen = import ./nix/pymatgen.nix { inherit nixpkgs; };
-  # pymatgen = pypkgs.pymatgen.overrideDerivation ( oldAttrs: rec {
-  #   version = "2018.12.12";
-  #   pname = "pymatgen";
-  #   src = pypkgs.fetchPypi {
-  #     inherit pname version;
-  #     sha256 = "1isgwqxp24rd5i1z8w8cfj48bcx068g0h3jrk75n5p95dwrdy32j";
-  #   };
-  # });
   ase = pypkgs.ase.overrideDerivation ( oldAttrs: rec {
     version = "3.11.0";
     pname = "ase";
