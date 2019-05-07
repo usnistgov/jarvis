@@ -1,71 +1,64 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
 version: 2
+
 jobs:
-  build:
-    environment:
-      CC_TEST_REPORTER_ID: f70262a98f1af05a17a23d0c29911f27669a9895b9a47f66fd7e7854014352e5
+
+  py361:
+    working_directory: ~/py361_jarvis
     docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
       - image: circleci/python:3.6.1
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: ~/jarvis
-
+        environment:
+          CODACY_PROJECT_TOKEN: "a888117ad27a41ceac9efb3810c5daa5"
+          SKIP_INTENSIVE: 1
     steps:
       - checkout
 
-      # Download and cache dependencies
+    # Download and cache dependencies
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "requirements.txt" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
+
       - run:
-          name: Setup Code Climate test-reporter
+          name: setup env and run tests
           command: |
-            # download test reporter as a static binary
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x "./cc-test-reporter"
-      - run:
-          name: install dependencies
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install --upgrade pip
-            pip install numpy scipy coverage  pytest 
-            rm -rf jarvis
-            git clone https://github.com/knc6/jarvis.git 
+            echo "SKIPPING INTENSIVE TESTS? $SKIP_INTENSIVE"
+            python3 -m venv test_env
+            . test_env/bin/activate
+            pip install -q --upgrade pip
+            pip install --quiet -r requirements.txt
+
+            # pip install --quiet -r requirements-optional.txt
+
+            # temporarily avoid pip install of matminer
+            mkdir jarvis
             cd jarvis
-            pip install -r requirements.txt
-            python setup.py install 
-      - run: python --version ; pip --version ; pwd ; ls
+            git clone https://github.com/usnistgov/jarvis.git
+            cd jarvis
+            pip install --upgrade pip
+            pip install install numpy scipy coverage  pytest
+            cd ../..
+
+            pip install -e .
+            pip install -q coverage
+            pip install -q codacy-coverage
+
+            coverage run setup.py test
+            coverage xml
+            python-codacy-coverage -r coverage.xml
+          no_output_timeout: 120m
 
       - save_cache:
           paths:
-            - ./venv
+          - ./test_env
           key: v1-dependencies-{{ checksum "requirements.txt" }}
-        
       - run:
           command: |
-            ./cc-test-reporter before-build
-      - run:
-          command: |
-            . venv/bin/activate
+            . test_env/bin/activate
             py.test 
 
-
-      - run: mkdir test-reports
-      #- run: coverage report && coverage xml -o test-reports/coverage.xml
-      - store_test_results:
-         path: test-reports
-      - store_artifacts:
-         path: test-reports 
-          
+workflows:
+  version: 2
+  run_tests_on_commit:
+    jobs:
+      - py361
