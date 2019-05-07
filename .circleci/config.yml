@@ -7,7 +7,7 @@ jobs:
     docker:
       - image: circleci/python:3.6.1
         environment:
-          CODACY_PROJECT_TOKEN: "a888117ad27a41ceac9efb3810c5daa5"
+          CODCOV_PROJECT_TOKEN: "b61081a0-39de-44a8-8a9c-97d4be82af6d"
           SKIP_INTENSIVE: 1
     steps:
       - checkout
@@ -22,7 +22,6 @@ jobs:
       - run:
           name: setup env and run tests
           command: |
-            echo "SKIPPING INTENSIVE TESTS? $SKIP_INTENSIVE"
             python3 -m venv test_env
             . test_env/bin/activate
             pip install -q --upgrade pip
@@ -30,9 +29,7 @@ jobs:
             pip install lightgbm
             pip install --quiet -r requirements.txt
 
-            # pip install --quiet -r requirements-optional.txt
             rm -rf jarvis
-            # temporarily avoid pip install of matminer
             mkdir jarvis
             cd jarvis
             git clone https://github.com/usnistgov/jarvis.git
@@ -40,9 +37,8 @@ jobs:
             pip install --upgrade pip
             cd ../..
 
-            pip install -e .
-            pip install -q coverage
-            pip install -q codacy-coverage
+            pip install coverage
+            pip install codecov
 
             git clone https://github.com/knc6/MDCS-api-tools.git
             cd MDCS-api-tools
@@ -52,7 +48,6 @@ jobs:
 
             coverage run setup.py test
             coverage xml
-            #python-codacy-coverage -r coverage.xml
           no_output_timeout: 120m
 
       - save_cache:
@@ -62,7 +57,9 @@ jobs:
       - run:
           command: |
             . test_env/bin/activate
-            py.test 
+            py.test
+            codecov
+            codecov --token = "b61081a0-39de-44a8-8a9c-97d4be82af6d" 
 
 workflows:
   version: 2
