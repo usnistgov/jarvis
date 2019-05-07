@@ -23,17 +23,14 @@ classical force-field/molecular dynamics and machine-learning. Official website:
 Installing JARVIS
 -----------------
 - We recommend installing miniconda environment from https://conda.io/miniconda.html ::
-
       bash Miniconda3-latest-Linux-x86_64.sh (for linux)
       bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
       Download 32/64 bit python 3.6 miniconda exe and install (for windows)
-
       Now, let's make a conda environment just for JARVIS::
       conda create --name my_jarvis python=3.6
       source activate my_jarvis
 
 - Git clone install (Recommended)::
-
       pip install numpy scipy matplotlib
       git clone https://github.com/usnistgov/jarvis.git
       cd jarvis
@@ -41,13 +38,11 @@ Installing JARVIS
 
 
 - Alternative pip install::
-
       pip install numpy scipy matplotlib
       pip install jarvis-tools
 
 - Alternative nix install::
-
-- Nix allows a robust and reproducible package for Linux. To generate a Nix environment for using JARVIS, follow the `Nix instructions`_.
+  Nix allows a robust and reproducible package for Linux. To generate a Nix environment for using JARVIS, follow the `Nix instructions`_.
 
 .. _`Nix instructions`: ./nix/README.md
 
@@ -66,22 +61,17 @@ Jupyter notebooks
 References
 -----------------
 - JARVIS-FF::
-
-      K. Choudhary, Faical Yannick P. Congo, Tao Liang, Chandler Becker, Richard G. Hennig, and Francesca Tavazza, Evaluation and comparison of classical interatomic potentials through a user-friendly interactive web-interface, Nature: Sci Data. 4, 160125 (2017).https://www.nature.com/articles/sdata2016125
-      K. Choudhary et al., High-throughput assessment of vacancy formation and surface energies of materials using classical force-fields, J. Phys. Cond. Matt. 30, 395901(2018).http://iopscience.iop.org/article/10.1088/1361-648X/aadaff/meta
-
+      1) Evaluation and comparison of classical interatomic potentials through a user-friendly interactive web-interface, Nature: Sci Data. 4, 160125 (2017).https://www.nature.com/articles/sdata2016125
+      2) High-throughput assessment of vacancy formation and surface energies of materials using classical force-fields, J. Phys. Cond. Matt. 30, 395901(2018).http://iopscience.iop.org/article/10.1088/1361-648X/aadaff/meta
 - JARVIS-DFT::
-
-      K. Choudhary et al., High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory, Scientific Reports 7, 5179 (2017).https://www.nature.com/articles/s41598-017-05402-0
-      K. Choudhary et al., Computational Screening of High-performance Optoelectronic Materials using OptB88vdW and TBmBJ Formalisms, Scientific Data 5, 180082 (2018).https://www.nature.com/articles/sdata201882
-      K. Choudhary et al., Elastic properties of bulk and low-dimensional materials using van der Waals density functional, Phys. Rev. B, 98, 014107 (2018).https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107
-      K. Choudhary, F. Tavazza, Convergence and machine learning predictions of Monkhorst-Pack k-points and plane-wave cut-off in high-throughput DFT calculations, Comp. Mat. Sci. 161, 300 (2019).https://www.sciencedirect.com/science/article/pii/S0927025619300813?via%3Dihub
-      K Choudhary, KF Garrity, F Tavazza, High-throughput discovery of topological materials using spin-orbit spillage, arXiv preprint arXiv:1810.10640.https://arxiv.org/abs/1810.10640
-      Kamal Choudhary, M. Bercx, J. Jiang, R. Pachter, D. Lamoen, F. Tavazza, Accelerated Discovery of Efficient Solar-cell Materials using Quantum and Machine-learning Methods,https://arxiv.org/abs/1903.06651
-
+      3) High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory, Scientific Reports 7, 5179 (2017).https://www.nature.com/articles/s41598-017-05402-0
+      4) Computational Screening of High-performance Optoelectronic Materials using OptB88vdW and TBmBJ Formalisms, Scientific Data 5, 180082 (2018).https://www.nature.com/articles/sdata201882
+      5) Elastic properties of bulk and low-dimensional materials using van der Waals density functional, Phys. Rev. B, 98, 014107 (2018).https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107
+      6) Convergence and machine learning predictions of Monkhorst-Pack k-points and plane-wave cut-off in high-throughput DFT calculations, Comp. Mat. Sci. 161, 300 (2019).https://www.sciencedirect.com/science/article/pii/S0927025619300813?via%3Dihub
+      7) High-throughput discovery of topological materials using spin-orbit spillage, arXiv preprint arXiv:1810.10640.https://arxiv.org/abs/1810.10640
+      8) Accelerated Discovery of Efficient Solar-cell Materials using Quantum and Machine-learning Methods,https://arxiv.org/abs/1903.06651
 - JARVIS-ML::
-
-      K. Choudhary, B. DeCost, F. Tavazza, Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018).,https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
+      9) Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018).,https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 
 
 Link to presentation slides
