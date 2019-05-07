@@ -29,7 +29,7 @@ jobs:
             pip install --quiet -r requirements.txt
 
             # pip install --quiet -r requirements-optional.txt
-
+            rm -rf jarvis
             # temporarily avoid pip install of matminer
             mkdir jarvis
             cd jarvis
