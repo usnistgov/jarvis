@@ -52,7 +52,7 @@ jobs:
 
             coverage run setup.py test
             coverage xml
-            python-codacy-coverage -r coverage.xml
+            #python-codacy-coverage -r coverage.xml
           no_output_timeout: 120m
 
       - save_cache:
