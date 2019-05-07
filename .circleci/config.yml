@@ -40,10 +40,10 @@ jobs:
             pip install coverage
             pip install codecov
 
-            git clone https://github.com/knc6/MDCS-api-tools.git
-            cd MDCS-api-tools
-            python setup.py develop
-            cd ..
+            #git clone https://github.com/knc6/MDCS-api-tools.git
+            #cd MDCS-api-tools
+            #python setup.py develop
+            #cd ..
 
 
             coverage run setup.py test
