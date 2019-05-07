@@ -26,6 +26,8 @@ jobs:
             python3 -m venv test_env
             . test_env/bin/activate
             pip install -q --upgrade pip
+            pip install install numpy scipy coverage pytest
+            pip install lightgbm
             pip install --quiet -r requirements.txt
 
             # pip install --quiet -r requirements-optional.txt
@@ -36,12 +38,17 @@ jobs:
             git clone https://github.com/usnistgov/jarvis.git
             cd jarvis
             pip install --upgrade pip
-            pip install install numpy scipy coverage  pytest
             cd ../..
 
             pip install -e .
             pip install -q coverage
             pip install -q codacy-coverage
+
+            git clone https://github.com/knc6/MDCS-api-tools.git
+            cd MDCS-api-tools
+            python setup.py develop
+
+
 
             coverage run setup.py test
             coverage xml
