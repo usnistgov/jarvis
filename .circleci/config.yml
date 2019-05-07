@@ -32,7 +32,7 @@ jobs:
             rm -rf jarvis
             mkdir jarvis
             cd jarvis
-            git clone https://github.com/usnistgov/jarvis.git
+            git clone https://github.com/knc6/jarvis.git 
             cd jarvis
             pip install --upgrade pip
             cd ../..
@@ -43,7 +43,7 @@ jobs:
             git clone https://github.com/knc6/MDCS-api-tools.git
             cd MDCS-api-tools
             python setup.py develop
-
+            cd ..
 
 
             coverage run setup.py test
