@@ -8,7 +8,7 @@ JARVIS_DIR = os.path.dirname(os.path.abspath(__file__))
 setup(
     name="jarvis-tools",
     version="2019.01.23",
-    install_requires = [
+    install_requires=[
         "numpy>=1.15.1",
         "scipy>=1.1.0",
         "pymatgen>=2018.12.12",
@@ -16,21 +16,23 @@ setup(
         "ase==3.11.0",
         "interruptingcow>=0.8",
         "pybtex>=0.21",
+        "blob",
         "fortranformat>=0.2.5",
         "pandas>=0.23.4",
     ],
-    extras_require={"babel": ["openbabel", "pybel"],
-                    "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
-                    },
+    extras_require={
+        "babel": ["openbabel", "pybel"],
+        "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
+    },
     author="Kamal Choudhary",
-    author_email = "kamal.choudhary@nist.gov",
+    author_email="kamal.choudhary@nist.gov",
     description=(
-        "High throughput computation with density functional theory, molecular dynamics and machine learning"),
+        "High throughput computation with density functional theory, molecular dynamics and machine learning"
+    ),
     license="MIT",
     url="https://github.com/usnistgov/jarvis",
     packages=find_packages(),
-    long_description=open(
-        os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
+    long_description=open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
     classifiers=[
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
@@ -42,5 +44,5 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering",
     ],
-    #scripts=glob.glob(os.path.join(JARVIS_DIR,  "*"))
+    # scripts=glob.glob(os.path.join(JARVIS_DIR,  "*"))
 )

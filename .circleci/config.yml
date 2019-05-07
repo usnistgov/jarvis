@@ -40,12 +40,17 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install --upgrade pip
-            pip install numpy scipy coverage  pytest 
+            pip install numpy scipy coverage 
+            pip install codecov 
             rm -rf jarvis
             git clone https://github.com/knc6/jarvis.git 
             cd jarvis
             pip install -r requirements.txt
-            python setup.py install 
+            python setup.py install
+            pip install pytest pytest-cov
+            pytest --cov=./
+            codecov
+            codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
       - run: python --version ; pip --version ; pwd ; ls
 
       - save_cache:
