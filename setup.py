@@ -16,6 +16,7 @@ setup(
         "ase==3.11.0",
         "interruptingcow>=0.8",
         "pybtex>=0.21",
+        "blob",
         "fortranformat>=0.2.5",
         "pandas>=0.23.4",
     ],
