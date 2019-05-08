@@ -2,9 +2,15 @@ from jarvis.sklearn.get_desc import get_comp_descp
 from monty.serialization import loadfn, MontyDecoder, dumpfn
 import numpy as np
 from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
-import lightgbm as lgb
+try:
+    import lightgbm.LGBMRegressor as lgb
+except:
+    print ('WARNING!!!!: LightGBM is not installed, using sklearn GBM')
+    print ('Will try to use sklearn instead, errors are possible')
+    from sklearn.ensemble import GradientBoostingRegressor as lgb
+    
 import matplotlib.pyplot as plt
-
+from jarvis.db.static.explore_db import get_ml_dataset
 plt.switch_backend("agg")
 import pandas as pd
 from sklearn.datasets import load_boston
@@ -71,7 +77,7 @@ def jdata(data_file="jarvisml_cfid.json", prop=""):
 
   """
 
-    d3 = loadfn(data_file, cls=MontyDecoder)
+    d3 = get_ml_dataset() 
     X = []
     Y = []
     jid = []
@@ -104,7 +110,7 @@ def plot_learning_curve(
     ylim=None,
     cv=5,
     # n_jobs=-1, train_sizes=np.linspace(.1, 1.0, 10),fname='fig.png'):
-    n_jobs=n_jobs,
+    n_jobs=1,
     train_sizes=np.linspace(0.01, 1.0, 50),
     fname="fig.png",
 ):
@@ -259,7 +265,7 @@ def get_lgbm(train_x, val_x, train_y, val_y, cv, n_jobs, scoring):
     """
 
     # Get converged boosting iterations with high learning rate, MAE as the convergence crietria
-    lgbm = lgb.LGBMRegressor(
+    lgbm = lgb(
         n_estimators=1000,
         learning_rate=0.1,
         max_depth=5,
@@ -308,7 +314,7 @@ def get_lgbm(train_x, val_x, train_y, val_y, cv, n_jobs, scoring):
         #'est__max_depth': sp.stats.randint(1, 5),
         "est__learning_rate": sp.stats.uniform(1e-3, 0.9)
     }
-    lgbm = lgb.LGBMRegressor(
+    lgbm = lgb(
         objective="regression",
         # device='gpu',
         n_estimators=num_iteration,
@@ -495,7 +501,7 @@ if __name__ == "__main__":
     # run(version='version_1',scoring='neg_mean_absolute_error',cv=5,n_jobs=1,prop='op_gap',do_cv=False)
 
     # smaller test fit model
-    model = lgb.LGBMRegressor(
+    model = lgb(
         n_estimators=100,
         learning_rate=0.1,
         max_depth=5,
