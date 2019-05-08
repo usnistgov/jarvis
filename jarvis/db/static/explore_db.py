@@ -31,6 +31,7 @@ def get_ml_dataset():
  return data_ml
 
 if __name__ == "__main__":
+
      data_2d = get_2d_dataset()
      print (len(data_2d))
      data_3d = get_3d_dataset()
