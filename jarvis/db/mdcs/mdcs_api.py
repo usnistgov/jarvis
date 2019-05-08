@@ -185,83 +185,87 @@ def delete_all(file=""):
 # Download 2D material data from https://figshare.com/articles/jdft_2d-7-7-2018_json/6815705
 # Example of curating/uploading JARVIS-DFT data  is given below
 
-d = loadfn("jdft_3d-7-7-2018.json", cls=MontyDecoder)
 
 
-count = 0
-for i in d:
-    filname = str(i["jid"]) + str(".xml")
-    if not os.path.exists(filname):
-        count = count + 1
-        energy = str(i["fin_en"]) + str(",") + str(i["form_enp"])
-        formula = str(i["final_str"].composition.reduced_formula)
-        sgp = str(SpacegroupAnalyzer(i["final_str"]).get_spacegroup_symbol())
-        name = str(i["jid"])
-        print(name)
-        ref = str(i["mpid"])
-        func = str("OptB88vdW")
-        elem = ""
-        species = list(set(i["final_str"].species))
-        for j in species:
-            elem = str(elem) + str(j.symbol) + str("-")
-        encut = str(i["encut"])
-        kpoints = (
-            str(i["kpoints"].kpts[0][0])
-            + str("x")
-            + str(i["kpoints"].kpts[0][1])
-            + str("x")
-            + str(i["kpoints"].kpts[0][2])
-        )
-        el_tens = str(i["elastic"])
-        KV = str(i["kv"])
-        GV = str(i["gv"])
-        op_eg = str(i["op_gap"])
-        mbj_eg = str(i["mbj_gap"])
-        realx_arr = str(i["epsx"])
-        mrealx_arr = str(i["mepsx"])
-        realy_arr = str(i["epsy"])
-        mrealy_arr = str(i["mepsy"])
-        realz_arr = str(i["epsz"])
-        mrealz_arr = str(i["mepsz"])
-        typ = str("3D")
-        other = str(
-            "Citation: 1) DOI:10.1038/s41598-017-05402-0, 2) DOI: 10.1038/sdata.2018.82, 3) arXiv:1804.01033v2 "
-        )
-        struct = str(
-            i["final_str"]
-            .to(fmt="cif")
-            .replace("# generated using pymatgen", "# JARVIS-DFT")
-        )
-        data_json(
-            other=other,
-            energy=energy,
-            typ=typ,
-            formula=formula,
-            sgp=sgp,
-            name=name,
-            func=func,
-            elem=elem,
-            encut=encut,
-            kpoints=kpoints,
-            el_tens=el_tens,
-            KV=KV,
-            GV=GV,
-            op_eg=op_eg,
-            mbj_eg=mbj_eg,
-            realx_arr=realx_arr,
-            mrealx_arr=mrealx_arr,
-            realy_arr=realy_arr,
-            mrealy_arr=mrealy_arr,
-            realz_arr=realz_arr,
-            mrealz_arr=mrealz_arr,
-            struct=struct,
-        )
+def upload_sample_data():
+    d = loadfn("jdft_3d-7-7-2018.json", cls=MontyDecoder)
+
+    count = 0
+    for i in d:
+        filname = str(i["jid"]) + str(".xml")
+        if not os.path.exists(filname):
+            count = count + 1
+            energy = str(i["fin_en"]) + str(",") + str(i["form_enp"])
+            formula = str(i["final_str"].composition.reduced_formula)
+            sgp = str(SpacegroupAnalyzer(i["final_str"]).get_spacegroup_symbol())
+            name = str(i["jid"])
+            print(name)
+            ref = str(i["mpid"])
+            func = str("OptB88vdW")
+            elem = ""
+            species = list(set(i["final_str"].species))
+            for j in species:
+                elem = str(elem) + str(j.symbol) + str("-")
+            encut = str(i["encut"])
+            kpoints = (
+                str(i["kpoints"].kpts[0][0])
+                + str("x")
+                + str(i["kpoints"].kpts[0][1])
+                + str("x")
+                + str(i["kpoints"].kpts[0][2])
+            )
+            el_tens = str(i["elastic"])
+            KV = str(i["kv"])
+            GV = str(i["gv"])
+            op_eg = str(i["op_gap"])
+            mbj_eg = str(i["mbj_gap"])
+            realx_arr = str(i["epsx"])
+            mrealx_arr = str(i["mepsx"])
+            realy_arr = str(i["epsy"])
+            mrealy_arr = str(i["mepsy"])
+            realz_arr = str(i["epsz"])
+            mrealz_arr = str(i["mepsz"])
+            typ = str("3D")
+            other = str(
+                "Citation: 1) DOI:10.1038/s41598-017-05402-0, 2) DOI: 10.1038/sdata.2018.82, 3) arXiv:1804.01033v2 "
+            )
+            struct = str(
+                i["final_str"]
+                .to(fmt="cif")
+                .replace("# generated using pymatgen", "# JARVIS-DFT")
+            )
+            data_json(
+                other=other,
+                energy=energy,
+                typ=typ,
+                formula=formula,
+                sgp=sgp,
+                name=name,
+                func=func,
+                elem=elem,
+                encut=encut,
+                kpoints=kpoints,
+                el_tens=el_tens,
+                KV=KV,
+                GV=GV,
+                op_eg=op_eg,
+                mbj_eg=mbj_eg,
+                realx_arr=realx_arr,
+                mrealx_arr=mrealx_arr,
+                realy_arr=realy_arr,
+                mrealy_arr=mrealy_arr,
+                realz_arr=realz_arr,
+                mrealz_arr=mrealz_arr,
+                struct=struct,
+            )
 
 
 # Some examples
 
 # data_json()
+
 # x=get_record(file='JVASP-48137.xml')[0]['content']['JARVIS-DFT']['structure']
+
 # print (Structure.from_str(x,fmt='cif'))
 # delete_all()
 # curate_data()
