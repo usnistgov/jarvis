@@ -55,23 +55,26 @@ def get_effective_structure(s=None, tol=8.0):
          s: re-structure structure with tol vacuum
   """
     coords = s.cart_coords
-    range_x = max(coords[:, 0]) - min(coords[:, 0])
-    range_y = max(coords[:, 1]) - min(coords[:, 1])
-    range_z = max(coords[:, 2]) - min(coords[:, 2])
-    a = s.lattice.matrix[0][0]
-    b = s.lattice.matrix[1][1]
-    c = s.lattice.matrix[2][2]
+    range_x = abs(max(coords[:, 0]) - min(coords[:, 0]))
+    range_y = abs(max(coords[:, 1]) - min(coords[:, 1]))
+    range_z = abs(max(coords[:, 2]) - min(coords[:, 2]))
+    a = abs(s.lattice.a) #matrix[0][0]
+    b = abs(s.lattice.b) #matrix[1][1]
+    c = abs(s.lattice.c) #matrix[2][2]
     if abs(a - range_x) > tol:
         a = range_x + tol
+        print ('Find vaccum in x-direction')
     if abs(b - range_y) > tol:
         b = range_y + tol
+        print ('Find vaccum in y-direction')
     if abs(c - range_z) > tol:
         c = range_z + tol
+        print ('Find vaccum in z-direction')
     arr = Lattice(
         [
-            [a, s.lattice.matrix[0][1], s.lattice.matrix[0][2]],
-            [s.lattice.matrix[1][0], b, s.lattice.matrix[1][2]],
-            [s.lattice.matrix[2][0], s.lattice.matrix[2][1], c],
+            [s.lattice.matrix[0][0], s.lattice.matrix[0][1], s.lattice.matrix[0][2]],
+            [s.lattice.matrix[1][0], s.lattice.matrix[1][1], s.lattice.matrix[1][2]],
+            [s.lattice.matrix[2][0], s.lattice.matrix[2][1], s.lattice.matrix[2][2]],
         ]
     )
     s = Structure(arr, s.species, coords, coords_are_cartesian=True)
@@ -718,7 +721,8 @@ def get_comp_descp(
               cat: catenated final descriptors
         """
     cat = []
-    s = get_effective_structure(struct)
+    s = struct
+    #s = get_effective_structure(struct)
     cell = []
     mean_chem = []
     rdf = []
@@ -858,9 +862,17 @@ if __name__ == "__main__":
 
     # chemo-structural features
     s = Structure.from_file("POSCAR")
+    ss = s.copy()
+    #Making supercell
+    ss.make_supercell([2,3,4])
     x = get_comp_descp(s)
-    print(len(x))
-
+    #print(len(x))
+    xx = get_comp_descp(ss)
+    count = 0
+    for i,j in zip(x,xx):
+        count = count+1
+        if i!=j:
+          print (count,i,j)
     # only chemical features for a structure
     y = get_comp_descp(
         struct=s,
