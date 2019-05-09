@@ -2,6 +2,7 @@ from jarvis.sklearn.get_desc import get_comp_descp
 from monty.serialization import loadfn, MontyDecoder, dumpfn
 import numpy as np
 from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
+
 try:
     import lightgbm.LGBMRegressor as lgb
 except:
@@ -11,6 +12,11 @@ except:
     
 import matplotlib.pyplot as plt
 from jarvis.db.static.explore_db import get_ml_dataset
+
+#import lightgbm as lgb
+import matplotlib.pyplot as plt
+
+
 plt.switch_backend("agg")
 import pandas as pd
 from sklearn.datasets import load_boston
@@ -77,7 +83,9 @@ def jdata(data_file="jarvisml_cfid.json", prop=""):
 
   """
 
+
     d3 = get_ml_dataset() 
+
     X = []
     Y = []
     jid = []
@@ -110,7 +118,9 @@ def plot_learning_curve(
     ylim=None,
     cv=5,
     # n_jobs=-1, train_sizes=np.linspace(.1, 1.0, 10),fname='fig.png'):
+
     n_jobs=1,
+
     train_sizes=np.linspace(0.01, 1.0, 50),
     fname="fig.png",
 ):
@@ -265,7 +275,9 @@ def get_lgbm(train_x, val_x, train_y, val_y, cv, n_jobs, scoring):
     """
 
     # Get converged boosting iterations with high learning rate, MAE as the convergence crietria
+
     lgbm = lgb(
+
         n_estimators=1000,
         learning_rate=0.1,
         max_depth=5,
@@ -314,7 +326,9 @@ def get_lgbm(train_x, val_x, train_y, val_y, cv, n_jobs, scoring):
         #'est__max_depth': sp.stats.randint(1, 5),
         "est__learning_rate": sp.stats.uniform(1e-3, 0.9)
     }
+
     lgbm = lgb(
+
         objective="regression",
         # device='gpu',
         n_estimators=num_iteration,
@@ -377,6 +391,7 @@ def run(
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
     os.chdir(dir_name)
+
 
     info = {}
     tmp_time = time.time()
@@ -520,6 +535,152 @@ if __name__ == "__main__":
     X = X_train[0:500]
     Y = y_train[0:500]
     model.fit(X, Y)
+
+
+
+    info = {}
+    tmp_time = time.time()
+
+    # STEP-1: Data for a particular model
+
+    x, y, jid = jdata(prop=prop)
+
+    # Toy example with boston data
+    # boston=load_boston()
+    # x, y = boston['data'], boston['target']
+
+    # STEP-2: Splitting the data
+    # 90-10% split for train test
+    X_train, X_test, y_train, y_test, jid_train, jid_test = train_test_split(
+        x, y, jid, random_state=1, test_size=0.1
+    )
+
+    # further split for boosting iteration convergence
+    X_train1, X_test1, y_train1, y_test1 = train_test_split(
+        X_train, y_train, random_state=1, test_size=0.1
+    )
+    print("lenx len y", len(x[0]), len(y))
+
+    # STEP-3: GBM model with converged iterations
+
+    model = get_lgbm(X_train1, X_test1, y_train1, y_test1, cv, n_jobs, scoring)
+
+    model.fit(X_train, y_train)
+    print(model, model.named_steps["est"].n_estimators)
+    print("model", model.__dict__)
+    # info['model']=model.__dict__
+
+    # STEP-4: Predict on 10% held data and  accuracy
+
+    pred = model.predict(X_test)
+    reg_sc = regr_scores(y_test, pred)
+
+    print("reg_sc", reg_sc)
+    info["reg_sc"] = reg_sc
+    info["y"] = y
+    info["time"] = time.time() - tmp_time
+    info["jid_test"] = jid_test
+
+    model.fit(X_train1, y_train1)
+    print("Plot feature importances...")
+
+    # STEP-5: Feature importance
+    feat_imp = model.named_steps["est"].feature_importances_  # feature_importances_
+    feat_imp = np.array([float(i) / float(np.sum(feat_imp)) for i in feat_imp])
+    print("feat_imp", name, feat_imp, len(feat_imp))
+
+    # Since variance threshold removed some features
+    keep_indices2 = model.named_steps["vart"].get_support(indices=True)
+    info["keep_indices_sel"] = keep_indices2
+
+    print("keep_indices2", keep_indices2, len(keep_indices2))
+
+    indices = np.argsort(feat_imp)[::-1]
+    xs = feat_imp[indices]
+    ys = keep_indices2[indices]
+
+    print("xs,ys", len(xs), len(ys))
+    data_imp = []
+    f = open("feat_names.json", "r")
+    names = json.load(f)
+    f.close()
+
+    for f in range(len(xs)):
+        print(f, xs[f], names[ys[f]])
+        data_imp.append([f, xs[f], names[ys[f]]])
+    info["feature_importance"] = data_imp
+    # STEP-6: N-fold cross-validation prediction
+
+    scores = cross_val_score(
+        model, x, y, cv=cv, n_jobs=n_jobs, scoring="mean_absolute_error"
+    )
+    print("MAE-Score: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    info["cross_val_scores"] = scores
+
+    fname = str(name) + str("-GB-CV.png")
+    predicted = cross_val_predict(model, x, y, cv=cv, n_jobs=n_jobs)
+    fig, ax = plt.subplots()
+    ax.set_xlabel("DFT prediction")
+    ax.set_ylabel("ML prediction")
+    print("cv_predicted")
+    cvpred = {}
+    cvpred["cross_val_y"] = y
+    cvpred["cross_val_predicted"] = predicted
+    info["cvpredict_result"] = cvpred
+
+    ax.scatter(y, predicted, edgecolors=(0, 0, 0))
+    plt.savefig(fname)
+    plt.close()
+
+    # STEP-7: Plot learning curve
+
+    mem_learn = plot_learning_curve(
+        estimator=model, scoring=scoring, fname=name, title="", X=x, y=y, n_jobs=n_jobs
+    )
+    info["learning_curve_data"] = mem_learn
+
+    # STEP-8: Store ML parameters with pickle and joblib
+
+    model.fit(x, y)
+    filename = str("pickle2-") + str(name) + str(".pk")
+    pickle.dump(model, open(filename, "wb"))
+    filename = str("joblib2-") + str(name) + str(".pkl")
+    joblib.dump(model, filename)
+
+    # STEP-9: Store data in a json file
+
+    file = str(name) + "_info.json"
+    f = open(file, "w")
+    f.write(json.dumps(info, cls=MontyEncoder, indent=4))
+    f.close()
+    os.chdir("../")
+
+
+if __name__ == "__main__":
+    # This may take long time
+    # run(version='version_1',scoring='neg_mean_absolute_error',cv=5,n_jobs=1,prop='op_gap',do_cv=False)
+
+    # smaller test fit model
+    model = lgb(
+        n_estimators=100,
+        learning_rate=0.1,
+        max_depth=5,
+        num_leaves=100,
+        objective="regression",
+        n_jobs=-1,
+        verbose=-1,
+    )
+    x, y, jid = jdata(prop="form_enp")
+    X_train, X_test, y_train, y_test, jid_train, jid_test = train_test_split(
+        x, y, jid, random_state=1, test_size=0.1
+    )
+    len(X_train), len(X_test)
+
+    # Let's take 500 of training set as a quick example
+    X = X_train[0:500]
+    Y = y_train[0:500]
+    model.fit(X, Y)
+
 
     pred = model.predict(X_test)
     reg_sc = regr_scores(y_test, pred)
