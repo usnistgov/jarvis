@@ -5,6 +5,34 @@ from jarvis.lammps.jlammps import *
 from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen, surfer
 
 
+
+
+
+parameters = {
+    "exec": "mpirun /cluster/bin/lmp_ctcms-14439-knc6 <in.elastic >out",
+    "pair_coeff": "/users/knc6/Software/jarvis/jarvis/lammps/examples/Mishin-Ni-Al-2009.eam.alloy",
+    "control_file": "/users/knc6/inelast.mod",
+    "pair_style": "eam/alloy",
+    "atom_style": "charge",
+    "cluster": "pbs",
+}
+
+
+init = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "lammps",
+    "examples",
+    "Al03.eam.alloy_nist",
+    "bulk@mp-134_fold",
+    "mp-134",
+    "init.mod",
+)
+
+
+
+
+
 dat = os.path.join(
     os.path.dirname(__file__),
     "..",
@@ -41,6 +69,13 @@ def test_read_data():
     data = read_data(data=dat, ff=ff)
     assert len(data) == 1
 
+def test_write_lammps_in():
+    data = read_data(data=dat, ff=ff)
+    fold = os.path.join(os.path.dirname(__file__), "tmp")
+    if not os.path.exists(fold):
+        os.makedirs(fold)
+    file =  os.path.join(os.path.dirname(__file__), fold, "tmp")
+    write_lammps_in(structure=data,lammps_in=init,lammps_in1 = ff,lammps_in2=file,parameters=parameters)
 
 def test_vac_antisite_def_struct_gen(tmpdir):
     data = read_data(data=dat, ff=ff)
