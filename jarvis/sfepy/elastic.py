@@ -64,37 +64,11 @@ Check that the top/bottom planes are periodic in both x and y.
 
 >>> assert np.allclose(u[:,0], u[:,-1])
 
-The module also works with Dask arrays,
-
->>> X = np.array([[[1, 0, 0, 1],
-...                [0, 1, 1, 1],
-...                [0, 0, 1, 1],
-...                [1, 0, 0, 1]],
-...               [[0, 0, 0, 1],
-...                [0, 0, 1, 1],
-...                [1, 0, 1, 1],
-...                [1, 1, 0, 1]]
-...              ])
->>> print(X.shape)
-(2, 4, 4)
->>> x_data = da.from_array(X, chunks=(1, 4, 4))
->>> out = solve(x_data,
-...             elastic_modulus=(10.0, 1.0),
-...             poissons_ratio=(0.3, 0.3),
-...             macro_strain=macro_strain)['displacement']
->>> print(out.chunks)
-((1, 1), (5,), (5,), (2,))
->>> print(out.shape)
-(2, 5, 5, 2)
->>> value = out.compute()
->>> assert np.allclose(value[0, -1, :, 0] - value[0 ,0, :,0], N * macro_strain)
-
 """
 
 import pytest
 import numpy as np
-import dask.array as da
-from toolz.curried import pipe, do, first, merge
+from toolz.curried import pipe, do, first, merge, curry, compose
 from toolz.curried import map as map_
 from toolz.sandbox.parallel import fold
 
@@ -132,10 +106,23 @@ from sfepy.base.base import output
 from sfepy.discrete.conditions import LinearCombinationBC
 from sfepy.mechanics.matcoefs import stiffness_from_lame
 
-from ..func import curry, sequence, apply_dict_func
 
 goptions["verbose"] = False
 output.set_output(quiet=True)
+
+
+def sequence(*args):
+    """Compose functions in order
+
+    Args:
+      args: the functions to compose
+
+    Returns:
+      composed functions
+
+    >>> assert sequence(lambda x: x + 1, lambda x: x * 2)(3) == 8
+    """
+    return compose(*args[::-1])
 
 
 @curry
@@ -178,19 +165,7 @@ def solve(x_data, elastic_modulus, poissons_ratio, macro_strain=1., delta_x=1.):
         dict,
     )
 
-    shape = lambda x: (x.shape[0],) + x.shape[1:] + (3,)
-    dis_shape = lambda x: (x.shape[0],) + tuple(y + 1 for y in x.shape[1:]) + (2,)
-
-    if isinstance(x_data, np.ndarray):
-        return solve_multiple_samples(x_data)
-
-    return apply_dict_func(
-        solve_multiple_samples,
-        x_data,
-        dict(
-            strain=shape(x_data), stress=shape(x_data), displacement=dis_shape(x_data)
-        ),
-    )
+    return solve_multiple_samples(x_data)
 
 
 def _convert_properties(dim, elastic_modulus, poissons_ratio):
@@ -305,7 +280,7 @@ def _check(n_phases, n_phases_other, x_data):
         raise RuntimeError("elastic_modulus and poissons_ratio must be the same length")
     if not issubclass(x_data.dtype.type, np.integer):
         raise TypeError("X must be an integer array")
-    if da.max(x_data) >= n_phases or da.min(x_data) < 0:
+    if np.max(x_data) >= n_phases or np.min(x_data) < 0:
         raise RuntimeError("X must be between 0 and {N}.".format(N=n_phases - 1))
     if not 3 <= len(x_data.shape) <= 4:
         raise RuntimeError("the shape of x_data is incorrect")
