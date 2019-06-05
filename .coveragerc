@@ -1,0 +1,10 @@
+[run]
+omit =
+    # omit anything in a .local directory anywhere
+    */__init__.py
+    # omit everything in /usr
+    #/usr/*
+    # omit this single file
+    #utils/tirefire.py
+    */mdcs_api.py
+    */run_*.py
