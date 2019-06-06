@@ -1,0 +1,8 @@
+[MASTER]
+extension-pkg-whitelist = numpy
+
+[TYPECHECK]
+ignored-modules = numpy, toolz.curried
+
+[MESSAGES CONTROL]
+disable = no-value-for-parameter
