@@ -15,13 +15,13 @@ import os, glob, json, sys
 
 try:
     import mdcs
+    from mdcs import curate, explore
 except:
     print("Please install MDCS")
     pass
 from monty.json import MontyEncoder, MontyDecoder
 import numpy as np
 from pymatgen.io.vasp.outputs import Vasprun
-from mdcs import curate, explore
 from pymatgen.core.structure import Structure
 
 # import dicttoxml

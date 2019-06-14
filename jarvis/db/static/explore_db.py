@@ -5,7 +5,7 @@ import os,requests
 def get_3d_dataset():
  j3d = str(os.path.join(os.path.dirname(__file__), "j3d.json"))
  if not os.path.isfile(j3d):
-    r = requests.get('https://ndownloader.figshare.com/files/12468083')
+    r = requests.get('https://ndownloader.figshare.com/files/15475826')
     f=open(j3d,'wb')
     f.write(r.content)
     f.close()
@@ -15,7 +15,7 @@ def get_3d_dataset():
 def get_2d_dataset():
  j2d = str(os.path.join(os.path.dirname(__file__), "j2d.json"))
  if not os.path.isfile(j2d):
-    r = requests.get('https://ndownloader.figshare.com/files/12394556')
+    r = requests.get('https://ndownloader.figshare.com/files/15475985')
     f=open(j2d,'wb')
     f.write(r.content)
  data_2d = loadfn(j2d, cls=MontyDecoder)

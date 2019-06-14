@@ -2,13 +2,17 @@ from pymatgen.core.structure import Structure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from jarvis.lammps.jlammps import main_func, write_lammps_data, write_lammps_in
 from pymatgen.io.vasp.inputs import Poscar
-
+import os
 """
 Step-1: writing LAMMPS data file
 Import VASP's POSCAR or cif format file,make it 15x15x15 with conventional cell
 """
+pos = os.path.join(
+    os.path.dirname(__file__), "..", "..", "vasp", "examples", "SiOptb88", "POSCAR"
+)
+
 c_size = 15
-p = Structure.from_file("POSCAR")
+p = Structure.from_file(pos)
 sg_mat = SpacegroupAnalyzer(p)
 mat_cvn = sg_mat.get_conventional_standard_structure()
 # mat_cvn.to(fmt='poscar',filename='POSCAR_cvb.vasp') #can be visualized using VESTA
@@ -41,7 +45,9 @@ write_lammps_in(
 """
 Step-3
 If you survive the above two steps, lets submit job to computer-cluster
-"""
+
+
 pos = Poscar(p)
 pos.comment = "bulk@Al"
 main_func(mat=pos, parameters=parameters)
+"""
