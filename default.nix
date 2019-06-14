@@ -5,6 +5,7 @@ let
   fortranformat = import ./nix/fortranformat.nix { inherit pypkgs; };
   phonopy = import ./nix/phonopy.nix { inherit pypkgs; };
   pymatgen = import ./nix/pymatgen.nix { inherit nixpkgs; };
+  sfepy = import ./nix/sfepy.nix { inherit nixpkgs pypkgs; };
   ase = pypkgs.ase.overrideDerivation ( oldAttrs: rec {
     version = "3.11.0";
     pname = "ase";
@@ -37,6 +38,10 @@ in
        pypkgs.interruptingcow
        pypkgs.pybtex
        pypkgs.black
+       pypkgs.toolz
+       sfepy
+       pypkgs.pylint
+       pypkgs.flake8
      ];
      src=if nixpkgs.lib.inNixShell then null else ./.;
      doCheck=false;
