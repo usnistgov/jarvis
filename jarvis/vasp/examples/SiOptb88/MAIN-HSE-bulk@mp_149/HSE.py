@@ -25,7 +25,7 @@ def fff():
        #mpvis = MPNonSCFVaspInputSet(user_incar_settings=incar)
        kpoints=mpvis.get_kpoints(s)
        kpoints.write_file("KPOINTS")
-       print kpoints
+       print (kpoints)
        import sys
        sys.exit()
        all_kp=kpoints.kpts
@@ -36,7 +36,7 @@ def fff():
        for k in all_kp:
            #allline=allline+str(k)
            allline=allline+ str(k[0])+str(' ')+str(k[1])+str(' ')+str(k[2])+str(' ')
-       print allline
+       print (allline)
        file=open('bandd.conf','w')
        line=str('FREQUENCY_CONVERSION_FACTOR = 521.471')+'\n'
        file.write(line)
@@ -52,4 +52,4 @@ def fff():
        file.write(line)
        file.close()
        # bandplot -o PBAND.png
-fff()
+#fff()

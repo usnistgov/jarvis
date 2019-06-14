@@ -20,7 +20,7 @@ def banddos(pref='',storedir=None):
     bsp =  BSPlotter(bands)
     zero_to_efermi=True
     bandgap=str(round(bands.get_band_gap()['energy'],3))
-    print "bg=",bandgap
+    print ("bg=",bandgap)
     data=bsp.bs_plot_data(zero_to_efermi)
     plt = get_publication_quality_plot(12, 8)
     band_linewidth = 3
@@ -68,5 +68,5 @@ def banddos(pref='',storedir=None):
 
 
 
-banddos()
+#banddos()
 
