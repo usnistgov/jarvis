@@ -1,4 +1,7 @@
-from pymatgen.io.vaspio_set import MPBSHSEVaspInputSet,MITHSEVaspInputSet,MPNonSCFVaspInputSet
+try:
+ from pymatgen.io.vaspio_set import MPBSHSEVaspInputSet,MITHSEVaspInputSet,MPNonSCFVaspInputSet
+except:
+   pass
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput
 def hse():
@@ -24,4 +27,4 @@ def hse():
        mpvis = MPBSHSEVaspInputSet(user_incar_settings=incar)
        kpoints=mpvis.get_kpoints(s)
        kpoints.write_file("KPOINTS")
-hse()
+#hse()
