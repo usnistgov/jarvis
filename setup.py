@@ -11,12 +11,13 @@ setup(
     install_requires=[
         "numpy>=1.15.1",
         "scipy>=1.1.0",
-        "pymatgen==2018.12.12",
+        "pymatgen>=2018.12.12",
         "custodian",
         "ase==3.11.0",
         "interruptingcow>=0.8",
         "pybtex>=0.21",
         "blob",
+        "toolz",
         "fortranformat>=0.2.5",
       
     ],
