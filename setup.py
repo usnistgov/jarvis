@@ -12,6 +12,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 setup(
     name="jarvis-tools",
     version="2019.06.14",
+
     long_description=long_d,
     long_description_content_type='rst/markdown',
     install_requires=[
