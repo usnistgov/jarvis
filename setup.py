@@ -20,6 +20,7 @@ setup(
         "pymatgen>=2018.12.12",
         "custodian",
         "ase==3.11.0",
+        "scikit-learn",
         "interruptingcow>=0.8",
         "pybtex>=0.21",
         "blob",
