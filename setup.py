@@ -5,15 +5,23 @@ from setuptools import setup, find_packages
 
 JARVIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
+base_dir = os.path.dirname(__file__)
+with open(os.path.join(base_dir, "README.rst")) as f:
+    long_d = f.read()
+
 setup(
     name="jarvis-tools",
     version="2019.06.14",
+
+    long_description=long_d,
+    long_description_content_type='rst/markdown',
     install_requires=[
-        "numpy>=1.15.1",
-        "scipy>=1.1.0",
+        "numpy==1.16.3",
+        "scipy==1.2.1",
         "pymatgen>=2018.12.12",
         "custodian",
         "ase==3.11.0",
+        "scikit-learn",
         "interruptingcow>=0.8",
         "pybtex>=0.21",
         "blob",
@@ -33,7 +41,7 @@ setup(
     license="MIT",
     url="https://github.com/usnistgov/jarvis",
     packages=find_packages(),
-    long_description=open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
+    #long_description=open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
     classifiers=[
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
