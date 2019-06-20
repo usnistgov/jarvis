@@ -40,7 +40,9 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install --upgrade pip
-            pip install numpy scipy coverage pymatgen 
+            pip install --upgrade setuptools
+            pip install numpy 
+            pip install scipy coverage
             pip install codecov 
             rm -rf jarvis
             git clone https://github.com/knc6/jarvis.git 
