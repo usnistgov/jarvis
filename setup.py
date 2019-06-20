@@ -15,7 +15,7 @@ setup(
     long_description=long_d,
     long_description_content_type='rst/markdown',
     install_requires=[
-        "numpy==1.15.1",
+        "numpy==1.16.3",
         "scipy==1.2.1",
         "pymatgen>=2018.12.12",
         "custodian",
