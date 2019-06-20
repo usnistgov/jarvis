@@ -65,7 +65,6 @@ jobs:
       - run:
           command: |
             . venv/bin/activate
-            py.test 
 
 
       - run: mkdir test-reports
