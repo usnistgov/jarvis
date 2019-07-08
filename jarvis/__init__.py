@@ -17,5 +17,5 @@ try:
             # print (tmp[0],tmp[1])
             os.environ[tmp[0]] = tmp[1]
 except:
-    print("Cannot find env_variables in site-packages/path")
+    #print("Cannot find env_variables in site-packages/path")
     pass
