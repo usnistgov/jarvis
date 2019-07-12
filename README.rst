@@ -73,12 +73,11 @@ References
       6) Convergence and machine learning predictions of Monkhorst-Pack k-points and plane-wave cut-off in high-throughput DFT calculations, Comp. Mat. Sci. 161, 300 (2019).https://www.sciencedirect.com/science/article/pii/S0927025619300813?via%3Dihub
       7) High-throughput Discovery of Topologically Non-trivial Materials using Spin-orbit Spillage, https://www.nature.com/articles/s41598-019-45028-y
       8) Accelerated Discovery of Efficient Solar-cell Materials using Quantum and Machine-learning Methods,https://arxiv.org/abs/1903.06651
-<<<<<<< HEAD
       9) Data-driven Discovery of 3D and 2D Thermoelectric Materials, https://arxiv.org/abs/1906.06024
 =======
 >>>>>>> 12053cdde1edd6c238ce5496d94e414c86805691
 - JARVIS-ML::
-      9) Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018).,https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
+      10) Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018).,https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 
 
 Link to presentation slides
