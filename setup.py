@@ -11,10 +11,10 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2019.06.14",
+    version="2019.07.11",
 
     long_description=long_d,
-    long_description_content_type='rst/markdown',
+    long_description_content_type='text/markdown',
     install_requires=[
         "numpy==1.16.3",
         "scipy==1.2.1",
