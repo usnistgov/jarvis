@@ -621,6 +621,14 @@ def get_chgdescrp_arr(elm=""):
              arr: array value
       """
     arr = []
+
+
+    f = open(el_chrg_json, "r")
+    emdat = json.load(f)
+    f.close()
+    arr = emdat[elm][0][1]
+
+
     try:
         f = open(el_chrg_json, "r")
         emdat = json.load(f)
