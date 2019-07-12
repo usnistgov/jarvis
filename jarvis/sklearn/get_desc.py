@@ -36,9 +36,11 @@ from interruptingcow import timeout
 
 # Note time limit for angular part is hardcoded
 
-el_chrg_json = str(os.path.join(os.path.dirname(__file__), "element_charge.json"))
-el_chem_json = str(os.path.join(os.path.dirname(__file__), "Elements.json"))
-
+#el_chrg_json = str(os.path.join(os.path.dirname(__file__), "element_charge.json"))
+#el_chem_json = str(os.path.join(os.path.dirname(__file__), "Elements.json"))
+dir = os.path.dirname(os.path.realpath('__file__'))
+el_chrg_json = os.path.join(dir, "element_charge.json")# str(os.path.dirname(os.path.realpath('__file__')), "element_charge.json")
+el_chem_json = os.path.join(dir, "Elements.json") #str(os.path.dirname(os.path.realpath('__file__')), "Elements.json")
 timelimit = 300  # 5 minutes
 
 
@@ -866,8 +868,9 @@ if __name__ == "__main__":
     #Making supercell
     ss.make_supercell([2,3,4])
     x = get_comp_descp(s)
-    #print(len(x))
     xx = get_comp_descp(ss)
+    print ('len',len(x))
+    #print(len(x))
     count = 0
     for i,j in zip(x,xx):
         count = count+1
