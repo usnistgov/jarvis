@@ -1,3 +1,4 @@
+
 from __future__ import unicode_literals, print_function
 
 """
@@ -41,11 +42,12 @@ import sys, zipfile
 import fortranformat as fform
 from pymatgen.core.structure import Structure
 from ase.calculators.lammpsrun import LAMMPS, prism
-
-input_nobox = os.environ["input_nobox"]
-input_box = os.environ["input_box"]
-lammps_exec = os.environ["lammps_exec"]
-
+try:
+    input_nobox = os.environ["input_nobox"]
+    input_box = os.environ["input_box"]
+    lammps_exec = os.environ["lammps_exec"]
+except:
+    pass
 
 def get_phonopy_atoms(mat=None):
     """
