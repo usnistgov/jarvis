@@ -38,7 +38,6 @@ from interruptingcow import timeout
 
 el_chrg_json = str(os.path.join(os.path.dirname(__file__), "element_charge.json"))
 el_chem_json = str(os.path.join(os.path.dirname(__file__), "Elements.json"))
-
 timelimit = 300  # 5 minutes
 
 
@@ -622,6 +621,8 @@ def get_chgdescrp_arr(elm=""):
              arr: array value
       """
     arr = []
+
+
     try:
         f = open(el_chrg_json, "r")
         emdat = json.load(f)
@@ -866,8 +867,9 @@ if __name__ == "__main__":
     #Making supercell
     ss.make_supercell([2,3,4])
     x = get_comp_descp(s)
-    #print(len(x))
     xx = get_comp_descp(ss)
+    print ('len',len(x))
+    #print(len(x))
     count = 0
     for i,j in zip(x,xx):
         count = count+1

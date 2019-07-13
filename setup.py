@@ -11,10 +11,10 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2019.06.14",
+    version="2019.07.12.2",
 
     long_description=long_d,
-    long_description_content_type='rst/markdown',
+    long_description_content_type='text/markdown',
     install_requires=[
         "numpy==1.16.3",
         "scipy==1.2.1",
@@ -29,6 +29,7 @@ setup(
         "fortranformat>=0.2.5",
       
     ],
+    package_data={"jarvis.sklearn":['element_charge.json','Elements.json']},
     extras_require={
         "babel": ["openbabel", "pybel"],
         "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
