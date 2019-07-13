@@ -1,7 +1,7 @@
 import os, builtins, io, pytest
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Poscar
-from jarvis.lammps.jlammps import *
+#from jarvis.lammps.jlammps import *
 from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen, surfer
 
 from jarvis.tools.interface import *
@@ -13,13 +13,13 @@ pos = os.path.join(
 
 def test_get_ase_surf():
     s = Structure.from_file(pos)
-    surf = get_ase_surf(strt=s)
-    assert (surf.lattice.matrix[2][2]) == 32.36802898347962
+    surf = get_ase_surf(s)
+    assert (surf.lattice.matrix[2][2]) == 24.78934299449321
 
 
 def test_mismatch_strts():
     s = Structure.from_file(pos)
-    surf = get_ase_surf(strt=s)
+    surf = get_ase_surf(s)
     info = mismatch_strts(film=surf, subs=surf)
     assert info["area1"] == 12.95010493389544
 
@@ -42,4 +42,4 @@ def test_get_direct_hetero():
     s = Structure.from_file(pos)
     x = get_direct_hetero(bulk_film=s, bulk_subs=s)
     print(len(x))
-    assert len(x) == 48
+    assert len(x) == 24

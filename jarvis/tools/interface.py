@@ -1,3 +1,5 @@
+from pymatgen.io.vasp.inputs import Poscar
+from pymatgen.core.structure import Structure
 from matplotlib.colors import LinearSegmentedColormap
 from math import floor
 from monty.serialization import loadfn, MontyDecoder
@@ -9,17 +11,46 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.analysis.substrate_analyzer import ZSLGenerator, SubstrateAnalyzer
 from pymatgen.io.ase import AseAtomsAdaptor
 from ase.lattice.surface import surface
-from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.core.surface import Slab, SlabGenerator
+from jarvis.db.static.explore_db import get_3d_dataset, get_2d_dataset
 
 plt.switch_backend("agg")
 
 
-def get_ase_surf(strt=[], miller=(0, 0, 1), layers=1, vacuum=15.0):
+def center_struct(s=""):
+    coords = s.cart_coords
+    avg_x = np.sum(coords[:, 0]) / len(s)
+    avg_y = np.sum(coords[:, 1]) / len(s)
+    avg_z = np.sum(coords[:, 2]) / len(s)
+    coords = s.cart_coords - [avg_x, avg_y, avg_z]
+    new_s = Structure(s.lattice, s.species, coords, coords_are_cartesian=True)
+    return new_s
+
+
+def rangexyz(s=""):
+    coords = s.cart_coords
+    range_x = abs(max(coords[:, 0]) - min(coords[:, 0]))
+    range_y = abs(max(coords[:, 1]) - min(coords[:, 1]))
+    range_z = abs(max(coords[:, 2]) - min(coords[:, 2]))
+    return range_z
+
+
+def get_ase_surf(s=[], miller=(0, 0, 1), layers=1):
+    strt = center_struct(s)
     ase_atoms = AseAtomsAdaptor().get_atoms(strt)
     ase_slab = surface(ase_atoms, miller, layers)
-    ase_slab.center(vacuum=vacuum, axis=2)
+    ase_slab.center(axis=2)
+    tmp = AseAtomsAdaptor().get_structure(ase_slab)
+    range_z = rangexyz(strt)
+    # print ('rz',abs(strt.lattice.matrix[2][2]),range_z)
+    if abs(strt.lattice.matrix[2][2] - range_z) <= 6.0:
+        ase_slab.center(axis=2, vacuum=12.0)
+    else:
+        ase_slab.center(axis=2)
     slab_pymatgen = AseAtomsAdaptor().get_structure(ase_slab)
     slab_pymatgen.sort()
+    print("Surface")
+    print(Poscar(slab_pymatgen))
     return slab_pymatgen
 
 
@@ -180,27 +211,56 @@ def get_direct_hetero(
     bulk_film="",
     bulk_subs="",
     film_miller=(1, 1, 1),
-    film_subs=(1, 1, 1),
+    film_subs=(0, 0, 1),
     seperation=3.0,
-    vacuum=10.0,
-    film_layers=3,
-    bulk_layers=3,
+    film_layers=2,
+    bulk_layers=1,
 ):
     bulk_film_cvn = SpacegroupAnalyzer(bulk_film).get_conventional_standard_structure()
     bulk_subs_cvn = SpacegroupAnalyzer(bulk_subs).get_conventional_standard_structure()
-    slab_film = get_ase_surf(
-        strt=bulk_film_cvn, miller=film_miller, layers=film_layers, vacuum=vacuum
-    )
-    slab_subs = get_ase_surf(
-        strt=bulk_subs_cvn, miller=film_subs, layers=bulk_layers, vacuum=vacuum
-    )
-    hetero = get_hetero(slab_film, slab_subs, seperation=3.0)
+    slab_film = get_ase_surf(s=bulk_film_cvn, miller=film_miller, layers=film_layers)
+    slab_subs = get_ase_surf(s=bulk_subs_cvn, miller=film_subs, layers=bulk_layers)
+    hetero = get_hetero(slab_film, slab_subs, seperation=seperation)
+
     return hetero
+
+
+def get_strt(jid=""):
+    dat_2d = get_2d_dataset()
+    for i in dat_2d:
+        if i["jid"] == jid:
+            return i["final_str"]
+
+
+def make_2d_jid_strts(jid1="", jid2="", tol=3.0):
+    mat1 = get_strt(jid1)
+    mat2 = get_strt(jid2)
+    rz1 = rangexyz(s=mat1)
+    rz2 = rangexyz(s=mat2)
+    x = get_direct_hetero(
+        bulk_film=mat1,
+        bulk_subs=mat2,
+        film_miller=(0, 0, 1),
+        film_subs=(0, 0, 1),
+        film_layers=1,
+        bulk_layers=1,
+        seperation=tol,
+    )
+    return x
+    # return x
 
 
 if __name__ == "__main__":
 
-    s = Structure.from_file("POSCAR")
+    s = Structure.from_file("POSCAR-Al.vasp")
     x = get_direct_hetero(bulk_film=s, bulk_subs=s)
-    print(x)
-    x.to(fmt="poscar", filename="POSCAR-Al.vasp")
+    print(Poscar(x))
+
+    # x.to(fmt="poscar", filename="POSCAR-Al.vasp")
+    x = make_2d_jid_strts(jid1="JVASP-664", jid2="JVASP-652")
+    print(Poscar(x))
+
+    s1 = Structure.from_file("POSCAR-Al.vasp")
+    s2 = Structure.from_file("POSCAR-Al2O3.vasp")
+    x = get_direct_hetero(bulk_film=s1, bulk_subs=s2)
+    print(Poscar(x))
