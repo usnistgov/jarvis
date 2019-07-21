@@ -2,6 +2,15 @@ from monty.json import MontyEncoder, MontyDecoder
 from monty.serialization import loadfn, dumpfn
 import os, requests
 
+def get_ff_eneleast():
+    jff1 = str(os.path.join(os.path.dirname(__file__), "jff1.json"))
+    if not os.path.isfile(jff1):
+        r = requests.get("https://ndownloader.figshare.com/files/10307139")
+        f = open(jff1, "wb")
+        f.write(r.content)
+        f.close()
+    data_ff1 = loadfn(jff1, cls=MontyDecoder)
+    return data_ff1
 
 def get_3d_dataset():
     j3d = str(os.path.join(os.path.dirname(__file__), "j3d.json"))
@@ -42,3 +51,5 @@ if __name__ == "__main__":
     print(len(data_3d))
     data_ml = get_ml_dataset()
     print(len(data_ml))
+    data_ff = get_ff_eneleast()
+    print (len(data_ff))
