@@ -12,6 +12,8 @@ def coulomb_matrix(strt="", max_dim=100):
     Args:
         strt: structure object
         max_dim: maximum number of atoms=sqrt(max_dim)
+    Returns:
+          z: numpy array of 1 x max_dim dimension
     """
     natoms = len(strt)
     mat = np.zeros((natoms, natoms))
