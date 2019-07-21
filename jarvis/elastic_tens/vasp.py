@@ -3,6 +3,7 @@ import numpy as np
 from pymatgen.analysis.elasticity.elastic import ElasticTensor
 import os
 
+
 def elastic_props(outcar="", vacuum=False):
     """
     Obtain elastic tensor and calculate related properties
@@ -199,10 +200,10 @@ def elastic_props(outcar="", vacuum=False):
     try:
         for i in lines:
             if "cm-1" in i and "meV" in i:
-              
+
                 mod = float(i.split()[7])
-                if 'f/i' in i:
-                    mod=mod*-1
+                if "f/i" in i:
+                    mod = mod * -1
                 if mod not in modes:
                     modes.append(float(mod))
     except:
@@ -217,15 +218,15 @@ def elastic_props(outcar="", vacuum=False):
     return info
 
 
-def get_et(elast_str=''):
-    cij=np.empty((6, 6), dtype=float)
-    elast=np.array(elast_str.split(','),dtype='float')
-    count=0
+def get_et(elast_str=""):
+    cij = np.empty((6, 6), dtype=float)
+    elast = np.array(elast_str.split(","), dtype="float")
+    count = 0
     for ii in range(6):
-      for jj in range(6):
-       cij[ii][jj]=elast[count]
-       count=count+1
-    et=ElasticTensor.from_voigt(cij)
+        for jj in range(6):
+            cij[ii][jj] = elast[count]
+            count = count + 1
+    et = ElasticTensor.from_voigt(cij)
     return et
 
 
@@ -236,5 +237,5 @@ if __name__ == "__main__":
             "../vasp/examples/SiOptb88/MAIN-ELASTIC-bulk@mp_149/OUTCAR",
         )
     )
-    ep=elastic_props(out)
-    print (ep)
+    ep = elastic_props(out)
+    print(ep)

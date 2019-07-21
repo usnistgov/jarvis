@@ -6,14 +6,14 @@ from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 try:
     import lightgbm.LGBMRegressor as lgb
 except:
-    print ('WARNING!!!!: LightGBM is not installed, using sklearn GBM')
-    print ('Will try to use sklearn instead, errors are possible')
+    print("WARNING!!!!: LightGBM is not installed, using sklearn GBM")
+    print("Will try to use sklearn instead, errors are possible")
     from sklearn.ensemble import GradientBoostingRegressor as lgb
-    
+
 import matplotlib.pyplot as plt
 from jarvis.db.static.explore_db import get_ml_dataset
 
-#import lightgbm as lgb
+# import lightgbm as lgb
 import matplotlib.pyplot as plt
 
 
@@ -83,8 +83,7 @@ def jdata(data_file="jarvisml_cfid.json", prop=""):
 
   """
 
-
-    d3 = get_ml_dataset() 
+    d3 = get_ml_dataset()
 
     X = []
     Y = []
@@ -118,9 +117,7 @@ def plot_learning_curve(
     ylim=None,
     cv=5,
     # n_jobs=-1, train_sizes=np.linspace(.1, 1.0, 10),fname='fig.png'):
-
     n_jobs=1,
-
     train_sizes=np.linspace(0.01, 1.0, 50),
     fname="fig.png",
 ):
@@ -277,7 +274,6 @@ def get_lgbm(train_x, val_x, train_y, val_y, cv, n_jobs, scoring):
     # Get converged boosting iterations with high learning rate, MAE as the convergence crietria
 
     lgbm = lgb(
-
         n_estimators=1000,
         learning_rate=0.1,
         max_depth=5,
@@ -328,7 +324,6 @@ def get_lgbm(train_x, val_x, train_y, val_y, cv, n_jobs, scoring):
     }
 
     lgbm = lgb(
-
         objective="regression",
         # device='gpu',
         n_estimators=num_iteration,
@@ -392,7 +387,6 @@ def run(
         os.makedirs(dir_name)
     os.chdir(dir_name)
 
-
     info = {}
     tmp_time = time.time()
 
@@ -536,8 +530,6 @@ if __name__ == "__main__":
     Y = y_train[0:500]
     model.fit(X, Y)
 
-
-
     info = {}
     tmp_time = time.time()
 
@@ -680,7 +672,6 @@ if __name__ == "__main__":
     X = X_train[0:500]
     Y = y_train[0:500]
     model.fit(X, Y)
-
 
     pred = model.predict(X_test)
     reg_sc = regr_scores(y_test, pred)

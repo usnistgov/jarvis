@@ -7,7 +7,7 @@ import os
 import json
 
 MAPI_KEY = os.environ.get("MAPI_KEY", "")
-#from pymatgen.matproj.rest import MPRester
+# from pymatgen.matproj.rest import MPRester
 from pymatgen.ext.matproj import MPRester
 import matplotlib, subprocess
 

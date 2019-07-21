@@ -1,4 +1,5 @@
-import os,sys, zipfile
+import os, sys, zipfile
+
 
 def ZipDir(inputDir, outputZip, contents=[]):
     """
@@ -40,4 +41,3 @@ def ZipDir(inputDir, outputZip, contents=[]):
     _ArchiveDirectory(inputDir)
 
     zipOut.close()
-

@@ -10,6 +10,7 @@ from jarvis.slme.slme import *
 from jarvis.boltztrap.boltztrap import *
 from jarvis.elastic_tens.vasp import *
 from jarvis.ip_optics.freq_dielectric import *
+
 pos = os.path.join(
     os.path.dirname(__file__), "..", "vasp", "examples", "SiOptb88", "POSCAR"
 )
@@ -158,6 +159,7 @@ def test_plot_dos():
 def test_plot_enc_convergence():
     _, enc = plot_enc_convergence(dir)
     assert enc == 500
+
 
 def test_ip_optics():
     vrun = str(run).replace("BAND", "OPTICS")

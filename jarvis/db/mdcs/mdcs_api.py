@@ -186,7 +186,6 @@ def delete_all(file=""):
 # Example of curating/uploading JARVIS-DFT data  is given below
 
 
-
 def upload_sample_data():
     d = loadfn("jdft_3d-7-7-2018.json", cls=MontyDecoder)
 

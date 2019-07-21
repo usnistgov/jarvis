@@ -12,13 +12,8 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn.pipeline import Pipeline
 
 
-
 class RegressorModule(nn.Module):
-    def __init__(
-            self,
-            num_units=10,
-            nonlin=F.relu,
-    ):
+    def __init__(self, num_units=10, nonlin=F.relu):
         super(RegressorModule, self).__init__()
         self.num_units = num_units
         self.nonlin = nonlin
@@ -35,7 +30,6 @@ class RegressorModule(nn.Module):
         return X
 
 
-
 def simple_regression(X=[], Y=[], plot=False, preprocess=True):
     """
   Quickly train simple regression models without hyperparameter-optimization
@@ -48,21 +42,21 @@ def simple_regression(X=[], Y=[], plot=False, preprocess=True):
   """
 
     net_regr = NeuralNetRegressor(
-    RegressorModule,
-    max_epochs=20,
-    lr=0.1,
-#     device='cuda',  # uncomment this to train with CUDA
+        RegressorModule,
+        max_epochs=20,
+        lr=0.1,
+        #     device='cuda',  # uncomment this to train with CUDA
     )
     X_train, X_test, y_train, y_test, jid_train, jid_test = train_test_split(
         X, Y, jid, random_state=1, test_size=0.1
     )
     pipe = Pipeline(
-            [
-                ("stdscal", StandardScaler()),
-                ("vart", VarianceThreshold(1e-4)),
-                ("est",net_regr ),
-            ]
-        )
+        [
+            ("stdscal", StandardScaler()),
+            ("vart", VarianceThreshold(1e-4)),
+            ("est", net_regr),
+        ]
+    )
     if preprocess == True:
         model = pipe
     else:
@@ -71,15 +65,12 @@ def simple_regression(X=[], Y=[], plot=False, preprocess=True):
     pred = model.predict(X_test)
     reg_sc = regr_scores(y_test, pred)
     if plot == True:
-        plt.plot(
-            reg_sc["pred"], reg_sc["test"], ".", label=str(type(i).__name__)[0:4]
-        )
+        plt.plot(reg_sc["pred"], reg_sc["test"], ".", label=str(type(i).__name__)[0:4])
     print(type(i).__name__, round(reg_sc["mae"], 3), round(reg_sc["rmse"], 3))
     if plot == True:
         plt.legend()
         plt.xlabel("DFT")
         plt.ylabel("ML")
-
 
 
 if __name__ == "__main__":

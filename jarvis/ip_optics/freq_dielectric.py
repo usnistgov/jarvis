@@ -21,8 +21,6 @@ import numpy as np
 from pymatgen.analysis.elasticity.elastic import ElasticTensor
 
 
-
-
 def ip_optics(vrun="", filename=".", extra="", plot=False):
     """
     Optoelectronic properties derived from dielectric function 
@@ -358,6 +356,7 @@ def ip_optics(vrun="", filename=".", extra="", plot=False):
     print(info["real_part"][0][0])
     return info
 
+
 if __name__ == "__main__":
     run = path = str(
         os.path.join(
@@ -365,6 +364,5 @@ if __name__ == "__main__":
             "../vasp/examples/SiOptb88/MAIN-MBJ-bulk@mp_149/vasprun.xml",
         )
     )
-    ep=ip_optics(vrun=run)
-    print (ep)
-
+    ep = ip_optics(vrun=run)
+    print(ep)

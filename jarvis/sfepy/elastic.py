@@ -126,7 +126,7 @@ def sequence(*args):
 
 
 @curry
-def solve(x_data, elastic_modulus, poissons_ratio, macro_strain=1., delta_x=1.):
+def solve(x_data, elastic_modulus, poissons_ratio, macro_strain=1.0, delta_x=1.0):
     """Solve the elasticity problem
 
     Args:
@@ -228,7 +228,7 @@ def _convert_properties(dim, elastic_modulus, poissons_ratio):
         map_(
             lambda x: pipe(
                 ElasticConstants(young=x[0], poisson=x[1]),
-                lambda y: (y.lam, dim / 3. * y.mu),
+                lambda y: (y.lam, dim / 3.0 * y.mu),
             )
         ),
         list,
