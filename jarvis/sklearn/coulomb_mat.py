@@ -8,6 +8,11 @@ Refer: 10.1103/PhysRevLett.108.058301
 
 
 def coulomb_matrix(strt="", max_dim=100):
+    """
+    Args:
+        strt: structure object
+        max_dim: maximum number of atoms=sqrt(max_dim)
+    """
     natoms = len(strt)
     mat = np.zeros((natoms, natoms))
     for ii, i in enumerate(strt):
