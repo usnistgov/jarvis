@@ -225,7 +225,7 @@ def gaps_only(nelec, wf):
 
 
 if __name__ == "__main__":
-    #JVASP-1044
+    # JVASP-1044
 
     wf_noso = "WAVECAR.noso"  # sys.argv[1]
     wf_so = "WAVECAR.so"  # sys.argv[2]

@@ -3,8 +3,9 @@ import os
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Poscar
 from jarvis.lammps.jlammps import read_data
-from jarvis.plane_defect.surface import  surfer,pmg_surfer
+from jarvis.plane_defect.surface import surfer, pmg_surfer
 from jarvis.point_defect.vacancy import vac_antisite_def_struct_gen
+
 dat = os.path.join(
     os.path.dirname(__file__),
     "..",

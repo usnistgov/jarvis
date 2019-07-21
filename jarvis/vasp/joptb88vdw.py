@@ -44,21 +44,22 @@ import operator
 from monty.serialization import loadfn, dumpfn
 from monty.json import MontyEncoder, MontyDecoder
 
-
-# Define in enenv_variable file
-main_exe = os.environ["vasp_bulk_exe"]
-surf_exe = os.environ["vasp_surf_exe"]
-nw_exe = os.environ["vasp_nw_exe"]
-soc_exe = os.environ["vasp_soc_exe"]
-pot_yaml = str(os.path.join(os.path.dirname(__file__), "Special_POTCAR.yaml"))
-vdw_dat = os.environ["vasp_vdw_dat"]
-json_dat = os.environ["data_json"]
-ncores = int(os.environ["ncores"])
-nnodes = int(os.environ["nnodes"])
-mem = str(os.environ["mem"])
-walltime = str(os.environ["walltime"])
-mp_cmd = str(os.environ["mp_cmd"])
-
+try:
+    # Define in enenv_variable file
+    main_exe = os.environ["vasp_bulk_exe"]
+    surf_exe = os.environ["vasp_surf_exe"]
+    nw_exe = os.environ["vasp_nw_exe"]
+    soc_exe = os.environ["vasp_soc_exe"]
+    pot_yaml = str(os.path.join(os.path.dirname(__file__), "Special_POTCAR.yaml"))
+    vdw_dat = os.environ["vasp_vdw_dat"]
+    json_dat = os.environ["data_json"]
+    ncores = int(os.environ["ncores"])
+    nnodes = int(os.environ["nnodes"])
+    mem = str(os.environ["mem"])
+    walltime = str(os.environ["walltime"])
+    mp_cmd = str(os.environ["mp_cmd"])
+except:
+    pass
 
 optb88dict = dict(
     PREC="Accurate",

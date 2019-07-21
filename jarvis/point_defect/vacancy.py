@@ -16,15 +16,17 @@ import glob
 from pymatgen.io.vasp import Poscar
 from pymatgen.core.structure import Structure
 from pymatgen.io.ase import AseAtomsAdaptor
-from monty.serialization import loadfn,MontyDecoder
+from monty.serialization import loadfn, MontyDecoder
 
-def chempot_struct(element='Al'):
+
+def chempot_struct(element="Al"):
     chempot_json_file = str(os.path.join(os.path.dirname(__file__), "chem_pot.json"))
-    chempot_json = loadfn(chempot_json_file,cls=MontyDecoder)
-    id,struct=chempot_json[element]
-    return id,struct
+    chempot_json = loadfn(chempot_json_file, cls=MontyDecoder)
+    id, struct = chempot_json[element]
+    return id, struct
 
-def vac_antisite_def_struct_gen(c_size=15,  struct=None, write_file=True):
+
+def vac_antisite_def_struct_gen(c_size=15, struct=None, write_file=True):
     """
     Vacancy, antisite generator
 
@@ -37,7 +39,7 @@ def vac_antisite_def_struct_gen(c_size=15,  struct=None, write_file=True):
     """
     def_str = []
     if struct == None:
-            print("Provide structure")
+        print("Provide structure")
     c_size = c_size
     prim_struct_sites = len(struct.sites)
     struct = SpacegroupAnalyzer(struct).get_conventional_standard_structure()
@@ -94,7 +96,6 @@ def vac_antisite_def_struct_gen(c_size=15,  struct=None, write_file=True):
     return def_str
 
 
-
 if __name__ == "__main__":
     pos = str(
         os.path.join(
@@ -102,8 +103,8 @@ if __name__ == "__main__":
             "../vasp/examples/SiOptb88/MAIN-MBJ-bulk@mp_149/POSCAR",
         )
     )
-    mat=Structure.from_file(pos)
-    x=vac_antisite_def_struct_gen(struct=mat,write_file=False)
-    print (x)
-    id,s=chempot_struct('Al')
-    print(id,s)
+    mat = Structure.from_file(pos)
+    x = vac_antisite_def_struct_gen(struct=mat, write_file=False)
+    print(x)
+    id, s = chempot_struct("Al")
+    print(id, s)

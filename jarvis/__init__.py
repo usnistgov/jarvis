@@ -3,10 +3,11 @@ Integration of JARVIS-FF/DFT/ML .
 """
 import os
 from pathlib import Path
+
 try:
-    #dir = os.path.dirname(os.path.realpath('__file__'))
+    # dir = os.path.dirname(os.path.realpath('__file__'))
     home = str(Path.home())
-    env =  str(home)+str("/env_variables")
+    env = str(home) + str("/env_variables")
     # env=str('env_variables'))
     f = open(env, "r")
     lines = f.read().splitlines()

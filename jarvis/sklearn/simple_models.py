@@ -39,28 +39,30 @@ from jarvis.sklearn.build_models import jdata
 from jarvis.db.static.explore_db import get_3d_dataset, get_2d_dataset, get_ml_dataset
 
 simple_regr_models = [
-        GaussianProcessRegressor(),
-        RandomForestRegressor(),
-        GradientBoostingRegressor(),
-        AdaBoostRegressor(),
-        SVR(),
-        Lasso(),
-        LinearRegression(),
-        KernelRidge(),
-        MLPRegressor(),
-        DecisionTreeRegressor(),
-    ]
+    GaussianProcessRegressor(),
+    RandomForestRegressor(),
+    GradientBoostingRegressor(),
+    AdaBoostRegressor(),
+    SVR(),
+    Lasso(),
+    LinearRegression(),
+    KernelRidge(),
+    MLPRegressor(),
+    DecisionTreeRegressor(),
+]
 
 simple_class_models = [
-        DecisionTreeClassifier(),
-        MLPClassifier(),
-        GradientBoostingClassifier(),
-        KNeighborsClassifier(),
-        GaussianProcessClassifier(),
-        RandomForestClassifier(),
-        AdaBoostClassifier(),
-        SVC(),
-    ]
+    DecisionTreeClassifier(),
+    MLPClassifier(),
+    GradientBoostingClassifier(),
+    KNeighborsClassifier(),
+    GaussianProcessClassifier(),
+    RandomForestClassifier(),
+    AdaBoostClassifier(),
+    SVC(),
+]
+
+
 def read_vasp_structure(filename=""):
     """
    Read VASP POSCAR, .cif file
@@ -74,7 +76,9 @@ def read_vasp_structure(filename=""):
     return s
 
 
-def simple_regression(X=[], Y=[], plot=False, simple_models=simple_regr_models, preprocess=True):
+def simple_regression(
+    X=[], Y=[], plot=False, simple_models=simple_regr_models, preprocess=True
+):
     """
   Quickly train simple regression models without hyperparameter-optimization
   Args:
@@ -223,7 +227,7 @@ def classify_roc_ml(
     return model, roc_auc
 
 
-def simple_classification(plot=True,simple_models=simple_class_models):
+def simple_classification(plot=True, simple_models=simple_class_models):
     """
     Quickly train some of the classifcation algorithms available in scikit-learn
     """
@@ -232,29 +236,27 @@ def simple_classification(plot=True,simple_models=simple_class_models):
         m, r = classify_roc_ml(X=X_class, y=Y_class, method=i, plot=plot)
         print(type(i).__name__, r[0])
 
-def simple_GB_confidence_interval(X=[],Y=[]):
- """
+
+def simple_GB_confidence_interval(X=[], Y=[]):
+    """
  From https://towardsdatascience.com/how-to-generate-prediction-intervals-with-scikit-learn-and-python-ab3899f992ed
 
  """
- LOWER_ALPHA = 0.1
- UPPER_ALPHA = 0.9
- # Each model has to be separate
- lower_model = GradientBoostingRegressor(loss="quantile",                   
-                                        alpha=LOWER_ALPHA)
- # The mid model will use the default loss
- mid_model = GradientBoostingRegressor(loss="ls")
- upper_model = GradientBoostingRegressor(loss="quantile",
-                                        alpha=UPPER_ALPHA)
+    LOWER_ALPHA = 0.1
+    UPPER_ALPHA = 0.9
+    # Each model has to be separate
+    lower_model = GradientBoostingRegressor(loss="quantile", alpha=LOWER_ALPHA)
+    # The mid model will use the default loss
+    mid_model = GradientBoostingRegressor(loss="ls")
+    upper_model = GradientBoostingRegressor(loss="quantile", alpha=UPPER_ALPHA)
 
- models=[lower_model,mid_model,upper_model]
- simple_regression(X=X,Y=Y,simple_models=models)
-
+    models = [lower_model, mid_model, upper_model]
+    simple_regression(X=X, Y=Y, simple_models=models)
 
 
 if __name__ == "__main__":
     X, Y, jid = jdata(prop="exfoliation_en")
-    simple_GB_confidence_interval(X,Y)
+    simple_GB_confidence_interval(X, Y)
     simple_regression(X, Y)
     X_class, Y_class = binary_class_dat(X=X, Y=Y, tol=100)
     simple_classification()

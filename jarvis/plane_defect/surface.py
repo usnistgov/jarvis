@@ -26,9 +26,7 @@ from pymatgen.core.surface import (
 )
 
 
-
-
-def pmg_surfer( vacuum=15, mat=None, max_index=1, min_slab_size=15, write_file=True):
+def pmg_surfer(vacuum=15, mat=None, max_index=1, min_slab_size=15, write_file=True):
     """
     Pymatgen surface builder for a Poscar
 
@@ -43,7 +41,7 @@ def pmg_surfer( vacuum=15, mat=None, max_index=1, min_slab_size=15, write_file=T
     """
 
     if mat == None:
-            print("Provide structure")
+        print("Provide structure")
 
     sg_mat = SpacegroupAnalyzer(mat)
     mat_cvn = sg_mat.get_conventional_standard_structure()
@@ -127,7 +125,7 @@ def surfer(vacuum=15, layers=2, mat=None, max_index=1, write_file=True):
     """
 
     if mat == None:
-            print("Provide structure")
+        print("Provide structure")
 
     sg_mat = SpacegroupAnalyzer(mat)
     mat_cvn = sg_mat.get_conventional_standard_structure()
@@ -180,6 +178,7 @@ def surfer(vacuum=15, layers=2, mat=None, max_index=1, write_file=True):
 
     return structures
 
+
 if __name__ == "__main__":
     pos = str(
         os.path.join(
@@ -187,7 +186,7 @@ if __name__ == "__main__":
             "../vasp/examples/SiOptb88/MAIN-MBJ-bulk@mp_149/POSCAR",
         )
     )
-    mat=Structure.from_file(pos)
-    x=pmg_surfer(mat=mat,write_file=False)
-    print (x)
-    y=surfer(mat=mat,write_file=False)
+    mat = Structure.from_file(pos)
+    x = pmg_surfer(mat=mat, write_file=False)
+    print(x)
+    y = surfer(mat=mat, write_file=False)

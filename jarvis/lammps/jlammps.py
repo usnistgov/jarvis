@@ -1,4 +1,3 @@
-
 from __future__ import unicode_literals, print_function
 
 """
@@ -8,9 +7,10 @@ Used for defects, surface and phonon calculations
 
 from monty.json import MontyEncoder
 from numpy import matrix
-import shutil,time
+import shutil, time
 from ase import *
 import numpy as np
+
 try:
     from phonopy import Phonopy
     from phonopy.file_IO import parse_FORCE_CONSTANTS, write_FORCE_CONSTANTS
@@ -18,7 +18,7 @@ try:
     from phonopy.structure.atoms import Atoms as PhonopyAtoms
 except:
     pass
-import glob,fileinput
+import glob, fileinput
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Incar, Poscar
 from pymatgen.core.surface import (
@@ -32,7 +32,7 @@ from pymatgen.ext.matproj import MPRester
 import operator
 from pymatgen.core.lattice import Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from jarvis.point_defect.vacancy import vac_antisite_def_struct_gen,chempot_struct
+from jarvis.point_defect.vacancy import vac_antisite_def_struct_gen, chempot_struct
 from jarvis.plane_defect.surface import pmg_surfer, surfer
 import numpy as np, time, json
 import sys, os, subprocess, socket
@@ -42,6 +42,7 @@ from jarvis.phonopy.phonon import get_phonopy_atoms
 import fortranformat as fform
 from pymatgen.core.structure import Structure
 from ase.calculators.lammpsrun import LAMMPS, prism
+
 try:
     input_nobox = os.environ["input_nobox"]
     input_box = os.environ["input_box"]
@@ -96,9 +97,9 @@ def write_lammps_data(structure=None, file="", write_tmp_file=True):
 
 def write_lammps_in(
     structure=None,
-    lammps_in='init.mod',
-    lammps_in1='potential.mod',
-    lammps_in2='in.main',
+    lammps_in="init.mod",
+    lammps_in1="potential.mod",
+    lammps_in2="in.main",
     lammps_trj=None,
     lammps_data=None,
     parameters={},
@@ -690,8 +691,8 @@ def get_chem_pot(s1=None, s2=None, parameters={}):
             print("j is ", j)
             if j not in uniq:
                 uniq.append(j)
-                a,b=chempot_struct(j.symbol)
-                #a, b = get_struct_from_jv(j)
+                a, b = chempot_struct(j.symbol)
+                # a, b = get_struct_from_jv(j)
                 p = Poscar(b)
                 p.comment = str(a)
                 enp, strt, forces = run_job(mat=p, parameters=parameters)
@@ -699,7 +700,6 @@ def get_chem_pot(s1=None, s2=None, parameters={}):
         print("uniq problem", uniq)
     return enp
 
-     
 
 def calc_forces(mat=None, parameters={}):
     """
@@ -720,7 +720,7 @@ def do_phonons(strt=None, parameters=None, c_size=15):
         c_size: cell-size 
     
     """
-    #spg_strt = SpacegroupAnalyzer(strt).get_conventional_standard_structure()
+    # spg_strt = SpacegroupAnalyzer(strt).get_conventional_standard_structure()
     p = get_phonopy_atoms(mat=strt)
     bulk = p
 
@@ -732,13 +732,13 @@ def do_phonons(strt=None, parameters=None, c_size=15):
     tmp.make_supercell([dim1, dim2, dim3])
     Poscar(tmp).write_file("POSCAR-Super.vasp")
 
-    #phonon = Phonopy(get_phonopy_atoms(tmp), [[dim1, 0, 0], [0, dim2, 0], [0, 0, dim3]])  # ,
+    # phonon = Phonopy(get_phonopy_atoms(tmp), [[dim1, 0, 0], [0, dim2, 0], [0, 0, dim3]])  # ,
     phonon = Phonopy(bulk, [[dim1, 0, 0], [0, dim2, 0], [0, 0, dim3]])  # ,
-    print("[Phonopy] Atomic displacements1:",bulk)
-    print("[Phonopy] Atomic displacements2:",phonon,dim1,dim2,dim3)
+    print("[Phonopy] Atomic displacements1:", bulk)
+    print("[Phonopy] Atomic displacements2:", phonon, dim1, dim2, dim3)
     phonon.generate_displacements(distance=0.03)
     disps = phonon.get_displacements()
-    print("[Phonopy] Atomic displacements3:",disps)
+    print("[Phonopy] Atomic displacements3:", disps)
     for d in disps:
         print("[Phonopy]", d[0], d[1:])
     supercells = phonon.get_supercells_with_displacements()
@@ -919,15 +919,11 @@ def main(p=None, parameters={}, c_size=10):
         os.system(line)
 
 
-def main_func( mat=None, parameters={}):
+def main_func(mat=None, parameters={}):
     """
     Call master job function either using mpid or Poscar object
     """
     main(p=mat, parameters=parameters)
-
-
-
-
 
 
 def run_job(mat=None, parameters={}, jobname=""):
@@ -956,38 +952,38 @@ def run_job(mat=None, parameters={}, jobname=""):
     os.chdir(str(jobname))
     print("folder name", folder)
     forces = "na"
-    if os.path.isfile('./log.lammps'):
-     try:
+    if os.path.isfile("./log.lammps"):
+        try:
 
-        (
-            en,
-            press,
-            toten,
-            c11,
-            c22,
-            c33,
-            c12,
-            c13,
-            c23,
-            c44,
-            c55,
-            c66,
-            c14,
-            c16,
-            c24,
-            c25,
-            c26,
-            c34,
-            c35,
-            c36,
-            c45,
-            c46,
-            c56,
-        ) = analyz_loge("./log.lammps")
-     except:
-        pass
+            (
+                en,
+                press,
+                toten,
+                c11,
+                c22,
+                c33,
+                c12,
+                c13,
+                c23,
+                c44,
+                c55,
+                c66,
+                c14,
+                c16,
+                c24,
+                c25,
+                c26,
+                c34,
+                c35,
+                c36,
+                c45,
+                c46,
+                c56,
+            ) = analyz_loge("./log.lammps")
+        except:
+            pass
     else:
-        #pass
+        # pass
         # line=str("#PBS -l pmem=")+str(mem)+'\n'
         # f.write(line)
         write_lammps_data(structure=mat.structure, file="data")
@@ -998,15 +994,14 @@ def run_job(mat=None, parameters={}, jobname=""):
             lammps_in2="in.main",
             parameters=parameters,
         )
-        if 'elast' in parameters['control_file']:
-         import jarvis
-         base_path=jarvis.__file__.split('/__init__.py')[0]
-         displace_file = os.path.join(
-          base_path,
-          "lammps",
-          "module_files",
-          "displace.mod")
-         shutil.copy2(displace_file,'./')
+        if "elast" in parameters["control_file"]:
+            import jarvis
+
+            base_path = jarvis.__file__.split("/__init__.py")[0]
+            displace_file = os.path.join(
+                base_path, "lammps", "module_files", "displace.mod"
+            )
+            shutil.copy2(displace_file, "./")
         os.system(parameters["exec"])
         initial_str = read_data(data="data", ff="potential.mod")
 
@@ -1067,40 +1062,32 @@ def run_job(mat=None, parameters={}, jobname=""):
     f_json.close()
     return en, final_str, forces
 
+
 if __name__ == "__main__":
-   import jarvis
-   base_path=jarvis.__file__.split('/__init__.py')[0]
-   pos = os.path.join(
-    base_path,
-    "lammps",
-    "examples",
-    "Al03.eam.alloy_nist",
-    "bulk@mp-134_fold",
-    "POSCAR")
-   pair_coeff = os.path.join(
-    base_path,
-    "lammps",
-    "examples",
-    "Al03.eam.alloy")
+    import jarvis
 
-   control_file = os.path.join(
-    base_path,
-    "lammps",
-    "module_files",
-    "inelast.mod")
+    base_path = jarvis.__file__.split("/__init__.py")[0]
+    pos = os.path.join(
+        base_path,
+        "lammps",
+        "examples",
+        "Al03.eam.alloy_nist",
+        "bulk@mp-134_fold",
+        "POSCAR",
+    )
+    pair_coeff = os.path.join(base_path, "lammps", "examples", "Al03.eam.alloy")
 
+    control_file = os.path.join(base_path, "lammps", "module_files", "inelast.mod")
 
+    mat = Poscar.from_file(pos)
 
-   mat = Poscar.from_file(pos)
-
-
-   parameters = {
-       "c_size": 3,
-       "exec": "/opt/lammps/bin/lammps  <in.main >out",
-       "pair_style": "eam/alloy",
-       "pair_coeff": pair_coeff,
-       "atom_style": "charge",
-       "control_file": control_file,
-   }
-   run_job(mat=mat, parameters=parameters)
-   main_func(mat=mat, parameters=parameters) 
+    parameters = {
+        "c_size": 3,
+        "exec": "/opt/lammps/bin/lammps  <in.main >out",
+        "pair_style": "eam/alloy",
+        "pair_coeff": pair_coeff,
+        "atom_style": "charge",
+        "control_file": control_file,
+    }
+    run_job(mat=mat, parameters=parameters)
+    main_func(mat=mat, parameters=parameters)
