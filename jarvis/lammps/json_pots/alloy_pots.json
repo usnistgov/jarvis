@@ -1,0 +1,287 @@
+[
+    {
+        "elements": [
+            "U",
+        ],
+        "file": "U.eam.sss2012.alloy"
+    },
+    {
+        "elements": [
+            "Au"
+        ],
+        "file": "Au-Grochola-JCP05.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ta"
+        ],
+        "file": "Ta2_Ravelo_2013.eam.alloy"
+    },
+    {
+        "elements": [
+            "Cu"
+        ],
+        "file": "Cu_zhou.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ti",
+            "Al"
+        ],
+        "file": "Zope-Ti-Al-2003.eam.alloy"
+    },
+    {
+        "elements": [
+            "Al"
+        ],
+        "file": "Al99.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ni",
+            "Co"
+        ],
+        "file": "Mishin-Ni-Co-2013.eam.alloy"
+    },
+    {
+        "elements": [
+            "Fe",
+            "Ni"
+        ],
+        "file": "Fe-Ni.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ta"
+        ],
+        "file": "newPP1_47-setfl.eam.alloy"
+    },
+    {
+        "elements": [
+            "Al"
+        ],
+        "file": "Al03.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ni",
+            "Al"
+        ],
+        "file": "NiAl.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ni",
+            "Al",
+            "Co"
+        ],
+        "file": "Mishin-Ni-Al-Co-2013.eam.alloy"
+    },
+    {
+        "elements": [
+            "Fe",
+            "Cu",
+            "Ni"
+        ],
+        "file": "FeCuNi.eam.alloy"
+    },
+    {
+        "elements": [
+            "Co",
+            "Al"
+        ],
+        "file": "CoAl.eam.alloy"
+    },
+    {
+        "elements": [
+            "Cu",
+            "Ag"
+        ],
+        "file": "CuAg.eam.alloy"
+    },
+    {
+        "elements": [
+            "Cu"
+        ],
+        "file": "Cu_mishin1.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ni",
+            "Al"
+        ],
+        "file": "Mishin-Ni-Al-2009.eam.alloy"
+    },
+    {
+        "elements": [
+            "Fe",
+            "Ni",
+            "Cr"
+        ],
+        "file": "FeNiCr.eam.alloy"
+    },
+    {
+        "elements": [
+            "Al",
+            "Co"
+        ],
+        "file": "Mishin-Al-Co-2013.eam.alloy"
+    },
+    {
+        "elements": [
+            "Mg",
+            "Al"
+        ],
+        "file": "mg-al-set.eam.alloy"
+    },
+    {
+        "elements": [
+            "Al",
+            "Cu"
+        ],
+        "file": "AlCu.eam.alloy"
+    },
+    {
+        "elements": [
+            "Al"
+        ],
+        "file": "Al_zhou.eam.alloy"
+    },
+    {
+        "elements": [
+            "Pd",
+            "Ag",
+            "H"
+        ],
+        "file": "PdAgH_HybridPd3Ag.eam.alloy"
+    },
+    {
+        "elements": [
+            "Cu",
+            "Ag"
+        ],
+        "file": "cu_ag_ymwu.eam.alloy"
+    },
+    {
+        "elements": [
+            "Nb"
+        ],
+        "file": "Nb.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ni",
+            "Al",
+            "Co"
+        ],
+        "file": "Mishin_updated-Ni-Al-Co-2013.eam.alloy"
+    },
+    {
+        "elements": [
+            "Fe",
+            "Ni",
+            "Cr"
+        ],
+        "file": "FeNiCr_Bonny_2013_ptDef.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ni",
+            "Al"
+        ],
+        "file": "NiAl02.eam.alloy"
+    },
+    {
+        "elements": [
+            "Al",
+            "Pb"
+        ],
+        "file": "alpb-setfl.eam.alloy"
+    },
+    {
+        "elements": [
+            "Co"
+        ],
+        "file": "Co_PurjaPun_2012.eam.alloy"
+    },
+    {
+        "elements": [
+            "Al",
+            "Co"
+        ],
+        "file": "Mishin_updated-Al-Co-2013.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ni",
+            "Al",
+            "H"
+        ],
+        "file": "NiAlH_jea.eam.alloy"
+    },
+    {
+        "elements": [
+            "Cu"
+        ],
+        "file": "Cu01.eam.alloy"
+    },
+    {
+        "elements": [
+            "W"
+        ],
+        "file": "W_zhou.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ta"
+        ],
+        "file": "Ta1_Ravelo_2013.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ag"
+        ],
+        "file": "Ag.eam.alloy"
+    },
+    {
+        "elements": [],
+        "file": "Al-LEA.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ni",
+            "Co"
+        ],
+        "file": "Mishin_updated-Ni-Co-2013.eam.alloy"
+    },
+    {
+        "elements": [
+            "U",
+            "Mo",
+            "Xe"
+        ],
+        "file": "U_Mo_Xe.2013.eam.alloy"
+    },
+    {
+        "elements": [
+            "Ni"
+        ],
+        "file": "Ni99.eam.alloy"
+    },
+    {
+        "elements": [
+            "Pd",
+            "Ag",
+            "H"
+        ],
+        "file": "PdAgH_MorsePd3Ag.eam.alloy"
+    },
+    {
+        "elements": [
+            "Nb",
+            "Ti",
+            "Al"
+        ],
+        "file": "Farkas_Nb-Ti-Al_1996.eam.alloy"
+    }
+]
