@@ -9,60 +9,6 @@ boundaries.
 The microstructure is of shape (n_samples, n_x, n_y) or (n_samples,
 n_x, n_y, n_z).
 
->>> X = np.zeros((1, 3, 3), dtype=int)
->>> X[0, :, 1] = 1
-
->>> strain = solve(
-...     X,
-...     elastic_modulus=(1.0, 10.0),
-...     poissons_ratio=(0., 0.),
-...     macro_strain=1.,
-...     delta_x=1.
-... )['strain']
-
-y is the strain with components as follows
-
->>> exx = strain[..., 0]
->>> eyy = strain[..., 1]
->>> exy = strain[..., 2]
-
-In this example, the strain is only in the x-direction and has a
-uniform value of 1 since the displacement is always 1 and the size
-of the domain is 1.
-
->>> assert np.allclose(exx, 1)
->>> assert np.allclose(eyy, 0)
->>> assert np.allclose(exy, 0)
-
-The following example is for a system with contrast. It tests the
-left/right periodic offset and the top/bottom periodicity.
-
->>> X = np.array([[[1, 0, 0, 1],
-...                [0, 1, 1, 1],
-...                [0, 0, 1, 1],
-...                [1, 0, 0, 1]]])
->>> n_samples, N, N = X.shape
->>> macro_strain = 0.1
->>> displacement = solve(
-...     X,
-...     elastic_modulus=(10.0, 1.0),
-...     poissons_ratio=(0.3, 0.3),
-...     macro_strain=macro_strain
-... )['displacement']
->>> u = displacement[0]
-
-Check that the offset for the left/right planes is `N *
-macro_strain`.
-
->>> assert np.allclose(u[-1,:,0] - u[0,:,0], N * macro_strain)
-
-Check that the left/right side planes are periodic in y.
-
->>> assert np.allclose(u[0,:,1], u[-1,:,1])
-
-Check that the top/bottom planes are periodic in both x and y.
-
->>> assert np.allclose(u[:,0], u[:,-1])
 
 """
 
@@ -120,7 +66,6 @@ def sequence(*args):
     Returns:
       composed functions
 
-    >>> assert sequence(lambda x: x + 1, lambda x: x * 2)(3) == 8
     """
     return compose(*args[::-1])
 
@@ -181,46 +126,6 @@ def _convert_properties(dim, elastic_modulus, poissons_ratio):
       array of shape (n_phases, 2) where for example [1, 0], gives the
       Lame parameter in the second phase
 
-    >>> assert(np.allclose(
-    ...     _convert_properties(
-    ...          dim=2, elastic_modulus=(1., 2.), poissons_ratio=(1., 1.)
-    ...     ),
-    ...     np.array([[-0.5, 1. / 6.], [-1., 1. / 3.]])
-    ... ))
-
-    Test case with 3 phases.
-
-    >>> X2D = np.array([[[0, 1, 2, 1],
-    ...                  [2, 1, 0, 0],
-    ...                  [1, 0, 2, 2]]])
-    >>> X2D_property = _convert_properties(
-    ...     dim=2, elastic_modulus=(1., 2., 3.), poissons_ratio=(1., 1., 1.)
-    ... )[X2D]
-    >>> lame = lame0, lame1, lame2 = -0.5, -1., -1.5
-    >>> mu = mu0, mu1, mu2 = 1. / 6, 1. / 3, 1. / 2
-    >>> lm = list(zip(lame, mu))
-    >>> assert(np.allclose(X2D_property,
-    ...                    [[lm[0], lm[1], lm[2], lm[1]],
-    ...                     [lm[2], lm[1], lm[0], lm[0]],
-    ...                     [lm[1], lm[0], lm[2], lm[2]]]))
-
-    Test case with 2 phases.
-
-    >>> X3D = np.array([[[0, 1],
-    ...                  [0, 0]],
-    ...                 [[1, 1],
-    ...                  [0, 1]]])
-    >>> X3D_property = _convert_properties(
-    ...     dim=2, elastic_modulus=(1., 2.), poissons_ratio=(1., 1.)
-    ... )[X3D]
-
-    >>> assert(np.allclose(
-    ...     X3D_property,
-    ...     [[[lm[0], lm[1]],
-    ...       [lm[0], lm[0]]],
-    ...      [[lm[1], lm[1]],
-    ...       [lm[0], lm[1]]]]
-    ... ))
 
     """
     return pipe(
@@ -248,32 +153,6 @@ def _check(n_phases, n_phases_other, x_data):
 
     Poissons ratio and elasticy arrays must have equal length
 
-    >>> _check(3, 2, None)
-    Traceback (most recent call last):
-    ...
-    RuntimeError: elastic_modulus and poissons_ratio must be the same length
-
-    The microstructure array must be integer values
-
-    >>> _check(1, 1, np.zeros((2, 2), dtype=float))
-    Traceback (most recent call last):
-    ...
-    TypeError: X must be an integer array
-
-    The microstructure array must be shape (n_sample, n_x, n_y) or
-    (n_sample, n_x, n_y, n_z)
-
-    >>> _check(2, 2, np.array([0, 1]).reshape((1, 2)))
-    Traceback (most recent call last):
-    ...
-    RuntimeError: the shape of x_data is incorrect
-
-    The phase index must be bounded by 0 and the n_phases - 1.
-
-    >>> _check(2, 2, np.array([0, 3]))
-    Traceback (most recent call last):
-    ...
-    RuntimeError: X must be between 0 and 1.
 
     """
     if n_phases != n_phases_other:

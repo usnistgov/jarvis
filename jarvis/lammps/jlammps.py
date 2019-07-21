@@ -1,3 +1,4 @@
+
 from __future__ import unicode_literals, print_function
 
 """
@@ -42,7 +43,6 @@ from jarvis.phonopy.phonon import get_phonopy_atoms
 import fortranformat as fform
 from pymatgen.core.structure import Structure
 from ase.calculators.lammpsrun import LAMMPS, prism
-
 try:
     input_nobox = os.environ["input_nobox"]
     input_box = os.environ["input_box"]
