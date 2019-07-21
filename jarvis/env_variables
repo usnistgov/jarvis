@@ -1,9 +1,9 @@
-vasp_bulk_exe=/users/knc6/VASP/vasp54/src/vasp.5.4.1Dobby/bin/vasp_std
-vasp_surf_exe=/users/knc6/VASP/vasp54/src/vasp.5.4.1Dobbynoz/bin/vasp_std
-vasp_nw_exe=/users/knc6/VASP/vasp54/src/vasp.5.4.1Dobbynoxy/bin/vasp_ncl
-vasp_soc_exe=/users/knc6/VASP/vasp54/src/vasp.5.4.1Dobby/bin/vasp_ncl
+vasp_bulk_exe=/opt/vasp/5.4.4/bin/vasp
+vasp_surf_exe=/opt/vasp/5.4.4/bin/vasp
+vasp_nw_exe=/opt/vasp/5.4.4/bin/vasp
+vasp_soc_exe=/opt/vasp/5.4.4/bin/vasp
 vasp_vdw_dat=/users/knc6/bin/vdw_kernel.bindat
-lammps_exec=~/Software/LAMMPS/lammps-master/src/lmp_serial
+lammps_exec=/opt/lammps/bin/lammps
 VASP_PSP_DIR=/users/knc6/VASP/VASP-POTENTIAL
 MAPI_KEY=''
 data_json=/users/knc6/bin/all_mp.json

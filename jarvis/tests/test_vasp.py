@@ -5,10 +5,11 @@ from pymatgen.io.vasp.inputs import Poscar
 from jarvis.vasp.joptb88vdw import *  # Auto_Kpoints
 from jarvis.lammps.jlammps import read_data
 from jarvis.sklearn.get_desc import get_comp_descp
-from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen, surfer
 from jarvis.tools.vasp import *
-from jarvis.tools.slme import *
-from jarvis.tools.boltztrap import *
+from jarvis.slme.slme import *
+from jarvis.boltztrap.boltztrap import *
+from jarvis.elastic_tens.vasp import *
+from jarvis.ip_optics.freq_dielectric import *
 
 pos = os.path.join(
     os.path.dirname(__file__), "..", "vasp", "examples", "SiOptb88", "POSCAR"
@@ -160,9 +161,9 @@ def test_plot_enc_convergence():
     assert enc == 500
 
 
-def test_IP_optics():
+def test_ip_optics():
     vrun = str(run).replace("BAND", "OPTICS")
-    op = IP_optics(vrun)
+    op = ip_optics(vrun)
     val = op["real_part"][0][0]
     assert val == 13.4865
 

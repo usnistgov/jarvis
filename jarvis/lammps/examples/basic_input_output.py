@@ -3,6 +3,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from jarvis.lammps.jlammps import main_func, write_lammps_data, write_lammps_in
 from pymatgen.io.vasp.inputs import Poscar
 import os
+
 """
 Step-1: writing LAMMPS data file
 Import VASP's POSCAR or cif format file,make it 15x15x15 with conventional cell
