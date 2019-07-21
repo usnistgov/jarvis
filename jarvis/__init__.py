@@ -5,11 +5,11 @@ import os
 from pathlib import Path
 
 try:
-    # dir = os.path.dirname(os.path.realpath('__file__'))
-    home = str(Path.home())
-    #env = str(home) + str("/env_variables")
-    env = str("env_variables")
-    # env=str('env_variables'))
+
+    dir = os.path.join(os.path.dirname(__file__))
+    #dir = os.path.dirname(os.path.realpath('__file__'))
+    env = os.path.join(dir, "env_variables")
+
     f = open(env, "r")
     lines = f.read().splitlines()
     f.close()
