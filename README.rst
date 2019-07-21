@@ -18,7 +18,7 @@ JARVIS
 Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
 classical force-field/molecular dynamics and machine-learning. Official website: https://jarvis.nist.gov
 
-
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jarvis-git.JPG
 
 Installing JARVIS
 -----------------
@@ -123,33 +123,33 @@ Lucas Hale, Andrew Reid, Marcus Newrock (NIST)
 Plot-gallery with additional jupyter notebooks
 -----------------
 .. class:: center
-   .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF.png
-      :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/ADF-a.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/ADF-b.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/DDF.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/bandstr.jpg
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Dos.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
 
     
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/BoltzTrap.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Boltztrap.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Boltztrap.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/kp_converg.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/en_converg.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
