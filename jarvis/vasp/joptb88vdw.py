@@ -44,6 +44,7 @@ import operator
 from monty.serialization import loadfn, dumpfn
 from monty.json import MontyEncoder, MontyDecoder
 
+ncores = 16
 try:
     # Define in enenv_variable file
     main_exe = os.environ["vasp_bulk_exe"]
@@ -74,7 +75,7 @@ optb88dict = dict(
     NSW=1,
     NELM=400,
     ISIF=2,
-    NPAR=8,
+    NPAR=ncores,
     #NPAR=np.sqrt(ncores),
     LCHARG=".FALSE.",
     LWAVE=".FALSE.",
