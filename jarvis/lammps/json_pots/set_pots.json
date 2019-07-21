@@ -1,0 +1,118 @@
+[
+    {
+        "elements": [
+            "Fe"
+        ],
+        "file": "Fe.set"
+    },
+    {
+        "elements": [
+            "Ag"
+        ],
+        "file": "Ag.set"
+    },
+    {
+        "elements": [
+            "Au"
+        ],
+        "file": "Au.set"
+    },
+    {
+        "elements": [
+            "Ti"
+        ],
+        "file": "Ti.set"
+    },
+    {
+        "elements": [
+            "Al"
+        ],
+        "file": "Al_wkg_MSMSE_2009.set"
+    },
+    {
+        "elements": [
+            "Mg"
+        ],
+        "file": "Mg.set"
+    },
+    {
+        "elements": [
+            "Mo"
+        ],
+        "file": "Mo.set"
+    },
+    {
+        "elements": [
+            "Pt"
+        ],
+        "file": "Pt.set"
+    },
+    {
+        "elements": [
+            "Pd",
+            "H"
+        ],
+        "file": "PdH_Zhou_June29_2007_2.set"
+    },
+    {
+        "elements": [
+            "Ta"
+        ],
+        "file": "Ta.set"
+    },
+    {
+        "elements": [
+            "Pb"
+        ],
+        "file": "Pb.set"
+    },
+    {
+        "elements": [
+            "Ni"
+        ],
+        "file": "Ni.set"
+    },
+    {
+        "elements": [
+            "Co"
+        ],
+        "file": "Co.set"
+    },
+    {
+        "elements": [
+            "W"
+        ],
+        "file": "W.set"
+    },
+    {
+        "elements": [
+            "Al"
+        ],
+        "file": "Al.set"
+    },
+    {
+        "elements": [
+            "Al",
+            "Pb"
+        ],
+        "file": "alpb.set"
+    },
+    {
+        "elements": [
+            "Zr"
+        ],
+        "file": "Zr.set"
+    },
+    {
+        "elements": [
+            "Cu"
+        ],
+        "file": "Cu.set"
+    },
+    {
+        "elements": [
+            "Pd"
+        ],
+        "file": "Pd.set"
+    }
+]
