@@ -74,7 +74,8 @@ optb88dict = dict(
     NSW=1,
     NELM=400,
     ISIF=2,
-    NPAR=np.sqrt(ncores),
+    NPAR=8,
+    #NPAR=np.sqrt(ncores),
     LCHARG=".FALSE.",
     LWAVE=".FALSE.",
 )
