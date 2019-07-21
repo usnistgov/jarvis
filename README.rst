@@ -1,5 +1,5 @@
 .. class:: center
-   .. image:: https://circleci.com/gh/usnistgov/jarvis.svg?style=shield
+.. image:: https://circleci.com/gh/usnistgov/jarvis.svg?style=shield
           :target: https://circleci.com/gh/usnistgov/jarvis
 .. image:: https://travis-ci.org/usnistgov/jarvis.svg?branch=master
        :target: https://travis-ci.org/usnistgov/jarvis
