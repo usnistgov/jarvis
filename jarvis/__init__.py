@@ -18,5 +18,4 @@ try:
         if len(tmp) > 1:
             os.environ[tmp[0]] = tmp[1]
 except:
->>>>>>> 53bc91eccf3a6fb8ec7c559c0ee4a2de0b24d78f
     pass
