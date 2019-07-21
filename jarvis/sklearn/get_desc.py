@@ -622,10 +622,6 @@ def get_chgdescrp_arr(elm=""):
       """
     arr = []
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 53bc91eccf3a6fb8ec7c559c0ee4a2de0b24d78f
     try:
         f = open(el_chrg_json, "r")
         emdat = json.load(f)

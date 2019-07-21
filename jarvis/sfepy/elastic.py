@@ -66,7 +66,6 @@ def sequence(*args):
     Returns:
       composed functions
 
-    >>> assert sequence(lambda x: x + 1, lambda x: x * 2)(3) == 8
     """
     return compose(*args[::-1])
 
