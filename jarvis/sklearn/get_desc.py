@@ -867,6 +867,8 @@ if __name__ == "__main__":
     ss.make_supercell([2, 3, 4])
     x = get_comp_descp(s)
     xx = get_comp_descp(ss)
+    print("len", len(x))
+    # print(len(x))
     count = 0
     for i, j in zip(x, xx):
         count = count + 1
