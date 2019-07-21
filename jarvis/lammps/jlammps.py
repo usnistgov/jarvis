@@ -8,7 +8,7 @@ Used for defects, surface and phonon calculations
 
 from monty.json import MontyEncoder
 from numpy import matrix
-import time
+import shutil, time
 from ase import *
 import numpy as np
 
@@ -18,9 +18,8 @@ try:
     from phonopy.structure.atoms import Atoms as PhonopyAtoms
     from phonopy.structure.atoms import Atoms as PhonopyAtoms
 except:
-    print("Install phonopy==1.11.2")
     pass
-import glob
+import glob, fileinput
 from pymatgen.core.structure import Structure
 from pymatgen.io.vasp.inputs import Incar, Poscar
 from pymatgen.core.surface import (
@@ -34,11 +33,13 @@ from pymatgen.ext.matproj import MPRester
 import operator
 from pymatgen.core.lattice import Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from jarvis.lammps.Surf_Def import vac_antisite_def_struct_gen, pmg_surfer, surfer
+from jarvis.point_defect.vacancy import vac_antisite_def_struct_gen, chempot_struct
+from jarvis.plane_defect.surface import pmg_surfer, surfer
 import numpy as np, time, json
 import sys, os, subprocess, socket
 from pymatgen.io.ase import AseAtomsAdaptor
-import sys, zipfile
+from jarvis.tools.zipit import ZipDir
+from jarvis.phonopy.phonon import get_phonopy_atoms
 import fortranformat as fform
 from pymatgen.core.structure import Structure
 from ase.calculators.lammpsrun import LAMMPS, prism
@@ -48,336 +49,6 @@ try:
     lammps_exec = os.environ["lammps_exec"]
 except:
     pass
-
-def get_phonopy_atoms(mat=None):
-    """
-    Helper function to convert pymatgen structure object to phonopy atoms
-
-    Args:
-        mat: pymatgen structure object
-    Returns:
-           phonopy atoms object
-    """
-    symbols = [str(site.specie.symbol) for site in mat]
-    positions = [site.coords for site in mat]
-    cell = mat.lattice.matrix
-    p = PhonopyAtoms(symbols=symbols, positions=positions, pbc=True, cell=cell)
-    return p
-
-
-def ZipDir(inputDir, outputZip, contents=[]):
-    """
-    Zip up a directory and preserve symlinks and empty directories
-    """
-    zipOut = zipfile.ZipFile(outputZip, "w", compression=zipfile.ZIP_DEFLATED)
-    tmp = contents
-    rootLen = len(os.path.dirname(inputDir))
-
-    def _ArchiveDirectory(parentDirectory):
-        # contents = os.listdir(parentDirectory)
-        contents = (
-            tmp
-        )  # ['init.mod', 'potential.mod', 'in.elastic', 'data',  'log.lammps', 'restart.equil','data0' ]
-        # store empty directories
-        if not contents:
-            # http://www.velocityreviews.com/forums/t318840-add-empty-directory-using-zipfile.html
-            archiveRoot = parentDirectory[rootLen:].replace("\\", "/").lstrip("/")
-            zipInfo = zipfile.ZipInfo(archiveRoot + "/")
-            zipOut.writestr(zipInfo, "")
-        for item in contents:
-            fullPath = os.path.join(parentDirectory, item)
-            if os.path.isdir(fullPath) and not os.path.islink(fullPath):
-                _ArchiveDirectory(fullPath)
-            else:
-                archiveRoot = fullPath[rootLen:].replace("\\", "/").lstrip("/")
-                if os.path.islink(fullPath):
-                    # http://www.mail-archive.com/python-list@python.org/msg34223.html
-                    zipInfo = zipfile.ZipInfo(archiveRoot)
-                    zipInfo.create_system = 3
-                    # long type of hex val of '0xA1ED0000L',
-                    # say, symlink attr magic...
-                    # zipInfo.external_attr = 0777 << 16L
-                    zipInfo.external_attr = "2716663808L"
-                    zipOut.writestr(zipInfo, os.readlink(fullPath))
-                else:
-                    zipOut.write(fullPath, archiveRoot, zipfile.ZIP_DEFLATED)
-
-    _ArchiveDirectory(inputDir)
-
-    zipOut.close()
-
-
-def get_struct_from_mp(formula, MAPI_KEY="", all_structs=False):
-    """
-    Fetches the structure corresponding to the given formula
-    from the materialsproject database.
-    Note: Get the api key from materialsproject website.
-
-    Args:
-        formula: Example Al-Ni, Al, Al2O3 etc.
-        MAPI_KEY: key for database
-        all_structs: if all structures or only stable structures 
-    Returns:
-         structures
-    """
-    if not MAPI_KEY:
-        MAPI_KEY = os.environ.get("MAPI_KEY", "")
-        if not MAPI_KEY:
-            print("API key not provided")
-            print(
-                "get API KEY from materialsproject and set it to the MAPI_KEY environment variable. aborting ... "
-            )
-            sys.exit()
-    with MPRester(MAPI_KEY) as m:
-        data = m.get_data(formula)
-        structures = []
-        x = {}
-        print(
-            "\nnumber of structures matching the chemical formula {0} = {1}".format(
-                formula, len(data)
-            )
-        )
-        print(
-            "The one with the the lowest energy above the hull is returned, unless all_structs is set to True"
-        )
-        for d in data:
-            mpid = str(d["material_id"])
-            x[mpid] = d["e_above_hull"]
-            if all_structs:
-                structure = m.get_structure_by_material_id(mpid)
-                structure.sort()
-                structures.append(structure)
-        if all_structs:
-            return structures
-        else:
-            mineah_key = sorted(x.items(), key=operator.itemgetter(1))[0][0]
-            print(
-                "The id of the material corresponding to the lowest energy above the hull = {0}".format(
-                    mineah_key
-                )
-            )
-            if mineah_key:
-                return mineah_key, m.get_structure_by_material_id(mineah_key)
-            else:
-                return None
-
-
-def run_job(mat=None, parameters={}, jobname=""):
-    """ 
-    Generic  function for running LAMMPS job
-
-    Args:
-        mat: Poscar object
-        parameters: parameters with LAMMPS input information
-        jobname: a user-defined jobname
-    Returns:
-          en: final enery
-          final_str: final structure
-          forces: forces on final structure
-    """
-    # def run_job(mat=None,parameters = {'exec':'/cluster/bin/lmp_ctcms-14439-knc6-2','pair_style':'comb3 polar_on','pair_coeff':None,'atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'},jobname=''):
-    jobname = str(mat.comment)
-    # if jobname.startswith('bulk') or jobname.startswith('sbulk'):
-    #   parameters['control_file']='/home/kamal/inelast.mod'
-    # else:
-    #   parameters['control_file']='/home/kamal/inelast_nobox.mod'
-
-    folder = str(os.getcwd()) + str("/") + str(jobname)
-    if not os.path.exists(folder):
-        os.makedirs(str(jobname))
-    os.chdir(str(jobname))
-    print("folder name", folder)
-    forces = "na"
-    try:
-
-        (
-            en,
-            press,
-            toten,
-            c11,
-            c22,
-            c33,
-            c12,
-            c13,
-            c23,
-            c44,
-            c55,
-            c66,
-            c14,
-            c16,
-            c24,
-            c25,
-            c26,
-            c34,
-            c35,
-            c36,
-            c45,
-            c46,
-            c56,
-        ) = analyz_loge("./log.lammps")
-    except:
-        nprocs = 1
-        nnodes = 1
-        f = open("submit_job", "w")
-        line = str("#!/bin/bash") + "\n"
-        f.write(line)
-        line = str("#PBS -N ") + jobname + "\n"
-        f.write(line)
-        line = str("#PBS -l walltime=0:30:00") + "\n"
-        f.write(line)
-        line = str("#PBS -o test.log") + "\n"
-        f.write(line)
-        line = str("#PBS -m abe") + "\n"
-        f.write(line)
-        line = str("#PBS -j oe") + "\n"
-        f.write(line)
-        line = str("#PBS -r n") + "\n"
-        f.write(line)
-        line = (
-            str("#PBS -l nodes=")
-            + str(nnodes)
-            + str(":")
-            + str("ppn=")
-            + str(int(float(nprocs) / float(nnodes)))
-            + "\n"
-        )
-        f.write(line)
-        # line=str("#PBS -l pmem=")+str(mem)+'\n'
-        # f.write(line)
-        dir = str(os.getcwd())
-        line = str("cd ") + dir + "\n"
-        f.write(line)
-        cluster = parameters["cluster"]
-        job_bin = str(
-            parameters["exec"]
-        )  # str("mpirun /cluster/bin/lmp_ctcms-14439-knc6 <in.elastic >out")
-        print("job_bin", job_bin)
-        line = str(job_bin) + "\n"
-        f.write(line)
-        f.close()
-        write_lammps_data(structure=mat.structure, file="data")
-        write_lammps_in(
-            structure=mat.structure,
-            lammps_in="init.mod",
-            lammps_in1="potential.mod",
-            lammps_in2="in.elastic",
-            parameters=parameters,
-        )
-        initial_str = read_data(data="data", ff="potential.mod")
-        if cluster == "sun":  # sungrid engine
-            # if 'ruth' in socket.gethostname() or 'r049' in socket.gethostname():
-            with open("job.out", "w") as f:
-                p = subprocess.Popen(
-                    ["qsub", "-cwd", "-pe", "nodal", "1", "submit_job"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                )
-                stdout, stderr = p.communicate()
-                job_id = str(stdout.split("Your job")[1].split(" ")[1])
-                f.write(job_id)
-            status = True
-            while status != False:
-                try:
-                    line = str("qstat -j ") + str(job_id)
-                    a = os.system(line)
-                    if int(a) != 0:
-                        status = False
-                    else:
-                        time.sleep(5)
-                except:
-                    status = False
-                    # print "whattyhjkl;'"
-        elif cluster == "pbs":
-            print("cluster=", cluster)
-            # elif 'dobby' in socket.gethostname():
-            with open("job.out", "w") as f:
-                p = subprocess.Popen(
-                    ["qsub", "submit_job"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                )
-                stdout, stderr = p.communicate()
-                # self.job_id = stdout.rstrip('\n').split()[-1]
-                print("stdout,stderr", stdout, stderr)
-                job_id = str(
-                    stdout.split(".")[0]
-                )  # str(stdout.rstrip('\n').split()[-1])
-                f.write(job_id)
-            status = True
-            while status != False:
-                # print ("status=",status, job_id)
-                try:
-                    print("qstat,jobid comeonnn", job_id)
-                    output = subprocess.check_output(["qstat", "-i", job_id])
-                    # state = output.rstrip('\n').split('\n')[-1].split()[-2]
-                    # time.sleep(5)
-                    print("output", output)
-                    if "Unknown" in output:
-                        # if 'C' in output or 'Unknown Job Id Error' in output:
-                        status = False
-                except:
-                    status = False
-                    print("Error in job submission")
-
-        else:
-            print("socket error")
-
-        time.sleep(100)
-        (
-            en,
-            press,
-            toten,
-            c11,
-            c22,
-            c33,
-            c12,
-            c13,
-            c23,
-            c44,
-            c55,
-            c66,
-            c14,
-            c16,
-            c24,
-            c25,
-            c26,
-            c34,
-            c35,
-            c36,
-            c45,
-            c46,
-            c56,
-        ) = analyz_loge("./log.lammps")
-
-    print("initial,final sr", os.getcwd())
-    initial_str = read_data(data="data", ff="potential.mod")
-    final_str = read_data(data="data0", ff="potential.mod")
-    try:
-        forces = read_dump(data="0.dump", ff="potential.mod")
-    except:
-        pass
-    print("initial,final sr2", os.getcwd())
-
-    data_cal = []
-    data_cal.append(
-        {
-            "jobname": jobname,
-            "poscar": mat.as_dict(),
-            "initial_pos": initial_str.as_dict(),
-            "pair_style": str(parameters["pair_style"]),
-            "pair_coeff": str(parameters["pair_coeff"]),
-            "final_energy": float(toten),
-            "en": en,
-            "press": press,
-            "final_str": final_str.as_dict(),
-        }
-    )
-    json_file = str(jobname) + str(".json")
-    os.chdir("../")
-    f_json = open(json_file, "w")
-    f_json.write(json.dumps(data_cal, indent=4, cls=MontyEncoder))
-    f_json.close()
-    return en, final_str, forces
 
 
 def write_lammps_data(structure=None, file="", write_tmp_file=True):
@@ -426,9 +97,9 @@ def write_lammps_data(structure=None, file="", write_tmp_file=True):
 
 def write_lammps_in(
     structure=None,
-    lammps_in=None,
-    lammps_in1=None,
-    lammps_in2=None,
+    lammps_in="init.mod",
+    lammps_in1="potential.mod",
+    lammps_in2="in.main",
     lammps_trj=None,
     lammps_data=None,
     parameters={},
@@ -1020,7 +691,8 @@ def get_chem_pot(s1=None, s2=None, parameters={}):
             print("j is ", j)
             if j not in uniq:
                 uniq.append(j)
-                a, b = get_struct_from_mp(j)
+                a, b = chempot_struct(j.symbol)
+                # a, b = get_struct_from_jv(j)
                 p = Poscar(b)
                 p.comment = str(a)
                 enp, strt, forces = run_job(mat=p, parameters=parameters)
@@ -1038,7 +710,7 @@ def calc_forces(mat=None, parameters={}):
     return forces
 
 
-def do_phonons(strt=None, parameters=None, c_size=25):
+def do_phonons(strt=None, parameters=None, c_size=15):
     """
     Setting up phonopy job using LAMMPS
 
@@ -1048,7 +720,7 @@ def do_phonons(strt=None, parameters=None, c_size=25):
         c_size: cell-size 
     
     """
-
+    # spg_strt = SpacegroupAnalyzer(strt).get_conventional_standard_structure()
     p = get_phonopy_atoms(mat=strt)
     bulk = p
 
@@ -1060,9 +732,13 @@ def do_phonons(strt=None, parameters=None, c_size=25):
     tmp.make_supercell([dim1, dim2, dim3])
     Poscar(tmp).write_file("POSCAR-Super.vasp")
 
+    # phonon = Phonopy(get_phonopy_atoms(tmp), [[dim1, 0, 0], [0, dim2, 0], [0, 0, dim3]])  # ,
     phonon = Phonopy(bulk, [[dim1, 0, 0], [0, dim2, 0], [0, 0, dim3]])  # ,
-    print("[Phonopy] Atomic displacements:")
+    print("[Phonopy] Atomic displacements1:", bulk)
+    print("[Phonopy] Atomic displacements2:", phonon, dim1, dim2, dim3)
+    phonon.generate_displacements(distance=0.03)
     disps = phonon.get_displacements()
+    print("[Phonopy] Atomic displacements3:", disps)
     for d in disps:
         print("[Phonopy]", d[0], d[1:])
     supercells = phonon.get_supercells_with_displacements()
@@ -1152,7 +828,7 @@ def def_energy(vac=[], parameters={}):
 
 
 # def main(p=None, parameters={'pair_style':'rebomos','pair_coeff':'/scratch/lfs/kamal/JARVIS/All2/MoS2/MoS.REBO.set5b','atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'}):
-def main(p=None, parameters={}, c_size=35):
+def main(p=None, parameters={}, c_size=10):
     """
     Master function to run LAMMPS job
 
@@ -1162,7 +838,6 @@ def main(p=None, parameters={}, c_size=35):
         c_size:cell size
     """
     # p=Poscar.from_file("POSCAR")
-    c_size = 35
     sg_mat = SpacegroupAnalyzer(p.structure)
     mat_cvn = sg_mat.get_conventional_standard_structure()
     dim1 = int((float(c_size) / float(max(abs(mat_cvn.lattice.matrix[0]))))) + 1
@@ -1190,11 +865,17 @@ def main(p=None, parameters={}, c_size=35):
     except:
         pass
     try:
-        surf = pmg_surfer(mat=final_str, min_slab_size=35, vacuum=35, max_index=3)
+        surf = pmg_surfer(mat=final_str, min_slab_size=c_size, vacuum=35, max_index=3)
         surf_list, surf_header_list = surf_energy(surf=surf, parameters=parameters)
         print(surf_list, surf_header_list)
     except:
         pass
+    cwd = str(os.getcwd())
+    if not os.path.exists("Phonon"):
+        os.mkdir("Phonon")
+    os.chdir("Phonon")
+    do_phonons(strt=final_str, parameters=parameters)
+    os.chdir(cwd)
     try:
         cwd = str(os.getcwd())
         if not os.path.exists("Phonon"):
@@ -1238,170 +919,175 @@ def main(p=None, parameters={}, c_size=35):
         os.system(line)
 
 
-def main_func(mpid="", mat=None, parameters={}):
+def main_func(mat=None, parameters={}):
     """
     Call master job function either using mpid or Poscar object
     """
-    if mpid != "":
-        with MPRester() as mp:
-            strt = mp.get_structure_by_material_id(mpid)
-            mat = Poscar(strt)
-
-            mpid = mpid.replace("-", "_")
-            mpid = str("bulk@") + str(mpid)
-            mat.comment = mpid
-
     main(p=mat, parameters=parameters)
 
 
-# Example
-def main_alloy():
+def run_job(mat=None, parameters={}, jobname=""):
+    """ 
+    Generic  function for running LAMMPS job
+
+    Args:
+        mat: Poscar object
+        parameters: parameters with LAMMPS input information
+        jobname: a user-defined jobname
+    Returns:
+          en: final enery
+          final_str: final structure
+          forces: forces on final structure
     """
-   Run alloy FFs job
-   """
-    for file in glob.glob("*.alloy"):
+    # def run_job(mat=None,parameters = {'exec':'/cluster/bin/lmp_ctcms-14439-knc6-2','pair_style':'comb3 polar_on','pair_coeff':None,'atom_style': 'charge' ,'control_file':'/home/kamal/inelast.mod'},jobname=''):
+    jobname = str(mat.comment)
+    # if jobname.startswith('bulk') or jobname.startswith('sbulk'):
+    #   parameters['control_file']='/home/kamal/inelast.mod'
+    # else:
+    #   parameters['control_file']='/home/kamal/inelast_nobox.mod'
+
+    folder = str(os.getcwd()) + str("/") + str(jobname)
+    if not os.path.exists(folder):
+        os.makedirs(str(jobname))
+    os.chdir(str(jobname))
+    print("folder name", folder)
+    forces = "na"
+    if os.path.isfile("./log.lammps"):
         try:
-            folder1 = str(os.getcwd()) + str("/") + str(file) + str("_nist")
-            if not os.path.exists(folder1):
-                os.makedirs(str(folder1))
-            cwd1 = str(os.getcwd())
-            print("folder1=", folder1)
-            ff = str(file)
-            element_ff = []
-            f = open(ff, "r")
-            os.chdir(str(folder1))
-            list_el = []
-            lines = f.readlines()
-            content = (lines[3]).split(" ")
-            # content=(lines[3]).split("' '|\n|\r\n")
-            for val in content:
 
-                if val != "" and val != "\n" and val != "\r\n":
-                    list_el.append(val)
-            for i in range(0, len(list_el)):
-                if i != 0:
-                    element_ff.append(list_el[i])
-            #    print ff,' ',element_ff
-            with MPRester(MAPI_KEY) as m:
-                data = m.get_entries_in_chemsys(
-                    element_ff,
-                    inc_structure="final",
-                    property_data=[
-                        "unit_cell_formula",
-                        "material_id",
-                        "icsd_id",
-                        "spacegroup",
-                        "energy_per_atom",
-                        "formation_energy_per_atom",
-                        "pretty_formula",
-                        "band_gap",
-                        "total_magnetization",
-                        "e_above_hull",
-                    ],
-                )
-                if len(element_ff) > 1:
-                    try:
-                        entries = m.get_entries_in_chemsys(element_ff)
-                        pd = PhaseDiagram(entries)
-                        plotter = PDPlotter(pd, show_unstable=True)
-                        image = str(ff) + str("_DFT") + str(".jpg")
-                        plotter.write_image(image)
-                    except:
-                        pass
-                structures = []
-                structures_cvn = []
-                icsd_arr = []
-                mp_arr = []
-                sg_arr = []
-                enp_arr = []
-                fenp_arr = []
-                pf_arr = []
-                ucf_arr = []
-                bg_arr = []
-                tm_arr = []
-                ehull_arr = []
-                for d in data:
-                    x = d.data["material_id"]
-                    sg = d.data["spacegroup"]
-                    enp = d.data["energy_per_atom"]
-                    fenp = d.data["formation_energy_per_atom"]
-                    pf = d.data["pretty_formula"]
-                    ucf = d.data["unit_cell_formula"]
-                    bg = d.data["band_gap"]
-                    tm = d.data["total_magnetization"]
-                    ehull = d.data["e_above_hull"]
-                    icsd = d.data["icsd_id"]
-                    structure = m.get_structure_by_material_id(x)
-                    structures.append(structure)
-                    icsd_arr.append(icsd)
-                    mp_arr.append(x)
-                    sg_arr.append(sg)
-                    enp_arr.append(enp)
-                    fenp_arr.append(fenp)
-                    pf_arr.append(pf)
-                    bg_arr.append(bg)
-                    tm_arr.append(tm)
-                    ucf_arr.append(ucf)
-                    ehull_arr.append(ehull)
-
-                    comment = str("bulk@") + str(x)
-                    folder2 = str(os.getcwd()) + str("/") + str(comment) + str("_fold")
-                    if not os.path.exists(folder2):
-                        os.makedirs(str(folder2))
-                    print("folder2=", folder2)
-                    cwd2 = str(os.getcwd())
-                    os.chdir(str(folder2))
-
-                    p = Poscar(structure)
-                    p.comment = comment
-                    p.write_file("POSCAR")
-                    poscar_file = str(os.getcwd()) + str("/POSCAR")
-
-                    pair_coeff = str(cwd1) + str("/") + str(file)
-                    # pair_coeff=str('/data/knc6/JARVIS-FF-NEW/ALLOY')+str("/")+str(file)
-                    parameters = {
-                        "pair_style": "eam/alloy",
-                        "exec": lammps_exec,
-                        "pair_coeff": pair_coeff,
-                        "atom_style": "charge",
-                        "control_file": input_box,
-                    }
-                    main_file = open("setup.py", "w")
-                    line = str("from jlammps import main_func") + "\n"
-                    main_file.write(line)
-                    line = str("from pymatgen.io.vasp.inputs import  Poscar") + "\n"
-                    main_file.write(line)
-                    # line=str("try:")+'\n'
-                    # main_file.write(line)
-                    line = (
-                        str("p=Poscar.from_file(")
-                        + str('"')
-                        + str(poscar_file)
-                        + str('"')
-                        + str(")")
-                        + "\n"
-                    )
-                    main_file.write(line)
-                    line = (
-                        str("main_func(mat=p")
-                        + str(",")
-                        + str("parameters=")
-                        + str(parameters)
-                        + str(")")
-                        + "\n"
-                    )
-                    main_file.write(line)
-                    # line=str("except:")+'\n'
-                    # main_file.write(line)
-                    # line=str("     pass")+'\n'
-                    # main_file.write(line)
-                    main_file.close()
-                    # try:
-                    #    p=Poscar.from_file(poscar_file)
-                    #    main_func(mat=p,parameters=parameters)
-                    # except:
-                    #     pass
-                    os.chdir(cwd2)  # =str(os.getcwd())
-            os.chdir(cwd1)  # =str(os.getcwd())
+            (
+                en,
+                press,
+                toten,
+                c11,
+                c22,
+                c33,
+                c12,
+                c13,
+                c23,
+                c44,
+                c55,
+                c66,
+                c14,
+                c16,
+                c24,
+                c25,
+                c26,
+                c34,
+                c35,
+                c36,
+                c45,
+                c46,
+                c56,
+            ) = analyz_loge("./log.lammps")
         except:
             pass
+    else:
+        # pass
+        # line=str("#PBS -l pmem=")+str(mem)+'\n'
+        # f.write(line)
+        write_lammps_data(structure=mat.structure, file="data")
+        write_lammps_in(
+            structure=mat.structure,
+            lammps_in="init.mod",
+            lammps_in1="potential.mod",
+            lammps_in2="in.main",
+            parameters=parameters,
+        )
+        if "elast" in parameters["control_file"]:
+            import jarvis
+
+            base_path = jarvis.__file__.split("/__init__.py")[0]
+            displace_file = os.path.join(
+                base_path, "lammps", "module_files", "displace.mod"
+            )
+            shutil.copy2(displace_file, "./")
+        os.system(parameters["exec"])
+        initial_str = read_data(data="data", ff="potential.mod")
+
+        ####time.sleep(100)
+        (
+            en,
+            press,
+            toten,
+            c11,
+            c22,
+            c33,
+            c12,
+            c13,
+            c23,
+            c44,
+            c55,
+            c66,
+            c14,
+            c16,
+            c24,
+            c25,
+            c26,
+            c34,
+            c35,
+            c36,
+            c45,
+            c46,
+            c56,
+        ) = analyz_loge("./log.lammps")
+
+    print("initial,final sr", os.getcwd())
+    initial_str = read_data(data="data", ff="potential.mod")
+    final_str = read_data(data="data0", ff="potential.mod")
+    try:
+        forces = read_dump(data="0.dump", ff="potential.mod")
+    except:
+        pass
+    print("initial,final sr2", os.getcwd())
+
+    data_cal = []
+    data_cal.append(
+        {
+            "jobname": jobname,
+            "poscar": mat.as_dict(),
+            "initial_pos": initial_str.as_dict(),
+            "pair_style": str(parameters["pair_style"]),
+            "pair_coeff": str(parameters["pair_coeff"]),
+            "final_energy": float(toten),
+            "en": en,
+            "press": press,
+            "final_str": final_str.as_dict(),
+        }
+    )
+    json_file = str(jobname) + str(".json")
+    os.chdir("../")
+    f_json = open(json_file, "w")
+    f_json.write(json.dumps(data_cal, indent=4, cls=MontyEncoder))
+    f_json.close()
+    return en, final_str, forces
+
+
+if __name__ == "__main__":
+    import jarvis
+
+    base_path = jarvis.__file__.split("/__init__.py")[0]
+    pos = os.path.join(
+        base_path,
+        "lammps",
+        "examples",
+        "Al03.eam.alloy_nist",
+        "bulk@mp-134_fold",
+        "POSCAR",
+    )
+    pair_coeff = os.path.join(base_path, "lammps", "examples", "Al03.eam.alloy")
+
+    control_file = os.path.join(base_path, "lammps", "module_files", "inelast.mod")
+
+    mat = Poscar.from_file(pos)
+
+    parameters = {
+        "c_size": 3,
+        "exec": "/opt/lammps/bin/lammps  <in.main >out",
+        "pair_style": "eam/alloy",
+        "pair_coeff": pair_coeff,
+        "atom_style": "charge",
+        "control_file": control_file,
+    }
+    run_job(mat=mat, parameters=parameters)
+    main_func(mat=mat, parameters=parameters)
