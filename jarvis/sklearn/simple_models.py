@@ -89,8 +89,8 @@ def simple_regression(
   Returns:
   """
 
-    X_train, X_test, y_train, y_test, jid_train, jid_test = train_test_split(
-        X, Y, jid, random_state=1, test_size=0.1
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, Y, random_state=1, test_size=0.1
     )
     for i in simple_models:
         pipe = Pipeline(
