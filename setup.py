@@ -11,7 +11,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2019.07.23",
+    version="2019.07.23.1",
 
     long_description=long_d,
     long_description_content_type='text/markdown',
