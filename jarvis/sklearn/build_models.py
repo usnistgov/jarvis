@@ -7,7 +7,6 @@ try:
     import lightgbm.LGBMRegressor as lgb
 except:
     print("WARNING!!!!: LightGBM is not installed, using sklearn GBM")
-    print("Will try to use sklearn instead, errors are possible")
     from sklearn.ensemble import GradientBoostingRegressor as lgb
 
 import matplotlib.pyplot as plt
@@ -675,3 +674,4 @@ if __name__ == "__main__":
 
     pred = model.predict(X_test)
     reg_sc = regr_scores(y_test, pred)
+    print (reg_sc)
