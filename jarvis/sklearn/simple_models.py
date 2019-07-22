@@ -89,8 +89,8 @@ def simple_regression(
   Returns:
   """
 
-    X_train, X_test, y_train, y_test, jid_train, jid_test = train_test_split(
-        X, Y, jid, random_state=1, test_size=0.1
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, Y, random_state=1, test_size=0.1
     )
     for i in simple_models:
         pipe = Pipeline(
@@ -227,11 +227,11 @@ def classify_roc_ml(
     return model, roc_auc
 
 
-def simple_classification(plot=True, simple_models=simple_class_models):
+def simple_classification(X=[],Y=[],tol=100,plot=True, simple_models=simple_class_models):
     """
     Quickly train some of the classifcation algorithms available in scikit-learn
     """
-
+    X_class, Y_class = binary_class_dat(X=X, Y=Y, tol=tol)
     for i in simple_models:
         m, r = classify_roc_ml(X=X_class, y=Y_class, method=i, plot=plot)
         print(type(i).__name__, r[0])
@@ -256,7 +256,7 @@ def simple_GB_confidence_interval(X=[], Y=[]):
 
 if __name__ == "__main__":
     X, Y, jid = jdata(prop="exfoliation_en")
-    simple_GB_confidence_interval(X, Y)
-    simple_regression(X, Y)
-    X_class, Y_class = binary_class_dat(X=X, Y=Y, tol=100)
-    simple_classification()
+    #simple_GB_confidence_interval(X, Y)
+    #simple_regression(X, Y)
+    #X_class, Y_class = binary_class_dat(X=X, Y=Y, tol=100)
+    simple_classification(X=X,Y=Y,tol=100)

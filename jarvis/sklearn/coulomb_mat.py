@@ -25,10 +25,15 @@ def coulomb_matrix(strt="", max_dim=100):
                 dist = strt.get_distance(ii, jj)
                 mat[ii, jj] = (i.specie.Z * j.specie.Z) / dist
     tmp = mat.ravel()
-    z = np.pad(tmp, (0, max_dim), "constant")
+    if max_dim<len(tmp):
+      print ('WARNING: Increase max_dim')
+    padding = max_dim-len(tmp)
+    z = np.pad(tmp, (0, padding), "constant")
     return z
+
 
 
 if __name__ == "__main__":
     s = Structure.from_file("POSCAR")
-    coulomb_matrix(strt=s)
+    z  = coulomb_matrix(strt=s)
+    print (z, len(z))

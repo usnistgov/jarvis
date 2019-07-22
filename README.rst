@@ -16,9 +16,9 @@ JARVIS
 =====
 
 Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
-classical force-field/molecular dynamics and machine-learning. Official website: https://jarvis.nist.gov
+classical force-field/molecular dynamics and machine-learning. The tools can be used for high-throughput calculations, data-analysis and machine-learning. Official website: https://jarvis.nist.gov
 
-
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jarvis-git.JPG
 
 Installing JARVIS
 -----------------
@@ -51,13 +51,17 @@ Installing JARVIS
 
 Jupyter notebooks
 -----------------
-- JARVIS-FF::
-      https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_ff-explore.ipynb
-- JARVIS-DFT::
-      https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_dft-explore.ipynb
-- JARVIS-ML::
-      https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/jarvis_ml-train.ipynb
-      
+- JARVIS-DFT data analysis::
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jdft1.JPG
+        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/db/static/jarvis_dft_explore.ipynb
+- JARVIS-ML training::
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jml1.JPG
+        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/db/static/jarvis_ml_quick_train.ipynb
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jml2.JPG
+        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/db/static/Compare_ml_algorithms.ipynb
+- JARVIS-FF data-analysis::
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jff1.JPG
+        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/db/static/jarvis_ff_explore.ipynb
 - See more in the plot-gallery below
 
 
@@ -78,34 +82,27 @@ References
       10) Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018).,https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 
 
-Link to presentation slides
------------------
-https://www.slideshare.net/KAMALCHOUDHARY4
 
-Pypi page
+Pypi, Readthedocs and Slideshare links
 -----------------
-- jarvis-tools:
-
       https://pypi.org/project/jarvis-tools
 
-Readthedocs page
------------------
-- jarvis-tools:
-
       https://jarvis-tools.readthedocs.io/en/latest/
+      
+      https://www.slideshare.net/KAMALCHOUDHARY4
 
 Running the examples
 -----------------
 - For running high-throughput calculations, set HPC/system related information in env_variables
 - Run py.test in tests folder to ensure basic setup
 - LAMMPS example::
-      An example calculation for Aluminum is given in the lammps folder for running EAM calculation (https://github.com/usnistgov/jarvis/blob/master/jarvis/lammps/examples/basic_input_output.py). Untar the example folder using tar -xvzf Al03.eam.alloy_nist.tgz . Change the 'parameters' variable in run_alloy.py to accommodate your lammps executable path, inelast.mod and dsiplace.mod path according to your system. Right now, crystal structures are obtained from materials-project, so MAPI_KEY needs to be adjusted also. Then, type python run_alloy.py which will launch jobs on your cluster. A json file is created as any lammps calculation get created. First, the geometry is optimized using LAMMPS. Then, symmetrically distinct vacancies are created and their energetics is determined. Reference elements are also downloaded from MP and their energies are calculated for measuring the chemical potemtial used in defect calculation. Afterthat, surfaces with miller index upto 3 is created and their energies are calculated. Perfect cell is used as reference to calculate surface energies. Finally, phonons are calculated using phonopy package. We use ASE to make interface between phonopy and LAMMPS.
+      An example calculation for Aluminum is given in the lammps folder for running EAM calculation (https://github.com/usnistgov/jarvis/blob/master/jarvis/lammps/examples/basic_input_output.py). Untar the example folder using tar -xvzf Al03.eam.alloy_nist.tgz . Change the 'parameters' variable and run jlammps.py.
 - VASP example::
-      Similarly, an example calculation for Silicon is given in vasp folder (https://github.com/usnistgov/jarvis/blob/master/jarvis/vasp/examples/runstruct_pyvasp.py). The input is a POSCAR file, which is already provided. executable paths, pseudopotential directory path and Special_POTCAR.yaml path needs to be adjusted in joptb88vdw.py top section. The master.py can be submitted to the queuing system with qsub sub.sh. Adjust path and your cluster specifics in sub.sh. The contents of master.py and joptb88vdw.py should be independent of PBS/SLURM or any other cluster. After successful submission of the sub.sh script a series of ENCUT- and KPOINTS- files are produced for plane wave convergence and kpoint convergence. After that, geometry is optimized with force-convergence criteria in MAIN-RELAX file. The crystal structure used in MAIN-RELAX calculation is then used for subsequent band-structure, dielectric function, MBJ calculation and elastic property calculations. Each complete calculation is notified with generation of respective json file.
+      Similarly, an example calculation for Silicon is given in vasp folder (https://github.com/usnistgov/jarvis/blob/master/jarvis/vasp/examples/runstruct_pyvasp.py). The input is a POSCAR file, which is already provided. executable paths, pseudopotential directory path and Special_POTCAR.yaml path needs to be adjusted in joptb88vdw.py top section. The master.py can be submitted to the queuing system with qsub sub.sh. 
 - ML example::
       We trained machine learning models using JARVIS-DFT data on bandgaps, formation energies and elastic modulus and other properties. We used both chemical and structural descriptors during GradientBoostingRegression training. Example of getting 1557 descriptors for a system is given at: https://github.com/usnistgov/jarvis/blob/master/jarvis/sklearn/examples/desc_example.py
 - Access to JARVIS database::
-       Our database is freely available at https://www.ctcms.nist.gov/~knc6/JVASP.html and https://www.ctcms.nist.gov/~knc6/periodic.html, https://www.ctcms.nist.gov/~knc6/JLAMMPS.html for JARVIS-DFT and JARVIS-FF. JARVIS-FF and its development version has data for energetics, elastic constants, defect formation energies, surface energies and phonon properties. JARVIS-DFT has 3D and 2D properties of materials such as energetics, X-ray diffraction (for 3D), radial-distribution function, electronic density of states, electrostatic potential and band-structure, MBJ and semi-local dielectric function calculation, elastic properties and allied gamma-point unconverged phonons and thermoelectric properties. JARVIS-DFT can be downloaded in json format also now using the link provided and JARVIS-DFT webpage. 
+       Our database is freely available at https://www.ctcms.nist.gov/~knc6/JVASP.html, https://www.ctcms.nist.gov/jarvisml/, https://www.ctcms.nist.gov/~knc6/periodic.html, and https://www.ctcms.nist.gov/~knc6/JLAMMPS.html for JARVIS-DFT, JARVIS-ML and JARVIS-FF. 
        We can also load the dataset using python scripts similar to https://github.com/knc6/jarvis/blob/master/jarvis/db/static/explore_db.py .
 - Uploading your data using JARVIS-API::
        In addition to downloading/browsing through the JARVIS-database, one can also upload their data and query using JARVIS-API. Follow the instructions in https://github.com/usnistgov/jarvis/blob/master/jarvis/db/mdcs/mdcs_api.py
@@ -123,33 +120,33 @@ Lucas Hale, Andrew Reid, Marcus Newrock (NIST)
 Plot-gallery with additional jupyter notebooks
 -----------------
 .. class:: center
-   .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF.png
-      :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF.png
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/ADF-a.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/ADF-b.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/DDF.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/bandstr.jpg
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Dos.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
 
     
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/BoltzTrap.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Boltztrap.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Boltztrap.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/kp_converg.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
 
 .. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/en_converg.png
-   :Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
+:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
