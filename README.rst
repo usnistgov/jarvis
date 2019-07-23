@@ -7,6 +7,8 @@
        :target: https://ci.appveyor.com/project/knc6/jarvis-63tl9
 .. image:: https://api.codacy.com/project/badge/Grade/be8fa78b1c0a49c280415ce061163e77
        :target: https://www.codacy.com/app/knc6/jarvisutm_source=github.com&amp;utm_medium=referral&amp;utm_content=usnistgov/jarvis&amp;utm_campaign=Badge_Grade
+.. image::  https://img.shields.io/pypi/dm/jarvis-tools.svg      
+        :target: https://img.shields.io/pypi/dm/jarvis-tools.svg
 .. image:: https://codecov.io/gh/knc6/jarvis/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/knc6/jarvis
 
