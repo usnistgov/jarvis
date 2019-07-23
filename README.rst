@@ -19,7 +19,7 @@ Joint Automated Repository for Various Integrated Simulations (JARVIS) is an int
 classical force-field/molecular dynamics and machine-learning. The tools can be used for high-throughput calculations, data-analysis and machine-learning. Official website: https://jarvis.nist.gov
 
 .. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jarvis-git.JPG
-
+        :target: https://jarvis.nist.gov/
 Installing JARVIS
 -----------------
 - We recommend installing miniconda environment from https://conda.io/miniconda.html ::
