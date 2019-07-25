@@ -9,16 +9,16 @@
        :target: https://www.codacy.com/app/knc6/jarvisutm_source=github.com&amp;utm_medium=referral&amp;utm_content=usnistgov/jarvis&amp;utm_campaign=Badge_Grade
 .. image::  https://img.shields.io/pypi/dm/jarvis-tools.svg      
         :target: https://img.shields.io/pypi/dm/jarvis-tools.svg
+.. image:: https://pepy.tech/badge/jarvis-tools
+        :target: https://pepy.tech/badge/jarvis-tools
 .. image:: https://codecov.io/gh/knc6/jarvis/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/knc6/jarvis
-
-
 
 JARVIS
 =====
 
 Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
-classical force-field/molecular dynamics and machine-learning. The tools can be used for high-throughput calculations, data-analysis and machine-learning. Official website: https://jarvis.nist.gov
+classical force-field/molecular dynamics and machine-learning. The tools can be used for high-throughput calculations, data-analysis and machine-learning. Some of the packages used in jarvis-tools package are shown below. JARVIS-official website: https://jarvis.nist.gov
 
 .. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jarvis-git.JPG
         :target: https://jarvis.nist.gov/
@@ -77,18 +77,19 @@ References
       4) Computational Screening of High-performance Optoelectronic Materials using OptB88vdW and TBmBJ Formalisms, Scientific Data 5, 180082 (2018).https://www.nature.com/articles/sdata201882
       5) Elastic properties of bulk and low-dimensional materials using van der Waals density functional, Phys. Rev. B, 98, 014107 (2018).https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107
       6) Convergence and machine learning predictions of Monkhorst-Pack k-points and plane-wave cut-off in high-throughput DFT calculations, Comp. Mat. Sci. 161, 300 (2019).https://www.sciencedirect.com/science/article/pii/S0927025619300813?via%3Dihub
-      7) High-throughput Discovery of Topologically Non-trivial Materials using Spin-orbit Spillage, https://www.nature.com/articles/s41598-019-45028-y
-      8) Accelerated Discovery of Efficient Solar-cell Materials using Quantum and Machine-learning Methods,https://pubs.acs.org/doi/10.1021/acs.chemmater.9b02166
+      7) High-throughput Discovery of Topologically Non-trivial Materials using Spin-orbit Spillage, Nature: Sci. Rep. 9, 8534,(2019),  https://www.nature.com/articles/s41598-019-45028-y
+      8) Accelerated Discovery of Efficient Solar-cell Materials using Quantum and Machine-learning Methods, Chem. Mater., https://pubs.acs.org/doi/10.1021/acs.chemmater.9b02166
       9) Data-driven Discovery of 3D and 2D Thermoelectric Materials , https://arxiv.org/abs/1903.06651.
 - JARVIS-ML::
       10) Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018).,https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
+      11) Materials science in the artificial intelligence age: high-throughput library generation, machine learning, and a pathway from correlations to the underpinning physics, MRS Comm., 1-18 https://doi.org/10.1557/mrc.2019.95
 
 
 
 Pypi, Readthedocs and Slideshare links
 -----------------
       https://pypi.org/project/jarvis-tools
-
+      
       https://jarvis-tools.readthedocs.io/en/latest/
       
       https://www.slideshare.net/KAMALCHOUDHARY4
