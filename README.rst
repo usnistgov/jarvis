@@ -9,10 +9,10 @@
        :target: https://www.codacy.com/app/knc6/jarvisutm_source=github.com&amp;utm_medium=referral&amp;utm_content=usnistgov/jarvis&amp;utm_campaign=Badge_Grade
 .. image::  https://img.shields.io/pypi/dm/jarvis-tools.svg      
         :target: https://img.shields.io/pypi/dm/jarvis-tools.svg
+.. image:: https://pepy.tech/badge/jarvis-tools
+        :target: https://pepy.tech/badge/jarvis-tools
 .. image:: https://codecov.io/gh/knc6/jarvis/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/knc6/jarvis
-
-
 
 JARVIS
 =====
