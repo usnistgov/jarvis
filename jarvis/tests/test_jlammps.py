@@ -4,7 +4,7 @@ from pymatgen.io.vasp.inputs import Poscar
 from jarvis.lammps.jlammps import *
 from jarvis.plane_defect.surface import surfer
 from jarvis.point_defect.vacancy import vac_antisite_def_struct_gen
-
+import pytest
 
 parameters = {
     "exec": "mpirun /cluster/bin/lmp_ctcms-14439-knc6 <in.elastic >out",
@@ -59,11 +59,9 @@ log = os.path.join(
     "log.lammps",
 )
 
-
 def test_read_data():
     data = read_data(data=dat, ff=ff)
     assert len(data) == 1
-
 
 def test_write_lammps_in():
     data = read_data(data=dat, ff=ff)
@@ -79,12 +77,10 @@ def test_write_lammps_in():
         parameters=parameters,
     )
 
-
 def test_vac_antisite_def_struct_gen(tmpdir):
     data = read_data(data=dat, ff=ff)
     vacs = vac_antisite_def_struct_gen(struct=data, c_size=0, write_file=False)
     assert len(vacs) == 2
-
 
 def sample_strt():
     data = read_data(data=dat, ff=ff)
@@ -96,7 +92,6 @@ def sample_strt():
 #    phn=get_phonopy_atoms(mat=s)
 #    assert phn.symbols==['Al']
 
-
 def test_write_lammps_data():
     success = False
     s = sample_strt()
@@ -107,7 +102,6 @@ def test_write_lammps_data():
     write_lammps_data(structure=s, file=file, write_tmp_file=False)
     success = True
     assert success == True
-
 
 def test_analyz_loge():
     x = len(analyz_loge(log))

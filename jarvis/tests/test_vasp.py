@@ -10,6 +10,7 @@ from jarvis.slme.slme import *
 from jarvis.boltztrap.boltztrap import *
 from jarvis.elastic_tens.vasp import *
 from jarvis.ip_optics.freq_dielectric import *
+from jarvis.ip_optics.freq_dielectric import ip_optics
 
 pos = os.path.join(
     os.path.dirname(__file__), "..", "vasp", "examples", "SiOptb88", "POSCAR"
@@ -197,8 +198,9 @@ def test_slme():
     SLME = slme(en, abz, indirgap, indirgap, plot_current_voltage=False)
     SQ = calculate_SQ(indirgap)
     assert SLME == 0.3323125002699776
-
-
+def test_ip_opt():
+  ip = ip_optics(mbjrun)  
+  assert ip["absorption"][0][0]==0
 # def test_boltztrap():
 #   b=boltz_run(mainrun)
 #   val=get_prop(b,prop='zt')
