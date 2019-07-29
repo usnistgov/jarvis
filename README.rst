@@ -18,7 +18,7 @@ JARVIS
 =====
 
 Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
-classical force-field/molecular dynamics and machine-learning. The tools can be used for high-throughput calculations, data-analysis and machine-learning. Some of the packages used in jarvis-tools package are shown below. JARVIS-official website: https://jarvis.nist.gov
+classical force-field/molecular dynamics and machine-learning. The tools can be used for high-throughput calculations, data-analysis and machine-learning. Some of the packages used in the jarvis-tools package are shown below. JARVIS-official website: https://jarvis.nist.gov
 
 .. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jarvis-git.JPG
         :target: https://jarvis.nist.gov/
@@ -53,17 +53,21 @@ Installing JARVIS
 
 Jupyter notebooks
 -----------------
+- Python for beginners::
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/novice.JPG
+        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/python_novice_notebook.ipynb
 - JARVIS-DFT data analysis::
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jdft1.JPG
-        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/db/static/jarvis_dft_explore.ipynb
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/jarvis_dft_explore.JPG
+        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/jarvis_dft_explore_notebook.ipynb
 - JARVIS-ML training::
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jml1.JPG
-        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/db/static/jarvis_ml_quick_train.ipynb
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jml2.JPG
-        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/db/static/Compare_ml_algorithms.ipynb
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/jarvis_ml_train.JPG
+        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/jarvis_ml_quick_train_notebook.ipynb
+- Comparing ML algorithms::
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/compare_ml.JPG
+        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/compare_ml_algorithms_notebook.ipynb
 - JARVIS-FF data-analysis::
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jff1.JPG
-        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/db/static/jarvis_ff_explore.ipynb
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/jarvis_ff_explore.JPG
+        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/jarvis_ff_explore_notebook.ipynb
 - See more in the plot-gallery below
 
 
