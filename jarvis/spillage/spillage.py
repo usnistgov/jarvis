@@ -227,8 +227,8 @@ def gaps_only(nelec, wf):
 if __name__ == "__main__":
     # JVASP-1044
 
-    wf_noso = "WAVECAR.noso"  # sys.argv[1]
-    wf_so = "WAVECAR.so"  # sys.argv[2]
+    wf_noso = "WAVECAR.nosoc"  # sys.argv[1]
+    wf_so = "WAVECAR.soc"  # sys.argv[2]
     gamma_max, gamma_k, kmax, kpoints, noso_direct, so_direct, x, y, so_lumo, so_homo, noso_lumo, noso_homo = overlap_so_spinpol(
         wf_noso, wf_so
     )
