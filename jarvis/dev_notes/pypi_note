@@ -11,4 +11,5 @@ password = xyz
 +++++++++++++++++++++++++
 
 python setup.py sdist bdist_wheel --universal
+twine check dist/*
 twine  upload dist/*
