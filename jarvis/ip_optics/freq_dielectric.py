@@ -365,4 +365,4 @@ if __name__ == "__main__":
         )
     )
     ep = ip_optics(vrun=run)
-    print(ep)
+    print('val',ep["absorption"][0][0])

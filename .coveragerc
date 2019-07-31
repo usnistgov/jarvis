@@ -7,4 +7,6 @@ omit =
     # omit this single file
     #utils/tirefire.py
     */mdcs_api.py
+    */*lammps.py
+    */*joptb88vdw.py
     */run_*.py
