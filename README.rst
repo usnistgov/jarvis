@@ -54,19 +54,19 @@ Installing JARVIS
 Jupyter notebooks
 -----------------
 - Python for beginners::
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/novice.JPG
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/novice.JPG
         :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/python_novice_notebook.ipynb
 - JARVIS-DFT data analysis::
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/jarvis_dft_explore.JPG
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/jdft.JPG
         :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/jarvis_dft_explore_notebook.ipynb
 - JARVIS-ML training::
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/jarvis_ml_train.JPG
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/jml_train.JPG
         :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/jarvis_ml_quick_train_notebook.ipynb
 - Comparing ML algorithms::
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/compare_ml.JPG
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/compareml.JPG
         :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/compare_ml_algorithms_notebook.ipynb
 - JARVIS-FF data-analysis::
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/jarvis_ff_explore.JPG
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/jff.JPG
         :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/jarvis_ff_explore_notebook.ipynb
 - See more in the plot-gallery below
 
