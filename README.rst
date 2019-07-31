@@ -22,6 +22,8 @@ classical force-field/molecular dynamics and machine-learning. The jarvis-tools 
 
 .. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jarvis-git.JPG
         :target: https://jarvis.nist.gov/
+.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/statistics.JPG
+        :target: https://jarvis.nist.gov/
 Installing JARVIS
 -----------------
 - We recommend installing miniconda environment from https://conda.io/miniconda.html ::
