@@ -1,10 +1,9 @@
 from jarvis.sklearn.build_models import isfloat, jdata, regr_scores, plot_learning_curve
 import numpy as np
-
+import pytest
 
 def test_isfloat():
     assert isfloat(5.5) == True
-
 
 def test_jdata():
     X, Y, jid = jdata(prop="form_enp")
