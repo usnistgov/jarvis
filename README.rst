@@ -18,7 +18,7 @@ JARVIS
 ==========
 
 Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
-classical force-field/molecular dynamics and machine-learning. The jarvis-tools package can be used for high-throughput computation, data-analysis, and training machine-learning models. Some of the packages used in the jarvis-tools package are shown below. JARVIS-official website: https://jarvis.nist.gov
+classical force-field/molecular dynamics and machine-learning developed by Dr. Kamal Choudhary at NIST. The jarvis-tools package can be used for high-throughput computation, data-analysis, and training machine-learning models. Some of the packages used in the jarvis-tools package are shown below. JARVIS-official website: https://jarvis.nist.gov
 
 .. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jarvis-git.JPG
         :target: https://jarvis.nist.gov/
