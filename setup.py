@@ -11,24 +11,13 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2019.7.31",
+    version="2020.1.11",
 
     long_description=long_d,
     install_requires=[
-        "numpy==1.16.3",
-        "scipy==1.2.1",
-        "pymatgen>=2018.12.12",
-        "custodian",
-        "ase==3.11.0",
-        "scikit-learn",
-        "interruptingcow>=0.8",
-        "pybtex>=0.21",
-        "blob",
-        "toolz",
-        "fortranformat>=0.2.5",
       
     ],
-    package_data={"jarvis.sklearn":['element_charge.json','Elements.json']},
+    package_data={"jarvis.core":['Elements.json']},
     extras_require={
         "babel": ["openbabel", "pybel"],
         "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],

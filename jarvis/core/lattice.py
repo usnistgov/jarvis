@@ -2,7 +2,7 @@ import numpy as np
 
 
 class Lattice(object):
-    def __init__(self, box=None):
+    def __init__(self, lattice_mat=None):
         """
         >>> box=[[10,0,0],[0,10,0],[0,0,10]]
         >>> lat=Lattice(box)
@@ -27,7 +27,7 @@ class Lattice(object):
         >>> [round(i,2) for i in lat.lat_angles()]
         [90.0, 90.0, 90.0]
         """
-        self._lat = np.array(box, dtype=np.float64).reshape((3, 3))
+        self._lat = np.array(lattice_mat, dtype=np.float64).reshape((3, 3))
         self._inv_lat = None
 
     def lat_lengths(self):
@@ -65,15 +65,12 @@ class Lattice(object):
         return np.dot(np.array(cart_coords), self.inv_lattice())
 
 
-"""
-if __name__=='__main__':
-
-        box=[[10,0,0],[0,10,0],[0,0,10]]
-        lat=Lattice(box)
-        frac_coords=[[0,0,0],[0.5,0.5,0.5]]
-        print (lat.cart_coords(frac_coords)[1][1])
-        
-        cart_coords=[[0,0,0],[5,5,5]]
-        print (lat.frac_coords(cart_coords)[1][1])
-        
-"""
+# if __name__=='__main__':
+#
+#        box=[[10,0,0],[0,10,0],[0,0,10]]
+#        lat=Lattice(box)
+#        frac_coords=[[0,0,0],[0.5,0.5,0.5]]
+#        print (lat.cart_coords(frac_coords)[1][1])
+#
+#        cart_coords=[[0,0,0],[5,5,5]]
+#        print (lat.frac_coords(cart_coords)[1][1])
