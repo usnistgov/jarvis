@@ -8,7 +8,6 @@ import numpy as np
 from jarvis.core.composition import Composition
 from jarvis.core.specie import Specie
 from jarvis.core.lattice import Lattice
-import importlib.util
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 import math
