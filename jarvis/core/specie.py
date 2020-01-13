@@ -84,7 +84,7 @@ class Specie(object):
     def atomic_rad(self):
         return self.element_property("atom_rad")
 
-    def element_property(self, key: str = ""):
+    def element_property(self, key = ""):
         val = np.nan
         try:
             keys = [
