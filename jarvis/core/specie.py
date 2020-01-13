@@ -1,10 +1,16 @@
-import os, json
+import os
+import json
 import numpy as np
 
 el_chem_json_file = str(os.path.join(os.path.dirname(__file__), "Elements.json"))
 el_chem_json = open(el_chem_json_file, "r")
-data = data = json.load(el_chem_json)
+chem_data = json.load(el_chem_json)
 el_chem_json.close()
+
+el_chrg_json_file = str(os.path.join(os.path.dirname(__file__), "element_charge.json"))
+el_chrg_json = open(el_chrg_json_file, "r")
+chrg_data = json.load(el_chrg_json)
+el_chrg_json.close()
 
 
 class Specie(object):
@@ -16,6 +22,10 @@ class Specie(object):
     26.98
     >>> el.symbol
     'Al'
+    >>> round(el.get_chgdescrp_arr[1],2)
+    12.17
+    >>> round(el.get_descrp_arr[1],2)
+    2792.11
     >>> el = Specie('asdfg')
     >>> el.element_property("asdfg")
     nan
@@ -23,7 +33,7 @@ class Specie(object):
 
     def __init__(self, symbol: str = ""):
         self.symbol = symbol
-        self._data = data
+        self._data = chem_data
 
     @property
     def Z(self):
@@ -32,6 +42,47 @@ class Specie(object):
     @property
     def atomic_mass(self):
         return self.element_property("atom_mass")
+
+    @property
+    def get_chgdescrp_arr(self, elm=""):
+        """
+        Get charge descriptors for an element
+
+        Args:
+           elm: element name
+        Returns:
+             arr: array value
+        """
+        arr = []
+
+        #try:
+        arr = chrg_data[self.symbol][0][1]
+        #except:
+        #    pass
+        return arr
+
+    @property
+    def get_descrp_arr(self, elm=""):
+        """
+        Get chemical descriptors for an element
+
+        Args:
+           elm: element name
+        Returns:
+             arr: array value
+        """
+        arr = []
+
+        d = chem_data[self.symbol]
+        arr = []
+        for k, v in d.items():
+            arr.append(v)
+        arr = np.array(arr).astype(float)
+        return arr
+
+    @property
+    def atomic_rad(self):
+        return self.element_property("atom_rad")
 
     def element_property(self, key: str = ""):
         val = np.nan
@@ -126,3 +177,10 @@ class Specie(object):
         except:
             pass
         return val
+
+"""
+if __name__ == "__main__":
+    el = Specie("Al")
+    #print(el.get_chgdescrp_arr)
+    print(el.get_descrp_arr)
+"""

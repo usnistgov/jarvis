@@ -1,6 +1,6 @@
 # from math import gcd
 import string
-from specie import Specie
+from jarvis.core.specie import Specie
 
 
 def gcd(a, b):
@@ -50,6 +50,11 @@ class Composition(object):
             proto = proto + str(all_upper[N]) + str(round(count, 3))
             N = N + 1
         return proto.replace("1", "")
+
+
+
+
+
 
     @property
     def reduced_formula(self):
