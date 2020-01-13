@@ -14,28 +14,6 @@ import math
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
 
-from pymatgen.core.structure import Structure
-from pymatgen.io.ase import AseAtomsAdaptor
-def center_around_origin(strt=''):
-    lat=strt.lattice
-    typ_sp=strt.species
-    natoms=len(strt)
-    ase_atoms = AseAtomsAdaptor().get_atoms(strt)
-    COM = ase_atoms.get_center_of_mass(scaled=False)
-    print ('COM',COM)
-    x = np.zeros((natoms))
-    y = np.zeros((natoms))
-    z = np.zeros((natoms))
-    coords = list()
-    for i in range(0,natoms):
-      strt.cart_coords[i]=strt.cart_coords[i]-COM
-      x[i] = strt.cart_coords[i][0]-COM[0]
-      y[i] = strt.cart_coords[i][1]-COM[1]
-      z[i] = strt.cart_coords[i][2]-COM[2]
-      coords.append([x[i], y[i], z[i]])
-    struct = Structure(lat, typ_sp, coords, coords_are_cartesian=True)
-    #print (Poscar(struct))
-    return struct
 
 class Atoms(object):
     def __init__(
