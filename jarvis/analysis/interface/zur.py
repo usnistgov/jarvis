@@ -444,10 +444,10 @@ def get_hetero(film, substrate, seperation=3.0):
     # unique site coordinates in the 2D material bottom layers
     coords_uniq_film = np.array(film.cart_coords)
     
-    substrate_top_z = max(np.array(substrate.cart_coords[:,2]))
+    substrate_top_z = max(np.array(substrate.cart_coords)[:,2])
     
 
-    film_bottom = min(np.array(film.cart_coords[:,2]))
+    film_bottom = min(np.array(film.cart_coords)[:,2])
     
 
     # shift normal to the surface by 'seperation'
