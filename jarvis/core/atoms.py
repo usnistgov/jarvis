@@ -18,7 +18,7 @@ ang_cm = 1e-8
 
 class Atoms(object):
     def __init__(
-        self, lattice_mat=None, coords=None, elements=None, cartesian: bool = False
+        self, lattice_mat=None, coords=None, elements=None, cartesian = False
     ):
         """
         Create atomic structure with lattice, coordinates, atom type and other information
