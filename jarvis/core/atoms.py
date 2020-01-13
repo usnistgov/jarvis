@@ -201,6 +201,15 @@ class Atoms(object):
      return super_cell
 
 
+    def get_string(self):
+        header= str('\nSystem\n1.0\n')+str(self.lattice_mat[0][0])+' '+str(self.lattice_mat[0][1])+' '+str(self.lattice_mat[0][2])+'\n'+ str(self.lattice_mat[1][0])+' '+str(self.lattice_mat[1][1])+' '+str(self.lattice_mat[1][2])+'\n'+str(self.lattice_mat[2][0])+' '+str(self.lattice_mat[2][1])+' '+str(self.lattice_mat[2][2])+'\n'
+        middle = ' '.join(map(str,Counter(self.elements).keys()))+'\n'+' '.join(map(str,Counter(self.elements).values()))+'\ndirect\n'
+        rest = ''
+        for i in self.frac_coords:
+            rest=rest+' '.join(map(str,i))+'\n'
+        result = header+middle+rest
+        return result
+
     def __repr__(self):
         header= str('\nSystem\n1.0\n')+str(self.lattice_mat[0][0])+' '+str(self.lattice_mat[0][1])+' '+str(self.lattice_mat[0][2])+'\n'+ str(self.lattice_mat[1][0])+' '+str(self.lattice_mat[1][1])+' '+str(self.lattice_mat[1][2])+'\n'+str(self.lattice_mat[2][0])+' '+str(self.lattice_mat[2][1])+' '+str(self.lattice_mat[2][2])+'\n'
         middle = ' '.join(map(str,Counter(self.elements).keys()))+'\n'+' '.join(map(str,Counter(self.elements).values()))+'\ndirect\n'
@@ -219,8 +228,9 @@ if __name__=='__main__':
    pmg = Si.pymatgen_converter()
    pmg.make_supercell([2,2,2])
    #print (pmg)
-   print (Si.get_center_of_mass())
-   center_around_origin(pmg)
+   #print (Si.get_center_of_mass())
+   #center_around_origin(pmg)
+   print (Si.get_string())
 # if __name__=='__main__':
 #    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]] 
 #    coords = [[0, 0, 0], [0.25, 0.2, 0.25]] 
