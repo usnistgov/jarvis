@@ -14,7 +14,7 @@ setup(
     version="2020.1.11",
 
     long_description=long_d,
-    install_requires=[
+    install_requires=['joblib',flask',
       
     ],
     package_data={"jarvis.core":['Elements.json']},
