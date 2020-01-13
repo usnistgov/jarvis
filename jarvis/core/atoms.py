@@ -57,11 +57,11 @@ class Atoms(object):
         self.elements = elements
         if cartesian == True:
             self.cart_coords = self.coords
-            self.frac_coords = self.lattice.frac_coords(self.coords)
+            self.frac_coords = np.array(self.lattice.frac_coords(self.coords))
             #print ('TRUE')
         else:
             self.frac_coords = self.coords
-            self.cart_coords = self.lattice.cart_coords(self.coords)
+            self.cart_coords = np.array(self.lattice.cart_coords(self.coords))
             #print ('FALSE')
 
     @property
@@ -206,8 +206,7 @@ if __name__=='__main__':
    pmg = Si.pymatgen_converter()
    pmg.make_supercell([2,2,2])
    #print (pmg)
-   #print (Si.get_center_of_mass())
-   #center_around_origin(pmg)
+   print (Si.get_center_of_mass())
    print (Si.get_string())
 # if __name__=='__main__':
 #    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]] 
