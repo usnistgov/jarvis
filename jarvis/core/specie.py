@@ -31,7 +31,7 @@ class Specie(object):
     nan
     """
 
-    def __init__(self, symbol: str = ""):
+    def __init__(self, symbol = ""):
         self.symbol = symbol
         self._data = chem_data
 
