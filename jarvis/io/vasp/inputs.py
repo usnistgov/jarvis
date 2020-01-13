@@ -5,7 +5,7 @@ class Poscar(object):
     def __init__(self,atoms,comment='System'):
           self.atoms = atoms
     @staticmethod
-    def from_file(filename:str='POSCAR'):
+    def from_file(filename='POSCAR'):
     
         with open(filename, "r") as f:
           return Poscar.from_string(f.read())
