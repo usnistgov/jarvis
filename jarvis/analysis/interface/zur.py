@@ -435,6 +435,50 @@ def get_hetero_type(A={}, B={}):
         pass
     return int_type, stack
 
+def get_hetero(film, substrate, seperation=3.0):
+
+
+    # unique site coordinates in the substrate top layers
+    coords_uniq_sub = substrate.cart_coords
+                                           
+    # unique site coordinates in the 2D material bottom layers
+    coords_uniq_film = film.cart_coords
+    
+    substrate_top_z = max(substrate.cart_coords[:,2])
+    
+
+    film_bottom = min(film.cart_coords[:,2])
+    
+
+    # shift normal to the surface by 'seperation'
+    sub_z = substrate.lattice_mat[2, :]
+    origin = np.array([0, 0, substrate_top_z])
+    shift_normal = sub_z / np.linalg.norm(sub_z) * seperation
+    # generate all possible interfaces, one for each combination of
+    # unique substrate and unique 2d materials site in the layers .i.e
+    # an interface structure for each parallel shift
+    # interface = 2D material + substrate
+    
+    new_coords = []
+    lattice_mat =  substrate.lattice_mat
+    elements = []
+    for i in  substrate.cart_coords:
+         new_coords.append(i)
+    for i in substrate.elements:
+        elements.append(i)
+   
+    for i in film.elements:
+        elements.append(i)
+    for i in film.cart_coords:
+          tmp = i
+          tmp[2] = i[2] - film_bottom
+          tmp = tmp+origin+shift_normal
+          new_coords.append(i)
+             
+    
+    interface = Atoms(lattice_mat=lattice_mat,elements=elements,coords=new_coords,cartesian=True)
+            
+    return interface
 
 if __name__=='__main__':
   s1=Poscar.from_file('/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-1821-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-1821/POSCAR')
@@ -449,8 +493,8 @@ if __name__=='__main__':
   joblib.dump(s1,f)
   f.close()
 
-
+  print(get_hetero(s1.atoms,s2.atoms))
   ff=open('test.json','rb')
   dd=joblib.load(ff)
   ff.close()
-  print (dd.atoms.lattice_mat)
+  #print (dd.atoms.lattice_mat)
