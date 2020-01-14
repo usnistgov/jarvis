@@ -14,10 +14,10 @@ setup(
     version="2020.1.11",
 
     long_description=long_d,
-    install_requires=['joblib',flask',
+    install_requires=['joblib','flask','numpy','matplotlib'
       
     ],
-    package_data={"jarvis.core":['Elements.json']},
+    package_data={"jarvis.core":['Elements.json','element_charge.json']},
     extras_require={
         "babel": ["openbabel", "pybel"],
         "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
