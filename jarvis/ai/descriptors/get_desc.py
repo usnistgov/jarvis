@@ -87,7 +87,7 @@ class CFID(object):
             Nbrs = NeighborsAnalysis(s)
             _, distrdf, nn = Nbrs.get_rdf()
             rdf = np.array(distrdf)
-            # print ('rdf',len(rdf))
+            print ('rdf',len(rdf))
 
         if jrdf_adf == True:
             try:

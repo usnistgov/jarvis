@@ -137,7 +137,7 @@ class NeighborsAnalysis(object):
         nbor_info["bondx"] = bondx
         nbor_info["bondy"] = bondy
         nbor_info["bondz"] = bondz
-        print ('nat',nat)
+        #print ('nat',nat)
 
         return nbor_info
 
@@ -147,12 +147,12 @@ class NeighborsAnalysis(object):
         n_zero_d = nbor_info["dist"][np.nonzero(nbor_info["dist"])]
         #print ('n_zero_d',n_zero_d)
         hist, bins = np.histogram(
-            n_zero_d.ravel(), bins=np.arange(0.1, 10.1, 0.1)
+            n_zero_d.ravel(), bins=np.arange(0.1, 10.2, 0.1)
         )
         const = float(nbor_info['nat'])/float(self._atoms.num_atoms)
         hist = hist /float(const)
-        print ('nbor_info,num_atoms',nbor_info['nat'],self._atoms.num_atoms,const)
-        print ('our_hist',hist)
+        #print ('nbor_info,num_atoms',nbor_info['nat'],self._atoms.num_atoms,const)
+        #print ('our_hist',hist)
         #print("bins[:-1]", bins[:-1])
         #print("bins[1:]", bins[1:])
         shell_vol = 4.0 / 3.0 * np.pi * (np.power(bins[1:], 3) - np.power(bins[:-1], 3))
@@ -160,7 +160,8 @@ class NeighborsAnalysis(object):
         rdf =  hist / shell_vol / number_density/self._atoms.num_atoms#/len(n_zero_d)
         #rdf = 2*len(bins) * hist / np.sum(hist) / shell_vol / number_density
         #rdf = 2*len(bins) * hist / np.sum(hist) / shell_vol / number_density
-        nn = rdf /len(n_zero_d)# self._atoms.num_atoms
+        nn = rdf /self._atoms.num_atoms
+        #print ('rdf',len(rdf))
         if plot:
             plt.bar(bins[:-1], rdf, width=0.1)
             plt.savefig("rdf.png")
