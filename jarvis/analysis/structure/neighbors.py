@@ -141,7 +141,7 @@ class NeighborsAnalysis(object):
 
         return nbor_info
 
-    def get_rdf(self, plot=True):
+    def get_rdf(self, plot=False):
         nbor_info = self.nbor_list(c_size=21.0)
         # print (nbor_info['dist'].tolist())
         n_zero_d = nbor_info["dist"][np.nonzero(nbor_info["dist"])]
@@ -208,17 +208,17 @@ class NeighborsAnalysis(object):
 
     def ang_dist(self, nbor_info={}, plot=False):
         """
-    Get  angular distribution function upto first neighbor
-    Args:
+        Get  angular distribution function upto first neighbor
+        Args:
         struct_info: struct information
         max_n: maximum number of neigbors
         c_size: max. cell size
         plot: whether to plot distributions
         max_cut: max. bond cut-off for angular distribution
-    Retruns:
+        Retruns:
          ang_hist1: Angular distribution upto first cut-off
          ang_bins1: angle bins
-    """
+        """
 
         # rcut1,rcut2=self.get_dist_cutoffs()
         # rcut=rcut1
@@ -264,7 +264,7 @@ class NeighborsAnalysis(object):
 
         return ang_hist, ang_bins
 
-    def ang_dist_first(self, plot=True):
+    def ang_dist_first(self, plot=False):
         rcut1, rcut2 = self.get_dist_cutoffs()
         nbor_info = self.nbor_list(rcut=rcut1)
         ang_hist, ang_bins = self.ang_dist(nbor_info=nbor_info)
@@ -276,7 +276,7 @@ class NeighborsAnalysis(object):
             plt.close()
         return ang_hist, ang_bins
 
-    def ang_dist_second(self, plot=True):
+    def ang_dist_second(self, plot=False):
         rcut1, rcut2 = self.get_dist_cutoffs()
         # print ('rcut1,rcut2',rcut1,rcut2)
         nbor_info = self.nbor_list(rcut=rcut2)
@@ -287,7 +287,7 @@ class NeighborsAnalysis(object):
             plt.close()
         return ang_hist, ang_bins
 
-    def get_ddf(self, plot=True):
+    def get_ddf(self, plot=False):
         rcut1, rcut2 = self.get_dist_cutoffs()
         nbor_info = self.nbor_list(rcut=rcut1)
         nat = nbor_info["nat"]
