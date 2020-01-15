@@ -14,7 +14,7 @@ setup(
     version="2020.1.11",
 
     long_description=long_d,
-    install_requires=['joblib','flask','numpy','matplotlib'
+    install_requires=['joblib','flask','numpy','scipy','matplotlib'
       
     ],
     package_data={"jarvis.core":['Elements.json','element_charge.json']},

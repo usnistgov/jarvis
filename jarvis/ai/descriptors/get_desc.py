@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 plt.switch_backend("agg")
 from collections import defaultdict
 import itertools
-from scipy.stats import gaussian_kde
+#from scipy.stats import gaussian_kde
 from math import pi
 from operator import itemgetter
 import collections, math, os
