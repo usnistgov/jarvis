@@ -1,8 +1,23 @@
 import numpy as np
+from numpy import dot
+
+
+def abs_cap(val, max_abs_val=1):
+    """
+    Returns the value with its absolute value capped at max_abs_val.
+    Particularly useful in passing values to trignometric functions where
+    numerical errors may result in an argument > 1 being passed in.
+    Args:
+        val (float): Input value.
+        max_abs_val (float): The maximum absolute value for val. Defaults to 1.
+    Returns:
+        val if abs(val) < 1 else sign of val * max_abs_val.
+    """
+    return max(min(val, max_abs_val), -max_abs_val)
 
 
 class Lattice(object):
-    def __init__(self, lattice_mat=None):
+    def __init__(self, lattice_mat=None,round_off=5):
         """
         >>> box=[[10,0,0],[0,10,0],[0,0,10]]
         >>> lat=Lattice(box)
@@ -27,11 +42,55 @@ class Lattice(object):
         >>> [round(i,2) for i in lat.lat_angles()]
         [90.0, 90.0, 90.0]
         """
-        self._lat = np.array(lattice_mat, dtype=np.float64).reshape((3, 3))
+        tmp  = np.array(lattice_mat, dtype=np.float64).reshape((3, 3))
+             
+        self._lat=np.around(tmp,decimals=round_off)
         self._inv_lat = None
-
+        self._lll_matrix_mappings= {}
     def lat_lengths(self):
         return [round(np.linalg.norm(v),6) for v in self._lat]
+
+    @property
+    def volume(self):
+        m = self._lat
+        vol = float(abs(np.dot(np.cross(m[0], m[1]), m[2])))
+        return vol
+
+    @property
+    def a(self):
+        return self.lat_lengths()[0]
+
+    @property
+    def b(self):
+        return self.lat_lengths()[1]
+
+    @property
+    def c(self):
+        return self.lat_lengths()[2]
+
+
+    @property
+    def alpha(self):
+        return self.lat_angles()[0]
+
+    @property
+    def beta(self):
+        return self.lat_angles()[1]
+
+    @property
+    def gamma(self):
+        return self.lat_angles()[2]
+
+
+    @property
+    def abc(self):
+        return self.lat_lengths()
+
+
+    @property
+    def angles(self):
+        return self.lat_angles()
+
 
     def lat_angles(self, tol=1e-2, radians=False):
         lengths = self.lat_lengths()
@@ -49,6 +108,72 @@ class Lattice(object):
         if radians:
             angles = [round(angle * np.pi / 180.0,4) for angle in angles]
         return angles
+
+    @property
+    def parameters(self):
+        return [self.abc,self.angles] 
+
+    @staticmethod
+    def from_parameters(a,b,c,alpha,beta,gamma):
+        angles_r = np.radians([alpha, beta, gamma])
+        cos_alpha, cos_beta, cos_gamma = np.cos(angles_r)
+        sin_alpha, sin_beta, sin_gamma = np.sin(angles_r)
+        tmp = (cos_alpha * cos_beta - cos_gamma) / (sin_alpha * sin_beta)
+        val = abs_cap(tmp) 
+        gamma_star = np.arccos(val)
+        vector_a = [a * sin_beta, 0.0, a * cos_beta]
+        vector_b = [
+            -b * sin_alpha * np.cos(gamma_star),
+            b * sin_alpha * np.sin(gamma_star),
+            b * cos_alpha,
+        ]
+        vector_c = [0.0, 0.0, float(c)]
+        return Lattice(lattice_mat=[vector_a, vector_b, vector_c])
+
+
+
+    @staticmethod
+    def cubic(a):     
+        return Lattice.from_parameters(a, a, a, 90, 90, 90)
+
+
+    @staticmethod
+    def tetragonal(a,c):     
+        return Lattice.from_parameters(a, a, c, 90, 90, 90)
+
+
+    @staticmethod
+    def orthorhombic(a,b,c):     
+        return Lattice.from_parameters(a, b, c, 90, 90, 90)
+
+
+    @staticmethod
+    def monoclinic(a,b,c,beta):     
+        return Lattice.from_parameters(a, b, c, 90, beta, 90)
+
+    @staticmethod
+    def hexagonal(a,c):     
+        return Lattice.from_parameters(a, a, c, 90, 90, 120)
+
+    @staticmethod
+    def rhombohedral(a,alpha):     
+        return Lattice.from_parameters(a, a, a, alpha, alpha, alpha)
+
+    def as_dict(self):
+        d=OrderedDict()
+        d['matrix']=self.matrix
+        return d
+
+    def from_dict(self,d):
+        return Lattice(lattice_mat=d['matrix'])
+    
+    @property
+    def matrix(self):
+        return self.lattice()
+
+    @property
+    def inv_matrix(self):
+        return self.inv_lattice()
 
     def lattice(self):
         return self._lat
@@ -168,12 +293,106 @@ class Lattice(object):
                 return x
            return None
 
-# if __name__=='__main__':
-#
-#        box=[[10,0,0],[0,10,0],[0,0,10]]
-#        lat=Lattice(box)
-#        frac_coords=[[0,0,0],[0.5,0.5,0.5]]
-#        print (lat.cart_coords(frac_coords)[1][1])
-#
-#        cart_coords=[[0,0,0],[5,5,5]]
-#        print (lat.frac_coords(cart_coords)[1][1])
+    def _calculate_lll(self, delta = 0.75) :
+        """
+        Performs a Lenstra-Lenstra-Lovasz lattice basis reduction to obtain a
+        c-reduced basis. This method returns a basis which is as "good" as
+        possible, with "good" defined by orthongonality of the lattice vectors.
+        This basis is used for all the periodic boundary condition calculations.
+        Args:
+            delta (float): Reduction parameter. Default of 0.75 is usually
+                fine.
+        Returns:
+            Reduced lattice matrix, mapping to get to that lattice.
+        """
+        # Transpose the lattice matrix first so that basis vectors are columns.
+        # Makes life easier.
+        a = self._lat.copy().T
+
+        b = np.zeros((3, 3))  # Vectors after the Gram-Schmidt process
+        u = np.zeros((3, 3))  # Gram-Schmidt coeffieicnts
+        m = np.zeros(3)  # These are the norm squared of each vec.
+
+        b[:, 0] = a[:, 0]
+        m[0] = dot(b[:, 0], b[:, 0])
+        for i in range(1, 3):
+            u[i, 0:i] = dot(a[:, i].T, b[:, 0:i]) / m[0:i]
+            b[:, i] = a[:, i] - dot(b[:, 0:i], u[i, 0:i].T)
+            m[i] = dot(b[:, i], b[:, i])
+
+        k = 2
+
+        mapping = np.identity(3, dtype=np.double)
+        while k <= 3:
+            # Size reduction.
+            for i in range(k - 1, 0, -1):
+                q = round(u[k - 1, i - 1])
+                if q != 0:
+                    # Reduce the k-th basis vector.
+                    a[:, k - 1] = a[:, k - 1] - q * a[:, i - 1]
+                    mapping[:, k - 1] = mapping[:, k - 1] - q * mapping[:, i - 1]
+                    uu = list(u[i - 1, 0: (i - 1)])
+                    uu.append(1)
+                    # Update the GS coefficients.
+                    u[k - 1, 0:i] = u[k - 1, 0:i] - q * np.array(uu)
+
+            # Check the Lovasz condition.
+            if dot(b[:, k - 1], b[:, k - 1]) >= (
+                    delta - abs(u[k - 1, k - 2]) ** 2
+            ) * dot(b[:, (k - 2)], b[:, (k - 2)]):
+                # Increment k if the Lovasz condition holds.
+                k += 1
+            else:
+                # If the Lovasz condition fails,
+                # swap the k-th and (k-1)-th basis vector
+                v = a[:, k - 1].copy()
+                a[:, k - 1] = a[:, k - 2].copy()
+                a[:, k - 2] = v
+
+                v_m = mapping[:, k - 1].copy()
+                mapping[:, k - 1] = mapping[:, k - 2].copy()
+                mapping[:, k - 2] = v_m
+
+                # Update the Gram-Schmidt coefficients
+                for s in range(k - 1, k + 1):
+                    u[s - 1, 0: (s - 1)] = (
+                        dot(a[:, s - 1].T, b[:, 0: (s - 1)]) / m[0: (s - 1)]
+                    )
+                    b[:, s - 1] = a[:, s - 1] - dot(
+                        b[:, 0: (s - 1)], u[s - 1, 0: (s - 1)].T
+                    )
+                    m[s - 1] = dot(b[:, s - 1], b[:, s - 1])
+
+                if k > 2:
+                    k -= 1
+                else:
+                    # We have to do p/q, so do lstsq(q.T, p.T).T instead.
+                    p = dot(a[:, k:3].T, b[:, (k - 2): k])
+                    q = np.diag(m[(k - 2): k])
+                    result = np.linalg.lstsq(q.T, p.T, rcond=None)[0].T  # type: ignore
+                    u[k:3, (k - 2): k] = result
+
+        return a.T, mapping.T
+
+    def get_lll_reduced_lattice(self, delta= 0.75):
+        """
+        :param delta: Delta parameter.
+        :return: LLL reduced Lattice.
+        """
+        if delta not in self._lll_matrix_mappings:
+            self._lll_matrix_mappings[delta] = self._calculate_lll()
+        return Lattice(self._lll_matrix_mappings[delta][0])
+
+
+if __name__=='__main__':
+
+       box=[[10,0,0],[0,10,0],[0,0,10]]
+       box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+       lat=Lattice(box)
+       print ('lll',lat._calculate_lll())
+       print ('lll_educed',lat.get_lll_reduced_lattice()._lat)
+       frac_coords=[[0,0,0],[0.5,0.5,0.5]]
+       print (lat.cart_coords(frac_coords)[1][1])
+
+       cart_coords=[[0,0,0],[5,5,5]]
+       print (lat.frac_coords(cart_coords)[1][1])

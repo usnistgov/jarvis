@@ -210,8 +210,12 @@ class Atoms(object):
     #def __repr__(self,indent=4):
     #     return pprint.pformat(self.to_dict(), indent=indent)
 
-
-
+    def get_lll_reduced_structure(self):
+          reduced_latt = self.lattice.get_lll_reduced_lattice()
+          if reduced_latt != self.lattice:
+                return Atoms(lattice_mat=reduced_latt._lat,elements=self.elements,coords=self.frac_coords, cartesian=False)
+          else:
+                return Atoms(lattice_mat=self.lattice_mat,elements=self.elements,coords=self.frac_coords, cartesian=False)
     def __repr__(self):
         header= str('\nSystem\n1.0\n')+str(self.lattice_mat[0][0])+' '+str(self.lattice_mat[0][1])+' '+str(self.lattice_mat[0][2])+'\n'+ str(self.lattice_mat[1][0])+' '+str(self.lattice_mat[1][1])+' '+str(self.lattice_mat[1][2])+'\n'+str(self.lattice_mat[2][0])+' '+str(self.lattice_mat[2][1])+' '+str(self.lattice_mat[2][2])+'\n'
         middle = ' '.join(map(str,Counter(self.elements).keys()))+'\n'+' '.join(map(str,Counter(self.elements).values()))+'\ndirect\n'
@@ -227,7 +231,7 @@ if __name__=='__main__':
    elements = ["Si", "Si"]
    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
    print ('Si',Si)
-
+   print ('reduced',Si.get_lll_reduced_structure())
    #print ('pf',Si.packing_fraction,Si.make_supercell())
    pmg = Si.pymatgen_converter()
    pmg.make_supercell([2,2,2])
