@@ -31,7 +31,7 @@ class Lattice(object):
         self._inv_lat = None
 
     def lat_lengths(self):
-        return [np.linalg.norm(v) for v in self._lat]
+        return [round(np.linalg.norm(v),6) for v in self._lat]
 
     def lat_angles(self, tol=1e-2, radians=False):
         lengths = self.lat_lengths()
@@ -42,12 +42,12 @@ class Lattice(object):
             leng2 = lengths[j] * lengths[k]
             if leng2 > tol:
                 tmp = np.dot(self._lat[j], self._lat[k]) / leng2
-                angle = 180.0 * np.arccos(tmp) / np.pi
+                angle = round(180.0 * np.arccos(tmp) / np.pi,4)
             else:
                 angle = 90.0
             angles.append(angle)
         if radians:
-            angles = [angle * np.pi / 180.0 for angle in angles]
+            angles = [round(angle * np.pi / 180.0,4) for angle in angles]
         return angles
 
     def lattice(self):
@@ -118,7 +118,7 @@ class Lattice(object):
         """
         lengths = other_lattice.lat_lengths()
         angles = other_lattice.lat_angles()
-        print ('angles',angles)
+        #print ('angles',angles)
         alpha = angles[0]
         beta = angles[1]
         gamma = angles[2]

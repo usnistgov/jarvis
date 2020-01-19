@@ -1,5 +1,3 @@
-#https://github.com/acadien/matcalc/blob/037d7080c07856877d7a3f5f9dcbb2dec5f38dd1/analysis/rdf.py
-#/rk2/knc6/UFHPC_3_16_2016/scratch-uf/LOREN/spicykamal/TaoLammps/COMB3_v18/src/analysis_tools.f
 """
 This module provides classes to specify atomic structure
 """
@@ -9,8 +7,11 @@ from jarvis.core.composition import Composition
 from jarvis.core.specie import Specie
 from jarvis.core.lattice import Lattice
 import matplotlib.pyplot as plt
-plt.switch_backend('agg')
+from collections import OrderedDict
+import pprint
 import math
+
+plt.switch_backend('agg')
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
 
@@ -55,7 +56,9 @@ class Atoms(object):
         self.lattice = Lattice(lattice_mat)
         self.coords = coords
         self.elements = elements
-        if cartesian == True:
+        self.cartesian = cartesian
+
+        if self.cartesian == True:
             self.cart_coords = self.coords
             self.frac_coords = np.array(self.lattice.frac_coords(self.coords))
             #print ('TRUE')
@@ -63,6 +66,20 @@ class Atoms(object):
             self.frac_coords = self.coords
             self.cart_coords = np.array(self.lattice.cart_coords(self.coords))
             #print ('FALSE')
+    def to_dict(self):
+        d = OrderedDict()
+        d['lattice_mat']=self.lattice_mat
+        d['coords']=self.coords          
+        d['elements']=self.elements
+        d['abc']=self.lattice.lat_lengths()
+        d['angles']=self.lattice.lat_angles()
+        d['cartesian']=self.cartesian
+        return d
+
+    def from_dict(self,d={}):
+        return Atoms(lattice_mat=d['lattice_mat'],elements=d['elements'],coords=d['coords'],cartesian=d['cartesian'])
+
+
 
     @property
     def volume(self):
@@ -116,6 +133,8 @@ class Atoms(object):
                 coords_are_cartesian=False,
             ) 
         except:pass
+
+
 
     def spacegroup(self, symprec=1e-3):
         #try:
@@ -188,6 +207,11 @@ class Atoms(object):
         result = header+middle+rest
         return result
 
+    #def __repr__(self,indent=4):
+    #     return pprint.pformat(self.to_dict(), indent=indent)
+
+
+
     def __repr__(self):
         header= str('\nSystem\n1.0\n')+str(self.lattice_mat[0][0])+' '+str(self.lattice_mat[0][1])+' '+str(self.lattice_mat[0][2])+'\n'+ str(self.lattice_mat[1][0])+' '+str(self.lattice_mat[1][1])+' '+str(self.lattice_mat[1][2])+'\n'+str(self.lattice_mat[2][0])+' '+str(self.lattice_mat[2][1])+' '+str(self.lattice_mat[2][2])+'\n'
         middle = ' '.join(map(str,Counter(self.elements).keys()))+'\n'+' '.join(map(str,Counter(self.elements).values()))+'\ndirect\n'
@@ -199,9 +223,11 @@ class Atoms(object):
 
 if __name__=='__main__':
    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]] 
-   coords = [[0, 0, 0], [0.25, 0.2, 0.25]] 
+   coords = [[0, 0, 0], [0.25, 0.25, 0.25]] 
    elements = ["Si", "Si"]
    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
+   print ('Si',Si)
+
    #print ('pf',Si.packing_fraction,Si.make_supercell())
    pmg = Si.pymatgen_converter()
    pmg.make_supercell([2,2,2])

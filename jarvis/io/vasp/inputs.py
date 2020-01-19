@@ -1,12 +1,14 @@
+import pprint
+import json
+import os
 import numpy as np
 from jarvis.core.atoms import Atoms
-
+from collections import OrderedDict
 class Poscar(object):
     def __init__(self,atoms,comment='System'):
           self.atoms = atoms
     @staticmethod
     def from_file(filename='POSCAR'):
-    
         with open(filename, "r") as f:
           return Poscar.from_string(f.read())
 
@@ -40,8 +42,133 @@ class Poscar(object):
        #print (atoms)
        formula = atoms.composition.formula
        return Poscar(atoms,comment=formula)
+
     def __repr__(self):
         return str(self.atoms)
+
+
+class Incar(object):
+    def __init__(self,tags={}):
+        self._tags = tags
+
+    @staticmethod
+    def from_file(filename='POSCAR'):
+        with open(filename, "r") as f:
+          return Incar.from_string(f.read())
+
+    @staticmethod
+    def from_string(lines):
+       text = lines.splitlines()
+       tags = OrderedDict()
+       for i in  text:
+          if '=' in i:
+           tmp = i.split('=')
+           tags.setdefault(tmp[0],tmp[1])
+      
+       return Incar(tags=tags)
+
+    def __repr__(self):
+        return str(self._tags)
+
+    def write_file(self,filename):
+        tags = self._tags
+        lines = ''
+        for i,j in tags.items():
+            lines = lines+str(i)+str('=')+str(j)+'\n'
+        f=open(filename,'w')
+        f.write(lines)
+        f.close()
+
+class IndividualPotcarData(object):
+     def __init__(self,data={}):
+       self._data=data
+
+     def from_string(lines):
+        text=lines.splitlines()
+        individual_data=OrderedDict()
+        individual_data['header1']=text[0]
+        individual_data['header2']=text[2]
+        individual_data['VRHFIN']=text[3].split('=')[1]
+        individual_data['element']=text[3].split('=')[1].split(':')[0]
+        individual_data['LEXCH']=text[4].split('=')[1].replace(" ","")
+        individual_data['EATOM']=text[5].split('=')[1].split()[0].replace(" ","")
+        individual_data['TITEL']=text[7].split('=')[1].replace(" ","")
+        
+        return IndividualPotcarData(data=individual_data) 
+
+     def from_file(filename='POTCAR'):
+        with open(filename, "r") as f:
+          return IndividualPotcarData.from_string(f.read())
+      
+     def __repr__(self):
+         return pprint.pformat(self._data, indent=4)
+
+class Potcar(object):
+    def __init__(self,elements = [],pot_type='POT_GGA_PAW_PBE',pot_json_path='',potcar_strings={}):
+        self._elements = elements
+        self._pot_type = pot_type
+        self._potcar_strings=potcar_strings
+
+        if self._potcar_strings=={}:
+           pot_json_file = str(os.path.join(os.path.dirname(__file__), "default_potcars.json"))
+           pot_json = open(pot_json_file, "r")
+           pot_json_selected = json.load(pot_json)
+           pot_json.close()
+           potcar_strings = OrderedDict()
+           for i in  self._elements:
+             for j,k in pot_json_selected.items():
+                if i==j:
+                  potcar_strings.setdefault(i,k)
+           self._potcar_strings=potcar_strings
+           if len(self._elements)!=len(self._potcar_strings.keys()):
+                raise ValueError('Number of elements is not same as potcar_strings')
+        else:
+           pot_json = open(pot_json_path, "r")
+           pot_json_selected = json.load(pot_json)
+           pot_json.close()
+           potcar_strings = OrderedDict()
+           for i,j in pot_json_selected.items():
+             if i in  self._elements:
+              potcar_strings.setdefault(i,j)
+           self._potcar_strings=potcar_strings
+           if len(self._elements)!=len(self._potcar_strings.keys()):
+                raise ValueError('Number of elements is not same as potcar_strings')
+        
+               
+
+    def catenate_potcar_files(self, destination_filename='POTCAR',filenames=[]):
+       with open(destination_filename, 'w') as outfile:
+          for fname in filenames:
+           with open(fname) as infile:
+              for line in infile:
+                outfile.write(line)         
+
+    def list_potcar_files(self):
+       pot_files = []
+       vasp_dir=str(os.environ['JARVIS_VASP_PSP_DIR'])
+       vasp_psp_dir = str(os.path.join(vasp_dir, self._pot_type))
+       potcar_strings=self._potcar_strings
+       for i,j in potcar_strings.items():
+          tmp = os.path.join(vasp_psp_dir,j,'POTCAR')
+          pot_files.append(tmp)
+       return pot_files
+
+    def write_file(self,filename='POTCAR') :
+        pot_files = self.list_potcar_files()
+        self.catenate_potcar_files(destination_filename=filename,filenames=pot_files)
+            
+    def __repr__(self):
+        return str(str(self._pot_type)+'\n'+str(self._potcar_strings))
+
 if __name__=='__main__':
-    p = Poscar.from_file(filename='/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/POSCAR')
-    print (p.atoms*[3,3,3])
+    #p = Poscar.from_file(filename='/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/POSCAR')
+    #print (p.atoms*[3,3,3])
+    #p = Incar.from_file(filename='/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/INCAR')
+    #print (p)
+    #p.write_file('pp')
+    #elements=['S']
+    #p=Potcar(elements=elements)
+    #print (p)
+    #p.write_file('POTCAR')
+    inp=IndividualPotcarData.from_file('POTCAR')
+    print (inp)
