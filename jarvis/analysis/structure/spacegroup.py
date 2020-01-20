@@ -4,6 +4,7 @@ import spglib
 from jarvis.core.specie import Specie
 import itertools
 import numpy as np
+from numpy import sin,cos
 
 class Spacegroup3D(object):
     def __init__(self,atoms=[],dataset={},symprec=1e-2,angle_tolerance=5):
@@ -116,7 +117,7 @@ class Spacegroup3D(object):
 
     @property
     def conventional_standard_structure(
-            self, tol=1e-5,nternational_monoclinic=True):
+            self, tol=1e-5,international_monoclinic=True):
         """
         Gives a structure with a conventional cell according to certain
         standards. The standards are defined in Setyawan, W., & Curtarolo,
@@ -194,8 +195,8 @@ class Spacegroup3D(object):
 
             if abs(b - c) < 0.001:
                 a, c = c, a
-            new_matrix = [[a / 2, -a * math.sqrt(3) / 2, 0],
-                          [a / 2, a * math.sqrt(3) / 2, 0],
+            new_matrix = [[a / 2, -a * np.sqrt(3) / 2, 0],
+                          [a / 2, a * np.sqrt(3) / 2, 0],
                           [0, 0, c]]
             latt = Lattice(new_matrix)
             transf = np.eye(3, 3)
@@ -203,7 +204,7 @@ class Spacegroup3D(object):
         elif latt_type == "monoclinic":
             # You want to keep the c axis where it is to keep the C- settings
 
-            if self.get_space_group_operations().int_symbol.startswith("C"):
+            if self.space_group_symbol.startswith("C"):
                 transf = np.zeros(shape=(3, 3))
                 transf[2] = [0, 0, 1]
                 sorted_dic = sorted([{'vec': latt.matrix[i],
@@ -217,18 +218,19 @@ class Spacegroup3D(object):
                 for t in itertools.permutations(list(range(2)), 2):
                     m = latt.matrix
                     latt2 = Lattice([m[t[0]], m[t[1]], m[2]])
-                    lengths = latt2.lengths
+                    lengths = latt2.abc
                     angles = latt2.angles
                     if angles[0] > 90:
                         # if the angle is > 90 we invert a and b to get
                         # an angle < 90
+                        #print ('[-m[t[0]], -m[t[1]], m[2]]',[-m[t[0]], -m[t[1]], m[2]])
                         a, b, c, alpha, beta, gamma = Lattice(
                             [-m[t[0]], -m[t[1]], m[2]]).parameters
                         transf = np.zeros(shape=(3, 3))
                         transf[0][t[0]] = -1
                         transf[1][t[1]] = -1
                         transf[2][2] = 1
-                        alpha = math.pi * alpha / 180
+                        alpha = np.pi * alpha / 180
                         new_matrix = [[a, 0, 0],
                                       [0, b, 0],
                                       [0, c * cos(alpha), c * sin(alpha)]]
@@ -240,7 +242,7 @@ class Spacegroup3D(object):
                         transf[1][t[1]] = 1
                         transf[2][2] = 1
                         a, b, c = lengths
-                        alpha = math.pi * angles[0] / 180
+                        alpha = np.pi * angles[0] / 180
                         new_matrix = [[a, 0, 0],
                                       [0, b, 0],
                                       [0, c * cos(alpha), c * sin(alpha)]]
@@ -271,7 +273,7 @@ class Spacegroup3D(object):
                         transf[0][t[0]] = -1
                         transf[1][t[1]] = -1
                         transf[2][t[2]] = 1
-                        alpha = math.pi * alpha / 180
+                        alpha = np.pi * alpha / 180
                         new_matrix = [[a, 0, 0],
                                       [0, b, 0],
                                       [0, c * cos(alpha), c * sin(alpha)]]
@@ -281,7 +283,7 @@ class Spacegroup3D(object):
                         transf[0][t[0]] = 1
                         transf[1][t[1]] = 1
                         transf[2][t[2]] = 1
-                        alpha = math.pi * alpha / 180
+                        alpha = np.pi * alpha / 180
                         new_matrix = [[a, 0, 0],
                                       [0, b, 0],
                                       [0, c * cos(alpha), c * sin(alpha)]]
@@ -314,15 +316,15 @@ class Spacegroup3D(object):
             # we use a LLL Minkowski-like reduction for the triclinic cells
             struct = struct.get_lll_reduced_structure()
 
-            a, b, c = latt.lengths
-            alpha, beta, gamma = [math.pi * i / 180 for i in latt.angles]
+            a, b, c = latt.abc#lengths
+            alpha, beta, gamma = [np.pi * i / 180 for i in latt.angles]
             new_matrix = None
             test_matrix = [[a, 0, 0],
                            [b * cos(gamma), b * sin(gamma), 0.0],
                            [c * cos(beta),
                             c * (cos(alpha) - cos(beta) * cos(gamma)) /
                             sin(gamma),
-                            c * math.sqrt(sin(gamma) ** 2 - cos(alpha) ** 2
+                            c * np.sqrt(sin(gamma) ** 2 - cos(alpha) ** 2
                                           - cos(beta) ** 2
                                           + 2 * cos(alpha) * cos(beta)
                                           * cos(gamma)) / sin(gamma)]]
@@ -340,7 +342,7 @@ class Spacegroup3D(object):
                            [-c * cos(beta),
                             -c * (cos(alpha) - cos(beta) * cos(gamma)) /
                             sin(gamma),
-                            -c * math.sqrt(sin(gamma) ** 2 - cos(alpha) ** 2
+                            -c * np.sqrt(sin(gamma) ** 2 - cos(alpha) ** 2
                                            - cos(beta) ** 2
                                            + 2 * cos(alpha) * cos(beta)
                                            * cos(gamma)) / sin(gamma)]]
@@ -356,7 +358,7 @@ class Spacegroup3D(object):
                            [c * cos(beta),
                             c * (cos(alpha) - cos(beta) * cos(gamma)) /
                             sin(gamma),
-                            c * math.sqrt(sin(gamma) ** 2 - cos(alpha) ** 2
+                            c * np.sqrt(sin(gamma) ** 2 - cos(alpha) ** 2
                                           - cos(beta) ** 2
                                           + 2 * cos(alpha) * cos(beta)
                                           * cos(gamma)) / sin(gamma)]]
@@ -372,7 +374,7 @@ class Spacegroup3D(object):
                            [-c * cos(beta),
                             -c * (cos(alpha) - cos(beta) * cos(gamma)) /
                             sin(gamma),
-                            -c * math.sqrt(sin(gamma) ** 2 - cos(alpha) ** 2
+                            -c * np.sqrt(sin(gamma) ** 2 - cos(alpha) ** 2
                                            - cos(beta) ** 2
                                            + 2 * cos(alpha) * cos(beta)
                                            * cos(gamma)) / sin(gamma)]]

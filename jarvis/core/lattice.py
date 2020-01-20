@@ -111,7 +111,7 @@ class Lattice(object):
 
     @property
     def parameters(self):
-        return [self.abc,self.angles] 
+        return [self.a,self.b,self.c,self.angles[0],self.angles[1],self.angles[2]] 
 
     @staticmethod
     def from_parameters(a,b,c,alpha,beta,gamma):
