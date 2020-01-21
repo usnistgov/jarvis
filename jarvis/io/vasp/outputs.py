@@ -1,3 +1,5 @@
+from jarvis.core.atoms import Atoms
+import numpy as np
 import xmltodict
 import types
 from pymatgen.io.vasp.outputs import Vasprun
@@ -54,8 +56,12 @@ class Vasprun(object):
       def all_structures(self):
           structs=[]
           for i in self.ionic_steps:
-             vrun_struct = i['structure']
-             atoms = vrun_structure_to_atoms(vrun_struct)
+             s = i['structure']
+             lattice_mat = np.array([[float(j) for j in i.split()] for i in s['crystal']['varray'][0]['v']])
+             frac_coords = np.array([[float(j) for j in i.split()] for i in s['varray']['v']])
+             elements = self.elements
+             atoms = Atoms(lattice_mat=lattice_mat,elements=elements,coords = frac_coords, cartesian=False)
+             #atoms = vrun_structure_to_atoms(vrun_struct)
              structs.append(atoms)
           return structs
 
