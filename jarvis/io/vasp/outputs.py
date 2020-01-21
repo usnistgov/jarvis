@@ -41,16 +41,37 @@ class Vasprun(object):
           if len(elements)!=self.num_atoms:
              ValueError ('Number of atoms is  not equal to number of elements')
           return elements
+ 
+
+      def vrun_structure_to_atoms(self,s={}):
+         lattice_mat = np.array([[float(j) for j in i.split()] for i in s['crystal']['varray'][0]['v']])
+         frac_coords = np.array([[float(j) for j in i.split()] for i in s['varray']['v']])
+         elements = self.elements
+         atoms = Atoms(lattice_mat=lattice_mat,elements=elements,coords = frac_coords, cartesian=False)
+         return atoms
+
+      @property
+      def all_structures(self):
+          structs=[]
+          for i in self.ionic_steps:
+             vrun_struct = i['structure']
+             atoms = vrun_structure_to_atoms(vrun_struct)
+             structs.append(atoms)
+          return structs
+
+               
 if __name__=='__main__':
     filename='/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/vasprun.xml'
     v=Vasprun(filename=filename)
     #print (v._filename, v.final_energy)
-    print (v._filename,'elements', v.elements)
+    #print (v._filename,'elements', v.elements)
+    print (v._filename,'structs', v.all_structures)
     #print ('pmg',Vasprun(v._filename).final_energy)
     filename='/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-BAND-bulk@mp_541837/vasprun.xml'
     v=Vasprun(filename=filename)
+    print (v._filename,'structs', v.all_structures)
     #print (v._filename,v.final_energy)
-    print (v._filename,v.elements)
+    #print (v._filename,v.elements)
     #print ('pmg',Vasprun(v._filename).final_energy)
     #print (v._data.keys())
     #print ()
