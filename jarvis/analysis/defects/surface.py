@@ -63,13 +63,16 @@ class Surface(object):
             #print ('c1c2c3',c1,c2,c3)
             lattice = atoms.lattice_mat#.lat_lengths()
             basis = np.array([c1,c2,c3])
-            scaled = np.linalg.solve(basis.T, np.array(atoms.frac_coords).T).T
+            print ('basis',basis)
+            scaled = np.dot(basis, np.array(atoms.frac_coords).T).T
+            #scaled = np.linalg.solve(basis, np.array(atoms.frac_coords).T).T
             scaled -= np.floor(scaled + self.tol)
+            print ('scaled_tol',scaled)
             #atoms.frac_coords=scaled
             new_coords = scaled
             new_lattice = np.dot(basis, lattice)
             #print ('new_lattice',new_lattice)
-            surf_atoms = Atoms(lattice_mat=new_lattice, elements=self.atoms.elements, coords=new_coords, cartesian=False)
+            surf_atoms = Atoms(lattice_mat=new_lattice, elements=self.atoms.elements, coords=new_coords, cartesian=True)
             surf_atoms=surf_atoms.make_supercell([1,1,self.layers])
             print ('scaled_111',surf_atoms.frac_coords)
             new_lat = surf_atoms.lattice_mat#lat_lengths()
@@ -79,11 +82,10 @@ class Surface(object):
             new_lat = np.array([a1,a2,np.cross(a1, a2) * np.dot(a3, np.cross(a1, a2)) /norm(np.cross(a1, a2))**2] )
             print ('new_lat1',new_lat)
             #surf_atoms.lattice_mat = new_lat
-            new_coords = np.dot(new_lat, np.array(surf_atoms.cart_coords.T)).T
+            new_coords = np.dot(new_lat, np.array(surf_atoms.frac_coords.T)).T
             #new_coords = np.linalg.solve(new_lat.T, np.array(surf_atoms.frac_coords).T).T
             surf_atoms = Atoms(lattice_mat=new_lat, elements=surf_atoms.elements, coords=new_coords, cartesian=True)
             print ('scaled_222',surf_atoms.frac_coords)
-            print ('scaled_222',surf_atoms.cart_coords)
             #print ('new_lat1',new_lat)
             #tmp  = np.array(new_lat, dtype=np.float64)#.reshape((3, 3))
             a1=new_lat[0]
@@ -93,14 +95,15 @@ class Surface(object):
             #print ('a3',np.linalg.norm(a3))
             new_lat = np.array([(np.linalg.norm(a1), 0, 0),(np.dot(a1, a2) / np.linalg.norm(a1),np.sqrt(np.linalg.norm(a2)**2 - (np.dot(a1, a2) / np.linalg.norm(a1))**2), 0),(0, 0, np.linalg.norm(a3))])
             #print ('new_lat2',new_lat)
-            surf_atoms = Atoms(lattice_mat=new_lat, elements=surf_atoms.elements, coords=surf_atoms.cart_coords, cartesian=True)
+            new_coords = np.dot(new_lat, np.array(surf_atoms.frac_coords.T)).T
+            surf_atoms = Atoms(lattice_mat=new_lat, elements=surf_atoms.elements, coords=new_coords, cartesian=False)
             print ('scaled',surf_atoms.frac_coords)
             new_coords = surf_atoms.frac_coords
             #print ('scaled',new_coords)
             new_coords[:,:2]%=1 
             #print ('new_lat',new_lat)
             surf_atoms=Atoms(lattice_mat=new_lat, elements=surf_atoms.elements,coords=new_coords,cartesian=False).center()
-            #print (surf_atoms)
+            print (surf_atoms)
 
 
 if __name__=='__main__':
@@ -108,7 +111,7 @@ if __name__=='__main__':
    coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
    elements = ["Si", "Si"]
    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-   Si = Poscar.from_file('/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO/MAIN-RELAX-bulk@mp-134/POSCAR').atoms
+   #Si = Poscar.from_file('/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO/MAIN-RELAX-bulk@mp-134/POSCAR').atoms
    tmp = Spacegroup3D(Si).conventional_standard_structure
    pmg = tmp.pymatgen_converter()
    ase_atoms = AseAtomsAdaptor().get_atoms(pmg)
