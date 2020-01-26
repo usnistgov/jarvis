@@ -79,7 +79,59 @@ class Atoms(object):
     def from_dict(self,d={}):
         return Atoms(lattice_mat=d['lattice_mat'],elements=d['elements'],coords=d['coords'],cartesian=d['cartesian'])
 
+    def center(self,axis=2,vacuum=18.0, about=None):
+        cell = self.lattice_mat
+        p = self.cart_coords
+         
+        dirs = np.zeros_like(cell)
+        for i in range(3):
+            dirs[i] = np.cross(cell[i - 1], cell[i - 2])
+            dirs[i] /= np.sqrt(np.dot(dirs[i], dirs[i]))  # normalize
+            if np.dot(dirs[i], cell[i]) < 0.0:
+                dirs[i] *= -1
 
+        if isinstance(axis, int):
+            axes = (axis,)
+        else:
+            axes = axis
+
+        # if vacuum and any(self.pbc[x] for x in axes):
+        #     warnings.warn(
+        #         'You are adding vacuum along a periodic direction!')
+
+        # Now, decide how much each basis vector should be made longer
+        longer = np.zeros(3)
+        shift = np.zeros(3)
+        for i in axes:
+            p0 = np.dot(p, dirs[i]).min() if len(p) else 0
+            p1 = np.dot(p, dirs[i]).max() if len(p) else 0
+            height = np.dot(cell[i], dirs[i])
+            if vacuum is not None:
+                lng = (p1 - p0 + 2 * vacuum) - height
+            else:
+                lng = 0.0  # Do not change unit cell size!
+            top = lng + height - p1
+            shf = 0.5 * (top - p0)
+            cosphi = np.dot(cell[i], dirs[i]) / np.sqrt(np.dot(cell[i],
+                                                               cell[i]))
+            longer[i] = lng / cosphi
+            shift[i] = shf / cosphi
+
+        # Now, do it!
+        translation = np.zeros(3)
+        for i in axes:
+            nowlen = np.sqrt(np.dot(cell[i], cell[i]))
+            if vacuum is not None or cell[i].any():
+                cell[i] = cell[i] * (1 + longer[i] / nowlen)
+                translation += shift[i] * cell[i] / nowlen
+     
+        new_coords = p+translation
+        if about is not None:
+            for vector in cell:
+                new_coords -= vector / 2.0
+            new_coords += about
+        atoms = Atoms(lattice_mat=cell,elements=self.elements,coords=new_coords,cartesian=True)
+        return atoms
 
     @property
     def volume(self):
@@ -230,14 +282,15 @@ if __name__=='__main__':
    coords = [[0, 0, 0], [0.25, 0.25, 0.25]] 
    elements = ["Si", "Si"]
    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-   print ('Si',Si)
-   print ('reduced',Si.get_lll_reduced_structure())
+   print ('center',Si.center())
+   #print ('Si',Si)
+   #print ('reduced',Si.get_lll_reduced_structure())
    #print ('pf',Si.packing_fraction,Si.make_supercell())
    pmg = Si.pymatgen_converter()
    pmg.make_supercell([2,2,2])
    #print (pmg)
-   print (Si.get_center_of_mass())
-   print (Si.get_string())
+   #print (Si.get_center_of_mass())
+   #print (Si.get_string())
 # if __name__=='__main__':
 #    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]] 
 #    coords = [[0, 0, 0], [0.25, 0.2, 0.25]] 
