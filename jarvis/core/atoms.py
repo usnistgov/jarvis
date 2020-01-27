@@ -1,6 +1,7 @@
 """
 This module provides classes to specify atomic structure
 """
+#from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from collections import Counter
 import numpy as np
 from jarvis.core.composition import Composition
@@ -18,7 +19,7 @@ ang_cm = 1e-8
 
 class Atoms(object):
     def __init__(
-        self, lattice_mat=None, coords=None, elements=None, cartesian = False
+        self, lattice_mat=None, coords=None, elements=None,props=None, cartesian = False
     ):
         """
         Create atomic structure with lattice, coordinates, atom type and other information
@@ -57,7 +58,9 @@ class Atoms(object):
         self.coords = coords
         self.elements = elements
         self.cartesian = cartesian
-
+        self.props = props
+        if self.props is None:
+            self.props = ['' for i in range(len(self.elements))]
         if self.cartesian == True:
             self.cart_coords = self.coords
             self.frac_coords = np.array(self.lattice.frac_coords(self.coords))
@@ -74,11 +77,27 @@ class Atoms(object):
         d['abc']=self.lattice.lat_lengths()
         d['angles']=self.lattice.lat_angles()
         d['cartesian']=self.cartesian
+        d['props']=self.props
         return d
 
     def from_dict(self,d={}):
-        return Atoms(lattice_mat=d['lattice_mat'],elements=d['elements'],coords=d['coords'],cartesian=d['cartesian'])
+        return Atoms(lattice_mat=d['lattice_mat'],elements=d['elements'],props=d['props'],coords=d['coords'],cartesian=d['cartesian'])
 
+
+    def remove_site_by_index(self,site=0):
+        #print ('elements',self.elements.pop(site))
+        #print ('coords',self.frac_coords.tolist().pop(site))
+        #print ('props',self.props.pop(site))
+        new_els=[]
+        new_coords=[]
+        new_props=[]
+        for ii,i in enumerate(self.frac_coords):
+         if ii!=site:
+           print (self.elements,len(self.elements),len(self.frac_coords))
+           new_els.append(self.elements[ii])
+           new_coords.append(self.frac_coords[ii])
+           new_props.append(self.props[ii])
+        return  Atoms(lattice_mat=self.lattice_mat,elements=new_els,coords=np.array(new_coords),props=new_props,cartesian=False)
     def center(self,axis=2,vacuum=18.0, about=None):
         cell = self.lattice_mat
         p = self.cart_coords
@@ -216,15 +235,17 @@ class Atoms(object):
      nat = len(coords)
 
      new_nat = nat * dim[0] * dim[1] * dim[2]
-     print ('new_nat,dim',new_nat,dim)
+     #print ('new_nat,dim',new_nat,dim)
      new_coords = np.zeros((new_nat, 3))
      new_symbs = []  # np.chararray((new_nat))
+     props=[]#self.props
 
      count = 0
      for i in range(nat):
         for j in range(dim[0]):
             for k in range(dim[1]):
                 for l in range(dim[2]):
+                    props.append(self.props[i])
                     new_coords[count][0] = (coords[i][0] + j) / float(dim[0])
                     new_coords[count][1] = (coords[i][1] + k) / float(dim[1])
                     new_coords[count][2] = (coords[i][2] + l) / float(dim[2])
@@ -245,8 +266,7 @@ class Atoms(object):
      lat[2][0] = dim[2] * box[2][0]
      lat[2][1] = dim[2] * box[2][1]
      lat[2][2] = dim[2] * box[2][2]
-
-     super_cell=Atoms(lattice_mat=lat, coords=new_coords, elements=new_symbs, cartesian=False)
+     super_cell=Atoms(lattice_mat=lat, coords=new_coords, elements=new_symbs, props=props, cartesian=False)
      return super_cell
 
 
@@ -272,8 +292,9 @@ class Atoms(object):
         header= str('\nSystem\n1.0\n')+str(self.lattice_mat[0][0])+' '+str(self.lattice_mat[0][1])+' '+str(self.lattice_mat[0][2])+'\n'+ str(self.lattice_mat[1][0])+' '+str(self.lattice_mat[1][1])+' '+str(self.lattice_mat[1][2])+'\n'+str(self.lattice_mat[2][0])+' '+str(self.lattice_mat[2][1])+' '+str(self.lattice_mat[2][2])+'\n'
         middle = ' '.join(map(str,Counter(self.elements).keys()))+'\n'+' '.join(map(str,Counter(self.elements).values()))+'\ndirect\n'
         rest = ''
-        for i in self.frac_coords:
-            rest=rest+' '.join(map(str,i))+'\n'
+        #print ('repr',self.frac_coords, self.frac_coords.shape)
+        for ii,i in enumerate(self.frac_coords):
+            rest=rest+' '.join(map(str,i))+' '+str(self.props[ii])+'\n'
         result = header+middle+rest
         return result
 
@@ -282,7 +303,14 @@ if __name__=='__main__':
    coords = [[0, 0, 0], [0.25, 0.25, 0.25]] 
    elements = ["Si", "Si"]
    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-   print ('center',Si.center())
+   Si.props=['a','a']
+   #spg = Spacegroup3D(Si)
+   #Si = spg.conventional_standard_structure
+   #print ('center',Si.center())
+   #print ('propos',Si.props)
+   print ('Supercell\n',Si.make_supercell([2,2,2]))
+   #print (Si.make_supercell().props)
+   print (Si.make_supercell([2,2,2]).remove_site_by_index())
    #print ('Si',Si)
    #print ('reduced',Si.get_lll_reduced_structure())
    #print ('pf',Si.packing_fraction,Si.make_supercell())
