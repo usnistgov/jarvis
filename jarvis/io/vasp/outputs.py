@@ -53,7 +53,7 @@ class Vasprun(object):
 
     @property
     def efermi(self):
-        return self.ionic_steps[-1]["dos"]["i"]["#text"]
+        return float(self.ionic_steps[-1]["dos"]["i"]["#text"])
 
     @property
     def num_atoms(self):
