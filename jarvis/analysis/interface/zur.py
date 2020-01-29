@@ -4,16 +4,21 @@ from jarvis.core.atoms import Atoms
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.core.lattice import Lattice
 import json
-import joblib,pickle 
+import joblib, pickle
+
 
 class ZSLGenerator(object):
     """
     This class is modified from pymatgen.
     """
 
-    def __init__(self, max_area_ratio_tol=0.09,
-                 max_area=400,
-                 max_length_tol=0.03, max_angle_tol=0.01):
+    def __init__(
+        self,
+        max_area_ratio_tol=0.09,
+        max_area=400,
+        max_length_tol=0.03,
+        max_angle_tol=0.01,
+    ):
         """
         Intialize a Zur Super Lattice Generator for a specific film and
             substrate
@@ -39,14 +44,11 @@ class ZSLGenerator(object):
             vec_set1(array[array]): an array of two vectors
             vec_set2(array[array]): second array of two vectors
         """
-        if (np.absolute(rel_strain(vec_set1[0], vec_set2[0])) >
-                self.max_length_tol):
+        if np.absolute(rel_strain(vec_set1[0], vec_set2[0])) > self.max_length_tol:
             return False
-        elif (np.absolute(rel_strain(vec_set1[1], vec_set2[1])) >
-              self.max_length_tol):
+        elif np.absolute(rel_strain(vec_set1[1], vec_set2[1])) > self.max_length_tol:
             return False
-        elif (np.absolute(rel_angle(vec_set1, vec_set2)) >
-              self.max_angle_tol):
+        elif np.absolute(rel_angle(vec_set1, vec_set2)) > self.max_angle_tol:
             return False
         else:
             return True
@@ -67,19 +69,22 @@ class ZSLGenerator(object):
                 2.) the tranformation matricies for the substrate to create
                 a super lattice of area j*film area
         """
-        transformation_indicies = [(i, j)
-                                   for i in range(1, int(self.max_area / film_area))
-                                   for j in range(1, int(self.max_area / substrate_area))
-                                   if np.absolute(film_area / substrate_area - float(j) / i) < self.max_area_ratio_tol]
+        transformation_indicies = [
+            (i, j)
+            for i in range(1, int(self.max_area / film_area))
+            for j in range(1, int(self.max_area / substrate_area))
+            if np.absolute(film_area / substrate_area - float(j) / i)
+            < self.max_area_ratio_tol
+        ]
 
         # Sort sets by the square of the matching area and yield in order
         # from smallest to largest
         for x in sorted(transformation_indicies, key=lambda x: x[0] * x[1]):
-            yield (gen_sl_transform_matricies(x[0]),
-                   gen_sl_transform_matricies(x[1]))
+            yield (gen_sl_transform_matricies(x[0]), gen_sl_transform_matricies(x[1]))
 
-    def get_equiv_transformations(self, transformation_sets, film_vectors,
-                                  substrate_vectors):
+    def get_equiv_transformations(
+        self, transformation_sets, film_vectors, substrate_vectors
+    ):
         """
         Applies the transformation_sets to the film and substrate vectors
         to generate super-lattices and checks if they matches.
@@ -96,16 +101,22 @@ class ZSLGenerator(object):
                 lattices
         """
 
-        for (film_transformations, substrate_transformations) in \
-                transformation_sets:
+        for (film_transformations, substrate_transformations) in transformation_sets:
             # Apply transformations and reduce using Zur reduce methodology
-            films = [reduce_vectors(*np.dot(f, film_vectors)) for f in film_transformations]
+            films = [
+                reduce_vectors(*np.dot(f, film_vectors)) for f in film_transformations
+            ]
 
-            substrates = [reduce_vectors(*np.dot(s, substrate_vectors)) for s in substrate_transformations]
+            substrates = [
+                reduce_vectors(*np.dot(s, substrate_vectors))
+                for s in substrate_transformations
+            ]
 
             # Check if equivalant super lattices
-            for (f_trans, s_trans), (f, s) in zip(product(film_transformations, substrate_transformations),
-                                                  product(films, substrates)):
+            for (f_trans, s_trans), (f, s) in zip(
+                product(film_transformations, substrate_transformations),
+                product(films, substrates),
+            ):
                 if self.is_same_vectors(f, s):
                     yield [f, s, f_trans, s_trans]
 
@@ -120,22 +131,39 @@ class ZSLGenerator(object):
 
         # Generate all super lattice comnbinations for a given set of miller
         # indicies
-        transformation_sets = self.generate_sl_transformation_sets(film_area, substrate_area)
+        transformation_sets = self.generate_sl_transformation_sets(
+            film_area, substrate_area
+        )
 
         # Check each super-lattice pair to see if they match
-        for match in self.get_equiv_transformations(transformation_sets,
-                                                    film_vectors,
-                                                    substrate_vectors):
+        for match in self.get_equiv_transformations(
+            transformation_sets, film_vectors, substrate_vectors
+        ):
             # Yield the match area, the miller indicies,
-            yield self.match_as_dict(match[0], match[1], film_vectors, substrate_vectors, vec_area(*match[0]),
-                                     match[2], match[3])
+            yield self.match_as_dict(
+                match[0],
+                match[1],
+                film_vectors,
+                substrate_vectors,
+                vec_area(*match[0]),
+                match[2],
+                match[3],
+            )
 
             # Just want lowest match per direction
-            if (lowest):
+            if lowest:
                 break
 
-    def match_as_dict(self, film_sl_vectors, substrate_sl_vectors, film_vectors, substrate_vectors, match_area,
-                      film_transformation, substrate_transformation):
+    def match_as_dict(
+        self,
+        film_sl_vectors,
+        substrate_sl_vectors,
+        film_vectors,
+        substrate_vectors,
+        match_area,
+        film_transformation,
+        substrate_transformation,
+    ):
         """
         Returns dict which contains ZSL match
         Args:
@@ -152,6 +180,8 @@ class ZSLGenerator(object):
         d["substrate_transformation"] = np.asarray(substrate_transformation)
 
         return d
+
+
 def gen_sl_transform_matricies(area_multiple):
     """
     Generates the transformation matricies that convert a set of 2D
@@ -166,9 +196,11 @@ def gen_sl_transform_matricies(area_multiple):
         matrix_list: transformation matricies to covert unit vectors to
         super lattice vectors
     """
-    return [np.array(((i, j), (0, area_multiple / i)))
-            for i in get_factors(area_multiple)
-            for j in range(area_multiple // i)]
+    return [
+        np.array(((i, j), (0, area_multiple / i)))
+        for i in get_factors(area_multiple)
+        for j in range(area_multiple // i)
+    ]
 
 
 def rel_strain(vec1, vec2):
@@ -185,8 +217,7 @@ def rel_angle(vec_set1, vec_set2):
         vec_set1(array[array]): an array of two vectors
         vec_set2(array[array]): second array of two vectors
     """
-    return vec_angle(vec_set2[0], vec_set2[1]) / vec_angle(
-        vec_set1[0], vec_set1[1]) - 1
+    return vec_angle(vec_set2[0], vec_set2[1]) / vec_angle(vec_set1[0], vec_set1[1]) - 1
 
 
 def fast_norm(a):
@@ -240,6 +271,7 @@ def get_factors(n):
         if n % x == 0:
             yield x
 
+
 def mismatch_strts(film=[], subs=[]):
 
     z = ZSLGenerator()
@@ -252,7 +284,6 @@ def mismatch_strts(film=[], subs=[]):
     info["area2"] = "na"
     info["film_sl"] = film
     info["subs_sl"] = subs
-
 
     uv1 = matches[0]["sub_sl_vecs"]
     uv2 = matches[0]["film_sl_vecs"]
@@ -282,24 +313,18 @@ def mismatch_strts(film=[], subs=[]):
     uv_substrate = uv1
     uv_mat2d = uv2
     substrate_latt = Lattice(
-        np.array(
-            [uv_substrate[0][:], uv_substrate[1][:], subs.lattice_mat[2, :]]
-        )
+        np.array([uv_substrate[0][:], uv_substrate[1][:], subs.lattice_mat[2, :]])
     )
     # to avoid numerical issues with find_mapping
-    mat2d_fake_c = (
-        film.lattice_mat[2, :] / np.linalg.norm(film.lattice_mat[2, :]) * 5.0
-    )
+    mat2d_fake_c = film.lattice_mat[2, :] / np.linalg.norm(film.lattice_mat[2, :]) * 5.0
     mat2d_latt = Lattice(np.array([uv_mat2d[0][:], uv_mat2d[1][:], mat2d_fake_c]))
     mat2d_latt_fake = Lattice(
-        np.array(
-            [film.lattice_mat[0, :], film.lattice_mat[1, :], mat2d_fake_c]
-        )
+        np.array([film.lattice_mat[0, :], film.lattice_mat[1, :], mat2d_fake_c])
     )
     _, __, scell = subs.lattice.find_matches(substrate_latt, ltol=0.05, atol=1)
     scell[2] = np.array([0, 0, 1])
-    print ('subs lattice',subs.lattice_mat)
-    print ('scell',scell)
+    print("subs lattice", subs.lattice_mat)
+    print("scell", scell)
     subs.make_supercell(scell)
     _, __, scell = mat2d_latt_fake.find_matches(mat2d_latt, ltol=0.05, atol=1)
     scell[2] = np.array([0, 0, 1])
@@ -308,15 +333,11 @@ def mismatch_strts(film=[], subs=[]):
     # grafted on top of it
     lmap = Lattice(
         np.array(
-            [
-                subs.lattice_mat[0, :],
-                subs.lattice_mat[1, :],
-                film.lattice_mat[2, :],
-            ]
+            [subs.lattice_mat[0, :], subs.lattice_mat[1, :], film.lattice_mat[2, :]]
         )
     )
     film.lattice = lmap
-    #film.modify_lattice(lmap)
+    # film.modify_lattice(lmap)
     # print ("film",film)
     # print ("subs",subs)
 
@@ -326,7 +347,6 @@ def mismatch_strts(film=[], subs=[]):
     info["area1"] = area1
     info["area2"] = area2
     info["film_sl"] = film
-
 
     try:
         uv1 = matches[0]["sub_sl_vecs"]
@@ -435,20 +455,18 @@ def get_hetero_type(A={}, B={}):
         pass
     return int_type, stack
 
-def get_hetero(film, substrate, seperation=3.0):
 
+def get_hetero(film, substrate, seperation=3.0):
 
     # unique site coordinates in the substrate top layers
     coords_uniq_sub = np.array(substrate.cart_coords)
-                                           
+
     # unique site coordinates in the 2D material bottom layers
     coords_uniq_film = np.array(film.cart_coords)
-    
-    substrate_top_z = max(np.array(substrate.cart_coords)[:,2])
-    
 
-    film_bottom = min(np.array(film.cart_coords)[:,2])
-    
+    substrate_top_z = max(np.array(substrate.cart_coords)[:, 2])
+
+    film_bottom = min(np.array(film.cart_coords)[:, 2])
 
     # shift normal to the surface by 'seperation'
     sub_z = substrate.lattice_mat[2, :]
@@ -458,43 +476,49 @@ def get_hetero(film, substrate, seperation=3.0):
     # unique substrate and unique 2d materials site in the layers .i.e
     # an interface structure for each parallel shift
     # interface = 2D material + substrate
-    
+
     new_coords = []
-    lattice_mat =  substrate.lattice_mat
+    lattice_mat = substrate.lattice_mat
     elements = []
-    for i in  substrate.cart_coords:
-         new_coords.append(i)
+    for i in substrate.cart_coords:
+        new_coords.append(i)
     for i in substrate.elements:
         elements.append(i)
-   
+
     for i in film.elements:
         elements.append(i)
     for i in film.cart_coords:
-          tmp = i
-          tmp[2] = i[2] - film_bottom
-          tmp = tmp+origin+shift_normal
-          new_coords.append(i)
-             
-    
-    interface = Atoms(lattice_mat=lattice_mat,elements=elements,coords=new_coords,cartesian=True)
-            
+        tmp = i
+        tmp[2] = i[2] - film_bottom
+        tmp = tmp + origin + shift_normal
+        new_coords.append(i)
+
+    interface = Atoms(
+        lattice_mat=lattice_mat, elements=elements, coords=new_coords, cartesian=True
+    )
+
     return interface
 
-if __name__=='__main__':
-  s1=Poscar.from_file('/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-1821-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-1821/POSCAR')
-  s2=Poscar.from_file('/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/POSCAR')
-  print (s1)
-  print (s2)
-  info = mismatch_strts(film=s1.atoms,subs=s2.atoms)
-  #print (info)
-  print ((s1.__dict__['atoms'].lattice_mat))
-  d = s1.__dict__['atoms']
-  f=open('test.json','wb')
-  joblib.dump(s1,f)
-  f.close()
 
-  print(get_hetero(s1.atoms,s2.atoms))
-  ff=open('test.json','rb')
-  dd=joblib.load(ff)
-  ff.close()
-  #print (dd.atoms.lattice_mat)
+if __name__ == "__main__":
+    s1 = Poscar.from_file(
+        "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-1821-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-1821/POSCAR"
+    )
+    s2 = Poscar.from_file(
+        "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/POSCAR"
+    )
+    print(s1)
+    print(s2)
+    info = mismatch_strts(film=s1.atoms, subs=s2.atoms)
+    # print (info)
+    print((s1.__dict__["atoms"].lattice_mat))
+    d = s1.__dict__["atoms"]
+    f = open("test.json", "wb")
+    joblib.dump(s1, f)
+    f.close()
+
+    print(get_hetero(s1.atoms, s2.atoms))
+    ff = open("test.json", "rb")
+    dd = joblib.load(ff)
+    ff.close()
+    # print (dd.atoms.lattice_mat)

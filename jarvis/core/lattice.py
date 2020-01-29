@@ -17,7 +17,7 @@ def abs_cap(val, max_abs_val=1):
 
 
 class Lattice(object):
-    def __init__(self, lattice_mat=None,round_off=5):
+    def __init__(self, lattice_mat=None, round_off=5):
         """
         >>> box=[[10,0,0],[0,10,0],[0,0,10]]
         >>> lat=Lattice(box)
@@ -42,13 +42,14 @@ class Lattice(object):
         >>> [round(i,2) for i in lat.lat_angles()]
         [90.0, 90.0, 90.0]
         """
-        tmp  = np.array(lattice_mat, dtype=np.float64).reshape((3, 3))
-             
-        self._lat=np.around(tmp,decimals=round_off)
+        tmp = np.array(lattice_mat, dtype=np.float64).reshape((3, 3))
+
+        self._lat = np.around(tmp, decimals=round_off)
         self._inv_lat = None
-        self._lll_matrix_mappings= {}
+        self._lll_matrix_mappings = {}
+
     def lat_lengths(self):
-        return [round(np.linalg.norm(v),6) for v in self._lat]
+        return [round(np.linalg.norm(v), 6) for v in self._lat]
 
     @property
     def volume(self):
@@ -68,7 +69,6 @@ class Lattice(object):
     def c(self):
         return self.lat_lengths()[2]
 
-
     @property
     def alpha(self):
         return self.lat_angles()[0]
@@ -81,16 +81,13 @@ class Lattice(object):
     def gamma(self):
         return self.lat_angles()[2]
 
-
     @property
     def abc(self):
         return self.lat_lengths()
 
-
     @property
     def angles(self):
         return self.lat_angles()
-
 
     def lat_angles(self, tol=1e-2, radians=False):
         lengths = self.lat_lengths()
@@ -101,25 +98,25 @@ class Lattice(object):
             leng2 = lengths[j] * lengths[k]
             if leng2 > tol:
                 tmp = np.dot(self._lat[j], self._lat[k]) / leng2
-                angle = round(180.0 * np.arccos(tmp) / np.pi,4)
+                angle = round(180.0 * np.arccos(tmp) / np.pi, 4)
             else:
                 angle = 90.0
             angles.append(angle)
         if radians:
-            angles = [round(angle * np.pi / 180.0,4) for angle in angles]
+            angles = [round(angle * np.pi / 180.0, 4) for angle in angles]
         return angles
 
     @property
     def parameters(self):
-        return [self.a,self.b,self.c,self.angles[0],self.angles[1],self.angles[2]] 
+        return [self.a, self.b, self.c, self.angles[0], self.angles[1], self.angles[2]]
 
     @staticmethod
-    def from_parameters(a,b,c,alpha,beta,gamma):
+    def from_parameters(a, b, c, alpha, beta, gamma):
         angles_r = np.radians([alpha, beta, gamma])
         cos_alpha, cos_beta, cos_gamma = np.cos(angles_r)
         sin_alpha, sin_beta, sin_gamma = np.sin(angles_r)
         tmp = (cos_alpha * cos_beta - cos_gamma) / (sin_alpha * sin_beta)
-        val = abs_cap(tmp) 
+        val = abs_cap(tmp)
         gamma_star = np.arccos(val)
         vector_a = [a * sin_beta, 0.0, a * cos_beta]
         vector_b = [
@@ -130,43 +127,38 @@ class Lattice(object):
         vector_c = [0.0, 0.0, float(c)]
         return Lattice(lattice_mat=[vector_a, vector_b, vector_c])
 
-
-
     @staticmethod
-    def cubic(a):     
+    def cubic(a):
         return Lattice.from_parameters(a, a, a, 90, 90, 90)
 
-
     @staticmethod
-    def tetragonal(a,c):     
+    def tetragonal(a, c):
         return Lattice.from_parameters(a, a, c, 90, 90, 90)
 
-
     @staticmethod
-    def orthorhombic(a,b,c):     
+    def orthorhombic(a, b, c):
         return Lattice.from_parameters(a, b, c, 90, 90, 90)
 
-
     @staticmethod
-    def monoclinic(a,b,c,beta):     
+    def monoclinic(a, b, c, beta):
         return Lattice.from_parameters(a, b, c, 90, beta, 90)
 
     @staticmethod
-    def hexagonal(a,c):     
+    def hexagonal(a, c):
         return Lattice.from_parameters(a, a, c, 90, 90, 120)
 
     @staticmethod
-    def rhombohedral(a,alpha):     
+    def rhombohedral(a, alpha):
         return Lattice.from_parameters(a, a, a, alpha, alpha, alpha)
 
     def as_dict(self):
-        d=OrderedDict()
-        d['matrix']=self.matrix
+        d = OrderedDict()
+        d["matrix"] = self.matrix
         return d
 
-    def from_dict(self,d):
-        return Lattice(lattice_mat=d['matrix'])
-    
+    def from_dict(self, d):
+        return Lattice(lattice_mat=d["matrix"])
+
     @property
     def matrix(self):
         return self.lattice()
@@ -190,9 +182,9 @@ class Lattice(object):
         return np.dot(np.array(cart_coords), self.inv_lattice())
 
     def reciprocal_lattice(self):
-        return Lattice(2*np.pi*np.linalg.inv(self._lat).T)
+        return Lattice(2 * np.pi * np.linalg.inv(self._lat).T)
 
-    def get_points_in_sphere(self,frac_points,center,r):
+    def get_points_in_sphere(self, frac_points, center, r):
         recp_len = np.array(self.reciprocal_lattice().lat_lengths()) / (2 * np.pi)
         nmax = float(r) * recp_len + 0.01
 
@@ -228,22 +220,21 @@ class Lattice(object):
         d_2 = np.sum(coords, axis=4)
 
         # Determine which points are within `r` of `center`
-        within_r = np.where(d_2 <= r ** 2)        
-        return  (
-                shifted_coords[within_r],
-                np.sqrt(d_2[within_r]),
-                indices[within_r[0]],
-                images[within_r[1:]],
-            )
+        within_r = np.where(d_2 <= r ** 2)
+        return (
+            shifted_coords[within_r],
+            np.sqrt(d_2[within_r]),
+            indices[within_r[0]],
+            images[within_r[1:]],
+        )
 
- 
-    def find_all_matches(self,other_lattice,ltol=1e-5,atol=1):
+    def find_all_matches(self, other_lattice, ltol=1e-5, atol=1):
         """
         Adapted from pymatgen, which is available under MIT license:
         """
         lengths = other_lattice.lat_lengths()
         angles = other_lattice.lat_angles()
-        #print ('angles',angles)
+        # print ('angles',angles)
         alpha = angles[0]
         beta = angles[1]
         gamma = angles[2]
@@ -253,7 +244,9 @@ class Lattice(object):
         cart = self.cart_coords(frac)
         # this can't be broadcast because they're different lengths
         inds = [
-            np.logical_and(dist / l < 1 + ltol, dist / l > 1 / (1 + ltol))  # type: ignore
+            np.logical_and(
+                dist / l < 1 + ltol, dist / l > 1 / (1 + ltol)
+            )  # type: ignore
             for l in lengths
         ]
         c_a, c_b, c_c = (cart[i] for i in inds)
@@ -276,7 +269,9 @@ class Lattice(object):
                 all_j[:, None], np.logical_and(alphab, betab[i][None, :])
             )
             for j, k in np.argwhere(inds):
-                scale_m = np.array((f_a[i], f_b[j], f_c[k]), dtype=np.int)  # type: ignore
+                scale_m = np.array(
+                    (f_a[i], f_b[j], f_c[k]), dtype=np.int
+                )  # type: ignore
                 if abs(np.linalg.det(scale_m)) < 1e-8:
                     continue
 
@@ -285,15 +280,12 @@ class Lattice(object):
                 rotation_m = np.linalg.solve(aligned_m, other_lattice._lat)
                 yield Lattice(aligned_m), rotation_m, scale_m
 
+    def find_matches(self, other_lattice, ltol=1e-5, atol=1):
+        for x in self.find_all_matches(other_lattice, ltol, atol):
+            return x
+        return None
 
-
-    def find_matches(self,other_lattice,ltol=1e-5,atol=1):
-           for x in self.find_all_matches(
-                other_lattice, ltol, atol):
-                return x
-           return None
-
-    def _calculate_lll(self, delta = 0.75) :
+    def _calculate_lll(self, delta=0.75):
         """
         Performs a Lenstra-Lenstra-Lovasz lattice basis reduction to obtain a
         c-reduced basis. This method returns a basis which is as "good" as
@@ -331,14 +323,14 @@ class Lattice(object):
                     # Reduce the k-th basis vector.
                     a[:, k - 1] = a[:, k - 1] - q * a[:, i - 1]
                     mapping[:, k - 1] = mapping[:, k - 1] - q * mapping[:, i - 1]
-                    uu = list(u[i - 1, 0: (i - 1)])
+                    uu = list(u[i - 1, 0 : (i - 1)])
                     uu.append(1)
                     # Update the GS coefficients.
                     u[k - 1, 0:i] = u[k - 1, 0:i] - q * np.array(uu)
 
             # Check the Lovasz condition.
             if dot(b[:, k - 1], b[:, k - 1]) >= (
-                    delta - abs(u[k - 1, k - 2]) ** 2
+                delta - abs(u[k - 1, k - 2]) ** 2
             ) * dot(b[:, (k - 2)], b[:, (k - 2)]):
                 # Increment k if the Lovasz condition holds.
                 k += 1
@@ -355,11 +347,11 @@ class Lattice(object):
 
                 # Update the Gram-Schmidt coefficients
                 for s in range(k - 1, k + 1):
-                    u[s - 1, 0: (s - 1)] = (
-                        dot(a[:, s - 1].T, b[:, 0: (s - 1)]) / m[0: (s - 1)]
+                    u[s - 1, 0 : (s - 1)] = (
+                        dot(a[:, s - 1].T, b[:, 0 : (s - 1)]) / m[0 : (s - 1)]
                     )
                     b[:, s - 1] = a[:, s - 1] - dot(
-                        b[:, 0: (s - 1)], u[s - 1, 0: (s - 1)].T
+                        b[:, 0 : (s - 1)], u[s - 1, 0 : (s - 1)].T
                     )
                     m[s - 1] = dot(b[:, s - 1], b[:, s - 1])
 
@@ -367,14 +359,14 @@ class Lattice(object):
                     k -= 1
                 else:
                     # We have to do p/q, so do lstsq(q.T, p.T).T instead.
-                    p = dot(a[:, k:3].T, b[:, (k - 2): k])
-                    q = np.diag(m[(k - 2): k])
+                    p = dot(a[:, k:3].T, b[:, (k - 2) : k])
+                    q = np.diag(m[(k - 2) : k])
                     result = np.linalg.lstsq(q.T, p.T, rcond=None)[0].T  # type: ignore
-                    u[k:3, (k - 2): k] = result
+                    u[k:3, (k - 2) : k] = result
 
         return a.T, mapping.T
 
-    def get_lll_reduced_lattice(self, delta= 0.75):
+    def get_lll_reduced_lattice(self, delta=0.75):
         """
         :param delta: Delta parameter.
         :return: LLL reduced Lattice.
@@ -384,15 +376,15 @@ class Lattice(object):
         return Lattice(self._lll_matrix_mappings[delta][0])
 
 
-if __name__=='__main__':
+if __name__ == "__main__":
 
-       box=[[10,0,0],[0,10,0],[0,0,10]]
-       box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-       lat=Lattice(box)
-       print ('lll',lat._calculate_lll())
-       print ('lll_educed',lat.get_lll_reduced_lattice()._lat)
-       frac_coords=[[0,0,0],[0.5,0.5,0.5]]
-       print (lat.cart_coords(frac_coords)[1][1])
+    box = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
+    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+    lat = Lattice(box)
+    print("lll", lat._calculate_lll())
+    print("lll_educed", lat.get_lll_reduced_lattice()._lat)
+    frac_coords = [[0, 0, 0], [0.5, 0.5, 0.5]]
+    print(lat.cart_coords(frac_coords)[1][1])
 
-       cart_coords=[[0,0,0],[5,5,5]]
-       print (lat.frac_coords(cart_coords)[1][1])
+    cart_coords = [[0, 0, 0], [5, 5, 5]]
+    print(lat.frac_coords(cart_coords)[1][1])

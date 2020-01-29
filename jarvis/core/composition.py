@@ -51,10 +51,8 @@ class Composition(object):
             N = N + 1
         return proto.replace("1", "")
 
-
-
-
-
+    def to_dict(self):
+        return self._content
 
     @property
     def reduced_formula(self):
@@ -82,10 +80,11 @@ class Composition(object):
         return str(self._content)
 
 
-# if __name__ == "__main__":
-#    comp = {"Li": 2, "O": 4}
-#    cc = Composition(comp)
-#    x, y = cc.reduce()
-#    # print(x, y)
-#    proto = cc.prototype
-#    print(proto, cc.formula, cc.reduced_formula)
+if __name__ == "__main__":
+    comp = {"Li": 2, "O": 4}
+    cc = Composition(comp)
+    print("dict", cc.to_dict())
+    x, y = cc.reduce()
+    # print(x, y)
+    proto = cc.prototype
+    print(proto, cc.formula, cc.reduced_formula)

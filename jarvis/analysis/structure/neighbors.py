@@ -8,6 +8,7 @@ from jarvis.core.atoms import Atoms
 import matplotlib.pyplot as plt
 from operator import itemgetter
 from jarvis.io.vasp.inputs import Poscar
+
 plt.switch_backend("agg")
 import math
 
@@ -85,12 +86,12 @@ class NeighborsAnalysis(object):
         coords = np.array(struct_info["coords"])
         dim = struct_info["dim"]
         nat = struct_info["nat"]
-        new_symbs = struct_info['new_symbs']
+        new_symbs = struct_info["new_symbs"]
         lat = np.array(struct_info["lat"])
         znm = 0
         bond_arr = []
         deg_arr = []
-        different_bond={}
+        different_bond = {}
         nn = np.zeros((nat), dtype="int")
         # print ('max_n, nat',max_n, nat)
         dist = np.zeros((max_n, nat))
@@ -109,10 +110,10 @@ class NeighborsAnalysis(object):
                 new_diff = np.dot(diff, lat)
                 dd = np.linalg.norm(new_diff)
                 if dd < rcut and dd >= 0.1:
-                    sumb_i=new_symbs[i]
-                    sumb_j=new_symbs[j]
-                    comb = '_'.join(sorted(str(sumb_i+'_'+sumb_j).split('_')))
-                    different_bond.setdefault(comb,[]).append(dd)
+                    sumb_i = new_symbs[i]
+                    sumb_j = new_symbs[j]
+                    comb = "_".join(sorted(str(sumb_i + "_" + sumb_j).split("_")))
+                    different_bond.setdefault(comb, []).append(dd)
 
                     # print ('dd',dd)
                     nn_index = nn[i]  # index of the neighbor
@@ -137,7 +138,7 @@ class NeighborsAnalysis(object):
         nbor_info["bondx"] = bondx
         nbor_info["bondy"] = bondy
         nbor_info["bondz"] = bondz
-        #print ('nat',nat)
+        # print ('nat',nat)
 
         return nbor_info
 
@@ -145,23 +146,23 @@ class NeighborsAnalysis(object):
         nbor_info = self.nbor_list(c_size=21.0)
         # print (nbor_info['dist'].tolist())
         n_zero_d = nbor_info["dist"][np.nonzero(nbor_info["dist"])]
-        #print ('n_zero_d',n_zero_d)
-        hist, bins = np.histogram(
-            n_zero_d.ravel(), bins=np.arange(0.1, 10.2, 0.1)
-        )
-        const = float(nbor_info['nat'])/float(self._atoms.num_atoms)
-        hist = hist /float(const)
-        #print ('nbor_info,num_atoms',nbor_info['nat'],self._atoms.num_atoms,const)
-        #print ('our_hist',hist)
-        #print("bins[:-1]", bins[:-1])
-        #print("bins[1:]", bins[1:])
+        # print ('n_zero_d',n_zero_d)
+        hist, bins = np.histogram(n_zero_d.ravel(), bins=np.arange(0.1, 10.2, 0.1))
+        const = float(nbor_info["nat"]) / float(self._atoms.num_atoms)
+        hist = hist / float(const)
+        # print ('nbor_info,num_atoms',nbor_info['nat'],self._atoms.num_atoms,const)
+        # print ('our_hist',hist)
+        # print("bins[:-1]", bins[:-1])
+        # print("bins[1:]", bins[1:])
         shell_vol = 4.0 / 3.0 * np.pi * (np.power(bins[1:], 3) - np.power(bins[:-1], 3))
         number_density = self._atoms.num_atoms / self._atoms.volume
-        rdf =  hist / shell_vol / number_density/self._atoms.num_atoms#/len(n_zero_d)
-        #rdf = 2*len(bins) * hist / np.sum(hist) / shell_vol / number_density
-        #rdf = 2*len(bins) * hist / np.sum(hist) / shell_vol / number_density
-        nn = rdf /self._atoms.num_atoms
-        #print ('rdf',len(rdf))
+        rdf = (
+            hist / shell_vol / number_density / self._atoms.num_atoms
+        )  # /len(n_zero_d)
+        # rdf = 2*len(bins) * hist / np.sum(hist) / shell_vol / number_density
+        # rdf = 2*len(bins) * hist / np.sum(hist) / shell_vol / number_density
+        nn = rdf / self._atoms.num_atoms
+        # print ('rdf',len(rdf))
         if plot:
             plt.bar(bins[:-1], rdf, width=0.1)
             plt.savefig("rdf.png")
@@ -377,15 +378,17 @@ if __name__ == "__main__":
         [0.500000, 0.500000, 0.000000],
         [0.750000, 0.750000, 0.250000],
     ]
-    #box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-    #coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
-    #elements = ["Si", "Si"]
+    # box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+    # coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
+    # elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    #Si = Poscar.from_file('/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/POSCAR').atoms
-    Si = Poscar.from_file('/rk2/knc6/JARVIS-DFT/Mr-French/mp-672232.vasp_PBEBO/MAIN-ELASTIC-bulk@mp-672232/POSCAR').atoms
+    # Si = Poscar.from_file('/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/POSCAR').atoms
+    Si = Poscar.from_file(
+        "/rk2/knc6/JARVIS-DFT/Mr-French/mp-672232.vasp_PBEBO/MAIN-ELASTIC-bulk@mp-672232/POSCAR"
+    ).atoms
     x = NeighborsAnalysis(Si).get_rdf()
-    #print(x)
-    #import sys
+    # print(x)
+    # import sys
     # distributions = NeighborsAnalysis(Si).get_all_distributions
     s = Si.pymatgen_converter()
     neighbors_list = s.get_all_neighbors(12.0)
@@ -401,20 +404,20 @@ if __name__ == "__main__":
     shell_vol = (
         4.0 / 3.0 * np.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
     )
-    print ('pmg',dist_hist)
+    print("pmg", dist_hist)
     number_density = s.num_sites / s.volume
     rdf = dist_hist / shell_vol / number_density / len(neighbors_list)
-    plt.plot(dist_bins[:-1],rdf)
-    plt.savefig('pmgrdf.png')
+    plt.plot(dist_bins[:-1], rdf)
+    plt.savefig("pmgrdf.png")
     plt.close()
     sys.exit()
     # print ('shell_vol',shell_vol)
     # print ('all_distances',all_distances)
-    pmg=tuple(map(lambda x:[itemgetter(1)(e) for e in x],neighbors_list))
-    our=NeighborsAnalysis(Si).nbor_list()['dist']
-    print (pmg,len(pmg))
-    print ()
-    print (our,len(our))
+    pmg = tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_list))
+    our = NeighborsAnalysis(Si).nbor_list()["dist"]
+    print(pmg, len(pmg))
+    print()
+    print(our, len(our))
     # print(distributions['rdf'])
     _, Nb = NeighborsAnalysis(Si).ang_dist_first()
     _, Nb = NeighborsAnalysis(Si).ang_dist_second()

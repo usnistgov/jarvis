@@ -10,6 +10,7 @@ from numpy import pi, cos, sin
 from math import ceil
 from jarvis.io.vasp.inputs import Poscar
 
+
 class Kpoints3D(object):
     def __init__(
         self,
@@ -246,14 +247,21 @@ class Kpoints3D(object):
             frac_k_points = [self._prim_rec.frac_coords(k) for k in list_k_points]
             return frac_k_points, sym_point_labels
 
-    def kpath(self, atoms, line_density=20, weights=[], unique_kp_only = False, coords_are_cartesian=False):
+    def kpath(
+        self,
+        atoms,
+        line_density=20,
+        weights=[],
+        unique_kp_only=False,
+        coords_are_cartesian=False,
+    ):
         k_points, labels = self.interpolated_points(
             atoms, line_density=line_density, coords_are_cartesian=coords_are_cartesian
         )
         if unique_kp_only:
-          uniqueValues, indicesList = np.unique(k_points, axis=0, return_index=True)
-          k_points=np.array(k_points)[indicesList.astype(int)]
-          labels = np.array(labels)[indicesList.astype(int)]
+            uniqueValues, indicesList = np.unique(k_points, axis=0, return_index=True)
+            k_points = np.array(k_points)[indicesList.astype(int)]
+            labels = np.array(labels)[indicesList.astype(int)]
         return Kpoints3D(
             kpoints=k_points,
             header="Non SCF run along symmetry lines",
@@ -947,6 +955,8 @@ if __name__ == "__main__":
     x, y = kp.interpolated_points(Si)
     # for i,j in zip(x,y):
     #   print (i,j)
-    Si =Poscar.from_file('/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/CONTCAR').atoms
+    Si = Poscar.from_file(
+        "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/CONTCAR"
+    ).atoms
     kp = Kpoints3D().kpath(atoms=Si)  # automatic_length_mesh(lattice_mat=lattice_mat)
     kp.write_file("KPOINTS")

@@ -31,7 +31,7 @@ class Specie(object):
     nan
     """
 
-    def __init__(self, symbol = ""):
+    def __init__(self, symbol=""):
         self.symbol = symbol
         self._data = chem_data
 
@@ -55,9 +55,9 @@ class Specie(object):
         """
         arr = []
 
-        #try:
+        # try:
         arr = chrg_data[self.symbol][0][1]
-        #except:
+        # except:
         #    pass
         return arr
 
@@ -84,7 +84,7 @@ class Specie(object):
     def atomic_rad(self):
         return self.element_property("atom_rad")
 
-    def element_property(self, key = ""):
+    def element_property(self, key=""):
         val = np.nan
         try:
             keys = [
@@ -177,6 +177,7 @@ class Specie(object):
         except:
             pass
         return val
+
 
 """
 if __name__ == "__main__":
