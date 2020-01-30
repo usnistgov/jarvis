@@ -1,3 +1,4 @@
+from scipy.constants import physical_constants, speed_of_light
 from jarvis.io.vasp.vasp_constant import *
 from jarvis.core.atoms import Atoms
 import numpy as np
@@ -8,6 +9,7 @@ import numpy as np
 import xmltodict
 from collections import OrderedDict
 from jarvis.core.kpoints import Kpoints3D as Kpoints
+
 
 
 class TotalDos(object):
@@ -65,6 +67,63 @@ class Vasprun(object):
         return int(self._data["modeling"]["atominfo"]["types"])
 
     @property
+    def dielectric_loptics(self):
+        tmp = self.ionic_steps[-1]['dielectricfunction']['real']['array']['set']['r']
+        reals=[]
+        for i in range(len(tmp)):
+              reals.append([float(j) for j in tmp[i].split()])
+
+        tmp = self.ionic_steps[-1]['dielectricfunction']['imag']['array']['set']['r']
+        imags=[]
+        for i in range(len(tmp)):
+              imags.append([float(j) for j in tmp[i].split()])
+        reals=np.array(reals)
+        imags=np.array(imags)
+        return reals,imags
+
+    
+    @property
+    def avg_absorption_coefficient(self,max_axis=3):
+         eV_to_recip_cm = 1.0 / (
+    physical_constants["Planck constant in eV s"][0] * speed_of_light * 1e2
+)
+         real,imag=self.dielectric_loptics
+         energies=real[:,0]
+         epsilon_1=np.mean(real[:,1:max_axis], axis=1)
+         epsilon_2=np.mean(imag[:,1:max_axis], axis=1)
+         absorption=2*np.pi*np.sqrt(2.0)*eV_to_recip_cm*energies*np.sqrt(-epsilon_1 + np.sqrt(epsilon_1 ** 2 + epsilon_2 ** 2))
+         return energies,absorption
+
+    @property
+    def get_dir_gap(self):
+       spin_channels=2
+       up_gap='na'
+       dn_gap='na'
+       if  self.is_spin_orbit:
+            spin_channels=1
+       levels=int(float(self.all_input_parameters['NELECT'])/float(spin_channels))
+       ups=self.eigenvalues[0][:, :, 0][:,levels]
+       dns=self.eigenvalues[0][:, :, 0][:,levels-1]
+       return min(ups-dns) 
+
+
+    @property
+    def get_indir_gap(self):
+       spin_channels=2
+       up_gap='na'
+       dn_gap='na'
+       if  self.is_spin_orbit:
+            spin_channels=1
+       levels=int(float(self.all_input_parameters['NELECT'])/float(spin_channels))
+       print ('levels',levels)
+       up_gap=min(self.eigenvalues[0][:, :, 0][:,levels])-max(self.eigenvalues[0][:, :, 0][:,levels-1])
+       if self.is_spin_polarized:
+          dn_gap=min(self.eigenvalues[1][:, :, 0][:,levels])-max(self.eigenvalues[1][:, :, 0][:,levels-1])
+       if dn_gap=='na':
+         dn_gap=up_gap
+       return  min(up_gap,dn_gap)
+
+    @property
     def elements(self):
         elements = [
             self._data["modeling"]["atominfo"]["array"][0]["set"]["rc"][i]["c"][0]
@@ -100,10 +159,19 @@ class Vasprun(object):
             en = float(i["energy"]["i"][1]["#text"])
             energies.append(en)
         return np.array(energies)
+        
+
 
     @property
     def is_spin_polarized(self):
         if self.all_input_parameters["ISPIN"] == "2":
+            return True
+        else:
+            return False
+
+    @property
+    def is_spin_orbit(self):
+        if self.all_input_parameters["LSORBIT"] == "T":
             return True
         else:
             return False
@@ -122,8 +190,8 @@ class Vasprun(object):
         nkpts = len(self.kpoints._kpoints)
         all_up_eigs = []
         all_dn_eigs = []
-
-        for j in range(nkpts):
+        if self.is_spin_polarized:
+         for j in range(nkpts):
             eigs = np.array(
                 [
                     [float(jj) for jj in ii.split()]
@@ -133,7 +201,7 @@ class Vasprun(object):
                 ]
             )
             all_up_eigs.append(eigs)
-        for j in range(nkpts):
+         for j in range(nkpts):
             eigs = np.array(
                 [
                     [float(jj) for jj in ii.split()]
@@ -143,6 +211,19 @@ class Vasprun(object):
                 ]
             )
             all_dn_eigs.append(eigs)
+        else:
+         for j in range(nkpts):
+            eigs = np.array(
+                [
+                    [float(jj) for jj in ii.split()]
+                    for ii in (
+                        self.ionic_steps[-1]["eigenvalues"]["array"]["set"]["set"]
+                    )["set"][j]["r"]
+                ]
+            )
+            all_up_eigs.append(eigs)
+         all_dn_eigs=all_up_eigs
+            
         all_up_eigs = np.array(all_up_eigs)
         all_dn_eigs = np.array(all_dn_eigs)
         return all_up_eigs, all_dn_eigs
@@ -641,6 +722,23 @@ class Wavecar(object):
 
 
 if __name__ == "__main__":
+    #filename = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/vasprun.xml"
+    #filename = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/vasprun.xml"
+    #filename='/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO/MAIN-RELAX-bulk@mp-134/vasprun.xml'
+    #filename = '/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/vasprun.xml'
+    filename='/rk2/knc6/JARVIS-DFT/Bulk-less5mp1/mp-1077840_PBEBO/MAIN-RELAX-bulk@mp_1077840/vasprun.xml' #????
+    filename='/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-OPTICS-bulk@mp-149/vasprun.xml'
+    v = Vasprun(filename=filename)
+    #print (v.is_spin_orbit,v.is_spin_polarized)
+   
+    print ('dir',v.get_dir_gap,'indir',v.get_indir_gap)
+    print ('reals',v.avg_absorption_coefficient)
+    from pymatgen.io.vasp.outputs import Vasprun  as pmg
+    pmgv=pmg(filename)
+    bandstructure = pmgv.get_band_structure()
+    print ('pmggap', bandstructure.get_direct_band_gap(),bandstructure.get_band_gap())
+    import sys
+    sys.exit()
     filename = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/OSZICAR"
     osz=Oszicar(filename=filename)
     #print (osz.ionic_steps(),osz.magnetic_moment())
@@ -649,8 +747,6 @@ if __name__ == "__main__":
     wf_so='/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/WAVECAR'
     so = Wavecar(fnm=wf_so, lsorbit=True)
     print ('Read SO')
-    filename = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/vasprun.xml"
-    v = Vasprun(filename=filename)
     # print (v._filename, v.final_energy)
     # print (v._filename,'elements', v.elements)
     #print(v._filename, "structs", v.all_structures)
