@@ -5,7 +5,7 @@ import numpy as np
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from numpy.linalg import norm, solve
 from numpy import gcd
-
+import sys
 
 def ext_gcd(a, b):
     if b == 0:
@@ -73,16 +73,24 @@ class Surface(object):
         scaled -= np.floor(scaled + self.tol)
         # atoms.frac_coords=scaled
         new_coords = scaled
-        new_lattice = np.dot(basis, lattice)
-        # print ('new_lattice',new_lattice)
-        surf_atoms = Atoms(
-            lattice_mat=new_lattice,
-            elements=self.atoms.elements,
-            coords=new_coords,
-            cartesian=False,
-        )
-        surf_atoms = surf_atoms.make_supercell([1, 1, self.layers])
-        print("scaled_111", surf_atoms.frac_coords)
+        tmp_cell = np.dot(basis,lattice)
+        M = np.linalg.solve(lattice,tmp_cell)
+        print ('scaled',scaled)
+        cart_coords=np.dot(scaled,lattice)
+        print ('cart_coords',cart_coords)
+        print ('M Matric',M)
+        new_coords = np.dot(cart_coords,M)
+        print ('new_coords',new_coords)
+        #new_cart_coords=np.dot(scaled,tmp_cell)
+
+
+        new_atoms=Atoms(lattice_mat=tmp_cell,coords=new_coords,elements=atoms.elements,cartesian=True)
+
+
+
+        surf_atoms = new_atoms.make_supercell([1, 1, self.layers])
+        print("supercell_cart_coords", surf_atoms.frac_coords)
+       
         new_lat = surf_atoms.lattice_mat  # lat_lengths()
         a1 = new_lat[0]
         a2 = new_lat[1]
@@ -96,26 +104,14 @@ class Surface(object):
                 / norm(np.cross(a1, a2)) ** 2,
             ]
         )
-        print("new_lat1", new_lat)
-        # surf_atoms.lattice_mat = new_lat
-        # new_coords = np.dot(new_lat, np.array(surf_atoms.cart_coords.T)).T
-        new_coords = np.linalg.solve(new_lat.T, np.array(surf_atoms.frac_coords).T).T
-        surf_atoms = Atoms(
-            lattice_mat=new_lat,
-            elements=surf_atoms.elements,
-            coords=new_coords,
-            cartesian=False,
-        )
-        print("scaled_222", surf_atoms.frac_coords)
-        print("scaled_222", surf_atoms.cart_coords)
-        # print ('new_lat1',new_lat)
-        # tmp  = np.array(new_lat, dtype=np.float64)#.reshape((3, 3))
+
+
         a1 = new_lat[0]
         a2 = new_lat[1]
         a3 = new_lat[2]
-        # print ('a1a2a3',a1,a2,a3)
-        # print ('a3',np.linalg.norm(a3))
-        new_lat = np.array(
+        print("a1,a2,a3", new_lat)
+        
+        latest_lat = np.array(
             [
                 (np.linalg.norm(a1), 0, 0),
                 (
@@ -129,30 +125,32 @@ class Surface(object):
                 (0, 0, np.linalg.norm(a3)),
             ]
         )
-        # print ('new_lat2',new_lat)
-        surf_atoms = Atoms(
-            lattice_mat=new_lat,
-            elements=surf_atoms.elements,
-            coords=surf_atoms.cart_coords,
-            cartesian=False,
-        )
-        print("scaled", surf_atoms.frac_coords)
-        new_coords = surf_atoms.frac_coords
-        # print ('scaled',new_coords)
-        new_coords[:, :2] %= 1
-        # print ('new_lat',new_lat)
-        surf_atoms = Atoms(
-            lattice_mat=new_lat,
-            elements=surf_atoms.elements,
-            coords=new_coords,
-            cartesian=False,
-        ).center()
-        print(surf_atoms)
 
+        M = np.linalg.solve(new_lat,latest_lat)
+
+
+        new_cart_coords=surf_atoms.cart_coords #np.dot(scaled,lattice)
+
+        new_coords = np.dot(new_cart_coords,M)
+      
+        new_atoms = Atoms(lattice_mat=latest_lat,elements=surf_atoms.elements,coords=new_coords,cartesian=True)
+
+        frac_coords = new_atoms.frac_coords
+
+        frac_coords[:]=frac_coords[:]%1
+        new_atoms = Atoms(lattice_mat=latest_lat,elements=surf_atoms.elements,coords=frac_coords,cartesian=False)
+        new_lat=new_atoms.lattice_mat
+        new_cart_coords=new_atoms.cart_coords
+        elements=new_atoms.elements
+        new_lat[2][2]=new_lat[2][2]+ self.vacuum
+        with_vacuum_atoms=Atoms(lattice_mat=new_lat,elements=elements,coords=new_cart_coords,cartesian=True)
+        #new_atoms.center()
+        print (with_vacuum_atoms)
+        return with_vacuum_atoms
 
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    Surface(atoms=Si, indices=[1, 0, 0]).make_surface()
+    Surface(atoms=Si, indices=[1, 1, 1]).make_surface()

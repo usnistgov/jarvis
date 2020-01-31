@@ -36,6 +36,14 @@ class Kpoints3D(object):
         n3 = int(max(1, length * b3 + 0.5))
         return Kpoints3D(kpoints=[[n1, n2, n3]], header=header, kpoint_mode="automatic")
 
+    @property
+    def kpts(self):
+         return self._kpoints
+
+    @property
+    def labels(self):
+         return self._labels
+
     def write_file(self, filename=""):
         if self._kpoint_mode == "automatic":
             f = open(filename, "w")

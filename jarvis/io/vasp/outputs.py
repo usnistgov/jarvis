@@ -96,32 +96,48 @@ class Vasprun(object):
 
     @property
     def get_dir_gap(self):
-       spin_channels=2
-       up_gap='na'
-       dn_gap='na'
-       if  self.is_spin_orbit:
+       if not self.is_spin_polarized:
+        spin_channels=2
+        up_gap='na'
+        dn_gap='na'
+        if  self.is_spin_orbit:
             spin_channels=1
-       levels=int(float(self.all_input_parameters['NELECT'])/float(spin_channels))
-       ups=self.eigenvalues[0][:, :, 0][:,levels]
-       dns=self.eigenvalues[0][:, :, 0][:,levels-1]
-       return min(ups-dns) 
+        levels=int(float(self.all_input_parameters['NELECT'])/float(spin_channels))
+        ups=self.eigenvalues[0][:, :, 0][:,levels]
+        dns=self.eigenvalues[0][:, :, 0][:,levels-1]
+        gap=min(ups-dns)
+       else:
+          tmp=np.concatenate((self.eigenvalues[0][:, :, 0],self.eigenvalues[1][:, :, 0]),axis=1)
+          cat = np.sort(tmp,axis=1)
+          nelect=int(float(self.all_input_parameters['NELECT']))
+          ups=cat[:,nelect]
+          dns=cat[:,nelect-1]
+          gap=min(ups-dns)
+           
+       return gap
 
 
     @property
     def get_indir_gap(self):
-       spin_channels=2
-       up_gap='na'
-       dn_gap='na'
-       if  self.is_spin_orbit:
+       if not self.is_spin_polarized:
+        spin_channels=2
+        up_gap='na'
+        dn_gap='na'
+        if  self.is_spin_orbit:
             spin_channels=1
-       levels=int(float(self.all_input_parameters['NELECT'])/float(spin_channels))
-       print ('levels',levels)
-       up_gap=min(self.eigenvalues[0][:, :, 0][:,levels])-max(self.eigenvalues[0][:, :, 0][:,levels-1])
+        levels=int(float(self.all_input_parameters['NELECT'])/float(spin_channels))
+        print ('levels',levels)
+        gap=min(self.eigenvalues[0][:, :, 0][:,levels])-max(self.eigenvalues[0][:, :, 0][:,levels-1])
+
+     
        if self.is_spin_polarized:
-          dn_gap=min(self.eigenvalues[1][:, :, 0][:,levels])-max(self.eigenvalues[1][:, :, 0][:,levels-1])
-       if dn_gap=='na':
-         dn_gap=up_gap
-       return  min(up_gap,dn_gap)
+          print (self.eigenvalues[0][:, :, 0],self.eigenvalues[0][:, :, 0].shape)
+          print (self.eigenvalues[1][:, :, 0],self.eigenvalues[1][:, :, 0].shape)
+          tmp=np.concatenate((self.eigenvalues[0][:, :, 0],self.eigenvalues[1][:, :, 0]),axis=1)
+          cat = np.sort(tmp,axis=1)
+          nelect=int(float(self.all_input_parameters['NELECT']))
+          gap=min(cat[:,nelect])-max(cat[:,nelect-1])
+       return  gap
 
     @property
     def elements(self):
@@ -332,9 +348,11 @@ class Oszicar(object):
              f.close()
              self.data = lines
 
+     @property
      def magnetic_moment(self):
          return self.ionic_steps()[-1][-1]
 
+     @property
      def ionic_steps(self):
          ionic_data = []
          for i in self.data:
@@ -352,7 +370,22 @@ class Outcar(object):
              lines=f.read().splitlines()
              f.close()
              self.data = lines
-        
+
+      @property
+      def converged(self):
+          
+            cnvg = False
+            try:
+                lines = self.data
+                cnvg = False
+                for i in lines:
+                    if "General timing and accounting informations for this job" in i:
+                        cnvg = True
+                # print fil,cnvg
+            except:
+                pass
+            return cnvg
+                
       
 class Chgcar(object):
       def __init__(self,filename,data={}):
@@ -722,17 +755,17 @@ class Wavecar(object):
 
 
 if __name__ == "__main__":
-    #filename = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/vasprun.xml"
     #filename = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/vasprun.xml"
     #filename='/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO/MAIN-RELAX-bulk@mp-134/vasprun.xml'
     #filename = '/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/vasprun.xml'
-    filename='/rk2/knc6/JARVIS-DFT/Bulk-less5mp1/mp-1077840_PBEBO/MAIN-RELAX-bulk@mp_1077840/vasprun.xml' #????
     filename='/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-OPTICS-bulk@mp-149/vasprun.xml'
+    filename = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/vasprun.xml"
+    filename='/rk2/knc6/JARVIS-DFT/Bulk-less5mp1/mp-1077840_PBEBO/MAIN-RELAX-bulk@mp_1077840/vasprun.xml' #????
     v = Vasprun(filename=filename)
     #print (v.is_spin_orbit,v.is_spin_polarized)
    
     print ('dir',v.get_dir_gap,'indir',v.get_indir_gap)
-    print ('reals',v.avg_absorption_coefficient)
+    #print ('reals',v.avg_absorption_coefficient)
     from pymatgen.io.vasp.outputs import Vasprun  as pmg
     pmgv=pmg(filename)
     bandstructure = pmgv.get_band_structure()

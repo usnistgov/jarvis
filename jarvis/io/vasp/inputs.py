@@ -1,3 +1,4 @@
+from collections import Counter
 import pprint
 import json
 import os
@@ -7,11 +8,48 @@ from collections import OrderedDict
 class Poscar(object):
     def __init__(self,atoms,comment='System'):
           self.atoms = atoms
+          self.comment = comment
     @staticmethod
     def from_file(filename='POSCAR'):
         with open(filename, "r") as f:
           return Poscar.from_string(f.read())
 
+    def write_file(self,filename):
+        f=open(filename,'w')
+        header = (
+            str("System\n1.0\n")
+            + str(self.atoms.lattice_mat[0][0])
+            + " "
+            + str(self.atoms.lattice_mat[0][1])
+            + " "
+            + str(self.atoms.lattice_mat[0][2])
+            + "\n"
+            + str(self.atoms.lattice_mat[1][0])
+            + " "
+            + str(self.atoms.lattice_mat[1][1])
+            + " "
+            + str(self.atoms.lattice_mat[1][2])
+            + "\n"
+            + str(self.atoms.lattice_mat[2][0])
+            + " "
+            + str(self.atoms.lattice_mat[2][1])
+            + " "
+            + str(self.atoms.lattice_mat[2][2])
+            + "\n"
+        )
+        middle = (
+            " ".join(map(str, Counter(self.atoms.elements).keys()))
+            + "\n"
+            + " ".join(map(str, Counter(self.atoms.elements).values()))
+            + "\ndirect\n"
+        )
+        rest = ""
+        # print ('repr',self.frac_coords, self.frac_coords.shape)
+        for ii, i in enumerate(self.atoms.frac_coords):
+            rest = rest + " ".join(map(str, i)) + " " + str(self.atoms.props[ii]) + "\n"
+        result = header + middle + rest
+        f.write(result)
+        f.close()
     @staticmethod
     def from_string(lines):
        text = lines.splitlines()
@@ -161,14 +199,17 @@ class Potcar(object):
         return str(str(self._pot_type)+'\n'+str(self._potcar_strings))
 
 if __name__=='__main__':
-    #p = Poscar.from_file(filename='/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/POSCAR')
+    p = Poscar.from_file(filename='/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/POSCAR')
+    p.write_file('POSCAR')
+    from jarvis.db.jsonutils import dumpjson
+    dumpjson(p.atoms.to_dict(),'pp.json')
     #print (p.atoms*[3,3,3])
     #p = Incar.from_file(filename='/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/INCAR')
     #print (p)
     #p.write_file('pp')
-    #elements=['S']
+    #elements=['S','P']
     #p=Potcar(elements=elements)
     #print (p)
     #p.write_file('POTCAR')
-    inp=IndividualPotcarData.from_file('POTCAR')
-    print (inp)
+    #inp=IndividualPotcarData.from_file('POTCAR')
+    #print (inp)

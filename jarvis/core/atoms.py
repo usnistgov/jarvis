@@ -70,10 +70,43 @@ class Atoms(object):
             self.cart_coords = np.array(self.lattice.cart_coords(self.coords))
             # print ('FALSE')
 
+
+    @property
+    def check_polar(self):
+            """
+            Check if the surface structure is polar
+            by comparing atom types at top and bottom.
+            Applicable for sufcae with vaccums only.
+            Args:
+                 file:atoms object (surface with vacuum)
+            Returns:
+                   polar:True/False   
+            """
+            up = 0
+            dn = 0
+            coords = np.array(self.frac_coords)
+            z_max = max(coords[:, 2])
+            z_min = min(coords[:, 2])
+            for site,element in zip(self.frac_coords, self.elements):
+                if site[2] == z_max:
+                    up = up + Specie(element).Z
+                if site[2] == z_min:
+                    dn = dn + Specie(element).Z
+            polar = False
+            if up != dn:
+                print("polar")
+                polar = True
+            if up == dn:
+                print("Non-polar")
+                polar = False
+            return polar
+
+
+
     def to_dict(self):
         d = OrderedDict()
-        d["lattice_mat"] = self.lattice_mat
-        d["coords"] = self.coords
+        d["lattice_mat"] = self.lattice_mat.tolist()
+        d["coords"] = self.coords.tolist()
         d["elements"] = self.elements
         d["abc"] = self.lattice.lat_lengths()
         d["angles"] = self.lattice.lat_angles()
@@ -387,6 +420,8 @@ if __name__ == "__main__":
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     Si.props = ["a", "a"]
     # spg = Spacegroup3D(Si)
+    polar=Si.check_polar
+    print ('polar',polar)
     # Si = spg.conventional_standard_structure
     # print ('center',Si.center())
     # print ('propos',Si.props)
