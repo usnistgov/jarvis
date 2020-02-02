@@ -159,7 +159,7 @@ class Potcar(object):
                   potcar_strings.setdefault(i,k)
            self._potcar_strings=potcar_strings
            if len(self._elements)!=len(self._potcar_strings.keys()):
-                raise ValueError('Number of elements is not same as potcar_strings')
+                raise ValueError('Number of elements is not same as potcar_strings',self._elements,self._potcar_strings.keys())
         else:
            pot_json = open(pot_json_path, "r")
            pot_json_selected = json.load(pot_json)
