@@ -90,9 +90,29 @@ class Incar(object):
         self._tags = tags
 
     @staticmethod
-    def from_file(filename='POSCAR'):
+    def from_file(filename='INCAR'):
         with open(filename, "r") as f:
           return Incar.from_string(f.read())
+
+    def update(self,d={}):
+       print ('selftags1=',self._tags)
+       if self._tags!={}:
+          for i,j in self._tags.items(): 
+             self._tags[i]=j
+       for i,j in d.items(): 
+           self._tags[i]=j
+       print ('selftags2=',self._tags)
+       return Incar(self._tags)       
+
+
+    def to_dict(self):
+           return self._tags
+ 
+
+    def from_dict(self,data={}):
+        print ('data',data)
+        return Incar(tags=data)
+
 
     @staticmethod
     def from_string(lines):
@@ -146,6 +166,7 @@ class Potcar(object):
         self._elements = elements
         self._pot_type = pot_type
         self._potcar_strings=potcar_strings
+        self._pot_json_path=pot_json_path
 
         if self._potcar_strings=={}:
            pot_json_file = str(os.path.join(os.path.dirname(__file__), "default_potcars.json"))
@@ -161,7 +182,7 @@ class Potcar(object):
            if len(self._elements)!=len(self._potcar_strings.keys()):
                 raise ValueError('Number of elements is not same as potcar_strings',self._elements,self._potcar_strings.keys())
         else:
-           pot_json = open(pot_json_path, "r")
+           pot_json = open(self._pot_json_path, "r")
            pot_json_selected = json.load(pot_json)
            pot_json.close()
            potcar_strings = OrderedDict()
