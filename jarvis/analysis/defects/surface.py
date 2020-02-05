@@ -36,6 +36,8 @@ class Surface(object):
         self.vacuum = vacuum
         self.layers = layers
 
+       
+
     def make_surface(self):
         atoms = self.atoms
         h, k, l = self.indices
@@ -75,12 +77,12 @@ class Surface(object):
         new_coords = scaled
         tmp_cell = np.dot(basis,lattice)
         M = np.linalg.solve(lattice,tmp_cell)
-        print ('scaled',scaled)
+        #print ('scaled',scaled)
         cart_coords=np.dot(scaled,lattice)
-        print ('cart_coords',cart_coords)
-        print ('M Matric',M)
+        #print ('cart_coords',cart_coords)
+        #print ('M Matric',M)
         new_coords = np.dot(cart_coords,M)
-        print ('new_coords',new_coords)
+        #print ('new_coords',new_coords)
         #new_cart_coords=np.dot(scaled,tmp_cell)
 
 
@@ -89,7 +91,7 @@ class Surface(object):
 
 
         surf_atoms = new_atoms.make_supercell([1, 1, self.layers])
-        print("supercell_cart_coords", surf_atoms.frac_coords)
+        #print("supercell_cart_coords", surf_atoms.frac_coords)
        
         new_lat = surf_atoms.lattice_mat  # lat_lengths()
         a1 = new_lat[0]
@@ -109,7 +111,7 @@ class Surface(object):
         a1 = new_lat[0]
         a2 = new_lat[1]
         a3 = new_lat[2]
-        print("a1,a2,a3", new_lat)
+        #print("a1,a2,a3", new_lat)
         
         latest_lat = np.array(
             [
@@ -145,7 +147,7 @@ class Surface(object):
         new_lat[2][2]=new_lat[2][2]+ self.vacuum
         with_vacuum_atoms=Atoms(lattice_mat=new_lat,elements=elements,coords=new_cart_coords,cartesian=True)
         #new_atoms.center()
-        print (with_vacuum_atoms)
+        #print (with_vacuum_atoms)
         return with_vacuum_atoms
 
 if __name__ == "__main__":

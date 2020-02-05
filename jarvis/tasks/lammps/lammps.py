@@ -1,15 +1,16 @@
-from jarvis.analysis.structure.spacegroup import Spacegroup3D
+from jarvis.analysis.structure.spacegroup import Spacegroup3D,symmetrically_distinct_miller_indices
 from jarvis.core.atoms import Atoms
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.lammps.inputs import LammpsInput, LammpsData
 from jarvis.tasks.lammps.templates.templates import GenericInputs
 from jarvis.io.lammps.outputs import analyze_log
 from jarvis.analysis.defects.vacancy import Vacancy
+from jarvis.analysis.defects.surface import Surface
 
 import os
 import subprocess
 import json
-
+import sys
 
 
 
@@ -37,6 +38,15 @@ class JobFactory(object):
          en, final_str, forces=LammpsJob(atoms=atoms, jobname='ELASTIC',parameters=parameters, lammps_cmd=lammps_cmd).runjob()         
          print ('en, final_str, forces',en, final_str, forces)          
 
+
+         indices=symmetrically_distinct_miller_indices(max_index=1)
+         for i in indices:
+           surf=Surface(atoms=final_str, indices=i).make_surface()
+           jobname=str('Surf-')+str('_'.join(map(str,i)))
+           en2, final_str2, forces2=LammpsJob(atoms=surf, jobname=jobname,parameters=parameters, lammps_cmd=lammps_cmd).runjob()
+           
+         sys.exit()
+
          v=Vacancy(atoms=final_str).generate_defects(enforce_c_size=5)
          print ('vacs=',v)
          for i,ii in enumerate(v):
@@ -44,7 +54,7 @@ class JobFactory(object):
           print ('ii._defect_structure',ii._atoms)
           en2, final_str2, forces2=LammpsJob(atoms=ii._defect_structure, jobname=jobname,parameters=parameters, lammps_cmd=lammps_cmd).runjob()
 
-       
+                
     def optimize_and_elastic(self):
         pass
 
@@ -235,8 +245,8 @@ if __name__ == "__main__":
 
     cmd = "/users/knc6/Software/LAMMPS/lammps-master/src/lmp_serial<in.main"
     #LammpsJob(atoms=cvn, parameters=parameters, lammps_cmd=cmd).runjob()
-    final_str = LammpsData().read_data(
-                potential_file='/users/knc6/Software/J2020/jarvis/jarvis/tasks/lammps/ELASTIC/potential.mod', filename="/users/knc6/Software/J2020/jarvis/jarvis/tasks/lammps/ELASTIC/data", element_order=[])
+    #final_str = LammpsData().read_data(
+    #            potential_file='/users/knc6/Software/J2020/jarvis/jarvis/tasks/lammps/ELASTIC/potential.mod', filename="/users/knc6/Software/J2020/jarvis/jarvis/tasks/lammps/ELASTIC/data", element_order=[])
     #print ('final_str',final_str)
 
     JobFactory().all_props_eam_alloy(atoms=cvn,ff_path="/data/knc6/JARVIS-FF-NEW/FS/Al1.eam.fs",lammps_cmd=cmd)

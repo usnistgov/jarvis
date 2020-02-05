@@ -10,64 +10,6 @@ import os
 import shutil
 
 
-class GenericIncars(object):
-    def __init__(self, name="", incar={}, pot_type=""):
-        self.name = name
-        self.incar = incar
-        self.pot_type = pot_type
-
-    def optb88vdw(self):
-        data = dict(
-            PREC="Accurate",
-            ISMEAR=0,
-            IBRION=2,
-            GGA="BO",
-            PARAM1=0.1833333333,
-            PARAM2=0.2200000000,
-            LUSE_VDW=".TRUE.",
-            AGGAC=0.0000,
-            EDIFF="1E-7",
-            NSW=1,
-            NELM=400,
-            ISIF=2,
-            LCHARG=".FALSE.",
-            LWAVE=".FALSE.",
-        )
-        inc = Incar(data)
-        return GenericIncars(name="optb88vdw", incar=inc, pot_type="POT_GGA_PAW_PBE")
-
-    def pbe(self):
-        data = dict(
-            PREC="Accurate",
-            ISMEAR=0,
-            IBRION=2,
-            GGA="PE",
-            EDIFF="1E-7",
-            NSW=1,
-            NELM=400,
-            ISIF=2,
-            LCHARG=".FALSE.",
-            LWAVE=".FALSE.",
-        )
-        inc = Incar(data)
-        return GenericIncars(name="pbe", incar=inc, pot_type="POT_GGA_PAW_PBE")
-
-    def lda(self):
-
-        data = dict(
-            PREC="Accurate",
-            ISMEAR=0,
-            IBRION=2,
-            EDIFF="1E-7",
-            NSW=1,
-            NELM=400,
-            ISIF=2,
-            LCHARG=".FALSE.",
-            LWAVE=".FALSE.",
-        )
-        inc = Incar(data)
-        return GenericIncars(name="lda", incar=inc, pot_type="POT_LDA_PAW")
-
 
 class JobFactory(object):
     def __init__(self, name="", use_incar_dict={}, pot_type=None):
@@ -77,7 +19,23 @@ class JobFactory(object):
 
     #def combine_jobs(self):
 
-  
+    def all_optb88vdw_props(self,mat=None):
+      optb88=GenericIncars().optb88vdw()
+      job=JobFactory(use_incar_dict=optb88.incar,pot_type=optb88.pot_type)
+      encut=job.converg_encut(mat=mat)
+      length=job.converg_kpoint(mat=mat)
+      energy,contcar_path=job.optimize_geometry(mat=mat, encut=encut, length=length)        
+      optimized_mat=Poscar.from_file(contcar_path) 
+      vrun=Vapsrun(contcar_path.replace('CONTCAR','vasprun.xml'))
+      chg_path=contcar_path.replace('CONTCAR','CHGCAR')
+      nbands=int(vrun.all_input_parameters['NBANDS'])
+      enB,contcB=job.band_structure(mat=optimized_mat, encut=encut, line_density=20, nbands=2*nbands, copy_prev_chgcar=chg_path)
+      enL,contcL=job.loptics(mat=optimized_mat, encut=encut,  nbands=2*nbands, length=length)
+      enM,contcM=job.mbj_loptics(mat=optimized_mat, encut=encut,  nbands=2*nbands, length=length)
+      enE,contcE=job.elastic(mat=optimized_mat, encut=encut,  nbands=2*nbands, length=length)
+     
+
+ 
     def elastic(
         self, mat=None, encut=None,  nbands=None , potim=0.015,npar=None,length=20
     ):
@@ -824,6 +782,64 @@ class VaspJobs(object):
             return f_energy, contcar
 
 
+class GenericIncars(object):
+    def __init__(self, name="", incar={}, pot_type=""):
+        self.name = name
+        self.incar = incar
+        self.pot_type = pot_type
+
+    def optb88vdw(self):
+        data = dict(
+            PREC="Accurate",
+            ISMEAR=0,
+            IBRION=2,
+            GGA="BO",
+            PARAM1=0.1833333333,
+            PARAM2=0.2200000000,
+            LUSE_VDW=".TRUE.",
+            AGGAC=0.0000,
+            EDIFF="1E-7",
+            NSW=1,
+            NELM=400,
+            ISIF=2,
+            LCHARG=".FALSE.",
+            LWAVE=".FALSE.",
+        )
+        inc = Incar(data)
+        return GenericIncars(name="optb88vdw", incar=inc, pot_type="POT_GGA_PAW_PBE")
+
+    def pbe(self):
+        data = dict(
+            PREC="Accurate",
+            ISMEAR=0,
+            IBRION=2,
+            GGA="PE",
+            EDIFF="1E-7",
+            NSW=1,
+            NELM=400,
+            ISIF=2,
+            LCHARG=".FALSE.",
+            LWAVE=".FALSE.",
+        )
+        inc = Incar(data)
+        return GenericIncars(name="pbe", incar=inc, pot_type="POT_GGA_PAW_PBE")
+
+    def lda(self):
+
+        data = dict(
+            PREC="Accurate",
+            ISMEAR=0,
+            IBRION=2,
+            EDIFF="1E-7",
+            NSW=1,
+            NELM=400,
+            ISIF=2,
+            LCHARG=".FALSE.",
+            LWAVE=".FALSE.",
+        )
+        inc = Incar(data)
+        return GenericIncars(name="lda", incar=inc, pot_type="POT_LDA_PAW")
+
 if __name__ == "__main__":
 
     p = Poscar.from_file(
@@ -848,13 +864,15 @@ if __name__ == "__main__":
     # job = VaspJobs(poscar=p, kpoints=kp, incar=inc, jobname="testt").write_jobsub_py()
     # job = VaspJobs(poscar=p, kpoints=kp,pot_type='POT_GGA_PAW_PBE', incar=inc, jobname="testt").runjob()
     # print('optb88vdw incar',GenericIncars().optb88vdw().incar)
-    JobFactory(
-        use_incar_dict=GenericIncars().optb88vdw().incar,
-        pot_type=GenericIncars().optb88vdw().pot_type,
+    #JobFactory(
+    #    use_incar_dict=GenericIncars().optb88vdw().incar,
+    #    pot_type=GenericIncars().optb88vdw().pot_type,
         # ).converg_encut(mat=p)
         # ).converg_kpoint(mat=p)
         #).optimize_geometry(mat=p, encut=500, length=0)
         #).band_structure(mat=p, encut=500, nbands=100)
         #).loptics(mat=p, encut=500, nbands=100)
         #).mbj_loptics(mat=p, encut=500, nbands=100)
-        ).elastic(mat=p, encut=500, nbands=100)
+        #).elastic(mat=p, encut=500, nbands=100)
+
+    JobFactory().all_optb88vdw_props(mat=p)

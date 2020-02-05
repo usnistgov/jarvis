@@ -5,7 +5,13 @@ from jarvis.core.specie import Specie
 import itertools
 import numpy as np
 from numpy import sin, cos
+import itertools
 
+def symmetrically_distinct_miller_indices(max_index=3,cvn_atoms=None):
+    r = list(range(-max_index, max_index + 1))
+    r.reverse()
+    conv_hkl_list = [miller for miller in itertools.product(r, r, r) if any([i != 0 for i in miller])]
+    return conv_hkl_list
 
 class Spacegroup3D(object):
     def __init__(self, atoms=[], dataset={}, symprec=1e-2, angle_tolerance=5):
@@ -491,6 +497,8 @@ if __name__ == "__main__":
     print("cryst_sys", spg.crystal_system)
     print("point group", spg.point_group_symbol)
     print("cvn", spg.conventional_standard_structure)
+    ml=symmetrically_distinct_miller_indices(max_index=1)
+    print ('miller=',ml)
     # pmg=Si.pymatgen_converter()
     # from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
     # spg=SpacegroupAnalyzer(pmg)
