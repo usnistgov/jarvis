@@ -2,11 +2,17 @@ from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.core.atoms import Atoms
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.lammps.inputs import LammpsInput, LammpsData
-from jarvis.tasks.lammps.templates.templates  import LammpsJobFactory
+from jarvis.tasks.lammps.templates.templates  import GenericInputs
 from jarvis.io.lammps.outputs import analyze_log
 import os
 import subprocess
 import json
+
+
+class JobFactory(object):
+      def __init__(self, name=''):
+         self.name=name
+
 
 class LammpsJob(object):
     def __init__(
@@ -46,7 +52,7 @@ class LammpsJob(object):
             shutil.copy2(i, ".")
         if "control_file" in self.parameters:
              if self.parameters["control_file"]=="inelast.mod":
-                    LammpsJobFactory().elastic_general(path=".")
+                    GenericInputs().elastic_general(path=".")
 
     def run(self):
         with open(self.output_file, "w") as f_std, open(
@@ -94,6 +100,7 @@ class LammpsJob(object):
                 ) = analyze_log("./log.lammps")
             except:
                 pass
+            #print ('toten',toten)
         else:
             self.write_input()
             self.run()
@@ -126,34 +133,36 @@ class LammpsJob(object):
                 ) = analyze_log("./log.lammps")
             except:
                 pass
-            initial_str = LammpsData().read_data(
-                filename="data", element_order=self.element_order,potential_file='potential.mod'
-            )
-            final_str = LammpsData().read_data(
-                filename="data0", element_order=self.element_order
-            )
-            forces = []
+        pot=os.path.join(os.getcwd(),'potential.mod')
+        #print ('toten2',toten,pot)
+        initial_str = LammpsData().read_data(
+            filename="data", element_order=self.element_order,potential_file=pot
+        )
+        final_str = LammpsData().read_data(potential_file=pot,
+            filename="data0", element_order=self.element_order
+        )
+        forces = []
 
-            data_cal = []
-            data_cal.append(
-                {
-                    "jobname": self.jobname,
-                    "initial_pos": initial_str.to_dict(),
-                    "pair_style": str(parameters["pair_style"]),
-                    "pair_coeff": str(parameters["pair_coeff"]),
-                    "final_energy": float(toten),
-                    "en": en,
-                    "press": press,
-                    "final_str": final_str.to_dict(),
-                }
-            )
+        data_cal = []
+        data_cal.append(
+            {
+                "jobname": self.jobname,
+                "initial_pos": initial_str.to_dict(),
+                "pair_style": str(parameters["pair_style"]),
+                "pair_coeff": str(parameters["pair_coeff"]),
+                "final_energy": float(toten),
+                "en": en,
+                "press": press,
+                "final_str": final_str.to_dict(),
+            }
+        )
 
-            json_file = str(self.jobname) + str(".json")
-            os.chdir("../")
-            f_json = open(json_file, "w")
-            f_json.write(json.dumps(data_cal))
-            f_json.close()
-            return en, final_str, forces
+        json_file = str(self.jobname) + str(".json")
+        os.chdir("../")
+        f_json = open(json_file, "w")
+        f_json.write(json.dumps(data_cal))
+        f_json.close()
+        return en, final_str, forces
 
 
 if __name__ == "__main__":
@@ -175,12 +184,3 @@ if __name__ == "__main__":
     cmd='/users/knc6/Software/LAMMPS/lammps-master/src/lmp_serial<in.main'
     LammpsJob(atoms=cvn,parameters=parameters,lammps_cmd=cmd).runjob()
 
-    lmp = LammpsData().atoms_to_lammps(atoms=cvn)
-    LammpsInput(LammpsDataObj=lmp).write_lammps_in(
-        parameters={
-            "pair_style": "eam/alloy",
-            "pair_coeff": "/data/knc6/JARVIS-FF-NEW/FS/Al1.eam.fs",
-            "atom_style": "charge",
-            "control_file": "inelast.mod",
-        }
-    )

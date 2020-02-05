@@ -2,7 +2,7 @@ import os
 import shutil
 
 
-class LammpsJobFactory(object):
+class GenericInputs(object):
     def __init__(self, input_name=""):
         self.input_name = input_name
 

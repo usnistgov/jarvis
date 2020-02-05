@@ -6,7 +6,7 @@ import pprint
 from collections import OrderedDict
 from jarvis.core.atoms import Atoms
 from jarvis.core.specie import Specie
-
+import os
 
 class LammpsData(object):
     def __init__(
@@ -94,7 +94,7 @@ class LammpsData(object):
             for i, line in enumerate(lines):
                 if "pair_coeff" in line.split():
                     sp = line.split()
-                    # print("spsplit", sp, os.getcwd())
+                    #print("spsplit", sp, os.getcwd())
                     for el in sp:
                         try:
                             if Specie(el):
@@ -102,7 +102,7 @@ class LammpsData(object):
                                 #    el='Mo'
                                 # count=count+1
                                 # if count >4:
-                                symb.append(el.symbol)
+                                symb.append(Specie(el).symbol)
                         except:
                             pass
         else:
