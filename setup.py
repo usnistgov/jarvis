@@ -17,7 +17,7 @@ setup(
     install_requires=['joblib','flask','numpy','scipy','matplotlib'
       
     ],
-    package_data={"jarvis.core":['Elements.json','element_charge.json']},
+    package_data={"jarvis.core":['Elements.json','element_charge.json'],"jarvis.tasks.lammps.templates":['displace.mod'  ,'inelastcomb.mod'  ,'inelast_min.mod' , 'inelast.mod'  ,'inelast_nobox.mod'  ,'inelastreax.mod','relax.mod' , 'run0.mod'],"jarvis.io.vasp":['default_potcars.json'],"jarvis.io.wannier":['default_semicore.json']},
     extras_require={
         "babel": ["openbabel", "pybel"],
         "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],

@@ -108,7 +108,7 @@ class LammpsData(object):
         else:
             symb = [Specie(i).symbol for i in element_order]
 
-        # print("symb=", symb)
+        #print("symb=", symb)
         f = open(filename, "r")
         lines = f.read().splitlines()
         for i, line in enumerate(lines):
