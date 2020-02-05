@@ -14,7 +14,7 @@ setup(
     version="2020.1.11",
 
     long_description=long_d,
-    install_requires=['joblib','flask','numpy','scipy','matplotlib'
+    install_requires=['joblib','flask','numpy','scipy','matplotlib','spglib'
       
     ],
     package_data={"jarvis.core":['Elements.json','element_charge.json'],"jarvis.tasks.lammps.templates":['displace.mod'  ,'inelastcomb.mod'  ,'inelast_min.mod' , 'inelast.mod'  ,'inelast_nobox.mod'  ,'inelastreax.mod','relax.mod' , 'run0.mod'],"jarvis.io.vasp":['default_potcars.json'],"jarvis.io.wannier":['default_semicore.json']},

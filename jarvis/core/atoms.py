@@ -132,7 +132,7 @@ class Atoms(object):
         new_props = []
         for ii, i in enumerate(self.frac_coords):
             if ii != site:
-                print(self.elements, len(self.elements), len(self.frac_coords))
+                #print(self.elements, len(self.elements), len(self.frac_coords))
                 new_els.append(self.elements[ii])
                 new_coords.append(self.frac_coords[ii])
                 new_props.append(self.props[ii])

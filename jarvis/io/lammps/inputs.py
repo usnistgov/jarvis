@@ -97,7 +97,7 @@ class LammpsData(object):
                     #print("spsplit", sp, os.getcwd())
                     for el in sp:
                         try:
-                            if Specie(el):
+                            if str(Specie(el).Z) !='nan':
                                 # if el=='M':
                                 #    el='Mo'
                                 # count=count+1
@@ -154,6 +154,7 @@ class LammpsData(object):
         f.close()
         # print ("info",(typ),'coo',(coords),'latt',lat)
         typ_sp = [str(i, "utf-8") for i in typ]
+        #print ('typ_sp',typ_sp)
         atoms = Atoms(
             lattice_mat=lat, elements=typ_sp, coords=np.array(coords), cartesian=True
         )
