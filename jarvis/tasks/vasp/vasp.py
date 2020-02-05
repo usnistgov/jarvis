@@ -1,12 +1,13 @@
 from jarvis.io.vasp.outputs import Outcar, Vasprun
 from jarvis.io.vasp.inputs import Poscar, Incar, Potcar
 from jarvis.db.jsonutils import loadjson, dumpjson
+from jarvis.core.kpoints import Kpoints3D as Kpoints
+from jarvis.tasks.queue_jobs import Queue
+from jarvis.analysis.structure.spacegroup import Spacegroup3D
+import subprocess
 import json
 import os
 import shutil
-from jarvis.core.kpoints import Kpoints3D as Kpoints
-from jarvis.tasks.queue_jobs import Queue
-import subprocess
 
 
 class GenericIncars(object):
@@ -74,9 +75,158 @@ class JobFactory(object):
         self.use_incar_dict = use_incar_dict
         self.pot_type = pot_type
 
-    def optimize_geometry(self,mat=None,encut=None,length=None):
-            incar = self.use_incar_dict
-            data = {
+    #def combine_jobs(self):
+
+  
+    def elastic(
+        self, mat=None, encut=None,  nbands=None , potim=0.015,npar=None,length=20
+    ):
+
+        incar = self.use_incar_dict
+        cvn=Spacegroup3D(mat.atoms).conventional_standard_structure
+        comment=mat.comment
+        p=Poscar(cvn,comment=comment)
+
+
+        if npar is not None:
+            incar.update({"NPAR": npar})
+
+        if nbands is not None:
+            nbands = int(nbands * 3)
+            incar.update({"NBANDS": nbands})
+        data = {
+            "ENCUT": 1.3 * float(encut),
+            "NEDOS": 5000,
+            "ISIF": 3,
+            "POTIM": potim,
+            "ISPIN": 2,
+            "IBRION": 6,
+            "LCHARG": ".FALSE.",
+        }
+        incar.update(data)
+        kpoints = Kpoints().automatic_length_mesh(
+            lattice_mat=p.atoms.lattice_mat, length=length
+        )  # Auto_Kpoints(mat=mat, length=length)
+
+        en, contcar = VaspJobs(
+            poscar=p,
+            incar=incar,
+            pot_type=self.pot_type,
+            kpoints=kpoints,
+            jobname=str("MAIN-ELASTIC-") + str(p.comment),
+        ).runjob()
+
+        return en, contcar
+
+    def mbj_loptics(
+        self, mat=None, encut=None,  nbands=None , length=20
+    ):
+
+        incar = self.use_incar_dict
+
+        if nbands is not None:
+            nbands = int(nbands * 3)
+            incar.update({"NBANDS": nbands})
+        data = {
+            "ENCUT": encut,
+            "NEDOS": 5000,
+            "NELM": 500,
+            "LORBIT": 11,
+            "ISPIN": 2,
+            "METAGGA": "MBJ",
+            "SIGMA": 0.1, 
+            "ISYM":0,
+            "LOPTICS": ".TRUE.",
+            "IBRION": 1,
+            "LCHARG": ".FALSE.",
+        }
+        incar.update(data)
+        kpoints = Kpoints().automatic_length_mesh(
+            lattice_mat=mat.atoms.lattice_mat, length=length
+        )  # Auto_Kpoints(mat=mat, length=length)
+
+        en, contcar = VaspJobs(
+            poscar=mat,
+            incar=incar,
+            pot_type=self.pot_type,
+            kpoints=kpoints,
+            jobname=str("MAIN-MBJ-") + str(mat.comment),
+        ).runjob()
+
+        return en, contcar
+
+
+    def loptics(
+        self, mat=None, encut=None,  nbands=None , length=20
+    ):
+
+        incar = self.use_incar_dict
+
+        if nbands is not None:
+            nbands = int(nbands * 3)
+            incar.update({"NBANDS": nbands})
+        data = {
+            "ENCUT": encut,
+            "NEDOS": 5000,
+            "NELM": 500,
+            "LORBIT": 11,
+            "ISPIN": 2,
+            "LOPTICS": ".TRUE.",
+            "IBRION": 1,
+            "LCHARG": ".FALSE.",
+        }
+        incar.update(data)
+        kpoints = Kpoints().automatic_length_mesh(
+            lattice_mat=mat.atoms.lattice_mat, length=length
+        )  # Auto_Kpoints(mat=mat, length=length)
+
+        en, contcar = VaspJobs(
+            poscar=mat,
+            incar=incar,
+            pot_type=self.pot_type,
+            kpoints=kpoints,
+            jobname=str("MAIN-OPTICS-") + str(mat.comment),
+        ).runjob()
+
+        return en, contcar
+
+
+    def band_structure(
+        self, mat=None, encut=None, line_density=20, nbands=None, copy_prev_chgcar=None
+    ):
+
+        incar = self.use_incar_dict
+        if copy_prev_chgcar is not None:
+            shutil.copy2(copy_prev_chgcar, ".")
+
+        if nbands is not None:
+            nbands = int(nbands * 1.3)
+            incar.update({"NBANDS": nbands})
+        data = {
+            "ENCUT": encut,
+            "NEDOS": 5000,
+            "NELM": 500,
+            "LORBIT": 11,
+            "ISPIN": 2,
+            "IBRION": 1,
+            "LCHARG": ".FALSE.",
+        }
+        incar.update(data)
+        kpoints = Kpoints().kpath(mat.atoms,line_density=line_density)
+
+        en, contcar = VaspJobs(
+            poscar=mat,
+            incar=incar,
+            pot_type=self.pot_type,
+            kpoints=kpoints,
+            jobname=str("MAIN-BAND-") + str(mat.comment),
+        ).runjob()
+
+        return en, contcar
+
+    def optimize_geometry(self, mat=None, encut=None, length=None):
+        incar = self.use_incar_dict
+        data = {
             "ENCUT": encut,
             "EDIFFG": -1e-3,
             "ISIF": 3,
@@ -89,19 +239,18 @@ class JobFactory(object):
             "ISPIN": 2,
             "LCHARG": ".TRUE.",
         }
-            incar.update(data)
-            kpoints = Kpoints().automatic_length_mesh(
-                lattice_mat=mat.atoms.lattice_mat, length=length
-            )  # Auto_Kpoints(mat=mat, length=length)
-            en, contcar = VaspJobs(
-                poscar=mat,
-                incar=incar,
-                pot_type=self.pot_type,
-                kpoints=kpoints,
-                jobname=str("MAIN-RELAX-") + str(mat.comment)
-            ).runjob()
-            return en, contcar
-            
+        incar.update(data)
+        kpoints = Kpoints().automatic_length_mesh(
+            lattice_mat=mat.atoms.lattice_mat, length=length
+        )  # Auto_Kpoints(mat=mat, length=length)
+        en, contcar = VaspJobs(
+            poscar=mat,
+            incar=incar,
+            pot_type=self.pot_type,
+            kpoints=kpoints,
+            jobname=str("MAIN-RELAX-") + str(mat.comment),
+        ).runjob()
+        return en, contcar
 
     def converg_encut(self, encut=500, mat=None, starting_length=10, tol=0.001):
         """
@@ -126,10 +275,10 @@ class JobFactory(object):
             length = starting_length
             encut1 = encut + 50
             incar_dict = self.use_incar_dict
-            #print ('incar_dict',incar_dict)
+            # print ('incar_dict',incar_dict)
             incar_dict.update({"ENCUT": encut})
             # print (use_incar_dict)
-            incar = (incar_dict)
+            incar = incar_dict
             kpoints = Kpoints().automatic_length_mesh(
                 lattice_mat=mat.atoms.lattice_mat, length=length
             )  # Auto_Kpoints(mat=mat, length=length)
@@ -149,10 +298,10 @@ class JobFactory(object):
                 encut1 = encut + 50
                 encut_list.append(encut)
                 print("Incrementing encut", encut)
-                #incar_dict = self.use_incar_dict
+                # incar_dict = self.use_incar_dict
                 incar_dict.update({"ENCUT": encut1})
-                #incar_dict["ENCUT"]= encut1
-                #incar = Incar.from_dict(incar_dict)
+                # incar_dict["ENCUT"]= encut1
+                # incar = Incar.from_dict(incar_dict)
                 print(
                     "running smart_converge for",
                     str(mat.comment) + str("-") + str("ENCUT") + str("-") + str(encut),
@@ -171,7 +320,7 @@ class JobFactory(object):
 
             encut2 = encut1 + 50
             incar.update({"ENCUT": encut2})
-            #incar_dict["ENCUT"]= encut2
+            # incar_dict["ENCUT"]= encut2
             en3, contc = VaspJobs(
                 poscar=mat,
                 incar=incar,
@@ -183,7 +332,7 @@ class JobFactory(object):
             encut3 = encut2 + 50
             # incar["ENCUT"] = encut3
             incar.update({"ENCUT": encut3})
-            #incar_dict["ENCUT"]= encut3
+            # incar_dict["ENCUT"]= encut3
             en4, contc = VaspJobs(
                 poscar=mat,
                 incar=incar,
@@ -194,7 +343,7 @@ class JobFactory(object):
 
             encut4 = encut3 + 50
             incar.update({"ENCUT": encut4})
-            #incar_dict["ENCUT"]= encut4
+            # incar_dict["ENCUT"]= encut4
             en5, contc = VaspJobs(
                 poscar=mat,
                 incar=incar,
@@ -206,7 +355,7 @@ class JobFactory(object):
             encut5 = encut4 + 50
             # incar["ENCUT"] = encut5
             incar.update({"ENCUT": encut5})
-            #incar_dict["ENCUT"]= encut5
+            # incar_dict["ENCUT"]= encut5
             en6, contc = VaspJobs(
                 poscar=mat,
                 pot_type=pot_type,
@@ -218,7 +367,7 @@ class JobFactory(object):
             encut6 = encut5 + 50
             # incar["ENCUT"] = encut6
             incar.update({"ENCUT": encut6})
-            #incar_dict["ENCUT"]= encut6
+            # incar_dict["ENCUT"]= encut6
             en7, contc = VaspJobs(
                 poscar=mat,
                 pot_type=pot_type,
@@ -248,7 +397,7 @@ class JobFactory(object):
                 convg_encut2 = True
         return encut
 
-    def converg_kpoint(self, length=0, mat=None,encut=500,tol=0.001):
+    def converg_kpoint(self, length=0, mat=None, encut=500, tol=0.001):
         """
             Function to converg K-points
             Args:
@@ -268,7 +417,7 @@ class JobFactory(object):
             # while convg_kp1 !=True and  convg_kp2 !=True:
             incar = self.use_incar_dict
             incar.update({"ENCUT": encut})
-            #incar_dict["ENCUT"]= encut
+            # incar_dict["ENCUT"]= encut
             length1 = length1 + 5
             print("Incrementing length", length1)
             kpoints = Kpoints().automatic_length_mesh(
@@ -291,15 +440,15 @@ class JobFactory(object):
                     while mesh in kp_list:
                         length1 = length1 + 5
                         ##Assuming you are not super unlucky
-                        #kpoints = Auto_Kpoints(mat=mat, length=length1)
+                        # kpoints = Auto_Kpoints(mat=mat, length=length1)
                         kpoints = Kpoints().automatic_length_mesh(
-                         lattice_mat=mat.atoms.lattice_mat, length=length1
-                           )  # Auto_Kpoints(mat=mat, length=length)
+                            lattice_mat=mat.atoms.lattice_mat, length=length1
+                        )  # Auto_Kpoints(mat=mat, length=length)
                         mesh = kpoints.kpts[0]
 
                     kpoints = Kpoints().automatic_length_mesh(
-                lattice_mat=mat.atoms.lattice_mat, length=length1
-            )  # Auto_Kpoints(mat=mat, length=length)
+                        lattice_mat=mat.atoms.lattice_mat, length=length1
+                    )  # Auto_Kpoints(mat=mat, length=length)
                     mesh = kpoints.kpts[0]
                     if mesh not in kp_list:
                         kp_list.append(mesh)
@@ -316,10 +465,10 @@ class JobFactory(object):
                     else:
                         length1 = length1 + 5
                         ##Assuming you are not super unlucky
-            #            kpoints = Auto_Kpoints(mat=mat, length=length1)
+                        #            kpoints = Auto_Kpoints(mat=mat, length=length1)
                         kpoints = Kpoints().automatic_length_mesh(
-                lattice_mat=mat.atoms.lattice_mat, length=length1
-            )  # Auto_Kpoints(mat=mat, length=length)
+                            lattice_mat=mat.atoms.lattice_mat, length=length1
+                        )  # Auto_Kpoints(mat=mat, length=length)
                         mesh = kpoints.kpts[0]
                         kp_list.append(mesh)
                         en2, contc = Vaspjobs(
@@ -336,10 +485,10 @@ class JobFactory(object):
                 # Some extra points to check
                 print("Some extra points to check for KPOINTS")
                 length3 = length1 + 5
-                #kpoints = Auto_Kpoints(mat=mat, length=length3)
+                # kpoints = Auto_Kpoints(mat=mat, length=length3)
                 kpoints = Kpoints().automatic_length_mesh(
-                lattice_mat=mat.atoms.lattice_mat, length=length3
-            )  # Auto_Kpoints(mat=mat, length=length)
+                    lattice_mat=mat.atoms.lattice_mat, length=length3
+                )  # Auto_Kpoints(mat=mat, length=length)
                 mesh = kpoints.kpts[0]
                 kp_list.append(mesh)
                 en3, contc = VaspJobs(
@@ -351,10 +500,10 @@ class JobFactory(object):
                 ).runjob()
 
                 length4 = length3 + 5
-                #kpoints = Auto_Kpoints(mat=mat, length=length4)
+                # kpoints = Auto_Kpoints(mat=mat, length=length4)
                 kpoints = Kpoints().automatic_length_mesh(
-                lattice_mat=mat.atoms.lattice_mat, length=length4
-            )  # Auto_Kpoints(mat=mat, length=length)
+                    lattice_mat=mat.atoms.lattice_mat, length=length4
+                )  # Auto_Kpoints(mat=mat, length=length)
                 mesh = kpoints.kpts[0]
                 kp_list.append(mesh)
                 en4, contc = VaspJobs(
@@ -366,10 +515,10 @@ class JobFactory(object):
                 ).runjob()
 
                 length5 = length4 + 5
-                #kpoints = Auto_Kpoints(mat=mat, length=length5)
+                # kpoints = Auto_Kpoints(mat=mat, length=length5)
                 kpoints = Kpoints().automatic_length_mesh(
-                lattice_mat=mat.atoms.lattice_mat, length=length5
-            )  # Auto_Kpoints(mat=mat, length=length)
+                    lattice_mat=mat.atoms.lattice_mat, length=length5
+                )  # Auto_Kpoints(mat=mat, length=length)
                 mesh = kpoints.kpts[0]
                 kp_list.append(mesh)
                 en5, contc = VaspJobs(
@@ -381,10 +530,10 @@ class JobFactory(object):
                 ).runjob()
 
                 length6 = length5 + 5
-                #kpoints = Auto_Kpoints(mat=mat, length=length6)
+                # kpoints = Auto_Kpoints(mat=mat, length=length6)
                 kpoints = Kpoints().automatic_length_mesh(
-                lattice_mat=mat.atoms.lattice_mat, length=length6
-            )  # Auto_Kpoints(mat=mat, length=length)
+                    lattice_mat=mat.atoms.lattice_mat, length=length6
+                )  # Auto_Kpoints(mat=mat, length=length)
                 mesh = kpoints.kpts[0]
                 kp_list.append(mesh)
                 en6, contc = VaspJobs(
@@ -395,10 +544,10 @@ class JobFactory(object):
                     jobname=str("KPOINTS") + str(mat.comment) + str("-") + str(length6),
                 ).runjob()
                 length7 = length6 + 5
-                #kpoints = Auto_Kpoints(mat=mat, length=length7)
+                # kpoints = Auto_Kpoints(mat=mat, length=length7)
                 kpoints = Kpoints().automatic_length_mesh(
-                lattice_mat=mat.atoms.lattice_mat, length=length7
-            )  # Auto_Kpoints(mat=mat, length=length)
+                    lattice_mat=mat.atoms.lattice_mat, length=length7
+                )  # Auto_Kpoints(mat=mat, length=length)
                 mesh = kpoints.kpts[0]
                 kp_list.append(mesh)
                 en7, contc = VaspJobs(
@@ -604,51 +753,21 @@ class VaspJobs(object):
                 print("Starting new job")
                 os.makedirs(run_dir)
                 os.chdir(run_dir)
-                self.incar.write_file("INCAR")
-                self.potcar.write_file("POTCAR")
-                self.kpoints.write_file("KPOINTS")
                 self.poscar.write_file("POSCAR")
-                for i in self.copy_files:
-                    print("copying", i)
-                    shutil.copy2(i, "./")
-                # f=open('job.out','w')
-
-                self.run()  # .wait()
-                print("Queue 1")
-                # Queue().pbs(submit_cmd=['qsub','-q','francesca','submit_job'], directory='/users/knc6/Software/J2020/jarvis/jarvis/tasks/vasp/testt',job_line='mpirun /users/knc6/VASP/vasp54/src/vasp.5.4.1DobbySOC2/bin/vasp_ncl>vasp.out')
-                if os.path.isfile("OUTCAR"):
-                    try:
-                        wait = Outcar(
-                            "OUTCAR"
-                        ).converged  # Vasprun("vasprun.xml").converged
-                    except:
-                        pass
-                print("End of the first loop", os.getcwd(), wait)
-
             else:
-                print("Jobs seens to have started before")
                 os.chdir(run_dir)
-                # wait = False
                 if os.path.isfile("OUTCAR"):
                     try:
                         wait = main_outcar("OUTCAR")  # Vasprun("vasprun.xml").converged
                         # wait=Vasprun("vasprun.xml").converged
                     except:
                         pass
-                print("Tried to find OUTCAR, wait is=", wait)
-                if wait == False:
-                    self.incar.write_file("INCAR")
-                    self.kpoints.write_file("KPOINTS")
-                    self.poscar.write_file("POSCAR")
                     try:
-                        # if self.potcar is None:
-                        #     new_symb = list(set(self.poscar.atoms.elements))
-                        #     self.potcar = Potcar(elements=new_symb, pot_type=self.pot_type)
                         self.potcar.write_file("POTCAR")
                         print("FOUND OLD CONTCAR in", os.getcwd())
-                        # old_contcar = Poscar.from_file("CONTCAR")
-                        # old_contcar.write_file('POSCAR')
                         copy_cmd = str("cp CONTCAR POSCAR")
+                        self.poscar.write_file("POSCAR")
+                        pos=Poscar.from_file('CONTCAR')
                         print("copy_cmd=", copy_cmd)
                         if "ELAST" not in jobname and "LEPSILON" not in jobname:
                             # Because in ELASTIC calculations structures are deformed
@@ -656,27 +775,26 @@ class VaspJobs(object):
                         # time.sleep(3)
                     except:
                         pass
-                    for i in self.copy_files:
-                        print("copying", i)
-                        shutil.copy2(i, "./")
 
-                    cmd = (
-                        str(
-                            "/users/knc6/VASP/vasp54/src/vasp.5.4.1DobbySOC2/bin/vasp_ncl"
-                        )
-                        + "\n"
-                    )
-                    # os.system(cmd)
-                    # print ('Queue 2')
-                    # Queue().pbs(submit_cmd=['qsub','-q','francesca'], directory='/users/knc6/Software/J2020/jarvis/jarvis/tasks/vasp',job_line='mpirun /users/knc6/VASP/vasp54/src/vasp.5.4.1DobbySOC2/bin/vasp_ncl>vasp.out')
-                    # if os.path.isfile("OUTCAR"):
-                    #    try:
-                    #        wait = Outcar(
-                    #            "OUTCAR"
-                    #        ).converged  # Vasprun("vasprun.xml").converged
-                    #        # wait=Vasprun("vasprun.xml").converged
-                    #    except:
-                    #        pass
+
+            self.incar.write_file("INCAR")
+            self.potcar.write_file("POTCAR")
+            self.kpoints.write_file("KPOINTS")
+            for i in self.copy_files:
+                print("copying", i)
+                shutil.copy2(i, "./")
+
+            self.run()  # .wait()
+            print("Queue 1")
+            if os.path.isfile("OUTCAR"):
+                try:
+                    wait = Outcar(
+                        "OUTCAR"
+                    ).converged  # Vasprun("vasprun.xml").converged
+                except:
+                    pass
+            print("End of the first loop", os.getcwd(), wait)
+
         f_energy = "na"
         enp = "na"
         contcar = str(os.getcwd()) + str("/") + str("CONTCAR")
@@ -684,13 +802,6 @@ class VaspJobs(object):
         vrun = Vasprun("vasprun.xml")
         f_energy = float(vrun.final_energy)
         enp = float(f_energy) / float(final_str.num_atoms)
-        # try:
-        #    vrun = Vasprun("vasprun.xml")
-        #    f_energy = float(vrun.final_energy)
-        #    enp = float(f_energy) / float(final_str.num_atoms)
-        # except:
-        #    print("Error in OSZICAR file during re-run jpb")
-        #    pass
         natoms = final_str.num_atoms
         os.chdir("../")
         if wait == True:
@@ -736,10 +847,14 @@ if __name__ == "__main__":
     potcar = Potcar(elements=new_symb)
     # job = VaspJobs(poscar=p, kpoints=kp, incar=inc, jobname="testt").write_jobsub_py()
     # job = VaspJobs(poscar=p, kpoints=kp,pot_type='POT_GGA_PAW_PBE', incar=inc, jobname="testt").runjob()
-    #print('optb88vdw incar',GenericIncars().optb88vdw().incar)
+    # print('optb88vdw incar',GenericIncars().optb88vdw().incar)
     JobFactory(
         use_incar_dict=GenericIncars().optb88vdw().incar,
         pot_type=GenericIncars().optb88vdw().pot_type,
-    #).converg_encut(mat=p)
-    #).converg_kpoint(mat=p)
-    ).optimize_geometry(mat=p,encut=500,length=0)
+        # ).converg_encut(mat=p)
+        # ).converg_kpoint(mat=p)
+        #).optimize_geometry(mat=p, encut=500, length=0)
+        #).band_structure(mat=p, encut=500, nbands=100)
+        #).loptics(mat=p, encut=500, nbands=100)
+        #).mbj_loptics(mat=p, encut=500, nbands=100)
+        ).elastic(mat=p, encut=500, nbands=100)
