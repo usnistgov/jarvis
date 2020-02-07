@@ -9,9 +9,12 @@ import numpy as np
 import xmltodict
 from collections import OrderedDict
 from jarvis.core.kpoints import Kpoints3D as Kpoints
+import sys
+from jarvis.io.vasp.inputs import Poscar
+from ase.calculators.vasp import VaspChargeDensity
 
 
-
+"""
 class TotalDos(object):
     def __init__(
         self,
@@ -28,6 +31,95 @@ class TotalDos(object):
         self.element = element
         self.orbital = orbital
         self.spin = spin
+"""
+
+
+class Chgcar(object):
+    def __init__(
+        self,
+        filename="",
+        atoms=None,
+        chg=[],
+        chgdif=None,
+        aug=None,
+        augdiff=None,
+        nsets=1,
+    ):
+        self.filename = filename
+        self.atoms = atoms
+        self.chg = chg
+        self.chgdif = chgdif
+        self.aug = aug
+        self.augdiff = augdiff
+        self.nsets = nsets
+        if self.atoms is None:
+            self.read_file()
+
+    def is_spin_polarized(self):
+        if self.nsets == 2:
+            return True
+        else:
+            return False
+
+    def is_spin_orbit(self):
+        if self.nsets == 4:
+            return True
+        else:
+            return False
+
+    def read_file(self):
+        f = open(self.filename, "r")
+        lines = f.read()
+        f.close()
+        self.atoms = Poscar.from_string(lines).atoms
+        volume = self.atoms.volume
+        text = lines.splitlines()
+        for ii, i in enumerate(text):
+            if i == "":
+                ng_line = text[ii + 1]
+                ng = [int(j) for j in text[ii + 1].split()]
+                found = ii
+        nsets = 0
+        for i in text:
+            if "augmentation occupancies   1 " in i:
+                nsets = nsets + 1
+        self.nsets = nsets
+        if self.is_spin_orbit():
+            ValueError("Not implemeted for spin-orbit calculations yet")
+        # print ('nsets=',nsets)
+
+        start = found + 2
+        ngs = int(ng[0] * ng[1] * ng[2])
+        if ngs % 5 == 0:
+            nlines = int(ngs / 5.0)
+        else:
+            nlines = int(ngs / 5.0) + 1
+        end = nlines + start  # +1
+
+        for ii, i in enumerate(text):
+            if text[ii] == ng_line:
+                start = ii + 1
+                end = start + nlines
+                chg = self.chg_set(text, start, end, volume, ng)
+                self.chg.append(chg)
+
+    def chg_set(self, text, start, end, volume, ng):
+        chg = np.empty(ng)
+        # print ('start,end',start,end)
+        # if 'augmentation occupancies' not in text[end]:
+        #   raise ValueError('nlines is set incoorect',text[end])
+
+        lines_0 = text[start:end]
+        tmp = []
+        for i in lines_0:
+            for j in i.split():
+                if j != "":
+                    tmp.append(float(j))
+        # print ('tmp=',len(tmp),tmp[0],tmp[-1])
+        # print ('lines_0',len(lines_0),ng,ng[0]*ng[1]*ng[2],lines_0[0].split())
+        tmp = np.array(tmp).reshape(ng)
+        tmp = tmp / volume
+        return tmp
 
 
 class Vasprun(object):
@@ -68,76 +160,90 @@ class Vasprun(object):
 
     @property
     def dielectric_loptics(self):
-        tmp = self.ionic_steps[-1]['dielectricfunction']['real']['array']['set']['r']
-        reals=[]
+        tmp = self.ionic_steps[-1]["dielectricfunction"]["real"]["array"]["set"]["r"]
+        reals = []
         for i in range(len(tmp)):
-              reals.append([float(j) for j in tmp[i].split()])
+            reals.append([float(j) for j in tmp[i].split()])
 
-        tmp = self.ionic_steps[-1]['dielectricfunction']['imag']['array']['set']['r']
-        imags=[]
+        tmp = self.ionic_steps[-1]["dielectricfunction"]["imag"]["array"]["set"]["r"]
+        imags = []
         for i in range(len(tmp)):
-              imags.append([float(j) for j in tmp[i].split()])
-        reals=np.array(reals)
-        imags=np.array(imags)
-        return reals,imags
+            imags.append([float(j) for j in tmp[i].split()])
+        reals = np.array(reals)
+        imags = np.array(imags)
+        return reals, imags
 
-    
     @property
-    def avg_absorption_coefficient(self,max_axis=3):
-         eV_to_recip_cm = 1.0 / (
-    physical_constants["Planck constant in eV s"][0] * speed_of_light * 1e2
-)
-         real,imag=self.dielectric_loptics
-         energies=real[:,0]
-         epsilon_1=np.mean(real[:,1:max_axis], axis=1)
-         epsilon_2=np.mean(imag[:,1:max_axis], axis=1)
-         absorption=2*np.pi*np.sqrt(2.0)*eV_to_recip_cm*energies*np.sqrt(-epsilon_1 + np.sqrt(epsilon_1 ** 2 + epsilon_2 ** 2))
-         return energies,absorption
+    def avg_absorption_coefficient(self, max_axis=3):
+        eV_to_recip_cm = 1.0 / (
+            physical_constants["Planck constant in eV s"][0] * speed_of_light * 1e2
+        )
+        real, imag = self.dielectric_loptics
+        energies = real[:, 0]
+        epsilon_1 = np.mean(real[:, 1:max_axis], axis=1)
+        epsilon_2 = np.mean(imag[:, 1:max_axis], axis=1)
+        absorption = (
+            2
+            * np.pi
+            * np.sqrt(2.0)
+            * eV_to_recip_cm
+            * energies
+            * np.sqrt(-epsilon_1 + np.sqrt(epsilon_1 ** 2 + epsilon_2 ** 2))
+        )
+        return energies, absorption
 
     @property
     def get_dir_gap(self):
-       if not self.is_spin_polarized:
-        spin_channels=2
-        up_gap='na'
-        dn_gap='na'
-        if  self.is_spin_orbit:
-            spin_channels=1
-        levels=int(float(self.all_input_parameters['NELECT'])/float(spin_channels))
-        ups=self.eigenvalues[0][:, :, 0][:,levels]
-        dns=self.eigenvalues[0][:, :, 0][:,levels-1]
-        gap=min(ups-dns)
-       else:
-          tmp=np.concatenate((self.eigenvalues[0][:, :, 0],self.eigenvalues[1][:, :, 0]),axis=1)
-          cat = np.sort(tmp,axis=1)
-          nelect=int(float(self.all_input_parameters['NELECT']))
-          ups=cat[:,nelect]
-          dns=cat[:,nelect-1]
-          gap=min(ups-dns)
-           
-       return gap
+        if not self.is_spin_polarized:
+            spin_channels = 2
+            up_gap = "na"
+            dn_gap = "na"
+            if self.is_spin_orbit:
+                spin_channels = 1
+            levels = int(
+                float(self.all_input_parameters["NELECT"]) / float(spin_channels)
+            )
+            ups = self.eigenvalues[0][:, :, 0][:, levels]
+            dns = self.eigenvalues[0][:, :, 0][:, levels - 1]
+            gap = min(ups - dns)
+        else:
+            tmp = np.concatenate(
+                (self.eigenvalues[0][:, :, 0], self.eigenvalues[1][:, :, 0]), axis=1
+            )
+            cat = np.sort(tmp, axis=1)
+            nelect = int(float(self.all_input_parameters["NELECT"]))
+            ups = cat[:, nelect]
+            dns = cat[:, nelect - 1]
+            gap = min(ups - dns)
 
+        return gap
 
     @property
     def get_indir_gap(self):
-       if not self.is_spin_polarized:
-        spin_channels=2
-        up_gap='na'
-        dn_gap='na'
-        if  self.is_spin_orbit:
-            spin_channels=1
-        levels=int(float(self.all_input_parameters['NELECT'])/float(spin_channels))
-        print ('levels',levels)
-        gap=min(self.eigenvalues[0][:, :, 0][:,levels])-max(self.eigenvalues[0][:, :, 0][:,levels-1])
+        if not self.is_spin_polarized:
+            spin_channels = 2
+            up_gap = "na"
+            dn_gap = "na"
+            if self.is_spin_orbit:
+                spin_channels = 1
+            levels = int(
+                float(self.all_input_parameters["NELECT"]) / float(spin_channels)
+            )
+            print("levels", levels)
+            gap = min(self.eigenvalues[0][:, :, 0][:, levels]) - max(
+                self.eigenvalues[0][:, :, 0][:, levels - 1]
+            )
 
-     
-       if self.is_spin_polarized:
-          print (self.eigenvalues[0][:, :, 0],self.eigenvalues[0][:, :, 0].shape)
-          print (self.eigenvalues[1][:, :, 0],self.eigenvalues[1][:, :, 0].shape)
-          tmp=np.concatenate((self.eigenvalues[0][:, :, 0],self.eigenvalues[1][:, :, 0]),axis=1)
-          cat = np.sort(tmp,axis=1)
-          nelect=int(float(self.all_input_parameters['NELECT']))
-          gap=min(cat[:,nelect])-max(cat[:,nelect-1])
-       return  gap
+        if self.is_spin_polarized:
+            print(self.eigenvalues[0][:, :, 0], self.eigenvalues[0][:, :, 0].shape)
+            print(self.eigenvalues[1][:, :, 0], self.eigenvalues[1][:, :, 0].shape)
+            tmp = np.concatenate(
+                (self.eigenvalues[0][:, :, 0], self.eigenvalues[1][:, :, 0]), axis=1
+            )
+            cat = np.sort(tmp, axis=1)
+            nelect = int(float(self.all_input_parameters["NELECT"]))
+            gap = min(cat[:, nelect]) - max(cat[:, nelect - 1])
+        return gap
 
     @property
     def elements(self):
@@ -175,8 +281,6 @@ class Vasprun(object):
             en = float(i["energy"]["i"][1]["#text"])
             energies.append(en)
         return np.array(energies)
-        
-
 
     @property
     def is_spin_polarized(self):
@@ -207,39 +311,43 @@ class Vasprun(object):
         all_up_eigs = []
         all_dn_eigs = []
         if self.is_spin_polarized:
-         for j in range(nkpts):
-            eigs = np.array(
-                [
-                    [float(jj) for jj in ii.split()]
-                    for ii in (
-                        self.ionic_steps[-1]["eigenvalues"]["array"]["set"]["set"][0]
-                    )["set"][j]["r"]
-                ]
-            )
-            all_up_eigs.append(eigs)
-         for j in range(nkpts):
-            eigs = np.array(
-                [
-                    [float(jj) for jj in ii.split()]
-                    for ii in (
-                        self.ionic_steps[-1]["eigenvalues"]["array"]["set"]["set"][1]
-                    )["set"][j]["r"]
-                ]
-            )
-            all_dn_eigs.append(eigs)
+            for j in range(nkpts):
+                eigs = np.array(
+                    [
+                        [float(jj) for jj in ii.split()]
+                        for ii in (
+                            self.ionic_steps[-1]["eigenvalues"]["array"]["set"]["set"][
+                                0
+                            ]
+                        )["set"][j]["r"]
+                    ]
+                )
+                all_up_eigs.append(eigs)
+            for j in range(nkpts):
+                eigs = np.array(
+                    [
+                        [float(jj) for jj in ii.split()]
+                        for ii in (
+                            self.ionic_steps[-1]["eigenvalues"]["array"]["set"]["set"][
+                                1
+                            ]
+                        )["set"][j]["r"]
+                    ]
+                )
+                all_dn_eigs.append(eigs)
         else:
-         for j in range(nkpts):
-            eigs = np.array(
-                [
-                    [float(jj) for jj in ii.split()]
-                    for ii in (
-                        self.ionic_steps[-1]["eigenvalues"]["array"]["set"]["set"]
-                    )["set"][j]["r"]
-                ]
-            )
-            all_up_eigs.append(eigs)
-         all_dn_eigs=all_up_eigs
-            
+            for j in range(nkpts):
+                eigs = np.array(
+                    [
+                        [float(jj) for jj in ii.split()]
+                        for ii in (
+                            self.ionic_steps[-1]["eigenvalues"]["array"]["set"]["set"]
+                        )["set"][j]["r"]
+                    ]
+                )
+                all_up_eigs.append(eigs)
+            all_dn_eigs = all_up_eigs
+
         all_up_eigs = np.array(all_up_eigs)
         all_dn_eigs = np.array(all_dn_eigs)
         return all_up_eigs, all_dn_eigs
@@ -339,63 +447,53 @@ class Vasprun(object):
 
 
 class Oszicar(object):
-     def __init__(self,filename, data={}):
-          self.filename= filename
-          self.data = data
-          if self.data=={}:
-             f=open(filename,'r')
-             lines=f.read().splitlines()
-             f.close()
-             self.data = lines
+    def __init__(self, filename, data={}):
+        self.filename = filename
+        self.data = data
+        if self.data == {}:
+            f = open(filename, "r")
+            lines = f.read().splitlines()
+            f.close()
+            self.data = lines
 
-     @property
-     def magnetic_moment(self):
-         return self.ionic_steps()[-1][-1]
+    @property
+    def magnetic_moment(self):
+        return self.ionic_steps()[-1][-1]
 
-     @property
-     def ionic_steps(self):
-         ionic_data = []
-         for i in self.data:
-           if 'E0' in i:
-             ionic_data.append(i.split())
-         return ionic_data
-               
-         
+    @property
+    def ionic_steps(self):
+        ionic_data = []
+        for i in self.data:
+            if "E0" in i:
+                ionic_data.append(i.split())
+        return ionic_data
+
+
 class Outcar(object):
-      def __init__(self,filename,data={}):
-          self.filename= filename
-          self.data = data
-          if self.data=={}:
-             f=open(filename,'r')
-             lines=f.read().splitlines()
-             f.close()
-             self.data = lines
+    def __init__(self, filename, data={}):
+        self.filename = filename
+        self.data = data
+        if self.data == {}:
+            f = open(filename, "r")
+            lines = f.read().splitlines()
+            f.close()
+            self.data = lines
 
-      @property
-      def converged(self):
-          
+    @property
+    def converged(self):
+
+        cnvg = False
+        try:
+            lines = self.data
             cnvg = False
-            try:
-                lines = self.data
-                cnvg = False
-                for i in lines:
-                    if "General timing and accounting informations for this job" in i:
-                        cnvg = True
-                # print fil,cnvg
-            except:
-                pass
-            return cnvg
-                
-      
-class Chgcar(object):
-      def __init__(self,filename,data={}):
-          self.filename= filename
-          self.data = data
-          if self.data=={}:
-             f=open(filename,'r')
-             lines=f.read().splitlines()
-             f.close()
-             self.data = lines
+            for i in lines:
+                if "General timing and accounting informations for this job" in i:
+                    cnvg = True
+            # print fil,cnvg
+        except:
+            pass
+        return cnvg
+
 
 class Waveder(object):
     """
@@ -409,18 +507,22 @@ class Waveder(object):
         Args:
             filename: Name of file containing WAVEDER.
         """
-        with open(filename, 'rb') as fp:
+        with open(filename, "rb") as fp:
+
             def readData(dtype):
                 """ Read records from Fortran binary file and convert to
                 np.array of given dtype. """
-                data = b''
+                data = b""
                 while 1:
                     prefix = np.fromfile(fp, dtype=np.int32, count=1)[0]
                     data += fp.read(abs(prefix))
                     suffix = np.fromfile(fp, dtype=np.int32, count=1)[0]
                     if abs(prefix) - abs(suffix):
-                        raise RuntimeError("Read wrong amount of bytes.\n"
-                                           "Expected: %d, read: %d, suffix: %d." % (prefix, len(data), suffix))
+                        raise RuntimeError(
+                            "Read wrong amount of bytes.\n"
+                            "Expected: %d, read: %d, suffix: %d."
+                            % (prefix, len(data), suffix)
+                        )
                     if prefix > 0:
                         break
                 return np.frombuffer(data, dtype=dtype)
@@ -469,7 +571,9 @@ class Waveder(object):
         """
         return self._nelect
 
-    def get_orbital_derivative_between_states(self, band_i, band_j, kpoint, spin, cart_dir):
+    def get_orbital_derivative_between_states(
+        self, band_i, band_j, kpoint, spin, cart_dir
+    ):
         """
         Method returning a value
         between bands band_i and band_j for k-point index, spin-channel and cartesian direction.
@@ -482,7 +586,12 @@ class Waveder(object):
         Returns:
             a float value
         """
-        if band_i < 0 or band_i > self.nbands - 1 or band_j < 0 or band_j > self.nelect - 1:
+        if (
+            band_i < 0
+            or band_i > self.nbands - 1
+            or band_j < 0
+            or band_j > self.nelect - 1
+        ):
             raise ValueError("Band index out of bounds")
         if kpoint > self.nkpoints:
             raise ValueError("K-point index out of bounds")
@@ -519,19 +628,52 @@ class Wavecar(object):
         End loop over spin
     """
 
-    def __init__(self, fnm="WAVECAR", lsorbit=False, lgamma=False):
+    def __init__(
+        self,
+        filename="WAVECAR",
+        lsorbit=False,
+        lgamma=False,
+        recl=None,
+        nspin=None,
+        rtag=None,
+        nkpts=None,
+        nbands=None,
+        encut=None,
+        lattice_mat=None,
+        nplws=None,
+        wfc=None,
+        efermi=None,
+        kvecs=None,
+        energies=None,
+        occs=None,
+        gvec=None,
+    ):
         """
         Initialization.
         """
 
-        self._fname = fnm
+        self._filename = filename
         self._lsoc = lsorbit
         self._lgam = lgamma
-
+        self._recl=recl
+        self._nspin=nspin
+        self._rtag=rtag
+        self._nkpts=nkpts
+        self._nbands=nbands
+        self._encut=encut
+        self._lattice_mat=lattice_mat
+        self._nplws=nplws
+        self._efermi=efermi
+        self._kvecs=kvecs
+        self._energies=energies
+        self._occs=occs
+        self._gvec=gvec
+        self._lattice_mat=lattice_mat
+        
         assert not (lsorbit and lgamma), "The two settings conflict!"
 
         try:
-            self._wfc = open(self._fname, "rb")
+            self._wfc = open(self._filename, "rb")
         except:
             raise IOError("Failed to open %s" % self._fname)
 
@@ -548,7 +690,6 @@ class Wavecar(object):
         Is the WAVECAR from an SOC calculation?
         """
         return True if self._lsoc else False
-
 
     def readWFHeader(self):
         """
@@ -572,12 +713,12 @@ class Wavecar(object):
         self._nkpts = int(dump[0])  # No. of k-points
         self._nbands = int(dump[1])  # No. of bands
         self._encut = dump[2]  # Energy cutoff
-        self._Acell = dump[3:].reshape((3, 3))  # real space supercell basis
-        self._Omega = np.linalg.det(self._Acell)  # real space supercell volume
-        self._Bcell = np.linalg.inv(self._Acell).T  # reciprocal space supercell volume
+        self._lattice_mat = dump[3:].reshape((3, 3))  # real space supercell basis
+        self._Omega = np.linalg.det(self._lattice_mat)  # real space supercell volume
+        self._Bcell = np.linalg.inv(self._lattice_mat).T  # reciprocal space supercell volume
 
         # Minimum FFT grid size
-        Anorm = np.linalg.norm(self._Acell, axis=1)
+        Anorm = np.linalg.norm(self._lattice_mat, axis=1)
         CUTOF = np.ceil(np.sqrt(self._encut / RYTOEV) / (TPI / (Anorm / AUTOA)))
         self._ngrid = np.array(2 * CUTOF + 1, dtype=int)
 
@@ -608,7 +749,7 @@ class Wavecar(object):
 
         self._nplws = np.zeros(self._nkpts, dtype=int)
         self._kvecs = np.zeros((self._nkpts, 3), dtype=float)
-        self._bands = np.zeros((self._nspin, self._nkpts, self._nbands), dtype=float)
+        self._energies = np.zeros((self._nspin, self._nkpts, self._nbands), dtype=float)
         self._occs = np.zeros((self._nspin, self._nkpts, self._nbands), dtype=float)
 
         for ii in range(self._nspin):
@@ -622,7 +763,7 @@ class Wavecar(object):
                     self._nplws[jj] = int(dump[0])
                     self._kvecs[jj] = dump[1:4]
                 dump = dump[4:].reshape((-1, 3))
-                self._bands[ii, jj, :] = dump[:, 0]
+                self._energies[ii, jj, :] = dump[:, 0]
                 self._occs[ii, jj, :] = dump[:, 2]
 
         if self._nkpts > 1:
@@ -632,7 +773,7 @@ class Wavecar(object):
             self._kpath = np.concatenate(([0], np.cumsum(tmp)))
         else:
             self._kpath = None
-        return self._kpath, self._bands
+        return self._kpath, self._energies
 
     def gvectors(self, ikpt=1):
         """
@@ -706,10 +847,9 @@ class Wavecar(object):
                 "No. of planewaves not consistent! %d %d %d"
                 % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid))
             )
+        self._gvec=np.asarray(Gvec, dtype=int)
 
         return np.asarray(Gvec, dtype=int)
-
-
 
     def readBandCoeff(self, ispin=1, ikpt=1, iband=1, norm=False):
         """
@@ -753,40 +893,57 @@ class Wavecar(object):
         assert 1 <= iband <= self._nbands, "Invalid band index!"
 
 
-
 if __name__ == "__main__":
-    #filename = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/vasprun.xml"
-    #filename='/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO/MAIN-RELAX-bulk@mp-134/vasprun.xml'
-    #filename = '/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/vasprun.xml'
-    filename='/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-OPTICS-bulk@mp-149/vasprun.xml'
-    filename = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/vasprun.xml"
-    filename='/rk2/knc6/JARVIS-DFT/Bulk-less5mp1/mp-1077840_PBEBO/MAIN-RELAX-bulk@mp_1077840/vasprun.xml' #????
-    v = Vasprun(filename=filename)
-    #print (v.is_spin_orbit,v.is_spin_polarized)
-   
-    print ('dir',v.get_dir_gap,'indir',v.get_indir_gap)
-    #print ('reals',v.avg_absorption_coefficient)
-    from pymatgen.io.vasp.outputs import Vasprun  as pmg
-    pmgv=pmg(filename)
-    bandstructure = pmgv.get_band_structure()
-    print ('pmggap', bandstructure.get_direct_band_gap(),bandstructure.get_band_gap())
-    import sys
+    # c=Chgcar()
+    #filename = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
+    #filename = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/LOCPOT"
+    #x = Chgcar(filename).chg
+    #print(len(x), x[0])
+    #y = VaspChargeDensity(filename).chg
+    #print(len(y), y[0])
+    #if x[0].all() == y[0].all():
+    #    print("JACKPOT")
+    # filename='/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOC-bulk@JVASP-1067_mp-541837/CHGCAR'
+    # x=Chgcar(filename)
+    # filename='/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-MAGSCF-bulk@JVASP-1067_mp-541837/CHGCAR'
+    # x=Chgcar(filename)
+    # filename='/rk2/knc6/Chern/JVASP-13600_mp-28208_PBEBO/MAIN-MAGSCF-bulk@JVASP-13600_mp-28208/CHGCAR'
+    # x=Chgcar(filename)
+    wf_so = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/WAVECAR"
+    so = Wavecar(filename=wf_so, lsorbit=True)
+    print("Read SO")
     sys.exit()
-    filename = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/OSZICAR"
-    osz=Oszicar(filename=filename)
-    #print (osz.ionic_steps(),osz.magnetic_moment())
+    # filename = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/vasprun.xml"
+    # filename='/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO/MAIN-RELAX-bulk@mp-134/vasprun.xml'
+    # filename = '/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/vasprun.xml'
+    filename = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-OPTICS-bulk@mp-149/vasprun.xml"
+    filename = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/vasprun.xml"
+    filename = "/rk2/knc6/JARVIS-DFT/Bulk-less5mp1/mp-1077840_PBEBO/MAIN-RELAX-bulk@mp_1077840/vasprun.xml"  # ????
+    v = Vasprun(filename=filename)
+    # print (v.is_spin_orbit,v.is_spin_polarized)
+
+    print("dir", v.get_dir_gap, "indir", v.get_indir_gap)
+    # print ('reals',v.avg_absorption_coefficient)
+    from pymatgen.io.vasp.outputs import Vasprun as pmg
+
+    pmgv = pmg(filename)
+    bandstructure = pmgv.get_band_structure()
+    print("pmggap", bandstructure.get_direct_band_gap(), bandstructure.get_band_gap())
     import sys
-    #sys.exit()
-    wf_so='/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/WAVECAR'
-    so = Wavecar(fnm=wf_so, lsorbit=True)
-    print ('Read SO')
+
+    filename = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/OSZICAR"
+    osz = Oszicar(filename=filename)
+    # print (osz.ionic_steps(),osz.magnetic_moment())
+    import sys
+
+    # sys.exit()
     # print (v._filename, v.final_energy)
     # print (v._filename,'elements', v.elements)
-    #print(v._filename, "structs", v.all_structures)
+    # print(v._filename, "structs", v.all_structures)
     # print ('pmg',Vasprun(v._filename).final_energy)
     filename = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-BAND-bulk@mp_541837/vasprun.xml"
     v = Vasprun(filename=filename)
-    #print(v._filename, "structs", v.all_structures)
+    # print(v._filename, "structs", v.all_structures)
     # print (v._filename,v.final_energy)
     # print (v._filename,v.elements)
     # print ('pmg',Vasprun(v._filename).final_energy)

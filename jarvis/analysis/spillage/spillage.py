@@ -30,8 +30,8 @@ def orth(A):
 
 
 def overlap_so_spinpol(wf_noso, wf_so):
-    noso = Wavecar(fnm=wf_noso, lsorbit=False)
-    so = Wavecar(fnm=wf_so, lsorbit=True)
+    noso = Wavecar(filename=wf_noso, lsorbit=False)
+    so = Wavecar(filename=wf_so, lsorbit=True)
     # band gap stuff. not needed per se, just a useful sanity check
     noso_k, noso_bands = noso.readWFBand()
     so_k, so_bands = so.readWFBand()

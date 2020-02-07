@@ -376,7 +376,8 @@ class Atoms(object):
                 coords=self.frac_coords,
                 cartesian=False,
             )
-
+    #def __str__(self):
+    #     return "(%s(%r))" %(self.__class__,self.__dict__)
     def __repr__(self):
         header = (
             str("\nSystem\n1.0\n")
@@ -420,20 +421,20 @@ if __name__ == "__main__":
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     Si.props = ["a", "a"]
     # spg = Spacegroup3D(Si)
-    polar=Si.check_polar
-    print ('polar',polar)
+    #polar=Si.check_polar
+    #print ('polar',polar)
     # Si = spg.conventional_standard_structure
     # print ('center',Si.center())
     # print ('propos',Si.props)
-    print("Supercell\n", Si.make_supercell([2, 2, 2]))
+    #print("Supercell\n", Si.make_supercell([2, 2, 2]))
     # print (Si.make_supercell().props)
-    print(Si.make_supercell([2, 2, 2]).remove_site_by_index())
-    # print ('Si',Si)
+    #print(Si.make_supercell([2, 2, 2]).remove_site_by_index())
+    print ('Si',Si)
     # print ('reduced',Si.get_lll_reduced_structure())
     # print ('pf',Si.packing_fraction,Si.make_supercell())
     pmg = Si.pymatgen_converter()
     pmg.make_supercell([2, 2, 2])
-    # print (pmg)
+    #print (pmg)
     # print (Si.get_center_of_mass())
     # print (Si.get_string())
 # if __name__=='__main__':

@@ -6,6 +6,8 @@ from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from numpy.linalg import norm, solve
 from numpy import gcd
 import sys
+from pymatgen.analysis.wulff import WulffShape
+from pymatgen.core.lattice import Lattice
 
 def ext_gcd(a, b):
     if b == 0:
@@ -15,6 +17,17 @@ def ext_gcd(a, b):
     else:
         x, y = self.ext_gcd(b, a % b)
         return y, x - y * (a // b)
+
+
+def wulff_normals(miller_indices=[],surface_energies=[]):
+     max_s=min(surface_energies)
+     normals=[]
+     for i,j in zip(miller_indices,surface_energies):
+       normal=j*np.linalg.norm(i)/float(max_s)
+       normals.append([normal,i])
+     
+     return normals
+
 
 
 class Surface(object):
@@ -156,3 +169,11 @@ if __name__ == "__main__":
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     Surface(atoms=Si, indices=[1, 1, 1]).make_surface()
+    su=[0.8582640971273426, 0.9334963319196496, 0.9360461382184894, 0.9419095687284446, 0.9802042233627004, 0.9875446840480956, 1.0120634294466684, 1.0126231880823566, 1.0241538763302507, 1.0315901848682645, 1.0318271257831195, 1.0331286888257398, 1.0344297141291043, 1.0388709097092674, 1.040277640596931, 1.042494119906149, 1.04453679643896, 1.0450598648770613, 1.045076130339553, 1.0469310544190567, 1.0491015867538047, 1.0495494553198788, 1.0534717916897114, 1.0535201391639715, 1.054233162444997, 1.0579157863887743, 1.0595676718662346, 1.0601381085497692, 1.109580394178689]
+
+    ml=[[0, 0, 1], [2, 0, 3], [2, 0, 1], [1, 0, 1], [3, 0, 2], [1, 0, 3], [3, 1, 1], [3, 0, 1], [3, 1, 3], [3, -1, 1], [3, 1, 0], [3, 2, 1], [3, 3, 1], [1, 0, 0], [2, 2, 1], [3, -1, 3], [3, -1, 2], [3, 3, 2], [3, 2, 2], [2, -1, 3], [3, 2, 0], [3, 2, 3], [1, 1, 1], [1, 0, 2], [3, 1, 2], [2, -1, 2], [3, -1, 0], [2, 2, 3], [1, 1, 0]]
+    nm=wulff_normals(miller_indices=ml,surface_energies=su)
+    print (nm)
+    lat=Lattice([[4.05,0,0],[0,4.05,0],[0,0,4.05]])
+    pmg_wulff=WulffShape(lat,ml,su)
+    print (pmg_wulff.facets)

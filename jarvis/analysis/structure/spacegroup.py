@@ -1,3 +1,4 @@
+from functools import reduce
 from jarvis.core.lattice import Lattice
 from jarvis.core.atoms import Atoms
 import spglib
@@ -6,12 +7,52 @@ import itertools
 import numpy as np
 from numpy import sin, cos
 import itertools
+from math import gcd
+
+from pymatgen.core.surface import get_symmetrically_distinct_miller_indices
+
+
+def unique_rows_2(a):
+    order = np.lexsort(a.T)
+    a = a[order]
+    diff = np.diff(a, axis=0)
+    ui = np.ones(len(a), 'bool')
+    ui[1:] = (diff != 0).any(axis=1) 
+    return a[ui]
+
+def unique_rows(a):
+    # https://stackoverflow.com/questions/31097247/remove-duplicate-rows-of-a-numpy-array
+    a = np.ascontiguousarray(a)
+    unique_a = np.unique(a.view([('', a.dtype)]*a.shape[1]))
+    return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
+
 
 def symmetrically_distinct_miller_indices(max_index=3,cvn_atoms=None):
-    r = list(range(-max_index, max_index + 1))
-    r.reverse()
+    #Need to work on this
+    r1 = list(range(1, max_index + 1))
+    r2=list(range(-max_index, 1))
+    r2.reverse()
+    r3=r1+r2
+    #r.reverse()
+    r=r3
+    print ('rrrrr',r,sorted(r))
     conv_hkl_list = [miller for miller in itertools.product(r, r, r) if any([i != 0 for i in miller])]
-    return conv_hkl_list
+    spg=Spacegroup3D(cvn_atoms)._dataset
+    rot=spg['rotations']
+    done=[]
+    unique_millers=[]
+    #print (conv_hkl_list)
+    #print (sorted(conv_hkl_list, key=lambda x: x[0], reverse=True))
+    for i in conv_hkl_list:
+      d = abs(reduce(gcd, i))
+      miller=tuple([int(k / d) for k in i])
+      for j in  rot:
+         prod=list(np.dot(miller,j))
+         if prod not in done:
+              unique_millers.append(i)
+              done.append(prod)
+    uniq=unique_rows_2(np.array(unique_millers))
+    return uniq
 
 class Spacegroup3D(object):
     def __init__(self, atoms=[], dataset={}, symprec=1e-2, angle_tolerance=5):
@@ -490,15 +531,18 @@ if __name__ == "__main__":
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     spg = Spacegroup3D(atoms=Si)  # .spacegroup_data()
-    print(spg.space_group_symbol)
-    print(spg.space_group_number)
-    primt = spg.primitive_atoms
-    print("primt", primt)
-    print("cryst_sys", spg.crystal_system)
-    print("point group", spg.point_group_symbol)
-    print("cvn", spg.conventional_standard_structure)
-    ml=symmetrically_distinct_miller_indices(max_index=1)
-    print ('miller=',ml)
+    #print(spg.space_group_symbol)
+    #print(spg.space_group_number)
+    #primt = spg.primitive_atoms
+    #print("primt", primt)
+    #print("cryst_sys", spg.crystal_system)
+    #print("point group", spg.point_group_symbol)
+    #print("cvn", spg.conventional_standard_structure)
+    cvn = spg.conventional_standard_structure
+    ml=symmetrically_distinct_miller_indices(max_index=3, cvn_atoms=cvn)
+    print ('miller=',ml,len(ml))
+    ml_pmg=get_symmetrically_distinct_miller_indices(cvn.pymatgen_converter(),max_index=3)
+    print ('millerpmg=',ml_pmg,len(ml_pmg))
     # pmg=Si.pymatgen_converter()
     # from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
     # spg=SpacegroupAnalyzer(pmg)
