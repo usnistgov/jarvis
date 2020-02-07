@@ -468,6 +468,14 @@ class Oszicar(object):
                 ionic_data.append(i.split())
         return ionic_data
 
+    @property
+    def electronic_steps(self):
+        electronic_data = []
+        for i in self.data:
+            if "E0" not in i and 'd eps' not in i:
+                electronic_data.append(i.split())
+        return electronic_data
+
 
 class Outcar(object):
     def __init__(self, filename, data={}):
@@ -894,6 +902,9 @@ class Wavecar(object):
 
 
 if __name__ == "__main__":
+    oz=Oszicar('/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/OSZICAR')
+    print (oz.electronic_steps)
+    sys.exit()
     # c=Chgcar()
     #filename = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
     #filename = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/LOCPOT"
@@ -936,7 +947,6 @@ if __name__ == "__main__":
     # print (osz.ionic_steps(),osz.magnetic_moment())
     import sys
 
-    # sys.exit()
     # print (v._filename, v.final_energy)
     # print (v._filename,'elements', v.elements)
     # print(v._filename, "structs", v.all_structures)

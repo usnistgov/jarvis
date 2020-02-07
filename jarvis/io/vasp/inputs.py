@@ -98,12 +98,19 @@ class Incar(object):
        print ('selftags1=',self._tags)
        if self._tags!={}:
           for i,j in self._tags.items(): 
-             self._tags[i]=j
+             self._tags[i]=j#.strip(' ')
        for i,j in d.items(): 
            self._tags[i]=j
        print ('selftags2=',self._tags)
        return Incar(self._tags)       
-
+    
+    def get(self,key='POTIM', temp=0.5):
+       if key in list(self._tags.keys()):
+           return self._tags[key]
+       else:
+          self._tags[key]=temp
+          print ('Setting the temp value to the key',temp,key)
+          return self._tags[key]
 
     def to_dict(self):
            return self._tags
@@ -121,7 +128,7 @@ class Incar(object):
        for i in  text:
           if '=' in i:
            tmp = i.split('=')
-           tags.setdefault(tmp[0],tmp[1])
+           tags.setdefault(tmp[0].strip(' '),tmp[1].strip(' '))
       
        return Incar(tags=tags)
 

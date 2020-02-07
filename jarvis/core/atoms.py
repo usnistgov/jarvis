@@ -101,6 +101,18 @@ class Atoms(object):
                 polar = False
             return polar
 
+    def apply_strain(self, strain):
+        """
+        Apply a strain to the lattice.
+        Args:
+            strain (float or list): Amount of strain to apply. Can be a float,
+                or a sequence of 3 numbers. E.g., 0.01 means all lattice
+                vectors are increased by 1%. This is equivalent to calling
+                modify_lattice with a lattice with lattice parameters that
+                are 1% larger.
+        """
+        s = (1 + np.array(strain)) * np.eye(3)
+        self.lattice_mat = (np.dot(self.lattice_mat.T, s).T)
 
 
     def to_dict(self):
