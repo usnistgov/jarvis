@@ -11,7 +11,12 @@ from collections import OrderedDict
 from jarvis.core.kpoints import Kpoints3D as Kpoints
 import sys
 from jarvis.io.vasp.inputs import Poscar
-from ase.calculators.vasp import VaspChargeDensity
+import matplotlib
+from matplotlib import pyplot as plt
+
+plt.switch_backend("agg")
+
+# from ase.calculators.vasp import VaspChargeDensity
 
 
 """
@@ -412,10 +417,51 @@ class Vasprun(object):
         )
         return Kpoints(kpoints=kplist, kpoints_weights=kpwt)
 
-    def get_bandstructure(self, spin=0):
+    def get_bandstructure(
+        self, E_low=-4, E_high=4, spin=0, zero_efermi=True, kpoints_file_path="."
+    ):
+        try:
+            f = open(kpoints_file_path, "r")
+            lines = f.read().splitlines()
+            f.close()
+            kp_labels = []
+            kp_labels_points = []
+            for ii, i in enumerate(lines):
+                if ii > 2:
+                    tmp = i.split()
+                    if len(tmp) == 5:
+                        tmp = str("$") + str(tmp[4]) + str("$")
+                        if len(kp_labels) == 0:
+                            kp_labels.append(tmp)
+                            kp_labels_points.append(ii - 3)
+                        elif tmp != kp_labels[-1]:
+                            kp_labels.append(tmp)
+                            kp_labels_points.append(ii - 3)
+
+        except:
+            print("No K-points file found, still proceeding")
+            pass
+
+        tmp = 0.0
+        if zero_efermi == True:
+            tmp = float(self.efermi)
         plt.clf()
-        for i, ii in enumerate(self.eigenvalues[spin][:, :, 0].T - float(v.efermi)):
+        for i, ii in enumerate(self.eigenvalues[spin][:, :, 0].T - tmp):
             plt.plot(ii, color="b")
+
+        if self.is_spin_polarized:
+            for i, ii in enumerate(self.eigenvalues[1][:, :, 0].T - tmp):
+                plt.plot(ii, color="r")
+
+        plt.ylim([E_low, E_high])
+        plt.xticks(kp_labels_points, kp_labels)
+        plt.xlim([0, len(self.kpoints._kpoints)])
+        plt.xlabel(r"$\mathrm{Wave\ Vector}$")
+        ylabel = (
+            r"$\mathrm{E\ -\ E_f\ (eV)}$" if zero_efermi else r"$\mathrm{Energy\ (eV)}$"
+        )
+        plt.ylabel(ylabel)
+
         return plt
 
     @property
@@ -472,7 +518,7 @@ class Oszicar(object):
     def electronic_steps(self):
         electronic_data = []
         for i in self.data:
-            if "E0" not in i and 'd eps' not in i:
+            if "E0" not in i and "d eps" not in i:
                 electronic_data.append(i.split())
         return electronic_data
 
@@ -663,21 +709,21 @@ class Wavecar(object):
         self._filename = filename
         self._lsoc = lsorbit
         self._lgam = lgamma
-        self._recl=recl
-        self._nspin=nspin
-        self._rtag=rtag
-        self._nkpts=nkpts
-        self._nbands=nbands
-        self._encut=encut
-        self._lattice_mat=lattice_mat
-        self._nplws=nplws
-        self._efermi=efermi
-        self._kvecs=kvecs
-        self._energies=energies
-        self._occs=occs
-        self._gvec=gvec
-        self._lattice_mat=lattice_mat
-        
+        self._recl = recl
+        self._nspin = nspin
+        self._rtag = rtag
+        self._nkpts = nkpts
+        self._nbands = nbands
+        self._encut = encut
+        self._lattice_mat = lattice_mat
+        self._nplws = nplws
+        self._efermi = efermi
+        self._kvecs = kvecs
+        self._energies = energies
+        self._occs = occs
+        self._gvec = gvec
+        self._lattice_mat = lattice_mat
+
         assert not (lsorbit and lgamma), "The two settings conflict!"
 
         try:
@@ -723,7 +769,9 @@ class Wavecar(object):
         self._encut = dump[2]  # Energy cutoff
         self._lattice_mat = dump[3:].reshape((3, 3))  # real space supercell basis
         self._Omega = np.linalg.det(self._lattice_mat)  # real space supercell volume
-        self._Bcell = np.linalg.inv(self._lattice_mat).T  # reciprocal space supercell volume
+        self._Bcell = np.linalg.inv(
+            self._lattice_mat
+        ).T  # reciprocal space supercell volume
 
         # Minimum FFT grid size
         Anorm = np.linalg.norm(self._lattice_mat, axis=1)
@@ -855,7 +903,7 @@ class Wavecar(object):
                 "No. of planewaves not consistent! %d %d %d"
                 % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid))
             )
-        self._gvec=np.asarray(Gvec, dtype=int)
+        self._gvec = np.asarray(Gvec, dtype=int)
 
         return np.asarray(Gvec, dtype=int)
 
@@ -902,17 +950,29 @@ class Wavecar(object):
 
 
 if __name__ == "__main__":
-    oz=Oszicar('/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/OSZICAR')
-    print (oz.electronic_steps)
+    v = Vasprun(
+        "/cluster/users/knc6/justback/Interfa/DFT/JVASP-649_JVASP-76195_PBEBO/RELAXSOCPBEBAND/vasprun.xml"
+    )
+    # v=Vasprun('/cluster/users/knc6/justback/Interfa/DFT/JVASP-649_JVASP-76195_PBEBO/RELAXPBEBAND/vasprun.xml')
+
+    p = v.get_bandstructure(
+        kpoints_file_path="/cluster/users/knc6/justback/Interfa/DFT/JVASP-649_JVASP-76195_PBEBO/RELAXPBEBAND/KPOINTS"
+    )
+    p.savefig("PBEBAND2.png")
+
     sys.exit()
+    oz = Oszicar(
+        "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/OSZICAR"
+    )
+    print(oz.electronic_steps)
     # c=Chgcar()
-    #filename = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
-    #filename = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/LOCPOT"
-    #x = Chgcar(filename).chg
-    #print(len(x), x[0])
-    #y = VaspChargeDensity(filename).chg
-    #print(len(y), y[0])
-    #if x[0].all() == y[0].all():
+    # filename = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
+    # filename = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/LOCPOT"
+    # x = Chgcar(filename).chg
+    # print(len(x), x[0])
+    # y = VaspChargeDensity(filename).chg
+    # print(len(y), y[0])
+    # if x[0].all() == y[0].all():
     #    print("JACKPOT")
     # filename='/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOC-bulk@JVASP-1067_mp-541837/CHGCAR'
     # x=Chgcar(filename)
