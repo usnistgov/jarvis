@@ -9,6 +9,7 @@ import time
 import copy as copy
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.io.vasp.inputs import Poscar
+from jarvis.io.vasp.outputs import Vasprun
 
 class WannierHam(object):
     def __init__(self,filename='wannier90_hr.dat',nwan=None,nr=None, sym_r=None, H_int=None, H_val=None, H=None, HR=None):
@@ -105,7 +106,7 @@ class WannierHam(object):
 
             self.H[ind[0], ind[1], ind[2], nw1-1,nw2-1] = self.H_val[i]
 
-        print ('done reshaping1')
+        #print ('done reshaping1')
         nr = ix*iy*iz
         self.R = np.zeros((nr,3),dtype=float)
         self.HR = np.zeros((nr,self.nwan**2),dtype=complex)
@@ -134,10 +135,10 @@ class WannierHam(object):
     def solve_ham(self,k=[0,0,0], proj=None):
 
 
-        print ('solve', self.nwan, self.R.shape, self.HR.shape)
+        #print ('solve', self.nwan, self.R.shape, self.HR.shape)
 
         nr = self.R.shape[0]
-        print ('nr==',nr,self.nr)
+        #print ('nr==',nr,self.nr)
         hk = np.zeros((self.nwan,self.nwan),dtype=complex)
 
 
@@ -167,7 +168,7 @@ class WannierHam(object):
     def band_structure_eigs(self,kpath=None,proj=None,efermi=0.0):  
        eigs=[]
        for i in kpath:
-          print (i)
+          #print (i)
           val, vect,p = self.solve_ham(k=i,proj=proj)
           eigs.append(val-efermi)
        return np.array(eigs)
@@ -190,6 +191,42 @@ class WannierHam(object):
          plt.close()
 
                   
+    def compare_dft_wann(self,vasprun_path = '', energy_tol = 2,  plot=False, filename = 'compare.png'):
+          
+          vrun = Vasprun(vasprun_path)
+          kpoints = vrun.kpoints._kpoints
+          fermi = vrun.efermi
+          eigs_wan = self.band_structure_eigs(kpath = kpoints,efermi=vrun.efermi)[::-1]#.T
+          eigs_vrun = (vrun.eigenvalues[0][:, :, 0]-fermi)[::-1]#.T
+          nbands = eigs_vrun.shape[1]
+          nwann = eigs_wan.shape[1]
+          print ('eigs.shape,eigs_vrun.shape',eigs_wan.shape,eigs_vrun.shape, nbands, nwann)
+          min_arr=[]
+          erange=[-energy_tol-fermi,energy_tol+fermi]
+          for k in range(len(kpoints)):
+           for n in eigs_wan[k]:
+              diff_arr=[]
+              if n >erange[0] and n<erange[1] :
+                 for v in eigs_vrun[k]:
+                   diff=abs(n-v)
+                   diff_arr.append(diff)
+              if diff_arr!=[]:
+                tmp=np.min(diff_arr)
+                min_arr.append(tmp)
+          maxdiff='na'
+          if min_arr!=[]:
+            #print ('min_arr',min_arr)
+            print ('MAX diff',max(min_arr))
+            maxdiff=max(min_arr)
+          print ('maxdiff',maxdiff)
+          if plot==True:
+                  for i,ii in enumerate(eigs_wan.T):
+                      plt.plot(ii,color='b')
+                  for i,ii in enumerate(eigs_vrun.T):
+                      plt.plot(ii,color='r')
+                  plt.savefig(filename)
+                  plt.close()
+          return maxdiff
         
 class Wannier90wout(object):
         def __init__(self, wout_path='wannier90.wout'):
@@ -212,6 +249,45 @@ class Wannier90wout(object):
 
 if __name__ == "__main__":
   hr = '/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90_hr.dat'
+  run = ('/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/vasprun.xml')
+  hr = '/rk2/knc6/Chern3DMAGMOM/JVASP-49890_mp-754684_PBEBO/MAIN-WANN-SOC-bulk@JVASP-49890_mp-754684/wannier90_hr.dat'
+  run = '/rk2/knc6/Chern3DMAGMOM/JVASP-49890_mp-754684_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-49890_mp-754684/vasprun.xml'
+  w = WannierHam(filename=hr)#get_bandstructure_plot(atoms=p)
+  w.compare_dft_wann(vasprun_path=run)
+  import sys
+  sys.exit()
+  
+  vrun = Vasprun(run)
+  eigs_wan = w.band_structure_eigs(kpath=vrun.kpoints._kpoints,efermi=vrun.efermi)#.T
+  eigs_vrun = vrun.eigenvalues[0][:, :, 0]#.T
+  nbands = eigs_vrun.shape[1]
+  nwann = eigs_wan.shape[1]
+  fermi = vrun.efermi
+  print ('eigs.shape,eigs_vrun.shape',eigs_wan.shape,eigs_vrun.shape, nbands, nwann)
+  min_arr=[]
+  erange=[-2-fermi,2+fermi]
+  for k in range(len(eigs_vrun)):
+   for n in eigs_wan[k]:
+      diff_arr=[]
+      if n >erange[0] and n<erange[1] :
+         for v in eigs_vrun[k]:
+           diff=abs(n-v)
+           diff_arr.append(diff)
+      if diff_arr!=[]:
+        tmp=np.min(diff_arr)
+        min_arr.append(tmp)
+  maxdiff='na'
+  if min_arr!=[]:
+    #print ('min_arr',min_arr)
+    print ('MAX diff',max(min_arr))
+    maxdiff=max(min_arr)
+  print ('maxdiff',maxdiff)
+
+
+
+
+
+
   wout = '/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90.wout'
   centers =  Wannier90wout(wout_path=wout).give_wannier_centers()
   #print (centers)
@@ -224,6 +300,8 @@ if __name__ == "__main__":
   p=Poscar.from_file('/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/POSCAR').atoms
   print (p)
   WannierHam(filename=hr).get_bandstructure_plot(atoms=p)
+
+  
 
   #R,H, HR = WannierHam(filename=hr).read_ham()
   #print ('R',R)

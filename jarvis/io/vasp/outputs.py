@@ -447,11 +447,11 @@ class Vasprun(object):
             tmp = float(self.efermi)
         plt.clf()
         for i, ii in enumerate(self.eigenvalues[spin][:, :, 0].T - tmp):
-            plt.plot(ii, color="b")
+            plt.plot(ii, color="r")
 
         if self.is_spin_polarized:
             for i, ii in enumerate(self.eigenvalues[1][:, :, 0].T - tmp):
-                plt.plot(ii, color="r")
+                plt.plot(ii, color="b")
 
         plt.ylim([E_low, E_high])
         plt.xticks(kp_labels_points, kp_labels)
