@@ -1,5 +1,3 @@
-# https://github.com/acadien/matcalc/blob/037d7080c07856877d7a3f5f9dcbb2dec5f38dd1/analysis/rdf.py
-# /rk2/knc6/UFHPC_3_16_2016/scratch-uf/LOREN/spicykamal/TaoLammps/COMB3_v18/src/analysis_tools.f
 """
 This module provides classes to specify atomic structure
 """
@@ -8,9 +6,160 @@ from jarvis.core.atoms import Atoms
 import matplotlib.pyplot as plt
 from operator import itemgetter
 from jarvis.io.vasp.inputs import Poscar
-
+import time
 plt.switch_backend("agg")
 import math
+from toolz.curried import pipe
+
+
+def check_array(arr, type_=None, shape=None):
+    """Check type and shape of np.ndarray
+
+    Args:
+      x: array to check
+      type_: the type of the array (int, float), None to not check
+      shape: the shape of the array, None to not check, -1 to ignore a
+        dimension
+
+    >>> check_array('blah')
+    Traceback (most recent call last):
+    ...
+    TypeError: not an array
+    >>> check_array(np.array(1), float)
+    Traceback (most recent call last):
+    ...
+    TypeError: array is not type <class 'float'>
+    >>> check_array(np.reshape(np.arange(12), (3, 4)), shape=(3, -1))
+    >>> check_array(np.reshape(np.arange(12), (3, 4)), shape=(3, 5))
+    Traceback (most recent call last):
+    ...
+    ValueError: array must have shape [3 5]
+
+    """
+    if not isinstance(arr, np.ndarray):
+        raise TypeError("not an array")
+
+    if type_ is not None:
+        if not np.issubdtype(arr.dtype, type_):
+            raise TypeError(f"array is not type {type_}")
+
+    if shape is not None:
+        if len(shape) != len(arr.shape):
+            raise ValueError(f"array must have {len(shape)} dimensions")
+
+        npshape = np.where(np.array(shape) >= 0, shape, arr.shape)
+        if np.any(npshape != np.array(arr.shape)):
+            raise ValueError(f"array must have shape {npshape}")
+
+
+def special_arange(dims):
+    """Multiple dimensional arange
+
+    This could be extended to any dimension
+
+    Args:
+      dims: sequence of ints of length 3
+
+    Returns:
+      an array of shape (np.prod(dims), 3) with each index having a
+      different arrangement of arange.
+
+    This function implements the equivalent of a multidimensional for
+    loop, which feels like multidimensional arange (see the test)
+
+    >>> dim0, dim1, dim2 = 2, 4, 3
+    >>> arr_test = np.zeros((dim0 * dim1 * dim2, 3), dtype=int)
+    >>> counter = 0
+    >>> for i in np.arange(dim0):
+    ...     for j in np.arange(dim1):
+    ...         for k in np.arange(dim2):
+    ...             arr_test[counter, 0] = i
+    ...             arr_test[counter, 1] = j
+    ...             arr_test[counter, 2] = k
+    ...             counter += 1
+
+    >>> arr_actual = special_arange((dim0, dim1, dim2))
+    >>> print(arr_actual)
+    [[0 0 0]
+     [0 0 1]
+     [0 0 2]
+     [0 1 0]
+     [0 1 1]
+     [0 1 2]
+     [0 2 0]
+     [0 2 1]
+     [0 2 2]
+     [0 3 0]
+     [0 3 1]
+     [0 3 2]
+     [1 0 0]
+     [1 0 1]
+     [1 0 2]
+     [1 1 0]
+     [1 1 1]
+     [1 1 2]
+     [1 2 0]
+     [1 2 1]
+     [1 2 2]
+     [1 3 0]
+     [1 3 1]
+     [1 3 2]]
+    >>> assert np.all(arr_actual == arr_test)
+
+    """
+    # This can be made much more functional and for arbitrary
+    # dimensions if necessary
+    dim0, dim1, dim2 = dims
+    i = np.repeat(np.repeat(np.arange(dim0), dim2), dim1)
+    j = np.tile(np.repeat(np.arange(dim1), dim2), dim0)
+    k = np.tile(np.tile(np.arange(dim2), dim1), dim0)
+    return np.concatenate((i[:, None], j[:, None], k[:, None]), axis=-1)
+
+
+def calc_structure_data(
+    coords: np.ndarray, box: np.ndarray, all_symbs: list, c_size: float
+) -> dict:
+    """Calcuate a dictionary of structure data
+
+    Args:
+      coords: the coordinates for each element
+      box: the lattic matrix
+      all_symbs: the elements
+      c_size: the c size
+
+    Returns:
+      a set of structure data
+
+    >>> coords = np.array([[0, 0, 0], [0.25, 0.2, 0.25]])
+    >>> box = np.array([[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]])
+    >>> elements = ["Si", "Si"]
+    >>> c_size = 10.0
+    >>> data = calc_structure_data(coords, box, elements, c_size)
+    >>> assert len(data['coords']) == 128
+    >>> assert np.allclose(data['coords'][9], [0.    , 0.5   , 0.25  ])
+    >>> assert np.all(data['dim'] == [4, 4, 4])
+    >>> assert len(data['new_symbs']) == 128
+
+    """
+    check_array(coords, float, (len(all_symbs), 3))
+    check_array(box, float, (3, 3))
+
+    def make_coords(dim):
+        return pipe(
+            dim,
+            special_arange,
+            lambda x: (coords[:, None, :] + x[None, :, :]) / dim[None, None, :],
+            lambda x: np.reshape(x, (-1, 3)),
+            lambda x: dict(
+                coords=x,
+                dim=dim,
+                nat=len(coords),
+                lat=dim[:, None] * box,
+                new_symbs=np.repeat(all_symbs, np.prod(dim)),
+            ),
+        )
+
+    return make_coords((c_size / np.max(np.abs(box),axis=1)).astype(int) + 1)
 
 
 class NeighborsAnalysis(object):
@@ -28,57 +177,12 @@ class NeighborsAnalysis(object):
         """
 
     def get_structure_data(self, c_size=10.0):
-
-        info = {}
-        coords = self._atoms.frac_coords
-        box = self._atoms.lattice_mat
-        # print ('coords',coords)
-        # print ('box',box)
-        all_symbs = self._atoms.elements
-        dim1 = int(float(c_size) / float(max(abs(box[0])))) + 1
-        dim2 = int(float(c_size) / float(max(abs(box[1])))) + 1
-        dim3 = int(float(c_size) / float(max(abs(box[2])))) + 1
-        dim = [dim1, dim2, dim3]
-        dim = np.array(dim)
-        nat = len(coords)
-
-        new_nat = nat * dim[0] * dim[1] * dim[2]
-        new_coords = np.zeros((new_nat, 3))
-        new_symbs = []  # np.chararray((new_nat))
-
-        count = 0
-        for i in range(nat):
-            for j in range(dim[0]):
-                for k in range(dim[1]):
-                    for l in range(dim[2]):
-                        new_coords[count][0] = (coords[i][0] + j) / float(dim[0])
-                        new_coords[count][1] = (coords[i][1] + k) / float(dim[1])
-                        new_coords[count][2] = (coords[i][2] + l) / float(dim[2])
-                        new_symbs.append(all_symbs[i])
-                        count = count + 1
-
-        # print ('here4')
-        nat = new_nat
-        coords = new_coords
-
-        nat = len(coords)  # int(s.composition.num_atoms)
-        lat = np.zeros((3, 3))
-        lat[0][0] = dim[0] * box[0][0]
-        lat[0][1] = dim[0] * box[0][1]
-        lat[0][2] = dim[0] * box[0][2]
-        lat[1][0] = dim[1] * box[1][0]
-        lat[1][1] = dim[1] * box[1][1]
-        lat[1][2] = dim[1] * box[1][2]
-        lat[2][0] = dim[2] * box[2][0]
-        lat[2][1] = dim[2] * box[2][1]
-        lat[2][2] = dim[2] * box[2][2]
-
-        info["coords"] = coords
-        info["dim"] = dim
-        info["nat"] = nat
-        info["lat"] = lat
-        info["new_symbs"] = new_symbs
-        return info
+        return calc_structure_data(
+            self._atoms.frac_coords,
+            self._atoms.lattice_mat,
+            self._atoms.elements,
+            c_size,
+        )
 
     def nbor_list(self, max_n=500, rcut=10.0, c_size=12.0):
         nbor_info = {}
@@ -366,6 +470,16 @@ class NeighborsAnalysis(object):
 
 
 if __name__ == "__main__":
+    p = Poscar.from_file('/rk2/knc6/JARVIS-DFT/2D-bulk/mp-2815_bulk_PBEBO/MAIN-RELAX-bulk@mp_2815/CONTCAR').atoms
+    nb = NeighborsAnalysis(p)
+    Time = time.time()
+    data = nb.get_structure_data()
+    tot_time = time.time()-Time
+    print ('data=',data,tot_time)
+    import sys
+
+    sys.exit()
+
     box = [[5.493642, 0, 0], [0, 5.493642, 0], [0, 0, 5.493642]]
     elements = ["Si", "Si", "Si", "Si", "Si", "Si", "Si", "Si"]
     coords = [
@@ -387,8 +501,9 @@ if __name__ == "__main__":
         "/rk2/knc6/JARVIS-DFT/Mr-French/mp-672232.vasp_PBEBO/MAIN-ELASTIC-bulk@mp-672232/POSCAR"
     ).atoms
     x = NeighborsAnalysis(Si).get_rdf()
-    # print(x)
-    # import sys
+    print(x)
+    import sys
+    sys.exit()
     # distributions = NeighborsAnalysis(Si).get_all_distributions
     s = Si.pymatgen_converter()
     neighbors_list = s.get_all_neighbors(12.0)

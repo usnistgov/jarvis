@@ -32,8 +32,10 @@ class WannierHam(object):
         f.close()
         self.nwan=int(lines[1])
         self.nr=int(lines[2])
-                
-        lines_r = int(math.floor(self.nr / 15) + 1)      
+        if self.nr%15==0:
+            lines_r = int(math.floor(self.nr // 15))      
+        else:
+             lines_r = int(math.floor(self.nr // 15) + 1)      
 
         #print ('self.nwan,self.nr',self.nwan,self.nr,lines_r)
         self.sym_r = np.zeros(self.nr, dtype=float)
@@ -191,18 +193,18 @@ class WannierHam(object):
          plt.close()
 
                   
-    def compare_dft_wann(self,vasprun_path = '', energy_tol = 2,  plot=False, filename = 'compare.png'):
+    def compare_dft_wann(self,vasprun_path = '', energy_tol = 1,  plot=True, filename = 'compare.png'):
           
           vrun = Vasprun(vasprun_path)
           kpoints = vrun.kpoints._kpoints
           fermi = vrun.efermi
-          eigs_wan = self.band_structure_eigs(kpath = kpoints,efermi=vrun.efermi)[::-1]#.T
-          eigs_vrun = (vrun.eigenvalues[0][:, :, 0]-fermi)[::-1]#.T
+          eigs_wan = self.band_structure_eigs(kpath = kpoints,efermi=vrun.efermi)#-fermi#[::-1]#.T
+          eigs_vrun = (vrun.eigenvalues[0][:, :, 0]-fermi)#[::-1]#.T
           nbands = eigs_vrun.shape[1]
           nwann = eigs_wan.shape[1]
           print ('eigs.shape,eigs_vrun.shape',eigs_wan.shape,eigs_vrun.shape, nbands, nwann)
           min_arr=[]
-          erange=[-energy_tol-fermi,energy_tol+fermi]
+          erange=[-energy_tol,energy_tol]
           for k in range(len(kpoints)):
            for n in eigs_wan[k]:
               diff_arr=[]
@@ -224,6 +226,7 @@ class WannierHam(object):
                       plt.plot(ii,color='b')
                   for i,ii in enumerate(eigs_vrun.T):
                       plt.plot(ii,color='r')
+                  plt.ylim([-energy_tol,energy_tol])
                   plt.savefig(filename)
                   plt.close()
           return maxdiff
@@ -252,6 +255,14 @@ if __name__ == "__main__":
   run = ('/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/vasprun.xml')
   hr = '/rk2/knc6/Chern3DMAGMOM/JVASP-49890_mp-754684_PBEBO/MAIN-WANN-SOC-bulk@JVASP-49890_mp-754684/wannier90_hr.dat'
   run = '/rk2/knc6/Chern3DMAGMOM/JVASP-49890_mp-754684_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-49890_mp-754684/vasprun.xml'
+  hr = '/rk2/knc6/Chern3DMAGMOM/JVASP-59757_mp-22260_PBEBO/MAIN-WANN-SOC-bulk@JVASP-59757_mp-22260/wannier90_hr.dat'
+  run = '/rk2/knc6/Chern3DMAGMOM/JVASP-59757_mp-22260_PBEBO/MAIN-WANN-SOC-bulk@JVASP-59757_mp-22260/vasprun.xml'
+  hr = '/rk2/knc6/Wannier/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-1067_mp-541837/wannier90_hr.dat'
+  run = '/rk2/knc6/Wannier/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-1067_mp-541837/vasprun.xml'
+  hr = '/rk2/knc6/Wannier/JVASP-59757_mp-22260_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-59757_mp-22260/wannier90_hr.dat'
+  run = '/rk2/knc6/Wannier/JVASP-59757_mp-22260_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-59757_mp-22260/vasprun.xml'
+  hr = '/rk2/knc6/Wannier/JVASP-17265_mp-13545_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-17265_mp-13545/wannier90_hr.dat'
+  run = '/rk2/knc6/Wannier/JVASP-17265_mp-13545_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-17265_mp-13545/vasprun.xml'
   w = WannierHam(filename=hr)#get_bandstructure_plot(atoms=p)
   w.compare_dft_wann(vasprun_path=run)
   import sys
