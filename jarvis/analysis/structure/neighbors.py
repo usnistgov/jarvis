@@ -153,7 +153,7 @@ def calc_structure_data(
             lambda x: dict(
                 coords=x,
                 dim=dim,
-                nat=len(coords),
+                nat=len(x),
                 lat=dim[:, None] * box,
                 new_symbs=np.repeat(all_symbs, np.prod(dim)),
             ),

@@ -5,7 +5,8 @@ https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 """
 from __future__ import unicode_literals, print_function
 from jarvis.core.atoms import Atoms
-from jarvis.analysis.structure.neighborstmp import NeighborsAnalysis
+#from jarvis.analysis.structure.neighborstmp import NeighborsAnalysis
+from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.core.specie import Specie
 import matplotlib.pyplot as plt
 from jarvis.io.vasp.inputs import Poscar
