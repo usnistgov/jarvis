@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from operator import itemgetter
 from jarvis.io.vasp.inputs import Poscar
 import time
+
 plt.switch_backend("agg")
 import math
 from toolz.curried import pipe
@@ -159,7 +160,7 @@ def calc_structure_data(
             ),
         )
 
-    return make_coords((c_size / np.max(np.abs(box),axis=1)).astype(int) + 1)
+    return make_coords((c_size / np.max(np.abs(box), axis=1)).astype(int) + 1)
 
 
 class NeighborsAnalysis(object):
@@ -175,7 +176,9 @@ class NeighborsAnalysis(object):
         >>> distributions['rdf']
         1
         """
-
+        rcut1, rcut2 = self.get_dist_cutoffs()
+        self.rcut1 = rcut1
+        self.rcut2 = rcut2
     def get_structure_data(self, c_size=10.0):
         return calc_structure_data(
             self._atoms.frac_coords,
@@ -267,23 +270,23 @@ class NeighborsAnalysis(object):
         # rdf = 2*len(bins) * hist / np.sum(hist) / shell_vol / number_density
         nn = rdf / self._atoms.num_atoms
         # print ('rdf',len(rdf))
-        if plot:
-            plt.bar(bins[:-1], rdf, width=0.1)
+        if plot == True:
+            plt.plot(bins[:-1], rdf)
             plt.savefig("rdf.png")
             plt.close()
         return bins[:-1], rdf, nn
 
     def get_dist_cutoffs(self, max_cut=5.0):
         """
-    Helper function to get dufferent type of distance cut-offs
-    Args:
-        s: Structure object
-    Returns:
-           rcut: max-cutoff to ensure all the element-combinations are included, used in calculating angluar distribution upto first neighbor
-           rcut1: decide first cut-off based on total RDF and a buffer (previously used in dihedrals, but not used now in the code)
-           rcut2: second neighbor cut-off
-           rcut_dihed: specialized cut-off for dihedrals to avaoid large bonds such as N-N, uses average bond-distance and standard deviations
-    """
+        Helper function to get dufferent type of distance cut-offs
+        Args:
+            s: Structure object
+        Returns:
+               rcut: max-cutoff to ensure all the element-combinations are included, used in calculating angluar distribution upto first neighbor
+               rcut1: decide first cut-off based on total RDF and a buffer (previously used in dihedrals, but not used now in the code)
+               rcut2: second neighbor cut-off
+               rcut_dihed: specialized cut-off for dihedrals to avaoid large bonds such as N-N, uses average bond-distance and standard deviations
+        """
 
         x, y, z = self.get_rdf()
         arr = []
@@ -371,30 +374,35 @@ class NeighborsAnalysis(object):
         return ang_hist, ang_bins
 
     def ang_dist_first(self, plot=False):
-        rcut1, rcut2 = self.get_dist_cutoffs()
+        rcut1 = self.rcut1
+        rcut2 = self.rcut2
         nbor_info = self.nbor_list(rcut=rcut1)
         ang_hist, ang_bins = self.ang_dist(nbor_info=nbor_info)
         # print ('anghist',ang_hist)
-        if plot:
+        if plot == True:
 
-            plt.bar(ang_bins[:-1], ang_hist)
+            plt.plot(ang_bins[:-1], ang_hist)
             plt.savefig("adf1.png")
             plt.close()
         return ang_hist, ang_bins
 
     def ang_dist_second(self, plot=False):
-        rcut1, rcut2 = self.get_dist_cutoffs()
+        #rcut1, rcut2 = self.get_dist_cutoffs()
+        rcut1 = self.rcut1
+        rcut2 = self.rcut2
         # print ('rcut1,rcut2',rcut1,rcut2)
         nbor_info = self.nbor_list(rcut=rcut2)
         ang_hist, ang_bins = self.ang_dist(nbor_info=nbor_info)
-        if plot:
-            plt.bar(ang_bins[:-1], ang_hist)
+        if plot == True:
+            plt.plot(ang_bins[:-1], ang_hist)
             plt.savefig("adf2.png")
             plt.close()
         return ang_hist, ang_bins
 
     def get_ddf(self, plot=False):
-        rcut1, rcut2 = self.get_dist_cutoffs()
+        #rcut1, rcut2 = self.get_dist_cutoffs()
+        rcut1 = self.rcut1
+        rcut2 = self.rcut2
         nbor_info = self.nbor_list(rcut=rcut1)
         nat = nbor_info["nat"]
         dist = nbor_info["dist"]
@@ -449,7 +457,7 @@ class NeighborsAnalysis(object):
             dih, weights=norm, bins=np.arange(1, 181.0, 1), density=False
         )
         if plot == True:
-            plt.bar(dih_bins1[:-1], dih_hist1)
+            plt.plot(dih_bins1[:-1], dih_hist1)
             plt.savefig("dihedrals.png")
             plt.close()
         return dih_hist1, dih_bins1
@@ -470,12 +478,15 @@ class NeighborsAnalysis(object):
 
 
 if __name__ == "__main__":
-    p = Poscar.from_file('/rk2/knc6/JARVIS-DFT/2D-bulk/mp-2815_bulk_PBEBO/MAIN-RELAX-bulk@mp_2815/CONTCAR').atoms
+    p = Poscar.from_file(
+        "/rk2/knc6/JARVIS-DFT/2D-bulk/mp-2815_bulk_PBEBO/MAIN-RELAX-bulk@mp_2815/CONTCAR"
+    ).atoms
     nb = NeighborsAnalysis(p)
     Time = time.time()
     data = nb.get_structure_data()
-    tot_time = time.time()-Time
-    print ('data=',data,tot_time)
+    tot_time = time.time() - Time
+    print("data=", data, tot_time)
+    distributions = NeighborsAnalysis(p).get_all_distributions
     import sys
 
     sys.exit()
@@ -503,6 +514,7 @@ if __name__ == "__main__":
     x = NeighborsAnalysis(Si).get_rdf()
     print(x)
     import sys
+
     sys.exit()
     # distributions = NeighborsAnalysis(Si).get_all_distributions
     s = Si.pymatgen_converter()
@@ -537,16 +549,3 @@ if __name__ == "__main__":
     _, Nb = NeighborsAnalysis(Si).ang_dist_first()
     _, Nb = NeighborsAnalysis(Si).ang_dist_second()
     _, Nb = NeighborsAnalysis(Si).get_ddf()
-"""
-# https://github.com/caspervdw/rdf/blob/master/rdfmain.py
-
-# if __name__=='__main__':
-#    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-#    coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
-#    elements = ["Si", "Si"]
-#    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-#    comp=Si.composition
-#    #print (comp,Si.density)
-#    print (Si.atomic_numbers)
-#   print (Si.pymatgen_converter().composition.weight,Si.composition.weight,Si.density)
-"""
