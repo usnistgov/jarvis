@@ -8,8 +8,8 @@ import numpy as np
 from numpy import sin, cos
 import itertools
 from math import gcd
-
-from pymatgen.core.surface import get_symmetrically_distinct_miller_indices
+import os
+#from pymatgen.core.surface import get_symmetrically_distinct_miller_indices
 
 
 def unique_rows_2(a):
@@ -53,6 +53,90 @@ def symmetrically_distinct_miller_indices(max_index=3,cvn_atoms=None):
               done.append(prod)
     uniq=unique_rows_2(np.array(unique_millers))
     return uniq
+
+wyckoff_file = str(os.path.join(os.path.dirname(__file__), "Wyckoff.csv"))
+
+def parse_wyckoff_csv(wyckoff_file):
+    """Parse Wyckoff.csv
+    There are 530 data sets. For one example:
+    9:C 1 2 1:::::::
+    ::4:c:1:(x,y,z):(-x,y,-z)::
+    ::2:b:2:(0,y,1/2):::
+    ::2:a:2:(0,y,0):::
+    """
+
+    rowdata = []
+    points = []
+    hP_nums = [433, 436, 444, 450, 452, 458, 460]
+    for i, line in enumerate(wyckoff_file):
+        if line.strip() == 'end of data':
+            break
+        rowdata.append(line.strip().split(':'))
+
+        # 2:P -1  ::::::: <-- store line number if first element is number
+        if rowdata[-1][0].isdigit():
+            points.append(i)
+    points.append(i)
+
+    wyckoff = []
+    for i in range(len(points) - 1):  # 0 to 529
+        symbol = rowdata[points[i]][1]  # e.g. "C 1 2 1"
+        if i + 1 in hP_nums:
+            symbol = symbol.replace('R', 'H', 1)
+        wyckoff.append({'symbol': symbol.strip()})
+
+    # When the number of positions is larger than 4,
+    # the positions are written in the next line.
+    # So those positions are connected.
+    for i in range(len(points) - 1):
+        count = 0
+        wyckoff[i]['wyckoff'] = []
+        for j in range(points[i] + 1, points[i + 1]):
+            # Hook if the third element is a number (multiplicity), e.g.,
+            #
+            # 232:P 2/b 2/m 2/b:::::::  <- ignored
+            # ::8:r:1:(x,y,z):(-x,y,-z):(x,-y+1/2,-z):(-x,-y+1/2,z)
+            # :::::(-x,-y,-z):(x,-y,z):(-x,y+1/2,z):(x,y+1/2,-z)  <- ignored
+            # ::4:q:..m:(x,0,z):(-x,0,-z):(x,1/2,-z):(-x,1/2,z)
+            # ::4:p:..2:(0,y,1/2):(0,-y+1/2,1/2):(0,-y,1/2):(0,y+1/2,1/2)
+            # ::4:o:..2:(1/2,y,0):(1/2,-y+1/2,0):(1/2,-y,0):(1/2,y+1/2,0)
+            # ...
+            if rowdata[j][2].isdigit():
+                pos = []
+                w = {'letter': rowdata[j][3].strip(),
+                     'multiplicity': int(rowdata[j][2]),
+                     'site_symmetry': rowdata[j][4].strip(),
+                     'positions': pos}
+                wyckoff[i]['wyckoff'].append(w)
+
+                for k in range(4):
+                    if rowdata[j][k + 5]:  # check if '(x,y,z)' or ''
+                        count += 1
+                        pos.append(rowdata[j][k + 5])
+            else:
+                for k in range(4):
+                    if rowdata[j][k + 5]:
+                        count += 1
+                        pos.append(rowdata[j][k + 5])
+
+        # assertion
+        #for w in wyckoff[i]['wyckoff']:
+        #    n_pos = len(w['positions'])
+        #    n_pos *= len(lattice_symbols[wyckoff[i]['symbol'][0]])
+        #    assert n_pos == w['multiplicity']
+
+    return wyckoff
+
+def read_wyckoff_csv(filename):
+    with open(filename) as wyckoff_file:
+        return parse_wyckoff_csv(wyckoff_file)
+
+def get_wyckoff_position_operators(hall_number ):
+    wyckoff = read_wyckoff_csv( wyckoff_file )
+    operations = wyckoff[ hall_number - 1 ]
+    return operations
+
+
 
 class Spacegroup3D(object):
     def __init__(self, atoms=[], dataset={}, symprec=1e-2, angle_tolerance=5):
@@ -526,6 +610,10 @@ class Spacegroup3D(object):
 
 
 if __name__ == "__main__":
+    x = get_wyckoff_position_operators(488)
+    print (x)
+    import sys
+    sys.exit()
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]

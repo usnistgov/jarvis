@@ -16,6 +16,136 @@ plt.switch_backend("agg")
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
 
+class VacuumPadding(object):
+    """
+    Currently works for non-skew lattice only
+    """
+
+    def __init__(self, atoms, vacuum = 20.0):
+        self.atoms = atoms
+        self.vacuum = vacuum
+
+    def get_effective_2d_slab(self):
+        z_coord = []
+        for i in self.atoms.frac_coords:
+            tmp = i[2]
+            if i[2] >= 0.5:
+               tmp = i[2]-1
+            elif i[2] < -0.5:
+               tmp = i[2]+1
+            z_coord.append(tmp)
+
+        zmaxp=max(np.array(z_coord)*self.atoms.lattice_mat[2][2])
+        zminp=min(np.array(z_coord)*self.atoms.lattice_mat[2][2])
+        thickness = abs(zmaxp-zminp)
+        padding = self.vacuum + thickness
+
+        lattice_mat = self.atoms.lattice_mat
+        #lattice_mat[2][2] = padding
+        #elements = self.atoms.elements
+        #atoms = Atoms(lattice_mat = lattice_mat, coords = self.atoms.cart_coords, elements = elements, cartesian = True)
+        #atoms = atoms.center(vacuum=0.0)
+        new_lat = self.atoms.lattice_mat
+        a1 = new_lat[0]
+        a2 = new_lat[1]
+        a3 = new_lat[2]
+        new_lat = np.array(
+            [
+                a1,
+                a2,
+                np.cross(a1, a2)
+                * np.dot(a3, np.cross(a1, a2))
+                / norm(np.cross(a1, a2)) ** 2,
+            ]
+        )
+
+
+        a1 = new_lat[0]
+        a2 = new_lat[1]
+        a3 = new_lat[2]
+        #print("a1,a2,a3", new_lat)
+
+        latest_lat = np.array(
+            [
+                (np.linalg.norm(a1), 0, 0),
+                (
+                    np.dot(a1, a2) / np.linalg.norm(a1),
+                    np.sqrt(
+                        np.linalg.norm(a2) ** 2
+                        - (np.dot(a1, a2) / np.linalg.norm(a1)) ** 2
+                    ),
+                    0,
+                ),
+                (0, 0, np.linalg.norm(a3)),
+            ]
+        )
+        #latest_lat[2][2] = padding
+        M = np.linalg.solve(new_lat,latest_lat)
+        new_cart_coords=self.atoms.cart_coords
+        new_coords = np.dot(new_cart_coords,M)
+        new_atoms = Atoms(lattice_mat=latest_lat,elements=self.atoms.elements,coords=new_coords,cartesian=True)
+        frac_coords = new_atoms.frac_coords
+        frac_coords[:]=frac_coords[:]%1
+        new_atoms = Atoms(lattice_mat=latest_lat,elements=self.atoms.elements,coords=frac_coords,cartesian=False)
+        new_lat=new_atoms.lattice_mat
+        new_cart_coords=new_atoms.cart_coords
+        elements=new_atoms.elements
+        new_lat[2][2]=padding #new_lat[2][2]+ self.vacuum
+        with_vacuum_atoms=Atoms(lattice_mat=new_lat,elements=elements,coords=new_cart_coords,cartesian=True)
+        frac = np.array(with_vacuum_atoms.frac_coords)
+        frac[:,2] = frac[:,2] - np.mean(frac[:,2])+0.5
+        frac[:,2] = frac[:,2] - np.mean(frac[:,2])+0.5
+        with_vacuum_atoms=Atoms(lattice_mat=new_lat,elements=elements,coords=frac,cartesian=False)
+        return with_vacuum_atoms
+
+    def get_effective_molecule(self):
+        x_coord = []
+        y_coord = []
+        z_coord = []
+        for i in self.atoms.frac_coords:
+            tmp = i[0]
+            if i[0] >= 0.5:
+               tmp = i[0]-1
+            elif i[0] < -0.5:
+               tmp = i[0]+1
+            x_coord.append(tmp)
+            tmp = i[1]
+            if i[1] >= 0.5:
+               tmp = i[1]-1
+            elif i[1] < -0.5:
+               tmp = i[1]+1
+            y_coord.append(tmp)
+            tmp = i[2]
+            if i[2] >= 0.5:
+               tmp = i[2]-1
+            elif i[2] < -0.5:
+               tmp = i[2]+1
+            z_coord.append(tmp)
+
+        xmaxp=max(np.array(x_coord)*self.atoms.lattice_mat[0][0])
+        xminp=min(np.array(x_coord)*self.atoms.lattice_mat[0][0])
+        ymaxp=max(np.array(y_coord)*self.atoms.lattice_mat[1][1])
+        yminp=min(np.array(y_coord)*self.atoms.lattice_mat[1][1])
+        zmaxp=max(np.array(z_coord)*self.atoms.lattice_mat[2][2])
+        zminp=min(np.array(z_coord)*self.atoms.lattice_mat[2][2])
+        thickness_x = abs(xmaxp-xminp)
+        thickness_y = abs(ymaxp-yminp)
+        thickness_z = abs(zmaxp-zminp)
+
+        lattice_mat = np.zeros((3,3))#self.atoms.lattice_mat
+        lattice_mat[0][0] = self.vacuum + thickness_x
+        lattice_mat[1][1] = self.vacuum + thickness_y
+        lattice_mat[2][2] = self.vacuum + thickness_z
+        elements = self.atoms.elements
+        atoms = Atoms(lattice_mat = lattice_mat, coords = self.atoms.cart_coords, elements = elements, cartesian = True)
+        frac = np.array(atoms.frac_coords)
+        frac[:,0] = frac[:,0] - np.mean(frac[:,0])+0.5
+        frac[:,1] = frac[:,1] - np.mean(frac[:,1])+0.5
+        frac[:,2] = frac[:,2] - np.mean(frac[:,2])+0.5
+        with_vacuum_atoms=Atoms(lattice_mat=lattice_mat, elements=elements,coords=frac,cartesian=False)
+        return with_vacuum_atoms
+
+
 
 class Atoms(object):
     def __init__(
@@ -357,20 +487,24 @@ class Atoms(object):
             + str(self.lattice_mat[2][2])
             + "\n"
         )
+        order = np.argsort(self.elements)
+        coords = self.frac_coords
+        coords_ordered = np.array(coords)[order]
+        elements_ordered = np.array(self.elements)[order] 
+        props_ordered = np.array(self.props)[order]
         middle = (
-            " ".join(map(str, Counter(self.elements).keys()))
+            " ".join(map(str, Counter(elements_ordered).keys()))
             + "\n"
-            + " ".join(map(str, Counter(self.elements).values()))
+            + " ".join(map(str, Counter(elements_ordered).values()))
             + "\ndirect\n"
         )
         rest = ""
-        for i in self.frac_coords:
-            rest = rest + " ".join(map(str, i)) + "\n"
+        # print ('repr',self.frac_coords, self.frac_coords.shape)
+        for ii, i in enumerate(coords_ordered):
+            rest = rest + " ".join(map(str, i)) + " " + str(props_ordered) + "\n"
         result = header + middle + rest
-        return result
 
-    # def __repr__(self,indent=4):
-    #     return pprint.pformat(self.to_dict(), indent=indent)
+        return result
 
     def get_lll_reduced_structure(self):
         reduced_latt = self.lattice.get_lll_reduced_lattice()
@@ -392,7 +526,7 @@ class Atoms(object):
     #     return "(%s(%r))" %(self.__class__,self.__dict__)
     def __repr__(self):
         header = (
-            str("\nSystem\n1.0\n")
+            str("System\n1.0\n")
             + str(self.lattice_mat[0][0])
             + " "
             + str(self.lattice_mat[0][1])
@@ -412,24 +546,43 @@ class Atoms(object):
             + str(self.lattice_mat[2][2])
             + "\n"
         )
-        middle = (
-            " ".join(map(str, Counter(self.elements).keys()))
+        order = np.argsort(self.elements)
+        coords = self.frac_coords
+        coords_ordered = np.array(coords)[order]
+        elements_ordered = np.array(self.elements)[order]
+        props_ordered = np.array(self.props)[order]
+        check_selective_dynamics = False
+        if 'T' in ''.join(map(str,self.props[0])):
+          middle = (
+            " ".join(map(str, Counter(elements_ordered).keys()))
             + "\n"
-            + " ".join(map(str, Counter(self.elements).values()))
+            + " ".join(map(str, Counter(elements_ordered).values()))
+            + "\nSelective dynamics\n"
+            + "Direct\n"
+          )
+        else: 
+           middle = (
+            " ".join(map(str, Counter(elements_ordered).keys()))
+            + "\n"
+            + " ".join(map(str, Counter(elements_ordered).values()))
             + "\ndirect\n"
-        )
+         )
         rest = ""
         # print ('repr',self.frac_coords, self.frac_coords.shape)
-        for ii, i in enumerate(self.frac_coords):
-            rest = rest + " ".join(map(str, i)) + " " + str(self.props[ii]) + "\n"
+        for ii, i in enumerate(coords_ordered):
+            rest = rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
         result = header + middle + rest
         return result
-
 
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]
+    pdb = read_pdb('/cluster/users/knc6/pdb/pdb101d.ent')
+    print (pdb)
+    import sys
+    sys.exit()
+     
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     Si.props = ["a", "a"]
     # spg = Spacegroup3D(Si)
