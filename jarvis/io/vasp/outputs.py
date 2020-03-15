@@ -504,7 +504,7 @@ class Oszicar(object):
 
     @property
     def magnetic_moment(self):
-        return self.ionic_steps()[-1][-1]
+        return self.ionic_steps[-1][-1]
 
     @property
     def ionic_steps(self):
@@ -547,6 +547,133 @@ class Outcar(object):
         except:
             pass
         return cnvg
+
+    def elastic_props(self, atoms = None, vacuum=False):
+            """
+            Obtain elastic tensor and calculate related properties
+            Args:
+                outcar: OUTCAR file path
+                vacuum: whether the structure has vaccum such as 2D materials
+                for vacuum structures bulk and shear mod. needs extra attenstion
+                and elastic tensor are in Nm^-1 rather than GPa
+            Returns:
+                  info: data for elastic tensor (in string and object representation), bulk, shear modulus, and phonon modes
+            """
+            if vacuum == True:
+                ratio_c = 0.1 * float(
+                    abs(atoms.lattice_mat[2][2])
+                )  # *(10**9)*(10**-10) #N/m unit
+            KV = "na"
+            GV = "na"
+            spin = "na"
+            info = {}
+            ratio_c = 1.0
+            v = open(self.filename, "r")
+            lines = v.read().splitlines()
+            c = np.empty((6, 6), dtype=float)
+            for i, line in enumerate(lines):
+                if "TOTAL ELASTIC MODULI (kBar)" in line:
+                    c11 = lines[i + 3].split()[1]
+                    c12 = lines[i + 3].split()[2]
+                    c13 = lines[i + 3].split()[3]
+                    c14 = lines[i + 3].split()[4]
+                    c15 = lines[i + 3].split()[5]
+                    c16 = lines[i + 3].split()[6]
+                    c21 = lines[i + 4].split()[1]
+                    c22 = lines[i + 4].split()[2]
+                    c23 = lines[i + 4].split()[3]
+                    c24 = lines[i + 4].split()[4]
+                    c25 = lines[i + 4].split()[5]
+                    c26 = lines[i + 4].split()[6]
+                    c31 = lines[i + 5].split()[1]
+                    c32 = lines[i + 5].split()[2]
+                    c33 = lines[i + 5].split()[3]
+                    c34 = lines[i + 5].split()[4]
+                    c35 = lines[i + 5].split()[5]
+                    c36 = lines[i + 5].split()[6]
+                    c41 = lines[i + 6].split()[1]
+                    c42 = lines[i + 6].split()[2]
+                    c43 = lines[i + 6].split()[3]
+                    c44 = lines[i + 6].split()[4]
+                    c45 = lines[i + 6].split()[5]
+                    c46 = lines[i + 6].split()[6]
+                    c51 = lines[i + 7].split()[1]
+                    c52 = lines[i + 7].split()[2]
+                    c53 = lines[i + 7].split()[3]
+                    c54 = lines[i + 7].split()[4]
+                    c55 = lines[i + 7].split()[5]
+                    c56 = lines[i + 7].split()[6]
+                    c61 = lines[i + 8].split()[1]
+                    c62 = lines[i + 8].split()[2]
+                    c63 = lines[i + 8].split()[3]
+                    c64 = lines[i + 8].split()[4]
+                    c65 = lines[i + 8].split()[5]
+                    c66 = lines[i + 8].split()[6]
+                    c[0][0] = round(ratio_c * float(c11) / float(10), 1)
+                    c[0][1] = round(ratio_c * float(c12) / float(10), 1)
+                    c[0][2] = round(ratio_c * float(c13) / float(10), 1)
+                    c[0][3] = round(ratio_c * float(c14) / float(10), 1)
+                    c[0][4] = round(ratio_c * float(c15) / float(10), 1)
+                    c[0][5] = round(ratio_c * float(c16) / float(10), 1)
+                    c[1][0] = round(ratio_c * float(c21) / float(10), 1)
+                    c[1][1] = round(ratio_c * float(c22) / float(10), 1)
+                    c[1][2] = round(ratio_c * float(c23) / float(10), 1)
+                    c[1][3] = round(ratio_c * float(c24) / float(10), 1)
+                    c[1][4] = round(ratio_c * float(c25) / float(10), 1)
+                    c[1][5] = round(ratio_c * float(c26) / float(10), 1)
+                    c[2][0] = round(float(c31) / float(10), 1)
+                    c[2][1] = round(float(c32) / float(10), 1)
+                    c[2][2] = round(float(c33) / float(10), 1)
+                    c[2][3] = round(float(c34) / float(10), 1)
+                    c[2][4] = round(float(c35) / float(10), 1)
+                    c[2][5] = round(float(c36) / float(10), 1)
+                    c[3][0] = round(float(c41) / float(10), 1)
+                    c[3][1] = round(float(c42) / float(10), 1)
+                    c[3][2] = round(float(c43) / float(10), 1)
+                    c[3][3] = round(float(c44) / float(10), 1)
+                    c[3][4] = round(float(c45) / float(10), 1)
+                    c[3][5] = round(float(c46) / float(10), 1)
+                    c[4][0] = round(float(c51) / float(10), 1)
+                    c[4][1] = round(float(c52) / float(10), 1)
+                    c[4][2] = round(float(c53) / float(10), 1)
+                    c[4][3] = round(float(c54) / float(10), 1)
+                    c[4][4] = round(float(c55) / float(10), 1)
+                    c[4][5] = round(float(c56) / float(10), 1)
+                    c[5][0] = round(float(c61) / float(10), 1)
+                    c[5][1] = round(float(c62) / float(10), 1)
+                    c[5][2] = round(float(c63) / float(10), 1)
+                    c[5][3] = round(float(c64) / float(10), 1)
+                    c[5][4] = round(float(c65) / float(10), 1)
+                    c[5][5] = round(float(c66) / float(10), 1)
+                    KV = float((c[0][0] + c[1][1] + c[2][2]) + 2 * (c[0][1] + c[1][2] + c[2][0])) / float(9)
+                    GV = float(
+                        (c[0][0] + c[1][1] + c[2][2]) - (c[0][1] + c[1][2] + c[2][0]) + 3 * (c[3][3] + c[4][4] + c[5][5])
+                    ) / float(15)
+                    KV = round(KV, 3)
+                    GV = round(GV, 3)
+                    break
+            v.close()
+
+
+            modes = []
+            try:
+              for i in lines:
+                    if "cm-1" in i and "meV" in i:
+
+                        mod = float(i.split()[-4])
+                        if "f/i" in i:
+                            mod = mod * -1
+                        if mod not in modes:
+                            modes.append(float(mod))
+            except:
+                pass
+
+            info["cij"] = c
+            info["KV"] = KV
+            info["GV"] = GV
+            info["modes"] = modes
+
+            return info
 
 
 class Waveder(object):
@@ -950,6 +1077,11 @@ class Wavecar(object):
 
 
 if __name__ == "__main__":
+    o = Outcar('/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO/MAIN-ELASTIC-bulk@mp-134/OUTCAR')
+    o = Outcar('/rk2/knc6/JARVIS-DFT/Solar-Semi/mp-5986_bulk_PBEBO/MAIN-ELASTIC-bulk@mp_5986/OUTCAR')
+    print (o.elastic_props())
+    import sys
+    sys.exit()
     v = Vasprun(
         "/cluster/users/knc6/justback/Interfa/DFT/JVASP-649_JVASP-76195_PBEBO/RELAXSOCPBEBAND/vasprun.xml"
     )

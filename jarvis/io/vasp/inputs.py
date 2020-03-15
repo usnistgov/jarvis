@@ -17,7 +17,7 @@ class Poscar(object):
     def write_file(self,filename):
         f=open(filename,'w')
         header = (
-            str("System\n1.0\n")
+            str(self.comment)+str("\n1.0\n")
             + str(self.atoms.lattice_mat[0][0])
             + " "
             + str(self.atoms.lattice_mat[0][1])
@@ -37,17 +37,35 @@ class Poscar(object):
             + str(self.atoms.lattice_mat[2][2])
             + "\n"
         )
-        middle = (
-            " ".join(map(str, Counter(self.atoms.elements).keys()))
+        order = np.argsort(self.atoms.elements)
+        coords = self.atoms.frac_coords
+        coords_ordered = np.array(coords)[order]
+        elements_ordered = np.array(self.atoms.elements)[order]
+        props_ordered = np.array(self.atoms.props)[order]
+        check_selective_dynamics = False
+        if 'T' in ''.join(map(str,self.atoms.props[0])):
+          middle = (
+            " ".join(map(str, Counter(elements_ordered).keys()))
             + "\n"
-            + " ".join(map(str, Counter(self.atoms.elements).values()))
+            + " ".join(map(str, Counter(elements_ordered).values()))
+            + "\nSelective dynamics\n"
+            + "Direct\n"
+          )
+        else:
+           middle = (
+            " ".join(map(str, Counter(elements_ordered).keys()))
+            + "\n"
+            + " ".join(map(str, Counter(elements_ordered).values()))
             + "\ndirect\n"
-        )
+         )
         rest = ""
         # print ('repr',self.frac_coords, self.frac_coords.shape)
-        for ii, i in enumerate(self.atoms.frac_coords):
-            rest = rest + " ".join(map(str, i)) + " " + str(self.atoms.props[ii]) + "\n"
+        for ii, i in enumerate(coords_ordered):
+            rest = rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
+
+
         result = header + middle + rest
+
         f.write(result)
         f.close()
     @staticmethod
@@ -82,7 +100,55 @@ class Poscar(object):
        return Poscar(atoms,comment=formula)
 
     def __repr__(self):
-        return str(self.atoms)
+        header = (
+            str(self.comment)+str("\n1.0\n")
+            + str(self.atoms.lattice_mat[0][0])
+            + " "
+            + str(self.atoms.lattice_mat[0][1])
+            + " "
+            + str(self.atoms.lattice_mat[0][2])
+            + "\n"
+            + str(self.atoms.lattice_mat[1][0])
+            + " "
+            + str(self.atoms.lattice_mat[1][1])
+            + " "
+            + str(self.atoms.lattice_mat[1][2])
+            + "\n"
+            + str(self.atoms.lattice_mat[2][0])
+            + " "
+            + str(self.atoms.lattice_mat[2][1])
+            + " "
+            + str(self.atoms.lattice_mat[2][2])
+            + "\n"
+        )
+        order = np.argsort(self.atoms.elements)
+        coords = self.atoms.frac_coords
+        coords_ordered = np.array(coords)[order]
+        elements_ordered = np.array(self.atoms.elements)[order]
+        props_ordered = np.array(self.atoms.props)[order]
+        check_selective_dynamics = False
+        if 'T' in ''.join(map(str,self.atoms.props[0])):
+          middle = (
+            " ".join(map(str, Counter(elements_ordered).keys()))
+            + "\n"
+            + " ".join(map(str, Counter(elements_ordered).values()))
+            + "\nSelective dynamics\n"
+            + "Direct\n"
+          )
+        else:
+           middle = (
+            " ".join(map(str, Counter(elements_ordered).keys()))
+            + "\n"
+            + " ".join(map(str, Counter(elements_ordered).values()))
+            + "\ndirect\n"
+         )
+        rest = ""
+        # print ('repr',self.frac_coords, self.frac_coords.shape)
+        for ii, i in enumerate(coords_ordered):
+            rest = rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
+        result = header + middle + rest
+        return result
+
 
 
 class Incar(object):

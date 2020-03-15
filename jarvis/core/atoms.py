@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from collections import OrderedDict
 import pprint
 import math
+from numpy.linalg import norm, solve
 
 plt.switch_backend("agg")
 amu_gm = 1.66054e-24

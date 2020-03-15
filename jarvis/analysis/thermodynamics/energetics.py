@@ -42,13 +42,13 @@ def form_enp(atoms=None, total_energy=None):
     return form_en
 
 #https://wiki.fysik.dtu.dk/ase/_modules/ase/phasediagram.html#PhaseDiagram
-class EnergyConvexHull(object):
-     def __init__(entries=None):
-        # [array of [composition_as_dict,total_energy]]
-        self.entries = entries
+#class EnergyConvexHull(object):
+#     def __init__(entries=None):
+#        # [array of [composition_as_dict,total_energy]]
+#        self.entries = entries
 
-     def chull(self):
-        for i in self.entries:
+#     def chull(self):
+#        for i in self.entries:
             
               
      
