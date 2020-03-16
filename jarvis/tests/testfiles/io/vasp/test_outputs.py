@@ -30,20 +30,6 @@ chg = Chgcar(
         "CHGCAR",
     )
 )
-loc = Chgcar(
-    filename=os.path.join(
-        os.path.dirname(__file__),
-        "..",
-        "..",
-        "..",
-        "..",
-        "examples",
-        "vasp",
-        "SiOptb88",
-        "MAIN-RELAX-bulk@mp_149",
-        "LOCPOT",
-    )
-)
 osz = Oszicar(
     filename=os.path.join(
         os.path.dirname(__file__),
@@ -105,7 +91,7 @@ def test_chgcar():
     assert (chg.is_spin_polarized(), chg.is_spin_orbit(), np.array(chg.chg).shape) == (
         True,
         False,
-        (4, 56, 56, 56),
+        (2, 56, 56, 56),
     )
 
 
