@@ -6,8 +6,8 @@ from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from numpy.linalg import norm, solve
 from numpy import gcd
 import sys
-from pymatgen.analysis.wulff import WulffShape
-from pymatgen.core.lattice import Lattice
+#from pymatgen.analysis.wulff import WulffShape
+#from pymatgen.core.lattice import Lattice
 
 
 def ext_gcd(a, b):

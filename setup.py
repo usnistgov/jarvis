@@ -12,12 +12,32 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 setup(
     name="jarvis-tools",
     version="2020.1.11",
-
     long_description=long_d,
-    install_requires=['joblib','flask','numpy','scipy','matplotlib','spglib'
-      
+    install_requires=[
+        "joblib",
+        "flask",
+        "numpy",
+        "scipy",
+        "matplotlib",
+        "spglib",
+        "toolz",
+        "xmltodict",
     ],
-    package_data={"jarvis.core":['Elements.json','element_charge.json'],"jarvis.tasks.lammps.templates":['displace.mod'  ,'inelastcomb.mod'  ,'inelast_min.mod' , 'inelast.mod'  ,'inelast_nobox.mod'  ,'inelastreax.mod','relax.mod' , 'run0.mod'],"jarvis.io.vasp":['default_potcars.json'],"jarvis.io.wannier":['default_semicore.json']},
+    package_data={
+        "jarvis.core": ["Elements.json", "element_charge.json"],
+        "jarvis.tasks.lammps.templates": [
+            "displace.mod",
+            "inelastcomb.mod",
+            "inelast_min.mod",
+            "inelast.mod",
+            "inelast_nobox.mod",
+            "inelastreax.mod",
+            "relax.mod",
+            "run0.mod",
+        ],
+        "jarvis.io.vasp": ["default_potcars.json"],
+        "jarvis.io.wannier": ["default_semicore.json"],
+    },
     extras_require={
         "babel": ["openbabel", "pybel"],
         "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
@@ -30,7 +50,7 @@ setup(
     license="MIT",
     url="https://github.com/usnistgov/jarvis",
     packages=find_packages(),
-    #long_description=open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
+    # long_description=open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
     classifiers=[
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
