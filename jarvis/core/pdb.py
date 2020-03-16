@@ -24,10 +24,11 @@ def read_pdb(filename=''):
     pdb = Atoms(lattice_mat = box, elements = species, coords = coords, cartesian = True)
     mol = VacuumPadding(pdb,vacuum=20.).get_effective_molecule()
     return mol
-
+"""
 if __name__ == "__main__":
     pdb = read_pdb('/cluster/users/knc6/pdb/pdb101d.ent')
     print (pdb)
     import sys
     sys.exit()
 
+"""

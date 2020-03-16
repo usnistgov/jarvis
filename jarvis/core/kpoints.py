@@ -948,7 +948,7 @@ class HighSymmetryKpoint3DFactory(object):
         ]
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
-
+"""
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
@@ -968,3 +968,4 @@ if __name__ == "__main__":
     ).atoms
     kp = Kpoints3D().kpath(atoms=Si)  # automatic_length_mesh(lattice_mat=lattice_mat)
     kp.write_file("KPOINTS")
+"""

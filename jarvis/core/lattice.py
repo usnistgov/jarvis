@@ -42,6 +42,7 @@ class Lattice(object):
         >>> [round(i,2) for i in lat.lat_angles()]
         [90.0, 90.0, 90.0]
         """
+        #print ('lattice_mat', lattice_mat)
         tmp = np.array(lattice_mat, dtype=np.float64).reshape((3, 3))
 
         self._lat = np.around(tmp, decimals=round_off)
@@ -375,7 +376,7 @@ class Lattice(object):
             self._lll_matrix_mappings[delta] = self._calculate_lll()
         return Lattice(self._lll_matrix_mappings[delta][0])
 
-
+"""
 if __name__ == "__main__":
 
     box = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
@@ -388,3 +389,4 @@ if __name__ == "__main__":
 
     cart_coords = [[0, 0, 0], [5, 5, 5]]
     print(lat.frac_coords(cart_coords)[1][1])
+"""

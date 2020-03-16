@@ -559,6 +559,7 @@ class Outcar(object):
             Returns:
                   info: data for elastic tensor (in string and object representation), bulk, shear modulus, and phonon modes
             """
+            ratio_c = 1.0
             if vacuum == True:
                 ratio_c = 0.1 * float(
                     abs(atoms.lattice_mat[2][2])
@@ -567,7 +568,6 @@ class Outcar(object):
             GV = "na"
             spin = "na"
             info = {}
-            ratio_c = 1.0
             v = open(self.filename, "r")
             lines = v.read().splitlines()
             c = np.empty((6, 6), dtype=float)
@@ -668,7 +668,7 @@ class Outcar(object):
             except:
                 pass
 
-            info["cij"] = c
+            info["cij"] = c.tolist()
             info["KV"] = KV
             info["GV"] = GV
             info["modes"] = modes

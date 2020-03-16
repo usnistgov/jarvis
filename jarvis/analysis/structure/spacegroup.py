@@ -35,7 +35,7 @@ def symmetrically_distinct_miller_indices(max_index=3,cvn_atoms=None):
     r3=r1+r2
     #r.reverse()
     r=r3
-    print ('rrrrr',r,sorted(r))
+    #print ('rrrrr',r,sorted(r))
     conv_hkl_list = [miller for miller in itertools.product(r, r, r) if any([i != 0 for i in miller])]
     spg=Spacegroup3D(cvn_atoms)._dataset
     rot=spg['rotations']
@@ -608,7 +608,7 @@ class Spacegroup3D(object):
         )
         return new_struct
 
-
+"""
 if __name__ == "__main__":
     x = get_wyckoff_position_operators(488)
     print (x)
@@ -636,3 +636,4 @@ if __name__ == "__main__":
     # spg=SpacegroupAnalyzer(pmg)
     # print (spg.get_space_group_symbol(),spg.get_space_group_number())
     # print (pmg.get_primitive_structure())
+"""

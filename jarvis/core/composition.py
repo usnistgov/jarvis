@@ -79,7 +79,7 @@ class Composition(object):
     def __repr__(self):
         return str(self._content)
 
-
+#"""
 if __name__ == "__main__":
     comp = {"Li": 2, "O": 4}
     cc = Composition(comp)
@@ -88,3 +88,4 @@ if __name__ == "__main__":
     # print(x, y)
     proto = cc.prototype
     print(proto, cc.formula, cc.reduced_formula)
+#"""

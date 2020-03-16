@@ -186,7 +186,7 @@ class Atoms(object):
 
         self.lattice_mat = np.array(lattice_mat)
         self.lattice = Lattice(lattice_mat)
-        self.coords = coords
+        self.coords = np.array(coords)
         self.elements = elements
         self.cartesian = cartesian
         self.props = props
@@ -249,7 +249,7 @@ class Atoms(object):
     def to_dict(self):
         d = OrderedDict()
         d["lattice_mat"] = self.lattice_mat.tolist()
-        d["coords"] = self.coords.tolist()
+        d["coords"] = np.array(self.coords).tolist()
         d["elements"] = self.elements
         d["abc"] = self.lattice.lat_lengths()
         d["angles"] = self.lattice.lat_angles()
@@ -574,7 +574,7 @@ class Atoms(object):
             rest = rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
         result = header + middle + rest
         return result
-
+"""
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
@@ -612,3 +612,4 @@ if __name__ == "__main__":
 #    #print (comp,Si.density)
 #    print (Si.atomic_numbers)
 #   print (Si.pymatgen_converter().composition.weight,Si.composition.weight,Si.density)
+"""

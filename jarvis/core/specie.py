@@ -12,6 +12,25 @@ el_chrg_json = open(el_chrg_json_file, "r")
 chrg_data = json.load(el_chrg_json)
 el_chrg_json.close()
 
+def get_descrp_arr_name(elm="Al"):
+    """
+      Get chemical descriptors for an element
+      Args:
+           elm: element name
+      Returns:
+             arr: array value
+      """
+    arr = []
+    try:
+        dat = chem_data
+
+        d = dat[elm]
+        arr = []
+        for k, v in d.items():
+            arr.append(k)
+    except:
+        pass
+    return arr
 
 class Specie(object):
     """
@@ -183,5 +202,6 @@ class Specie(object):
 if __name__ == "__main__":
     el = Specie("Al")
     #print(el.get_chgdescrp_arr)
-    print(el.get_descrp_arr)
+    #print(el.get_descrp_arr)
+    print (get_descrp_arr_name())
 """

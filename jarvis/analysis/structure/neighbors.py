@@ -7,8 +7,7 @@ import matplotlib.pyplot as plt
 from operator import itemgetter
 from jarvis.io.vasp.inputs import Poscar
 import time
-
-plt.switch_backend("agg")
+#plt.switch_backend("agg")
 import math
 from toolz.curried import pipe
 
@@ -38,7 +37,7 @@ def check_array(arr, type_=None, shape=None):
 
     """
     if not isinstance(arr, np.ndarray):
-        raise TypeError("not an array")
+        raise TypeError("not an array",arr)
 
     if type_ is not None:
         if not np.issubdtype(arr.dtype, type_):

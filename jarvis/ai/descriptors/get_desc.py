@@ -3,157 +3,21 @@ Classical Force-field Inspired Descriptors (CFID)
 Find details in:
 https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 """
-from __future__ import unicode_literals, print_function
-from jarvis.core.atoms import Atoms
-#from jarvis.analysis.structure.neighborstmp import NeighborsAnalysis
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
-#from jarvis.analysis.structure.nborold import NeighborsAnalysis
 from numpy.linalg import norm, solve
 from jarvis.core.specie import Specie
 import matplotlib.pyplot as plt
+from jarvis.core.atoms import Atoms, VacuumPadding
+from jarvis.core.specie import get_descrp_arr_name
 from jarvis.io.vasp.inputs import Poscar
-plt.switch_backend("agg")
+#plt.switch_backend("agg")
 from collections import defaultdict
-import itertools
-import time
 # from scipy.stats import gaussian_kde
 from math import pi
 from operator import itemgetter
-import collections, math, os
+import time, itertools, collections, math, os, json, sys
 import numpy as np
 from math import log
-import json, sys
-import numpy as np
-
-class VacuumPadding(object):
-    """
-    Currently works for non-skew lattice only
-    """
-
-    def __init__(self, atoms, vacuum = 20.0):
-        self.atoms = atoms
-        self.vacuum = vacuum
-
-    def get_effective_2d_slab(self):
-        z_coord = []
-        for i in self.atoms.frac_coords:
-            tmp = i[2]
-            if i[2] >= 0.5:
-               tmp = i[2]-1
-            elif i[2] < -0.5:
-               tmp = i[2]+1
-            z_coord.append(tmp)
-        
-        zmaxp=max(np.array(z_coord)*self.atoms.lattice_mat[2][2])
-        zminp=min(np.array(z_coord)*self.atoms.lattice_mat[2][2])
-        thickness = abs(zmaxp-zminp)
-        padding = self.vacuum + thickness
-
-        lattice_mat = self.atoms.lattice_mat
-        #lattice_mat[2][2] = padding
-        #elements = self.atoms.elements
-        #atoms = Atoms(lattice_mat = lattice_mat, coords = self.atoms.cart_coords, elements = elements, cartesian = True)
-        #atoms = atoms.center(vacuum=0.0)
-
-
-        new_lat = self.atoms.lattice_mat
-        a1 = new_lat[0]
-        a2 = new_lat[1]
-        a3 = new_lat[2]
-        new_lat = np.array(
-            [
-                a1,
-                a2,
-                np.cross(a1, a2)
-                * np.dot(a3, np.cross(a1, a2))
-                / norm(np.cross(a1, a2)) ** 2,
-            ]
-        )
-
-
-        a1 = new_lat[0]
-        a2 = new_lat[1]
-        a3 = new_lat[2]
-        #print("a1,a2,a3", new_lat)
-        
-        latest_lat = np.array(
-            [
-                (np.linalg.norm(a1), 0, 0),
-                (
-                    np.dot(a1, a2) / np.linalg.norm(a1),
-                    np.sqrt(
-                        np.linalg.norm(a2) ** 2
-                        - (np.dot(a1, a2) / np.linalg.norm(a1)) ** 2
-                    ),
-                    0,
-                ),
-                (0, 0, np.linalg.norm(a3)),
-            ]
-        )
-        #latest_lat[2][2] = padding
-        M = np.linalg.solve(new_lat,latest_lat)
-        new_cart_coords=self.atoms.cart_coords
-        new_coords = np.dot(new_cart_coords,M)
-        new_atoms = Atoms(lattice_mat=latest_lat,elements=self.atoms.elements,coords=new_coords,cartesian=True)
-        frac_coords = new_atoms.frac_coords
-        frac_coords[:]=frac_coords[:]%1
-        new_atoms = Atoms(lattice_mat=latest_lat,elements=self.atoms.elements,coords=frac_coords,cartesian=False)
-        new_lat=new_atoms.lattice_mat
-        new_cart_coords=new_atoms.cart_coords
-        elements=new_atoms.elements
-        new_lat[2][2]=padding #new_lat[2][2]+ self.vacuum
-        with_vacuum_atoms=Atoms(lattice_mat=new_lat,elements=elements,coords=new_cart_coords,cartesian=True)
-        frac = np.array(with_vacuum_atoms.frac_coords)
-        frac[:,2] = frac[:,2] - np.mean(frac[:,2])+0.5
-        with_vacuum_atoms=Atoms(lattice_mat=new_lat,elements=elements,coords=frac,cartesian=False)
-        return with_vacuum_atoms
-        
-    def get_effective_molecule(self):
-        x_coord = []
-        y_coord = []
-        z_coord = []
-        for i in self.atoms.frac_coords:
-            tmp = i[0]
-            if i[0] >= 0.5:
-               tmp = i[0]-1
-            elif i[0] < -0.5:
-               tmp = i[0]+1
-            x_coord.append(tmp)
-            tmp = i[1]
-            if i[1] >= 0.5:
-               tmp = i[1]-1
-            elif i[1] < -0.5:
-               tmp = i[1]+1
-            y_coord.append(tmp)
-            tmp = i[2]
-            if i[2] >= 0.5:
-               tmp = i[2]-1
-            elif i[2] < -0.5:
-               tmp = i[2]+1
-            z_coord.append(tmp)
-        
-        xmaxp=max(np.array(x_coord)*self.atoms.lattice_mat[0][0])
-        xminp=min(np.array(x_coord)*self.atoms.lattice_mat[0][0])
-        ymaxp=max(np.array(y_coord)*self.atoms.lattice_mat[1][1])
-        yminp=min(np.array(y_coord)*self.atoms.lattice_mat[1][1])
-        zmaxp=max(np.array(z_coord)*self.atoms.lattice_mat[2][2])
-        zminp=min(np.array(z_coord)*self.atoms.lattice_mat[2][2])
-        thickness_x = abs(xmaxp-xminp)
-        thickness_y = abs(ymaxp-yminp)
-        thickness_z = abs(zmaxp-zminp)
-
-        lattice_mat = np.zeros((3,3))#self.atoms.lattice_mat
-        lattice_mat[0][0] = self.vacuum + thickness_x
-        lattice_mat[1][1] = self.vacuum + thickness_y
-        lattice_mat[2][2] = self.vacuum + thickness_z
-        elements = self.atoms.elements
-        atoms = Atoms(lattice_mat = lattice_mat, coords = self.atoms.cart_coords, elements = elements, cartesian = True)
-        frac = np.array(atoms.frac_coords)
-        frac[:,0] = frac[:,0] - np.mean(frac[:,0])+0.5
-        frac[:,1] = frac[:,1] - np.mean(frac[:,1])+0.5
-        frac[:,2] = frac[:,2] - np.mean(frac[:,2])+0.5
-        with_vacuum_atoms=Atoms(lattice_mat=lattice_mat, elements=elements,coords=frac,cartesian=False)
-        return with_vacuum_atoms
         
 
 class CFID(object):
