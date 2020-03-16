@@ -46,7 +46,7 @@ jobs:
             pip install codecov 
             rm -rf jarvis
             git clone -b j2020 https://github.com/knc6/jarvis.git
-            cd jarvis/tests
+            cd jarvis
             python setup.py install
             pip install pytest pytest-cov
             pytest --cov=./
