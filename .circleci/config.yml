@@ -25,7 +25,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
+          #- v1-dependencies-{{ checksum "requirements.txt" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
       - run:
@@ -46,7 +46,7 @@ jobs:
             pip install codecov 
             rm -rf jarvis
             git clone -b j2020 https://github.com/knc6/jarvis.git
-            cd jarvis
+            cd jarvis/tests
             python setup.py install
             pip install pytest pytest-cov
             pytest --cov=./
@@ -57,7 +57,7 @@ jobs:
       - save_cache:
           paths:
             - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
+          #key: v1-dependencies-{{ checksum "requirements.txt" }}
         
       - run:
           command: |
