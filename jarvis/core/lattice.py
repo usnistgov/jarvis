@@ -42,7 +42,7 @@ class Lattice(object):
         >>> [round(i,2) for i in lat.lat_angles()]
         [90.0, 90.0, 90.0]
         """
-        #print ('lattice_mat', lattice_mat)
+        # print ('lattice_mat', lattice_mat)
         tmp = np.array(lattice_mat, dtype=np.float64).reshape((3, 3))
 
         self._lat = np.around(tmp, decimals=round_off)
@@ -375,6 +375,7 @@ class Lattice(object):
         if delta not in self._lll_matrix_mappings:
             self._lll_matrix_mappings[delta] = self._calculate_lll()
         return Lattice(self._lll_matrix_mappings[delta][0])
+
 
 """
 if __name__ == "__main__":

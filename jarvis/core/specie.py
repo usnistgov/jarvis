@@ -12,6 +12,7 @@ el_chrg_json = open(el_chrg_json_file, "r")
 chrg_data = json.load(el_chrg_json)
 el_chrg_json.close()
 
+
 def get_descrp_arr_name(elm="Al"):
     """
       Get chemical descriptors for an element
@@ -31,6 +32,7 @@ def get_descrp_arr_name(elm="Al"):
     except:
         pass
     return arr
+
 
 class Specie(object):
     """

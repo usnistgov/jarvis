@@ -1,4 +1,7 @@
-from jarvis.analysis.structure.spacegroup import Spacegroup3D,symmetrically_distinct_miller_indices
+from jarvis.analysis.structure.spacegroup import (
+    Spacegroup3D,
+    symmetrically_distinct_miller_indices,
+)
 from jarvis.core.atoms import Atoms
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.lammps.inputs import LammpsInput, LammpsData
@@ -13,48 +16,80 @@ import json
 import sys
 
 
-
 class JobFactory(object):
-    def __init__(self, name="", pair_style='',pair_coeff='',control_file=''):
-        self.pair_style=pair_style
-        self.pair_coeff=pair_coeff
-        self.control_file=control_file
+    def __init__(self, name="", pair_style="", pair_coeff="", control_file=""):
+        self.pair_style = pair_style
+        self.pair_coeff = pair_coeff
+        self.control_file = control_file
         self.name = name
 
-    def all_props_eam_alloy(self,atoms=None, ff_path='', lammps_cmd='', enforce_conventional_structure=True, enforce_c_size=0):
-         if enforce_conventional_structure:
-             atoms=Spacegroup3D(atoms).conventional_standard_structure
+    def all_props_eam_alloy(
+        self,
+        atoms=None,
+        ff_path="",
+        lammps_cmd="",
+        enforce_conventional_structure=True,
+        enforce_c_size=0,
+    ):
+        if enforce_conventional_structure:
+            atoms = Spacegroup3D(atoms).conventional_standard_structure
 
-         if enforce_c_size is not None:
-               dim1 = int((float(enforce_c_size) / float(max(abs(atoms.lattice_mat[0]))))) + 1
-               dim2 = int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[1])))) + 1
-               dim3 = int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[2])))) + 1
-               atoms=atoms.make_supercell([dim1,dim2,dim3])
+        if enforce_c_size is not None:
+            dim1 = (
+                int((float(enforce_c_size) / float(max(abs(atoms.lattice_mat[0]))))) + 1
+            )
+            dim2 = (
+                int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[1])))) + 1
+            )
+            dim3 = (
+                int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[2])))) + 1
+            )
+            atoms = atoms.make_supercell([dim1, dim2, dim3])
 
-         self.pair_style='eam/alloy'
-         self.pair_coeff=ff_path
-         parameters={"pair_style":self.pair_style, 'atom_style': 'charge', "pair_coeff":self.pair_coeff}
-         parameters['control_file']='inelast.mod'
-         en, final_str, forces=LammpsJob(atoms=atoms, jobname='ELASTIC',parameters=parameters, lammps_cmd=lammps_cmd).runjob()         
-         print ('en, final_str, forces',en, final_str, forces)          
+        self.pair_style = "eam/alloy"
+        self.pair_coeff = ff_path
+        parameters = {
+            "pair_style": self.pair_style,
+            "atom_style": "charge",
+            "pair_coeff": self.pair_coeff,
+        }
+        parameters["control_file"] = "inelast.mod"
+        en, final_str, forces = LammpsJob(
+            atoms=atoms, jobname="ELASTIC", parameters=parameters, lammps_cmd=lammps_cmd
+        ).runjob()
+        print("en, final_str, forces", en, final_str, forces)
 
+        indices = symmetrically_distinct_miller_indices(max_index=1)
+        for i in indices:
+            surf = Surface(atoms=final_str, indices=i).make_surface()
+            jobname = str("Surf-") + str("_".join(map(str, i)))
+            en2, final_str2, forces2 = LammpsJob(
+                atoms=surf,
+                jobname=jobname,
+                parameters=parameters,
+                lammps_cmd=lammps_cmd,
+            ).runjob()
 
-         indices=symmetrically_distinct_miller_indices(max_index=1)
-         for i in indices:
-           surf=Surface(atoms=final_str, indices=i).make_surface()
-           jobname=str('Surf-')+str('_'.join(map(str,i)))
-           en2, final_str2, forces2=LammpsJob(atoms=surf, jobname=jobname,parameters=parameters, lammps_cmd=lammps_cmd).runjob()
-           
-         sys.exit()
+        sys.exit()
 
-         v=Vacancy(atoms=final_str).generate_defects(enforce_c_size=5)
-         print ('vacs=',v)
-         for i,ii in enumerate(v):
-          jobname=str('symbol-')+str(ii._symbol ) +str('-')+str('Wycoff-')+str(ii._wyckoff_multiplicity)
-          print ('ii._defect_structure',ii._atoms)
-          en2, final_str2, forces2=LammpsJob(atoms=ii._defect_structure, jobname=jobname,parameters=parameters, lammps_cmd=lammps_cmd).runjob()
+        v = Vacancy(atoms=final_str).generate_defects(enforce_c_size=5)
+        print("vacs=", v)
+        for i, ii in enumerate(v):
+            jobname = (
+                str("symbol-")
+                + str(ii._symbol)
+                + str("-")
+                + str("Wycoff-")
+                + str(ii._wyckoff_multiplicity)
+            )
+            print("ii._defect_structure", ii._atoms)
+            en2, final_str2, forces2 = LammpsJob(
+                atoms=ii._defect_structure,
+                jobname=jobname,
+                parameters=parameters,
+                lammps_cmd=lammps_cmd,
+            ).runjob()
 
-                
     def optimize_and_elastic(self):
         pass
 
@@ -244,9 +279,11 @@ if __name__ == "__main__":
     }
 
     cmd = "/users/knc6/Software/LAMMPS/lammps-master/src/lmp_serial<in.main"
-    #LammpsJob(atoms=cvn, parameters=parameters, lammps_cmd=cmd).runjob()
-    #final_str = LammpsData().read_data(
+    # LammpsJob(atoms=cvn, parameters=parameters, lammps_cmd=cmd).runjob()
+    # final_str = LammpsData().read_data(
     #            potential_file='/users/knc6/Software/J2020/jarvis/jarvis/tasks/lammps/ELASTIC/potential.mod', filename="/users/knc6/Software/J2020/jarvis/jarvis/tasks/lammps/ELASTIC/data", element_order=[])
-    #print ('final_str',final_str)
+    # print ('final_str',final_str)
 
-    JobFactory().all_props_eam_alloy(atoms=cvn,ff_path="/data/knc6/JARVIS-FF-NEW/FS/Al1.eam.fs",lammps_cmd=cmd)
+    JobFactory().all_props_eam_alloy(
+        atoms=cvn, ff_path="/data/knc6/JARVIS-FF-NEW/FS/Al1.eam.fs", lammps_cmd=cmd
+    )

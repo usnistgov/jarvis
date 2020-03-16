@@ -2,6 +2,7 @@ from subprocess import Popen, PIPE
 import os
 import subprocess
 
+
 class Queue(object):
     def __init__(
         self,
@@ -17,7 +18,7 @@ class Queue(object):
         self.job_check_cmd = job_check_cmd
         self.job_id = job_id
 
-    def head_node(self,submit_cmd=None):
+    def head_node(self, submit_cmd=None):
         os.system(submit_cmd)
 
     def pbs(
@@ -160,4 +161,4 @@ class Queue(object):
 if __name__ == "__main__":
     Queue().pbs()
     Queue().slurm(filename="ll")
-    Queue().head_node('echo ABC')
+    Queue().head_node("echo ABC")

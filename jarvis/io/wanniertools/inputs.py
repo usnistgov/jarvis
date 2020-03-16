@@ -285,7 +285,7 @@ class WTin(object):
             f.write(line)
         f.close()
 
-
+"""
 if __name__ == "__main__":
     hr = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90_hr.dat"
     wout = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90.wout"
@@ -297,3 +297,4 @@ if __name__ == "__main__":
     lines = WTin(atoms=p).get_ibz_kp()
     # print(lines)
     wtin = WTin(atoms=p, wannierout=wout).write_wt_in()
+"""

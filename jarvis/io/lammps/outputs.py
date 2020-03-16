@@ -1,5 +1,5 @@
-
 import sys
+
 
 def analyze_log(log="log.lammps"):
 
@@ -125,7 +125,9 @@ def analyze_log(log="log.lammps"):
         round(float(c56), 1),
     )
 
+"""
 if __name__ == "__main__":
-    lg='/rk2/knc6/JARVIS-FF/ALLOY8/Mishin_updated-Ni-Al-Co-2013.eam.alloy_nist/bulk@mp-134_fold/bulk@mp-134/log.lammps'
-    x=analyze_log(lg)
-    print (x)
+    lg = "/rk2/knc6/JARVIS-FF/ALLOY8/Mishin_updated-Ni-Al-Co-2013.eam.alloy_nist/bulk@mp-134_fold/bulk@mp-134/log.lammps"
+    x = analyze_log(lg)
+    print(x)
+"""

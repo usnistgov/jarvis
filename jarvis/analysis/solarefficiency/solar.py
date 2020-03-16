@@ -351,7 +351,7 @@ class SolarEfficiency(object):
 
         return efficiency
 
-
+"""
 if __name__ == "__main__":
 
     v = Vasprun(
@@ -367,3 +367,4 @@ if __name__ == "__main__":
     print("SLME", 100 * eff)
     eff = SolarEfficiency().calculate_SQ(indirgap)
     print("SQ", 100 * eff)
+"""

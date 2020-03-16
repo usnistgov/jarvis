@@ -10,41 +10,51 @@ import os
 import shutil
 
 
-
 class JobFactory(object):
     def __init__(self, name="", use_incar_dict={}, pot_type=None):
         self.name = name
         self.use_incar_dict = use_incar_dict
         self.pot_type = pot_type
 
-    #def combine_jobs(self):
+    # def combine_jobs(self):
 
-    def all_optb88vdw_props(self,mat=None):
-      optb88=GenericIncars().optb88vdw()
-      job=JobFactory(use_incar_dict=optb88.incar,pot_type=optb88.pot_type)
-      encut=job.converg_encut(mat=mat)
-      length=job.converg_kpoint(mat=mat)
-      energy,contcar_path=job.optimize_geometry(mat=mat, encut=encut, length=length)        
-      optimized_mat=Poscar.from_file(contcar_path) 
-      vrun=Vapsrun(contcar_path.replace('CONTCAR','vasprun.xml'))
-      chg_path=contcar_path.replace('CONTCAR','CHGCAR')
-      nbands=int(vrun.all_input_parameters['NBANDS'])
-      enB,contcB=job.band_structure(mat=optimized_mat, encut=encut, line_density=20, nbands=2*nbands, copy_prev_chgcar=chg_path)
-      enL,contcL=job.loptics(mat=optimized_mat, encut=encut,  nbands=2*nbands, length=length)
-      enM,contcM=job.mbj_loptics(mat=optimized_mat, encut=encut,  nbands=2*nbands, length=length)
-      enE,contcE=job.elastic(mat=optimized_mat, encut=encut,  nbands=2*nbands, length=length)
-     
+    def all_optb88vdw_props(self, mat=None):
+        optb88 = GenericIncars().optb88vdw()
+        job = JobFactory(use_incar_dict=optb88.incar, pot_type=optb88.pot_type)
+        encut = job.converg_encut(mat=mat)
+        length = job.converg_kpoint(mat=mat)
+        energy, contcar_path = job.optimize_geometry(
+            mat=mat, encut=encut, length=length
+        )
+        optimized_mat = Poscar.from_file(contcar_path)
+        vrun = Vapsrun(contcar_path.replace("CONTCAR", "vasprun.xml"))
+        chg_path = contcar_path.replace("CONTCAR", "CHGCAR")
+        nbands = int(vrun.all_input_parameters["NBANDS"])
+        enB, contcB = job.band_structure(
+            mat=optimized_mat,
+            encut=encut,
+            line_density=20,
+            nbands=2 * nbands,
+            copy_prev_chgcar=chg_path,
+        )
+        enL, contcL = job.loptics(
+            mat=optimized_mat, encut=encut, nbands=2 * nbands, length=length
+        )
+        enM, contcM = job.mbj_loptics(
+            mat=optimized_mat, encut=encut, nbands=2 * nbands, length=length
+        )
+        enE, contcE = job.elastic(
+            mat=optimized_mat, encut=encut, nbands=2 * nbands, length=length
+        )
 
- 
     def elastic(
-        self, mat=None, encut=None,  nbands=None , potim=0.015,npar=None,length=20
+        self, mat=None, encut=None, nbands=None, potim=0.015, npar=None, length=20
     ):
 
         incar = self.use_incar_dict
-        cvn=Spacegroup3D(mat.atoms).conventional_standard_structure
-        comment=mat.comment
-        p=Poscar(cvn,comment=comment)
-
+        cvn = Spacegroup3D(mat.atoms).conventional_standard_structure
+        comment = mat.comment
+        p = Poscar(cvn, comment=comment)
 
         if npar is not None:
             incar.update({"NPAR": npar})
@@ -76,9 +86,7 @@ class JobFactory(object):
 
         return en, contcar
 
-    def mbj_loptics(
-        self, mat=None, encut=None,  nbands=None , length=20
-    ):
+    def mbj_loptics(self, mat=None, encut=None, nbands=None, length=20):
 
         incar = self.use_incar_dict
 
@@ -92,8 +100,8 @@ class JobFactory(object):
             "LORBIT": 11,
             "ISPIN": 2,
             "METAGGA": "MBJ",
-            "SIGMA": 0.1, 
-            "ISYM":0,
+            "SIGMA": 0.1,
+            "ISYM": 0,
             "LOPTICS": ".TRUE.",
             "IBRION": 1,
             "LCHARG": ".FALSE.",
@@ -113,10 +121,7 @@ class JobFactory(object):
 
         return en, contcar
 
-
-    def loptics(
-        self, mat=None, encut=None,  nbands=None , length=20
-    ):
+    def loptics(self, mat=None, encut=None, nbands=None, length=20):
 
         incar = self.use_incar_dict
 
@@ -148,7 +153,6 @@ class JobFactory(object):
 
         return en, contcar
 
-
     def band_structure(
         self, mat=None, encut=None, line_density=20, nbands=None, copy_prev_chgcar=None
     ):
@@ -170,7 +174,7 @@ class JobFactory(object):
             "LCHARG": ".FALSE.",
         }
         incar.update(data)
-        kpoints = Kpoints().kpath(mat.atoms,line_density=line_density)
+        kpoints = Kpoints().kpath(mat.atoms, line_density=line_density)
 
         en, contcar = VaspJobs(
             poscar=mat,
@@ -725,7 +729,7 @@ class VaspJobs(object):
                         print("FOUND OLD CONTCAR in", os.getcwd())
                         copy_cmd = str("cp CONTCAR POSCAR")
                         self.poscar.write_file("POSCAR")
-                        pos=Poscar.from_file('CONTCAR')
+                        pos = Poscar.from_file("CONTCAR")
                         print("copy_cmd=", copy_cmd)
                         if "ELAST" not in jobname and "LEPSILON" not in jobname:
                             # Because in ELASTIC calculations structures are deformed
@@ -733,7 +737,6 @@ class VaspJobs(object):
                         # time.sleep(3)
                     except:
                         pass
-
 
             self.incar.write_file("INCAR")
             self.potcar.write_file("POTCAR")
@@ -840,6 +843,7 @@ class GenericIncars(object):
         inc = Incar(data)
         return GenericIncars(name="lda", incar=inc, pot_type="POT_LDA_PAW")
 
+
 if __name__ == "__main__":
 
     p = Poscar.from_file(
@@ -864,15 +868,15 @@ if __name__ == "__main__":
     # job = VaspJobs(poscar=p, kpoints=kp, incar=inc, jobname="testt").write_jobsub_py()
     # job = VaspJobs(poscar=p, kpoints=kp,pot_type='POT_GGA_PAW_PBE', incar=inc, jobname="testt").runjob()
     # print('optb88vdw incar',GenericIncars().optb88vdw().incar)
-    #JobFactory(
+    # JobFactory(
     #    use_incar_dict=GenericIncars().optb88vdw().incar,
     #    pot_type=GenericIncars().optb88vdw().pot_type,
-        # ).converg_encut(mat=p)
-        # ).converg_kpoint(mat=p)
-        #).optimize_geometry(mat=p, encut=500, length=0)
-        #).band_structure(mat=p, encut=500, nbands=100)
-        #).loptics(mat=p, encut=500, nbands=100)
-        #).mbj_loptics(mat=p, encut=500, nbands=100)
-        #).elastic(mat=p, encut=500, nbands=100)
+    # ).converg_encut(mat=p)
+    # ).converg_kpoint(mat=p)
+    # ).optimize_geometry(mat=p, encut=500, length=0)
+    # ).band_structure(mat=p, encut=500, nbands=100)
+    # ).loptics(mat=p, encut=500, nbands=100)
+    # ).mbj_loptics(mat=p, encut=500, nbands=100)
+    # ).elastic(mat=p, encut=500, nbands=100)
 
     JobFactory().all_optb88vdw_props(mat=p)

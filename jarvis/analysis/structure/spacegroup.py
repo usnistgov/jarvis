@@ -9,52 +9,58 @@ from numpy import sin, cos
 import itertools
 from math import gcd
 import os
-#from pymatgen.core.surface import get_symmetrically_distinct_miller_indices
+
+# from pymatgen.core.surface import get_symmetrically_distinct_miller_indices
 
 
 def unique_rows_2(a):
     order = np.lexsort(a.T)
     a = a[order]
     diff = np.diff(a, axis=0)
-    ui = np.ones(len(a), 'bool')
-    ui[1:] = (diff != 0).any(axis=1) 
+    ui = np.ones(len(a), "bool")
+    ui[1:] = (diff != 0).any(axis=1)
     return a[ui]
+
 
 def unique_rows(a):
     # https://stackoverflow.com/questions/31097247/remove-duplicate-rows-of-a-numpy-array
     a = np.ascontiguousarray(a)
-    unique_a = np.unique(a.view([('', a.dtype)]*a.shape[1]))
+    unique_a = np.unique(a.view([("", a.dtype)] * a.shape[1]))
     return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
 
 
-def symmetrically_distinct_miller_indices(max_index=3,cvn_atoms=None):
-    #Need to work on this
+def symmetrically_distinct_miller_indices(max_index=3, cvn_atoms=None):
+    # Need to work on this
     r1 = list(range(1, max_index + 1))
-    r2=list(range(-max_index, 1))
+    r2 = list(range(-max_index, 1))
     r2.reverse()
-    r3=r1+r2
-    #r.reverse()
-    r=r3
-    #print ('rrrrr',r,sorted(r))
-    conv_hkl_list = [miller for miller in itertools.product(r, r, r) if any([i != 0 for i in miller])]
-    spg=Spacegroup3D(cvn_atoms)._dataset
-    rot=spg['rotations']
-    done=[]
-    unique_millers=[]
-    #print (conv_hkl_list)
-    #print (sorted(conv_hkl_list, key=lambda x: x[0], reverse=True))
+    r3 = r1 + r2
+    # r.reverse()
+    r = r3
+    # print ('rrrrr',r,sorted(r))
+    conv_hkl_list = [
+        miller for miller in itertools.product(r, r, r) if any([i != 0 for i in miller])
+    ]
+    spg = Spacegroup3D(cvn_atoms)._dataset
+    rot = spg["rotations"]
+    done = []
+    unique_millers = []
+    # print (conv_hkl_list)
+    # print (sorted(conv_hkl_list, key=lambda x: x[0], reverse=True))
     for i in conv_hkl_list:
-      d = abs(reduce(gcd, i))
-      miller=tuple([int(k / d) for k in i])
-      for j in  rot:
-         prod=list(np.dot(miller,j))
-         if prod not in done:
-              unique_millers.append(i)
-              done.append(prod)
-    uniq=unique_rows_2(np.array(unique_millers))
+        d = abs(reduce(gcd, i))
+        miller = tuple([int(k / d) for k in i])
+        for j in rot:
+            prod = list(np.dot(miller, j))
+            if prod not in done:
+                unique_millers.append(i)
+                done.append(prod)
+    uniq = unique_rows_2(np.array(unique_millers))
     return uniq
 
+
 wyckoff_file = str(os.path.join(os.path.dirname(__file__), "Wyckoff.csv"))
+
 
 def parse_wyckoff_csv(wyckoff_file):
     """Parse Wyckoff.csv
@@ -69,9 +75,9 @@ def parse_wyckoff_csv(wyckoff_file):
     points = []
     hP_nums = [433, 436, 444, 450, 452, 458, 460]
     for i, line in enumerate(wyckoff_file):
-        if line.strip() == 'end of data':
+        if line.strip() == "end of data":
             break
-        rowdata.append(line.strip().split(':'))
+        rowdata.append(line.strip().split(":"))
 
         # 2:P -1  ::::::: <-- store line number if first element is number
         if rowdata[-1][0].isdigit():
@@ -82,15 +88,15 @@ def parse_wyckoff_csv(wyckoff_file):
     for i in range(len(points) - 1):  # 0 to 529
         symbol = rowdata[points[i]][1]  # e.g. "C 1 2 1"
         if i + 1 in hP_nums:
-            symbol = symbol.replace('R', 'H', 1)
-        wyckoff.append({'symbol': symbol.strip()})
+            symbol = symbol.replace("R", "H", 1)
+        wyckoff.append({"symbol": symbol.strip()})
 
     # When the number of positions is larger than 4,
     # the positions are written in the next line.
     # So those positions are connected.
     for i in range(len(points) - 1):
         count = 0
-        wyckoff[i]['wyckoff'] = []
+        wyckoff[i]["wyckoff"] = []
         for j in range(points[i] + 1, points[i + 1]):
             # Hook if the third element is a number (multiplicity), e.g.,
             #
@@ -103,11 +109,13 @@ def parse_wyckoff_csv(wyckoff_file):
             # ...
             if rowdata[j][2].isdigit():
                 pos = []
-                w = {'letter': rowdata[j][3].strip(),
-                     'multiplicity': int(rowdata[j][2]),
-                     'site_symmetry': rowdata[j][4].strip(),
-                     'positions': pos}
-                wyckoff[i]['wyckoff'].append(w)
+                w = {
+                    "letter": rowdata[j][3].strip(),
+                    "multiplicity": int(rowdata[j][2]),
+                    "site_symmetry": rowdata[j][4].strip(),
+                    "positions": pos,
+                }
+                wyckoff[i]["wyckoff"].append(w)
 
                 for k in range(4):
                     if rowdata[j][k + 5]:  # check if '(x,y,z)' or ''
@@ -120,22 +128,23 @@ def parse_wyckoff_csv(wyckoff_file):
                         pos.append(rowdata[j][k + 5])
 
         # assertion
-        #for w in wyckoff[i]['wyckoff']:
+        # for w in wyckoff[i]['wyckoff']:
         #    n_pos = len(w['positions'])
         #    n_pos *= len(lattice_symbols[wyckoff[i]['symbol'][0]])
         #    assert n_pos == w['multiplicity']
 
     return wyckoff
 
+
 def read_wyckoff_csv(filename):
     with open(filename) as wyckoff_file:
         return parse_wyckoff_csv(wyckoff_file)
 
-def get_wyckoff_position_operators(hall_number ):
-    wyckoff = read_wyckoff_csv( wyckoff_file )
-    operations = wyckoff[ hall_number - 1 ]
-    return operations
 
+def get_wyckoff_position_operators(hall_number):
+    wyckoff = read_wyckoff_csv(wyckoff_file)
+    operations = wyckoff[hall_number - 1]
+    return operations
 
 
 class Spacegroup3D(object):
@@ -607,6 +616,7 @@ class Spacegroup3D(object):
             cartesian=False,
         )
         return new_struct
+
 
 """
 if __name__ == "__main__":

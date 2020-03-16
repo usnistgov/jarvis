@@ -323,8 +323,8 @@ def mismatch_strts(film=[], subs=[]):
     )
     _, __, scell = subs.lattice.find_matches(substrate_latt, ltol=0.05, atol=1)
     scell[2] = np.array([0, 0, 1])
-    #print("subs lattice", subs.lattice_mat)
-    #print("scell", scell)
+    # print("subs lattice", subs.lattice_mat)
+    # print("scell", scell)
     subs.make_supercell(scell)
     _, __, scell = mat2d_latt_fake.find_matches(mat2d_latt, ltol=0.05, atol=1)
     scell[2] = np.array([0, 0, 1])
@@ -498,6 +498,7 @@ def get_hetero(film, substrate, seperation=3.0):
     )
 
     return interface
+
 
 """
 if __name__ == "__main__":

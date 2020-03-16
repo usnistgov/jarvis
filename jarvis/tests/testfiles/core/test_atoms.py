@@ -29,13 +29,13 @@ def test_basic_atoms():
     scell_nat = Si.make_supercell([2, 2, 2]).num_atoms
     com = round(Si.get_center_of_mass()[0], 3)
     rem = (Si.make_supercell([2, 2, 2]).remove_site_by_index(site=0)).num_atoms
-        
-  
 
     d = Si.to_dict()
-    angs_a = d['angles'][0] 
-    Si_2_den = Atoms(lattice_mat = d['lattice_mat'], coords = d['coords'], elements = d['elements']).density
-    #print ('scell_nat', Si_2)
+    angs_a = d["angles"][0]
+    Si_2_den = Atoms(
+        lattice_mat=d["lattice_mat"], coords=d["coords"], elements=d["elements"]
+    ).density
+    # print ('scell_nat', Si_2)
     assert (
         round(Si.volume, 2),
         Si.atomic_numbers,
@@ -57,7 +57,7 @@ def test_basic_atoms():
         com,
         rem,
         angs_a,
-        round(Si_2_den,2)
+        round(Si_2_den, 2),
     ) == (
         40.03,
         [14, 14],
@@ -79,9 +79,9 @@ def test_basic_atoms():
         0.679,
         15,
         60.0,
-        2.33
+        2.33,
     )
 
 
-#test_basic_atoms()
+# test_basic_atoms()
 # def test_basic_atoms():

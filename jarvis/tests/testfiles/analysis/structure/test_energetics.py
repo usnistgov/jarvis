@@ -3,7 +3,7 @@ from jarvis.analysis.thermodynamics.energetics import form_enp
 
 from jarvis.io.vasp.inputs import Poscar
 
-p = os.path.join(".", "POSCAR")
+p = os.path.join(os.path.dirname(__file__), "POSCAR")
 
 
 def test_form_en():

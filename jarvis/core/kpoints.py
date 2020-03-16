@@ -38,11 +38,11 @@ class Kpoints3D(object):
 
     @property
     def kpts(self):
-         return self._kpoints
+        return self._kpoints
 
     @property
     def labels(self):
-         return self._labels
+        return self._labels
 
     def write_file(self, filename=""):
         if self._kpoint_mode == "automatic":
@@ -947,6 +947,7 @@ class HighSymmetryKpoint3DFactory(object):
             ["R", "\\Gamma"],
         ]
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
+
 
 """
 if __name__ == "__main__":

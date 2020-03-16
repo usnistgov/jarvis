@@ -8,6 +8,7 @@ from jarvis.core.atoms import Atoms
 from jarvis.core.specie import Specie
 import os
 
+
 class LammpsData(object):
     def __init__(
         self, lammps_box=[], species=[], charges=[], cart_coords=[], element_order=[]
@@ -94,10 +95,10 @@ class LammpsData(object):
             for i, line in enumerate(lines):
                 if "pair_coeff" in line.split():
                     sp = line.split()
-                    #print("spsplit", sp, os.getcwd())
+                    # print("spsplit", sp, os.getcwd())
                     for el in sp:
                         try:
-                            if str(Specie(el).Z) !='nan':
+                            if str(Specie(el).Z) != "nan":
                                 # if el=='M':
                                 #    el='Mo'
                                 # count=count+1
@@ -108,7 +109,7 @@ class LammpsData(object):
         else:
             symb = [Specie(i).symbol for i in element_order]
 
-        #print("symb=", symb)
+        # print("symb=", symb)
         f = open(filename, "r")
         lines = f.read().splitlines()
         for i, line in enumerate(lines):
@@ -154,7 +155,7 @@ class LammpsData(object):
         f.close()
         # print ("info",(typ),'coo',(coords),'latt',lat)
         typ_sp = [str(i, "utf-8") for i in typ]
-        #print ('typ_sp',typ_sp)
+        # print ('typ_sp',typ_sp)
         atoms = Atoms(
             lattice_mat=lat, elements=typ_sp, coords=np.array(coords), cartesian=True
         )
@@ -206,25 +207,22 @@ class LammpsData(object):
         return pprint.pformat(self.to_dict(), indent=indent)
 
 
-
-
 class LammpsInput(object):
-        def __init__(self,LammpsDataObj=None, pbc=['p','p','p']):
-        
-         self.LammpsDataObj = LammpsDataObj
-         self.pbc = pbc
+    def __init__(self, LammpsDataObj=None, pbc=["p", "p", "p"]):
 
+        self.LammpsDataObj = LammpsDataObj
+        self.pbc = pbc
 
-        def write_lammps_in(
-            self,
-            lammps_in="init.mod",
-            lammps_in1="potential.mod",
-            lammps_in2="in.main",
-            lammps_trj=None,
-            lammps_data=None,
-            parameters={},
-        ):
-            """
+    def write_lammps_in(
+        self,
+        lammps_in="init.mod",
+        lammps_in1="potential.mod",
+        lammps_in2="in.main",
+        lammps_trj=None,
+        lammps_data=None,
+        parameters={},
+    ):
+        """
                 write lammps input file
                 from ase with custom modifications
                 LAMMPS input is devided into three parts
@@ -235,127 +233,129 @@ class LammpsInput(object):
                     parameters: input parameters
                     
             """
-            f = open(lammps_in, "w")
-            f1 = open(lammps_in1, "w")  # potential.mod
-            f2 = open(lammps_in2, "w")
-            f.write(
-                ('variable dump_file string "%s"\n' % lammps_trj)
-                + ("variable up  equal 1.0e-6\n")
-                + ("variable cfac  equal 1.0e-4\n")
-                + ("variable cunits  string GPa\n")
-                + ("variable etol  equal 0\n")
-                + ("variable ftol  equal 1.0e-10\n")
-                + ("variable maxiter equal 1000\n")
-                + ("variable maxeval equal 10000\n")
-                + ("variable dmax equal 1.0e-2\n")
-                + ('variable data_file string "%s"\n' % "data")
-            )
-            if "control_file" in parameters:
-                f2.write("include %s \n" % parameters["control_file"])
-            if "units" in parameters:
-                f.write("units %s \n" % parameters["units"])
-            else:
-                f.write("units metal \n")
-            if "atom_style" in parameters:
-                f.write("atom_style %s \n" % parameters["atom_style"])
-            else:
-                f.write("atom_style atomic \n")
-            if "boundary" in parameters:
-                f.write("boundary %s \n" % parameters["boundary"])
-            else:
-                pbc = self.pbc
-                f.write("boundary %s %s %s \n" % (pbc[0],pbc[1],pbc[2]))
-            f.write("atom_modify sort 0 0.0 \n")
-            for key in ("neighbor", "newton"):
-                if key in parameters:
-                    f.write("%s %s \n" % (key, parameters[key]))
-            f.write("\n")
-            # If no_data_file,
-            # write the simulation box and the atoms
-            #species = [tos for tos in Poscar(structure).site_symbols]
+        f = open(lammps_in, "w")
+        f1 = open(lammps_in1, "w")  # potential.mod
+        f2 = open(lammps_in2, "w")
+        f.write(
+            ('variable dump_file string "%s"\n' % lammps_trj)
+            + ("variable up  equal 1.0e-6\n")
+            + ("variable cfac  equal 1.0e-4\n")
+            + ("variable cunits  string GPa\n")
+            + ("variable etol  equal 0\n")
+            + ("variable ftol  equal 1.0e-10\n")
+            + ("variable maxiter equal 1000\n")
+            + ("variable maxeval equal 10000\n")
+            + ("variable dmax equal 1.0e-2\n")
+            + ('variable data_file string "%s"\n' % "data")
+        )
+        if "control_file" in parameters:
+            f2.write("include %s \n" % parameters["control_file"])
+        if "units" in parameters:
+            f.write("units %s \n" % parameters["units"])
+        else:
+            f.write("units metal \n")
+        if "atom_style" in parameters:
+            f.write("atom_style %s \n" % parameters["atom_style"])
+        else:
+            f.write("atom_style atomic \n")
+        if "boundary" in parameters:
+            f.write("boundary %s \n" % parameters["boundary"])
+        else:
+            pbc = self.pbc
+            f.write("boundary %s %s %s \n" % (pbc[0], pbc[1], pbc[2]))
+        f.write("atom_modify sort 0 0.0 \n")
+        for key in ("neighbor", "newton"):
+            if key in parameters:
+                f.write("%s %s \n" % (key, parameters[key]))
+        f.write("\n")
+        # If no_data_file,
+        # write the simulation box and the atoms
+        # species = [tos for tos in Poscar(structure).site_symbols]
+        # species = [tos.symbol for tos in structure.types_of_specie]
+        # n_atom_types = len(species)
+        # species_i = dict([(s, i + 1) for i, s in enumerate(species)])
+        f.write("read_data %s\n" % "data")
+        # interaction
+        f.write("\n### interactions \n")
+        if "lib" in parameters:
+            lib = parameters["lib"]
+            f1.write("%s \n" % lib)
+        if ("pair_style" in parameters) and ("pair_coeff" in parameters):
+            pair_style = parameters["pair_style"]
+            f1.write("pair_style %s \n" % pair_style)
+            symbols = self.LammpsDataObj._element_order  # atoms.get_chemical_symbols()
+            # species = [tos.symbol.replace("Mo","M") for tos in structure.types_of_specie] #For REBO Mo-S
             # species = [tos.symbol for tos in structure.types_of_specie]
-            #n_atom_types = len(species)
-            #species_i = dict([(s, i + 1) for i, s in enumerate(species)])
-            f.write("read_data %s\n" % "data")
-            # interaction
-            f.write("\n### interactions \n")
-            if "lib" in parameters:
-                lib = parameters["lib"]
-                f1.write("%s \n" % lib)
-            if ("pair_style" in parameters) and ("pair_coeff" in parameters):
-                pair_style = parameters["pair_style"]
-                f1.write("pair_style %s \n" % pair_style)
-                symbols = self.LammpsDataObj._element_order#atoms.get_chemical_symbols()
-                # species = [tos.symbol.replace("Mo","M") for tos in structure.types_of_specie] #For REBO Mo-S
-                # species = [tos.symbol for tos in structure.types_of_specie]
-                #print("site symbolss", Poscar(structure).site_symbols)
-                #species = [tos for tos in Poscar(structure).site_symbols]
-                #if parameters["pair_style"] == "rebomos":
+            # print("site symbolss", Poscar(structure).site_symbols)
+            # species = [tos for tos in Poscar(structure).site_symbols]
+            # if parameters["pair_style"] == "rebomos":
 
-                #    species = [tos.replace("Mo", "M") for tos in Poscar(structure).site_symbols]
-                tag = ""
-                for i in symbols:
-                    tag = tag + " " + i
-                pair_coef = "* * " + str(parameters["pair_coeff"]) + " " + tag
-                f1.write("pair_coeff %s \n" % pair_coef)
+            #    species = [tos.replace("Mo", "M") for tos in Poscar(structure).site_symbols]
+            tag = ""
+            for i in symbols:
+                tag = tag + " " + i
+            pair_coef = "* * " + str(parameters["pair_coeff"]) + " " + tag
+            f1.write("pair_coeff %s \n" % pair_coef)
 
-                masses = []
-                for i in symbols:
-                    m = Specie(i).atomic_mass
-                    if m not in masses:
-                        masses.append(m)
-                count = 0
-                for i in masses:
-                    count = count + 1
-                    f.write("mass" + " " + str(count) + " " + str(i) + "\n")
-            else:
-                # default interaction
-                f.write("pair_style lj/cut 2.5 \n" + "pair_coeff * * 1 1 \n" + "mass * 1.0 \n")
-            f1.write("neighbor 1.0 nsq\n")
-            f1.write("neigh_modify once no every 1 delay 0 check yes\n")
-            if "min" not in parameters:
-                f1.write("min_style  cg\n")
-                f1.write("min_modify           dmax ${dmax} line quadratic\n")
-            f1.write("thermo          1\n")
-            f1.write(
-                "thermo_style custom step temp press cpu pxx pyy pzz pxy pxz pyz ke pe etotal vol lx ly lz atoms\n"
+            masses = []
+            for i in symbols:
+                m = Specie(i).atomic_mass
+                if m not in masses:
+                    masses.append(m)
+            count = 0
+            for i in masses:
+                count = count + 1
+                f.write("mass" + " " + str(count) + " " + str(i) + "\n")
+        else:
+            # default interaction
+            f.write(
+                "pair_style lj/cut 2.5 \n" + "pair_coeff * * 1 1 \n" + "mass * 1.0 \n"
             )
-            # f1.write('thermo_style custom step temp pe press pxx pyy pzz pxy pxz pyz lx ly lz vol\n' )
-            f1.write("thermo_modify norm no\n")
-            #   if 'thermo_style' in parameters:
-            #       f.write('thermo_style %s\n' % parameters['thermo_style'])
-            #   else:
-            #       f.write(('thermo_style custom %s\n') %
-            #               (' '.join(self._custom_thermo_args)))
-            #   if 'thermo_modify' in parameters:
-            #       f.write('thermo_modify %s\n' % parameters['thermo_modify'])
-            #   else:
-            #       f.write('thermo_modify flush yes\n')
-            #   if 'thermo' in parameters:
-            #       f.write('thermo %s\n' % parameters['thermo'])
-            #   else:
-            #       f.write('thermo 1\n')
-            #   if 'minimize' in parameters:
-            #       f.write('minimize %s\n' % parameters['minimize'])
-            #   if 'run' in parameters:
-            #       f.write('run %s\n' % parameters['run'])
-            #   if not (('minimize' in parameters) or ('run' in parameters)):
-            #       f.write('run 0\n')
-            #   if 'dump' in parameters:
-            #       f.write('dump %s\n' % parameters['dump'])
-            #   else:
-            #       f.write('dump dump_all all custom 1 %s id type x y z vx vy vz fx fy fz\n' % lammps_trj)
-            #   f.write('print __end_of_ase_invoked_calculation__\n')
-            #   f.write('log /dev/stdout\n')
-            if "fix" in parameters:
-                if parameters["fix"]:
-                    for i in parameters["fix"]:
-                        f1.write("fix %s\n" % i)
-            f.close()
-            f1.close()
-            f2.close()
+        f1.write("neighbor 1.0 nsq\n")
+        f1.write("neigh_modify once no every 1 delay 0 check yes\n")
+        if "min" not in parameters:
+            f1.write("min_style  cg\n")
+            f1.write("min_modify           dmax ${dmax} line quadratic\n")
+        f1.write("thermo          1\n")
+        f1.write(
+            "thermo_style custom step temp press cpu pxx pyy pzz pxy pxz pyz ke pe etotal vol lx ly lz atoms\n"
+        )
+        # f1.write('thermo_style custom step temp pe press pxx pyy pzz pxy pxz pyz lx ly lz vol\n' )
+        f1.write("thermo_modify norm no\n")
+        #   if 'thermo_style' in parameters:
+        #       f.write('thermo_style %s\n' % parameters['thermo_style'])
+        #   else:
+        #       f.write(('thermo_style custom %s\n') %
+        #               (' '.join(self._custom_thermo_args)))
+        #   if 'thermo_modify' in parameters:
+        #       f.write('thermo_modify %s\n' % parameters['thermo_modify'])
+        #   else:
+        #       f.write('thermo_modify flush yes\n')
+        #   if 'thermo' in parameters:
+        #       f.write('thermo %s\n' % parameters['thermo'])
+        #   else:
+        #       f.write('thermo 1\n')
+        #   if 'minimize' in parameters:
+        #       f.write('minimize %s\n' % parameters['minimize'])
+        #   if 'run' in parameters:
+        #       f.write('run %s\n' % parameters['run'])
+        #   if not (('minimize' in parameters) or ('run' in parameters)):
+        #       f.write('run 0\n')
+        #   if 'dump' in parameters:
+        #       f.write('dump %s\n' % parameters['dump'])
+        #   else:
+        #       f.write('dump dump_all all custom 1 %s id type x y z vx vy vz fx fy fz\n' % lammps_trj)
+        #   f.write('print __end_of_ase_invoked_calculation__\n')
+        #   f.write('log /dev/stdout\n')
+        if "fix" in parameters:
+            if parameters["fix"]:
+                for i in parameters["fix"]:
+                    f1.write("fix %s\n" % i)
+        f.close()
+        f1.close()
+        f2.close()
 
-
+"""
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
@@ -375,7 +375,15 @@ if __name__ == "__main__":
     x = lmp.lammps_to_atoms()
     # print (x)
     lmp = LammpsData().read_data("lammps.data")
-    #print(lmp)
+    # print(lmp)
     lmp = LammpsData().atoms_to_lammps(atoms=p.atoms)
-    pair_coeff ='abc'
-    LammpsInput(LammpsDataObj=lmp).write_lammps_in(parameters = {'pair_style':'eam/alloy','pair_coeff':pair_coeff,'atom_style': 'charge' ,'control_file':'/users/knc6/inelast.mod'})
+    pair_coeff = "abc"
+    LammpsInput(LammpsDataObj=lmp).write_lammps_in(
+        parameters={
+            "pair_style": "eam/alloy",
+            "pair_coeff": pair_coeff,
+            "atom_style": "charge",
+            "control_file": "/users/knc6/inelast.mod",
+        }
+    )
+"""

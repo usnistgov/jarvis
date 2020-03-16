@@ -3,6 +3,7 @@ import os
 import json
 import shutil
 
+
 class Wannier90win(object):
     def __init__(
         self,
@@ -36,7 +37,7 @@ class Wannier90win(object):
             f.close()
             self.semi_core_states = semi_core_states
 
-    def write_win(self,name="win.input"):
+    def write_win(self, name="win.input"):
 
         if self.soc == True:
             mult = 2
@@ -106,27 +107,33 @@ class Wannier90win(object):
         f.close()
         return nwan, exclude
 
+    def write_hr_win(
+        self,
+        hr_tag="hr_plot",
+        prev_win="wannier90.win",
+        hr="hr_wannier.win",
+        nbands=18,
+        soc="",
+    ):
+        f = open(prev_win, "r")
+        lines = f.read().splitlines()
+        f.close()
+        bak = str(prev_win) + str(".bak")
+        shutil.copy2(prev_win, bak)
 
-    def write_hr_win(self,hr_tag='hr_plot',prev_win='wannier90.win',hr='hr_wannier.win',nbands=18, soc=''):
-           f=open(prev_win,'r')
-           lines=f.read().splitlines()
-           f.close()
-           bak=str(prev_win)+str('.bak')
-           shutil.copy2(prev_win,bak)
+        # line=str('write_hr=.true. \n')
+        line = str(hr_tag) + str(".true. \n")
 
-           #line=str('write_hr=.true. \n')
-           line=str(hr_tag)+str('.true. \n')
+        f = open(hr, "w")
+        f.write(line)
+        line = str("num_bands = ") + str(nbands) + ("\n")
+        f.write(line)
+        for i in lines:
+            line = str(i) + str("\n")
+            f.write(line)
+        f.close()
 
-           f=open(hr,'w')
-           f.write(line)
-           line=str('num_bands = ')+str(nbands)+('\n')
-           f.write(line)
-           for i in lines:
-             line=str(i)+str('\n')
-             f.write(line)
-           f.close()
-
-
+"""
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
@@ -134,3 +141,4 @@ if __name__ == "__main__":
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     Wannier90win(struct=Si, efermi=0.0).write_win()
     Wannier90win().write_hr_win(prev_win="win.input")
+"""

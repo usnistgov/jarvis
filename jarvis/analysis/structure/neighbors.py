@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 from operator import itemgetter
 from jarvis.io.vasp.inputs import Poscar
 import time
-#plt.switch_backend("agg")
+
+# plt.switch_backend("agg")
 import math
 from toolz.curried import pipe
 
@@ -37,7 +38,7 @@ def check_array(arr, type_=None, shape=None):
 
     """
     if not isinstance(arr, np.ndarray):
-        raise TypeError("not an array",arr)
+        raise TypeError("not an array", arr)
 
     if type_ is not None:
         if not np.issubdtype(arr.dtype, type_):
@@ -178,6 +179,7 @@ class NeighborsAnalysis(object):
         rcut1, rcut2 = self.get_dist_cutoffs()
         self.rcut1 = rcut1
         self.rcut2 = rcut2
+
     def get_structure_data(self, c_size=10.0):
         return calc_structure_data(
             self._atoms.frac_coords,
@@ -386,7 +388,7 @@ class NeighborsAnalysis(object):
         return ang_hist, ang_bins
 
     def ang_dist_second(self, plot=False):
-        #rcut1, rcut2 = self.get_dist_cutoffs()
+        # rcut1, rcut2 = self.get_dist_cutoffs()
         rcut1 = self.rcut1
         rcut2 = self.rcut2
         # print ('rcut1,rcut2',rcut1,rcut2)
@@ -399,7 +401,7 @@ class NeighborsAnalysis(object):
         return ang_hist, ang_bins
 
     def get_ddf(self, plot=False):
-        #rcut1, rcut2 = self.get_dist_cutoffs()
+        # rcut1, rcut2 = self.get_dist_cutoffs()
         rcut1 = self.rcut1
         rcut2 = self.rcut2
         nbor_info = self.nbor_list(rcut=rcut1)
@@ -475,7 +477,7 @@ class NeighborsAnalysis(object):
         distributions["nn"] = nn
         return distributions
 
-
+"""
 if __name__ == "__main__":
     p = Poscar.from_file(
         "/rk2/knc6/JARVIS-DFT/2D-bulk/mp-2815_bulk_PBEBO/MAIN-RELAX-bulk@mp_2815/CONTCAR"
@@ -548,3 +550,4 @@ if __name__ == "__main__":
     _, Nb = NeighborsAnalysis(Si).ang_dist_first()
     _, Nb = NeighborsAnalysis(Si).ang_dist_second()
     _, Nb = NeighborsAnalysis(Si).get_ddf()
+"""

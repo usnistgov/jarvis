@@ -8,9 +8,9 @@ def test_lat():
     frac_coords = [[0, 0, 0], [0.5, 0.5, 0.5]]
     cart_coords = [[0, 0, 0], [5, 5, 5]]
     lll = lat._calculate_lll()
-    #print ('lll',lll[0][0][0])
+    # print ('lll',lll[0][0][0])
     lll_red = lat.get_lll_reduced_lattice()._lat
-    #print("lll_educed", lat.get_lll_reduced_lattice()._lat[0][0])
+    # print("lll_educed", lat.get_lll_reduced_lattice()._lat[0][0])
     assert (
         lat.lat_lengths(),
         lat.lat_angles(),
@@ -21,7 +21,7 @@ def test_lat():
         lat.volume,
         lat.parameters,
         lll[0][0][0],
-        lll_red[0][0]
+        lll_red[0][0],
     ) == (
         [10.0, 10.0, 10.0],
         [90.0, 90.0, 90.0],
@@ -31,9 +31,9 @@ def test_lat():
         0.5,
         1000.0,
         [10.0, 10.0, 10.0, 90.0, 90.0, 90.0],
-       10.0,
-       10.0
+        10.0,
+        10.0,
     )
 
 
-#test_lat()
+# test_lat()

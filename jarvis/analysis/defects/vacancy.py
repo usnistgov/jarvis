@@ -37,24 +37,27 @@ class Vacancy(object):
         self._wyckoff_multiplicity = wyckoff_multiplicity
         self._symbol = symbol
 
-    def generate_defects(self,enforce_c_size=10.0, on_conventional_cell=False):
+    def generate_defects(self, enforce_c_size=10.0, on_conventional_cell=False):
         atoms = self._atoms
         if on_conventional_cell:
             atoms = Spacegroup3D(atoms).conventional_standard_structure
 
         if enforce_c_size is not None:
-               dim1 = int((float(enforce_c_size) / float(max(abs(atoms.lattice_mat[0]))))) + 1
-               dim2 = int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[1])))) + 1
-               dim3 = int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[2])))) + 1
-               atoms=atoms.make_supercell([dim1,dim2,dim3])
-               supercell_size=[dim1,dim2,dim3]
+            dim1 = (
+                int((float(enforce_c_size) / float(max(abs(atoms.lattice_mat[0]))))) + 1
+            )
+            dim2 = (
+                int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[1])))) + 1
+            )
+            dim3 = (
+                int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[2])))) + 1
+            )
+            atoms = atoms.make_supercell([dim1, dim2, dim3])
+            supercell_size = [dim1, dim2, dim3]
 
-
-
-        
         element_list = list(set(atoms.elements))
 
-        #print ('atoms=',atoms)
+        # print ('atoms=',atoms)
         spg = Spacegroup3D(atoms)
         wyckoffs = spg._dataset["wyckoffs"]
         atoms.props = wyckoffs
@@ -86,7 +89,7 @@ class Vacancy(object):
     def __repr__(self, indent=2):
         return pprint.pformat(self.to_dict(), indent=indent)
 
-
+"""
 if __name__ == "__main__":
 
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
@@ -107,3 +110,4 @@ if __name__ == "__main__":
     ss = Si.make_supercell([2, 2, 2])
     props = ss.props
     # print (rand_select(props))
+"""
