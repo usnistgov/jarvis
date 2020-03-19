@@ -19,6 +19,7 @@ def abs_cap(val, max_abs_val=1):
 class Lattice(object):
     def __init__(self, lattice_mat=None, round_off=5):
         """
+        Holds lattice parameter information
         >>> box=[[10,0,0],[0,10,0],[0,0,10]]
         >>> lat=Lattice(box)
         >>> lat.lat_lengths()
@@ -50,10 +51,16 @@ class Lattice(object):
         self._lll_matrix_mappings = {}
 
     def lat_lengths(self):
+        """
+        Return lattice vectors' lengths
+        """
         return [round(np.linalg.norm(v), 6) for v in self._lat]
 
     @property
     def volume(self):
+        """
+        Volume given a lattice object
+        """
         m = self._lat
         vol = float(abs(np.dot(np.cross(m[0], m[1]), m[2])))
         return vol
@@ -91,6 +98,9 @@ class Lattice(object):
         return self.lat_angles()
 
     def lat_angles(self, tol=1e-2, radians=False):
+        """
+        Lattice angle information
+        """
         lengths = self.lat_lengths()
         angles = []
         for i in range(3):
@@ -186,6 +196,9 @@ class Lattice(object):
         return Lattice(2 * np.pi * np.linalg.inv(self._lat).T)
 
     def get_points_in_sphere(self, frac_points, center, r):
+        """
+        Similar to pymatgen implementation
+        """
         recp_len = np.array(self.reciprocal_lattice().lat_lengths()) / (2 * np.pi)
         nmax = float(r) * recp_len + 0.01
 
@@ -292,6 +305,7 @@ class Lattice(object):
         c-reduced basis. This method returns a basis which is as "good" as
         possible, with "good" defined by orthongonality of the lattice vectors.
         This basis is used for all the periodic boundary condition calculations.
+        Adapted from pymatgen
         Args:
             delta (float): Reduction parameter. Default of 0.75 is usually
                 fine.

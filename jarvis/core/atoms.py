@@ -20,7 +20,8 @@ ang_cm = 1e-8
 
 class VacuumPadding(object):
     """
-    Currently works for non-skew lattice only
+    Adds vaccum padding to make 2D structure or making molecules
+
     """
 
     def __init__(self, atoms, vacuum=20.0):
@@ -28,6 +29,9 @@ class VacuumPadding(object):
         self.vacuum = vacuum
 
     def get_effective_2d_slab(self):
+        """
+        Adds 2D vacuum to a system
+        """
         z_coord = []
         for i in self.atoms.frac_coords:
             tmp = i[2]
@@ -117,6 +121,9 @@ class VacuumPadding(object):
         return with_vacuum_atoms
 
     def get_effective_molecule(self):
+        """
+        Adds vacuum around a system
+        """
         x_coord = []
         y_coord = []
         z_coord = []
@@ -234,7 +241,7 @@ class Atoms(object):
                  file:atoms object (surface with vacuum)
             Returns:
                    polar:True/False   
-            """
+        """
         up = 0
         dn = 0
         coords = np.array(self.frac_coords)
@@ -256,18 +263,15 @@ class Atoms(object):
 
     def apply_strain(self, strain):
         """
-        Apply a strain to the lattice.
-        Args:
-            strain (float or list): Amount of strain to apply. Can be a float,
-                or a sequence of 3 numbers. E.g., 0.01 means all lattice
-                vectors are increased by 1%. This is equivalent to calling
-                modify_lattice with a lattice with lattice parameters that
-                are 1% larger.
+        Apply a strain(e.g. 0.01) to the lattice.
         """
         s = (1 + np.array(strain)) * np.eye(3)
         self.lattice_mat = np.dot(self.lattice_mat.T, s).T
 
     def to_dict(self):
+        """
+        Dictionary representation of the atoms object
+        """
         d = OrderedDict()
         d["lattice_mat"] = self.lattice_mat.tolist()
         d["coords"] = np.array(self.coords).tolist()
@@ -279,6 +283,9 @@ class Atoms(object):
         return d
 
     def from_dict(self, d={}):
+        """
+        Form atoms object from the dictionary
+        """
         return Atoms(
             lattice_mat=d["lattice_mat"],
             elements=d["elements"],
@@ -288,9 +295,9 @@ class Atoms(object):
         )
 
     def remove_site_by_index(self, site=0):
-        # print ('elements',self.elements.pop(site))
-        # print ('coords',self.frac_coords.tolist().pop(site))
-        # print ('props',self.props.pop(site))
+        """
+        Remove an atom by its index number
+        """
         new_els = []
         new_coords = []
         new_props = []
@@ -309,6 +316,9 @@ class Atoms(object):
         )
 
     def center(self, axis=2, vacuum=18.0, about=None):
+        """
+        Center structure with vacuum padding os size:vacuum in a direction:axis
+        """
         cell = self.lattice_mat
         p = self.cart_coords
 
@@ -365,12 +375,18 @@ class Atoms(object):
 
     @property
     def volume(self):
+        """
+        Get volume of the atoms object
+        """
         m = self.lattice_mat
         vol = float(abs(np.dot(np.cross(m[0], m[1]), m[2])))
         return vol
 
     @property
     def composition(self):
+        """
+        Get composition of the atoms object
+        """
         comp = {}
         for i in self.elements:
             comp[i] = comp.setdefault(i, 0) + 1
@@ -378,6 +394,9 @@ class Atoms(object):
 
     @property
     def density(self):
+        """
+        Get density in g/cm3 of the atoms object
+        """
         den = float(self.composition.weight * amu_gm) / (
             float(self.volume) * (ang_cm) ** 3
         )
@@ -385,6 +404,9 @@ class Atoms(object):
 
     @property
     def atomic_numbers(self):
+        """
+        Get list of atomic numbers of atoms in the atoms object
+        """
         numbers = []
         for i in self.elements:
             numbers.append(Specie(i).Z)
@@ -392,9 +414,15 @@ class Atoms(object):
 
     @property
     def num_atoms(self):
+        """
+        Get number of atoms
+        """
         return len(self.coords)
 
     def get_center_of_mass(self):
+        """
+        Get center of mass of the atoms object
+        """
         # atomic_mass
         m = []
         for i in self.elements:
@@ -405,6 +433,9 @@ class Atoms(object):
         return com
 
     def pymatgen_converter(self):
+        """
+        Get pymatgen representation of the atoms object
+        """
         try:
             from pymatgen.core.structure import Structure
 
@@ -418,7 +449,10 @@ class Atoms(object):
             pass
 
     def spacegroup(self, symprec=1e-3):
-        # try:
+        """
+        Get spacegroup of the atoms object
+        """
+        
         import spglib
 
         sg = spglib.get_spacegroup(
@@ -426,19 +460,22 @@ class Atoms(object):
         )
         return sg
 
-    # except:
-    #    pass
     @property
     def packing_fraction(self):
+        """
+        Get packing fraction of the atoms object
+        """
         total_rad = 0
         for i in self.elements:
             total_rad = total_rad + Specie(i).atomic_rad ** 3
         pf = np.array([4 * np.pi * total_rad / (3 * self.volume)])
         return round(pf[0], 5)
 
-    # def write(self,filename='POSCAR;,format='poscar'):
 
     def make_supercell(self, dim=[2, 2, 2]):
+        """
+        Make supercell of dimension dim
+        """
         dim = np.array(dim)
         if dim.shape == (3, 3):
             dim = np.array([int(np.linalg.norm(v)) for v in dim])
@@ -488,6 +525,9 @@ class Atoms(object):
         return super_cell
 
     def get_string(self):
+        """
+        Get string representation of the atoms object
+        """
         header = (
             str("\nSystem\n1.0\n")
             + str(self.lattice_mat[0][0])
@@ -545,8 +585,6 @@ class Atoms(object):
                 cartesian=False,
             )
 
-    # def __str__(self):
-    #     return "(%s(%r))" %(self.__class__,self.__dict__)
     def __repr__(self):
         header = (
             str("System\n1.0\n")
@@ -597,7 +635,7 @@ class Atoms(object):
         result = header + middle + rest
         return result
 
-
+"""
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
@@ -636,3 +674,4 @@ if __name__ == "__main__":
 #    #print (comp,Si.density)
 #    print (Si.atomic_numbers)
 #   print (Si.pymatgen_converter().composition.weight,Si.composition.weight,Si.density)
+"""

@@ -20,6 +20,9 @@ class Kpoints3D(object):
         kpoint_mode="automatic",
         header="Gamma",
     ):
+        """
+        Several types of k-points in the mesh or high-symmetry BZ
+        """
         self._kpoints = kpoints
         self._labels = labels
         self._kpoint_mode = kpoint_mode
@@ -221,6 +224,9 @@ class Kpoints3D(object):
         return self.high_symm_path(atoms).as_dict()
 
     def interpolated_points(self, atoms, line_density=20, coords_are_cartesian=False):
+        """
+        Useful for bandstructure, controlled by the line_density
+        """
         list_k_points = []
         sym_point_labels = []
         spg = Spacegroup3D(atoms=atoms)
@@ -283,6 +289,9 @@ class Kpoints3D(object):
 
 class HighSymmetryKpoint3DFactory(object):
     def __init__(self, kpoints=[], path=[]):
+        """
+        High-symmetry k-points for different crystal-systems, similar to AFLOW and Pymatgen
+        """
         self._kpoints = kpoints
         self._path = path
 

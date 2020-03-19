@@ -8,11 +8,15 @@ from scipy.integrate import simps
 from scipy.constants import physical_constants, speed_of_light
 import matplotlib.pyplot as plt
 
-plt.switch_backend("agg")
+#plt.switch_backend("agg")
 
 
 class SolarEfficiency(object):
     def __init__(self, formalism="slme"):
+        """
+        Calculates theoretical solar cell efficiency using SLME or SQ approach
+        See https://pubs.acs.org/doi/10.1021/acs.chemmater.9b02166
+        """
         self.formalism = formalism
 
     def calculate_SQ(

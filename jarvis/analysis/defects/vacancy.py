@@ -31,6 +31,9 @@ class Vacancy(object):
         wyckoff_multiplicity=None,
         symbol=None,
     ):
+        """
+        Get vacancy structures based on Wyckoff positions
+        """
         self._atoms = atoms
         self._defect_index = defect_index
         self._defect_structure = defect_structure

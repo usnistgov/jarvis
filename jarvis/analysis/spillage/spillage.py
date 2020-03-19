@@ -1,8 +1,8 @@
 """
 Code to calculate spin-orbit spillage.
 Please cite the following paper if you use the code:
-Kamal Choudhary, Kevin F. Garrity, Francesca Tavazza, Scientific Reports, 9,8534 (2019)
 https://www.nature.com/articles/s41598-019-45028-y
+https://arxiv.org/abs/2001.11389
 """
 
 import sys

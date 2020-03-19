@@ -2,6 +2,10 @@ import json
 
 
 def loadjson(filename=""):
+    """
+    Helper function to load a json file
+    Serialization would be available soon
+    """
     f = open(filename, "r")
     d = json.load(f)
     f.close()
@@ -9,6 +13,10 @@ def loadjson(filename=""):
 
 
 def dumpjson(data=[], filename="", indent=0):
+    """
+    Helper function to write a json file
+    Serialization would be available soon
+    """
     f = open(filename, "w")
     f.write(json.dumps(data, indent=indent))
     f.close()

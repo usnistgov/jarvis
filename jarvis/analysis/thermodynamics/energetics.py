@@ -26,6 +26,11 @@ def unary_energy(el="Na"):
 
 
 def form_enp(atoms=None, total_energy=None):
+    """
+    Calculate formation energy given the total energy and the atoms object
+    Currently for OptB88vdW functional based chemical potential implemented
+    but can be generalized by changing unary_energy
+    """
     dd = atoms.composition.to_dict()
     ref = 0.0
     for k, v in dd.items():

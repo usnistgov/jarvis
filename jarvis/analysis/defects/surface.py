@@ -40,6 +40,9 @@ class Surface(object):
         tol=1e-10,
         from_conventional_structure=True,
     ):
+        """
+        Get surface object of arbitrary atoms object
+        """
         self.indices = np.array(indices)
         if from_conventional_structure:
             self.atoms = Spacegroup3D(atoms).conventional_standard_structure

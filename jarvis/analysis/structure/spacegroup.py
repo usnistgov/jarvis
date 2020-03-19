@@ -149,6 +149,9 @@ def get_wyckoff_position_operators(hall_number):
 
 class Spacegroup3D(object):
     def __init__(self, atoms=[], dataset={}, symprec=1e-2, angle_tolerance=5):
+        """
+        Currently uses spglib to derive spacegroup related information for 3D materials mainly
+        """
         self._dataset = dataset
         self._atoms = atoms
         self._symprec = symprec
@@ -167,26 +170,26 @@ class Spacegroup3D(object):
             phonopy_atoms, symprec=self._symprec, angle_tolerance=self._angle_tolerance
         )
         """    
-            keys = ('number',
-            'hall_number',
-            'international',
-            'hall',
-            'choice',
-            'transformation_matrix',
-            'origin_shift',
-            'rotations',
-            'translations',
-            'wyckoffs',
-            'site_symmetry_symbols',
-            'equivalent_atoms',
-            'mapping_to_primitive',
-            'std_lattice',
-            'std_types',
-            'std_positions',
-            'std_rotation_matrix',
-            'std_mapping_to_primitive',
-            'pointgroup')
-            """
+        keys = ('number',
+        'hall_number',
+        'international',
+        'hall',
+        'choice',
+        'transformation_matrix',
+        'origin_shift',
+        'rotations',
+        'translations',
+        'wyckoffs',
+        'site_symmetry_symbols',
+        'equivalent_atoms',
+        'mapping_to_primitive',
+        'std_lattice',
+        'std_types',
+        'std_positions',
+        'std_rotation_matrix',
+        'std_mapping_to_primitive',
+        'pointgroup')
+        """
         return Spacegroup3D(
             atoms=self._atoms,
             symprec=self._symprec,

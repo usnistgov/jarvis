@@ -36,6 +36,7 @@ def get_descrp_arr_name(elm="Al"):
 
 class Specie(object):
     """
+    Specie object for chemistry information
     >>> el = Specie('Al')
     >>> el.Z
     13
@@ -58,10 +59,16 @@ class Specie(object):
 
     @property
     def Z(self):
+        """
+        Atomic number
+        """
         return self.element_property("Z")
 
     @property
     def atomic_mass(self):
+        """
+        Atomic mass
+        """
         return self.element_property("atom_mass")
 
     @property
@@ -103,9 +110,15 @@ class Specie(object):
 
     @property
     def atomic_rad(self):
+        """
+        Atomic radii
+        """
         return self.element_property("atom_rad")
 
     def element_property(self, key=""):
+        """
+        Get element property from the list of keys
+        """
         val = np.nan
         try:
             keys = [

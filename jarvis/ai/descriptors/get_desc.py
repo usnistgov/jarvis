@@ -10,11 +10,7 @@ import matplotlib.pyplot as plt
 from jarvis.core.atoms import Atoms, VacuumPadding
 from jarvis.core.specie import get_descrp_arr_name
 from jarvis.io.vasp.inputs import Poscar
-
-# plt.switch_backend("agg")
 from collections import defaultdict
-
-# from scipy.stats import gaussian_kde
 from math import pi
 from operator import itemgetter
 import time, itertools, collections, math, os, json, sys

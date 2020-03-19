@@ -152,6 +152,7 @@ class NeighborsAnalysis(object):
 
         self._atoms = atoms
         """
+        This class is helpful for RDF, ADF, DDF
         >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
         >>> coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
         >>> elements = ["Si", "Si"]

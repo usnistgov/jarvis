@@ -3,6 +3,9 @@ from jarvis.core.atoms import Atoms, VacuumPadding
 
 
 def read_pdb(filename=""):
+    """
+    Read PDB file and make Atoms object
+    """
     f = open(filename, "r")
     lines = f.read().splitlines()
     f.close()

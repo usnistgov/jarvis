@@ -9,6 +9,7 @@ import joblib, pickle
 
 class ZSLGenerator(object):
     """
+    Uses Zur algorithm to find best matched interfaces
     This class is modified from pymatgen.
     """
 
@@ -273,7 +274,9 @@ def get_factors(n):
 
 
 def mismatch_strts(film=[], subs=[]):
-
+    """
+    Returns mismatch and other information as info dict
+    """
     z = ZSLGenerator()
     matches = list(z(film.lattice_mat[:2], subs.lattice_mat[:2], lowest=True))
     info = {}
