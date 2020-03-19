@@ -533,6 +533,14 @@ class Outcar(object):
             f.close()
             self.data = lines
 
+
+    @property
+    def nions(self):
+        for i in self.data:
+            if 'NIONS =' in i:
+                 n_ions = int(i.split()[-1])
+                 return n_ions
+
     @property
     def converged(self):
 
@@ -547,6 +555,38 @@ class Outcar(object):
         except:
             pass
         return cnvg
+
+    @property
+    def efg_tensor_diag(self):
+        nions = self.nions
+        for ii,i in enumerate(self.data):
+            if 'Electric field gradients after diagonalization' in i:
+                tmp = ii
+        arr = self.data[tmp+5:tmp+5+nions]
+        efg_arr = []
+        for i in arr:
+            tmp=[i.split()[1],i.split()[2],i.split()[3],i.split()[4]]
+            efg_arr.append(tmp)
+        efg_arr = np.array(efg_arr,dtype='float')
+        return efg_arr
+
+
+    @property
+    def quad_mom(self):
+        nions = self.nions
+        for ii,i in enumerate(self.data):
+            if 'Q  : nuclear electric quadrupole moment in mb (millibarn)' in i:
+                tmp = ii
+        arr = self.data[tmp+4:tmp+4+nions]
+        quad_arr = []
+        for i in arr:
+            tmp=[i.split()[1],i.split()[2],i.split()[3]]
+            quad_arr.append(tmp)
+        quad_arr = np.array(quad_arr,dtype='float')
+        return quad_arr
+
+
+
 
     def elastic_props(self, atoms=None, vacuum=False):
         """
@@ -1078,11 +1118,21 @@ class Wavecar(object):
         assert 1 <= ikpt <= self._nkpts, "Invalid kpoint index!"
         assert 1 <= iband <= self._nbands, "Invalid band index!"
 
-"""
+#"""
 if __name__ == "__main__":
     o = Outcar(
         "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO/MAIN-ELASTIC-bulk@mp-134/OUTCAR"
     )
+    o = Outcar(
+        "/rk2/knc6/EFG/JVASP-1429/MAIN-RELAX-bulk@mp_2964/OUTCAR"
+    )
+    o = Outcar(
+        "/rk2/knc6/EFG/JVASP-4798_mp-12597_PBEBO/MAIN-LEFG-JVASP-4798_mp-12597/OUTCAR"
+    )
+    print ('NIONS2',o.efg_tensor_diag)
+    print ('NIONS2',o.efg_tensor_diag[:,0:3])
+    #print ('NIONS2',o.quad_mom)
+    sys.exit()
     o = Outcar(
         "/rk2/knc6/JARVIS-DFT/Solar-Semi/mp-5986_bulk_PBEBO/MAIN-ELASTIC-bulk@mp_5986/OUTCAR"
     )
@@ -1186,4 +1236,4 @@ if __name__ == "__main__":
     # print ()
     # print ()
     ##calculation odict_keys(['scstep', 'structure', 'varray', 'energy', 'time', 'eigenvalues', 'separator', 'dos', 'projected'])
-"""
+#"""

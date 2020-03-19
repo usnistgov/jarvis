@@ -13,7 +13,7 @@ def read_pdb(filename=""):
     species = []
     for i in lines:
         tmp = i.split()
-        if "ATOM " in i and "REMARK" not in i:
+        if "ATOM " in i and "REMARK" not in i and "SITE" not in i:
             coord = [float(tmp[6]), float(tmp[7]), float(tmp[8])]
             coords.append(coord)
             species.append(tmp[11])
