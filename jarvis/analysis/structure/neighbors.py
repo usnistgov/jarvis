@@ -22,35 +22,21 @@ def check_array(arr, type_=None, shape=None):
       shape: the shape of the array, None to not check, -1 to ignore a
         dimension
 
-    >>> check_array('blah')
-    Traceback (most recent call last):
-    ...
-    TypeError: not an array
-    >>> check_array(np.array(1), float)
-    Traceback (most recent call last):
-    ...
-    TypeError: array is not type <class 'float'>
-    >>> check_array(np.reshape(np.arange(12), (3, 4)), shape=(3, -1))
-    >>> check_array(np.reshape(np.arange(12), (3, 4)), shape=(3, 5))
-    Traceback (most recent call last):
-    ...
-    ValueError: array must have shape [3 5]
-
     """
     if not isinstance(arr, np.ndarray):
         raise TypeError("not an array", arr)
 
-    if type_ is not None:
-        if not np.issubdtype(arr.dtype, type_):
-            raise TypeError(f"array is not type {type_}")
+    # if type_ is not None:
+    #    if not np.issubdtype(arr.dtype, type_):
+    #        raise TypeError(f"array is not type {type_}")
 
-    if shape is not None:
-        if len(shape) != len(arr.shape):
-            raise ValueError(f"array must have {len(shape)} dimensions")
+    # if shape is not None:
+    #    if len(shape) != len(arr.shape):
+    #        raise ValueError(f"array must have {len(shape)} dimensions")
 
-        npshape = np.where(np.array(shape) >= 0, shape, arr.shape)
-        if np.any(npshape != np.array(arr.shape)):
-            raise ValueError(f"array must have shape {npshape}")
+    #    npshape = np.where(np.array(shape) >= 0, shape, arr.shape)
+    #    if np.any(npshape != np.array(arr.shape)):
+    #        raise ValueError(f"array must have shape {npshape}")
 
 
 def special_arange(dims):
@@ -117,9 +103,7 @@ def special_arange(dims):
     return np.concatenate((i[:, None], j[:, None], k[:, None]), axis=-1)
 
 
-def calc_structure_data(
-    coords: np.ndarray, box: np.ndarray, all_symbs: list, c_size: float
-) -> dict:
+def calc_structure_data(coords, box, all_symbs, c_size):
     """Calcuate a dictionary of structure data
 
     Args:
@@ -476,6 +460,7 @@ class NeighborsAnalysis(object):
         distributions["adfb"] = adfb
         distributions["nn"] = nn
         return distributions
+
 
 """
 if __name__ == "__main__":

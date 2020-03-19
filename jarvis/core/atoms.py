@@ -598,13 +598,13 @@ class Atoms(object):
         return result
 
 
-"""
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]
-    pdb = read_pdb('/cluster/users/knc6/pdb/pdb101d.ent')
-    print (pdb)
+    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
+    print (Si.props)
+    print (Si.make_supercell().props)
     import sys
     sys.exit()
      
@@ -636,4 +636,3 @@ if __name__ == "__main__":
 #    #print (comp,Si.density)
 #    print (Si.atomic_numbers)
 #   print (Si.pymatgen_converter().composition.weight,Si.composition.weight,Si.density)
-"""
