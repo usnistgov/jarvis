@@ -1,6 +1,6 @@
-from pymatgen.io.vasp.inputs import Poscar
-from jarvis.vasp.joptb88vdw import smart_converge
-p=Poscar.from_file('POSCAR')
-smart_converge(mat=p)
+from jarvis.io.vasp.inputs import Poscar
+from jarvis.tasks.vasp.vasp import JobFactory
 
-
+p = Poscar.from_file("POSCAR")
+print (p)
+JobFactory().all_optb88vdw_props(mat=p)

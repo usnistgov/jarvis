@@ -59,7 +59,7 @@ class JobFactory(object):
         ).runjob()
         print("en, final_str, forces", en, final_str, forces)
 
-        indices = symmetrically_distinct_miller_indices(max_index=1)
+        indices = symmetrically_distinct_miller_indices(max_index=1, cvn_atoms = atoms)
         for i in indices:
             surf = Surface(atoms=final_str, indices=i).make_surface()
             jobname = str("Surf-") + str("_".join(map(str, i)))
@@ -245,8 +245,8 @@ class LammpsJob(object):
                 {
                     "jobname": self.jobname,
                     "initial_pos": initial_str.to_dict(),
-                    "pair_style": str(parameters["pair_style"]),
-                    "pair_coeff": str(parameters["pair_coeff"]),
+                    "pair_style": str(self.parameters["pair_style"]),
+                    "pair_coeff": str(self.parameters["pair_coeff"]),
                     "final_energy": float(toten),
                     "en": en,
                     "press": press,
@@ -261,7 +261,7 @@ class LammpsJob(object):
             f_json.close()
             return en, final_str, forces
 
-
+"""
 if __name__ == "__main__":
     p = Poscar.from_file(
         "/rk2/knc6/JARVIS-FF/COMB/ffield.comb3.NiAlO_nist/bulk@mp-1143_fold/bulk@mp-1143/new_pymatgen_slab.vasp"
@@ -284,6 +284,8 @@ if __name__ == "__main__":
     #            potential_file='/users/knc6/Software/J2020/jarvis/jarvis/tasks/lammps/ELASTIC/potential.mod', filename="/users/knc6/Software/J2020/jarvis/jarvis/tasks/lammps/ELASTIC/data", element_order=[])
     # print ('final_str',final_str)
 
+    cmd = "/users/knc6/Software/LAMMPS/lammps-master/src/lmp_serial<in.main"
     JobFactory().all_props_eam_alloy(
         atoms=cvn, ff_path="/data/knc6/JARVIS-FF-NEW/FS/Al1.eam.fs", lammps_cmd=cmd
     )
+"""

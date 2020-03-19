@@ -106,7 +106,8 @@ class Poscar(object):
         )
         # print (atoms)
         formula = atoms.composition.formula
-        return Poscar(atoms, comment=formula)
+        
+        return Poscar(atoms, comment=comment)
 
     def __repr__(self):
         header = (

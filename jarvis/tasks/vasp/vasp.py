@@ -27,7 +27,7 @@ class JobFactory(object):
             mat=mat, encut=encut, length=length
         )
         optimized_mat = Poscar.from_file(contcar_path)
-        vrun = Vapsrun(contcar_path.replace("CONTCAR", "vasprun.xml"))
+        vrun = Vasprun(contcar_path.replace("CONTCAR", "vasprun.xml"))
         chg_path = contcar_path.replace("CONTCAR", "CHGCAR")
         nbands = int(vrun.all_input_parameters["NBANDS"])
         enB, contcB = job.band_structure(
@@ -81,7 +81,7 @@ class JobFactory(object):
             incar=incar,
             pot_type=self.pot_type,
             kpoints=kpoints,
-            jobname=str("MAIN-ELASTIC-") + str(p.comment),
+            jobname=str("MAIN-ELASTIC-") + str(p.comment.split()[0]),
         ).runjob()
 
         return en, contcar
@@ -116,7 +116,7 @@ class JobFactory(object):
             incar=incar,
             pot_type=self.pot_type,
             kpoints=kpoints,
-            jobname=str("MAIN-MBJ-") + str(mat.comment),
+            jobname=str("MAIN-MBJ-") + str(mat.comment.split()[0]),
         ).runjob()
 
         return en, contcar
@@ -148,7 +148,7 @@ class JobFactory(object):
             incar=incar,
             pot_type=self.pot_type,
             kpoints=kpoints,
-            jobname=str("MAIN-OPTICS-") + str(mat.comment),
+            jobname=str("MAIN-OPTICS-") + str(mat.comment.split()[0]),
         ).runjob()
 
         return en, contcar
@@ -181,7 +181,7 @@ class JobFactory(object):
             incar=incar,
             pot_type=self.pot_type,
             kpoints=kpoints,
-            jobname=str("MAIN-BAND-") + str(mat.comment),
+            jobname=str("MAIN-BAND-") + str(mat.comment.split()[0]),
         ).runjob()
 
         return en, contcar
@@ -843,7 +843,7 @@ class GenericIncars(object):
         inc = Incar(data)
         return GenericIncars(name="lda", incar=inc, pot_type="POT_LDA_PAW")
 
-
+"""
 if __name__ == "__main__":
 
     p = Poscar.from_file(
@@ -880,3 +880,4 @@ if __name__ == "__main__":
     # ).elastic(mat=p, encut=500, nbands=100)
 
     JobFactory().all_optb88vdw_props(mat=p)
+"""
