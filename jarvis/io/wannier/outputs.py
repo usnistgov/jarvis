@@ -27,7 +27,7 @@ class WannierHam(object):
     ):
         self.filename = filename
         self.nr = nr
-        self.nrwan = nwan
+        self.nwan = nwan
         self.sym_r = sym_r
         self.H_int = H_int
         self.H_val = H_val
@@ -36,6 +36,33 @@ class WannierHam(object):
 
         if self.nr is None:
             self.read_ham()
+
+    def to_dict(self):
+        info={}    
+        info['nr'] = self.nr 
+        info['filename'] = self.filename   
+        info['nwan']= self.nwan
+        info['sym_r'] = self.sym_r
+        info['H_int'] = self.H_int
+        info['H_val']= self.H_val
+        info['H'] = self.H
+        info['HR'] = self.HR
+        return info
+
+
+
+    @classmethod
+    def from_dict(self,info):
+        w = WannierHam(
+            nr=info['nr'],
+            nwan=info['nwan'],
+            sym_r=info['sym_r'],
+            H_int=info['H_int'],
+            H_val=info['H_val'],
+            H=info['H'],
+            HR=info['HR']
+           )
+        return w
 
     def read_ham(self):
         f = open(self.filename, "r")
@@ -208,7 +235,7 @@ class WannierHam(object):
         plt.close()
 
     def compare_dft_wann(
-        self, vasprun_path="", energy_tol=1, plot=True, filename="compare.png"
+        self, vasprun_path="", energy_tol=.75, plot=True,kp_labels_points=[], kp_labels=[], filename="compare.png"
     ):
 
         vrun = Vasprun(vasprun_path)
@@ -220,6 +247,7 @@ class WannierHam(object):
         eigs_vrun = vrun.eigenvalues[0][:, :, 0] - fermi  # [::-1]#.T
         nbands = eigs_vrun.shape[1]
         nwann = eigs_wan.shape[1]
+        info = {}
         print(
             "eigs.shape,eigs_vrun.shape", eigs_wan.shape, eigs_vrun.shape, nbands, nwann
         )
@@ -247,9 +275,18 @@ class WannierHam(object):
             for i, ii in enumerate(eigs_vrun.T):
                 plt.plot(ii, color="r")
             plt.ylim([-energy_tol, energy_tol])
+            if kp_labels_points!=[] and kp_labels!=[]:
+                 plt.xticks(kp_labels_points, kp_labels)
+
             plt.savefig(filename)
             plt.close()
-        return maxdiff
+        info['eigs_wan']=list(eigs_wan.tolist())
+        info['eigs_vrun']=list(eigs_vrun.tolist())
+        info['kp_labels_points']=list(kp_labels_points)
+        info['kp_labels']=kp_labels
+        info['maxdiff'] = maxdiff
+        #print (info)
+        return info#,eigs_wan.T,eigs_vrun.T
 
 
 class Wannier90wout(object):
@@ -285,8 +322,14 @@ if __name__ == "__main__":
     run = "/rk2/knc6/Wannier/JVASP-59757_mp-22260_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-59757_mp-22260/vasprun.xml"
     hr = "/rk2/knc6/Wannier/JVASP-17265_mp-13545_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-17265_mp-13545/wannier90_hr.dat"
     run = "/rk2/knc6/Wannier/JVASP-17265_mp-13545_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-17265_mp-13545/vasprun.xml"
+    hr='/wrk/knc6/Wannier-rar/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-JVASP-1067_mp-541837/wannier90_hr.dat'
     w = WannierHam(filename=hr)  # get_bandstructure_plot(atoms=p)
-    w.compare_dft_wann(vasprun_path=run)
+    info = w.to_dict()
+    print (info)
+    #ww = WannierHam()
+    dd = WannierHam.from_dict(info)
+    print (dd.to_dict())
+    #w.compare_dft_wann(vasprun_path=run)
     import sys
 
     sys.exit()

@@ -10,7 +10,9 @@ soc_scfband_vrun = os.path.join(
 
 def test_outputs():
     w = WannierHam(filename=wann_soc_win_hr)
-    maxdiff = w.compare_dft_wann(vasprun_path=soc_scfband_vrun, plot=False)
+    maxdiff = w.compare_dft_wann(vasprun_path=soc_scfband_vrun, plot=False)['maxdiff']
+    info = w.to_dict()
+    dd = WannierHam.from_dict(info)
     assert (round(maxdiff, 2)) == (0.12)
 
 
