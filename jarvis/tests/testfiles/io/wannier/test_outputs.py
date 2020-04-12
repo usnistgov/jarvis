@@ -16,7 +16,7 @@ def test_outputs():
     
     energies, dos, pdos=w.dos([5,5,5])
     #print (round(dos[75],3))
-    assert (round(maxdiff, 2),round(dos[75],3)) == (0.12, 0.893)
+    assert (round(maxdiff, 2),round(dos[75],3)) == (0.12, 2.881)
 
 
 def test_wann_cent():

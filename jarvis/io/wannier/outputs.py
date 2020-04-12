@@ -1,7 +1,7 @@
 import sys
 import matplotlib
-
-#matplotlib.use("Agg")  # fixes display issues?
+import os
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
@@ -16,8 +16,20 @@ from jarvis.io.vasp.outputs import Vasprun
 
 
 
-
-
+        #[["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]] 
+def get_projectors_for_formula(semi_core_states=None, formula_dict={'Bi':2,'Se':3}):
+    if semi_core_states is None:
+        path_semi_core = str(
+            os.path.join(os.path.dirname(__file__), "default_semicore.json")
+        )
+        f = open(path_semi_core, "r")
+        semi_core_states = json.load(f)
+        f.close()
+    arr = []
+    for i,j in formula_dict.items():
+         dat = semi_core_states[i]
+         arr.append([i,j,[str(k) for k in dat[2].split(',')]])
+    return arr
 class WannierHam(object):
     def __init__(
         self,
@@ -215,15 +227,7 @@ class WannierHam(object):
 
 
 
-    def get_projectors_for_formula(semi_core_states=None, formula_dict={'Bi':2,'Se':3}):
-        if self.semi_core_states is None:
-            path_semi_core = str(
-                os.path.join(os.path.dirname(__file__), "default_semicore.json")
-            )
-            f = open(path_semi_core, "r")
-            semi_core_states = json.load(f)
-            f.close()
-            
+        
 
 
     def band_structure_eigs(self, kpath=None, proj=None, efermi=0.0):
@@ -522,6 +526,9 @@ if __name__ == "__main__":
     hr = "/rk2/knc6/Wannier/JVASP-17265_mp-13545_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-17265_mp-13545/wannier90_hr.dat"
     run = "/rk2/knc6/Wannier/JVASP-17265_mp-13545_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-17265_mp-13545/vasprun.xml"
     hr='/wrk/knc6/Wannier-rar/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-JVASP-1067_mp-541837/wannier90_hr.dat'
+    get_projectors_for_formula()
+    sys.exit()
+
     w = WannierHam(filename=hr)  # get_bandstructure_plot(atoms=p)
     #info = w.to_dict()
     #print (info['nwan'])
@@ -533,7 +540,6 @@ if __name__ == "__main__":
     #w.compare_dft_wann(vasprun_path=run)
     import sys
 
-    sys.exit()
 
     vrun = Vasprun(run)
     eigs_wan = w.band_structure_eigs(
