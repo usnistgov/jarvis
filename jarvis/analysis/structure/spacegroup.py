@@ -7,9 +7,19 @@ import itertools
 import numpy as np
 from numpy import sin, cos
 import itertools
-from math import gcd
+from numpy import gcd
+#from math import gcd
 import os
-
+def gcd(a, b):
+    a, b = np.broadcast_arrays(a, b)
+    a = a.copy()
+    b = b.copy()
+    pos = np.nonzero(b)[0]
+    while len(pos) > 0:
+        b2 = b[pos]
+        a[pos], b[pos] = b2, a[pos] % b2
+        pos = pos[b[pos]!=0]
+    return a
 # from pymatgen.core.surface import get_symmetrically_distinct_miller_indices
 
 
