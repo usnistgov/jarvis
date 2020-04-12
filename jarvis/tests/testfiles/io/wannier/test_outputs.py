@@ -13,7 +13,10 @@ def test_outputs():
     maxdiff = w.compare_dft_wann(vasprun_path=soc_scfband_vrun, plot=False)['maxdiff']
     info = w.to_dict()
     dd = WannierHam.from_dict(info)
-    assert (round(maxdiff, 2)) == (0.12)
+    
+    energies, dos, pdos=w.dos([5,5,5])
+    #print (round(dos[75],3))
+    assert (round(maxdiff, 2),round(dos[75],3)) == (0.12, 0.893)
 
 
 def test_wann_cent():

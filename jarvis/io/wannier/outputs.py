@@ -9,6 +9,7 @@ import math
 import time
 import copy as copy
 from jarvis.core.kpoints import Kpoints3D
+from jarvis.core.kpoints import generate_kgrid
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.vasp.outputs import Vasprun
 
@@ -288,6 +289,187 @@ class WannierHam(object):
         #print (info)
         return info#,eigs_wan.T,eigs_vrun.T
 
+    #def generate_kgrid(self, grid):
+    #
+    #    t = []
+    #    for i in range(grid[0]):
+    #        for j in range(grid[1]):
+    #            for k in range(grid[2]):
+    #                t.append([float(i)/(float(grid[0])) , float(j)/(float(grid[1])), float(k)/(float(grid[2]))])
+    #    return t
+
+    def dos(self, grid, proj=None, efermi=0.0, xrange=None, nenergy=100, sig = 0.02,  pdf="dos.pdf", show=True):
+
+        #plt.clf()
+        
+        kgrid = generate_kgrid(grid)
+        nk = len(kgrid)
+        nwan = self.nwan
+        
+        vals = np.zeros((nk,nwan), dtype=float)
+        pvals = np.zeros((nk,nwan), dtype=float)
+
+        for i,k in enumerate(kgrid):
+            val, vect,p = self.solve_ham(k, proj)
+            vals[i,:] = val - efermi
+            pvals[i,:] = p
+
+
+        # print vals
+        # print "pvals"
+        # print pvals
+        #print "np.sum pvals ", np.sum(np.sum(pvals))
+        
+        if xrange is None:          
+            vmin = np.min(vals[:]) 
+            vmax = np.max(vals[:])
+            vmin2 = vmin - (vmax-vmin) * 0.05
+            vmax2 = vmax + (vmax-vmin) * 0.05
+            xrange = [vmin2, vmax2]
+            #plt.xlim(xrange)
+
+            
+        energies = np.arange(xrange[0], xrange[1]+1e-5, (xrange[1]-xrange[0])/float(nenergy))
+        dos = np.zeros(np.size(energies))
+        pdos = np.zeros(np.size(energies))
+
+        v = vals
+
+        condmin = np.min(v[v > 0.0])
+        valmax = np.max(v[v < 0.0])
+
+        print ("DOS BAND GAP " ,  condmin - valmax , "    ", valmax, " " , condmin)
+
+        c = -0.5/sig**2
+        for i in range(np.size(energies)):
+            arg = c * (v - energies[i])**2
+            dos[i] = np.sum(np.exp(arg))
+            if not proj is None:
+                pdos[i] = np.sum(np.exp(arg) * pvals)
+            
+        de = energies[1] - energies[0]
+        dos = dos / sig / (2.0*np.pi)**0.5  / float(nk)
+        if not proj is None:
+            pdos = pdos / sig / (2.0*np.pi)**0.5  / float(nk)         
+        print ("np.sum(dos) ", np.sum(dos*de))
+        if not proj is None:
+            print ("np.sum(pdos) ", np.sum(pdos*de))
+
+
+        
+        return energies, dos, pdos
+
+    
+    
+    
+    def get_orbitals(self,projection_info, desired_orbitals, so=False):
+        #projection_info example for Bi2Se3 with s and p orbital projections
+        #[["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]]
+
+        #orbitals wanted example
+        #[["Bi"]]   all Bi orbitals
+
+        #[["Bi", "p"]] all Bi p orbitals
+
+        #[["Bi", "px"], ["Bi" ,"py"]] all Bi px, py oribitals
+
+        #[["Bi", "s"], ["Se", "s"]]  Bi s and Se s
+
+        #so for spin-orbit
+
+        c = 0
+
+        projection_dict = {}
+
+        print "get_orbs ", so
+        print projection_info
+                
+        for proj in projection_info:
+
+            atom = proj[0]
+            natom = proj[1]
+            orbitals = proj[2]
+
+            for n in range(natom):
+                for o in orbitals:
+                    if o == "s":
+                        if (atom, "s") not in projection_dict:
+                            projection_dict[(atom, "s")] = []
+                        projection_dict[(atom, "s")].append(c)
+                        c += 1
+                        
+                    elif o == "p":
+                        if (atom, "p") not in projection_dict:
+                            projection_dict[(atom, "p")] = []
+                            projection_dict[(atom, "pz")] = []
+                            projection_dict[(atom, "py")] = []
+                            projection_dict[(atom, "px")] = []
+
+                        projection_dict[(atom, "p")].append(c)
+                        projection_dict[(atom, "pz")].append(c)
+                        c += 1
+
+                        projection_dict[(atom, "p")].append(c)
+                        projection_dict[(atom, "px")].append(c)
+                        c += 1
+
+                        projection_dict[(atom, "p")].append(c)
+                        projection_dict[(atom, "py")].append(c)
+                        c += 1
+
+                    elif o == "d":
+                        if (atom, "p") not in projection_dict:
+                            projection_dict[(atom, "d")] = []
+                            projection_dict[(atom, "dz2")] = []
+                            projection_dict[(atom, "dxz")] = []
+                            projection_dict[(atom, "dyz")] = []
+                            projection_dict[(atom, "dx2y2")] = []
+                            projection_dict[(atom, "dxy")] = []
+
+                            projection_dict[(atom, "d")].append(c)
+                            projection_dict[(atom, "dz2")].append(c)
+                            c += 1
+
+                            projection_dict[(atom, "d")].append(c)
+                            projection_dict[(atom, "dxz")].append(c)
+                            c += 1
+
+                            projection_dict[(atom, "d")].append(c)
+                            projection_dict[(atom, "dyz")].append(c)
+                            c += 1
+
+                            projection_dict[(atom, "d")].append(c)
+                            projection_dict[(atom, "dx2y2")].append(c)
+                            c += 1
+
+                            projection_dict[(atom, "d")].append(c)
+                            projection_dict[(atom, "dxy")].append(c)
+                            c += 1
+
+        nwan = c
+        if so:
+            for (atom, orb) in projection_dict.keys():
+                new_ind = []
+                for i in projection_dict[(atom, orb)]:
+                    new_ind.append(i+nwan)
+                projection_dict[(atom, orb)] += new_ind
+            nwan = nwan * 2
+        print "nwan = ", nwan
+        
+        inds = []
+        for d in desired_orbitals:
+            if len(d) == 1:
+                for orb in ["s", "p", "d"]:
+                    if (d[0], orb) in projection_dict:
+                        new_orbs = projection_dict[(d[0], orb)]
+                        inds += new_orbs
+            else:
+                new_orbs = projection_dict[tuple(d)]
+                inds += new_orbs
+
+        return inds
+    
+
 
 class Wannier90wout(object):
     def __init__(self, wout_path="wannier90.wout"):
@@ -308,7 +490,7 @@ class Wannier90wout(object):
                     wan_cnts.append(tmp)
         return wan_cnts
 
-"""
+#"""
 if __name__ == "__main__":
     hr = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90_hr.dat"
     run = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/vasprun.xml"
@@ -324,11 +506,13 @@ if __name__ == "__main__":
     run = "/rk2/knc6/Wannier/JVASP-17265_mp-13545_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-17265_mp-13545/vasprun.xml"
     hr='/wrk/knc6/Wannier-rar/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-JVASP-1067_mp-541837/wannier90_hr.dat'
     w = WannierHam(filename=hr)  # get_bandstructure_plot(atoms=p)
-    info = w.to_dict()
-    print (info)
+    #info = w.to_dict()
+    #print (info['nwan'])
     #ww = WannierHam()
-    dd = WannierHam.from_dict(info)
-    print (dd.to_dict())
+    #dd = WannierHam.from_dict(info)
+    #print (dd.to_dict()['nwan'])
+    energies, dos, pdos=w.dos([5,5,5])
+    print (round(dos[75],3))
     #w.compare_dft_wann(vasprun_path=run)
     import sys
 
@@ -382,4 +566,4 @@ if __name__ == "__main__":
     # print ()
     # print ()
     # print ('HR',HR)
-"""
+#"""
