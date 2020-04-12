@@ -7,7 +7,8 @@ import itertools
 import numpy as np
 from numpy import sin, cos
 import itertools
-from math import gcd
+from numpy import gcd
+#from math import gcd
 import os
 
 # from pymatgen.core.surface import get_symmetrically_distinct_miller_indices
