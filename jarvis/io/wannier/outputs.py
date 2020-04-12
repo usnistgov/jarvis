@@ -1,7 +1,7 @@
 import sys
 import matplotlib
 
-matplotlib.use("Agg")  # fixes display issues?
+#matplotlib.use("Agg")  # fixes display issues?
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
@@ -12,6 +12,10 @@ from jarvis.core.kpoints import Kpoints3D
 from jarvis.core.kpoints import generate_kgrid
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.vasp.outputs import Vasprun
+
+
+
+
 
 
 class WannierHam(object):
@@ -209,6 +213,19 @@ class WannierHam(object):
 
         return val.real, vect, p
 
+
+
+    def get_projectors_for_formula(semi_core_states=None, formula='Bi2Se3'):
+        if self.semi_core_states is None:
+            path_semi_core = str(
+                os.path.join(os.path.dirname(__file__), "default_semicore.json")
+            )
+            f = open(path_semi_core, "r")
+            semi_core_states = json.load(f)
+            f.close()
+            self.semi_core_states = semi_core_states
+
+
     def band_structure_eigs(self, kpath=None, proj=None, efermi=0.0):
         eigs = []
         for i in kpath:
@@ -381,8 +398,8 @@ class WannierHam(object):
 
         projection_dict = {}
 
-        print "get_orbs ", so
-        print projection_info
+        #print "get_orbs ", so
+        #print projection_info
                 
         for proj in projection_info:
 
@@ -454,7 +471,7 @@ class WannierHam(object):
                     new_ind.append(i+nwan)
                 projection_dict[(atom, orb)] += new_ind
             nwan = nwan * 2
-        print "nwan = ", nwan
+        print ("nwan = ", nwan)
         
         inds = []
         for d in desired_orbitals:
