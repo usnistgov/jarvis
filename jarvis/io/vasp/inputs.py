@@ -312,6 +312,31 @@ class Potcar(object):
     def __repr__(self):
         return str(str(self._pot_type) + "\n" + str(self._potcar_strings))
 
+
+def get_ibz_kp(filename='',lines=""):
+    if filename!='':
+      f = open(kpoints_file_path, "r")
+      lines = f.read().splitlines()
+      f.close()
+    kp_labels = []
+    all_kp = []
+    kp_labels_points = []
+    for ii, i in enumerate(lines):
+        if ii > 2:
+            tmp = i.split()
+            k=[tmp[0],tmp[1],tmp[2]]
+            all_kp.append(k)
+            if len(tmp) == 5:
+                tmp = str("$") + str(tmp[4]) + str("$")
+                if len(kp_labels) == 0:
+                    kp_labels.append(tmp)
+                    kp_labels_points.append(ii - 3)
+                elif tmp != kp_labels[-1]:
+                    kp_labels.append(tmp)
+                    kp_labels_points.append(ii - 3)
+    return kp_labels_points, kp_labels,np.array(all_kp,dtype='float')
+
+
 """
 if __name__ == "__main__":
     p = Poscar.from_file(
