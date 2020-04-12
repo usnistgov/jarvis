@@ -16,7 +16,6 @@ from jarvis.io.vasp.outputs import Vasprun
 
 
 
-        #[["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]] 
 def get_projectors_for_formula(semi_core_states=None, formula_dict={'Bi':2,'Se':3}):
     if semi_core_states is None:
         path_semi_core = str(
@@ -30,6 +29,115 @@ def get_projectors_for_formula(semi_core_states=None, formula_dict={'Bi':2,'Se':
          dat = semi_core_states[i]
          arr.append([i,j,[str(k) for k in dat[2].split(',')]])
     return arr
+
+def get_orbitals(projection_info = [["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]],
+    desired_orbitals = [["Bi", "p"]], so=True):
+    #projection_info example for Bi2Se3 with s and p orbital projections
+    #[["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]]
+
+    #orbitals wanted example
+    #[["Bi"]]   all Bi orbitals
+
+    #[["Bi", "p"]] all Bi p orbitals
+
+    #[["Bi", "px"], ["Bi" ,"py"]] all Bi px, py oribitals
+
+    #[["Bi", "s"], ["Se", "s"]]  Bi s and Se s
+
+    #so for spin-orbit
+
+    c = 0
+
+    projection_dict = {}
+
+    #print "get_orbs ", so
+    #print projection_info
+            
+    for proj in projection_info:
+
+        atom = proj[0]
+        natom = proj[1]
+        orbitals = proj[2]
+
+        for n in range(natom):
+            for o in orbitals:
+                if o == "s":
+                    if (atom, "s") not in projection_dict:
+                        projection_dict[(atom, "s")] = []
+                    projection_dict[(atom, "s")].append(c)
+                    c += 1
+                    
+                elif o == "p":
+                    if (atom, "p") not in projection_dict:
+                        projection_dict[(atom, "p")] = []
+                        projection_dict[(atom, "pz")] = []
+                        projection_dict[(atom, "py")] = []
+                        projection_dict[(atom, "px")] = []
+
+                    projection_dict[(atom, "p")].append(c)
+                    projection_dict[(atom, "pz")].append(c)
+                    c += 1
+
+                    projection_dict[(atom, "p")].append(c)
+                    projection_dict[(atom, "px")].append(c)
+                    c += 1
+
+                    projection_dict[(atom, "p")].append(c)
+                    projection_dict[(atom, "py")].append(c)
+                    c += 1
+
+                elif o == "d":
+                    if (atom, "p") not in projection_dict:
+                        projection_dict[(atom, "d")] = []
+                        projection_dict[(atom, "dz2")] = []
+                        projection_dict[(atom, "dxz")] = []
+                        projection_dict[(atom, "dyz")] = []
+                        projection_dict[(atom, "dx2y2")] = []
+                        projection_dict[(atom, "dxy")] = []
+
+                        projection_dict[(atom, "d")].append(c)
+                        projection_dict[(atom, "dz2")].append(c)
+                        c += 1
+
+                        projection_dict[(atom, "d")].append(c)
+                        projection_dict[(atom, "dxz")].append(c)
+                        c += 1
+
+                        projection_dict[(atom, "d")].append(c)
+                        projection_dict[(atom, "dyz")].append(c)
+                        c += 1
+
+                        projection_dict[(atom, "d")].append(c)
+                        projection_dict[(atom, "dx2y2")].append(c)
+                        c += 1
+
+                        projection_dict[(atom, "d")].append(c)
+                        projection_dict[(atom, "dxy")].append(c)
+                        c += 1
+
+    nwan = c
+    if so:
+        for (atom, orb) in projection_dict.keys():
+            new_ind = []
+            for i in projection_dict[(atom, orb)]:
+                new_ind.append(i+nwan)
+            projection_dict[(atom, orb)] += new_ind
+        nwan = nwan * 2
+    print ("nwan = ", nwan)
+    
+    inds = []
+    for d in desired_orbitals:
+        if len(d) == 1:
+            for orb in ["s", "p", "d"]:
+                if (d[0], orb) in projection_dict:
+                    new_orbs = projection_dict[(d[0], orb)]
+                    inds += new_orbs
+        else:
+            new_orbs = projection_dict[tuple(d)]
+            inds += new_orbs
+
+    return inds
+
 class WannierHam(object):
     def __init__(
         self,
@@ -383,112 +491,6 @@ class WannierHam(object):
     
     
     
-    def get_orbitals(self,projection_info, desired_orbitals, so=False):
-        #projection_info example for Bi2Se3 with s and p orbital projections
-        #[["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]]
-
-        #orbitals wanted example
-        #[["Bi"]]   all Bi orbitals
-
-        #[["Bi", "p"]] all Bi p orbitals
-
-        #[["Bi", "px"], ["Bi" ,"py"]] all Bi px, py oribitals
-
-        #[["Bi", "s"], ["Se", "s"]]  Bi s and Se s
-
-        #so for spin-orbit
-
-        c = 0
-
-        projection_dict = {}
-
-        #print "get_orbs ", so
-        #print projection_info
-                
-        for proj in projection_info:
-
-            atom = proj[0]
-            natom = proj[1]
-            orbitals = proj[2]
-
-            for n in range(natom):
-                for o in orbitals:
-                    if o == "s":
-                        if (atom, "s") not in projection_dict:
-                            projection_dict[(atom, "s")] = []
-                        projection_dict[(atom, "s")].append(c)
-                        c += 1
-                        
-                    elif o == "p":
-                        if (atom, "p") not in projection_dict:
-                            projection_dict[(atom, "p")] = []
-                            projection_dict[(atom, "pz")] = []
-                            projection_dict[(atom, "py")] = []
-                            projection_dict[(atom, "px")] = []
-
-                        projection_dict[(atom, "p")].append(c)
-                        projection_dict[(atom, "pz")].append(c)
-                        c += 1
-
-                        projection_dict[(atom, "p")].append(c)
-                        projection_dict[(atom, "px")].append(c)
-                        c += 1
-
-                        projection_dict[(atom, "p")].append(c)
-                        projection_dict[(atom, "py")].append(c)
-                        c += 1
-
-                    elif o == "d":
-                        if (atom, "p") not in projection_dict:
-                            projection_dict[(atom, "d")] = []
-                            projection_dict[(atom, "dz2")] = []
-                            projection_dict[(atom, "dxz")] = []
-                            projection_dict[(atom, "dyz")] = []
-                            projection_dict[(atom, "dx2y2")] = []
-                            projection_dict[(atom, "dxy")] = []
-
-                            projection_dict[(atom, "d")].append(c)
-                            projection_dict[(atom, "dz2")].append(c)
-                            c += 1
-
-                            projection_dict[(atom, "d")].append(c)
-                            projection_dict[(atom, "dxz")].append(c)
-                            c += 1
-
-                            projection_dict[(atom, "d")].append(c)
-                            projection_dict[(atom, "dyz")].append(c)
-                            c += 1
-
-                            projection_dict[(atom, "d")].append(c)
-                            projection_dict[(atom, "dx2y2")].append(c)
-                            c += 1
-
-                            projection_dict[(atom, "d")].append(c)
-                            projection_dict[(atom, "dxy")].append(c)
-                            c += 1
-
-        nwan = c
-        if so:
-            for (atom, orb) in projection_dict.keys():
-                new_ind = []
-                for i in projection_dict[(atom, orb)]:
-                    new_ind.append(i+nwan)
-                projection_dict[(atom, orb)] += new_ind
-            nwan = nwan * 2
-        print ("nwan = ", nwan)
-        
-        inds = []
-        for d in desired_orbitals:
-            if len(d) == 1:
-                for orb in ["s", "p", "d"]:
-                    if (d[0], orb) in projection_dict:
-                        new_orbs = projection_dict[(d[0], orb)]
-                        inds += new_orbs
-            else:
-                new_orbs = projection_dict[tuple(d)]
-                inds += new_orbs
-
-        return inds
     
 
 
@@ -526,7 +528,9 @@ if __name__ == "__main__":
     hr = "/rk2/knc6/Wannier/JVASP-17265_mp-13545_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-17265_mp-13545/wannier90_hr.dat"
     run = "/rk2/knc6/Wannier/JVASP-17265_mp-13545_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-17265_mp-13545/vasprun.xml"
     hr='/wrk/knc6/Wannier-rar/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-JVASP-1067_mp-541837/wannier90_hr.dat'
-    get_projectors_for_formula()
+    pp = get_projectors_for_formula()
+    x = get_orbitals()
+    print (x,pp)
     sys.exit()
 
     w = WannierHam(filename=hr)  # get_bandstructure_plot(atoms=p)
