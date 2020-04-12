@@ -7,7 +7,7 @@ import itertools
 import numpy as np
 from numpy import sin, cos
 import itertools
-from numpy import gcd
+#from numpy import gcd
 #from math import gcd
 import os
 def gcd(a, b):
@@ -21,7 +21,7 @@ def gcd(a, b):
         pos = pos[b[pos]!=0]
     return a
 # from pymatgen.core.surface import get_symmetrically_distinct_miller_indices
-
+from fractions import gcd
 
 def unique_rows_2(a):
     order = np.lexsort(a.T)
@@ -636,7 +636,7 @@ if __name__ == "__main__":
     x = get_wyckoff_position_operators(488)
     print (x)
     import sys
-    sys.exit()
+    #sys.exit()
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]
@@ -652,8 +652,8 @@ if __name__ == "__main__":
     cvn = spg.conventional_standard_structure
     ml=symmetrically_distinct_miller_indices(max_index=3, cvn_atoms=cvn)
     print ('miller=',ml,len(ml))
-    ml_pmg=get_symmetrically_distinct_miller_indices(cvn.pymatgen_converter(),max_index=3)
-    print ('millerpmg=',ml_pmg,len(ml_pmg))
+#    ml_pmg=get_symmetrically_distinct_miller_indices(cvn.pymatgen_converter(),max_index=3)
+#    print ('millerpmg=',ml_pmg,len(ml_pmg))
     # pmg=Si.pymatgen_converter()
     # from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
     # spg=SpacegroupAnalyzer(pmg)

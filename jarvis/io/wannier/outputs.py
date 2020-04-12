@@ -215,7 +215,7 @@ class WannierHam(object):
 
 
 
-    def get_projectors_for_formula(semi_core_states=None, formula='Bi2Se3'):
+    def get_projectors_for_formula(semi_core_states=None, formula_dict={'Bi':2,'Se':3}):
         if self.semi_core_states is None:
             path_semi_core = str(
                 os.path.join(os.path.dirname(__file__), "default_semicore.json")
@@ -223,7 +223,7 @@ class WannierHam(object):
             f = open(path_semi_core, "r")
             semi_core_states = json.load(f)
             f.close()
-            self.semi_core_states = semi_core_states
+            
 
 
     def band_structure_eigs(self, kpath=None, proj=None, efermi=0.0):
