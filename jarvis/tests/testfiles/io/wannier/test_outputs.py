@@ -14,13 +14,14 @@ def test_outputs():
     info = w.to_dict()
     dd = WannierHam.from_dict(info)
     
+    pp = get_projectors_for_formula()[0][0]
+    print ('getorbs', pp)
     energies, dos, pdos=w.dos([5,5,5])
-    pp = get_projectors_for_formula()[0]
-    orb = get_orbitals()[0][0]
+    orb = get_orbitals()[0]
     #print (x,pp)
 
     #print (round(dos[75],3))
-    assert (round(maxdiff, 2),round(dos[75],3), pp, orb) == (0.12, 2.881, 1, 'Bi')
+    assert (round(maxdiff, 2),round(dos[75],3), pp, orb) == (0.12, 2.881, 'Bi', 1)
 
 
 def test_wann_cent():

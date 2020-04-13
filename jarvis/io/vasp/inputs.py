@@ -5,6 +5,7 @@ import os
 import numpy as np
 from jarvis.core.atoms import Atoms
 from collections import OrderedDict
+from jarvis.core.kpoints import generate_kgrid, Kpoints3D
 
 
 class Poscar(object):
@@ -106,7 +107,7 @@ class Poscar(object):
         )
         # print (atoms)
         formula = atoms.composition.formula
-        
+
         return Poscar(atoms, comment=comment)
 
     def __repr__(self):
@@ -313,32 +314,79 @@ class Potcar(object):
         return str(str(self._pot_type) + "\n" + str(self._potcar_strings))
 
 
-def get_ibz_kp(filename='',lines=""):
-    if filename!='':
-      f = open(kpoints_file_path, "r")
-      lines = f.read().splitlines()
-      f.close()
-    kp_labels = []
-    all_kp = []
-    kp_labels_points = []
-    for ii, i in enumerate(lines):
-        if ii > 2:
-            tmp = i.split()
-            k=[tmp[0],tmp[1],tmp[2]]
-            all_kp.append(k)
-            if len(tmp) == 5:
-                tmp = str("$") + str(tmp[4]) + str("$")
-                if len(kp_labels) == 0:
-                    kp_labels.append(tmp)
-                    kp_labels_points.append(ii - 3)
-                elif tmp != kp_labels[-1]:
-                    kp_labels.append(tmp)
-                    kp_labels_points.append(ii - 3)
-    return kp_labels_points, kp_labels,np.array(all_kp,dtype='float')
+class Kpoints(object):
+    def __init__(self, filename=""):
+        self.filename = filename
+        if filename != "":
+            f = open(self.filename, "r")
+            self.lines = f.read().splitlines()
+            f.close()
+            self.kpoints = self.read(self.lines)
+
+    @classmethod
+    def read(self, lines):
+
+        if lines[1] == "0":
+            return self.get_mesh_kp(lines=lines)
+        elif "Reciprocal" in lines[2]:
+            return self.get_ibz_kp(lines=lines)
+        else:
+            ValueError("K-point scheme is not implemented")
+
+    def get_mesh_kp(lines=""):
+        print("lines", lines)
+        grid = [int(i) for i in lines[3].split()]
+        # print (grid)
+        kpts = generate_kgrid(grid)
+        kpoints = Kpoints3D(kpoints=np.array(kpts))
+        return kpoints
+
+    def get_ibz_kp(lines=""):
+        kp_labels = []
+        all_kp = []
+        kp_labels_points = []
+        for ii, i in enumerate(lines):
+            if ii > 2:
+                tmp = i.split()
+                k = [tmp[0], tmp[1], tmp[2]]
+                all_kp.append(k)
+                if len(tmp) == 5:
+                    tmp = str("$") + str(tmp[4]) + str("$")
+                    if len(kp_labels) == 0:
+                        kp_labels.append(tmp)
+                        kp_labels_points.append(ii - 3)
+                    elif tmp != kp_labels[-1]:
+                        kp_labels.append(tmp)
+                        kp_labels_points.append(ii - 3)
+        labels = []
+        for i in range(len(all_kp)):
+            labels.append("")
+        for i, j in zip(kp_labels, kp_labels_points):
+            labels[j] = i
+        all_kp = np.array(all_kp, dtype="float")
+        kpoints = Kpoints3D(kpoints=all_kp, labels=labels, kpoint_mode="linemode")
+        return kpoints
+        # print ('kp_labels',labels,len(all_kp))
+        # print ('kp2',kp_labels_points, kp_labels,np.array(all_kp,dtype='float'))
+
+        # return kp_labels_points, kp_labels,np.array(all_kp,dtype='float')
 
 
-"""
+# """
 if __name__ == "__main__":
+
+    kp = open(
+        "../../examples/vasp/SiOptb88/MAIN-RELAX-bulk@mp_149/KPOINTS", "r"
+    )  # .read_file()
+    lines = kp.read().splitlines()
+    kp.close()
+    print(Kpoints.read(lines))
+    kp = Kpoints(filename="../../examples/vasp/SiOptb88/MAIN-RELAX-bulk@mp_149/KPOINTS")
+    # print (kp.kpoints)
+    import sys
+
+    sys.exit()
+
     p = Poscar.from_file(
         filename="/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/POSCAR"
     )
@@ -356,4 +404,4 @@ if __name__ == "__main__":
     # p.write_file('POTCAR')
     # inp=IndividualPotcarData.from_file('POTCAR')
     # print (inp)
-"""
+# """

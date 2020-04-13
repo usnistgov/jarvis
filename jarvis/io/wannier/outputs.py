@@ -513,7 +513,7 @@ class Wannier90wout(object):
                     wan_cnts.append(tmp)
         return wan_cnts
 
-#"""
+"""
 if __name__ == "__main__":
     hr = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90_hr.dat"
     run = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/vasprun.xml"
@@ -593,4 +593,4 @@ if __name__ == "__main__":
     # print ()
     # print ()
     # print ('HR',HR)
-#"""
+"""

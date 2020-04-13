@@ -8,17 +8,23 @@ from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from warnings import warn
 from numpy import pi, cos, sin
 from math import ceil
-from jarvis.io.vasp.inputs import Poscar
+#from jarvis.io.vasp.inputs import Poscar
 
 
-
-def generate_kgrid(grid = [5,5,5]):
+def generate_kgrid(grid=[5, 5, 5]):
     t = []
     for i in range(grid[0]):
         for j in range(grid[1]):
             for k in range(grid[2]):
-                t.append([float(i)/(float(grid[0])) , float(j)/(float(grid[1])), float(k)/(float(grid[2]))])
+                t.append(
+                    [
+                        float(i) / (float(grid[0])),
+                        float(j) / (float(grid[1])),
+                        float(k) / (float(grid[2])),
+                    ]
+                )
     return t
+
 
 class Kpoints3D(object):
     def __init__(
@@ -52,16 +58,9 @@ class Kpoints3D(object):
     def kpts(self):
         return self._kpoints
 
-
-
     @property
     def labels(self):
         return self._labels
-
-
-
-
-
 
     def write_file(self, filename=""):
         if self._kpoint_mode == "automatic":
