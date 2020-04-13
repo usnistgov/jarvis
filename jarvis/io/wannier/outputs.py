@@ -14,9 +14,7 @@ from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.vasp.outputs import Vasprun
 
 
-
-
-def get_projectors_for_formula(semi_core_states=None, formula_dict={'Bi':2,'Se':3}):
+def get_projectors_for_formula(semi_core_states=None, formula_dict={"Bi": 2, "Se": 3}):
     if semi_core_states is None:
         path_semi_core = str(
             os.path.join(os.path.dirname(__file__), "default_semicore.json")
@@ -25,34 +23,38 @@ def get_projectors_for_formula(semi_core_states=None, formula_dict={'Bi':2,'Se':
         semi_core_states = json.load(f)
         f.close()
     arr = []
-    for i,j in formula_dict.items():
-         dat = semi_core_states[i]
-         arr.append([i,j,[str(k) for k in dat[2].split(',')]])
+    for i, j in formula_dict.items():
+        dat = semi_core_states[i]
+        arr.append([i, j, [str(k) for k in dat[2].split(",")]])
     return arr
 
-def get_orbitals(projection_info = [["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]],
-    desired_orbitals = [["Bi", "p"]], so=True):
-    #projection_info example for Bi2Se3 with s and p orbital projections
-    #[["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]]
 
-    #orbitals wanted example
-    #[["Bi"]]   all Bi orbitals
+def get_orbitals(
+    projection_info=[["Bi", 2, ["s", "p"]], ["Se", 3, ["s", "p"]]],
+    desired_orbitals=[["Bi", "p"]],
+    so=True,
+):
+    # projection_info example for Bi2Se3 with s and p orbital projections
+    # [["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]]
 
-    #[["Bi", "p"]] all Bi p orbitals
+    # orbitals wanted example
+    # [["Bi"]]   all Bi orbitals
 
-    #[["Bi", "px"], ["Bi" ,"py"]] all Bi px, py oribitals
+    # [["Bi", "p"]] all Bi p orbitals
 
-    #[["Bi", "s"], ["Se", "s"]]  Bi s and Se s
+    # [["Bi", "px"], ["Bi" ,"py"]] all Bi px, py oribitals
 
-    #so for spin-orbit
+    # [["Bi", "s"], ["Se", "s"]]  Bi s and Se s
+
+    # so for spin-orbit
 
     c = 0
 
     projection_dict = {}
 
-    #print "get_orbs ", so
-    #print projection_info
-            
+    # print "get_orbs ", so
+    # print projection_info
+
     for proj in projection_info:
 
         atom = proj[0]
@@ -66,7 +68,7 @@ def get_orbitals(projection_info = [["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]],
                         projection_dict[(atom, "s")] = []
                     projection_dict[(atom, "s")].append(c)
                     c += 1
-                    
+
                 elif o == "p":
                     if (atom, "p") not in projection_dict:
                         projection_dict[(atom, "p")] = []
@@ -120,11 +122,11 @@ def get_orbitals(projection_info = [["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]],
         for (atom, orb) in projection_dict.keys():
             new_ind = []
             for i in projection_dict[(atom, orb)]:
-                new_ind.append(i+nwan)
+                new_ind.append(i + nwan)
             projection_dict[(atom, orb)] += new_ind
         nwan = nwan * 2
-    print ("nwan = ", nwan)
-    
+    print("nwan = ", nwan)
+
     inds = []
     for d in desired_orbitals:
         if len(d) == 1:
@@ -137,6 +139,7 @@ def get_orbitals(projection_info = [["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]],
             inds += new_orbs
 
     return inds
+
 
 class WannierHam(object):
     def __init__(
@@ -163,30 +166,28 @@ class WannierHam(object):
             self.read_ham()
 
     def to_dict(self):
-        info={}    
-        info['nr'] = self.nr 
-        info['filename'] = self.filename   
-        info['nwan']= self.nwan
-        info['sym_r'] = self.sym_r
-        info['H_int'] = self.H_int
-        info['H_val']= self.H_val
-        info['H'] = self.H
-        info['HR'] = self.HR
+        info = {}
+        info["nr"] = self.nr
+        info["filename"] = self.filename
+        info["nwan"] = self.nwan
+        info["sym_r"] = self.sym_r
+        info["H_int"] = self.H_int
+        info["H_val"] = self.H_val
+        info["H"] = self.H
+        info["HR"] = self.HR
         return info
 
-
-
     @classmethod
-    def from_dict(self,info):
+    def from_dict(self, info):
         w = WannierHam(
-            nr=info['nr'],
-            nwan=info['nwan'],
-            sym_r=info['sym_r'],
-            H_int=info['H_int'],
-            H_val=info['H_val'],
-            H=info['H'],
-            HR=info['HR']
-           )
+            nr=info["nr"],
+            nwan=info["nwan"],
+            sym_r=info["sym_r"],
+            H_int=info["H_int"],
+            H_val=info["H_val"],
+            H=info["H"],
+            HR=info["HR"],
+        )
         return w
 
     def read_ham(self):
@@ -333,11 +334,6 @@ class WannierHam(object):
 
         return val.real, vect, p
 
-
-
-        
-
-
     def band_structure_eigs(self, kpath=None, proj=None, efermi=0.0):
         eigs = []
         for i in kpath:
@@ -365,7 +361,13 @@ class WannierHam(object):
         plt.close()
 
     def compare_dft_wann(
-        self, vasprun_path="", energy_tol=.75, plot=True,kp_labels_points=[], kp_labels=[], filename="compare.png"
+        self,
+        vasprun_path="",
+        energy_tol=0.75,
+        plot=True,
+        kp_labels_points=[],
+        kp_labels=[],
+        filename="compare.png",
     ):
 
         vrun = Vasprun(vasprun_path)
@@ -405,20 +407,20 @@ class WannierHam(object):
             for i, ii in enumerate(eigs_vrun.T):
                 plt.plot(ii, color="r")
             plt.ylim([-energy_tol, energy_tol])
-            if kp_labels_points!=[] and kp_labels!=[]:
-                 plt.xticks(kp_labels_points, kp_labels)
+            if kp_labels_points != [] and kp_labels != []:
+                plt.xticks(kp_labels_points, kp_labels)
 
             plt.savefig(filename)
             plt.close()
-        info['eigs_wan']=list(eigs_wan.tolist())
-        info['eigs_vrun']=list(eigs_vrun.tolist())
-        info['kp_labels_points']=list(kp_labels_points)
-        info['kp_labels']=kp_labels
-        info['maxdiff'] = maxdiff
-        #print (info)
-        return info#,eigs_wan.T,eigs_vrun.T
+        info["eigs_wan"] = list(eigs_wan.tolist())
+        info["eigs_vrun"] = list(eigs_vrun.tolist())
+        info["kp_labels_points"] = list(kp_labels_points)
+        info["kp_labels"] = kp_labels
+        info["maxdiff"] = maxdiff
+        # print (info)
+        return info  # ,eigs_wan.T,eigs_vrun.T
 
-    #def generate_kgrid(self, grid):
+    # def generate_kgrid(self, grid):
     #
     #    t = []
     #    for i in range(grid[0]):
@@ -427,38 +429,48 @@ class WannierHam(object):
     #                t.append([float(i)/(float(grid[0])) , float(j)/(float(grid[1])), float(k)/(float(grid[2]))])
     #    return t
 
-    def dos(self, grid, proj=None, efermi=0.0, xrange=None, nenergy=100, sig = 0.02,  pdf="dos.pdf", show=True):
+    def dos(
+        self,
+        kpoints=[],
+        proj=None,
+        efermi=0.0,
+        xrange=None,
+        nenergy=100,
+        sig=0.02,
+        pdf="dos.pdf",
+        show=True,
+    ):
 
-        #plt.clf()
-        
-        kgrid = generate_kgrid(grid)
-        nk = len(kgrid)
+        # plt.clf()
+
+        # kgrid = generate_kgrid(grid)
+        nk = len(kpoints)
         nwan = self.nwan
-        
-        vals = np.zeros((nk,nwan), dtype=float)
-        pvals = np.zeros((nk,nwan), dtype=float)
 
-        for i,k in enumerate(kgrid):
-            val, vect,p = self.solve_ham(k, proj)
-            vals[i,:] = val - efermi
-            pvals[i,:] = p
+        vals = np.zeros((nk, nwan), dtype=float)
+        pvals = np.zeros((nk, nwan), dtype=float)
 
+        for i, k in enumerate(kpoints):
+            val, vect, p = self.solve_ham(k, proj)
+            vals[i, :] = val - efermi
+            pvals[i, :] = p
 
         # print vals
         # print "pvals"
         # print pvals
-        #print "np.sum pvals ", np.sum(np.sum(pvals))
-        
-        if xrange is None:          
-            vmin = np.min(vals[:]) 
-            vmax = np.max(vals[:])
-            vmin2 = vmin - (vmax-vmin) * 0.05
-            vmax2 = vmax + (vmax-vmin) * 0.05
-            xrange = [vmin2, vmax2]
-            #plt.xlim(xrange)
+        # print "np.sum pvals ", np.sum(np.sum(pvals))
 
-            
-        energies = np.arange(xrange[0], xrange[1]+1e-5, (xrange[1]-xrange[0])/float(nenergy))
+        if xrange is None:
+            vmin = np.min(vals[:])
+            vmax = np.max(vals[:])
+            vmin2 = vmin - (vmax - vmin) * 0.05
+            vmax2 = vmax + (vmax - vmin) * 0.05
+            xrange = [vmin2, vmax2]
+            # plt.xlim(xrange)
+
+        energies = np.arange(
+            xrange[0], xrange[1] + 1e-5, (xrange[1] - xrange[0]) / float(nenergy)
+        )
         dos = np.zeros(np.size(energies))
         pdos = np.zeros(np.size(energies))
 
@@ -467,31 +479,24 @@ class WannierHam(object):
         condmin = np.min(v[v > 0.0])
         valmax = np.max(v[v < 0.0])
 
-        print ("DOS BAND GAP " ,  condmin - valmax , "    ", valmax, " " , condmin)
+        print("DOS BAND GAP ", condmin - valmax, "    ", valmax, " ", condmin)
 
-        c = -0.5/sig**2
+        c = -0.5 / sig ** 2
         for i in range(np.size(energies)):
-            arg = c * (v - energies[i])**2
+            arg = c * (v - energies[i]) ** 2
             dos[i] = np.sum(np.exp(arg))
             if not proj is None:
                 pdos[i] = np.sum(np.exp(arg) * pvals)
-            
+
         de = energies[1] - energies[0]
-        dos = dos / sig / (2.0*np.pi)**0.5  / float(nk)
+        dos = dos / sig / (2.0 * np.pi) ** 0.5 / float(nk)
         if not proj is None:
-            pdos = pdos / sig / (2.0*np.pi)**0.5  / float(nk)         
-        print ("np.sum(dos) ", np.sum(dos*de))
+            pdos = pdos / sig / (2.0 * np.pi) ** 0.5 / float(nk)
+        print("np.sum(dos) ", np.sum(dos * de))
         if not proj is None:
-            print ("np.sum(pdos) ", np.sum(pdos*de))
+            print("np.sum(pdos) ", np.sum(pdos * de))
 
-
-        
         return energies, dos, pdos
-
-    
-    
-    
-    
 
 
 class Wannier90wout(object):
@@ -512,6 +517,7 @@ class Wannier90wout(object):
                     tmp = [float(j) for j in i.split("(")[1].split(")")[0].split(",")]
                     wan_cnts.append(tmp)
         return wan_cnts
+
 
 """
 if __name__ == "__main__":

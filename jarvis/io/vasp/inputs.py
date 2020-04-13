@@ -380,12 +380,12 @@ if __name__ == "__main__":
     )  # .read_file()
     lines = kp.read().splitlines()
     kp.close()
-    print(Kpoints.read(lines))
-    kp = Kpoints(filename="../../examples/vasp/SiOptb88/MAIN-RELAX-bulk@mp_149/KPOINTS")
+    print('lbl',Kpoints.read(lines).labels)
     # print (kp.kpoints)
     import sys
 
     sys.exit()
+    kp = Kpoints(filename="../../examples/vasp/SiOptb88/MAIN-RELAX-bulk@mp_149/KPOINTS")
 
     p = Poscar.from_file(
         filename="/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/POSCAR"
