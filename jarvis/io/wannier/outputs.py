@@ -313,7 +313,7 @@ class WannierHam(object):
 
         kmat = np.tile(k, (nr, 1))
 
-        exp_ikr = np.exp(-1.0j * 2 * np.pi * np.sum(kmat * self.R, 1))
+        exp_ikr = np.exp(1.0j * 2 * np.pi * np.sum(kmat * self.R, 1))
 
         temp = np.zeros(self.nwan ** 2, dtype=complex)
         for i in range(nr):
