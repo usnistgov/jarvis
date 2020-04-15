@@ -281,7 +281,7 @@ class Atoms(object):
         d["cartesian"] = self.cartesian
         d["props"] = self.props
         return d
-
+    @classmethod
     def from_dict(self, d={}):
         """
         Form atoms object from the dictionary
@@ -641,8 +641,12 @@ if __name__ == "__main__":
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    print (Si.props)
-    print (Si.make_supercell().props)
+    #print (Si.props)
+    #print (Si.make_supercell().props)
+    d = Si.to_dict()
+    print (d)
+    a=Atoms.from_dict(d)
+    print (a)
     import sys
     sys.exit()
      

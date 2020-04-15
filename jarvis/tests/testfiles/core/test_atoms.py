@@ -31,6 +31,7 @@ def test_basic_atoms():
     rem = (Si.make_supercell([2, 2, 2]).remove_site_by_index(site=0)).num_atoms
 
     d = Si.to_dict()
+    new_at = Atoms.from_dict(d)
     angs_a = d["angles"][0]
     Si_2_den = Atoms(
         lattice_mat=d["lattice_mat"], coords=d["coords"], elements=d["elements"]
