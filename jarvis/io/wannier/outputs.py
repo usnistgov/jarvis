@@ -498,6 +498,114 @@ class WannierHam(object):
 
         return energies, dos, pdos
 
+    def generate_supercell(self, supercell=[2, 2, 2], index=[0, 0, 1], sparse=False):
+
+        t0 = time.time()
+
+        nw = self.nwan
+
+        factor = np.prod(supercell)
+        NWAN = factor * self.nwan
+
+        def plus_r(rold, subcell):
+            rnew = subcell + rold
+            # print ('cell',rnew,supercell)
+            cellnew = rnew / supercell  # this is integer division
+            subnew = rnew % supercell
+
+            return cellnew, subnew
+
+        def subcell_index(ss):
+            t = ss[0] * supercell[1] * supercell[2] + ss[1] * supercell[2] + ss[2]
+            return range(t * nw, (t + 1) * nw)
+
+        RH_new = {}
+        h_temp = np.zeros((self.nwan, self.nwan), dtype=complex)
+        subcell = np.zeros(3, dtype=int)
+
+        t1 = time.time()
+
+        for ii in range(self.R.shape[0]):
+
+            rold = np.array(self.R[ii, :], dtype=int)
+
+            for i in range(supercell[0]):
+                for j in range(supercell[1]):
+                    for k in range(supercell[2]):
+                        subcell[:] = [i, j, k]
+
+                        cellnew, subnew = plus_r(rold, subcell)
+
+                        if (
+                            (index[0] > 0 and cellnew[0] != 0)
+                            or (index[1] > 0 and cellnew[1] != 0)
+                            or (index[2] > 0 and cellnew[2] != 0)
+                        ):
+                            continue
+
+                        #                        print 'rs', rold, subcell, 'new', cellnew, subnew
+                        if tuple(cellnew) not in RH_new:
+                            if sparse:
+                                RH_new[tuple(cellnew)] = [
+                                    cellnew,
+                                    sps.lil_matrix((NWAN, NWAN), dtype=complex),
+                                ]
+                            else:
+                                RH_new[tuple(cellnew)] = [
+                                    cellnew,
+                                    np.zeros((NWAN, NWAN), dtype=complex),
+                                ]
+
+                        h_temp[:, :] = np.reshape(
+                            self.HR[ii, :], (self.nwan, self.nwan)
+                        )
+
+                        r1 = subcell_index(subcell)
+                        r2 = subcell_index(subnew)
+
+                        #                        print r1,r2,h_temp.shape, RH_new[tuple(cellnew)][1][r1,r2].shape
+                        for c1, c2 in enumerate(r1):
+                            for d1, d2 in enumerate(r2):
+                                RH_new[tuple(cellnew)][1][c2, d2] += h_temp[c1, d1]
+
+        t2 = time.time()
+
+        nr = len(RH_new)
+        hbig = WannierHam(nr=nr)
+        # hbig = wan_ham()
+        # if sparse:
+        #    hbig.sparse = True
+
+        nwan = NWAN
+        hbig.nwan = NWAN
+        # hbig.nr = rn
+
+        R = np.zeros((nr, 3), dtype=float)
+        hbig.R = np.zeros((nr, 3), dtype=float)
+        if sparse:
+            # HR = sps.lil_matrix((nr, NWAN ** 2), dtype=complex)
+            hbig.HR = sps.lil_matrix((nr, NWAN ** 2), dtype=complex)
+        else:
+            # HR = np.zeros((nr, NWAN ** 2), dtype=complex)
+            hbig.HR = np.zeros((nr, NWAN ** 2), dtype=complex)
+
+        for c, i in enumerate(RH_new):
+            h = RH_new[i][1]
+            r = RH_new[i][0]
+            if sparse:
+                # HR[c, :] = sps.lil_matrix.reshape(h, NWAN * NWAN)
+                hbig.HR[c, :] = sps.lil_matrix.reshape(h, NWAN * NWAN)
+            else:
+                # HR[c, :] = np.reshape(h, NWAN * NWAN)
+                hbig.HR[c, :] = np.reshape(h, NWAN * NWAN)
+
+            # R[c, :] = r
+            hbig.R[c, :] = r
+
+        t3 = time.time()
+        print("TIME SUPERCELL", t1 - t0, t2 - t1, t3 - t2)
+        return hbig
+
 
 class Wannier90wout(object):
     def __init__(self, wout_path="wannier90.wout"):
@@ -519,37 +627,25 @@ class Wannier90wout(object):
         return wan_cnts
 
 
-"""
 if __name__ == "__main__":
-    hr = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90_hr.dat"
-    run = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/vasprun.xml"
-    hr = "/rk2/knc6/Chern3DMAGMOM/JVASP-49890_mp-754684_PBEBO/MAIN-WANN-SOC-bulk@JVASP-49890_mp-754684/wannier90_hr.dat"
-    run = "/rk2/knc6/Chern3DMAGMOM/JVASP-49890_mp-754684_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-49890_mp-754684/vasprun.xml"
-    hr = "/rk2/knc6/Chern3DMAGMOM/JVASP-59757_mp-22260_PBEBO/MAIN-WANN-SOC-bulk@JVASP-59757_mp-22260/wannier90_hr.dat"
-    run = "/rk2/knc6/Chern3DMAGMOM/JVASP-59757_mp-22260_PBEBO/MAIN-WANN-SOC-bulk@JVASP-59757_mp-22260/vasprun.xml"
-    hr = "/rk2/knc6/Wannier/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-1067_mp-541837/wannier90_hr.dat"
-    run = "/rk2/knc6/Wannier/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-1067_mp-541837/vasprun.xml"
-    hr = "/rk2/knc6/Wannier/JVASP-59757_mp-22260_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-59757_mp-22260/wannier90_hr.dat"
-    run = "/rk2/knc6/Wannier/JVASP-59757_mp-22260_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-59757_mp-22260/vasprun.xml"
-    hr = "/rk2/knc6/Wannier/JVASP-17265_mp-13545_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-17265_mp-13545/wannier90_hr.dat"
-    run = "/rk2/knc6/Wannier/JVASP-17265_mp-13545_PBEBO/MAIN-WANN-MAIN-SOC-bulk@JVASP-17265_mp-13545/vasprun.xml"
-    hr='/wrk/knc6/Wannier-rar/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-JVASP-1067_mp-541837/wannier90_hr.dat'
+    hr = "../../tests/testfiles/io/wannier/wannier90_hr.dat"
+    w = WannierHam(filename=hr)  # get_bandstructure_plot(atoms=p)
+    big = w.generate_supercell()
+
     pp = get_projectors_for_formula()
     x = get_orbitals()
-    print (x,pp)
+    print(w.nwan, big.nwan)
     sys.exit()
 
-    w = WannierHam(filename=hr)  # get_bandstructure_plot(atoms=p)
-    #info = w.to_dict()
-    #print (info['nwan'])
-    #ww = WannierHam()
-    #dd = WannierHam.from_dict(info)
-    #print (dd.to_dict()['nwan'])
-    energies, dos, pdos=w.dos([5,5,5])
-    print (round(dos[75],3))
-    #w.compare_dft_wann(vasprun_path=run)
+    # info = w.to_dict()
+    # print (info['nwan'])
+    # ww = WannierHam()
+    # dd = WannierHam.from_dict(info)
+    # print (dd.to_dict()['nwan'])
+    energies, dos, pdos = w.dos([5, 5, 5])
+    print(round(dos[75], 3))
+    # w.compare_dft_wann(vasprun_path=run)
     import sys
-
 
     vrun = Vasprun(run)
     eigs_wan = w.band_structure_eigs(
@@ -599,4 +695,3 @@ if __name__ == "__main__":
     # print ()
     # print ()
     # print ('HR',HR)
-"""

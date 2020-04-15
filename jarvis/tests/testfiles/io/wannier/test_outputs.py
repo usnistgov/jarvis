@@ -21,14 +21,27 @@ def test_outputs():
     dd = WannierHam.from_dict(info)
 
     pp = get_projectors_for_formula()[0][0]
-    #print("getorbs", pp)
+    # print("getorbs", pp)
     kpoints = generate_kgrid([5, 5, 5])
     energies, dos, pdos = w.dos(kpoints)
     orb = get_orbitals()[0]
+    big = w.generate_supercell([2, 2, 2])
+
+    pp = get_projectors_for_formula()
+    x = get_orbitals()
+    print(pp, orb)
+
     # print (x,pp)
 
     # print (round(dos[75],3))
-    assert (round(maxdiff, 2), round(dos[75], 3), pp, orb) == (0.12, 2.881, "Bi", 1)
+    assert (round(maxdiff, 2), round(dos[75], 3), pp[0][0], orb, w.nwan, big.nwan) == (
+        0.12,
+        2.881,
+        "Bi",
+        1,
+        40,
+        320,
+    )
 
 
 def test_wann_cent():
