@@ -49,5 +49,5 @@ def test_wann_cent():
     # print (centers, len(centers))
     assert (len(centers)) == (40)
 
-
+test_outputs()
 # test_wann_cent()
