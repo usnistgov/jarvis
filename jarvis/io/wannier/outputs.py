@@ -32,7 +32,7 @@ def get_projectors_for_formula(semi_core_states=None, formula_dict={"Bi": 2, "Se
 def get_orbitals(
     projection_info=[["Bi", 2, ["s", "p"]], ["Se", 3, ["s", "p"]]],
     desired_orbitals=[["Bi", "p"]],
-    soc=True, ncells = 1, surfaceonly = False
+    soc=True, ncells = 1, supercell = [1,1,6],surfaceonly = False
 ):
     # projection_info example for Bi2Se3 with s and p orbital projections
     # [["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]]
@@ -646,7 +646,7 @@ class Wannier90wout(object):
                     wan_cnts.append(tmp)
         return wan_cnts
 
-
+"""
 if __name__ == "__main__":
     hr = "../../tests/testfiles/io/wannier/wannier90_hr.dat"
     w = WannierHam(filename=hr)  # get_bandstructure_plot(atoms=p)
@@ -715,3 +715,4 @@ if __name__ == "__main__":
     # print ()
     # print ()
     # print ('HR',HR)
+"""
