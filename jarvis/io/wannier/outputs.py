@@ -510,7 +510,7 @@ class WannierHam(object):
         def plus_r(rold, subcell):
             rnew = subcell + rold
             # print ('cell',rnew,supercell)
-            cellnew = rnew / supercell  # this is integer division
+            cellnew = rnew // supercell  # this is integer division
             subnew = rnew % supercell
 
             return cellnew, subnew
@@ -626,7 +626,7 @@ class Wannier90wout(object):
                     wan_cnts.append(tmp)
         return wan_cnts
 
-
+"""
 if __name__ == "__main__":
     hr = "../../tests/testfiles/io/wannier/wannier90_hr.dat"
     w = WannierHam(filename=hr)  # get_bandstructure_plot(atoms=p)
@@ -695,3 +695,4 @@ if __name__ == "__main__":
     # print ()
     # print ()
     # print ('HR',HR)
+"""
