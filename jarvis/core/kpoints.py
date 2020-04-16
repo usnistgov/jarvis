@@ -25,6 +25,14 @@ def generate_kgrid(grid=[5, 5, 5]):
                 )
     return t
 
+def generate_kpath(kpath = [[0,0,0],[0,0.5,.5]],num_k=5):
+        K = []
+        for i in range(len(kpath)-1):
+            dk = np.array(kpath[i+1]) - np.array(kpath[i])
+            for j in range(num_k):
+                K.append(np.array(kpath[i]) + dk * (float(j)/float(num_k)))     
+        K.append(kpath[-1])
+        return K
 
 class Kpoints3D(object):
     def __init__(

@@ -32,7 +32,7 @@ def get_projectors_for_formula(semi_core_states=None, formula_dict={"Bi": 2, "Se
 def get_orbitals(
     projection_info=[["Bi", 2, ["s", "p"]], ["Se", 3, ["s", "p"]]],
     desired_orbitals=[["Bi", "p"]],
-    so=True,
+    soc=True, ncells = 1, supercell = [1,1,6],surfaceonly = False
 ):
     # projection_info example for Bi2Se3 with s and p orbital projections
     # [["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]]
@@ -118,7 +118,7 @@ def get_orbitals(
                         c += 1
 
     nwan = c
-    if so:
+    if soc:
         for (atom, orb) in projection_dict.keys():
             new_ind = []
             for i in projection_dict[(atom, orb)]:
@@ -137,6 +137,26 @@ def get_orbitals(
         else:
             new_orbs = projection_dict[tuple(d)]
             inds += new_orbs
+
+
+        if ncells > 1 and surfaceonly == False:
+
+            inds_super = []
+            for n in range(ncells):
+                for i in inds:
+                    inds_super.append(i+ n * nwan)
+
+            return inds_super
+
+        elif ncells > 1 and surfaceonly == True:
+            inds_super = []
+            for n in [0, ncells-1]:
+                for i in inds:
+                    inds_super.append(i+ n * nwan)
+
+            return inds_super
+
+
 
     return inds
 
