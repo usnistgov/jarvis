@@ -215,8 +215,8 @@ class Specie(object):
 
 """
 if __name__ == "__main__":
-    el = Specie("Al")
+    el = Specie("Eu")
     #print(el.get_chgdescrp_arr)
-    #print(el.get_descrp_arr)
+    print(el.get_descrp_arr)
     print (get_descrp_arr_name())
 """

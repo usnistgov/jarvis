@@ -12,11 +12,11 @@ def loadjson(filename=""):
     return d
 
 
-def dumpjson(data=[], filename="", indent=0):
+def dumpjson(data=[], filename=""):
     """
     Helper function to write a json file
     Serialization would be available soon
     """
     f = open(filename, "w")
-    f.write(json.dumps(data, indent=indent))
+    f.write(json.dumps(data))
     f.close()
