@@ -209,12 +209,15 @@ class WannierHam(object):
             HR=info["HR"],
         )
         return w
-
-    def read_ham(self):
+    def make_lines(self):
         f = open(self.filename, "r")
         lines = f.read().splitlines()
-        allines = f.readlines()
+        #allines = f.readlines()
         f.close()
+        return lines
+    def read_ham(self,lines=[]):
+        if lines==[]:
+           lines=self.make_lines()      
         self.nwan = int(lines[1])
         self.nr = int(lines[2])
         if self.nr % 15 == 0:
