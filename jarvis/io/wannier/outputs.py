@@ -209,15 +209,12 @@ class WannierHam(object):
             HR=info["HR"],
         )
         return w
-    def make_lines(self):
+
+    def read_ham(self):
         f = open(self.filename, "r")
         lines = f.read().splitlines()
-        #allines = f.readlines()
+        allines = f.readlines()
         f.close()
-        return lines
-    def read_ham(self,lines=[]):
-        if lines==[]:
-           lines=self.make_lines()      
         self.nwan = int(lines[1])
         self.nr = int(lines[2])
         if self.nr % 15 == 0:
@@ -250,9 +247,9 @@ class WannierHam(object):
             # print ('lines[i].split()[0:5]',c,self.nwan**2)#,self.sym_r[rnum])
             self.H_int[c, :] = [int(j) for j in lines[i].split()[0:5]]
             # print ('lines[i][5]',lines[i])
-            self.H_val[c] = float(lines[i].split()[5]) + 1j * float(
+            self.H_val[c] = (float(lines[i].split()[5]) + 1j * float(
                 lines[i].split()[6]
-            )  # / float(self.sym_r[rnum])
+            )) / float(self.sym_r[rnum])
             c += 1
 
         # print (self.H_int[0,:])

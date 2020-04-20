@@ -36,7 +36,7 @@ def test_outputs():
     # print (round(dos[75],3))
     assert (round(maxdiff, 2), round(dos[75], 3), pp[0][0], orb, w.nwan, big.nwan) == (
         0.12,
-        2.881,
+        3.02,
         "Bi",
         1,
         40,
