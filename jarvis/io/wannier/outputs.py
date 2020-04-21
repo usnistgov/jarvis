@@ -437,6 +437,7 @@ class WannierHam(object):
         info["kp_labels_points"] = list(kp_labels_points)
         info["kp_labels"] = kp_labels
         info["maxdiff"] = maxdiff
+        info["efermi"] = fermi
         # print (info)
         return info  # ,eigs_wan.T,eigs_vrun.T
 
