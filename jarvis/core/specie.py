@@ -211,12 +211,11 @@ class Specie(object):
         except:
             pass
         return val
-
-
-"""
+#
+#"""
 if __name__ == "__main__":
-    el = Specie("Eu")
+    el = Specie("Al")
     #print(el.get_chgdescrp_arr)
-    print(el.get_descrp_arr)
-    print (get_descrp_arr_name())
-"""
+    print(len(el.get_descrp_arr))
+    #print (get_descrp_arr_name())
+#"""

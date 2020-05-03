@@ -124,7 +124,7 @@ class CFID(object):
                 [mean_chem, cell, mean_chg, rdf, adfa, adfb, ddf, nn],
                 ["mean_chem", "cell", "mean_chg", "rdf", "adfa", "adfb", "ddf", "nn"],
             ):
-                if d != []:
+                if len(d) != 0:
                     for ff, dd in enumerate(d):
                         cat.append(dd)
                         if nm == "mean_chem":
@@ -140,7 +140,8 @@ class CFID(object):
                 [mean_chem, cell, mean_chg, rdf, adfa, adfb, ddf, nn],
                 ["mean_chem", "cell", "mean_chg", "rdf", "adfa", "adfb", "ddf", "nn"],
             ):
-                if d != []:
+                if len(d) != 0 :
+                #if d != []:
                     for ff, dd in enumerate(d):
                         cat.append(dd)
             cat = np.array(cat).astype(float)
