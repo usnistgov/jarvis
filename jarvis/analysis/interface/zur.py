@@ -468,13 +468,21 @@ def get_hetero(film, substrate, seperation=3.0):
     coords_uniq_film = np.array(film.cart_coords)
 
     substrate_top_z = max(np.array(substrate.cart_coords)[:, 2])
-
+    substrate_bot_z = min(np.array(substrate.cart_coords)[:, 2])
+    print ('substrate_top_z',substrate_top_z- substrate_bot_z)
     film_bottom = min(np.array(film.cart_coords)[:, 2])
-
+    film_top = max(np.array(film.cart_coords)[:, 2])
+    print ('film_bottom',film_top-film_bottom)
     # shift normal to the surface by 'seperation'
     sub_z = substrate.lattice_mat[2, :]
     origin = np.array([0, 0, substrate_top_z])
     shift_normal = sub_z / np.linalg.norm(sub_z) * seperation
+    print ('origin', origin)
+    print ('shift_normal', shift_normal)
+    thickness_sub = abs(substrate_top_z-substrate_bot_z)
+    thickness_film = abs(film_top-film_bottom)
+    #shift_normal =  seperation
+    #shift_normal = sub_z / np.linalg.norm(sub_z) * seperation
     # generate all possible interfaces, one for each combination of
     # unique substrate and unique 2d materials site in the layers .i.e
     # an interface structure for each parallel shift
@@ -492,8 +500,10 @@ def get_hetero(film, substrate, seperation=3.0):
         elements.append(i)
     for i in film.cart_coords:
         tmp = i
-        tmp[2] = i[2] - film_bottom
-        tmp = tmp + origin + shift_normal
+        tmp[2] = i[2] + 2*(thickness_sub+thickness_film)/2.0
+        #tmp[2] = i[2] + film_bottom
+        tmp = tmp  + shift_normal
+        #tmp = tmp + origin + shift_normal
         new_coords.append(i)
 
     interface = Atoms(

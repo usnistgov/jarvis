@@ -432,6 +432,34 @@ class Atoms(object):
         # com = np.linalg.solve(self.lattice_mat.T, com)
         return com
 
+    def get_origin(self):
+        """
+        Get center of mass of the atoms object
+        """
+        # atomic_mass
+        return self.frac_coords.mean(axis=0)
+
+    def center_around_origin(self,new_origin=[0.0,0.0,0.5]):
+        lat=self.lattice_mat
+        typ_sp=self.elements
+        natoms=self.num_atoms
+        abc = self.lattice.lat_lengths()
+        COM = self.get_origin()
+        #COM = self.get_center_of_mass()
+        x = np.zeros((natoms))
+        y = np.zeros((natoms))
+        z = np.zeros((natoms))
+        coords = list()
+        for i in range(0,natoms):
+          #cart_coords[i]=self.cart_coords[i]-COM
+          x[i] = self.frac_coords[i][0]-COM[0]+new_origin[0]
+          y[i] = self.frac_coords[i][1]-COM[1]+new_origin[1]
+          z[i] = self.frac_coords[i][2]-COM[2]+new_origin[2]
+          coords.append([x[i], y[i], z[i]])
+        struct = Atoms(lattice_mat=lat, elements=typ_sp, coords=coords, cartesian=False)
+        return struct
+
+
     def pymatgen_converter(self):
         """
         Get pymatgen representation of the atoms object
@@ -641,14 +669,16 @@ if __name__ == "__main__":
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
+    print (Si)
+    print (Si.center_around_origin())
+    import sys
+    sys.exit()
     #print (Si.props)
     #print (Si.make_supercell().props)
     d = Si.to_dict()
     print (d)
     a=Atoms.from_dict(d)
     print (a)
-    import sys
-    sys.exit()
      
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     Si.props = ["a", "a"]

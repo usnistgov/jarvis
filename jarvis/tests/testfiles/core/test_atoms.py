@@ -36,6 +36,7 @@ def test_basic_atoms():
     Si_2_den = Atoms(
         lattice_mat=d["lattice_mat"], coords=d["coords"], elements=d["elements"]
     ).density
+    Si.center_around_origin()
     # print ('scell_nat', Si_2)
     assert (
         round(Si.volume, 2),
