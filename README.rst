@@ -14,7 +14,7 @@
 .. image:: https://codecov.io/gh/knc6/jarvis/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/knc6/jarvis
 
-JARVIS
+NIST-JARVIS
 ==========
 
 Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
@@ -73,7 +73,7 @@ References
 
 
 
-Pypi, Readthedocs, Slideshare and Figshare links
+External links
 -----------------------------------------
       https://pypi.org/project/jarvis-tools
       
@@ -82,4 +82,7 @@ Pypi, Readthedocs, Slideshare and Figshare links
       https://www.slideshare.net/KAMALCHOUDHARY4
 
       https://figshare.com/authors/Kamal_Choudhary/4445539
+
+
+
 
