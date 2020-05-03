@@ -599,23 +599,18 @@ class Outcar(object):
                 n_ions = int(i.split()[-1])
                 return n_ions
 
-
-
     @property
     def phonon_eigenvalues(self):
-      #Thz values
-      lines=self.data
-      vals=[]
-      for i,ii in enumerate(lines):
-        if 'meV' in ii:
-           tmp=float(ii.split()[-8])
-           if 'f/i' in ii:
-              tmp=tmp*-1
-           vals.append(tmp)
-      return np.array(vals,dtype='float')
-
-
-
+        # Thz values
+        lines = self.data
+        vals = []
+        for i, ii in enumerate(lines):
+            if "meV" in ii:
+                tmp = float(ii.split()[-8])
+                if "f/i" in ii:
+                    tmp = tmp * -1
+                vals.append(tmp)
+        return np.array(vals, dtype="float")
 
     @property
     def converged(self):
@@ -659,6 +654,25 @@ class Outcar(object):
             quad_arr.append(tmp)
         quad_arr = np.array(quad_arr, dtype="float")
         return quad_arr
+
+    @property
+    def piezoelectric_tensor(self):
+        lines = self.data
+        ionic_piezo = []
+        total_piezo = []
+        for ii, i in enumerate(lines):
+            if "PIEZOELECTRIC TENSOR" in i and "(C/m^2)" in i and "field" in i:
+                if "IONIC" in i:
+                    ionic_piezo.append(lines[ii + 3].split()[1:7])
+                    ionic_piezo.append(lines[ii + 4].split()[1:7])
+                    ionic_piezo.append(lines[ii + 5].split()[1:7])
+                else:
+                    total_piezo.append(lines[ii + 3].split()[1:7])
+                    total_piezo.append(lines[ii + 4].split()[1:7])
+                    total_piezo.append(lines[ii + 5].split()[1:7])
+        ionic_piezo = np.array(ionic_piezo, dtype="float")
+        total_piezo = np.array(total_piezo, dtype="float")
+        return ionic_piezo, total_piezo
 
     def elastic_props(self, atoms=None, vacuum=False):
         """

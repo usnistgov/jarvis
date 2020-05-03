@@ -113,8 +113,9 @@ def test_dfpt():
    out = Outcar(os.path.join(os.path.dirname(__file__), "OUTCAR.JVASP-39"))
    bec = round(vrun.dfpt_data['born_charges'][0][0][0],2)
    eig = round(out.phonon_eigenvalues[2],2)
-
-   assert (bec, eig)==(2.52, 19.58) 
+   ionic_pz,total_pz = out.piezoelectric_tensor
+   pz = total_pz[2][0]
+   assert (bec, eig, pz)==(2.52, 19.58,-0.26756) 
 
 
 def test_ir():
