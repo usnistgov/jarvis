@@ -5,6 +5,7 @@ import numpy as np
 import xmltodict
 from collections import OrderedDict
 from jarvis.core.atoms import Atoms
+from jarvis.core.specie import Specie
 import numpy as np
 import xmltodict
 from collections import OrderedDict
@@ -196,6 +197,64 @@ class Vasprun(object):
             * np.sqrt(-epsilon_1 + np.sqrt(epsilon_1 ** 2 + epsilon_2 ** 2))
         )
         return energies, absorption
+
+    @property
+    def dfpt_data(self, fc_mass=True):
+        info = {}
+        hessian = []
+        data = self._data
+        for i in (data["modeling"]["calculation"]["dynmat"]["varray"])[0]["v"]:
+            hessian.append(i.split())
+        hessian = np.array(hessian, dtype="double")
+        struct = self.all_structures[-1]
+        natoms = struct.num_atoms
+        force_constants = np.zeros((natoms, natoms, 3, 3), dtype="double")
+        for i in range(natoms):
+            for j in range(natoms):
+                force_constants[i, j] = hessian[
+                    i * 3 : (i + 1) * 3, j * 3 : (j + 1) * 3
+                ]
+        masses = [Specie(i).atomic_mass for i in struct.elements]
+        if fc_mass == True:
+            for i in range(natoms):
+                for j in range(natoms):
+                    force_constants[i, j] *= -np.sqrt(masses[i] * masses[j])
+        born_charges = []
+        for n in range(natoms):
+            born_charges.append(
+                [
+                    i.split()
+                    for i in (data["modeling"]["calculation"]["array"]["set"])[n]["v"]
+                ]
+            )
+        born_charges = np.array(born_charges, dtype="double")
+        phonon_eigenvals = np.array(
+            data["modeling"]["calculation"]["dynmat"]["v"]["#text"].split(),
+            dtype="double",
+        )
+        eigvecs = np.array(
+            [
+                i.split()
+                for i in (data["modeling"]["calculation"]["dynmat"]["varray"][1]["v"])
+            ],
+            dtype="float",
+        )
+        phonon_eigenvectors = []
+        for ev in eigvecs:
+            phonon_eigenvectors.append(np.array(ev).reshape(natoms, 3))
+        phonon_eigenvectors = np.array(phonon_eigenvectors, dtype="float")
+        epsilon = {}
+        for i in data["modeling"]["calculation"]["varray"]:
+            if "epsilon" in i["@name"]:
+                epsilon[i["@name"]] = np.array(
+                    [j.split() for j in i["v"]], dtype="float"
+                )
+        info["born_charges"] = born_charges
+        info["phonon_eigenvectors"] = phonon_eigenvectors
+        info["epsilon"] = epsilon
+        info["phonon_eigenvalues"] = phonon_eigenvals
+        info["masses"] = masses
+        return info
 
     @property
     def get_dir_gap(self):
@@ -533,13 +592,30 @@ class Outcar(object):
             f.close()
             self.data = lines
 
-
     @property
     def nions(self):
         for i in self.data:
-            if 'NIONS =' in i:
-                 n_ions = int(i.split()[-1])
-                 return n_ions
+            if "NIONS =" in i:
+                n_ions = int(i.split()[-1])
+                return n_ions
+
+
+
+    @property
+    def phonon_eigenvalues(self):
+      #Thz values
+      lines=self.data
+      vals=[]
+      for i,ii in enumerate(lines):
+        if 'meV' in ii:
+           tmp=float(ii.split()[-8])
+           if 'f/i' in ii:
+              tmp=tmp*-1
+           vals.append(tmp)
+      return np.array(vals,dtype='float')
+
+
+
 
     @property
     def converged(self):
@@ -559,34 +635,30 @@ class Outcar(object):
     @property
     def efg_tensor_diag(self):
         nions = self.nions
-        for ii,i in enumerate(self.data):
-            if 'Electric field gradients after diagonalization' in i:
+        for ii, i in enumerate(self.data):
+            if "Electric field gradients after diagonalization" in i:
                 tmp = ii
-        arr = self.data[tmp+5:tmp+5+nions]
+        arr = self.data[tmp + 5 : tmp + 5 + nions]
         efg_arr = []
         for i in arr:
-            tmp=[i.split()[1],i.split()[2],i.split()[3],i.split()[4]]
+            tmp = [i.split()[1], i.split()[2], i.split()[3], i.split()[4]]
             efg_arr.append(tmp)
-        efg_arr = np.array(efg_arr,dtype='float')
+        efg_arr = np.array(efg_arr, dtype="float")
         return efg_arr
-
 
     @property
     def quad_mom(self):
         nions = self.nions
-        for ii,i in enumerate(self.data):
-            if 'Q  : nuclear electric quadrupole moment in mb (millibarn)' in i:
+        for ii, i in enumerate(self.data):
+            if "Q  : nuclear electric quadrupole moment in mb (millibarn)" in i:
                 tmp = ii
-        arr = self.data[tmp+4:tmp+4+nions]
+        arr = self.data[tmp + 4 : tmp + 4 + nions]
         quad_arr = []
         for i in arr:
-            tmp=[i.split()[1],i.split()[2],i.split()[3]]
+            tmp = [i.split()[1], i.split()[2], i.split()[3]]
             quad_arr.append(tmp)
-        quad_arr = np.array(quad_arr,dtype='float')
+        quad_arr = np.array(quad_arr, dtype="float")
         return quad_arr
-
-
-
 
     def elastic_props(self, atoms=None, vacuum=False):
         """
@@ -1118,21 +1190,27 @@ class Wavecar(object):
         assert 1 <= ikpt <= self._nkpts, "Invalid kpoint index!"
         assert 1 <= iband <= self._nbands, "Invalid band index!"
 
-#"""
+
+"""
 if __name__ == "__main__":
+    
+    o=Outcar('../../tests/testfiles/io/vasp/OUTCAR.JVASP-39')
+    print (round(o.phonon_eigenvalues[2],2))
+    #print (o.born_eff_charg)
+    sys.exit()
+    v=Vasprun('../../tests/testfiles/io/vasp/vasprun.xml.JVASP-39')
+    dfpt=round(v.dfpt_data['born_charges'][0][0][0],2)
+    print (dfpt)
     o = Outcar(
         "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO/MAIN-ELASTIC-bulk@mp-134/OUTCAR"
     )
-    o = Outcar(
-        "/rk2/knc6/EFG/JVASP-1429/MAIN-RELAX-bulk@mp_2964/OUTCAR"
-    )
+    o = Outcar("/rk2/knc6/EFG/JVASP-1429/MAIN-RELAX-bulk@mp_2964/OUTCAR")
     o = Outcar(
         "/rk2/knc6/EFG/JVASP-4798_mp-12597_PBEBO/MAIN-LEFG-JVASP-4798_mp-12597/OUTCAR"
     )
-    print ('NIONS2',o.efg_tensor_diag)
-    print ('NIONS2',o.efg_tensor_diag[:,0:3])
-    #print ('NIONS2',o.quad_mom)
-    sys.exit()
+    print("NIONS2", o.efg_tensor_diag)
+    print("NIONS2", o.efg_tensor_diag[:, 0:3])
+    # print ('NIONS2',o.quad_mom)
     o = Outcar(
         "/rk2/knc6/JARVIS-DFT/Solar-Semi/mp-5986_bulk_PBEBO/MAIN-ELASTIC-bulk@mp_5986/OUTCAR"
     )
@@ -1236,4 +1314,4 @@ if __name__ == "__main__":
     # print ()
     # print ()
     ##calculation odict_keys(['scstep', 'structure', 'varray', 'energy', 'time', 'eigenvalues', 'separator', 'dos', 'projected'])
-#"""
+"""

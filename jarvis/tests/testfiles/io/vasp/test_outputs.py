@@ -1,7 +1,7 @@
 from jarvis.io.vasp.outputs import Vasprun, Oszicar, Wavecar, Waveder, Chgcar, Outcar
 import numpy as np
 import os
-
+from jarvis.analysis.phonon.ir import ir_intensity
 vrun = Vasprun(
     filename=os.path.join(
         os.path.dirname(__file__),
@@ -106,3 +106,29 @@ def test_osz():
 
 def test_out():
     assert (round(out.elastic_props()["KV"], 2)) == (87.27)
+
+
+def test_dfpt():
+   vrun = Vasprun(os.path.join(os.path.dirname(__file__), "vasprun.xml.JVASP-39"))
+   out = Outcar(os.path.join(os.path.dirname(__file__), "OUTCAR.JVASP-39"))
+   bec = round(vrun.dfpt_data['born_charges'][0][0][0],2)
+   eig = round(out.phonon_eigenvalues[2],2)
+
+   assert (bec, eig)==(2.52, 19.58) 
+
+
+def test_ir():
+    vrun = Vasprun(os.path.join(os.path.dirname(__file__), "vasprun.xml.JVASP-39"))
+    out = Outcar(os.path.join(os.path.dirname(__file__), "OUTCAR.JVASP-39"))
+    phonon_eigenvectors = vrun.dfpt_data["phonon_eigenvectors"]
+    vrun_eigs = vrun.dfpt_data["phonon_eigenvalues"]
+    phonon_eigenvalues = out.phonon_eigenvalues
+    masses = vrun.dfpt_data["masses"]
+    born_charges = vrun.dfpt_data["born_charges"]
+    x, y = ir_intensity(
+        phonon_eigenvectors=phonon_eigenvectors,
+        phonon_eigenvalues=phonon_eigenvalues,
+        masses=masses,
+        born_charges=born_charges,
+    )
+    assert round(y[2],2)==1.38
