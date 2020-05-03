@@ -11,7 +11,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2020.1.11",
+    version="2020.3.5",
     long_description=long_d,
     install_requires=[
         "joblib",
@@ -52,9 +52,6 @@ setup(
     packages=find_packages(),
     # long_description=open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
     classifiers=[
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
