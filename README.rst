@@ -15,7 +15,7 @@
         :target: https://codecov.io/gh/knc6/jarvis
 
 NIST-JARVIS
-==========
+=======================================
 
 Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
 classical force-field/molecular dynamics and machine-learning. The jarvis-tools package can be used for high-throughput computation, data-analysis, and training machine-learning models. Some of the packages used in the jarvis-tools package are shown below. JARVIS-official website: https://jarvis.nist.gov
@@ -23,8 +23,8 @@ classical force-field/molecular dynamics and machine-learning. The jarvis-tools 
 .. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/statistics.JPG
         :target: https://jarvis.nist.gov/
 
-Installing JARVIS
---------------------
+Installing jarvis-tools
+----------------------------------------
 
 - We recommend installing miniconda environment from https://conda.io/miniconda.html ::
 
