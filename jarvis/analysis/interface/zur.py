@@ -505,6 +505,7 @@ def get_hetero(film, substrate, seperation=3.0):
         tmp = tmp  + shift_normal
         #tmp = tmp + origin + shift_normal
         new_coords.append(i)
+        #new_coords.append(tmp)
 
     interface = Atoms(
         lattice_mat=lattice_mat, elements=elements, coords=new_coords, cartesian=True
