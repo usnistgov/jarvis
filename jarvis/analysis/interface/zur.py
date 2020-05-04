@@ -404,8 +404,8 @@ def get_hetero(film, substrate, seperation=3.0):
     sub_z = substrate.lattice_mat[2, :]
     origin = np.array([0, 0, substrate_top_z])
     shift_normal = sub_z / np.linalg.norm(sub_z) * seperation
-    print ('origin', origin)
-    print ('shift_normal', shift_normal)
+    #print ('origin', origin)
+    #print ('shift_normal', shift_normal)
     thickness_sub = abs(substrate_top_z-substrate_bot_z)
     thickness_film = abs(film_top-film_bottom)
     #shift_normal =  seperation
@@ -427,7 +427,7 @@ def get_hetero(film, substrate, seperation=3.0):
         elements.append(i)
     for i in film.cart_coords:
         tmp = i
-        tmp[2] = i[2] + (thickness_sub)
+        tmp[2] = i[2] + (thickness_sub+thickness_film)
         #tmp[2] = i[2] + film_bottom
         tmp = tmp  + shift_normal
         #tmp = tmp + origin + shift_normal
