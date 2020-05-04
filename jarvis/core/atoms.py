@@ -749,10 +749,14 @@ class Atoms(object):
                 + "\ndirect\n"
             )
         rest = ""
-        print ('props_ordered',props_ordered)
+        #print ('props_ordered',props_ordered)
         # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
-            rest = rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
+            if '' in props_ordered:
+                rest = rest + " ".join(map(str, i)) + " " + str(props_ordered) + "\n"
+            else:
+                rest = rest + " ".join(map(str, i))  + "\n"
+            #rest = rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
         result = header + middle + rest
         return result
 
