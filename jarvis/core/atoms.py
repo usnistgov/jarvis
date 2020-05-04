@@ -645,8 +645,9 @@ class Atoms(object):
         """
         Get string representation of the atoms object
         """
+        system = str(self.composition.reduced_formula)
         header = (
-            str("\nSystem\n1.0\n")
+            str(system)+str("\n1.0\n")
             + str(self.lattice_mat[0][0])
             + " "
             + str(self.lattice_mat[0][1])
@@ -680,7 +681,7 @@ class Atoms(object):
         rest = ""
         # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
-            if '' in props_ordered:
+            if '' not in props_ordered:
                 rest = rest + " ".join(map(str, i)) + " " + str(props_ordered) + "\n"
             else:
                 rest = rest + " ".join(map(str, i))  + "\n"
@@ -706,8 +707,9 @@ class Atoms(object):
             )
 
     def __repr__(self):
+        system = str(self.composition.reduced_formula)
         header = (
-            str("System\n1.0\n")
+            str(system)+str("\n1.0\n")
             + str(self.lattice_mat[0][0])
             + " "
             + str(self.lattice_mat[0][1])
@@ -752,7 +754,7 @@ class Atoms(object):
         #print ('props_ordered',props_ordered)
         # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
-            if '' in props_ordered:
+            if '' not in props_ordered:
                 rest = rest + " ".join(map(str, i)) + " " + str(props_ordered) + "\n"
             else:
                 rest = rest + " ".join(map(str, i))  + "\n"
@@ -767,7 +769,7 @@ if __name__ == "__main__":
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    print (Si)
+    print (Si.get_string())
     import sys
     sys.exit()
     #print (Si.props)
