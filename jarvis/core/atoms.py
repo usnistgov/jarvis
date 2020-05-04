@@ -281,6 +281,7 @@ class Atoms(object):
         d["cartesian"] = self.cartesian
         d["props"] = self.props
         return d
+
     @classmethod
     def from_dict(self, d={}):
         """
@@ -439,26 +440,25 @@ class Atoms(object):
         # atomic_mass
         return self.frac_coords.mean(axis=0)
 
-    def center_around_origin(self,new_origin=[0.0,0.0,0.5]):
-        lat=self.lattice_mat
-        typ_sp=self.elements
-        natoms=self.num_atoms
+    def center_around_origin(self, new_origin=[0.0, 0.0, 0.5]):
+        lat = self.lattice_mat
+        typ_sp = self.elements
+        natoms = self.num_atoms
         abc = self.lattice.lat_lengths()
         COM = self.get_origin()
-        #COM = self.get_center_of_mass()
+        # COM = self.get_center_of_mass()
         x = np.zeros((natoms))
         y = np.zeros((natoms))
         z = np.zeros((natoms))
         coords = list()
-        for i in range(0,natoms):
-          #cart_coords[i]=self.cart_coords[i]-COM
-          x[i] = self.frac_coords[i][0]-COM[0]+new_origin[0]
-          y[i] = self.frac_coords[i][1]-COM[1]+new_origin[1]
-          z[i] = self.frac_coords[i][2]-COM[2]+new_origin[2]
-          coords.append([x[i], y[i], z[i]])
+        for i in range(0, natoms):
+            # cart_coords[i]=self.cart_coords[i]-COM
+            x[i] = self.frac_coords[i][0] - COM[0] + new_origin[0]
+            y[i] = self.frac_coords[i][1] - COM[1] + new_origin[1]
+            z[i] = self.frac_coords[i][2] - COM[2] + new_origin[2]
+            coords.append([x[i], y[i], z[i]])
         struct = Atoms(lattice_mat=lat, elements=typ_sp, coords=coords, cartesian=False)
         return struct
-
 
     def pymatgen_converter(self):
         """
@@ -480,7 +480,7 @@ class Atoms(object):
         """
         Get spacegroup of the atoms object
         """
-        
+
         import spglib
 
         sg = spglib.get_spacegroup(
@@ -499,6 +499,95 @@ class Atoms(object):
         pf = np.array([4 * np.pi * total_rad / (3 * self.volume)])
         return round(pf[0], 5)
 
+    def lattice_points_in_supercell(self, supercell_matrix):
+        """
+        Adapted from Pymatgen
+        Returns the list of points on the original lattice contained in the
+        supercell in fractional coordinates (with the supercell basis).
+        e.g. [[2,0,0],[0,1,0],[0,0,1]] returns [[0,0,0],[0.5,0,0]]
+        Args:
+            supercell_matrix: 3x3 matrix describing the supercell
+        Returns:
+            numpy array of the fractional coordinates
+        """
+        diagonals = np.array(
+            [
+                [0, 0, 0],
+                [0, 0, 1],
+                [0, 1, 0],
+                [0, 1, 1],
+                [1, 0, 0],
+                [1, 0, 1],
+                [1, 1, 0],
+                [1, 1, 1],
+            ]
+        )
+        d_points = np.dot(diagonals, supercell_matrix)
+
+        mins = np.min(d_points, axis=0)
+        maxes = np.max(d_points, axis=0) + 1
+
+        ar = np.arange(mins[0], maxes[0])[:, None] * np.array([1, 0, 0])[None, :]
+        br = np.arange(mins[1], maxes[1])[:, None] * np.array([0, 1, 0])[None, :]
+        cr = np.arange(mins[2], maxes[2])[:, None] * np.array([0, 0, 1])[None, :]
+
+        all_points = ar[:, None, None] + br[None, :, None] + cr[None, None, :]
+        all_points = all_points.reshape((-1, 3))
+
+        frac_points = np.dot(all_points, np.linalg.inv(supercell_matrix))
+
+        tvects = frac_points[
+            np.all(frac_points < 1 - 1e-10, axis=1)
+            & np.all(frac_points >= -1e-10, axis=1)
+        ]
+        assert len(tvects) == round(abs(np.linalg.det(supercell_matrix)))
+        return tvects
+
+    def make_supercell_matrix(self, scaling_matrix):
+        """
+        Adapted from Pymatgen
+        Makes a supercell. Allowing to have sites outside the unit cell
+        Args:
+            scaling_matrix: A scaling matrix for transforming the lattice
+                vectors. Has to be all integers. Several options are possible:
+                a. A full 3x3 scaling matrix defining the linear combination
+                   the old lattice vectors. E.g., [[2,1,0],[0,3,0],[0,0,
+                   1]] generates a new structure with lattice vectors a' =
+                   2a + b, b' = 3b, c' = c where a, b, and c are the lattice
+                   vectors of the original structure.
+                b. An sequence of three scaling factors. E.g., [2, 1, 1]
+                   specifies that the supercell should have dimensions 2a x b x
+                   c.
+                c. A number, which simply scales all lattice vectors by the
+                   same factor.
+        Returns:
+            Supercell structure. Note that a Structure is always returned,
+            even if the input structure is a subclass of Structure. This is
+            to avoid different arguments signatures from causing problems. If
+            you prefer a subclass to return its own type, you need to override
+            this method in the subclass.
+        """
+        scale_matrix = np.array(scaling_matrix, np.int16)
+        if scale_matrix.shape != (3, 3):
+            scale_matrix = np.array(scale_matrix * np.eye(3), np.int16)
+        new_lattice = Lattice(np.dot(scale_matrix, self.lattice_mat))
+
+        f_lat = self.lattice_points_in_supercell(scale_matrix)
+        c_lat = new_lattice.cart_coords(f_lat)
+
+        new_sites = []
+        new_elements = []
+        for site, el in zip(self.cart_coords, self.elements):
+            for v in c_lat:
+                new_elements.append(el)
+                tmp = site + v
+                new_sites.append(tmp)
+        return Atoms(
+            lattice_mat=new_lattice.lattice(),
+            elements=new_elements,
+            coords=new_sites,
+            cartesian=True,
+        )
 
     def make_supercell(self, dim=[2, 2, 2]):
         """
@@ -662,6 +751,7 @@ class Atoms(object):
             rest = rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
         result = header + middle + rest
         return result
+
 
 """
 if __name__ == "__main__":

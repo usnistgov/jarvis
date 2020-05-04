@@ -328,10 +328,10 @@ def mismatch_strts(film=[], subs=[]):
     scell[2] = np.array([0, 0, 1])
     # print("subs lattice", subs.lattice_mat)
     # print("scell", scell)
-    subs.make_supercell(scell)
+    subs = subs.make_supercell_matrix(scell)
     _, __, scell = mat2d_latt_fake.find_matches(mat2d_latt, ltol=0.05, atol=1)
     scell[2] = np.array([0, 0, 1])
-    film.make_supercell(scell)
+    film = film.make_supercell_matrix(scell)
     # modify the substrate lattice so that the 2d material can be
     # grafted on top of it
     lmap = Lattice(
@@ -350,80 +350,7 @@ def mismatch_strts(film=[], subs=[]):
     info["area1"] = area1
     info["area2"] = area2
     info["film_sl"] = film
-
-    try:
-        uv1 = matches[0]["sub_sl_vecs"]
-        uv2 = matches[0]["film_sl_vecs"]
-        # uv1=[[-8.52917200e+00,  9.12745800e+00,  3.66344517e-17],[1.27937580e+01, 9.12745800e+00, 1.34228735e-15]]
-        # uv2=[[7.02403800e+00, 1.05360570e+01, 1.07524571e-15],[-1.40480760e+01,  7.02403800e+00, -4.30098283e-16]]
-        u = np.array(uv1)
-        v = np.array(uv2)
-        a1 = u[0]
-        a2 = u[1]
-        b1 = v[0]
-        b2 = v[1]
-        mismatch_u = np.linalg.norm(b1) / np.linalg.norm(a1) - 1
-        mismatch_v = np.linalg.norm(b2) / np.linalg.norm(a2) - 1
-        angle1 = (
-            np.arccos(np.dot(a1, a2) / np.linalg.norm(a1) / np.linalg.norm(a2))
-            * 180
-            / np.pi
-        )
-        angle2 = (
-            np.arccos(np.dot(b1, b2) / np.linalg.norm(b1) / np.linalg.norm(b2))
-            * 180
-            / np.pi
-        )
-        mismatch_angle = abs(angle1 - angle2)
-        area1 = np.linalg.norm(np.cross(a1, a2))
-        area2 = np.linalg.norm(np.cross(b1, b2))
-        uv_substrate = uv1
-        uv_mat2d = uv2
-        substrate_latt = Lattice(
-            np.array(
-                [uv_substrate[0][:], uv_substrate[1][:], subs.lattice.matrix[2, :]]
-            )
-        )
-        # to avoid numerical issues with find_mapping
-        mat2d_fake_c = (
-            film.lattice.matrix[2, :] / np.linalg.norm(film.lattice.matrix[2, :]) * 5.0
-        )
-        mat2d_latt = Lattice(np.array([uv_mat2d[0][:], uv_mat2d[1][:], mat2d_fake_c]))
-        mat2d_latt_fake = Lattice(
-            np.array(
-                [film.lattice.matrix[0, :], film.lattice.matrix[1, :], mat2d_fake_c]
-            )
-        )
-        _, __, scell = subs.lattice.find_mapping(substrate_latt, ltol=0.05, atol=1)
-        scell[2] = np.array([0, 0, 1])
-        subs.make_supercell(scell)
-        _, __, scell = mat2d_latt_fake.find_mapping(mat2d_latt, ltol=0.05, atol=1)
-        scell[2] = np.array([0, 0, 1])
-        film.make_supercell(scell)
-        # modify the substrate lattice so that the 2d material can be
-        # grafted on top of it
-        lmap = Lattice(
-            np.array(
-                [
-                    subs.lattice.matrix[0, :],
-                    subs.lattice.matrix[1, :],
-                    film.lattice.matrix[2, :],
-                ]
-            )
-        )
-        film.modify_lattice(lmap)
-        # print ("film",film)
-        # print ("subs",subs)
-
-        info["mismatch_u"] = mismatch_u
-        info["mismatch_v"] = mismatch_v
-        info["mismatch_angle"] = mismatch_angle
-        info["area1"] = area1
-        info["area2"] = area2
-        info["film_sl"] = film
-        info["subs_sl"] = subs
-    except:
-        pass
+    info["subs_sl"] = subs
     return info
 
 

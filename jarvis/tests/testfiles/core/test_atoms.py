@@ -27,6 +27,11 @@ def test_basic_atoms():
     den_lll_red = round(Si.get_lll_reduced_structure().density, 2)
     strng = Si.get_string()
     scell_nat = Si.make_supercell([2, 2, 2]).num_atoms
+    scell_nat2 = Si.make_supercell_matrix([[2, 0, 0], [0, 2, 0], [0, 0, 2]]).num_atoms
+    print("scell_nat,scell_nat2", scell_nat, scell_nat2)
+    print(Si.make_supercell([2, 2, 2]))
+    print()
+    print(Si.make_supercell_matrix([[2, 0, 0], [0, 2, 0], [0, 0, 2]]))
     com = round(Si.get_center_of_mass()[0], 3)
     rem = (Si.make_supercell([2, 2, 2]).remove_site_by_index(site=0)).num_atoms
 
