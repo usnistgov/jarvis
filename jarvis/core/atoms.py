@@ -680,7 +680,10 @@ class Atoms(object):
         rest = ""
         # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
-            rest = rest + " ".join(map(str, i)) + " " + str(props_ordered) + "\n"
+            if '' in props_ordered:
+                rest = rest + " ".join(map(str, i)) + " " + str(props_ordered) + "\n"
+            else:
+                rest = rest + " ".join(map(str, i))  + "\n"
         result = header + middle + rest
 
         return result
@@ -746,6 +749,7 @@ class Atoms(object):
                 + "\ndirect\n"
             )
         rest = ""
+        print ('props_ordered',props_ordered)
         # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
             rest = rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
@@ -760,7 +764,6 @@ if __name__ == "__main__":
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     print (Si)
-    print (Si.center_around_origin())
     import sys
     sys.exit()
     #print (Si.props)
