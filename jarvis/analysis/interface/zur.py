@@ -387,13 +387,12 @@ def get_hetero_type(A={}, B={}):
 
 
 def get_hetero(film, substrate, seperation=3.0):
-
     # unique site coordinates in the substrate top layers
     coords_uniq_sub = np.array(substrate.cart_coords)
 
     # unique site coordinates in the 2D material bottom layers
     coords_uniq_film = np.array(film.cart_coords)
-
+   
     substrate_top_z = max(np.array(substrate.cart_coords)[:, 2])
     substrate_bot_z = min(np.array(substrate.cart_coords)[:, 2])
     print ('substrate_top_z',substrate_top_z- substrate_bot_z)
@@ -427,12 +426,12 @@ def get_hetero(film, substrate, seperation=3.0):
         elements.append(i)
     for i in film.cart_coords:
         tmp = i
-        tmp[2] = i[2] + (thickness_sub+thickness_film)
-        #tmp[2] = i[2] + film_bottom
-        tmp = tmp  + shift_normal
+        #tmp[2] = i[2] + (thickness_sub+thickness_film)
+        tmp[2] = i[2] +(thickness_sub+thickness_film)/2.0+seperation
+        #tmp = tmp  + shift_normal
         #tmp = tmp + origin + shift_normal
-        new_coords.append(i)
-        #new_coords.append(tmp)
+        #new_coords.append(i)
+        new_coords.append(tmp)
 
     interface = Atoms(
         lattice_mat=lattice_mat, elements=elements, coords=new_coords, cartesian=True
