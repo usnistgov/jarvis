@@ -23,11 +23,11 @@ jobs:
       - checkout
 
       # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+      #- restore_cache:
+      #    keys:
+      #    #- v1-dependencies-{{ checksum "requirements.txt" }}
+      #    # fallback to using the latest cache if no exact match is found
+      #    - v1-dependencies-
       - run:
           name: Setup Code Climate test-reporter
           command: |
@@ -45,7 +45,7 @@ jobs:
             pip install scipy coverage
             pip install codecov 
             rm -rf jarvis
-            git clone https://github.com/knc6/jarvis.git 
+            git clone -b j2020 https://github.com/knc6/jarvis.git
             cd jarvis
             python setup.py install
             pip install pytest pytest-cov
@@ -54,10 +54,10 @@ jobs:
             codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
       - run: python --version ; pip --version ; pwd ; ls
 
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
+      #- save_cache:
+      #    paths:
+      #      - ./venv
+      #    #key: v1-dependencies-{{ checksum "requirements.txt" }}
         
       - run:
           command: |

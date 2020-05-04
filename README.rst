@@ -14,19 +14,17 @@
 .. image:: https://codecov.io/gh/knc6/jarvis/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/knc6/jarvis
 
-JARVIS
-==========
+NIST-JARVIS
+=======================================
 
 Joint Automated Repository for Various Integrated Simulations (JARVIS) is an integrated framework for computational science using density functional theory,
 classical force-field/molecular dynamics and machine-learning. The jarvis-tools package can be used for high-throughput computation, data-analysis, and training machine-learning models. Some of the packages used in the jarvis-tools package are shown below. JARVIS-official website: https://jarvis.nist.gov
 
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/tools/jarvis-git.JPG
-        :target: https://jarvis.nist.gov/
 .. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/statistics.JPG
         :target: https://jarvis.nist.gov/
 
-Installing JARVIS
---------------------
+Installing jarvis-tools
+----------------------------------------
 
 - We recommend installing miniconda environment from https://conda.io/miniconda.html ::
 
@@ -55,37 +53,6 @@ Installing JARVIS
 
 .. _`Nix instructions`: ./nix/README.md
 
-Jupyter notebooks
------------------
-
-- Python for beginners:
-
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/novice.JPG
-        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/python_novice_notebook.ipynb
-
-- JARVIS-DFT data analysis:
-
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/jdft.JPG
-        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/jarvis_dft_explore_notebook.ipynb
-
-- JARVIS-ML training:
-
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/jml_train.JPG
-        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/jarvis_ml_quick_train_notebook.ipynb
-
-- Comparing ML algorithms:
-
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/compareml.JPG
-        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/compare_ml_algorithms_notebook.ipynb
-
-- JARVIS-FF data-analysis:
-
-.. image:: https://github.com/knc6/jarvis/blob/master/jarvis/colab/colab_figures/jff.JPG
-        :target: https://colab.research.google.com/github/knc6/jarvis/blob/master/jarvis/colab/jarvis_ff_explore_notebook.ipynb
-
-- See more in the plot-gallery below
-
-
 References
 -----------------
 
@@ -106,7 +73,7 @@ References
 
 
 
-Pypi, Readthedocs and Slideshare links
+External links
 -----------------------------------------
       https://pypi.org/project/jarvis-tools
       
@@ -114,72 +81,8 @@ Pypi, Readthedocs and Slideshare links
       
       https://www.slideshare.net/KAMALCHOUDHARY4
 
-Running the examples
---------------------------------
-- For running high-throughput calculations, set HPC/system related information in env_variables
-- Run py.test in tests folder to ensure basic setup
-- LAMMPS example:
-      An example calculation for Aluminum is given in the lammps folder for running EAM calculation (https://github.com/usnistgov/jarvis/blob/master/jarvis/lammps/examples/basic_input_output.py). Untar the example folder using tar -xvzf Al03.eam.alloy_nist.tgz . Change the 'parameters' variable and run jlammps.py.
-- VASP example:
-      Similarly, an example calculation for Silicon is given in vasp folder (https://github.com/usnistgov/jarvis/blob/master/jarvis/vasp/examples/runstruct_pyvasp.py). The input is a POSCAR file, which is already provided. executable paths, pseudopotential directory path and Special_POTCAR.yaml path needs to be adjusted in joptb88vdw.py top section. The master.py can be submitted to the queuing system with qsub sub.sh. 
-- ML example:
-      We trained machine learning models using JARVIS-DFT data on bandgaps, formation energies and elastic modulus and other properties. We used both chemical and structural descriptors during GradientBoostingRegression training. Example of getting 1557 descriptors for a system is given at: https://github.com/usnistgov/jarvis/blob/master/jarvis/sklearn/examples/desc_example.py
-- Access to JARVIS database:
-       Our database is freely available at https://www.ctcms.nist.gov/~knc6/JVASP.html, https://www.ctcms.nist.gov/jarvisml/, https://www.ctcms.nist.gov/~knc6/periodic.html, and https://www.ctcms.nist.gov/~knc6/JLAMMPS.html for JARVIS-DFT, JARVIS-ML and JARVIS-FF. 
-       We can also load the dataset using python scripts similar to https://github.com/knc6/jarvis/blob/master/jarvis/db/static/explore_db.py .
-- Uploading your data using JARVIS-API:
-       In addition to downloading/browsing through the JARVIS-database, one can also upload their data and query using JARVIS-API. Follow the instructions in https://github.com/usnistgov/jarvis/blob/master/jarvis/db/mdcs/mdcs_api.py
-
-Founders
---------------------------------
-Kamal Choudhary, Francesca Tavazza (NIST)
-
-Contributors
------------------------------------
-Daniel Wheeler, Faical Yannick Congo, Kevin Garrity, Brian DeCost, Adam Biacchi,
-Lucas Hale, Andrew Reid, Marcus Newrock (NIST)
+      https://figshare.com/authors/Kamal_Choudhary/4445539
 
 
-Plot-gallery with additional jupyter notebooks
------------------------------------------------------
-.. class:: center
-.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF.png
 
-:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
 
-.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/ADF-a.png
-
-:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
-
-.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/ADF-b.png
-
-:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
-
-.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/DDF.png
-
-:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/RDF%2CPRDF%2CADF%2CDDF.ipynb
-
-.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/bandstr.jpg
-
-:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
-
-.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Dos.png
-
-:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/band_structure.ipynb
-
-    
-.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.png
-
-:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Wulff.ipynb
-
-.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/BoltzTrap.png
-
-:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Boltztrap.ipynb
-
-.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/kp_converg.png
-
-:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
-
-.. image:: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/en_converg.png
-
-:Notebook: https://github.com/usnistgov/jarvis/blob/master/jarvis/db/static/Convergence.ipynb
