@@ -45,7 +45,7 @@ jobs:
             pip install scipy coverage
             pip install codecov 
             rm -rf jarvis
-            git clone -b j2020 https://github.com/knc6/jarvis.git
+            git clone https://github.com/knc6/jarvis.git
             cd jarvis
             python setup.py install
             pip install pytest pytest-cov
