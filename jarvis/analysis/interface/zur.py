@@ -427,9 +427,9 @@ def get_hetero(film, substrate, seperation=3.0):
     for i in film.cart_coords:
         tmp = i
         #tmp[2] = i[2] + (thickness_sub+thickness_film)
-        tmp[2] = i[2] +(thickness_sub+thickness_film)/2.0+seperation
+        #tmp[2] = i[2] +(thickness_sub+thickness_film)+seperation
         #tmp = tmp  + shift_normal
-        #tmp = tmp + origin + shift_normal
+        tmp = tmp - origin + shift_normal
         #new_coords.append(i)
         new_coords.append(tmp)
 

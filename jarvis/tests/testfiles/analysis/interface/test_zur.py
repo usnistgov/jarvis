@@ -6,9 +6,15 @@ import os
 s1 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-652"))
 s2 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-664"))
 s3 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-688"))
+s4 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-75175"))
 
 
 def test_zur():
+    info = mismatch_strts(film=s4.atoms, subs=s2.atoms)
+    a = info['film_sl'].center_around_origin()
+    b = info['subs_sl'].center_around_origin()
+    combined  = get_hetero(a,b,seperation=3).center_around_origin()
+    #print (combined)
     info = mismatch_strts(film=s2.atoms, subs=s3.atoms)
     a = info['film_sl'].center_around_origin()
     b = info['subs_sl'].center_around_origin()
