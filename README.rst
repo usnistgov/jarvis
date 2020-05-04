@@ -14,7 +14,7 @@
 .. image:: https://codecov.io/gh/knc6/jarvis/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/knc6/jarvis
 
-NIST-JARVIS
+NIST-JARVIS & jarvis-tools package
 =======================================
 
 NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) is an integrated framework for computational science using density functional theory,
