@@ -272,10 +272,145 @@ def get_factors(n):
         if n % x == 0:
             yield x
 
-
-def mismatch_strts(film=[], subs=[]):
+  
+def make_interface(film='',subs='',atol=1,ltol=0.05):
     """
     Returns mismatch and other information as info dict
+    """
+
+
+    z = ZSLGenerator()
+
+    matches = list(z(film.lattice_mat[:2], subs.lattice_mat[:2], lowest=True))
+
+    info = {}
+    info["mismatch_u"] = "na"
+    info["mismatch_v"] = "na"
+    info["mismatch_angle"] = "na"
+    info["area1"] = "na"
+    info["area2"] = "na"
+    info["film_sl"] = "na"#film
+    info['matches']= matches
+    info["subs_sl"] = "na"#subs
+
+    uv1 = matches[0]["sub_sl_vecs"]
+    uv2 = matches[0]["film_sl_vecs"]
+    # uv1=[[-8.52917200e+00,  9.12745800e+00,  3.66344517e-17],[1.27937580e+01, 9.12745800e+00, 1.34228735e-15]]
+    # uv2=[[7.02403800e+00, 1.05360570e+01, 1.07524571e-15],[-1.40480760e+01,  7.02403800e+00, -4.30098283e-16]]
+    u = np.array(uv1)
+    v = np.array(uv2)
+    a1 = u[0]
+    a2 = u[1]
+    b1 = v[0]
+    b2 = v[1]
+    mismatch_u = np.linalg.norm(b1) / np.linalg.norm(a1) - 1
+    mismatch_v = np.linalg.norm(b2) / np.linalg.norm(a2) - 1
+    angle1 = (
+        np.arccos(np.dot(a1, a2) / np.linalg.norm(a1) / np.linalg.norm(a2))
+        * 180
+        / np.pi
+    )
+    angle2 = (
+        np.arccos(np.dot(b1, b2) / np.linalg.norm(b1) / np.linalg.norm(b2))
+        * 180
+        / np.pi
+    )
+    mismatch_angle = abs(angle1 - angle2)
+    area1 = np.linalg.norm(np.cross(a1, a2))
+    area2 = np.linalg.norm(np.cross(b1, b2))
+    uv_substrate = uv1
+    uv_film = uv2
+    substrate_latt = Lattice(
+        np.array([uv_substrate[0][:], uv_substrate[1][:], subs.lattice_mat[2, :]])
+    )
+
+    _, __, scell = subs.lattice.find_matches(substrate_latt, ltol=ltol, atol=atol)
+
+
+    film_latt = Lattice(
+        np.array([uv_film[0][:], uv_film[1][:], film.lattice_mat[2, :]])
+    )
+
+
+    scell[2] = np.array([0, 0, 1])
+    scell_subs = scell
+
+    _, __, scell = film.lattice.find_matches(film_latt, ltol=ltol, atol=atol)
+    scell[2] = np.array([0, 0, 1])
+    scell_film = scell
+
+
+    film = film.make_supercell(scell_film)
+    subs = subs.make_supercell(scell_subs)
+
+    lmap = Lattice(
+        np.array(
+            [subs.lattice_mat[0, :], subs.lattice_mat[1, :], film.lattice_mat[2, :]]
+        )
+    )
+
+    film = film.center_around_origin()
+    subs = subs.center_around_origin()
+    info["mismatch_u"] = mismatch_u
+    info["mismatch_v"] = mismatch_v
+    info["mismatch_angle"] = mismatch_angle
+    info["area1"] = area1
+    info["area2"] = area2
+    info["film_sl"] = film
+    info["subs_sl"] = subs
+
+    
+    seperation=3
+    coords_uniq_sub = np.array(subs.cart_coords)
+
+
+    coords_uniq_film = np.array(film.cart_coords)
+
+    substrate_top_z = max(np.array(subs.frac_coords)[:, 2])
+    substrate_bot_z = min(np.array(subs.frac_coords)[:, 2])
+
+    film_bottom = min(np.array(film.frac_coords)[:, 2])
+    film_top = max(np.array(film.frac_coords)[:, 2])
+
+    sub_z = subs.lattice_mat[2, :]
+    origin = np.array([0, 0, substrate_top_z])
+    shift_normal = sub_z / np.linalg.norm(sub_z) * seperation/ np.linalg.norm(sub_z)
+
+    thickness_sub = abs(substrate_top_z-substrate_bot_z)
+    thickness_film = abs(film_top-film_bottom)
+
+
+    new_coords = []
+    lattice_mat = subs.lattice_mat
+    elements = []
+    for i in subs.frac_coords:
+        new_coords.append(i)
+    for i in subs.elements:
+        elements.append(i)
+
+    for i in film.elements:
+        elements.append(i)
+    for i in film.frac_coords:
+        tmp = i
+        tmp[2] = i[2] +shift_normal[2]+(thickness_sub+thickness_film)/2.0
+
+
+        new_coords.append(tmp)
+
+
+    interface = Atoms(
+        lattice_mat=lattice_mat, elements=elements, coords=new_coords, cartesian=False
+    )
+    info['interface']=interface
+    return info
+
+
+
+
+def mismatch_strts(film=[], subs=[],ltol=0.05, atol=10):
+    """
+    Returns mismatch and other information as info dict,
+    Deprecated, this module will be removes in the next version
     """
     z = ZSLGenerator()
     matches = list(z(film.lattice_mat[:2], subs.lattice_mat[:2], lowest=True))
@@ -324,7 +459,7 @@ def mismatch_strts(film=[], subs=[]):
     mat2d_latt_fake = Lattice(
         np.array([film.lattice_mat[0, :], film.lattice_mat[1, :], mat2d_fake_c])
     )
-    _, __, scell = subs.lattice.find_matches(substrate_latt, ltol=0.05, atol=1)
+    _, __, scell = subs.lattice.find_matches(substrate_latt, ltol=ltol, atol=atol)
     scell[2] = np.array([0, 0, 1])
     # print("subs lattice", subs.lattice_mat)
     # print("scell", scell)
@@ -334,12 +469,22 @@ def mismatch_strts(film=[], subs=[]):
     film = film.make_supercell_matrix(scell)
     # modify the substrate lattice so that the 2d material can be
     # grafted on top of it
+    #lmap = Lattice(
+    #    np.array(
+    #        [subs.lattice_mat[0, :], subs.lattice_mat[1, :], film.lattice_mat[2, :]]
+    #    )
+    #)
+    #film.lattice = lmap
+
     lmap = Lattice(
         np.array(
             [subs.lattice_mat[0, :], subs.lattice_mat[1, :], film.lattice_mat[2, :]]
         )
     )
     film.lattice = lmap
+
+
+
     # film.modify_lattice(lmap)
     # print ("film",film)
     # print ("subs",subs)
@@ -429,7 +574,7 @@ def get_hetero(film, substrate, seperation=3.0):
         #tmp[2] = i[2] + (thickness_sub+thickness_film)
         #tmp[2] = i[2] +(thickness_sub+thickness_film)+seperation
         #tmp = tmp  + shift_normal
-        tmp = tmp - origin + shift_normal
+        tmp = tmp + origin + shift_normal
         #new_coords.append(i)
         new_coords.append(tmp)
 
