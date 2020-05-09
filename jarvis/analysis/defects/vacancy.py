@@ -40,19 +40,19 @@ class Vacancy(object):
         self._wyckoff_multiplicity = wyckoff_multiplicity
         self._symbol = symbol
 
-    def generate_defects(self, enforce_c_size=10.0, on_conventional_cell=False):
+    def generate_defects(self, enforce_c_size=10.0, on_conventional_cell=False, extend = 1):
         atoms = self._atoms
         if on_conventional_cell:
             atoms = Spacegroup3D(atoms).conventional_standard_structure
         if enforce_c_size is not None:
             dim1 = (
-                int((float(enforce_c_size) / float((abs(atoms.lattice.lat_lengths()[0]))))) + 1
+                int((float(enforce_c_size) / float((abs(atoms.lattice.lat_lengths()[0]))))) + extend
             )
             dim2 = (
-                int(float(enforce_c_size) / float((abs(atoms.lattice.lat_lengths()[1])))) + 1
+                int(float(enforce_c_size) / float((abs(atoms.lattice.lat_lengths()[1])))) + extend
             )
             dim3 = (
-                int(float(enforce_c_size) / float((abs(atoms.lattice.lat_lengths()[2])))) + 1
+                int(float(enforce_c_size) / float((abs(atoms.lattice.lat_lengths()[2])))) + extend
             )
             atoms = atoms.make_supercell([dim1, dim2, dim3])
             supercell_size = [dim1, dim2, dim3]
