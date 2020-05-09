@@ -44,16 +44,15 @@ class Vacancy(object):
         atoms = self._atoms
         if on_conventional_cell:
             atoms = Spacegroup3D(atoms).conventional_standard_structure
-
         if enforce_c_size is not None:
             dim1 = (
-                int((float(enforce_c_size) / float(max(abs(atoms.lattice_mat[0]))))) + 1
+                int((float(enforce_c_size) / float((abs(atoms.lattice.lat_lengths()[0]))))) + 1
             )
             dim2 = (
-                int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[1])))) + 1
+                int(float(enforce_c_size) / float((abs(atoms.lattice.lat_lengths()[1])))) + 1
             )
             dim3 = (
-                int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[2])))) + 1
+                int(float(enforce_c_size) / float((abs(atoms.lattice.lat_lengths()[2])))) + 1
             )
             atoms = atoms.make_supercell([dim1, dim2, dim3])
             supercell_size = [dim1, dim2, dim3]
