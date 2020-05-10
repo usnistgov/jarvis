@@ -60,9 +60,9 @@ class Vacancy(object):
             supercell_size = [dim1, dim2, dim3]
 
         element_list = list(set(atoms.elements))
-        print("s_size=", supercell_size, a, b, c, atoms.lattice.lat_lengths())
-        print("s_sizeomg=", atoms.pymatgen_converter().lattice.abc)
-        print(atoms)
+        #print("s_size=", supercell_size, a, b, c, atoms.lattice.lat_lengths())
+        #print("s_sizeomg=", atoms.pymatgen_converter().lattice.abc)
+        #print(atoms)
         spg = Spacegroup3D(atoms)
         wyckoffs = spg._dataset["wyckoffs"]
         atoms.props = wyckoffs
