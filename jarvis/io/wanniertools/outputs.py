@@ -1,3 +1,8 @@
+"""
+Class for analyzing  WT.out file
+"""
+
+
 class WTOut(object):
     def __init__(self, path=""):
         self.path = path
@@ -54,6 +59,7 @@ class WTOut(object):
         except:
             pass
         return chrn
+
 
 """
 if __name__ == "__main__":
