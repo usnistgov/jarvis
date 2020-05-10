@@ -1,3 +1,6 @@
+"""
+Class for writing wt.in for wanniertools
+"""
 import os
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.core.kpoints import Kpoints3D
@@ -284,6 +287,7 @@ class WTin(object):
             )
             f.write(line)
         f.close()
+
 
 """
 if __name__ == "__main__":

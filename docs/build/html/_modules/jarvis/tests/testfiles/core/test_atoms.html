@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>jarvis.tests.testfiles.core.test_atoms &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jarvis.tests.testfiles.core.test_atoms</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span><span class="p">,</span> <span class="n">VacuumPadding</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">poscar_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
+    <span class="s2">&quot;..&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;..&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;..&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;examples&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;vasp&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SiOptb88&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;POSCAR&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="test_basic_atoms"><a class="viewcode-back" href="../../../../../jarvis.tests.testfiles.core.html#jarvis.tests.testfiles.core.test_atoms.test_basic_atoms">[docs]</a><span class="k">def</span> <span class="nf">test_basic_atoms</span><span class="p">():</span>
+
+    <span class="n">box</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.715</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.715</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">]]</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]]</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Si&quot;</span><span class="p">,</span> <span class="s2">&quot;Si&quot;</span><span class="p">]</span>
+    <span class="n">Si</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="n">lattice_mat</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">)</span>
+    <span class="n">polar</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">check_polar</span>
+    <span class="n">Si</span><span class="o">.</span><span class="n">props</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">]</span>
+    <span class="n">vac_pad</span> <span class="o">=</span> <span class="n">VacuumPadding</span><span class="p">(</span><span class="n">Si</span><span class="p">)</span>
+    <span class="n">den_2d</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">vac_pad</span><span class="o">.</span><span class="n">get_effective_2d_slab</span><span class="p">()</span><span class="o">.</span><span class="n">density</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">den_0d</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">vac_pad</span><span class="o">.</span><span class="n">get_effective_molecule</span><span class="p">()</span><span class="o">.</span><span class="n">density</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">den_lll_red</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">Si</span><span class="o">.</span><span class="n">get_lll_reduced_structure</span><span class="p">()</span><span class="o">.</span><span class="n">density</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">strng</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
+    <span class="n">scell_nat</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">num_atoms</span>
+    <span class="n">scell_nat2</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">make_supercell_matrix</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span><span class="o">.</span><span class="n">num_atoms</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;scell_nat,scell_nat2&quot;</span><span class="p">,</span> <span class="n">scell_nat</span><span class="p">,</span> <span class="n">scell_nat2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Si</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Si</span><span class="o">.</span><span class="n">make_supercell_matrix</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]))</span>
+    <span class="n">com</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">Si</span><span class="o">.</span><span class="n">get_center_of_mass</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">rem</span> <span class="o">=</span> <span class="p">(</span><span class="n">Si</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span><span class="o">.</span><span class="n">remove_site_by_index</span><span class="p">(</span><span class="n">site</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">num_atoms</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="n">new_at</span> <span class="o">=</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="n">angs_a</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;angles&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">Si_2_den</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span>
+        <span class="n">lattice_mat</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;lattice_mat&quot;</span><span class="p">],</span> <span class="n">coords</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;coords&quot;</span><span class="p">],</span> <span class="n">elements</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;elements&quot;</span><span class="p">]</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">density</span>
+    <span class="n">Si</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
+    <span class="c1"># print (&#39;scell_nat&#39;, Si_2)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">round</span><span class="p">(</span><span class="n">Si</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">Si</span><span class="o">.</span><span class="n">atomic_numbers</span><span class="p">,</span>
+        <span class="n">Si</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">,</span>
+        <span class="n">Si</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">Si</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="nb">round</span><span class="p">(</span><span class="n">Si</span><span class="o">.</span><span class="n">density</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">Si</span><span class="o">.</span><span class="n">spacegroup</span><span class="p">(),</span>
+        <span class="n">Si</span><span class="o">.</span><span class="n">pymatgen_converter</span><span class="p">()</span> <span class="o">!=</span> <span class="p">{},</span>
+        <span class="n">polar</span><span class="p">,</span>
+        <span class="n">Si</span><span class="o">.</span><span class="n">props</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">den_2d</span><span class="p">,</span>
+        <span class="n">den_0d</span><span class="p">,</span>
+        <span class="nb">round</span><span class="p">(</span><span class="n">Si</span><span class="o">.</span><span class="n">packing_fraction</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">Si</span><span class="o">.</span><span class="n">composition</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+        <span class="n">strng</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">den_lll_red</span><span class="p">,</span>
+        <span class="n">scell_nat</span><span class="p">,</span>
+        <span class="n">com</span><span class="p">,</span>
+        <span class="n">rem</span><span class="p">,</span>
+        <span class="n">angs_a</span><span class="p">,</span>
+        <span class="nb">round</span><span class="p">(</span><span class="n">Si_2_den</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">)</span> <span class="o">==</span> <span class="p">(</span>
+        <span class="mf">40.03</span><span class="p">,</span>
+        <span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="mi">14</span><span class="p">],</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">2.33</span><span class="p">,</span>
+        <span class="s2">&quot;C2/m (12)&quot;</span><span class="p">,</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;a&quot;</span><span class="p">,</span>
+        <span class="mf">0.35</span><span class="p">,</span>
+        <span class="mf">0.01</span><span class="p">,</span>
+        <span class="mf">0.28</span><span class="p">,</span>
+        <span class="p">{</span><span class="s2">&quot;Si&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="mf">2.33</span><span class="p">,</span>
+        <span class="mi">16</span><span class="p">,</span>
+        <span class="mf">0.679</span><span class="p">,</span>
+        <span class="mi">15</span><span class="p">,</span>
+        <span class="mf">60.0</span><span class="p">,</span>
+        <span class="mf">2.33</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<span class="c1"># test_basic_atoms()</span>
+<span class="c1"># def test_basic_atoms():</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

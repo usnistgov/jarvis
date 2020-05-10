@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>jarvis.io.lammps package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="jarvis-io-lammps-package">
+<h1>jarvis.io.lammps package<a class="headerlink" href="#jarvis-io-lammps-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jarvis.io.lammps.inputs">
+<span id="jarvis-io-lammps-inputs-module"></span><h2>jarvis.io.lammps.inputs module<a class="headerlink" href="#module-jarvis.io.lammps.inputs" title="Permalink to this headline">¶</a></h2>
+<p>Module for LAMMPS input files</p>
+<dl class="py class">
+<dt id="jarvis.io.lammps.inputs.LammpsData">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.lammps.inputs.</code><code class="sig-name descname">LammpsData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lammps_box</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">species</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">charges</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">cart_coords</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">element_order</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="jarvis.io.lammps.inputs.LammpsData.atoms_to_lammps">
+<code class="sig-name descname">atoms_to_lammps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">0, 0, 0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.atoms_to_lammps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.atoms_to_lammps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.io.lammps.inputs.LammpsData.lammps_to_atoms">
+<code class="sig-name descname">lammps_to_atoms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.lammps_to_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.lammps_to_atoms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.io.lammps.inputs.LammpsData.read_data">
+<code class="sig-name descname">read_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'lammps.data'</span></em>, <em class="sig-param"><span class="n">element_order</span><span class="o">=</span><span class="default_value">['O', 'Al']</span></em>, <em class="sig-param"><span class="n">potential_file</span><span class="o">=</span><span class="default_value">'pot.mod'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.read_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.read_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.io.lammps.inputs.LammpsData.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.io.lammps.inputs.LammpsData.write_file">
+<code class="sig-name descname">write_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'lammps.data'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.write_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jarvis.io.lammps.inputs.LammpsInput">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.lammps.inputs.</code><code class="sig-name descname">LammpsInput</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">LammpsDataObj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pbc</span><span class="o">=</span><span class="default_value">['p', 'p', 'p']</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsInput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsInput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="jarvis.io.lammps.inputs.LammpsInput.write_lammps_in">
+<code class="sig-name descname">write_lammps_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lammps_in</span><span class="o">=</span><span class="default_value">'init.mod'</span></em>, <em class="sig-param"><span class="n">lammps_in1</span><span class="o">=</span><span class="default_value">'potential.mod'</span></em>, <em class="sig-param"><span class="n">lammps_in2</span><span class="o">=</span><span class="default_value">'in.main'</span></em>, <em class="sig-param"><span class="n">lammps_trj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lammps_data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsInput.write_lammps_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsInput.write_lammps_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>write lammps input file
+from ase with custom modifications
+LAMMPS input is devided into three parts
+Args:</p>
+<blockquote>
+<div><p>lammps_in: generally”init.mod”, with unit and conversion factor information
+lammps_in1: generally “potential.mod”, with force-field/potential style and element tyoe information
+lammps_in2: generally “in.elastic”, a generic main input file to be fed in LAMMPS usin lmp_*&lt;…,parameters[‘exec’]
+parameters: input parameters</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.io.lammps.outputs">
+<span id="jarvis-io-lammps-outputs-module"></span><h2>jarvis.io.lammps.outputs module<a class="headerlink" href="#module-jarvis.io.lammps.outputs" title="Permalink to this headline">¶</a></h2>
+<p>Functions to analze LAMMPS output</p>
+<dl class="py function">
+<dt id="jarvis.io.lammps.outputs.analyze_log">
+<code class="sig-prename descclassname">jarvis.io.lammps.outputs.</code><code class="sig-name descname">analyze_log</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log</span><span class="o">=</span><span class="default_value">'log.lammps'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/outputs.html#analyze_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.outputs.analyze_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyzes log.lammps file,
+Please note, the output format heavily depends on the input file
+A generic inpu is taken here
+Args:</p>
+<blockquote>
+<div><p>log: path to log.lammps file</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>en: energy/atom
+press: pressure
+toten: total energy
+cij: elastic constants</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.io.lammps">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.io.lammps" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">jarvis.io.lammps package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-jarvis.io.lammps.inputs">jarvis.io.lammps.inputs module</a></li>
+<li><a class="reference internal" href="#module-jarvis.io.lammps.outputs">jarvis.io.lammps.outputs module</a></li>
+<li><a class="reference internal" href="#module-jarvis.io.lammps">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/jarvis.io.lammps.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

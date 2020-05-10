@@ -1,3 +1,6 @@
+"""
+Modules for analyzing infrared intensities
+"""
 from jarvis.io.vasp.outputs import Vasprun, Outcar
 import numpy as np
 
@@ -5,6 +8,7 @@ import numpy as np
 def normalize_vecs(phonon_eigenvectors, masses):
     """
     Return the eigenvectors after division of each component by sqrt(mass).
+    Adapted from https://github.com/JMSkelton/Phonopy-Spectroscopy/ 
     """
 
     nmodes = len(phonon_eigenvectors)

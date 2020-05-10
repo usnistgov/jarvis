@@ -1,3 +1,7 @@
+"""
+Modules for running LAMMPS calculations
+"""
+
 from jarvis.analysis.structure.spacegroup import (
     Spacegroup3D,
     symmetrically_distinct_miller_indices,
@@ -17,7 +21,21 @@ import sys
 
 
 class JobFactory(object):
+
+    """
+    Class for generic LAMMPS calculations
+    """
+
     def __init__(self, name="", pair_style="", pair_coeff="", control_file=""):
+        """
+        Used in defining a LAMMPS job
+        Args:
+            pair_style :  LAMMPS pair_style, e.g. "eam/alloy" 
+            pair_coeff : path for pair-coefficients file
+            control_file :  control-file with units, include modules 
+                          for running LAMMPS calculation , see examples
+            name : generic name
+        """
         self.pair_style = pair_style
         self.pair_coeff = pair_coeff
         self.control_file = control_file
@@ -30,20 +48,29 @@ class JobFactory(object):
         lammps_cmd="",
         enforce_conventional_structure=True,
         enforce_c_size=0,
+        extend=1,
     ):
+        """
+        Generic function for high-throughput LAMMPS calculations using eam/alloy
+        Args:
+            atoms :  Atoms object
+            ff_path :  inter-atomic potential path
+            lammps_cmd : LAMMPS executable path
+            enforce_conventional_structure :  whether to enforce conventional cell
+            enforce_c_size : minimum cell-sizes
+            extend : used for round-off during making supercells
+        """
+
         if enforce_conventional_structure:
             atoms = Spacegroup3D(atoms).conventional_standard_structure
 
+        a = atoms.lattice.lat_lengths()[0]
+        b = atoms.lattice.lat_lengths()[1]
+        c = atoms.lattice.lat_lengths()[2]
         if enforce_c_size is not None:
-            dim1 = (
-                int((float(enforce_c_size) / float(max(abs(atoms.lattice_mat[0]))))) + 1
-            )
-            dim2 = (
-                int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[1])))) + 1
-            )
-            dim3 = (
-                int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[2])))) + 1
-            )
+            dim1 = int(float(enforce_c_size) / float(a)) + extend
+            dim2 = int(float(enforce_c_size) / float(b)) + extend
+            dim3 = int(float(enforce_c_size) / float(c)) + extend
             atoms = atoms.make_supercell([dim1, dim2, dim3])
 
         self.pair_style = "eam/alloy"
@@ -59,7 +86,7 @@ class JobFactory(object):
         ).runjob()
         print("en, final_str, forces", en, final_str, forces)
 
-        indices = symmetrically_distinct_miller_indices(max_index=1, cvn_atoms = atoms)
+        indices = symmetrically_distinct_miller_indices(max_index=1, cvn_atoms=atoms)
         for i in indices:
             surf = Surface(atoms=final_str, indices=i).make_surface()
             jobname = str("Surf-") + str("_".join(map(str, i)))
@@ -104,6 +131,10 @@ class JobFactory(object):
 
 
 class LammpsJob(object):
+    """
+    Class representing a LAMMPS job
+    """
+
     def __init__(
         self,
         atoms=None,
@@ -121,6 +152,19 @@ class LammpsJob(object):
         copy_files=[],
         element_order=[],
     ):
+        """
+        Used for defining a LAMMPS job
+        Args:
+            atoms :  Atoms object
+            element_order : element order used in accessing force-field parameters
+            parameters :  LAMMPS input parameter dictionary
+            lammps_cmd : LAMMPS executable path
+            output_file :  standard output file
+            stderr_file :  standard error file
+            jobname :  Job name
+            attempts :  number of attempts before crashing the job, TODO
+            copy_files : copy certain files before a job
+        """
 
         self.atoms = atoms
         self.element_order = element_order
@@ -133,6 +177,9 @@ class LammpsJob(object):
         self.copy_files = copy_files
 
     def write_input(self):
+        """
+        Writes LAMMPS input files
+        """
         lmp = LammpsData().atoms_to_lammps(atoms=self.atoms)
         self.element_order = lmp._element_order
         lmp.write_file("data")
@@ -144,6 +191,9 @@ class LammpsJob(object):
                 GenericInputs().elastic_general(path=".")
 
     def run(self):
+        """
+        Subprocess run a job
+        """
         with open(self.output_file, "w") as f_std, open(
             self.stderr_file, "w", buffering=1
         ) as f_err:
@@ -154,6 +204,9 @@ class LammpsJob(object):
         return p
 
     def runjob(self):
+        """
+        Generic LAMMPS job submission
+        """
         attempt = 0
         wait = False
         while wait == False:
@@ -260,6 +313,7 @@ class LammpsJob(object):
             f_json.write(json.dumps(data_cal))
             f_json.close()
             return en, final_str, forces
+
 
 """
 if __name__ == "__main__":

@@ -1,3 +1,9 @@
+"""
+CALPHAD requies to fix symmetry during IBRION = 7 optimization
+This module writes the POSCAR accordingly.
+"""
+
+
 from jarvis.analysis.structure.spacegroup import get_wyckoff_position_operators
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
@@ -81,7 +87,7 @@ def get_selective_dyn_decorated_atoms(atoms):
     )
     return decorated_atoms, hall_number, wsymbols
 
-
+"""
 if __name__ == "__main__":
     atoms = Poscar.from_file(
         "/rk2/knc6/ZenGen/VASP-CALCS/C14EndMembersCalculationSetup/AlAlAl/CONTCAR"
@@ -125,3 +131,4 @@ if __name__ == "__main__":
         x.append(i)
     # print (hall_number, wdata)
     print(len(x))
+"""

@@ -1,3 +1,7 @@
+"""
+Module for k-points used in solid-state calculations
+"""
+
 from jarvis.core.lattice import Lattice
 from jarvis.core.atoms import Atoms
 import numpy as np

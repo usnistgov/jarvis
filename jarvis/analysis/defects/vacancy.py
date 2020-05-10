@@ -1,3 +1,6 @@
+"""
+Modules for making point-defect vacancies
+"""
 import pprint
 import random
 from collections import OrderedDict
@@ -40,33 +43,31 @@ class Vacancy(object):
         self._wyckoff_multiplicity = wyckoff_multiplicity
         self._symbol = symbol
 
-    def generate_defects(self, enforce_c_size=10.0, on_conventional_cell=False):
+    def generate_defects(
+        self, enforce_c_size=10.0, on_conventional_cell=False, extend=1
+    ):
         atoms = self._atoms
         if on_conventional_cell:
             atoms = Spacegroup3D(atoms).conventional_standard_structure
-
+        a = atoms.lattice.lat_lengths()[0]
+        b = atoms.lattice.lat_lengths()[1]
+        c = atoms.lattice.lat_lengths()[2]
         if enforce_c_size is not None:
-            dim1 = (
-                int((float(enforce_c_size) / float(max(abs(atoms.lattice_mat[0]))))) + 1
-            )
-            dim2 = (
-                int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[1])))) + 1
-            )
-            dim3 = (
-                int(float(enforce_c_size) / float(max(abs(atoms.lattice_mat[2])))) + 1
-            )
-            atoms = atoms.make_supercell([dim1, dim2, dim3])
+            dim1 = int(float(enforce_c_size) / float(a)) + extend
+            dim2 = int(float(enforce_c_size) / float(b)) + extend
+            dim3 = int(float(enforce_c_size) / float(c)) + extend
+            # atoms = atoms.make_supercell([dim1, dim2, dim3])
             supercell_size = [dim1, dim2, dim3]
 
         element_list = list(set(atoms.elements))
-
-        # print ('atoms=',atoms)
+        print("s_size=", supercell_size, a, b, c, atoms.lattice.lat_lengths())
+        print("s_sizeomg=", atoms.pymatgen_converter().lattice.abc)
+        print(atoms)
         spg = Spacegroup3D(atoms)
         wyckoffs = spg._dataset["wyckoffs"]
         atoms.props = wyckoffs
         supercell = atoms.make_supercell(supercell_size)
         props = rand_select(supercell.props)
-        # print ('props',props)
         vacs = []
         for i, j in props.items():
             defect_strt = supercell.remove_site_by_index(j)
@@ -91,6 +92,7 @@ class Vacancy(object):
 
     def __repr__(self, indent=2):
         return pprint.pformat(self.to_dict(), indent=indent)
+
 
 """
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 Code to calculate spin-orbit spillage.
 Please cite the following paper if you use the code:
 https://www.nature.com/articles/s41598-019-45028-y
-https://arxiv.org/abs/2001.11389
+https://www.nature.com/articles/s41524-020-0319-4
 """
 
 import sys
