@@ -395,6 +395,7 @@ class Atoms(object):
         """
         Adapted from Pymatgen
         Makes a supercell. Allowing to have sites outside the unit cell
+
         Args:
             scaling_matrix: A scaling matrix for transforming the lattice
                 vectors. Has to be all integers. Several options are possible:
