@@ -5,19 +5,21 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
-    jarvis.atat
-    jarvis.db
-    jarvis.gasp
-    jarvis.lammps
-    jarvis.sklearn
-    jarvis.tools
-    jarvis.vasp
+   jarvis.ai
+   jarvis.analysis
+   jarvis.core
+   jarvis.db
+   jarvis.examples
+   jarvis.io
+   jarvis.tasks
+   jarvis.tests
 
 Module contents
 ---------------
 
 .. automodule:: jarvis
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

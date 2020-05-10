@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>jarvis.analysis.defects.surface &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jarvis.analysis.defects.surface</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Modules for making crystallographic plane surfaces</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Poscar</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.lattice</span> <span class="kn">import</span> <span class="n">Lattice</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="n">Spacegroup3D</span>
+<span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="kn">import</span> <span class="n">norm</span><span class="p">,</span> <span class="n">solve</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">gcd</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="c1">#from pymatgen.analysis.wulff import WulffShape</span>
+<span class="c1">#from pymatgen.core.lattice import Lattice</span>
+
+
+<div class="viewcode-block" id="ext_gcd"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.surface.ext_gcd">[docs]</a><span class="k">def</span> <span class="nf">ext_gcd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ext_gcd</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">%</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">-</span> <span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">//</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="wulff_normals"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.surface.wulff_normals">[docs]</a><span class="k">def</span> <span class="nf">wulff_normals</span><span class="p">(</span><span class="n">miller_indices</span><span class="o">=</span><span class="p">[],</span> <span class="n">surface_energies</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="n">max_s</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">surface_energies</span><span class="p">)</span>
+    <span class="n">normals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">miller_indices</span><span class="p">,</span> <span class="n">surface_energies</span><span class="p">):</span>
+        <span class="n">normal</span> <span class="o">=</span> <span class="n">j</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_s</span><span class="p">)</span>
+        <span class="n">normals</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">normal</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">normals</span></div>
+
+
+<div class="viewcode-block" id="Surface"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.surface.Surface">[docs]</a><span class="k">class</span> <span class="nc">Surface</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">layers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">vacuum</span><span class="o">=</span><span class="mf">18.0</span><span class="p">,</span>
+        <span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span>
+        <span class="n">from_conventional_structure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get surface object of arbitrary atoms object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">from_conventional_structure</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">conventional_standard_structure</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vacuum</span> <span class="o">=</span> <span class="n">vacuum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">layers</span>
+
+<div class="viewcode-block" id="Surface.make_surface"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.surface.Surface.make_surface">[docs]</a>    <span class="k">def</span> <span class="nf">make_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span>
+        <span class="n">h0</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">l0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">==</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">h0</span> <span class="ow">and</span> <span class="n">k0</span> <span class="ow">or</span> <span class="n">h0</span> <span class="ow">and</span> <span class="n">l0</span> <span class="ow">or</span> <span class="n">k0</span> <span class="ow">and</span> <span class="n">l0</span><span class="p">:</span>  <span class="c1"># if two indices are zero</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">h0</span><span class="p">:</span>
+                <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">k0</span><span class="p">:</span>
+                <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">l0</span><span class="p">:</span>
+                <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">ext_gcd</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+            <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">a3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span>  <span class="c1"># .lat_lengths()</span>
+
+            <span class="c1"># constants describing the dot product of basis c1 and c2:</span>
+            <span class="c1"># dot(c1,c2) = k1+i*k2, i in Z</span>
+            <span class="n">k1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h</span> <span class="o">*</span> <span class="n">a2</span><span class="p">)</span> <span class="o">+</span> <span class="n">q</span> <span class="o">*</span> <span class="p">(</span><span class="n">l</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h</span> <span class="o">*</span> <span class="n">a3</span><span class="p">),</span> <span class="n">l</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">a3</span><span class="p">)</span>
+            <span class="n">k2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">l</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h</span> <span class="o">*</span> <span class="n">a2</span><span class="p">)</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="p">(</span><span class="n">l</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h</span> <span class="o">*</span> <span class="n">a3</span><span class="p">),</span> <span class="n">l</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">-</span> <span class="n">k</span> <span class="o">*</span> <span class="n">a3</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">k2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">k1</span> <span class="o">/</span> <span class="n">k2</span><span class="p">))</span>  <span class="c1"># i corresponding to the optimal basis</span>
+                <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">l</span><span class="p">,</span> <span class="n">q</span> <span class="o">-</span> <span class="n">i</span> <span class="o">*</span> <span class="n">k</span>
+
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">ext_gcd</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="n">q</span> <span class="o">*</span> <span class="n">l</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+
+            <span class="n">c1</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="n">q</span> <span class="o">*</span> <span class="n">l</span><span class="p">,</span> <span class="o">-</span><span class="n">p</span> <span class="o">*</span> <span class="n">h</span><span class="p">,</span> <span class="o">-</span><span class="n">q</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span>
+            <span class="n">c2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="o">-</span><span class="n">k</span><span class="p">))</span> <span class="o">//</span> <span class="nb">abs</span><span class="p">(</span><span class="n">gcd</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+            <span class="n">c3</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">*</span> <span class="n">p</span><span class="p">,</span> <span class="n">a</span> <span class="o">*</span> <span class="n">q</span><span class="p">)</span>
+        <span class="c1"># print (&#39;c1c2c3&#39;,c1,c2,c3)</span>
+        <span class="n">lattice</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span>  <span class="c1"># .lat_lengths()</span>
+        <span class="n">basis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span><span class="p">])</span>
+        <span class="n">scaled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">basis</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">scaled</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">scaled</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">)</span>
+        <span class="c1"># atoms.frac_coords=scaled</span>
+        <span class="n">new_coords</span> <span class="o">=</span> <span class="n">scaled</span>
+        <span class="n">tmp_cell</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">lattice</span><span class="p">)</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">lattice</span><span class="p">,</span> <span class="n">tmp_cell</span><span class="p">)</span>
+        <span class="c1"># print (&#39;scaled&#39;,scaled)</span>
+        <span class="n">cart_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">scaled</span><span class="p">,</span> <span class="n">lattice</span><span class="p">)</span>
+        <span class="c1"># print (&#39;cart_coords&#39;,cart_coords)</span>
+        <span class="c1"># print (&#39;M Matric&#39;,M)</span>
+        <span class="n">new_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">cart_coords</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+        <span class="c1"># print (&#39;new_coords&#39;,new_coords)</span>
+        <span class="c1"># new_cart_coords=np.dot(scaled,tmp_cell)</span>
+
+        <span class="n">new_atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span>
+            <span class="n">lattice_mat</span><span class="o">=</span><span class="n">tmp_cell</span><span class="p">,</span>
+            <span class="n">coords</span><span class="o">=</span><span class="n">new_coords</span><span class="p">,</span>
+            <span class="n">elements</span><span class="o">=</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">,</span>
+            <span class="n">cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">surf_atoms</span> <span class="o">=</span> <span class="n">new_atoms</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">])</span>
+        <span class="c1"># print(&quot;supercell_cart_coords&quot;, surf_atoms.frac_coords)</span>
+
+        <span class="n">new_lat</span> <span class="o">=</span> <span class="n">surf_atoms</span><span class="o">.</span><span class="n">lattice_mat</span>  <span class="c1"># lat_lengths()</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="n">new_lat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="n">new_lat</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="n">new_lat</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">new_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">a1</span><span class="p">,</span>
+                <span class="n">a2</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">)</span>
+                <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">))</span>
+                <span class="o">/</span> <span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">a1</span> <span class="o">=</span> <span class="n">new_lat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="n">new_lat</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="n">new_lat</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="c1"># print(&quot;a1,a2,a3&quot;, new_lat)</span>
+
+        <span class="n">latest_lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a1</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a1</span><span class="p">),</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+                        <span class="o">-</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a1</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+                    <span class="p">),</span>
+                    <span class="mi">0</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a3</span><span class="p">)),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">new_lat</span><span class="p">,</span> <span class="n">latest_lat</span><span class="p">)</span>
+
+        <span class="n">new_cart_coords</span> <span class="o">=</span> <span class="n">surf_atoms</span><span class="o">.</span><span class="n">cart_coords</span>  <span class="c1"># np.dot(scaled,lattice)</span>
+
+        <span class="n">new_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">new_cart_coords</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
+
+        <span class="n">new_atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span>
+            <span class="n">lattice_mat</span><span class="o">=</span><span class="n">latest_lat</span><span class="p">,</span>
+            <span class="n">elements</span><span class="o">=</span><span class="n">surf_atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">,</span>
+            <span class="n">coords</span><span class="o">=</span><span class="n">new_coords</span><span class="p">,</span>
+            <span class="n">cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">frac_coords</span> <span class="o">=</span> <span class="n">new_atoms</span><span class="o">.</span><span class="n">frac_coords</span>
+
+        <span class="n">frac_coords</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">frac_coords</span><span class="p">[:]</span> <span class="o">%</span> <span class="mi">1</span>
+        <span class="n">new_atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span>
+            <span class="n">lattice_mat</span><span class="o">=</span><span class="n">latest_lat</span><span class="p">,</span>
+            <span class="n">elements</span><span class="o">=</span><span class="n">surf_atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">,</span>
+            <span class="n">coords</span><span class="o">=</span><span class="n">frac_coords</span><span class="p">,</span>
+            <span class="n">cartesian</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">new_lat</span> <span class="o">=</span> <span class="n">new_atoms</span><span class="o">.</span><span class="n">lattice_mat</span>
+        <span class="n">new_cart_coords</span> <span class="o">=</span> <span class="n">new_atoms</span><span class="o">.</span><span class="n">cart_coords</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">new_atoms</span><span class="o">.</span><span class="n">elements</span>
+        <span class="n">new_lat</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_lat</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">vacuum</span>
+        <span class="n">with_vacuum_atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span>
+            <span class="n">lattice_mat</span><span class="o">=</span><span class="n">new_lat</span><span class="p">,</span>
+            <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span>
+            <span class="n">coords</span><span class="o">=</span><span class="n">new_cart_coords</span><span class="p">,</span>
+            <span class="n">cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># new_atoms.center()</span>
+        <span class="c1"># print (with_vacuum_atoms)</span>
+        <span class="k">return</span> <span class="n">with_vacuum_atoms</span></div></div>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]</span>
+<span class="sd">    coords = [[0, 0, 0], [0.25, 0.25, 0.25]]</span>
+<span class="sd">    elements = [&quot;Si&quot;, &quot;Si&quot;]</span>
+<span class="sd">    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)</span>
+<span class="sd">    Surface(atoms=Si, indices=[1, 1, 1]).make_surface()</span>
+<span class="sd">    su = [</span>
+<span class="sd">        0.8582640971273426,</span>
+<span class="sd">        0.9334963319196496,</span>
+<span class="sd">        0.9360461382184894,</span>
+<span class="sd">        0.9419095687284446,</span>
+<span class="sd">        0.9802042233627004,</span>
+<span class="sd">        0.9875446840480956,</span>
+<span class="sd">        1.0120634294466684,</span>
+<span class="sd">        1.0126231880823566,</span>
+<span class="sd">        1.0241538763302507,</span>
+<span class="sd">        1.0315901848682645,</span>
+<span class="sd">        1.0318271257831195,</span>
+<span class="sd">        1.0331286888257398,</span>
+<span class="sd">        1.0344297141291043,</span>
+<span class="sd">        1.0388709097092674,</span>
+<span class="sd">        1.040277640596931,</span>
+<span class="sd">        1.042494119906149,</span>
+<span class="sd">        1.04453679643896,</span>
+<span class="sd">        1.0450598648770613,</span>
+<span class="sd">        1.045076130339553,</span>
+<span class="sd">        1.0469310544190567,</span>
+<span class="sd">        1.0491015867538047,</span>
+<span class="sd">        1.0495494553198788,</span>
+<span class="sd">        1.0534717916897114,</span>
+<span class="sd">        1.0535201391639715,</span>
+<span class="sd">        1.054233162444997,</span>
+<span class="sd">        1.0579157863887743,</span>
+<span class="sd">        1.0595676718662346,</span>
+<span class="sd">        1.0601381085497692,</span>
+<span class="sd">        1.109580394178689,</span>
+<span class="sd">    ]</span>
+
+<span class="sd">    ml = [</span>
+<span class="sd">        [0, 0, 1],</span>
+<span class="sd">        [2, 0, 3],</span>
+<span class="sd">        [2, 0, 1],</span>
+<span class="sd">        [1, 0, 1],</span>
+<span class="sd">        [3, 0, 2],</span>
+<span class="sd">        [1, 0, 3],</span>
+<span class="sd">        [3, 1, 1],</span>
+<span class="sd">        [3, 0, 1],</span>
+<span class="sd">        [3, 1, 3],</span>
+<span class="sd">        [3, -1, 1],</span>
+<span class="sd">        [3, 1, 0],</span>
+<span class="sd">        [3, 2, 1],</span>
+<span class="sd">        [3, 3, 1],</span>
+<span class="sd">        [1, 0, 0],</span>
+<span class="sd">        [2, 2, 1],</span>
+<span class="sd">        [3, -1, 3],</span>
+<span class="sd">        [3, -1, 2],</span>
+<span class="sd">        [3, 3, 2],</span>
+<span class="sd">        [3, 2, 2],</span>
+<span class="sd">        [2, -1, 3],</span>
+<span class="sd">        [3, 2, 0],</span>
+<span class="sd">        [3, 2, 3],</span>
+<span class="sd">        [1, 1, 1],</span>
+<span class="sd">        [1, 0, 2],</span>
+<span class="sd">        [3, 1, 2],</span>
+<span class="sd">        [2, -1, 2],</span>
+<span class="sd">        [3, -1, 0],</span>
+<span class="sd">        [2, 2, 3],</span>
+<span class="sd">        [1, 1, 0],</span>
+<span class="sd">    ]</span>
+<span class="sd">    nm = wulff_normals(miller_indices=ml, surface_energies=su)</span>
+<span class="sd">    print(nm)</span>
+<span class="sd">    lat = Lattice([[4.05, 0, 0], [0, 4.05, 0], [0, 0, 4.05]])</span>
+<span class="sd">    pmg_wulff = WulffShape(lat, ml, su)</span>
+<span class="sd">    print(pmg_wulff.facets)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>
