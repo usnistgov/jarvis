@@ -1,3 +1,6 @@
+"""
+Modules for making crystallographic plane surfaces
+"""
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.core.lattice import Lattice
 from jarvis.core.atoms import Atoms

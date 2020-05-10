@@ -1,3 +1,6 @@
+"""
+Class for analyzing BoltzTrap outputs
+"""
 import os
 import numpy as np
 from collections import OrderedDict, defaultdict
@@ -14,6 +17,9 @@ class BoltzTrapOutput(object):
         condtens_fixdoping=[],
         halltens_fixdoping=[],
     ):
+        """
+        Specify boltztrap folder  as path to analze data
+        """
         self.outtrans_data = outtrans_data
         self.intrans_data = intrans_data
         self.condtens_fixdoping = condtens_fixdoping
@@ -167,7 +173,7 @@ class BoltzTrapOutput(object):
         ] = self.read_condtens_fixdoping()  # self.condtens_fixdoping
         return d
 
-
+"""
 if __name__ == "__main__":
     condtens_fix = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/boltztrap/boltztrap.condtens_fixdoping"
     b = BoltzTrapOutput(
@@ -180,3 +186,4 @@ if __name__ == "__main__":
         path="/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/boltztrap"
     ).to_dict()
     print(b)
+"""

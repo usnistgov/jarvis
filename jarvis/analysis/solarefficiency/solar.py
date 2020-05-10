@@ -1,3 +1,7 @@
+"""
+Modules for calculating theoretical solar-cell efficiency
+See: https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166
+"""
 import numpy as np
 import os
 from jarvis.io.vasp.outputs import Vasprun

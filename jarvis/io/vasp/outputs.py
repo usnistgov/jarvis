@@ -1,3 +1,7 @@
+"""
+Modules for analzing VASP outputs
+"""
+
 from scipy.constants import physical_constants, speed_of_light
 from jarvis.io.vasp.vasp_constant import *
 from jarvis.core.atoms import Atoms
@@ -15,30 +19,6 @@ from jarvis.io.vasp.inputs import Poscar
 import matplotlib
 from matplotlib import pyplot as plt
 
-plt.switch_backend("agg")
-
-# from ase.calculators.vasp import VaspChargeDensity
-
-
-"""
-class TotalDos(object):
-    def __init__(
-        self,
-        energies=[],
-        values=[],
-        integrated_values=[],
-        spin=None,
-        element=None,
-        orbital=None,
-    ):
-        self.energues = energies
-        self.values = values
-        self.integrated_values = integrated_values
-        self.element = element
-        self.orbital = orbital
-        self.spin = spin
-"""
-
 
 class Chgcar(object):
     def __init__(
@@ -51,6 +31,9 @@ class Chgcar(object):
         augdiff=None,
         nsets=1,
     ):
+        """
+        Class handling VASP CHGCAR file data
+        """
         self.filename = filename
         self.atoms = atoms
         self.chg = chg
@@ -130,6 +113,9 @@ class Chgcar(object):
 
 class Vasprun(object):
     def __init__(self, filename="vasprun.xml", data={}):
+        """
+        Class handling VASP vasprun.xml file data
+        """
         self._filename = filename
         self._data = data
         self.ionic_steps = None
@@ -553,6 +539,9 @@ class Vasprun(object):
 
 class Oszicar(object):
     def __init__(self, filename, data={}):
+        """
+        Class handling VASP OSZICAR file data
+        """
         self.filename = filename
         self.data = data
         if self.data == {}:
@@ -584,6 +573,9 @@ class Oszicar(object):
 
 class Outcar(object):
     def __init__(self, filename, data={}):
+        """
+        Class handling VASP OUTCAR file data
+        """
         self.filename = filename
         self.data = data
         if self.data == {}:

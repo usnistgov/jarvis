@@ -1,3 +1,6 @@
+"""
+Class for writing Wannier90 input files
+"""
 from jarvis.core.atoms import Atoms
 import os
 import json
@@ -18,6 +21,23 @@ class Wannier90win(object):
         soc=True,
         semi_core_states=None,
     ):
+        """
+        Information ndeeded for writing wannier90.win
+        Args:
+            struct : Atoms object
+            efermi : Fermi-energy
+            soc : spin-orbit coupling True/False 
+            dis_num_iter : number of disentanglement iteration steps
+                           generally 100-200 is enough
+            num_iter : number of wannierisation iterations
+            kmesh_tol : important for wannier convergence, try to increase/decrease if 
+                        wannierization fails
+            dis_mix_ratio : mixing ratio for the disentanglement routine
+            frozen_tol :  disentanglement inner (frozen) window with +/- values
+            semi_core_states : important to specify according to pseudopotentials
+                              A generic one is given for GGA-PBE, change if you use
+                              different POTCARs
+        """
         self.struct = struct
         self.efermi = efermi
         self.soc = soc
@@ -115,6 +135,9 @@ class Wannier90win(object):
         nbands=18,
         soc="",
     ):
+        """
+        Helper function to write hr_plot or write_hr as .true. 
+        """
         f = open(prev_win, "r")
         lines = f.read().splitlines()
         f.close()
@@ -132,6 +155,7 @@ class Wannier90win(object):
             line = str(i) + str("\n")
             f.write(line)
         f.close()
+
 
 """
 if __name__ == "__main__":

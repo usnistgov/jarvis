@@ -1,3 +1,7 @@
+"""
+Modules for handing crystallographic lattice-parameters
+"""
+
 import numpy as np
 from numpy import dot
 

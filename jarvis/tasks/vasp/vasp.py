@@ -1,3 +1,7 @@
+"""
+Class for running VASP jobs
+"""
+
 from jarvis.io.vasp.outputs import Outcar, Vasprun
 from jarvis.io.vasp.inputs import Poscar, Incar, Potcar
 from jarvis.db.jsonutils import loadjson, dumpjson
@@ -12,13 +16,24 @@ import shutil
 
 class JobFactory(object):
     def __init__(self, name="", use_incar_dict={}, pot_type=None):
+        """
+        Generic class for running variations of VASP calculations
+        Args:
+            name : generic name
+            use_incar_dict : dictionary with INCAR parameters that would be repreated
+            pot_type : pseudopotential type
+        """
         self.name = name
         self.use_incar_dict = use_incar_dict
         self.pot_type = pot_type
 
-    # def combine_jobs(self):
-
     def all_optb88vdw_props(self, mat=None):
+        """
+        Used for OptB88vdW functional based high-throughput calculations
+        This will converge k-points, cut-offs, and then carry several property calculations.
+        Args:
+            mat : Poscar object
+        """
         optb88 = GenericIncars().optb88vdw()
         job = JobFactory(use_incar_dict=optb88.incar, pot_type=optb88.pot_type)
         encut = job.converg_encut(mat=mat)
@@ -50,6 +65,16 @@ class JobFactory(object):
     def elastic(
         self, mat=None, encut=None, nbands=None, potim=0.015, npar=None, length=20
     ):
+        """
+        Used for elastic property calculations using IBRION = 6
+        Enforces conventional standard structure
+        Args:
+            mat :  Poscar object
+            encut :  Plane-wave cut-off, 1.3 times will be used
+            nbands : number of bands, generally high-value recommended
+            npar : NPAR tag, see VASP manual, set it as number of cores
+            length :  K-points in length unit
+        """
 
         incar = self.use_incar_dict
         cvn = Spacegroup3D(mat.atoms).conventional_standard_structure
@@ -87,7 +112,14 @@ class JobFactory(object):
         return en, contcar
 
     def mbj_loptics(self, mat=None, encut=None, nbands=None, length=20):
-
+        """
+        Used for TBmBJ meta-GGA calculation
+        Args:
+            mat :  Poscar object
+            encut :  Plane-wave cut-off, 1.3 times will be used
+            nbands : number of bands, increased to threee times
+            length :  K-points in length unit
+        """
         incar = self.use_incar_dict
 
         if nbands is not None:
@@ -122,7 +154,14 @@ class JobFactory(object):
         return en, contcar
 
     def loptics(self, mat=None, encut=None, nbands=None, length=20):
-
+        """
+        Used in linear-optics calculations
+        Args:
+            mat :  Poscar object
+            encut :  Plane-wave cut-off, 1.3 times will be used
+            nbands : number of bands, increased to threee times
+            length :  K-points in length unit
+        """
         incar = self.use_incar_dict
 
         if nbands is not None:
@@ -156,7 +195,15 @@ class JobFactory(object):
     def band_structure(
         self, mat=None, encut=None, line_density=20, nbands=None, copy_prev_chgcar=None
     ):
-
+        """
+        Used in band-structure calculations
+        Args:
+            mat :  Poscar object
+            encut :  Plane-wave cut-off, 1.3 times will be used
+            nbands : number of bands, increased to threee times
+            line_density :  number of k-points between two high-symmetry k-points
+            copy_prev_chgcar :  path of CHGCAR file for Non-SCF step
+        """
         incar = self.use_incar_dict
         if copy_prev_chgcar is not None:
             shutil.copy2(copy_prev_chgcar, ".")
@@ -187,6 +234,13 @@ class JobFactory(object):
         return en, contcar
 
     def optimize_geometry(self, mat=None, encut=None, length=None):
+        """
+        Used in optimizing lattice-parameter and internal psotions
+        Args:
+            mat :  Poscar object
+            encut :  Plane-wave cut-off, 1.3 times will be used
+            length :  K-points in length unit
+        """
         incar = self.use_incar_dict
         data = {
             "ENCUT": encut,
@@ -216,13 +270,13 @@ class JobFactory(object):
 
     def converg_encut(self, encut=500, mat=None, starting_length=10, tol=0.001):
         """
-            Function to converg plane-wave cut-off
-            Args:
-                encut: intial cutoff
-                mat: Poscar object
-            Returns:
-                   encut: converged cut-off
-            """
+        Function to converg plane-wave cut-off
+        Args:
+            encut: intial cutoff
+            mat: Poscar object
+        Returns:
+               encut: converged cut-off
+        """
         pot_type = self.pot_type
         en1 = -10000
         encut1 = encut
@@ -361,13 +415,13 @@ class JobFactory(object):
 
     def converg_kpoint(self, length=0, mat=None, encut=500, tol=0.001):
         """
-            Function to converg K-points
-            Args:
-                lenght: K-point line density
-                mat: Poscar object with structure information
-            Returns:
-                   length1: K-point line density
-            """
+        Function to converg K-points
+        Args:
+            lenght: K-point line density
+            mat: Poscar object with structure information
+        Returns:
+               length1: K-point line density
+        """
 
         pot_type = self.pot_type
         en1 = -10000
@@ -593,6 +647,21 @@ class VaspJobs(object):
         copy_files=["/users/knc6/bin/vdw_kernel.bindat"],
         attempts=5,
     ):
+        """
+        Class defninig a typical VASP calculation
+        Args:
+            poscar :  Poscar object
+            incar : Incar object
+            kpoints : Kpoints object
+            potcar : Potcar object
+            vasp_cmd :  path to vasp executable
+            output_file : standard output file
+            stderr_file : standard error output file
+            jobname : job name
+            pot_type :  pseudopotential type
+            copy_files :  file(s) to be copied
+            attempts :  used in error handling
+        """
         self.poscar = poscar
         self.kpoints = kpoints
         self.incar = incar
@@ -615,6 +684,9 @@ class VaspJobs(object):
             self.potcar = Potcar(elements=new_symb, pot_type=self.pot_type)
 
     def run(self):
+        """
+        Use subprocess to tun a job
+        """
         with open(self.output_file, "w") as f_std, open(
             self.stderr_file, "w", buffering=1
         ) as f_err:
@@ -624,6 +696,9 @@ class VaspJobs(object):
         return p
 
     def write_jobsub_py(self, filename="jobsub.py"):
+        """
+        Writes a generic python file for running jobs
+        """
         f = open(filename, "w")
         f.write("%s\n" % "from jarvis.io.vasp.inputs import Poscar, Incar, Potcar")
         f.write("%s\n" % "from jarvis.core.kpoints import Kpoints3D as Kpoints")
@@ -640,6 +715,10 @@ class VaspJobs(object):
         f.close()
 
     def runjob(self):
+        """
+        Main function for running a generic VASP calculation
+        """
+
         # poscar=self.poscar
         # incar=self.incar
         # kpoints=self.kpoints
@@ -786,12 +865,19 @@ class VaspJobs(object):
 
 
 class GenericIncars(object):
+    """
+    Class containing several generic Incar object for different psuedopotentials
+    """
+
     def __init__(self, name="", incar={}, pot_type=""):
         self.name = name
         self.incar = incar
         self.pot_type = pot_type
 
     def optb88vdw(self):
+        """
+        OptB88vdW functional
+        """
         data = dict(
             PREC="Accurate",
             ISMEAR=0,
@@ -812,6 +898,9 @@ class GenericIncars(object):
         return GenericIncars(name="optb88vdw", incar=inc, pot_type="POT_GGA_PAW_PBE")
 
     def pbe(self):
+        """
+        GGA-PBE functional
+        """
         data = dict(
             PREC="Accurate",
             ISMEAR=0,
@@ -828,7 +917,9 @@ class GenericIncars(object):
         return GenericIncars(name="pbe", incar=inc, pot_type="POT_GGA_PAW_PBE")
 
     def lda(self):
-
+        """
+        LDA functional
+        """
         data = dict(
             PREC="Accurate",
             ISMEAR=0,
@@ -842,6 +933,7 @@ class GenericIncars(object):
         )
         inc = Incar(data)
         return GenericIncars(name="lda", incar=inc, pot_type="POT_LDA_PAW")
+
 
 """
 if __name__ == "__main__":

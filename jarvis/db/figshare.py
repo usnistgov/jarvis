@@ -1,3 +1,7 @@
+"""
+Downloads files from https://figshare.com/authors/Kamal_Choudhary/4445539
+"""
+
 import zipfile, os, requests
 from jarvis.db.jsonutils import loadjson
 

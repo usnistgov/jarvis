@@ -1,3 +1,7 @@
+"""
+Modules related to chemistry of periodic-table elements
+"""
+
 import os
 import json
 import numpy as np
@@ -211,11 +215,11 @@ class Specie(object):
         except:
             pass
         return val
-#
-#"""
+
+"""
 if __name__ == "__main__":
     el = Specie("Al")
     #print(el.get_chgdescrp_arr)
     print(len(el.get_descrp_arr))
     #print (get_descrp_arr_name())
-#"""
+"""

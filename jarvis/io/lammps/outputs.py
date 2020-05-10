@@ -1,3 +1,7 @@
+"""
+Functions to analze LAMMPS output
+"""
+
 import sys
 
 

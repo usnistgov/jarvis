@@ -1,3 +1,7 @@
+"""
+Helper functions for JSON files
+"""
+
 import json
 
 
