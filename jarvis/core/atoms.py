@@ -497,8 +497,10 @@ class Atoms(object):
         """
         system = str(self.composition.reduced_formula)
         header = (
+
             str(system)
             + str("\n1.0\n")
+
             + str(self.lattice_mat[0][0])
             + " "
             + str(self.lattice_mat[0][1])
@@ -532,12 +534,14 @@ class Atoms(object):
         rest = ""
         # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
+
             if self.show_props == True:
                 rest = (
                     rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
                 )
             else:
                 rest = rest + " ".join(map(str, i)) + "\n"
+
         result = header + middle + rest
 
         return result
@@ -562,8 +566,10 @@ class Atoms(object):
     def __repr__(self):
         system = str(self.composition.reduced_formula)
         header = (
+
             str(system)
             + str("\n1.0\n")
+
             + str(self.lattice_mat[0][0])
             + " "
             + str(self.lattice_mat[0][1])
@@ -605,6 +611,7 @@ class Atoms(object):
                 + "\ndirect\n"
             )
         rest = ""
+
         # print ('props_ordered',props_ordered)
         # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
@@ -614,8 +621,10 @@ class Atoms(object):
                 )
             else:
                 rest = rest + " ".join(map(str, i)) + "\n"
+
         result = header + middle + rest
         return result
+
 
 
 
@@ -776,6 +785,7 @@ class VacuumPadding(object):
             lattice_mat=lattice_mat, elements=elements, coords=frac, cartesian=False
         )
         return with_vacuum_atoms
+
 """
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
