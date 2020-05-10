@@ -180,7 +180,13 @@ class VacuumPadding(object):
 
 class Atoms(object):
     def __init__(
-        self, lattice_mat=None, coords=None, elements=None, props=None, cartesian=False
+        self,
+        lattice_mat=None,
+        coords=None,
+        elements=None,
+        props=None,
+        cartesian=False,
+        show_props=False,
     ):
         """
         Create atomic structure with lattice, coordinates, atom type and other information
@@ -215,6 +221,7 @@ class Atoms(object):
         """
 
         self.lattice_mat = np.array(lattice_mat)
+        self.show_props = show_props
         self.lattice = Lattice(lattice_mat)
         self.coords = np.array(coords)
         self.elements = elements
@@ -647,7 +654,8 @@ class Atoms(object):
         """
         system = str(self.composition.reduced_formula)
         header = (
-            str(system)+str("\n1.0\n")
+            str(system)
+            + str("\n1.0\n")
             + str(self.lattice_mat[0][0])
             + " "
             + str(self.lattice_mat[0][1])
@@ -681,10 +689,12 @@ class Atoms(object):
         rest = ""
         # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
-            if '' not in props_ordered:
-                rest = rest + " ".join(map(str, i)) + " " + str(props_ordered) + "\n"
+            if self.show_props == True:
+                rest = (
+                    rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
+                )
             else:
-                rest = rest + " ".join(map(str, i))  + "\n"
+                rest = rest + " ".join(map(str, i)) + "\n"
         result = header + middle + rest
 
         return result
@@ -709,7 +719,8 @@ class Atoms(object):
     def __repr__(self):
         system = str(self.composition.reduced_formula)
         header = (
-            str(system)+str("\n1.0\n")
+            str(system)
+            + str("\n1.0\n")
             + str(self.lattice_mat[0][0])
             + " "
             + str(self.lattice_mat[0][1])
@@ -751,14 +762,15 @@ class Atoms(object):
                 + "\ndirect\n"
             )
         rest = ""
-        #print ('props_ordered',props_ordered)
+        # print ('props_ordered',props_ordered)
         # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
-            if '' not in props_ordered:
-                rest = rest + " ".join(map(str, i)) + " " + str(props_ordered) + "\n"
+            if self.show_props == True:
+                rest = (
+                    rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
+                )
             else:
-                rest = rest + " ".join(map(str, i))  + "\n"
-            #rest = rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
+                rest = rest + " ".join(map(str, i)) + "\n"
         result = header + middle + rest
         return result
 
