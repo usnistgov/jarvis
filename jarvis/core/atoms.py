@@ -397,18 +397,18 @@ class Atoms(object):
         Makes a supercell. Allowing to have sites outside the unit cell
 
         Args:
-            scaling_matrix: A scaling matrix for transforming the lattice
-                vectors. Has to be all integers. Several options are possible:
-                a. A full 3x3 scaling matrix defining the linear combination
-                   the old lattice vectors. E.g., [[2,1,0],[0,3,0],[0,0,
-                   1]] generates a new structure with lattice vectors a' =
-                   2a + b, b' = 3b, c' = c where a, b, and c are the lattice
-                   vectors of the original structure.
-                b. An sequence of three scaling factors. E.g., [2, 1, 1]
-                   specifies that the supercell should have dimensions 2a x b x
-                   c.
-                c. A number, which simply scales all lattice vectors by the
-                   same factor.
+          scaling_matrix: A scaling matrix for transforming the lattice
+          vectors. Has to be all integers. Several options are possible:
+          a. A full 3x3 scaling matrix defining the linear combination
+             the old lattice vectors. E.g., [[2,1,0],[0,3,0],[0,0,
+             1]] generates a new structure with lattice vectors a' =
+             2a + b, b' = 3b, c' = c where a, b, and c are the lattice
+             vectors of the original structure.
+          b. An sequence of three scaling factors. E.g., [2, 1, 1]
+             specifies that the supercell should have dimensions 2a x b x
+             c.
+          c. A number, which simply scales all lattice vectors by the
+             same factor.
         Returns:
             Supercell structure. Note that a Structure is always returned,
             even if the input structure is a subclass of Structure. This is
