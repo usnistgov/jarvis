@@ -1,0 +1,900 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>jarvis.core package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="jarvis-core-package">
+<h1>jarvis.core package<a class="headerlink" href="#jarvis-core-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jarvis.core.atoms">
+<span id="jarvis-core-atoms-module"></span><h2>jarvis.core.atoms module<a class="headerlink" href="#module-jarvis.core.atoms" title="Permalink to this headline">¶</a></h2>
+<p>This module provides classes to specify atomic structure</p>
+<dl class="py class">
+<dt id="jarvis.core.atoms.Atoms">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.core.atoms.</code><code class="sig-name descname">Atoms</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lattice_mat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">coords</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">elements</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">props</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cartesian</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_props</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.apply_strain">
+<code class="sig-name descname">apply_strain</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">strain</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.apply_strain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.apply_strain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a strain(e.g. 0.01) to the lattice.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.atomic_numbers">
+<em class="property">property </em><code class="sig-name descname">atomic_numbers</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.atomic_numbers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of atomic numbers of atoms in the atoms object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.center">
+<code class="sig-name descname">center</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">vacuum</span><span class="o">=</span><span class="default_value">18.0</span></em>, <em class="sig-param"><span class="n">about</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Center structure with vacuum padding os size:vacuum in a direction:axis</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.center_around_origin">
+<code class="sig-name descname">center_around_origin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">new_origin</span><span class="o">=</span><span class="default_value">[0.0, 0.0, 0.5]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.center_around_origin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.center_around_origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.check_polar">
+<em class="property">property </em><code class="sig-name descname">check_polar</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.check_polar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the surface structure is polar
+by comparing atom types at top and bottom.
+Applicable for sufcae with vaccums only.
+Args:</p>
+<blockquote>
+<div><p><a class="reference external" href="file:atoms">file:atoms</a> object (surface with vacuum)</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>polar:True/False</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.composition">
+<em class="property">property </em><code class="sig-name descname">composition</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.composition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get composition of the atoms object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.density">
+<em class="property">property </em><code class="sig-name descname">density</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get density in g/cm3 of the atoms object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Form atoms object from the dictionary</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.get_center_of_mass">
+<code class="sig-name descname">get_center_of_mass</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.get_center_of_mass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.get_center_of_mass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get center of mass of the atoms object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.get_lll_reduced_structure">
+<code class="sig-name descname">get_lll_reduced_structure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.get_lll_reduced_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.get_lll_reduced_structure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.get_origin">
+<code class="sig-name descname">get_origin</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.get_origin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.get_origin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get center of mass of the atoms object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.get_string">
+<code class="sig-name descname">get_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.get_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.get_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get string representation of the atoms object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.lattice_points_in_supercell">
+<code class="sig-name descname">lattice_points_in_supercell</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">supercell_matrix</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.lattice_points_in_supercell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.lattice_points_in_supercell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapted from Pymatgen
+Returns the list of points on the original lattice contained in the
+supercell in fractional coordinates (with the supercell basis).
+e.g. [[2,0,0],[0,1,0],[0,0,1]] returns [[0,0,0],[0.5,0,0]]
+Args:</p>
+<blockquote>
+<div><p>supercell_matrix: 3x3 matrix describing the supercell</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>numpy array of the fractional coordinates</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.make_supercell">
+<code class="sig-name descname">make_supercell</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dim</span><span class="o">=</span><span class="default_value">[2, 2, 2]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.make_supercell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.make_supercell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make supercell of dimension dim</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.make_supercell_matrix">
+<code class="sig-name descname">make_supercell_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scaling_matrix</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.make_supercell_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.make_supercell_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapted from Pymatgen
+Makes a supercell. Allowing to have sites outside the unit cell
+Args:</p>
+<blockquote>
+<div><dl>
+<dt>scaling_matrix: A scaling matrix for transforming the lattice</dt><dd><p>vectors. Has to be all integers. Several options are possible:
+a. A full 3x3 scaling matrix defining the linear combination</p>
+<blockquote>
+<div><p>the old lattice vectors. E.g., [[2,1,0],[0,3,0],[0,0,
+1]] generates a new structure with lattice vectors a’ =
+2a + b, b’ = 3b, c’ = c where a, b, and c are the lattice
+vectors of the original structure.</p>
+</div></blockquote>
+<ol class="loweralpha simple" start="2">
+<li><p>An sequence of three scaling factors. E.g., [2, 1, 1]
+specifies that the supercell should have dimensions 2a x b x
+c.</p></li>
+<li><p>A number, which simply scales all lattice vectors by the
+same factor.</p></li>
+</ol>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Supercell structure. Note that a Structure is always returned,
+even if the input structure is a subclass of Structure. This is
+to avoid different arguments signatures from causing problems. If
+you prefer a subclass to return its own type, you need to override
+this method in the subclass.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.num_atoms">
+<em class="property">property </em><code class="sig-name descname">num_atoms</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.num_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get number of atoms</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.packing_fraction">
+<em class="property">property </em><code class="sig-name descname">packing_fraction</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.packing_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get packing fraction of the atoms object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.pymatgen_converter">
+<code class="sig-name descname">pymatgen_converter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.pymatgen_converter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.pymatgen_converter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get pymatgen representation of the atoms object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.remove_site_by_index">
+<code class="sig-name descname">remove_site_by_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">site</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.remove_site_by_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.remove_site_by_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove an atom by its index number</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.spacegroup">
+<code class="sig-name descname">spacegroup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symprec</span><span class="o">=</span><span class="default_value">0.001</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.spacegroup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.spacegroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get spacegroup of the atoms object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary representation of the atoms object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.volume">
+<em class="property">property </em><code class="sig-name descname">volume</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get volume of the atoms object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jarvis.core.atoms.VacuumPadding">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.core.atoms.</code><code class="sig-name descname">VacuumPadding</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em>, <em class="sig-param"><span class="n">vacuum</span><span class="o">=</span><span class="default_value">20.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#VacuumPadding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.VacuumPadding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Adds vaccum padding to make 2D structure or making molecules</p>
+<dl class="py method">
+<dt id="jarvis.core.atoms.VacuumPadding.get_effective_2d_slab">
+<code class="sig-name descname">get_effective_2d_slab</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#VacuumPadding.get_effective_2d_slab"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.VacuumPadding.get_effective_2d_slab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds 2D vacuum to a system</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.VacuumPadding.get_effective_molecule">
+<code class="sig-name descname">get_effective_molecule</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#VacuumPadding.get_effective_molecule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.VacuumPadding.get_effective_molecule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds vacuum around a system</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.core.composition">
+<span id="jarvis-core-composition-module"></span><h2>jarvis.core.composition module<a class="headerlink" href="#module-jarvis.core.composition" title="Permalink to this headline">¶</a></h2>
+<p>Modules handling chemical composition</p>
+<dl class="py class">
+<dt id="jarvis.core.composition.Composition">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.core.composition.</code><code class="sig-name descname">Composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">content</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">sort</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/composition.html#Composition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.composition.Composition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="jarvis.core.composition.Composition.formula">
+<em class="property">property </em><code class="sig-name descname">formula</code><a class="headerlink" href="#jarvis.core.composition.Composition.formula" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.composition.Composition.prototype">
+<em class="property">property </em><code class="sig-name descname">prototype</code><a class="headerlink" href="#jarvis.core.composition.Composition.prototype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.composition.Composition.reduce">
+<code class="sig-name descname">reduce</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/composition.html#Composition.reduce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.composition.Composition.reduce" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.composition.Composition.reduced_formula">
+<em class="property">property </em><code class="sig-name descname">reduced_formula</code><a class="headerlink" href="#jarvis.core.composition.Composition.reduced_formula" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.composition.Composition.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/composition.html#Composition.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.composition.Composition.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.composition.Composition.weight">
+<em class="property">property </em><code class="sig-name descname">weight</code><a class="headerlink" href="#jarvis.core.composition.Composition.weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.core.composition.gcd">
+<code class="sig-prename descclassname">jarvis.core.composition.</code><code class="sig-name descname">gcd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/composition.html#gcd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.composition.gcd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the Greatest Common Divisor of a and b.</p>
+<p>Unless b==0, the result will have the same sign as b (so that when
+b is divided by it, the result comes out positive).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.core.kpoints">
+<span id="jarvis-core-kpoints-module"></span><h2>jarvis.core.kpoints module<a class="headerlink" href="#module-jarvis.core.kpoints" title="Permalink to this headline">¶</a></h2>
+<p>Module for k-points used in solid-state calculations</p>
+<dl class="py class">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.core.kpoints.</code><code class="sig-name descname">HighSymmetryKpoint3DFactory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kpoints</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">path</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.as_dict">
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.as_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.as_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.bcc">
+<code class="sig-name descname">bcc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.bcc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.bcc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bcc HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.bctet1">
+<code class="sig-name descname">bctet1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">a</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.bctet1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.bctet1" title="Permalink to this definition">¶</a></dt>
+<dd><p>BCT1 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.bctet2">
+<code class="sig-name descname">bctet2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">a</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.bctet2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.bctet2" title="Permalink to this definition">¶</a></dt>
+<dd><p>BCT2 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.cubic">
+<code class="sig-name descname">cubic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.cubic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.cubic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cubic HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.fcc">
+<code class="sig-name descname">fcc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.fcc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.fcc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fcc HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.hex">
+<code class="sig-name descname">hex</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.hex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.hex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hexagonal HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mcl">
+<code class="sig-name descname">mcl</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">beta</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.mcl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mcl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monoclinic 1 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mclc1">
+<code class="sig-name descname">mclc1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.mclc1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mclc1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monoclinic C1 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mclc2">
+<code class="sig-name descname">mclc2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.mclc2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mclc2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monoclinic C2 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mclc3">
+<code class="sig-name descname">mclc3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.mclc3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mclc3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monoclinic C3 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mclc4">
+<code class="sig-name descname">mclc4</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.mclc4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mclc4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monoclinic C4 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mclc5">
+<code class="sig-name descname">mclc5</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.mclc5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.mclc5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Monoclinic C5 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orc">
+<code class="sig-name descname">orc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.orc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orthorhombic HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orcc">
+<code class="sig-name descname">orcc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.orcc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orcc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orthorhombic C HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orcf1">
+<code class="sig-name descname">orcf1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.orcf1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orcf1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orthorhombic f1 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orcf2">
+<code class="sig-name descname">orcf2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.orcf2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orcf2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orthorhombic f2 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orcf3">
+<code class="sig-name descname">orcf3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.orcf3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orcf3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orthorhombic f3 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orci">
+<code class="sig-name descname">orci</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.orci"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.orci" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orthorhombic I HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.rhl1">
+<code class="sig-name descname">rhl1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.rhl1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.rhl1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rhombohedral 1 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.rhl2">
+<code class="sig-name descname">rhl2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.rhl2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.rhl2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rhombohedral 2 HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.tet">
+<code class="sig-name descname">tet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.tet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.tet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tetragonal HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.tria">
+<code class="sig-name descname">tria</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.tria"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.tria" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trigonal a HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.trib">
+<code class="sig-name descname">trib</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.trib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.trib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trigonal b HighSymmKPath
+:return: Dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jarvis.core.kpoints.Kpoints3D">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.core.kpoints.</code><code class="sig-name descname">Kpoints3D</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kpoints</span><span class="o">=</span><span class="default_value">[[1, 1, 1]]</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">kpoints_weights</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">kpoint_mode</span><span class="o">=</span><span class="default_value">'automatic'</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">'Gamma'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="jarvis.core.kpoints.Kpoints3D.automatic_length_mesh">
+<code class="sig-name descname">automatic_length_mesh</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lattice_mat</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">length</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">'Gamma'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D.automatic_length_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.automatic_length_mesh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.Kpoints3D.high_kpath">
+<code class="sig-name descname">high_kpath</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D.high_kpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.high_kpath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.Kpoints3D.high_symm_path">
+<code class="sig-name descname">high_symm_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D.high_symm_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.high_symm_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.Kpoints3D.interpolated_points">
+<code class="sig-name descname">interpolated_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em>, <em class="sig-param"><span class="n">line_density</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">coords_are_cartesian</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D.interpolated_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.interpolated_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Useful for bandstructure, controlled by the line_density</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.Kpoints3D.kpath">
+<code class="sig-name descname">kpath</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em>, <em class="sig-param"><span class="n">line_density</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">unique_kp_only</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">coords_are_cartesian</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D.kpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.kpath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.Kpoints3D.kpts">
+<em class="property">property </em><code class="sig-name descname">kpts</code><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.kpts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.Kpoints3D.labels">
+<em class="property">property </em><code class="sig-name descname">labels</code><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.Kpoints3D.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.kpoints.Kpoints3D.write_file">
+<code class="sig-name descname">write_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.write_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.core.kpoints.generate_kgrid">
+<code class="sig-prename descclassname">jarvis.core.kpoints.</code><code class="sig-name descname">generate_kgrid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grid</span><span class="o">=</span><span class="default_value">[5, 5, 5]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#generate_kgrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.generate_kgrid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.core.kpoints.generate_kpath">
+<code class="sig-prename descclassname">jarvis.core.kpoints.</code><code class="sig-name descname">generate_kpath</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kpath</span><span class="o">=</span><span class="default_value">[[0, 0, 0], [0, 0.5, 0.5]]</span></em>, <em class="sig-param"><span class="n">num_k</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#generate_kpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.generate_kpath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.core.lattice">
+<span id="jarvis-core-lattice-module"></span><h2>jarvis.core.lattice module<a class="headerlink" href="#module-jarvis.core.lattice" title="Permalink to this headline">¶</a></h2>
+<p>Modules for handing crystallographic lattice-parameters</p>
+<dl class="py class">
+<dt id="jarvis.core.lattice.Lattice">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.core.lattice.</code><code class="sig-name descname">Lattice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lattice_mat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">round_off</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.a">
+<em class="property">property </em><code class="sig-name descname">a</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.a" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.abc">
+<em class="property">property </em><code class="sig-name descname">abc</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.abc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.alpha">
+<em class="property">property </em><code class="sig-name descname">alpha</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.alpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.angles">
+<em class="property">property </em><code class="sig-name descname">angles</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.angles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.as_dict">
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.as_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.as_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.b">
+<em class="property">property </em><code class="sig-name descname">b</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.b" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.beta">
+<em class="property">property </em><code class="sig-name descname">beta</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.beta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.c">
+<em class="property">property </em><code class="sig-name descname">c</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.cart_coords">
+<code class="sig-name descname">cart_coords</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frac_coords</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.cart_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.cart_coords" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.cubic">
+<em class="property">static </em><code class="sig-name descname">cubic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.cubic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.cubic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.find_all_matches">
+<code class="sig-name descname">find_all_matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other_lattice</span></em>, <em class="sig-param"><span class="n">ltol</span><span class="o">=</span><span class="default_value">1e-05</span></em>, <em class="sig-param"><span class="n">atol</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.find_all_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.find_all_matches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapted from pymatgen, which is available under MIT license:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.find_matches">
+<code class="sig-name descname">find_matches</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other_lattice</span></em>, <em class="sig-param"><span class="n">ltol</span><span class="o">=</span><span class="default_value">1e-05</span></em>, <em class="sig-param"><span class="n">atol</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.find_matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.find_matches" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.frac_coords">
+<code class="sig-name descname">frac_coords</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cart_coords</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.frac_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.frac_coords" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.from_dict">
+<code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.from_parameters">
+<em class="property">static </em><code class="sig-name descname">from_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">beta</span></em>, <em class="sig-param"><span class="n">gamma</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.from_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.from_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.gamma">
+<em class="property">property </em><code class="sig-name descname">gamma</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.gamma" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.get_lll_reduced_lattice">
+<code class="sig-name descname">get_lll_reduced_lattice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delta</span><span class="o">=</span><span class="default_value">0.75</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.get_lll_reduced_lattice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.get_lll_reduced_lattice" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>delta</strong> – Delta parameter.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>LLL reduced Lattice.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.get_points_in_sphere">
+<code class="sig-name descname">get_points_in_sphere</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frac_points</span></em>, <em class="sig-param"><span class="n">center</span></em>, <em class="sig-param"><span class="n">r</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.get_points_in_sphere"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.get_points_in_sphere" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to pymatgen implementation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.hexagonal">
+<em class="property">static </em><code class="sig-name descname">hexagonal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">c</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.hexagonal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.hexagonal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.inv_lattice">
+<code class="sig-name descname">inv_lattice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.inv_lattice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.inv_lattice" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.inv_matrix">
+<em class="property">property </em><code class="sig-name descname">inv_matrix</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.inv_matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.lat_angles">
+<code class="sig-name descname">lat_angles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">radians</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.lat_angles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.lat_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lattice angle information</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.lat_lengths">
+<code class="sig-name descname">lat_lengths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.lat_lengths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.lat_lengths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return lattice vectors’ lengths</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.lattice">
+<code class="sig-name descname">lattice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.lattice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.lattice" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.matrix">
+<em class="property">property </em><code class="sig-name descname">matrix</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.monoclinic">
+<em class="property">static </em><code class="sig-name descname">monoclinic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">beta</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.monoclinic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.monoclinic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.orthorhombic">
+<em class="property">static </em><code class="sig-name descname">orthorhombic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">c</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.orthorhombic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.orthorhombic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.parameters">
+<em class="property">property </em><code class="sig-name descname">parameters</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.reciprocal_lattice">
+<code class="sig-name descname">reciprocal_lattice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.reciprocal_lattice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.reciprocal_lattice" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.rhombohedral">
+<em class="property">static </em><code class="sig-name descname">rhombohedral</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">alpha</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.rhombohedral"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.rhombohedral" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.tetragonal">
+<em class="property">static </em><code class="sig-name descname">tetragonal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">c</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.tetragonal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.tetragonal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.lattice.Lattice.volume">
+<em class="property">property </em><code class="sig-name descname">volume</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Volume given a lattice object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.core.lattice.abs_cap">
+<code class="sig-prename descclassname">jarvis.core.lattice.</code><code class="sig-name descname">abs_cap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">max_abs_val</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#abs_cap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.abs_cap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value with its absolute value capped at max_abs_val.
+Particularly useful in passing values to trignometric functions where
+numerical errors may result in an argument &gt; 1 being passed in.
+Args:</p>
+<blockquote>
+<div><p>val (float): Input value.
+max_abs_val (float): The maximum absolute value for val. Defaults to 1.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>val if abs(val) &lt; 1 else sign of val * max_abs_val.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.core.pdb">
+<span id="jarvis-core-pdb-module"></span><h2>jarvis.core.pdb module<a class="headerlink" href="#module-jarvis.core.pdb" title="Permalink to this headline">¶</a></h2>
+<p>Modules for handling PDB files</p>
+<dl class="py function">
+<dt id="jarvis.core.pdb.read_pdb">
+<code class="sig-prename descclassname">jarvis.core.pdb.</code><code class="sig-name descname">read_pdb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/pdb.html#read_pdb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.pdb.read_pdb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read PDB file and make Atoms object</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.core.specie">
+<span id="jarvis-core-specie-module"></span><h2>jarvis.core.specie module<a class="headerlink" href="#module-jarvis.core.specie" title="Permalink to this headline">¶</a></h2>
+<p>Modules related to chemistry of periodic-table elements</p>
+<dl class="py class">
+<dt id="jarvis.core.specie.Specie">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.core.specie.</code><code class="sig-name descname">Specie</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbol</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/specie.html#Specie"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.specie.Specie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Specie object for chemistry information
+&gt;&gt;&gt; el = Specie(‘Al’)
+&gt;&gt;&gt; el.Z
+13
+&gt;&gt;&gt; round(el.atomic_mass,2)
+26.98
+&gt;&gt;&gt; el.symbol
+‘Al’
+&gt;&gt;&gt; round(el.get_chgdescrp_arr[1],2)
+12.17
+&gt;&gt;&gt; round(el.get_descrp_arr[1],2)
+2792.11
+&gt;&gt;&gt; el = Specie(‘asdfg’)
+&gt;&gt;&gt; el.element_property(“asdfg”)
+nan</p>
+<dl class="py method">
+<dt id="jarvis.core.specie.Specie.Z">
+<em class="property">property </em><code class="sig-name descname">Z</code><a class="headerlink" href="#jarvis.core.specie.Specie.Z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Atomic number</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.specie.Specie.atomic_mass">
+<em class="property">property </em><code class="sig-name descname">atomic_mass</code><a class="headerlink" href="#jarvis.core.specie.Specie.atomic_mass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Atomic mass</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.specie.Specie.atomic_rad">
+<em class="property">property </em><code class="sig-name descname">atomic_rad</code><a class="headerlink" href="#jarvis.core.specie.Specie.atomic_rad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Atomic radii</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.specie.Specie.element_property">
+<code class="sig-name descname">element_property</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/specie.html#Specie.element_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.specie.Specie.element_property" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get element property from the list of keys</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.specie.Specie.get_chgdescrp_arr">
+<em class="property">property </em><code class="sig-name descname">get_chgdescrp_arr</code><a class="headerlink" href="#jarvis.core.specie.Specie.get_chgdescrp_arr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get charge descriptors for an element</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>elm: element name</p>
+</dd>
+<dt>Returns:</dt><dd><p>arr: array value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.specie.Specie.get_descrp_arr">
+<em class="property">property </em><code class="sig-name descname">get_descrp_arr</code><a class="headerlink" href="#jarvis.core.specie.Specie.get_descrp_arr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get chemical descriptors for an element</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>elm: element name</p>
+</dd>
+<dt>Returns:</dt><dd><p>arr: array value</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.core.specie.get_descrp_arr_name">
+<code class="sig-prename descclassname">jarvis.core.specie.</code><code class="sig-name descname">get_descrp_arr_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">elm</span><span class="o">=</span><span class="default_value">'Al'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/specie.html#get_descrp_arr_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.specie.get_descrp_arr_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get chemical descriptors for an element
+Args:</p>
+<blockquote>
+<div><p>elm: element name</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>arr: array value</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.core">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.core" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">jarvis.core package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-jarvis.core.atoms">jarvis.core.atoms module</a></li>
+<li><a class="reference internal" href="#module-jarvis.core.composition">jarvis.core.composition module</a></li>
+<li><a class="reference internal" href="#module-jarvis.core.kpoints">jarvis.core.kpoints module</a></li>
+<li><a class="reference internal" href="#module-jarvis.core.lattice">jarvis.core.lattice module</a></li>
+<li><a class="reference internal" href="#module-jarvis.core.pdb">jarvis.core.pdb module</a></li>
+<li><a class="reference internal" href="#module-jarvis.core.specie">jarvis.core.specie module</a></li>
+<li><a class="reference internal" href="#module-jarvis.core">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/jarvis.core.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,342 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>jarvis.analysis.interface package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="jarvis-analysis-interface-package">
+<h1>jarvis.analysis.interface package<a class="headerlink" href="#jarvis-analysis-interface-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jarvis.analysis.interface.encoder">
+<span id="jarvis-analysis-interface-encoder-module"></span><h2>jarvis.analysis.interface.encoder module<a class="headerlink" href="#module-jarvis.analysis.interface.encoder" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="jarvis.analysis.interface.encoder.MontyDecoder">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.analysis.interface.encoder.</code><code class="sig-name descname">MontyDecoder</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">object_hook</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parse_float</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parse_int</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parse_constant</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">strict</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">object_pairs_hook</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/encoder.html#MontyDecoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.encoder.MontyDecoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">json.decoder.JSONDecoder</span></code></p>
+<p>A Json Decoder which supports the MSONable API. By default, the
+decoder attempts to find a module and name associated with a dict. If
+found, the decoder will generate a Pymatgen as a priority.  If that fails,
+the original decoded dictionary from the string is returned. Note that
+nested lists and dicts containing pymatgen object will be decoded correctly
+as well.
+Usage:</p>
+<blockquote>
+<div><p># Add it as a <em>cls</em> keyword when using json.load
+json.loads(json_string, cls=MontyDecoder)</p>
+</div></blockquote>
+<dl class="py method">
+<dt id="jarvis.analysis.interface.encoder.MontyDecoder.decode">
+<code class="sig-name descname">decode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/encoder.html#MontyDecoder.decode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.encoder.MontyDecoder.decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides decode from JSONDecoder.
+:param s: string
+:return: Object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.analysis.interface.encoder.MontyDecoder.process_decoded">
+<code class="sig-name descname">process_decoded</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/encoder.html#MontyDecoder.process_decoded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.encoder.MontyDecoder.process_decoded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursive method to support decoding dicts and lists containing
+pymatgen objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jarvis.analysis.interface.encoder.MontyEncoder">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.analysis.interface.encoder.</code><code class="sig-name descname">MontyEncoder</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">skipkeys</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ensure_ascii</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">check_circular</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">allow_nan</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">sort_keys</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">indent</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">separators</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">default</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/encoder.html#MontyEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.encoder.MontyEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">json.encoder.JSONEncoder</span></code></p>
+<p>A Json Encoder which supports the MSONable API, plus adds support for
+numpy arrays, datetime objects, bson ObjectIds (requires bson).
+Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add it as a *cls* keyword when using json.dump</span>
+<span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">MontyEncoder</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="jarvis.analysis.interface.encoder.MontyEncoder.default">
+<code class="sig-name descname">default</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">o</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="reference internal" href="_modules/jarvis/analysis/interface/encoder.html#MontyEncoder.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.encoder.MontyEncoder.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriding default method for JSON encoding. This method does two
+things: (a) If an object has a to_dict property, return the to_dict
+output. (b) If the &#64;module and &#64;class keys are not in the to_dict,
+add them to the output automatically. If the object has no to_dict
+property, the default Python json encoder default method is called.
+Args:</p>
+<blockquote>
+<div><p>o: Python object.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Return:</dt><dd><p>Python dict representation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.analysis.interface.zur">
+<span id="jarvis-analysis-interface-zur-module"></span><h2>jarvis.analysis.interface.zur module<a class="headerlink" href="#module-jarvis.analysis.interface.zur" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="jarvis.analysis.interface.zur.ZSLGenerator">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">ZSLGenerator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_area_ratio_tol</span><span class="o">=</span><span class="default_value">0.09</span></em>, <em class="sig-param"><span class="n">max_area</span><span class="o">=</span><span class="default_value">400</span></em>, <em class="sig-param"><span class="n">max_length_tol</span><span class="o">=</span><span class="default_value">0.03</span></em>, <em class="sig-param"><span class="n">max_angle_tol</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#ZSLGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.ZSLGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Uses Zur algorithm to find best matched interfaces
+This class is modified from pymatgen.</p>
+<dl class="py method">
+<dt id="jarvis.analysis.interface.zur.ZSLGenerator.generate_sl_transformation_sets">
+<code class="sig-name descname">generate_sl_transformation_sets</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">film_area</span></em>, <em class="sig-param"><span class="n">substrate_area</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#ZSLGenerator.generate_sl_transformation_sets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.ZSLGenerator.generate_sl_transformation_sets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates transformation sets for film/substrate pair given the
+area of the unit cell area for the film and substrate. The
+transformation sets map the film and substrate unit cells to super
+lattices with a maximum area
+Args:</p>
+<blockquote>
+<div><p>film_area(int): the unit cell area for the film
+substrate_area(int): the unit cell area for the substrate</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>transformation_sets: a set of transformation_sets defined as:</dt><dd><p>1.) the transformation matricies for the film to create a
+super lattice of area i*film area
+2.) the tranformation matricies for the substrate to create
+a super lattice of area j*film area</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.analysis.interface.zur.ZSLGenerator.get_equiv_transformations">
+<code class="sig-name descname">get_equiv_transformations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transformation_sets</span></em>, <em class="sig-param"><span class="n">film_vectors</span></em>, <em class="sig-param"><span class="n">substrate_vectors</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#ZSLGenerator.get_equiv_transformations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.ZSLGenerator.get_equiv_transformations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the transformation_sets to the film and substrate vectors
+to generate super-lattices and checks if they matches.
+Returns all matching vectors sets.
+Args:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>transformation_sets(array): an array of transformation sets:</dt><dd><p>each transformation set is an array with the (i,j)
+indicating the area multipes of the film and subtrate it
+corresponds to, an array with all possible transformations
+for the film area multiple i and another array for the
+substrate area multiple j.</p>
+</dd>
+</dl>
+<p>film_vectors(array): film vectors to generate super lattices
+substrate_vectors(array): substrate vectors to generate super</p>
+<blockquote>
+<div><p>lattices</p>
+</div></blockquote>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.analysis.interface.zur.ZSLGenerator.is_same_vectors">
+<code class="sig-name descname">is_same_vectors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vec_set1</span></em>, <em class="sig-param"><span class="n">vec_set2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#ZSLGenerator.is_same_vectors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.ZSLGenerator.is_same_vectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if two sets of vectors are the same within length and angle
+tolerances
+Args:</p>
+<blockquote>
+<div><p>vec_set1(array[array]): an array of two vectors
+vec_set2(array[array]): second array of two vectors</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.analysis.interface.zur.ZSLGenerator.match_as_dict">
+<code class="sig-name descname">match_as_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">film_sl_vectors</span></em>, <em class="sig-param"><span class="n">substrate_sl_vectors</span></em>, <em class="sig-param"><span class="n">film_vectors</span></em>, <em class="sig-param"><span class="n">substrate_vectors</span></em>, <em class="sig-param"><span class="n">match_area</span></em>, <em class="sig-param"><span class="n">film_transformation</span></em>, <em class="sig-param"><span class="n">substrate_transformation</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#ZSLGenerator.match_as_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.ZSLGenerator.match_as_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dict which contains ZSL match
+Args:</p>
+<blockquote>
+<div><p>film_miller(array)
+substrate_miller(array)</p>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.fast_norm">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">fast_norm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#fast_norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.fast_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Much faster variant of numpy linalg norm</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.gen_sl_transform_matricies">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">gen_sl_transform_matricies</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">area_multiple</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#gen_sl_transform_matricies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.gen_sl_transform_matricies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the transformation matricies that convert a set of 2D
+vectors into a super lattice of integer area multiple as proven
+in Cassels:
+Cassels, John William Scott. An introduction to the geometry of
+numbers. Springer Science &amp; Business Media, 2012.
+Args:</p>
+<blockquote>
+<div><p>area_multiple(int): integer multiple of unit cell area for super
+lattice area</p>
+</div></blockquote>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>matrix_list: transformation matricies to covert unit vectors to
+super lattice vectors</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.get_factors">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">get_factors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#get_factors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.get_factors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate all factors of n</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.get_hetero">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">get_hetero</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">film</span></em>, <em class="sig-param"><span class="n">substrate</span></em>, <em class="sig-param"><span class="n">seperation</span><span class="o">=</span><span class="default_value">3.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#get_hetero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.get_hetero" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.get_hetero_type">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">get_hetero_type</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">B</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#get_hetero_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.get_hetero_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.make_interface">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">make_interface</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">film</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">subs</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">atol</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">ltol</span><span class="o">=</span><span class="default_value">0.05</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#make_interface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.make_interface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns mismatch and other information as info dict</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.mismatch_strts">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">mismatch_strts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">film</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">subs</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">ltol</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="n">atol</span><span class="o">=</span><span class="default_value">10</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#mismatch_strts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.mismatch_strts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns mismatch and other information as info dict,
+Deprecated, this module will be removes in the next version</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.reduce_vectors">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">reduce_vectors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#reduce_vectors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.reduce_vectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate independent and unique basis vectors based on the
+methodology of Zur and McGill</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.rel_angle">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">rel_angle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vec_set1</span></em>, <em class="sig-param"><span class="n">vec_set2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#rel_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.rel_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the relative angle between two vector sets
+Args:</p>
+<blockquote>
+<div><p>vec_set1(array[array]): an array of two vectors
+vec_set2(array[array]): second array of two vectors</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.rel_strain">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">rel_strain</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vec1</span></em>, <em class="sig-param"><span class="n">vec2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#rel_strain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.rel_strain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate relative strain between two vectors</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.vec_angle">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">vec_angle</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#vec_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.vec_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate angle between two vectors</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.analysis.interface.zur.vec_area">
+<code class="sig-prename descclassname">jarvis.analysis.interface.zur.</code><code class="sig-name descname">vec_area</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#vec_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.vec_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Area of lattice plane defined by two vectors</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.analysis.interface">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.analysis.interface" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">jarvis.analysis.interface package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-jarvis.analysis.interface.encoder">jarvis.analysis.interface.encoder module</a></li>
+<li><a class="reference internal" href="#module-jarvis.analysis.interface.zur">jarvis.analysis.interface.zur module</a></li>
+<li><a class="reference internal" href="#module-jarvis.analysis.interface">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/jarvis.analysis.interface.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>
