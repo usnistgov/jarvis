@@ -1,3 +1,6 @@
+"""
+Modules handling input files for VASP calculations
+"""
 from collections import Counter
 import pprint
 import json
@@ -9,12 +12,22 @@ from jarvis.core.kpoints import generate_kgrid, Kpoints3D
 
 
 class Poscar(object):
+    """
+    Class defining Poscar object 
+    Args:
+        atoms : Atoms object
+        comment : Header of Poscar file
+    """
+
     def __init__(self, atoms, comment="System"):
         self.atoms = atoms
         self.comment = comment
 
     @staticmethod
     def from_file(filename="POSCAR"):
+        """
+        Read simple POSCAR file from the path
+        """
         with open(filename, "r") as f:
             return Poscar.from_string(f.read())
 
@@ -163,6 +176,10 @@ class Poscar(object):
 
 
 class Incar(object):
+    """
+    VASP INCAR files as python dictionary
+    """
+
     def __init__(self, tags={}):
         self._tags = tags
 
@@ -221,6 +238,10 @@ class Incar(object):
 
 
 class IndividualPotcarData(object):
+    """
+    Class for individual POTCAR file handling
+    """
+
     def __init__(self, data={}):
         self._data = data
 
@@ -315,6 +336,10 @@ class Potcar(object):
 
 
 class Kpoints(object):
+    """
+    VASP KPOINTS as object
+    """
+
     def __init__(self, filename=""):
         self.filename = filename
         if filename != "":
@@ -372,7 +397,7 @@ class Kpoints(object):
         # return kp_labels_points, kp_labels,np.array(all_kp,dtype='float')
 
 
-# """
+"""
 if __name__ == "__main__":
 
     kp = open(
@@ -404,4 +429,4 @@ if __name__ == "__main__":
     # p.write_file('POTCAR')
     # inp=IndividualPotcarData.from_file('POTCAR')
     # print (inp)
-# """
+"""

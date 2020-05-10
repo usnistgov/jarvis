@@ -1,3 +1,7 @@
+"""
+Module for LAMMPS input files
+"""
+
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.core.atoms import Atoms
 import numpy as np

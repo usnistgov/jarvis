@@ -1,3 +1,6 @@
+"""
+Modules for handling PDB files
+"""
 import numpy as np
 from jarvis.core.atoms import Atoms, VacuumPadding
 

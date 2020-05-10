@@ -56,7 +56,7 @@ def form_enp(atoms=None, total_energy=None):
 #     def chull(self):
 #        for i in self.entries:
 
-
+"""
 if __name__ == "__main__":
     p = Poscar.from_file(
         "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/POSCAR"
@@ -72,3 +72,4 @@ if __name__ == "__main__":
 
     # entries = [[{'Al':2,'O':1},-0.15],[{'Al':2,'O':3},-16.065],[{'Al':1,'O':1},-2.8],[{'Al':1,'O':3},-4.865]]
     print(x)
+"""

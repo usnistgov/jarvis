@@ -1,3 +1,7 @@
+"""
+Modules for handing crystallographic lattice-parameters
+"""
+
 import numpy as np
 from numpy import dot
 
@@ -54,7 +58,8 @@ class Lattice(object):
         """
         Return lattice vectors' lengths
         """
-        return [round(np.linalg.norm(v), 6) for v in self._lat]
+        return [round(i, 6) for i in (np.sqrt(np.sum(self._lat ** 2, axis=1)).tolist())]
+        # return [round(np.linalg.norm(v), 6) for v in self._lat]
 
     @property
     def volume(self):

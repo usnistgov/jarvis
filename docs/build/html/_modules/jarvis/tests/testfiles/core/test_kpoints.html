@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>jarvis.tests.testfiles.core.test_kpoints &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jarvis.tests.testfiles.core.test_kpoints</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">Kpoints3D</span><span class="p">,</span> <span class="n">generate_kpath</span><span class="p">,</span> <span class="n">generate_kgrid</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+
+
+<div class="viewcode-block" id="test_kp"><a class="viewcode-back" href="../../../../../jarvis.tests.testfiles.core.html#jarvis.tests.testfiles.core.test_kpoints.test_kp">[docs]</a><span class="k">def</span> <span class="nf">test_kp</span><span class="p">():</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.715</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.715</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">]]</span>
+    <span class="n">coords</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]]</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Si&quot;</span><span class="p">,</span> <span class="s2">&quot;Si&quot;</span><span class="p">]</span>
+    <span class="n">Si</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="n">lattice_mat</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">)</span>
+    <span class="n">lattice_mat</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">lattice_mat</span>
+    <span class="n">kp</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span><span class="n">lattice_mat</span><span class="o">=</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">high_symm_path</span><span class="p">(</span><span class="n">Si</span><span class="p">)</span><span class="o">.</span><span class="n">_path</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">interpolated_points</span><span class="p">(</span><span class="n">Si</span><span class="p">)</span>
+    <span class="n">kpath</span> <span class="o">=</span> <span class="n">generate_kpath</span><span class="p">(</span><span class="n">kpath</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="p">]],</span><span class="n">num_k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">kps</span> <span class="o">=</span> <span class="n">generate_kgrid</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+    
+    <span class="c1"># for i,j in zip(x,y):</span>
+    <span class="c1">#   print (i,j)</span>
+    <span class="c1"># print (len(x))</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kpath</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">kps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="p">(</span><span class="mi">166</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;\Gamma&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span></div>
+
+<span class="c1"># test_kp()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

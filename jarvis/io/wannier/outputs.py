@@ -1,3 +1,8 @@
+"""
+Class for reading wannier outouts such as
+wannier90.wout and wannier90_hr.dat
+"""
+
 import sys
 import matplotlib
 import os
