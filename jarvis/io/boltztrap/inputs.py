@@ -1,3 +1,6 @@
+"""
+Class for writing inputs for BoltzTrap calculations
+"""
 import numpy as np
 from jarvis.io.vasp.outputs import Vasprun
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
@@ -154,6 +157,7 @@ class WriteInputs(object):
         f.close()
 
 
+"""
 if __name__ == "__main__":
     from jarvis.io.vasp.outputs import Vasprun
 
@@ -169,3 +173,4 @@ if __name__ == "__main__":
     inp.write_intrans()
     cmd = "~/anaconda2/bin/x_trans BoltzTraP -so"
     os.system(cmd)
+"""

@@ -1,3 +1,4 @@
+"""
 from pymatgen.io.vasp.inputs import Incar, Poscar, VaspInput,Potcar, Kpoints
 import os,shutil
 from custodian.vasp.jobs import VaspJob
@@ -15,3 +16,4 @@ handlers = [VaspErrorHandler(), MeshSymmetryErrorHandler(),UnconvergedErrorHandl
 validators = [VasprunXMLValidator()]
 c = Custodian(handlers, [job],max_errors=5,validators=validators)
 c.run()
+"""

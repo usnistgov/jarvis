@@ -1,3 +1,6 @@
+"""
+Modules for making point-defect vacancies
+"""
 import pprint
 import random
 from collections import OrderedDict

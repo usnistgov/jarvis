@@ -1,3 +1,6 @@
+"""
+Modules for handling crystallographic Spacegroup related operations
+"""
 from functools import reduce
 from jarvis.core.lattice import Lattice
 from jarvis.core.atoms import Atoms
