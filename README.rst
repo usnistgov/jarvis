@@ -108,4 +108,3 @@ External links
 Correspondence
 --------------------
 Please report bugs as Github issues (https://github.com/usnistgov/jarvis/issues) or email to kamal.choudhary@nist.gov.
-
