@@ -1,19 +1,10 @@
 { nixpkgs ? import ./nix/nixpkgs_version.nix }:
 let
   pypkgs = nixpkgs.python36Packages;
-  custodian = import ./nix/custodian.nix { inherit pypkgs; };
   fortranformat = import ./nix/fortranformat.nix { inherit pypkgs; };
-  phonopy = import ./nix/phonopy.nix { inherit pypkgs; };
-  pymatgen = import ./nix/pymatgen.nix { inherit nixpkgs; };
+
   sfepy = import ./nix/sfepy.nix { inherit nixpkgs pypkgs; };
-  ase = pypkgs.ase.overrideDerivation ( oldAttrs: rec {
-    version = "3.11.0";
-    pname = "ase";
-    src = pypkgs.fetchPypi {
-      inherit pname version;
-      sha256 = "0kcfsx6wx2rdndy3463yngs4ap8zl0rjq6piwk24jnyrh6awqsyn";
-    };
-  });
+
 in
   pypkgs.buildPythonPackage rec {
      pname = "jarvis";
@@ -26,10 +17,7 @@ in
        pypkgs.scipy
        pypkgs.matplotlib
        pypkgs.tkinter
-       pymatgen
-       ase
        pypkgs.pybtex
-       custodian
        fortranformat
        pypkgs.networkx
        pypkgs.scikitlearn
