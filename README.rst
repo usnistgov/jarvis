@@ -12,10 +12,15 @@
 .. image:: https://pepy.tech/badge/jarvis-tools
         :target: https://pepy.tech/badge/jarvis-tools
 .. image:: https://codecov.io/gh/knc6/jarvis/branch/master/graph/badge.svg
-        :target: https://codecov.io/gh/knc6/jarvis
+        :target: https://codecov.io/gh/knc6/jarvis      
+.. image:: https://www.ctcms.nist.gov/~knc6/jlogo.png
+        :target: https://jarvis.nist.gov/
+
+        
+==============================================================================
 
 jarvis-tools: an open-source software package for data-driven materials design
-=======================================
+================================================================================
 
 NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) is an integrated framework for computational science using density functional theory,
 classical force-field/molecular dynamics and machine-learning. The jarvis-tools package consists of scripts used in generating and analyzing the dataset. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/).
@@ -25,16 +30,16 @@ classical force-field/molecular dynamics and machine-learning. The jarvis-tools 
   ===============  =======================================================================
   Projects          Brief description
   ===============  =======================================================================
-  ``JARVIS-DFT``      Density functional theory calculation database for ~40000 3D and ~1000 2D materials. Some of the material-properties include: Heat of formation, Crstal-tructural data using OptB88vdW, PBE, LDA functionals, Bandgaps using semi-local, meta-GGA, HSE06 and other beyond DFT methods, Electron and phonon-bandstructures, Elastic, Piezoelectric, Thermoelectric, Dielectric tensors, Exfoliation energies for low-diemnsional materials, Frequency dependent dielectric function, Absorption coefficients, Work-function for 2D materials, Infrared and Raman intensities, Electric field gradient, Magnetic moment, Solar-cell efficiencies, Scanning Tunneling Microscopy (STM) images, Topological spin-orbit spillage, converged k-point and plane wave cut-offs, Wannier-tight binding Hamiltonian parameters and more. The website for JARVIS-DFT: https://www.ctcms.nist.gov/~knc6/JVASP.html
+  ``JARVIS-DFT``      Density functional theory calculation database for ~40000 3D and ~1000 2D materials. Some of the material-properties include: Heat of formation, Crystal-structural data using OptB88vdW, PBE, LDA functionals, Bandgaps using semi-local, meta-GGA, HSE06 and other beyond DFT methods, Electron and phonon-bandstructures, Elastic, Piezoelectric, Thermoelectric, Dielectric tensors, Exfoliation energies for low-diemnsional materials, Frequency dependent dielectric function, Absorption coefficients, Work-function for 2D materials, Infrared and Raman intensities, Electric field gradient, Magnetic moment, Solar-cell efficiencies, Scanning Tunneling Microscopy (STM) images, Topological spin-orbit spillage, converged k-point and plane wave cut-offs, Wannier-tight binding Hamiltonian parameters and more. The website for JARVIS-DFT: https://www.ctcms.nist.gov/~knc6/JVASP.html
   ``JARVIS-FF``       Classical molecular dynamics calculation database for ~2000 3D materials with interatomic potential/force-fields. Some of the properties included in JARVIS-FF are energetics, elastic constants, surface energies, defect formations energies and phonon frequencies of materials. The website for JARVIS-FF: https://www.ctcms.nist.gov/~knc6/periodic.html
   ``JARVIS-ML``       Machine learning prediction tools trained on the JARVIS-DFT data. Some of the ML-prediction models are for  Heat of formation, GGA/METAGGA bandgaps, Refractive indices, Bulk and shear modulus, Magnetic moment, Thermoelectric, Piezoelectric and Dielectric properties properties, Exfoliation energies, Solar-cell efficiency, and STM image classification. The website for JARVIS-ML: https://www.ctcms.nist.gov/jarvisml/
   ``JARVIS-Het.``     Heterostructure design tools for 2D materials in the JARVIS-DFT database. Some of the properties available are: work function, Band-alignment, and Heterostructure classification. JARVIS-Heterostructure website: https://www.ctcms.nist.gov/jarvish/
   ``JARVIS-PV``       Solar-cell/Photovoltaic cell design tools. Dataset is made available and the website will be available soon.
   ``JARVIS-STM``      Scanning-tunneling microscopy images for 2D materials. Dataset is made available and the website will be available soon.
-  ``JARVIS-WTB``      Wannier Tight Binding Hamiltonian parameter dataset. Dataset is made available and the website will be available soon.
-  ``JARVIS-EFG``      Electric field gradient dataset. Dataset is made available and the website will be available soon.
+  ``JARVIS-WTB``      Wannier Tight Binding Hamiltonian parameter dataset. Dataset will be made available and the website will be available soon.
+  ``JARVIS-EFG``      Electric field gradient dataset. Dataset will be made available and the website will be available soon.
   ===============  =======================================================================
-  ===============  =======================================================================
+
 
 
 Installing jarvis-tools
@@ -68,7 +73,7 @@ Installing jarvis-tools
 .. _`Nix instructions`: ./nix/README.md
 
 Example Jupyter notebooks
------------------
+-----------------------------
 Look into the notebooks folder
 
 References
@@ -108,3 +113,7 @@ External links
 Correspondence
 --------------------
 Please report bugs as Github issues (https://github.com/usnistgov/jarvis/issues) or email to kamal.choudhary@nist.gov.
+
+Funding support
+--------------------
+NIST-MGI (https://www.nist.gov/mgi).
