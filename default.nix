@@ -3,8 +3,6 @@ let
   pypkgs = nixpkgs.python36Packages;
   fortranformat = import ./nix/fortranformat.nix { inherit pypkgs; };
 
-  sfepy = import ./nix/sfepy.nix { inherit nixpkgs pypkgs; };
-
 in
   pypkgs.buildPythonPackage rec {
      pname = "jarvis";
@@ -24,11 +22,9 @@ in
        pypkgs.scikitlearn
        pypkgs.pytest
        pypkgs.h5py
-       pypkgs.interruptingcow
        pypkgs.pybtex
        pypkgs.black
        pypkgs.toolz
-       sfepy
        pypkgs.pylint
        pypkgs.flake8
      ];
