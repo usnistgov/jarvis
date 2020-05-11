@@ -36,8 +36,8 @@ classical force-field/molecular dynamics and machine-learning. The jarvis-tools 
   ``JARVIS-Het.``     Heterostructure design tools for 2D materials in the JARVIS-DFT database. Some of the properties available are: work function, Band-alignment, and Heterostructure classification. JARVIS-Heterostructure website: https://www.ctcms.nist.gov/jarvish/
   ``JARVIS-PV``       Solar-cell/Photovoltaic cell design tools. Dataset is made available and the website will be available soon.
   ``JARVIS-STM``      Scanning-tunneling microscopy images for 2D materials. Dataset is made available and the website will be available soon.
-  ``JARVIS-WTB``      Wannier Tight Binding Hamiltonian parameter dataset. Dataset is made available and the website will be available soon.
-  ``JARVIS-EFG``      Electric field gradient dataset. Dataset is made available and the website will be available soon.
+  ``JARVIS-WTB``      Wannier Tight Binding Hamiltonian parameter dataset. Dataset will be made available and the website will be available soon.
+  ``JARVIS-EFG``      Electric field gradient dataset. Dataset will be made available and the website will be available soon.
   ===============  =======================================================================
 
 
@@ -73,7 +73,7 @@ Installing jarvis-tools
 .. _`Nix instructions`: ./nix/README.md
 
 Example Jupyter notebooks
------------------
+-----------------------------
 Look into the notebooks folder
 
 References
