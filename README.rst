@@ -16,7 +16,7 @@
         
 .. image:: https://www.ctcms.nist.gov/~knc6/jlogo.png
         :target: https://jarvis.nist.gov/
-        :align: middle
+
         
 -----------------------------------------------------------------------------------
 
@@ -114,3 +114,7 @@ External links
 Correspondence
 --------------------
 Please report bugs as Github issues (https://github.com/usnistgov/jarvis/issues) or email to kamal.choudhary@nist.gov.
+
+Funding support
+--------------------
+NIST-MGI (https://www.nist.gov/mgi).
