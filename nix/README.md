@@ -1,6 +1,6 @@
 # Nix Installation
 
-Jarvis now has a [Nix] expression for installing Jarvis using
+jarvis-tools now has a [Nix] expression for installing jarvis-tools using
 [Nix]. [Nix] is a powerful package manager for Linux and other Unix
 systems that makes package management reliable and reproducible. The
 recipe works on both Linux and Mac OS X.
