@@ -13,8 +13,11 @@
         :target: https://pepy.tech/badge/jarvis-tools
 .. image:: https://codecov.io/gh/knc6/jarvis/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/knc6/jarvis
+        
 .. image:: https://www.ctcms.nist.gov/~knc6/jlogo.png
         :target: https://jarvis.nist.gov/
+-----------------------------------------------------------------------------------
+
 jarvis-tools: an open-source software package for data-driven materials design
 =======================================
 
