@@ -48,7 +48,7 @@ setup(
     description=(
         "High throughput computation with density functional theory, molecular dynamics and machine learning. https://jarvis.nist.gov/"
     ),
-    license="MIT",
+    license="NIST",
     url="https://github.com/usnistgov/jarvis",
     packages=find_packages(),
     # long_description=open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
