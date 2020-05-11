@@ -15,6 +15,7 @@ in
        pypkgs.python
        pypkgs.numpy
        pypkgs.scipy
+       pypkgs.requests
        pypkgs.matplotlib
        pypkgs.tkinter
        pypkgs.pybtex
