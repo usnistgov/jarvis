@@ -20,6 +20,7 @@ setup(
         "scipy",
         "matplotlib",
         "spglib",
+        "requests",
         "toolz",
         "xmltodict",
     ],
