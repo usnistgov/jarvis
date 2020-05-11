@@ -5,8 +5,6 @@
        :target: https://travis-ci.org/usnistgov/jarvis
 .. image:: https://ci.appveyor.com/api/projects/status/d8na8vyfm7ulya9p/branch/master?svg=true
        :target: https://ci.appveyor.com/project/knc6/jarvis-63tl9
-.. image:: https://readthedocs.org/projects/jarvis-tools/badge/?version=latest
-       :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest
 .. image:: https://api.codacy.com/project/badge/Grade/be8fa78b1c0a49c280415ce061163e77
        :target: https://www.codacy.com/app/knc6/jarvisutm_source=github.com&amp;utm_medium=referral&amp;utm_content=usnistgov/jarvis&amp;utm_campaign=Badge_Grade
 .. image::  https://img.shields.io/pypi/dm/jarvis-tools.svg      
@@ -15,7 +13,6 @@
         :target: https://pepy.tech/badge/jarvis-tools
 .. image:: https://codecov.io/gh/knc6/jarvis/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/knc6/jarvis
-
 
 jarvis-tools: an open-source software package for data-driven materials design
 =======================================
@@ -28,8 +25,7 @@ classical force-field/molecular dynamics and machine-learning. The jarvis-tools 
   ===============  =======================================================================
   Projects          Brief description
   ===============  =======================================================================
-
-  ``JARVIS-DFT``      Density functional theory calculation database for ~40000 3D and ~1000 2D materials. Some of the material-properties include: Heat of formation, Crystal-structural data using OptB88vdW, PBE, LDA functionals, Bandgaps using semi-local, meta-GGA, HSE06 and other beyond DFT methods, Electron and phonon-bandstructures, Elastic, Piezoelectric, Thermoelectric, Dielectric tensors, Exfoliation energies for low-diemnsional materials, Frequency dependent dielectric function, Absorption coefficients, Work-function for 2D materials, Infrared and Raman intensities, Electric field gradient, Magnetic moment, Solar-cell efficiencies, Scanning Tunneling Microscopy (STM) images, Topological spin-orbit spillage, converged k-point and plane wave cut-offs, Wannier-tight binding Hamiltonian parameters and more. The website for JARVIS-DFT: https://www.ctcms.nist.gov/~knc6/JVASP.html
+  ``JARVIS-DFT``      Density functional theory calculation database for ~40000 3D and ~1000 2D materials. Some of the material-properties include: Heat of formation, Crstal-tructural data using OptB88vdW, PBE, LDA functionals, Bandgaps using semi-local, meta-GGA, HSE06 and other beyond DFT methods, Electron and phonon-bandstructures, Elastic, Piezoelectric, Thermoelectric, Dielectric tensors, Exfoliation energies for low-diemnsional materials, Frequency dependent dielectric function, Absorption coefficients, Work-function for 2D materials, Infrared and Raman intensities, Electric field gradient, Magnetic moment, Solar-cell efficiencies, Scanning Tunneling Microscopy (STM) images, Topological spin-orbit spillage, converged k-point and plane wave cut-offs, Wannier-tight binding Hamiltonian parameters and more. The website for JARVIS-DFT: https://www.ctcms.nist.gov/~knc6/JVASP.html
   ``JARVIS-FF``       Classical molecular dynamics calculation database for ~2000 3D materials with interatomic potential/force-fields. Some of the properties included in JARVIS-FF are energetics, elastic constants, surface energies, defect formations energies and phonon frequencies of materials. The website for JARVIS-FF: https://www.ctcms.nist.gov/~knc6/periodic.html
   ``JARVIS-ML``       Machine learning prediction tools trained on the JARVIS-DFT data. Some of the ML-prediction models are for  Heat of formation, GGA/METAGGA bandgaps, Refractive indices, Bulk and shear modulus, Magnetic moment, Thermoelectric, Piezoelectric and Dielectric properties properties, Exfoliation energies, Solar-cell efficiency, and STM image classification. The website for JARVIS-ML: https://www.ctcms.nist.gov/jarvisml/
   ``JARVIS-Het.``     Heterostructure design tools for 2D materials in the JARVIS-DFT database. Some of the properties available are: work function, Band-alignment, and Heterostructure classification. JARVIS-Heterostructure website: https://www.ctcms.nist.gov/jarvish/
@@ -71,6 +67,10 @@ Installing jarvis-tools
 
 .. _`Nix instructions`: ./nix/README.md
 
+Example Jupyter notebooks
+-----------------
+Look into the notebooks folder
+
 References
 -----------------
 - JARVIS-FF:
@@ -88,7 +88,7 @@ References
 - JARVIS-ML:
       8) Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018). https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
       9) Convergence and machine learning predictions of Monkhorst-Pack k-points and plane-wave cut-off in high-throughput DFT calculations, Comp. Mat. Sci. 161, 300 (2019). https://www.sciencedirect.com/science/article/pii/S0927025619300813?via%3Dihub
-      10) Materials science in the artificial intelligence age: high-throughput library generation, machine learning, and a pathway from correlations to the underpinning physics, MRS Comm., 1-18 (2019) https://doi.org/10.1557/mrc.2019.95
+      10) Materials science in the artificial intelligence age: high-throughput library generation, machine learning, and a pathway from correlations to the underpinning physics, MRS Comm., 1-18, 2019. https://doi.org/10.1557/mrc.2019.95
       11) Enhancing materials property prediction by leveraging computational and experimental data using deep transfer learning, Nature Comm., 10, 1, (2019). https://www.nature.com/articles/s41467-019-13297-w
       12) Accelerated Discovery of Efficient Solar-cell Materials using Quantum and Machine-learning Methods, Chem. Mater., https://pubs.acs.org/doi/10.1021/acs.chemmater.9b02166
       13) High-throughput Density Functional Perturbation Theory and Machine Learning Predictions of Infrared, Piezoelectric and Dielectric Responses, https://arxiv.org/abs/1910.01183.
@@ -105,4 +105,6 @@ External links
       https://figshare.com/authors/Kamal_Choudhary/4445539
 
 
-
+Correspondence
+--------------------
+Please report bugs as Github issues (https://github.com/usnistgov/jarvis/issues) or email to kamal.choudhary@nist.gov.
