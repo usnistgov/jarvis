@@ -67,6 +67,10 @@ Installing jarvis-tools
 
 .. _`Nix instructions`: ./nix/README.md
 
+Example Jupyter notebooks
+-----------------
+Look into the notebooks folder
+
 References
 -----------------
 - JARVIS-FF:
