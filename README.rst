@@ -16,7 +16,7 @@
         
 .. image:: https://www.ctcms.nist.gov/~knc6/jlogo.png
         :target: https://jarvis.nist.gov/
-         :align: middle
+        :align: middle
         
 -----------------------------------------------------------------------------------
 
