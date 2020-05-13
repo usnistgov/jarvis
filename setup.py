@@ -11,7 +11,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2020.10.05",
+    version="2020.5.13",
     long_description=long_d,
     install_requires=[
         "joblib",
@@ -46,7 +46,7 @@ setup(
     author="Kamal Choudhary",
     author_email="kamal.choudhary@nist.gov",
     description=(
-        "High throughput computation with density functional theory, molecular dynamics and machine learning. https://jarvis.nist.gov/"
+        "jarvis-tools: an open-source software package for data-driven atomistic materials design. https://jarvis.nist.gov/"
     ),
     license="NIST",
     url="https://github.com/usnistgov/jarvis",
