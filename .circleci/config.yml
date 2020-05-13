@@ -45,7 +45,7 @@ jobs:
             pip install scipy coverage
             pip install codecov 
             rm -rf jarvis
-            git clone -b coverage https://github.com/usnistgov/jarvis.git
+            git clone  https://github.com/usnistgov/jarvis.git
             cd jarvis
             python setup.py install
             pip install pytest pytest-cov
