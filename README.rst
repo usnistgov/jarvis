@@ -11,15 +11,15 @@
         :target: https://img.shields.io/pypi/dm/jarvis-tools.svg
 .. image:: https://pepy.tech/badge/jarvis-tools
         :target: https://pepy.tech/badge/jarvis-tools
-.. image:: https://codecov.io/gh/knc6/jarvis/branch/master/graph/badge.svg
-        :target: https://codecov.io/gh/knc6/jarvis      
+.. image:: https://codecov.io/gh/usnistgov/jarvis/branch/master/graph/badge.svg
+        :target: https://codecov.io/gh/usnistgov/jarvis      
 .. image:: https://www.ctcms.nist.gov/~knc6/jlogo.png
         :target: https://jarvis.nist.gov/
 
         
 ==============================================================================
 
-jarvis-tools: an open-source software package for data-driven materials design
+jarvis-tools: an open-source software package for data-driven atomistic materials design
 ================================================================================
 
 NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) is an integrated framework for computational science using density functional theory,
@@ -75,6 +75,16 @@ Installing jarvis-tools
 Example Jupyter notebooks
 -----------------------------
 Look into the notebooks folder
+
+Example function
+-----------------
+>>> from jarvis.core.atoms import Atoms
+>>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+>>> coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
+>>> elements = ["Si", "Si"]
+>>> Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
+>>> density = round(Si.density,2)
+2.33
 
 References
 -----------------
