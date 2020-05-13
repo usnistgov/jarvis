@@ -88,6 +88,7 @@ def test_basic_atoms():
         60.0,
         2.33,
     )
+    cc = Si.center()
 
 
 # test_basic_atoms()
