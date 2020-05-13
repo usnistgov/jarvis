@@ -84,6 +84,7 @@ Example function
 >>> elements = ["Si", "Si"]
 >>> Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
 >>> density = round(Si.density,2)
+>>> print (density)
 2.33
 
 References
