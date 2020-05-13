@@ -1,5 +1,4 @@
-###
-For sphinx
+###For sphinx
 sphinx-quickstart docs
 Separate source and build directories (y/n) [n]: y
 sys.path.insert(0, os.path.abspath('../../..')) in source/conf.py
@@ -10,6 +9,8 @@ html_theme = 'classic'
 in docs folder:
 sphinx-apidoc -f -o source/ ../jarvis/ 
 make html
+
+
 
 ##For pypi
 https://gist.github.com/gboeing/dcfaf5e13fad16fc500717a3a324ec17
@@ -27,3 +28,14 @@ password = xyz
 python setup.py sdist bdist_wheel --universal
 twine check dist/*
 twine  upload dist/*
+
+
+
+
+
+###covergae
+#!/bin/bash
+pytest
+coverage run -m pytest
+coverage report -m
+

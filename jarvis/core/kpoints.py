@@ -11,6 +11,7 @@ import pprint
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from warnings import warn
 from numpy import pi, cos, sin
+from math import cos, sin, tan, e, pi, ceil
 from math import ceil
 #from jarvis.io.vasp.inputs import Poscar
 
