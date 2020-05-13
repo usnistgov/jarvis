@@ -13,3 +13,4 @@ omit =
     */run_*.py
     */test*.py
     */error*.py
+    */job*.py
