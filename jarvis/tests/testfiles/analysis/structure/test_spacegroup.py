@@ -5,6 +5,7 @@ from jarvis.analysis.structure.spacegroup import (
 )
 from jarvis.core.atoms import Atoms
 from jarvis.io.vasp.inputs import Poscar
+import os
 
 s1 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "..","defects","POSCAR-JVASP-667")).atoms
 s2 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "..","..","io","wannier","POSCAR")).atoms
