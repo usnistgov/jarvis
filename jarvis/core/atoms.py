@@ -522,9 +522,9 @@ class Atoms(object):
         )
         order = np.argsort(self.elements)
         coords = self.frac_coords
-        coords_ordered = np.array(coords)[order]
-        elements_ordered = np.array(self.elements)[order]
-        props_ordered = np.array(self.props)[order]
+        coords_ordered = np.array(coords)#[order]
+        elements_ordered = np.array(self.elements)#[order]
+        props_ordered = np.array(self.props)#[order]
         middle = (
             " ".join(map(str, Counter(elements_ordered).keys()))
             + "\n"
@@ -591,9 +591,9 @@ class Atoms(object):
         )
         order = np.argsort(self.elements)
         coords = self.frac_coords
-        coords_ordered = np.array(coords)[order]
-        elements_ordered = np.array(self.elements)[order]
-        props_ordered = np.array(self.props)[order]
+        coords_ordered = np.array(coords)#[order]
+        elements_ordered = np.array(self.elements)#[order]
+        props_ordered = np.array(self.props)#[order]
         check_selective_dynamics = False
         if "T" in "".join(map(str, self.props[0])):
             middle = (
