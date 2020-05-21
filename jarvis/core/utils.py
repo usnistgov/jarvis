@@ -1,5 +1,5 @@
 """
-Set of useful utilit functions
+Set of useful utility functions
 """
 from collections import defaultdict, OrderedDict
 
