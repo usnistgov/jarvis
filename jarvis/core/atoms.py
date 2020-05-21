@@ -239,7 +239,7 @@ class Atoms(object):
         comp = {}
         for i in self.elements:
             comp[i] = comp.setdefault(i, 0) + 1
-        return Composition(comp)
+        return Composition(OrderedDict(comp))
 
     @property
     def density(self):
