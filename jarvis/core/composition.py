@@ -4,7 +4,7 @@ Modules handling chemical composition
 # from math import gcd
 import string
 from jarvis.core.specie import Specie
-
+from collections import OrderedDict
 
 def gcd(a, b):
     """Calculate the Greatest Common Divisor of a and b.
@@ -18,7 +18,7 @@ def gcd(a, b):
 
 
 class Composition(object):
-    def __init__(self, content={}, sort=True):
+    def __init__(self, content={}, sort=False):
         """
         >>> from composition import Composition
         >>> comp = {"Li": 2, "O": 4}
@@ -27,7 +27,7 @@ class Composition(object):
         AB2 Li2O4 LiO2 77.8796
         """
         if sort:
-            content = dict(sorted(content.items(), key=lambda x: (x[0])))
+            content = OrderedDict(sorted(content.items(), key=lambda x: (x[0])))
         self._content = content
 
     def reduce(self):
