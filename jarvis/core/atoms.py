@@ -12,6 +12,7 @@ from collections import OrderedDict
 import pprint
 import math
 from numpy.linalg import norm, solve
+from jarvis.core.utils import get_counts
 
 plt.switch_backend("agg")
 amu_gm = 1.66054e-24
@@ -522,17 +523,17 @@ class Atoms(object):
         )
         order = np.argsort(self.elements)
         coords = self.frac_coords
-        coords_ordered = np.array(coords)#[order]
-        elements_ordered = np.array(self.elements)#[order]
-        props_ordered = np.array(self.props)#[order]
+        coords_ordered = np.array(coords)[order]
+        elements_ordered = np.array(self.elements)[order]
+        props_ordered = np.array(self.props)[order]
+        counts = get_counts(elements_ordered)
         middle = (
-            " ".join(map(str, Counter(elements_ordered).keys()))
+            " ".join(map(str, counts.keys()))
             + "\n"
-            + " ".join(map(str, Counter(elements_ordered).values()))
+            + " ".join(map(str, counts.values()))
             + "\ndirect\n"
         )
         rest = ""
-        # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
 
             if self.show_props == True:
@@ -591,29 +592,28 @@ class Atoms(object):
         )
         order = np.argsort(self.elements)
         coords = self.frac_coords
-        coords_ordered = np.array(coords)#[order]
-        elements_ordered = np.array(self.elements)#[order]
-        props_ordered = np.array(self.props)#[order]
+        coords_ordered = np.array(coords)[order]
+        elements_ordered = np.array(self.elements)[order]
+        props_ordered = np.array(self.props)[order]
         check_selective_dynamics = False
+        counts = get_counts(elements_ordered)
         if "T" in "".join(map(str, self.props[0])):
             middle = (
-                " ".join(map(str, Counter(elements_ordered).keys()))
+                " ".join(map(str, counts.keys()))
                 + "\n"
-                + " ".join(map(str, Counter(elements_ordered).values()))
+                + " ".join(map(str, counts.values()))
                 + "\nSelective dynamics\n"
                 + "Direct\n"
             )
         else:
             middle = (
-                " ".join(map(str, Counter(elements_ordered).keys()))
+                " ".join(map(str, counts.keys()))
                 + "\n"
-                + " ".join(map(str, Counter(elements_ordered).values()))
+                + " ".join(map(str, counts.values()))
                 + "\ndirect\n"
             )
         rest = ""
 
-        # print ('props_ordered',props_ordered)
-        # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
             if self.show_props == True:
                 rest = (
@@ -786,7 +786,10 @@ class VacuumPadding(object):
         )
         return with_vacuum_atoms
 
+
 """
+
+
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
