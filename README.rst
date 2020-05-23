@@ -90,6 +90,11 @@ Example function
 >>> density = round(Si.density,2)
 >>> print (density)
 2.33
+>>>
+>>> from jarvis.db.figshare import data
+>>> dft_3d = data(dataset='dft_3d')
+>>> print (len(dft_3d))
+36099
 
 References
 -----------------
