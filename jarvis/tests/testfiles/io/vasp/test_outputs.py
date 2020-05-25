@@ -133,3 +133,9 @@ def test_ir():
         born_charges=born_charges,
     )
     assert round(y[2],2)==1.38
+
+def test_wavecar():
+   gvec = wf_noso.gvectors() 
+   assert (gvec.shape)==(555,3)
+
+

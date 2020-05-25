@@ -29,6 +29,7 @@ class JobFactory(object):
     def __init__(self, name="", pair_style="", pair_coeff="", control_file=""):
         """
         Used in defining a LAMMPS job
+
         Args:
             pair_style :  LAMMPS pair_style, e.g. "eam/alloy" 
             pair_coeff : path for pair-coefficients file
@@ -52,6 +53,7 @@ class JobFactory(object):
     ):
         """
         Generic function for high-throughput LAMMPS calculations using eam/alloy
+
         Args:
             atoms :  Atoms object
             ff_path :  inter-atomic potential path
@@ -154,6 +156,7 @@ class LammpsJob(object):
     ):
         """
         Used for defining a LAMMPS job
+
         Args:
             atoms :  Atoms object
             element_order : element order used in accessing force-field parameters

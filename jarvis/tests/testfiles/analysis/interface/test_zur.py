@@ -1,4 +1,4 @@
-from jarvis.analysis.interface.zur import ZSLGenerator, mismatch_strts, get_hetero,make_interface
+from jarvis.analysis.interface.zur import ZSLGenerator,get_hetero_type, mismatch_strts, get_hetero,make_interface
 from jarvis.core.atoms import Atoms
 from jarvis.io.vasp.inputs import Poscar
 import os
@@ -36,5 +36,14 @@ def test_zur():
         0.0,
     )
 
-
-#test_zur()
+def test_type():
+    B = {}
+    B["scf_vbm"] = -5
+    B["scf_cbm"] = -4
+    B["avg_max"] = -2
+    A = {}
+    A["scf_vbm"] = -7
+    A["scf_cbm"] = -6
+    A["avg_max"] = -2
+    int_type,stack = get_hetero_type(A=A,B=B)       
+    assert (int_type,stack)==('III','BA')
