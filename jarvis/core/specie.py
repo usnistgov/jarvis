@@ -45,6 +45,7 @@ def get_descrp_arr_name(elm="Al"):
 class Specie(object):
     """
     Specie object for chemistry information
+    
     >>> el = Specie('Al')
     >>> el.Z
     13
@@ -59,6 +60,7 @@ class Specie(object):
     >>> el = Specie('asdfg')
     >>> el.element_property("asdfg")
     nan
+    
     """
 
     def __init__(self, symbol=""):
