@@ -540,10 +540,10 @@ def get_hetero(film, substrate, seperation=3.0):
    
     substrate_top_z = max(np.array(substrate.cart_coords)[:, 2])
     substrate_bot_z = min(np.array(substrate.cart_coords)[:, 2])
-    print ('substrate_top_z',substrate_top_z- substrate_bot_z)
+    #print ('substrate_top_z',substrate_top_z- substrate_bot_z)
     film_bottom = min(np.array(film.cart_coords)[:, 2])
     film_top = max(np.array(film.cart_coords)[:, 2])
-    print ('film_bottom',film_top-film_bottom)
+    #print ('film_bottom',film_top-film_bottom)
     # shift normal to the surface by 'seperation'
     sub_z = substrate.lattice_mat[2, :]
     origin = np.array([0, 0, substrate_top_z])
