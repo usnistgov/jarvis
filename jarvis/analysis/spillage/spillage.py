@@ -13,6 +13,17 @@ import scipy as sp
 
 class Spillage(object):
     def __init__(self, wf_noso="", wf_so=""):
+        """
+        Requires path to WAVECAR files with and without LSORBIT = .TRUE.
+        
+        Args:
+        
+            wf_noso : WAVECAR without spin-orbit coupling
+            
+            wf_so : WAVECAR with spin-orbit coupling
+              
+        """
+        
         self.wf_noso = wf_noso
         self.wf_so = wf_so
 
