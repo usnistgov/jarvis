@@ -18,9 +18,13 @@ class JobFactory(object):
     def __init__(self, name="", use_incar_dict={}, pot_type=None):
         """
         Generic class for running variations of VASP calculations
+        
         Args:
+        
             name : generic name
+            
             use_incar_dict : dictionary with INCAR parameters that would be repreated
+            
             pot_type : pseudopotential type
         """
         self.name = name
@@ -31,7 +35,9 @@ class JobFactory(object):
         """
         Used for OptB88vdW functional based high-throughput calculations
         This will converge k-points, cut-offs, and then carry several property calculations.
+        
         Args:
+        
             mat : Poscar object
         """
         optb88 = GenericIncars().optb88vdw()
@@ -68,11 +74,17 @@ class JobFactory(object):
         """
         Used for elastic property calculations using IBRION = 6
         Enforces conventional standard structure
+        
         Args:
+        
             mat :  Poscar object
+            
             encut :  Plane-wave cut-off, 1.3 times will be used
+            
             nbands : number of bands, generally high-value recommended
+            
             npar : NPAR tag, see VASP manual, set it as number of cores
+            
             length :  K-points in length unit
         """
 
@@ -114,10 +126,15 @@ class JobFactory(object):
     def mbj_loptics(self, mat=None, encut=None, nbands=None, length=20):
         """
         Used for TBmBJ meta-GGA calculation
+        
         Args:
+        
             mat :  Poscar object
+            
             encut :  Plane-wave cut-off, 1.3 times will be used
+            
             nbands : number of bands, increased to threee times
+            
             length :  K-points in length unit
         """
         incar = self.use_incar_dict
@@ -156,10 +173,15 @@ class JobFactory(object):
     def loptics(self, mat=None, encut=None, nbands=None, length=20):
         """
         Used in linear-optics calculations
+        
         Args:
+        
             mat :  Poscar object
+            
             encut :  Plane-wave cut-off, 1.3 times will be used
+            
             nbands : number of bands, increased to threee times
+            
             length :  K-points in length unit
         """
         incar = self.use_incar_dict
@@ -197,11 +219,17 @@ class JobFactory(object):
     ):
         """
         Used in band-structure calculations
+        
         Args:
+        
             mat :  Poscar object
+            
             encut :  Plane-wave cut-off, 1.3 times will be used
+            
             nbands : number of bands, increased to threee times
+            
             line_density :  number of k-points between two high-symmetry k-points
+            
             copy_prev_chgcar :  path of CHGCAR file for Non-SCF step
         """
         incar = self.use_incar_dict
@@ -236,9 +264,13 @@ class JobFactory(object):
     def optimize_geometry(self, mat=None, encut=None, length=None):
         """
         Used in optimizing lattice-parameter and internal psotions
+        
         Args:
+        
             mat :  Poscar object
-            encut :  Plane-wave cut-off, 1.3 times will be used
+            
+            encut :  Plane-wave cut-off
+            
             length :  K-points in length unit
         """
         incar = self.use_incar_dict
@@ -271,10 +303,15 @@ class JobFactory(object):
     def converg_encut(self, encut=500, mat=None, starting_length=10, tol=0.001):
         """
         Function to converg plane-wave cut-off
+        
         Args:
+        
             encut: intial cutoff
+            
             mat: Poscar object
+            
         Returns:
+        
                encut: converged cut-off
         """
         pot_type = self.pot_type
@@ -416,10 +453,15 @@ class JobFactory(object):
     def converg_kpoint(self, length=0, mat=None, encut=500, tol=0.001):
         """
         Function to converg K-points
+        
         Args:
+        
             lenght: K-point line density
+            
             mat: Poscar object with structure information
+            
         Returns:
+        
                length1: K-point line density
         """
 
@@ -649,18 +691,31 @@ class VaspJobs(object):
     ):
         """
         Class defninig a typical VASP calculation
+        
         Args:
+        
             poscar :  Poscar object
+            
             incar : Incar object
+            
             kpoints : Kpoints object
+            
             potcar : Potcar object
+            
             vasp_cmd :  path to vasp executable
+            
             output_file : standard output file
+            
             stderr_file : standard error output file
+            
             jobname : job name
+            
             pot_type :  pseudopotential type
+            
             copy_files :  file(s) to be copied
+            
             attempts :  used in error handling
+            
         """
         self.poscar = poscar
         self.kpoints = kpoints
