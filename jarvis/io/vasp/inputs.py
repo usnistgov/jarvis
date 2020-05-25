@@ -17,6 +17,7 @@ class Poscar(object):
     Class defining Poscar object 
 
     Args:
+    
         atoms : Atoms object
         
         comment : Header of Poscar file
