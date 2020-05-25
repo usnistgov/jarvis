@@ -17,8 +17,9 @@ class Poscar(object):
     Class defining Poscar object 
 
     Args:
-      atoms : Atoms object
-      comment : Header of Poscar file
+        atoms : Atoms object
+        
+        comment : Header of Poscar file
     """
 
     def __init__(self, atoms, comment="System"):
@@ -34,6 +35,10 @@ class Poscar(object):
             return Poscar.from_string(f.read())
 
     def write_file(self, filename):
+        """
+        Write the Poscar object to a file
+        """
+        
         f = open(filename, "w")
         header = (
             str(self.comment)
@@ -91,6 +96,10 @@ class Poscar(object):
 
     @staticmethod
     def from_string(lines):
+        """
+        Read Poscar from strings, useful in reading files/streams
+        """
+        
         text = lines.splitlines()
         comment = text[0]
         scale = float(text[1])
@@ -181,7 +190,7 @@ class Poscar(object):
 
 class Incar(object):
     """
-    VASP INCAR files as python dictionary
+    VASP INCAR files as python dictionary of keys and values
     """
 
     def __init__(self, tags={}):
@@ -189,11 +198,19 @@ class Incar(object):
 
     @staticmethod
     def from_file(filename="INCAR"):
+        """
+        Read INCAR file
+        """
+        
         with open(filename, "r") as f:
             return Incar.from_string(f.read())
 
     def update(self, d={}):
-        print("selftags1=", self._tags)
+        """
+        Provide the new tags as a dictionary to update Incar object
+        """
+        
+        #print("selftags1=", self._tags)
         if self._tags != {}:
             for i, j in self._tags.items():
                 self._tags[i] = j  # .strip(' ')
@@ -203,6 +220,10 @@ class Incar(object):
         return Incar(self._tags)
 
     def get(self, key="POTIM", temp=0.5):
+        """
+        Get the value of a key
+        """
+        
         if key in list(self._tags.keys()):
             return self._tags[key]
         else:
@@ -211,10 +232,13 @@ class Incar(object):
             return self._tags[key]
 
     def to_dict(self):
+        """
+        Convert into dictionary
+        """
+        
         return self._tags
 
     def from_dict(self, data={}):
-        print("data", data)
         return Incar(tags=data)
 
     @staticmethod
@@ -232,6 +256,10 @@ class Incar(object):
         return str(self._tags)
 
     def write_file(self, filename):
+        """
+        Write Incar to a file
+        """
+        
         tags = self._tags
         lines = ""
         for i, j in tags.items():
@@ -250,6 +278,10 @@ class IndividualPotcarData(object):
         self._data = data
 
     def from_string(lines):
+        """
+        Some of the contents in the POTCAR
+        """
+        
         text = lines.splitlines()
         individual_data = OrderedDict()
         individual_data["header1"] = text[0]
@@ -363,7 +395,11 @@ class Kpoints(object):
             ValueError("K-point scheme is not implemented")
 
     def get_mesh_kp(lines=""):
-        print("lines", lines)
+        #print("lines", lines)
+        """
+        Read Kpoints as grid
+        """
+        
         grid = [int(i) for i in lines[3].split()]
         # print (grid)
         kpts = generate_kgrid(grid)
@@ -371,6 +407,10 @@ class Kpoints(object):
         return kpoints
 
     def get_ibz_kp(lines=""):
+        """
+        Read the Kpoints in the line-mode
+        """
+        
         kp_labels = []
         all_kp = []
         kp_labels_points = []
