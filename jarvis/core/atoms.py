@@ -86,9 +86,13 @@ class Atoms(object):
             Check if the surface structure is polar
             by comparing atom types at top and bottom.
             Applicable for sufcae with vaccums only.
+            
             Args:
+            
                  file:atoms object (surface with vacuum)
+                 
             Returns:
+            
                    polar:True/False   
         """
         up = 0
