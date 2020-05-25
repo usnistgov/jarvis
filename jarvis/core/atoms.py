@@ -31,7 +31,9 @@ class Atoms(object):
         show_props=False,
     ):
         """
+        
         Create atomic structure with lattice, coordinates, atom type and other information
+        
         >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
         >>> coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
         >>> elements = ["Si", "Si"]
@@ -60,6 +62,7 @@ class Atoms(object):
         'C2/m (12)'
         >>> Si.pymatgen_converter()!={}
         True
+        
         """
 
         self.lattice_mat = np.array(lattice_mat)
