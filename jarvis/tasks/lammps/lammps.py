@@ -31,6 +31,7 @@ class JobFactory(object):
         Used in defining a LAMMPS job
 
         Args:
+        
             pair_style :  LAMMPS pair_style, e.g. "eam/alloy" 
             
             pair_coeff : path for pair-coefficients file
@@ -167,6 +168,7 @@ class LammpsJob(object):
         Used for defining a LAMMPS job
 
         Args:
+        
             atoms :  Atoms object
             
             element_order : element order used in accessing force-field parameters
