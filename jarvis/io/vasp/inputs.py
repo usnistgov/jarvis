@@ -15,6 +15,7 @@ from jarvis.core.utils import get_counts
 class Poscar(object):
     """
     Class defining Poscar object 
+
     Args:
         atoms : Atoms object
         comment : Header of Poscar file
