@@ -23,12 +23,16 @@ class ZSLGenerator(object):
         """
         Intialize a Zur Super Lattice Generator for a specific film and
             substrate
+            
         Args:
             max_area_ratio_tol(float): Max tolerance on ratio of
                 super-lattices to consider equal
+                
             max_area(float): max super lattice area to generate in search
+            
             max_length_tol: maximum length tolerance in checking if two
                 vectors are of nearly the same length
+                
             max_angle_tol: maximum angle tolerance in checking of two sets
                 of vectors have nearly the same angle between them
         """
@@ -41,9 +45,12 @@ class ZSLGenerator(object):
         """
         Determine if two sets of vectors are the same within length and angle
         tolerances
+        
         Args:
             vec_set1(array[array]): an array of two vectors
+            
             vec_set2(array[array]): second array of two vectors
+            
         """
         if np.absolute(rel_strain(vec_set1[0], vec_set2[0])) > self.max_length_tol:
             return False
@@ -60,10 +67,15 @@ class ZSLGenerator(object):
         area of the unit cell area for the film and substrate. The
         transformation sets map the film and substrate unit cells to super
         lattices with a maximum area
+        
         Args:
+        
             film_area(int): the unit cell area for the film
+            
             substrate_area(int): the unit cell area for the substrate
+            
         Returns:
+        
             transformation_sets: a set of transformation_sets defined as:
                 1.) the transformation matricies for the film to create a
                 super lattice of area i*film area
@@ -90,14 +102,18 @@ class ZSLGenerator(object):
         Applies the transformation_sets to the film and substrate vectors
         to generate super-lattices and checks if they matches.
         Returns all matching vectors sets.
+        
         Args:
+        
             transformation_sets(array): an array of transformation sets:
                 each transformation set is an array with the (i,j)
                 indicating the area multipes of the film and subtrate it
                 corresponds to, an array with all possible transformations
                 for the film area multiple i and another array for the
                 substrate area multiple j.
+                
             film_vectors(array): film vectors to generate super lattices
+            
             substrate_vectors(array): substrate vectors to generate super
                 lattices
         """
@@ -167,8 +183,11 @@ class ZSLGenerator(object):
     ):
         """
         Returns dict which contains ZSL match
+        
         Args:
+        
             film_miller(array)
+            
             substrate_miller(array)
         """
         d = {}
@@ -190,12 +209,16 @@ def gen_sl_transform_matricies(area_multiple):
     in Cassels:
     Cassels, John William Scott. An introduction to the geometry of
     numbers. Springer Science & Business Media, 2012.
+    
     Args:
+    
         area_multiple(int): integer multiple of unit cell area for super
         lattice area
+        
     Returns:
         matrix_list: transformation matricies to covert unit vectors to
         super lattice vectors
+        
     """
     return [
         np.array(((i, j), (0, area_multiple / i)))
@@ -214,8 +237,10 @@ def rel_strain(vec1, vec2):
 def rel_angle(vec_set1, vec_set2):
     """
     Calculate the relative angle between two vector sets
+    
     Args:
         vec_set1(array[array]): an array of two vectors
+        
         vec_set2(array[array]): second array of two vectors
     """
     return vec_angle(vec_set2[0], vec_set2[1]) / vec_angle(vec_set1[0], vec_set1[1]) - 1
