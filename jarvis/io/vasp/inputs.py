@@ -17,8 +17,8 @@ class Poscar(object):
     Class defining Poscar object 
 
     Args:
-        atoms : Atoms object.
-        comment : Header of Poscar file.
+      atoms : Atoms object
+      comment : Header of Poscar file
     """
 
     def __init__(self, atoms, comment="System"):
