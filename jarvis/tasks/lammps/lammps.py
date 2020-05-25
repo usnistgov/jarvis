@@ -32,9 +32,12 @@ class JobFactory(object):
 
         Args:
             pair_style :  LAMMPS pair_style, e.g. "eam/alloy" 
+            
             pair_coeff : path for pair-coefficients file
+            
             control_file :  control-file with units, include modules 
                           for running LAMMPS calculation , see examples
+                          
             name : generic name
         """
         self.pair_style = pair_style
@@ -55,11 +58,17 @@ class JobFactory(object):
         Generic function for high-throughput LAMMPS calculations using eam/alloy
 
         Args:
+        
             atoms :  Atoms object
+            
             ff_path :  inter-atomic potential path
+            
             lammps_cmd : LAMMPS executable path
+            
             enforce_conventional_structure :  whether to enforce conventional cell
+            
             enforce_c_size : minimum cell-sizes
+            
             extend : used for round-off during making supercells
         """
 
@@ -159,14 +168,23 @@ class LammpsJob(object):
 
         Args:
             atoms :  Atoms object
+            
             element_order : element order used in accessing force-field parameters
+            
             parameters :  LAMMPS input parameter dictionary
+            
             lammps_cmd : LAMMPS executable path
+            
             output_file :  standard output file
+            
             stderr_file :  standard error file
+            
             jobname :  Job name
+            
             attempts :  number of attempts before crashing the job, TODO
+            
             copy_files : copy certain files before a job
+            
         """
 
         self.atoms = atoms
