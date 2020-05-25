@@ -11,10 +11,15 @@ def abs_cap(val, max_abs_val=1):
     Returns the value with its absolute value capped at max_abs_val.
     Particularly useful in passing values to trignometric functions where
     numerical errors may result in an argument > 1 being passed in.
+    
     Args:
+    
         val (float): Input value.
+        
         max_abs_val (float): The maximum absolute value for val. Defaults to 1.
+        
     Returns:
+    
         val if abs(val) < 1 else sign of val * max_abs_val.
     """
     return max(min(val, max_abs_val), -max_abs_val)
@@ -311,10 +316,13 @@ class Lattice(object):
         possible, with "good" defined by orthongonality of the lattice vectors.
         This basis is used for all the periodic boundary condition calculations.
         Adapted from pymatgen
+        
         Args:
-            delta (float): Reduction parameter. Default of 0.75 is usually
-                fine.
+        
+            delta (float): Reduction parameter. Default of 0.75 is usually fine.
+            
         Returns:
+        
             Reduced lattice matrix, mapping to get to that lattice.
         """
         # Transpose the lattice matrix first so that basis vectors are columns.
