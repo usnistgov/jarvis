@@ -396,8 +396,14 @@ class Lattice(object):
 
     def get_lll_reduced_lattice(self, delta=0.75):
         """
-        :param delta: Delta parameter.
-        :return: LLL reduced Lattice.
+        
+        Args:
+        
+           delta: Delta parameter.
+          
+        Returns:
+        
+             LLL reduced Lattice.
         """
         if delta not in self._lll_matrix_mappings:
             self._lll_matrix_mappings[delta] = self._calculate_lll()
