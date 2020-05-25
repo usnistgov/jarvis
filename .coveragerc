@@ -8,5 +8,9 @@ omit =
     #utils/tirefire.py
     */mdcs_api.py
     */*lammps.py
-    */*joptb88vdw.py
+    */*vasp.py
+    */master.py
     */run_*.py
+    */test*.py
+    */error*.py
+    */job*.py

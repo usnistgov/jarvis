@@ -9,11 +9,13 @@ import numpy as np
 from jarvis.core.atoms import Atoms
 from collections import OrderedDict
 from jarvis.core.kpoints import generate_kgrid, Kpoints3D
+from jarvis.core.utils import get_counts
 
 
 class Poscar(object):
     """
     Class defining Poscar object 
+
     Args:
         atoms : Atoms object
         comment : Header of Poscar file
@@ -61,19 +63,20 @@ class Poscar(object):
         elements_ordered = np.array(self.atoms.elements)#[order]
         props_ordered = np.array(self.atoms.props)#[order]
         check_selective_dynamics = False
+        counts = get_counts(elements_ordered)
         if "T" in "".join(map(str, self.atoms.props[0])):
             middle = (
-                " ".join(map(str, Counter(elements_ordered).keys()))
+                " ".join(map(str, counts.keys()))
                 + "\n"
-                + " ".join(map(str, Counter(elements_ordered).values()))
+                + " ".join(map(str, counts.values()))
                 + "\nSelective dynamics\n"
                 + "Direct\n"
             )
         else:
             middle = (
-                " ".join(map(str, Counter(elements_ordered).keys()))
+                " ".join(map(str, counts.keys()))
                 + "\n"
-                + " ".join(map(str, Counter(elements_ordered).values()))
+                + " ".join(map(str, counts.values()))
                 + "\ndirect\n"
             )
         rest = ""
@@ -152,19 +155,20 @@ class Poscar(object):
         elements_ordered = np.array(self.atoms.elements)[order]
         props_ordered = np.array(self.atoms.props)[order]
         check_selective_dynamics = False
+        counts = get_counts(elements_ordered)
         if "T" in "".join(map(str, self.atoms.props[0])):
             middle = (
-                " ".join(map(str, Counter(elements_ordered).keys()))
+                " ".join(map(str, counts.keys()))
                 + "\n"
-                + " ".join(map(str, Counter(elements_ordered).values()))
+                + " ".join(map(str, counts.values()))
                 + "\nSelective dynamics\n"
                 + "Direct\n"
             )
         else:
             middle = (
-                " ".join(map(str, Counter(elements_ordered).keys()))
+                " ".join(map(str, counts.keys()))
                 + "\n"
-                + " ".join(map(str, Counter(elements_ordered).values()))
+                + " ".join(map(str, counts.values()))
                 + "\ndirect\n"
             )
         rest = ""
