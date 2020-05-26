@@ -536,7 +536,6 @@ class Atoms(object):
         props_ordered = np.array(self.props)[order]
         counts = get_counts(elements_ordered)
 
-
         middle = (
             " ".join(map(str, counts.keys()))
             + "\n"
