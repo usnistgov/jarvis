@@ -1,7 +1,6 @@
 """
 This module provides classes to specify atomic structure
 """
-# from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from collections import Counter
 import numpy as np
 from jarvis.core.composition import Composition
@@ -13,8 +12,6 @@ import pprint
 import math
 from numpy.linalg import norm, solve
 from jarvis.core.utils import get_counts
-
-plt.switch_backend("agg")
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
 
@@ -171,6 +168,17 @@ class Atoms(object):
             props=new_props,
             cartesian=False,
         )
+    
+    @property
+    def get_primitive_atoms(self):
+        from jarvis.analysis.structure.spacegroup import Spacegroup3D
+        return Spacegroup3D(self).primitive_atoms
+
+    @property
+    def raw_distance_matrix(self):
+        coords = np.array(self.cart_coords)
+        z = (coords[:, None, :] - coords[None, :, :]) ** 2
+        return np.sum(z, axis=-1) ** 0.5
 
     def center(self, axis=2, vacuum=18.0, about=None):
         """
@@ -796,15 +804,17 @@ class VacuumPadding(object):
         return with_vacuum_atoms
 
 
+
+
 """
-
-
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    print (Si.get_string())
+    #print (Si.get_string())
+    print (Si.get_primitive_atoms)
+    print (Si.raw_distance_matrix)
     import sys
     sys.exit()
     #print (Si.props)

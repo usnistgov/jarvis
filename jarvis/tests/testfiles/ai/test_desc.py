@@ -1,4 +1,4 @@
-from jarvis.ai.descriptors.get_desc import CFID
+from jarvis.ai.descriptors.cfid import CFID
 from jarvis.core.atoms import Atoms
 
 
