@@ -9,7 +9,9 @@ def get_counts(array=['W','W','Mo','Mo','S','S']):
     
     Args:
          array of elements
+
     Returns:
+
          ordereddict, e.g.OrderedDict([('W', 2), ('Mo', 2), ('S', 2)])
     """
     uniqe_els = []

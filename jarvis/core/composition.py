@@ -18,7 +18,7 @@ def gcd(a, b):
 
 
 class Composition(object):
-    def __init__(self, content={}, sort=True):
+    def __init__(self, content={}, sort=False):
         """
         >>> from composition import Composition
         >>> comp = {"Li": 2, "O": 4}
