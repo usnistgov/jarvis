@@ -57,7 +57,7 @@ def get_ff_eneleast():
 
 
 
-
+"""
 if __name__ == "__main__":
 
     data_2d = data(dataset='dft_2d')
@@ -68,3 +68,4 @@ if __name__ == "__main__":
     print('cfid3d',len(data_ml))
     data_ff = get_ff_eneleast()
     print ('ff',len(data_ff))
+"""
