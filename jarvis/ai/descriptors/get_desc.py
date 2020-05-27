@@ -35,15 +35,25 @@ class CFID(object):
         Get chemo-structural CFID decriptors
 
         Args:
+        
         struct: Structure object
+        
         jcell: whether to use cell-size descriptors
+        
         jmean_chem: whether to use average chemical descriptors
+        
         jmean_chg: whether to use average charge distribution descriptors
+        
         jmean_rdf: whether to use radial distribution descriptors
+        
         jrdf_adf: whether to use radial as well as angle distribution descriptors
+        
         print_names: whether to print names of descriptors
+        
         Returns:
+        
           cat: catenated final descriptors
+          
         """
         cat = []
         s = self._atoms

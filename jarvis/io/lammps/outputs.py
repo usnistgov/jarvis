@@ -11,12 +11,19 @@ def analyze_log(log="log.lammps"):
     Analyzes log.lammps file,
     Please note, the output format heavily depends on the input file
     A generic inpu is taken here
+    
     Args:
+    
         log: path to log.lammps file
+        
     Returns:
+    
           en: energy/atom
+          
           press: pressure
+          
           toten: total energy
+          
           cij: elastic constants
     """
     en = 0

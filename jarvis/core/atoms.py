@@ -31,7 +31,9 @@ class Atoms(object):
         show_props=False,
     ):
         """
+        
         Create atomic structure with lattice, coordinates, atom type and other information
+        
         >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
         >>> coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
         >>> elements = ["Si", "Si"]
@@ -60,6 +62,7 @@ class Atoms(object):
         'C2/m (12)'
         >>> Si.pymatgen_converter()!={}
         True
+        
         """
 
         self.lattice_mat = np.array(lattice_mat)
@@ -86,9 +89,13 @@ class Atoms(object):
             Check if the surface structure is polar
             by comparing atom types at top and bottom.
             Applicable for sufcae with vaccums only.
+            
             Args:
+            
                  file:atoms object (surface with vacuum)
+                 
             Returns:
+            
                    polar:True/False   
         """
         up = 0
@@ -523,10 +530,12 @@ class Atoms(object):
         )
         order = np.argsort(self.elements)
         coords = self.frac_coords
+
         coords_ordered = np.array(coords)[order]
         elements_ordered = np.array(self.elements)[order]
         props_ordered = np.array(self.props)[order]
         counts = get_counts(elements_ordered)
+
         middle = (
             " ".join(map(str, counts.keys()))
             + "\n"
@@ -592,9 +601,9 @@ class Atoms(object):
         )
         order = np.argsort(self.elements)
         coords = self.frac_coords
-        coords_ordered = np.array(coords)[order]
-        elements_ordered = np.array(self.elements)[order]
-        props_ordered = np.array(self.props)[order]
+        coords_ordered = np.array(coords)#[order]
+        elements_ordered = np.array(self.elements)#[order]
+        props_ordered = np.array(self.props)#[order]
         check_selective_dynamics = False
         counts = get_counts(elements_ordered)
         if "T" in "".join(map(str, self.props[0])):

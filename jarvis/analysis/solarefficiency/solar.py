@@ -12,7 +12,7 @@ from scipy.integrate import simps
 from scipy.constants import physical_constants, speed_of_light
 import matplotlib.pyplot as plt
 
-#plt.switch_backend("agg")
+
 
 
 class SolarEfficiency(object):
@@ -27,12 +27,15 @@ class SolarEfficiency(object):
         self, bandgap_ev, temperature=300, fr=1, plot_current_voltage=False
     ):
         """
-            Args:
-                bandgap_ev: bandga in electron-volt
-                temperature: temperature in K
-            Returns:
+        
+        Args:
+        
+              bandgap_ev: bandga in electron-volt
+              
+              temperature: temperature in K
+     
                  
-            """
+        """
 
         # Defining constants for tidy equations
         c = constants.c  # speed of light, m/s
@@ -194,18 +197,30 @@ class SolarEfficiency(object):
                 293.15 K is the standard temperature assumed if not specified
             4) If absorbance is in cm^-1, multiply values by 100 to match units
                 assumed in code
+                
             Args:
                 material_energy_for_absorbance_data:
+                
                 material_absorbance_data:
+                
                 material_direct_allowed_gap:
+                
                 material_indirect_gap:
+                
                 thickness:
+                
                 temperature:
+                
                 absorbance_in_inverse_centimeters:
+                
                 cut_off_absorbance_below_direct_allowed_gap:
+                
                 plot_current_voltage:
+                
             Returns:
+            
                 The calculated maximum efficiency.
+                
             """
 
         # Defining constants for tidy equations

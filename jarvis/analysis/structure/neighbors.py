@@ -17,8 +17,11 @@ def check_array(arr, type_=None, shape=None):
     """Check type and shape of np.ndarray
 
     Args:
+    
       x: array to check
+      
       type_: the type of the array (int, float), None to not check
+      
       shape: the shape of the array, None to not check, -1 to ignore a
         dimension
 
@@ -45,9 +48,11 @@ def special_arange(dims):
     This could be extended to any dimension
 
     Args:
+    
       dims: sequence of ints of length 3
 
     Returns:
+    
       an array of shape (np.prod(dims), 3) with each index having a
       different arrangement of arange.
 
@@ -107,9 +112,13 @@ def calc_structure_data(coords, box, all_symbs, c_size):
     """Calcuate a dictionary of structure data
 
     Args:
+    
       coords: the coordinates for each element
+      
       box: the lattic matrix
+      
       all_symbs: the elements
+      
       c_size: the c size
 
     Returns:
@@ -265,13 +274,21 @@ class NeighborsAnalysis(object):
     def get_dist_cutoffs(self, max_cut=5.0):
         """
         Helper function to get dufferent type of distance cut-offs
+        
         Args:
+        
             s: Structure object
+            
         Returns:
+        
                rcut: max-cutoff to ensure all the element-combinations are included, used in calculating angluar distribution upto first neighbor
+               
                rcut1: decide first cut-off based on total RDF and a buffer (previously used in dihedrals, but not used now in the code)
+               
                rcut2: second neighbor cut-off
+               
                rcut_dihed: specialized cut-off for dihedrals to avaoid large bonds such as N-N, uses average bond-distance and standard deviations
+               
         """
 
         x, y, z = self.get_rdf()
@@ -304,15 +321,25 @@ class NeighborsAnalysis(object):
     def ang_dist(self, nbor_info={}, plot=False):
         """
         Get  angular distribution function upto first neighbor
+        
         Args:
-        struct_info: struct information
-        max_n: maximum number of neigbors
-        c_size: max. cell size
-        plot: whether to plot distributions
-        max_cut: max. bond cut-off for angular distribution
+        
+            struct_info: struct information
+            
+            max_n: maximum number of neigbors
+            
+            c_size: max. cell size
+            
+            plot: whether to plot distributions
+            
+            max_cut: max. bond cut-off for angular distribution
+            
         Retruns:
-         ang_hist1: Angular distribution upto first cut-off
-         ang_bins1: angle bins
+        
+            ang_hist1: Angular distribution upto first cut-off
+            
+            ang_bins1: angle bins
+            
         """
 
         # rcut1,rcut2=self.get_dist_cutoffs()

@@ -230,10 +230,14 @@ class LammpsInput(object):
                 write lammps input file
                 from ase with custom modifications
                 LAMMPS input is devided into three parts
+                
                 Args:
                     lammps_in: generally"init.mod", with unit and conversion factor information
+                    
                     lammps_in1: generally "potential.mod", with force-field/potential style and element tyoe information
+                    
                     lammps_in2: generally "in.elastic", a generic main input file to be fed in LAMMPS usin lmp_*<...,parameters['exec']
+                    
                     parameters: input parameters
                     
             """
