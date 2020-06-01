@@ -24,7 +24,7 @@ def test_lgbm_regression():
 def test_lgbm_classification():
     property = "exfoliation_energy"
     tol=100
-    models = [LGBMClassifier()]
+    models = [LGBMClassifier(n_estimators=10,  num_leaves=2)]
     info = l_classification(X=X, Y=Y, models=models, preprocess=True, save_model=False, tol=tol)
     assert info['LGBMClassifier']['roc_auc'][0]>0.0
 
