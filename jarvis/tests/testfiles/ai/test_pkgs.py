@@ -19,12 +19,14 @@ def test_lgbm_regression():
     info = l_regression(X=X, Y=Y,jid=jid, config=params, feat_names=names)
     assert info['reg_scores']['mae']<50.0
 
+"""    
 def test_lgbm_classification():
     property = "exfoliation_energy"
     tol=100
     models = [LGBMClassifier()]
     info = l_classification(X=X, Y=Y, models=models, preprocess=True, save_model=False, tol=tol)
     assert info['LGBMClassifier']['roc_auc'][0]>0.5
+"""
 
 def test_hyperparams():
    x,y  = classification_regression_params()
