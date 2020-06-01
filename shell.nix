@@ -18,6 +18,12 @@ in
        requests
        toolz
        xmltodict
+       scikit-learn
+       pandas
+       tensorflow
+       lightgbm
+       torch
+       keras
        pytest
      ];
      src=builtins.filterSource (path: type: type != "directory" || baseNameOf path != ".git") ./.;

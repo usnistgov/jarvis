@@ -14,8 +14,6 @@ setup(
     version="2020.5.13",
     long_description=long_d,
     install_requires=[
-        "joblib",
-        "flask",
         "numpy",
         "scipy",
         "matplotlib",
@@ -23,6 +21,7 @@ setup(
         "requests",
         "toolz",
         "xmltodict",
+        "pytest",
     ],
     package_data={
         "jarvis.core": ["Elements.json", "element_charge.json"],
@@ -40,8 +39,9 @@ setup(
         "jarvis.io.wannier": ["default_semicore.json"],
     },
     extras_require={
+        "ai": ["torch","keras","tensorflow","scikit-learn", "flask","pandas"],
         "babel": ["openbabel", "pybel"],
-        "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
+        "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"], 
     },
     author="Kamal Choudhary",
     author_email="kamal.choudhary@nist.gov",
