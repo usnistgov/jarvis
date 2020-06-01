@@ -28,6 +28,6 @@ in
        export PATH=$PATH:$PYTHONUSERBASE/bin
 
        ## To build a python package from pypi use
-       pip install --user scikit-learn pandas tensorflow lightgbm torch keras pytest
+       pip install --user scikit-learn pandas lightgbm 
      '';
   }
