@@ -17,13 +17,6 @@ in
        spglib
        requests
        toolz
-       xmltodict
-       scikit-learn
-       pandas
-       tensorflow
-       lightgbm
-       torch
-       keras
        pytest
      ];
      src=builtins.filterSource (path: type: type != "directory" || baseNameOf path != ".git") ./.;
@@ -35,6 +28,6 @@ in
        export PATH=$PATH:$PYTHONUSERBASE/bin
 
        ## To build a python package from pypi use
-       # pip install --user package_name
+       pip install --user scikit-learn pandas tensorflow lightgbm torch keras pytest
      '';
   }
