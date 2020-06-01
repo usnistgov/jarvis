@@ -6,6 +6,7 @@ from jarvis.ai.pkgs.lgbm.regression import regression as l_regression
 from jarvis.ai.pkgs.lgbm.regression import parameters_dict as l_params
 from jarvis.ai.pkgs.lgbm.classification import classification as l_classification
 from jarvis.ai.descriptors.cfid import feat_names
+from lightgbm import LGBMClassifier
 
 property = "exfoliation_energy"
 

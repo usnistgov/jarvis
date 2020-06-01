@@ -54,7 +54,7 @@ def get_ml_data( ml_property="formation_energy_peratom", dataset = 'cfid_3d', da
            X, Y , ids
     """
     import pandas as pd
-    if dataset=='cfid_3d':
+    if isinstance(dataset,str):
        dataml = data(dataset)
        df=pd.DataFrame(dataml)
     else:
