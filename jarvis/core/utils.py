@@ -2,6 +2,7 @@
 Set of useful utility functions
 """
 from collections import defaultdict, OrderedDict
+import numpy as np
 
 def get_counts(array=['W','W','Mo','Mo','S','S']):
     """
@@ -24,3 +25,5 @@ def get_counts(array=['W','W','Mo','Mo','S','S']):
     for i in array:
       info[i]+=1
     return info
+
+
