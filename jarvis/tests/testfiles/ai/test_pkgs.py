@@ -41,6 +41,3 @@ def test_sklearn_simple_classification():
     X_class, Y_class = binary_class_dat(X=X, Y=Y, tol=100)
     info = classification(X=X,Y=Y,tol=100)
     assert (info['GradientBoostingClassifier']['roc_auc'][0])>0.0
-
-
-
