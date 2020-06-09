@@ -20,7 +20,6 @@ try:
 except:
     print("Please install MDCS")
     pass
-from monty.json import MontyEncoder, MontyDecoder
 import numpy as np
 from jarvis.io.vasp.outputs import Vasprun
 from jarvis.core.atoms import Atoms
