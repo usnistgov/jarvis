@@ -50,17 +50,19 @@
 <dl class="py method">
 <dt id="jarvis.analysis.structure.neighbors.NeighborsAnalysis.ang_dist">
 <code class="sig-name descname">ang_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nbor_info</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/structure/neighbors.html#NeighborsAnalysis.ang_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.structure.neighbors.NeighborsAnalysis.ang_dist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get  angular distribution function upto first neighbor
-Args:
-struct_info: struct information
-max_n: maximum number of neigbors
-c_size: max. cell size
-plot: whether to plot distributions
-max_cut: max. bond cut-off for angular distribution
-Retruns:</p>
+<dd><p>Get  angular distribution function upto first neighbor</p>
+<p>Args:</p>
 <blockquote>
-<div><p>ang_hist1: Angular distribution upto first cut-off
-ang_bins1: angle bins</p>
+<div><p>struct_info: struct information</p>
+<p>max_n: maximum number of neigbors</p>
+<p>c_size: max. cell size</p>
+<p>plot: whether to plot distributions</p>
+<p>max_cut: max. bond cut-off for angular distribution</p>
+</div></blockquote>
+<p>Retruns:</p>
+<blockquote>
+<div><p>ang_hist1: Angular distribution upto first cut-off</p>
+<p>ang_bins1: angle bins</p>
 </div></blockquote>
 </dd></dl>
 
@@ -87,18 +89,18 @@ ang_bins1: angle bins</p>
 <dl class="py method">
 <dt id="jarvis.analysis.structure.neighbors.NeighborsAnalysis.get_dist_cutoffs">
 <code class="sig-name descname">get_dist_cutoffs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_cut</span><span class="o">=</span><span class="default_value">5.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/structure/neighbors.html#NeighborsAnalysis.get_dist_cutoffs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.structure.neighbors.NeighborsAnalysis.get_dist_cutoffs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper function to get dufferent type of distance cut-offs
-Args:</p>
+<dd><p>Helper function to get dufferent type of distance cut-offs</p>
+<p>Args:</p>
 <blockquote>
 <div><p>s: Structure object</p>
 </div></blockquote>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>rcut: max-cutoff to ensure all the element-combinations are included, used in calculating angluar distribution upto first neighbor
-rcut1: decide first cut-off based on total RDF and a buffer (previously used in dihedrals, but not used now in the code)
-rcut2: second neighbor cut-off
-rcut_dihed: specialized cut-off for dihedrals to avaoid large bonds such as N-N, uses average bond-distance and standard deviations</p>
-</dd>
-</dl>
+<p>Returns:</p>
+<blockquote>
+<div><p>rcut: max-cutoff to ensure all the element-combinations are included, used in calculating angluar distribution upto first neighbor</p>
+<p>rcut1: decide first cut-off based on total RDF and a buffer (previously used in dihedrals, but not used now in the code)</p>
+<p>rcut2: second neighbor cut-off</p>
+<p>rcut_dihed: specialized cut-off for dihedrals to avaoid large bonds such as N-N, uses average bond-distance and standard deviations</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -122,12 +124,14 @@ rcut_dihed: specialized cut-off for dihedrals to avaoid large bonds such as N-N,
 <dt id="jarvis.analysis.structure.neighbors.calc_structure_data">
 <code class="sig-prename descclassname">jarvis.analysis.structure.neighbors.</code><code class="sig-name descname">calc_structure_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">coords</span></em>, <em class="sig-param"><span class="n">box</span></em>, <em class="sig-param"><span class="n">all_symbs</span></em>, <em class="sig-param"><span class="n">c_size</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/structure/neighbors.html#calc_structure_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.structure.neighbors.calc_structure_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calcuate a dictionary of structure data</p>
+<p>Args:</p>
+<blockquote>
+<div><p>coords: the coordinates for each element</p>
+<p>box: the lattic matrix</p>
+<p>all_symbs: the elements</p>
+<p>c_size: the c size</p>
+</div></blockquote>
 <dl class="simple">
-<dt>Args:</dt><dd><p>coords: the coordinates for each element
-box: the lattic matrix
-all_symbs: the elements
-c_size: the c size</p>
-</dd>
 <dt>Returns:</dt><dd><p>a set of structure data</p>
 </dd>
 </dl>
@@ -148,15 +152,15 @@ c_size: the c size</p>
 <dt id="jarvis.analysis.structure.neighbors.check_array">
 <code class="sig-prename descclassname">jarvis.analysis.structure.neighbors.</code><code class="sig-name descname">check_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">type_</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">shape</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/structure/neighbors.html#check_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.structure.neighbors.check_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check type and shape of np.ndarray</p>
-<dl>
-<dt>Args:</dt><dd><p>x: array to check
-<a href="#id1"><span class="problematic" id="id2">type_</span></a>: the type of the array (int, float), None to not check
-shape: the shape of the array, None to not check, -1 to ignore a</p>
+<p>Args:</p>
 <blockquote>
-<div><p>dimension</p>
-</div></blockquote>
+<div><p>x: array to check</p>
+<p><a href="#id1"><span class="problematic" id="id2">type_</span></a>: the type of the array (int, float), None to not check</p>
+<dl class="simple">
+<dt>shape: the shape of the array, None to not check, -1 to ignore a</dt><dd><p>dimension</p>
 </dd>
 </dl>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py function">
@@ -164,13 +168,15 @@ shape: the shape of the array, None to not check, -1 to ignore a</p>
 <code class="sig-prename descclassname">jarvis.analysis.structure.neighbors.</code><code class="sig-name descname">special_arange</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dims</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/structure/neighbors.html#special_arange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.structure.neighbors.special_arange" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multiple dimensional arange</p>
 <p>This could be extended to any dimension</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dims: sequence of ints of length 3</p>
-</dd>
-<dt>Returns:</dt><dd><p>an array of shape (np.prod(dims), 3) with each index having a
+<p>Args:</p>
+<blockquote>
+<div><p>dims: sequence of ints of length 3</p>
+</div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div><p>an array of shape (np.prod(dims), 3) with each index having a
 different arrangement of arange.</p>
-</dd>
-</dl>
+</div></blockquote>
 <p>This function implements the equivalent of a multidimensional for
 loop, which feels like multidimensional arange (see the test)</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dim0</span><span class="p">,</span> <span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span>

@@ -40,33 +40,55 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-jarvis.ai.descriptors.get_desc">
-<span id="jarvis-ai-descriptors-get-desc-module"></span><h2>jarvis.ai.descriptors.get_desc module<a class="headerlink" href="#module-jarvis.ai.descriptors.get_desc" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-jarvis.ai.descriptors.cfid">
+<span id="jarvis-ai-descriptors-cfid-module"></span><h2>jarvis.ai.descriptors.cfid module<a class="headerlink" href="#module-jarvis.ai.descriptors.cfid" title="Permalink to this headline">¶</a></h2>
 <p>Classical Force-field Inspired Descriptors (CFID)
 Find details in:
 <a class="reference external" href="https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801">https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801</a></p>
 <dl class="py class">
-<dt id="jarvis.ai.descriptors.get_desc.CFID">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.ai.descriptors.get_desc.</code><code class="sig-name descname">CFID</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/descriptors/get_desc.html#CFID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.descriptors.get_desc.CFID" title="Permalink to this definition">¶</a></dt>
+<dt id="jarvis.ai.descriptors.cfid.CFID">
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.ai.descriptors.cfid.</code><code class="sig-name descname">CFID</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/descriptors/cfid.html#CFID"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.descriptors.cfid.CFID" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
-<dt id="jarvis.ai.descriptors.get_desc.CFID.get_comp_descp">
-<code class="sig-name descname">get_comp_descp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jcell</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">jmean_chem</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">jmean_chg</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">jrdf</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">jrdf_adf</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">print_names</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/descriptors/get_desc.html#CFID.get_comp_descp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.descriptors.get_desc.CFID.get_comp_descp" title="Permalink to this definition">¶</a></dt>
+<dt id="jarvis.ai.descriptors.cfid.CFID.get_comp_descp">
+<code class="sig-name descname">get_comp_descp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jcell</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">jmean_chem</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">jmean_chg</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">jrdf</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">jrdf_adf</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">print_names</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/descriptors/cfid.html#CFID.get_comp_descp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.descriptors.cfid.CFID.get_comp_descp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get chemo-structural CFID decriptors</p>
-<p>Args:
-struct: Structure object
-jcell: whether to use cell-size descriptors
-jmean_chem: whether to use average chemical descriptors
-jmean_chg: whether to use average charge distribution descriptors
-jmean_rdf: whether to use radial distribution descriptors
-jrdf_adf: whether to use radial as well as angle distribution descriptors
-print_names: whether to print names of descriptors
-Returns:</p>
+<p>Args:</p>
+<p>struct: Structure object</p>
+<p>jcell: whether to use cell-size descriptors</p>
+<p>jmean_chem: whether to use average chemical descriptors</p>
+<p>jmean_chg: whether to use average charge distribution descriptors</p>
+<p>jmean_rdf: whether to use radial distribution descriptors</p>
+<p>jrdf_adf: whether to use radial as well as angle distribution descriptors</p>
+<p>print_names: whether to print names of descriptors</p>
+<p>Returns:</p>
 <blockquote>
 <div><p>cat: catenated final descriptors</p>
 </div></blockquote>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.ai.descriptors.cfid.feat_names">
+<code class="sig-prename descclassname">jarvis.ai.descriptors.cfid.</code><code class="sig-name descname">feat_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/descriptors/cfid.html#feat_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.descriptors.cfid.feat_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.ai.descriptors.coulomb">
+<span id="jarvis-ai-descriptors-coulomb-module"></span><h2>jarvis.ai.descriptors.coulomb module<a class="headerlink" href="#module-jarvis.ai.descriptors.coulomb" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="jarvis.ai.descriptors.coulomb.coulomb_matrix">
+<code class="sig-prename descclassname">jarvis.ai.descriptors.coulomb.</code><code class="sig-name descname">coulomb_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">max_dim</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/descriptors/coulomb.html#coulomb_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.descriptors.coulomb.coulomb_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Args:</p>
+<blockquote>
+<div><p>atoms: atoms object</p>
+<p>max_dim: maximum number of atoms=sqrt(max_dim)</p>
+</div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div><p>z: numpy array of 1 x max_dim dimension</p>
+</div></blockquote>
 </dd></dl>
 
 </div>
@@ -85,7 +107,8 @@ Returns:</p>
   <ul>
 <li><a class="reference internal" href="#">jarvis.ai.descriptors package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-jarvis.ai.descriptors.get_desc">jarvis.ai.descriptors.get_desc module</a></li>
+<li><a class="reference internal" href="#module-jarvis.ai.descriptors.cfid">jarvis.ai.descriptors.cfid module</a></li>
+<li><a class="reference internal" href="#module-jarvis.ai.descriptors.coulomb">jarvis.ai.descriptors.coulomb module</a></li>
 <li><a class="reference internal" href="#module-jarvis.ai.descriptors">Module contents</a></li>
 </ul>
 </li>

@@ -52,6 +52,17 @@
 
 <div class="viewcode-block" id="Spillage"><a class="viewcode-back" href="../../../../jarvis.analysis.spillage.html#jarvis.analysis.spillage.spillage.Spillage">[docs]</a><span class="k">class</span> <span class="nc">Spillage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wf_noso</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">wf_so</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Requires path to WAVECAR files with and without LSORBIT = .TRUE.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">        </span>
+<span class="sd">            wf_noso : WAVECAR without spin-orbit coupling</span>
+<span class="sd">            </span>
+<span class="sd">            wf_so : WAVECAR with spin-orbit coupling</span>
+<span class="sd">              </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">wf_noso</span> <span class="o">=</span> <span class="n">wf_noso</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wf_so</span> <span class="o">=</span> <span class="n">wf_so</span>
 
