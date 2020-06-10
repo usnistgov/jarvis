@@ -83,14 +83,14 @@
 <code class="sig-name descname">write_lammps_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lammps_in</span><span class="o">=</span><span class="default_value">'init.mod'</span></em>, <em class="sig-param"><span class="n">lammps_in1</span><span class="o">=</span><span class="default_value">'potential.mod'</span></em>, <em class="sig-param"><span class="n">lammps_in2</span><span class="o">=</span><span class="default_value">'in.main'</span></em>, <em class="sig-param"><span class="n">lammps_trj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lammps_data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsInput.write_lammps_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsInput.write_lammps_in" title="Permalink to this definition">¶</a></dt>
 <dd><p>write lammps input file
 from ase with custom modifications
-LAMMPS input is devided into three parts
-Args:</p>
-<blockquote>
-<div><p>lammps_in: generally”init.mod”, with unit and conversion factor information
-lammps_in1: generally “potential.mod”, with force-field/potential style and element tyoe information
-lammps_in2: generally “in.elastic”, a generic main input file to be fed in LAMMPS usin lmp_*&lt;…,parameters[‘exec’]
-parameters: input parameters</p>
-</div></blockquote>
+LAMMPS input is devided into three parts</p>
+<dl>
+<dt>Args:</dt><dd><p>lammps_in: generally”init.mod”, with unit and conversion factor information</p>
+<p>lammps_in1: generally “potential.mod”, with force-field/potential style and element tyoe information</p>
+<p>lammps_in2: generally “in.elastic”, a generic main input file to be fed in LAMMPS usin lmp_*&lt;…,parameters[‘exec’]</p>
+<p>parameters: input parameters</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -104,18 +104,18 @@ parameters: input parameters</p>
 <code class="sig-prename descclassname">jarvis.io.lammps.outputs.</code><code class="sig-name descname">analyze_log</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log</span><span class="o">=</span><span class="default_value">'log.lammps'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/outputs.html#analyze_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.outputs.analyze_log" title="Permalink to this definition">¶</a></dt>
 <dd><p>Analyzes log.lammps file,
 Please note, the output format heavily depends on the input file
-A generic inpu is taken here
-Args:</p>
+A generic inpu is taken here</p>
+<p>Args:</p>
 <blockquote>
 <div><p>log: path to log.lammps file</p>
 </div></blockquote>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>en: energy/atom
-press: pressure
-toten: total energy
-cij: elastic constants</p>
-</dd>
-</dl>
+<p>Returns:</p>
+<blockquote>
+<div><p>en: energy/atom</p>
+<p>press: pressure</p>
+<p>toten: total energy</p>
+<p>cij: elastic constants</p>
+</div></blockquote>
 </dd></dl>
 
 </div>

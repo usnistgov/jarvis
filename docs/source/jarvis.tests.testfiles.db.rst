@@ -12,6 +12,14 @@ jarvis.tests.testfiles.db.test\_figshare module
    :undoc-members:
    :show-inheritance:
 
+jarvis.tests.testfiles.db.test\_restapi module
+----------------------------------------------
+
+.. automodule:: jarvis.tests.testfiles.db.test_restapi
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------

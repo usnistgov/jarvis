@@ -20,6 +20,14 @@ jarvis.db.jsonutils module
    :undoc-members:
    :show-inheritance:
 
+jarvis.db.restapi module
+------------------------
+
+.. automodule:: jarvis.db.restapi
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------

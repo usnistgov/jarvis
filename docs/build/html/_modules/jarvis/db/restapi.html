@@ -1,0 +1,358 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>jarvis.db.restapi &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jarvis.db.restapi</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">To access data in JARVIS-API, you do not need to request an account</span>
+<span class="sd">However, to upload your data, please request an account at https://jarvis.nist.gov/</span>
+<span class="sd">Then install MDCS-api-tools by:</span>
+
+<span class="sd">git clone https://github.com/knc6/MDCS-api-tools.git</span>
+<span class="sd">cd MDCS-api-tools</span>
+<span class="sd">python setup.py develop</span>
+
+<span class="sd">You&#39;ll require a schema ID and a user-name to go through examples below</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="n">Spacegroup3D</span>
+<span class="kn">from</span> <span class="nn">jarvis.db.figshare</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">glob</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">sys</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">mdcs</span>
+    <span class="kn">from</span> <span class="nn">mdcs</span> <span class="kn">import</span> <span class="n">curate</span><span class="p">,</span> <span class="n">explore</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please install MDCS&quot;</span><span class="p">)</span>
+    <span class="k">pass</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.vasp.outputs</span> <span class="kn">import</span> <span class="n">Vasprun</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">xml.etree.ElementTree</span> <span class="kn">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">SubElement</span><span class="p">,</span> <span class="n">Comment</span><span class="p">,</span> <span class="n">tostring</span><span class="p">,</span> <span class="n">ElementTree</span>
+
+<span class="k">try</span><span class="p">:</span>
+  <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;passwrd.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>  <span class="c1"># path to your passowrd file</span>
+  <span class="n">passd</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">except</span><span class="p">:</span>
+   <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Passowrd is not provided&#39;</span><span class="p">)</span>
+   <span class="k">pass</span>
+
+<span class="n">user</span> <span class="o">=</span> <span class="s2">&quot;abc&quot;</span>  <span class="c1"># your username</span>
+<span class="n">schema</span> <span class="o">=</span> <span class="s2">&quot;5a7f2a872887d500ab0c0d02&quot;</span>
+
+
+<div class="viewcode-block" id="data_json"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.restapi.data_json">[docs]</a><span class="k">def</span> <span class="nf">data_json</span><span class="p">(</span>
+    <span class="n">energy</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">typ</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">sgp</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">ref</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">func</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">elem</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">encut</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">kpoints</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">el_tens</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">KV</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">GV</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">m_eg</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">b_eg</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">op_eg</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">mbj_eg</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">en_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">realx_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">imagx_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">realy_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">imagy_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">realz_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">imagz_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">men_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">mrealx_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">mimagx_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">mrealy_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">mimagy_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">mrealz_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">mimagz_arr</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">struct</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">other</span><span class="o">=</span><span class="s2">&quot;na&quot;</span><span class="p">,</span>
+    <span class="n">curate_xml</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is an example of how to upload JARVIS data to the API. </span>
+<span class="sd">    It converts input data to XML based on a template schema which must be available in the JARVIS-API.</span>
+<span class="sd">    After the conversion, the XML could be uploaded to the API.</span>
+<span class="sd">    Any user with registered username and password can upload.</span>
+<span class="sd">    If they prefer to upload using their own schema, contact the developers.</span>
+<span class="sd">    See an example: https://jarvis.nist.gov/data?id=5df7f05ceaf3b300338bf83f</span>
+<span class="sd">    Args:</span>
+
+<span class="sd">         metadata with a calculation</span>
+<span class="sd">     </span>
+<span class="sd">         curate_xml: for debugging set it to False, and produce XML files</span>
+<span class="sd">   </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">top</span> <span class="o">=</span> <span class="n">Element</span><span class="p">(</span><span class="s2">&quot;JARVIS-DFT&quot;</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;energy-ev&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;formula&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;space-group&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">sgp</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;JVID&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;reference&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;calc_type&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;functional&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;elements&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;encut-ev&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;kpoints&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">kpoints</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;elastic_tensor-gpa&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">el_tens</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;kv-gpa&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">KV</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;gv-gpa&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">GV</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;scf_eg-ev&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">m_eg</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;brill_eg-ev&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">b_eg</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;optics_eg-ev&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">op_eg</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;mbj-eg_ev&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mbj_eg</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;opt_energy_arr-ev&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">en_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;realx_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">realx_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;imagx_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">imagx_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;realy_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">realy_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;imagy_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">imagy_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;realz_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">realz_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;imagz_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">imagz_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;mbj_energy_arr-ev&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">men_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;mbj_realx_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mrealx_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;mbj_imagx_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mimagx_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;mbj_realy_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mrealy_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;mbj_imagy_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mimagy_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;mbj_realz_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mrealz_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;mbj_imagz_arr&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">mimagz_arr</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">struct</span><span class="p">)</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">SubElement</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="s2">&quot;other&quot;</span><span class="p">)</span>
+    <span class="n">child</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;.xml&quot;</span><span class="p">)</span>
+    <span class="n">ElementTree</span><span class="p">(</span><span class="n">top</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">curate_xml</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+      <span class="n">curate</span><span class="p">(</span>
+        <span class="n">filename</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="s2">&quot;https://jarvis.nist.gov/&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">passd</span><span class="p">,</span> <span class="n">cert</span><span class="o">=</span><span class="kc">False</span>
+      <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_record"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.restapi.get_record">[docs]</a><span class="k">def</span> <span class="nf">get_record</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s2">&quot;JVASP-1002.xml&quot;</span><span class="p">):</span>
+   <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">   This is an example of how to get a particular jarvis-id document, say JVASP-1002.xml</span>
+
+<span class="sd">   Args:</span>
+
+<span class="sd">       file: name of the file</span>
+
+<span class="sd">   Returns:</span>
+
+<span class="sd">         data in json format</span>
+<span class="sd">   &quot;&quot;&quot;</span>
+
+   <span class="n">r</span> <span class="o">=</span> <span class="n">explore</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+        <span class="s2">&quot;https://jarvis.nist.gov/&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">passd</span><span class="p">,</span> <span class="n">cert</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span>
+   <span class="p">)</span>
+   <span class="k">return</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="delete_all"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.restapi.delete_all">[docs]</a><span class="k">def</span> <span class="nf">delete_all</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Caution, this deletes your documents</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">explore</span><span class="o">.</span><span class="n">select_all</span><span class="p">(</span>
+        <span class="s2">&quot;https://jarvis.nist.gov/&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">passd</span><span class="p">,</span> <span class="n">cert</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">r</span><span class="p">:</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="s2">&quot;_id&quot;</span><span class="p">]</span>
+        <span class="n">explore</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="s2">&quot;https://jarvis.nist.gov/&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">passd</span><span class="p">,</span> <span class="n">cert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="upload_sample_data"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.restapi.upload_sample_data">[docs]</a><span class="k">def</span> <span class="nf">upload_sample_data</span><span class="p">(</span><span class="n">curate_xml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate and upload XML files</span>
+<span class="sd">    Set curate_xml==True to upload all the XML documents</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="s1">&#39;dft_2d&#39;</span><span class="p">)</span>
+
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">filname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;jid&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;.xml&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filname</span><span class="p">):</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">energy</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;optb88vdw_total_energy&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;formation_energy_peratom&quot;</span><span class="p">])</span>
+            <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">])</span>
+            <span class="n">formula</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">composition</span><span class="o">.</span><span class="n">reduced_formula</span><span class="p">)</span>
+            <span class="n">sgp</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">space_group_symbol</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;jid&quot;</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">ref</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;OptB88vdW&quot;</span><span class="p">)</span>
+            <span class="n">elem</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">species</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">elements</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">species</span><span class="p">:</span>
+                <span class="n">elem</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="n">encut</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">])</span>
+            <span class="n">kpoints</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;kpoints_array&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;kpoints_array&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;kpoints_array&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="n">el_tens</span> <span class="o">=</span> <span class="s1">&#39;na&#39;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">el_tens</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;elastic_tensor&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">())))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">KV</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;bulk_modulus_kv&quot;</span><span class="p">])</span>
+            <span class="n">GV</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;shear_modulus_gv&quot;</span><span class="p">])</span>
+            <span class="n">op_eg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;optb88vdw_bandgap&quot;</span><span class="p">])</span>
+            <span class="n">mbj_eg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;mbj_bandgap&quot;</span><span class="p">])</span>
+            <span class="n">realx_arr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;epsx&quot;</span><span class="p">])</span>
+            <span class="n">mrealx_arr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;mepsx&quot;</span><span class="p">])</span>
+            <span class="n">realy_arr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;epsy&quot;</span><span class="p">])</span>
+            <span class="n">mrealy_arr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;mepsy&quot;</span><span class="p">])</span>
+            <span class="n">realz_arr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;epsz&quot;</span><span class="p">])</span>
+            <span class="n">mrealz_arr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;mepsz&quot;</span><span class="p">])</span>
+            <span class="n">typ</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;2D&quot;</span><span class="p">)</span> <span class="c1">#3D</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="s2">&quot;Citation: 1) DOI:10.1038/s41598-017-05402-0, 2) DOI: 10.1038/sdata.2018.82, 3) arXiv:1804.01033v2 &quot;</span>
+            <span class="p">)</span>
+            <span class="n">struct</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
+            <span class="n">data_json</span><span class="p">(</span>
+                <span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">,</span>
+                <span class="n">energy</span><span class="o">=</span><span class="n">energy</span><span class="p">,</span>
+                <span class="n">typ</span><span class="o">=</span><span class="n">typ</span><span class="p">,</span>
+                <span class="n">formula</span><span class="o">=</span><span class="n">formula</span><span class="p">,</span>
+                <span class="n">sgp</span><span class="o">=</span><span class="n">sgp</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span>
+                <span class="n">elem</span><span class="o">=</span><span class="n">elem</span><span class="p">,</span>
+                <span class="n">encut</span><span class="o">=</span><span class="n">encut</span><span class="p">,</span>
+                <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+                <span class="n">el_tens</span><span class="o">=</span><span class="n">el_tens</span><span class="p">,</span>
+                <span class="n">KV</span><span class="o">=</span><span class="n">KV</span><span class="p">,</span>
+                <span class="n">GV</span><span class="o">=</span><span class="n">GV</span><span class="p">,</span>
+                <span class="n">op_eg</span><span class="o">=</span><span class="n">op_eg</span><span class="p">,</span>
+                <span class="n">mbj_eg</span><span class="o">=</span><span class="n">mbj_eg</span><span class="p">,</span>
+                <span class="n">realx_arr</span><span class="o">=</span><span class="n">realx_arr</span><span class="p">,</span>
+                <span class="n">mrealx_arr</span><span class="o">=</span><span class="n">mrealx_arr</span><span class="p">,</span>
+                <span class="n">realy_arr</span><span class="o">=</span><span class="n">realy_arr</span><span class="p">,</span>
+                <span class="n">mrealy_arr</span><span class="o">=</span><span class="n">mrealy_arr</span><span class="p">,</span>
+                <span class="n">realz_arr</span><span class="o">=</span><span class="n">realz_arr</span><span class="p">,</span>
+                <span class="n">mrealz_arr</span><span class="o">=</span><span class="n">mrealz_arr</span><span class="p">,</span>
+                <span class="n">struct</span><span class="o">=</span><span class="n">struct</span><span class="p">,</span>
+                <span class="n">curate_xml</span><span class="o">=</span><span class="n">curate_xml</span>
+            <span class="p">)</span></div>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">     upload_sample_data(curate_xml = False)</span>
+<span class="sd">     #x=get_record(file=&#39;JVASP-48137.xml&#39;)[0][&#39;content&#39;][&#39;JARVIS-DFT&#39;][&#39;structure&#39;]</span>
+<span class="sd">     #print (x)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>
