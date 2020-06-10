@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    jarvis.ai.descriptors
+   jarvis.ai.pkgs
 
 Module contents
 ---------------

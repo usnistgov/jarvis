@@ -6,7 +6,7 @@
 jarvis-tools
 ========================================
 
-**jarvis-tools: an open-source software package for data-driven materials design**
+**jarvis-tools: an open-source software package for data-driven atomistic materials design**
 
 Source on Github: https://github.com/usnistgov/jarvis
 
