@@ -62,12 +62,16 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Intialize a Zur Super Lattice Generator for a specific film and</span>
 <span class="sd">            substrate</span>
+<span class="sd">            </span>
 <span class="sd">        Args:</span>
 <span class="sd">            max_area_ratio_tol(float): Max tolerance on ratio of</span>
 <span class="sd">                super-lattices to consider equal</span>
+<span class="sd">                </span>
 <span class="sd">            max_area(float): max super lattice area to generate in search</span>
+<span class="sd">            </span>
 <span class="sd">            max_length_tol: maximum length tolerance in checking if two</span>
 <span class="sd">                vectors are of nearly the same length</span>
+<span class="sd">                </span>
 <span class="sd">            max_angle_tol: maximum angle tolerance in checking of two sets</span>
 <span class="sd">                of vectors have nearly the same angle between them</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -80,9 +84,12 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Determine if two sets of vectors are the same within length and angle</span>
 <span class="sd">        tolerances</span>
+<span class="sd">        </span>
 <span class="sd">        Args:</span>
 <span class="sd">            vec_set1(array[array]): an array of two vectors</span>
+<span class="sd">            </span>
 <span class="sd">            vec_set2(array[array]): second array of two vectors</span>
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">rel_strain</span><span class="p">(</span><span class="n">vec_set1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vec_set2</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length_tol</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -99,10 +106,15 @@
 <span class="sd">        area of the unit cell area for the film and substrate. The</span>
 <span class="sd">        transformation sets map the film and substrate unit cells to super</span>
 <span class="sd">        lattices with a maximum area</span>
+<span class="sd">        </span>
 <span class="sd">        Args:</span>
+<span class="sd">        </span>
 <span class="sd">            film_area(int): the unit cell area for the film</span>
+<span class="sd">            </span>
 <span class="sd">            substrate_area(int): the unit cell area for the substrate</span>
+<span class="sd">            </span>
 <span class="sd">        Returns:</span>
+<span class="sd">        </span>
 <span class="sd">            transformation_sets: a set of transformation_sets defined as:</span>
 <span class="sd">                1.) the transformation matricies for the film to create a</span>
 <span class="sd">                super lattice of area i*film area</span>
@@ -129,14 +141,18 @@
 <span class="sd">        Applies the transformation_sets to the film and substrate vectors</span>
 <span class="sd">        to generate super-lattices and checks if they matches.</span>
 <span class="sd">        Returns all matching vectors sets.</span>
+<span class="sd">        </span>
 <span class="sd">        Args:</span>
+<span class="sd">        </span>
 <span class="sd">            transformation_sets(array): an array of transformation sets:</span>
 <span class="sd">                each transformation set is an array with the (i,j)</span>
 <span class="sd">                indicating the area multipes of the film and subtrate it</span>
 <span class="sd">                corresponds to, an array with all possible transformations</span>
 <span class="sd">                for the film area multiple i and another array for the</span>
 <span class="sd">                substrate area multiple j.</span>
+<span class="sd">                </span>
 <span class="sd">            film_vectors(array): film vectors to generate super lattices</span>
+<span class="sd">            </span>
 <span class="sd">            substrate_vectors(array): substrate vectors to generate super</span>
 <span class="sd">                lattices</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -206,8 +222,11 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns dict which contains ZSL match</span>
+<span class="sd">        </span>
 <span class="sd">        Args:</span>
+<span class="sd">        </span>
 <span class="sd">            film_miller(array)</span>
+<span class="sd">            </span>
 <span class="sd">            substrate_miller(array)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
@@ -229,12 +248,16 @@
 <span class="sd">    in Cassels:</span>
 <span class="sd">    Cassels, John William Scott. An introduction to the geometry of</span>
 <span class="sd">    numbers. Springer Science &amp; Business Media, 2012.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
+<span class="sd">    </span>
 <span class="sd">        area_multiple(int): integer multiple of unit cell area for super</span>
 <span class="sd">        lattice area</span>
+<span class="sd">        </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        matrix_list: transformation matricies to covert unit vectors to</span>
 <span class="sd">        super lattice vectors</span>
+<span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span>
         <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">area_multiple</span> <span class="o">/</span> <span class="n">i</span><span class="p">)))</span>
@@ -253,8 +276,10 @@
 <div class="viewcode-block" id="rel_angle"><a class="viewcode-back" href="../../../../jarvis.analysis.interface.html#jarvis.analysis.interface.zur.rel_angle">[docs]</a><span class="k">def</span> <span class="nf">rel_angle</span><span class="p">(</span><span class="n">vec_set1</span><span class="p">,</span> <span class="n">vec_set2</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the relative angle between two vector sets</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        vec_set1(array[array]): an array of two vectors</span>
+<span class="sd">        </span>
 <span class="sd">        vec_set2(array[array]): second array of two vectors</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">vec_angle</span><span class="p">(</span><span class="n">vec_set2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vec_set2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">vec_angle</span><span class="p">(</span><span class="n">vec_set1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">vec_set1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span></div>
@@ -579,10 +604,10 @@
    
     <span class="n">substrate_top_z</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">substrate</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">)[:,</span> <span class="mi">2</span><span class="p">])</span>
     <span class="n">substrate_bot_z</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">substrate</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">)[:,</span> <span class="mi">2</span><span class="p">])</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;substrate_top_z&#39;</span><span class="p">,</span><span class="n">substrate_top_z</span><span class="o">-</span> <span class="n">substrate_bot_z</span><span class="p">)</span>
+    <span class="c1">#print (&#39;substrate_top_z&#39;,substrate_top_z- substrate_bot_z)</span>
     <span class="n">film_bottom</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">film</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">)[:,</span> <span class="mi">2</span><span class="p">])</span>
     <span class="n">film_top</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">film</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">)[:,</span> <span class="mi">2</span><span class="p">])</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;film_bottom&#39;</span><span class="p">,</span><span class="n">film_top</span><span class="o">-</span><span class="n">film_bottom</span><span class="p">)</span>
+    <span class="c1">#print (&#39;film_bottom&#39;,film_top-film_bottom)</span>
     <span class="c1"># shift normal to the surface by &#39;seperation&#39;</span>
     <span class="n">sub_z</span> <span class="o">=</span> <span class="n">substrate</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
     <span class="n">origin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">substrate_top_z</span><span class="p">])</span>

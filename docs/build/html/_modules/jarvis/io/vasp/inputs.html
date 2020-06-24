@@ -48,13 +48,17 @@
 <span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">generate_kgrid</span><span class="p">,</span> <span class="n">Kpoints3D</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.utils</span> <span class="kn">import</span> <span class="n">get_counts</span>
 
 
 <div class="viewcode-block" id="Poscar"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Poscar">[docs]</a><span class="k">class</span> <span class="nc">Poscar</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class defining Poscar object </span>
+
 <span class="sd">    Args:</span>
+<span class="sd">    </span>
 <span class="sd">        atoms : Atoms object</span>
+<span class="sd">        </span>
 <span class="sd">        comment : Header of Poscar file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -71,6 +75,10 @@
             <span class="k">return</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="Poscar.write_file"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Poscar.write_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the Poscar object to a file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
         <span class="n">header</span> <span class="o">=</span> <span class="p">(</span>
             <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
@@ -96,23 +104,24 @@
         <span class="p">)</span>
         <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
         <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">frac_coords</span>
-        <span class="n">coords_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
-        <span class="n">elements_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
-        <span class="n">props_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">props</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
+        <span class="n">coords_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="c1">#[order]</span>
+        <span class="n">elements_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span><span class="c1">#[order]</span>
+        <span class="n">props_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">props</span><span class="p">)</span><span class="c1">#[order]</span>
         <span class="n">check_selective_dynamics</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">get_counts</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;T&quot;</span> <span class="ow">in</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">props</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
             <span class="n">middle</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Selective dynamics</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="o">+</span> <span class="s2">&quot;Direct</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">middle</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">direct</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="n">rest</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -127,6 +136,10 @@
 
 <div class="viewcode-block" id="Poscar.from_string"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Poscar.from_string">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read Poscar from strings, useful in reading files/streams</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="n">text</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
         <span class="n">comment</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -191,19 +204,20 @@
         <span class="n">elements_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
         <span class="n">props_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">props</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
         <span class="n">check_selective_dynamics</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">get_counts</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;T&quot;</span> <span class="ow">in</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">props</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
             <span class="n">middle</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Selective dynamics</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="o">+</span> <span class="s2">&quot;Direct</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">middle</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">direct</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="n">rest</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -216,7 +230,7 @@
 
 <div class="viewcode-block" id="Incar"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar">[docs]</a><span class="k">class</span> <span class="nc">Incar</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    VASP INCAR files as python dictionary</span>
+<span class="sd">    VASP INCAR files as python dictionary of keys and values</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{}):</span>
@@ -224,11 +238,19 @@
 
 <div class="viewcode-block" id="Incar.from_file"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;INCAR&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read INCAR file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="Incar.update"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;selftags1=&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Provide the new tags as a dictionary to update Incar object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c1">#print(&quot;selftags1=&quot;, self._tags)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span> <span class="o">!=</span> <span class="p">{}:</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>  <span class="c1"># .strip(&#39; &#39;)</span>
@@ -238,6 +260,10 @@
         <span class="k">return</span> <span class="n">Incar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Incar.get"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;POTIM&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the value of a key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -246,10 +272,13 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Incar.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert into dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span></div>
 
 <div class="viewcode-block" id="Incar.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.from_dict">[docs]</a>    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{}):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Incar</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Incar.from_string"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.from_string">[docs]</a>    <span class="nd">@staticmethod</span>
@@ -267,6 +296,10 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Incar.write_file"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.write_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write Incar to a file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -285,6 +318,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
 
 <div class="viewcode-block" id="IndividualPotcarData.from_string"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.IndividualPotcarData.from_string">[docs]</a>    <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Some of the contents in the POTCAR</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="n">text</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
         <span class="n">individual_data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="n">individual_data</span><span class="p">[</span><span class="s2">&quot;header1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -398,7 +435,11 @@
             <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;K-point scheme is not implemented&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Kpoints.get_mesh_kp"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Kpoints.get_mesh_kp">[docs]</a>    <span class="k">def</span> <span class="nf">get_mesh_kp</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;lines&quot;</span><span class="p">,</span> <span class="n">lines</span><span class="p">)</span>
+        <span class="c1">#print(&quot;lines&quot;, lines)</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read Kpoints as grid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="n">grid</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
         <span class="c1"># print (grid)</span>
         <span class="n">kpts</span> <span class="o">=</span> <span class="n">generate_kgrid</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
@@ -406,6 +447,10 @@
         <span class="k">return</span> <span class="n">kpoints</span></div>
 
 <div class="viewcode-block" id="Kpoints.get_ibz_kp"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Kpoints.get_ibz_kp">[docs]</a>    <span class="k">def</span> <span class="nf">get_ibz_kp</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read the Kpoints in the line-mode</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="n">kp_labels</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">all_kp</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">kp_labels_points</span> <span class="o">=</span> <span class="p">[]</span>

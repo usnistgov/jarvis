@@ -40,7 +40,6 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This module provides classes to specify atomic structure</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="c1"># from jarvis.analysis.structure.spacegroup import Spacegroup3D</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.composition</span> <span class="kn">import</span> <span class="n">Composition</span>
@@ -51,8 +50,7 @@
 <span class="kn">import</span> <span class="nn">pprint</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="kn">import</span> <span class="n">norm</span><span class="p">,</span> <span class="n">solve</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">switch_backend</span><span class="p">(</span><span class="s2">&quot;agg&quot;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.utils</span> <span class="kn">import</span> <span class="n">get_counts</span>
 <span class="n">amu_gm</span> <span class="o">=</span> <span class="mf">1.66054e-24</span>
 <span class="n">ang_cm</span> <span class="o">=</span> <span class="mf">1e-8</span>
 
@@ -69,7 +67,9 @@
         <span class="n">show_props</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        </span>
 <span class="sd">        Create atomic structure with lattice, coordinates, atom type and other information</span>
+<span class="sd">        </span>
 <span class="sd">        &gt;&gt;&gt; box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]</span>
 <span class="sd">        &gt;&gt;&gt; coords = [[0, 0, 0], [0.25, 0.2, 0.25]]</span>
 <span class="sd">        &gt;&gt;&gt; elements = [&quot;Si&quot;, &quot;Si&quot;]</span>
@@ -98,6 +98,7 @@
 <span class="sd">        &#39;C2/m (12)&#39;</span>
 <span class="sd">        &gt;&gt;&gt; Si.pymatgen_converter()!={}</span>
 <span class="sd">        True</span>
+<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">lattice_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lattice_mat</span><span class="p">)</span>
@@ -124,9 +125,13 @@
 <span class="sd">            Check if the surface structure is polar</span>
 <span class="sd">            by comparing atom types at top and bottom.</span>
 <span class="sd">            Applicable for sufcae with vaccums only.</span>
+<span class="sd">            </span>
 <span class="sd">            Args:</span>
+<span class="sd">            </span>
 <span class="sd">                 file:atoms object (surface with vacuum)</span>
+<span class="sd">                 </span>
 <span class="sd">            Returns:</span>
+<span class="sd">            </span>
 <span class="sd">                   polar:True/False   </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">up</span> <span class="o">=</span> <span class="mi">0</span>
@@ -202,6 +207,17 @@
             <span class="n">props</span><span class="o">=</span><span class="n">new_props</span><span class="p">,</span>
             <span class="n">cartesian</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_primitive_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="n">Spacegroup3D</span>
+        <span class="k">return</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">primitive_atoms</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">raw_distance_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
 
 <div class="viewcode-block" id="Atoms.center"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.atoms.Atoms.center">[docs]</a>    <span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">vacuum</span><span class="o">=</span><span class="mf">18.0</span><span class="p">,</span> <span class="n">about</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -278,7 +294,7 @@
         <span class="n">comp</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">:</span>
             <span class="n">comp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">Composition</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Composition</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">(</span><span class="n">comp</span><span class="p">))</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">density</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -434,19 +450,21 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adapted from Pymatgen</span>
 <span class="sd">        Makes a supercell. Allowing to have sites outside the unit cell</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            scaling_matrix: A scaling matrix for transforming the lattice</span>
-<span class="sd">                vectors. Has to be all integers. Several options are possible:</span>
-<span class="sd">                a. A full 3x3 scaling matrix defining the linear combination</span>
-<span class="sd">                   the old lattice vectors. E.g., [[2,1,0],[0,3,0],[0,0,</span>
-<span class="sd">                   1]] generates a new structure with lattice vectors a&#39; =</span>
-<span class="sd">                   2a + b, b&#39; = 3b, c&#39; = c where a, b, and c are the lattice</span>
-<span class="sd">                   vectors of the original structure.</span>
-<span class="sd">                b. An sequence of three scaling factors. E.g., [2, 1, 1]</span>
-<span class="sd">                   specifies that the supercell should have dimensions 2a x b x</span>
-<span class="sd">                   c.</span>
-<span class="sd">                c. A number, which simply scales all lattice vectors by the</span>
-<span class="sd">                   same factor.</span>
+<span class="sd">            vectors. Has to be all integers. Several options are possible:</span>
+<span class="sd">            a. A full 3x3 scaling matrix defining the linear combination</span>
+<span class="sd">             the old lattice vectors. E.g., [[2,1,0],[0,3,0],[0,0,</span>
+<span class="sd">             1]] generates a new structure with lattice vectors a&#39; =</span>
+<span class="sd">             2a + b, b&#39; = 3b, c&#39; = c where a, b, and c are the lattice</span>
+<span class="sd">             vectors of the original structure.</span>
+<span class="sd">            b. An sequence of three scaling factors. E.g., [2, 1, 1]</span>
+<span class="sd">             specifies that the supercell should have dimensions 2a x b x</span>
+<span class="sd">             c.</span>
+<span class="sd">            c. A number, which simply scales all lattice vectors by the</span>
+<span class="sd">             same factor.</span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            Supercell structure. Note that a Structure is always returned,</span>
 <span class="sd">            even if the input structure is a subclass of Structure. This is</span>
@@ -534,8 +552,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">system</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">composition</span><span class="o">.</span><span class="n">reduced_formula</span><span class="p">)</span>
         <span class="n">header</span> <span class="o">=</span> <span class="p">(</span>
+
             <span class="nb">str</span><span class="p">(</span><span class="n">system</span><span class="p">)</span>
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">1.0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
             <span class="o">+</span> <span class="s2">&quot; &quot;</span>
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
@@ -557,24 +577,28 @@
         <span class="p">)</span>
         <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
         <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac_coords</span>
+
         <span class="n">coords_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
         <span class="n">elements_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
         <span class="n">props_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">get_counts</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span>
+
         <span class="n">middle</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">direct</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="n">rest</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="c1"># print (&#39;repr&#39;,self.frac_coords, self.frac_coords.shape)</span>
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coords_ordered</span><span class="p">):</span>
+
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_props</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">rest</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">rest</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">props_ordered</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">rest</span> <span class="o">=</span> <span class="n">rest</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
         <span class="n">result</span> <span class="o">=</span> <span class="n">header</span> <span class="o">+</span> <span class="n">middle</span> <span class="o">+</span> <span class="n">rest</span>
 
         <span class="k">return</span> <span class="n">result</span></div>
@@ -599,8 +623,10 @@
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">system</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">composition</span><span class="o">.</span><span class="n">reduced_formula</span><span class="p">)</span>
         <span class="n">header</span> <span class="o">=</span> <span class="p">(</span>
+
             <span class="nb">str</span><span class="p">(</span><span class="n">system</span><span class="p">)</span>
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">1.0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
             <span class="o">+</span> <span class="s2">&quot; &quot;</span>
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
@@ -622,28 +648,28 @@
         <span class="p">)</span>
         <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
         <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frac_coords</span>
-        <span class="n">coords_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
-        <span class="n">elements_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
-        <span class="n">props_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
+        <span class="n">coords_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="c1">#[order]</span>
+        <span class="n">elements_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span><span class="c1">#[order]</span>
+        <span class="n">props_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">)</span><span class="c1">#[order]</span>
         <span class="n">check_selective_dynamics</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">get_counts</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;T&quot;</span> <span class="ow">in</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">props</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
             <span class="n">middle</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Selective dynamics</span><span class="se">\n</span><span class="s2">&quot;</span>
                 <span class="o">+</span> <span class="s2">&quot;Direct</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">middle</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+                <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Counter</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+                <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">counts</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
                 <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">direct</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="n">rest</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="c1"># print (&#39;props_ordered&#39;,props_ordered)</span>
-        <span class="c1"># print (&#39;repr&#39;,self.frac_coords, self.frac_coords.shape)</span>
+
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coords_ordered</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_props</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">rest</span> <span class="o">=</span> <span class="p">(</span>
@@ -651,8 +677,10 @@
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">rest</span> <span class="o">=</span> <span class="n">rest</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
         <span class="n">result</span> <span class="o">=</span> <span class="n">header</span> <span class="o">+</span> <span class="n">middle</span> <span class="o">+</span> <span class="n">rest</span>
         <span class="k">return</span> <span class="n">result</span></div>
+
 
 
 
@@ -813,13 +841,19 @@
             <span class="n">lattice_mat</span><span class="o">=</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">frac</span><span class="p">,</span> <span class="n">cartesian</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">with_vacuum_atoms</span></div></div>
+
+
+
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">if __name__ == &quot;__main__&quot;:</span>
 <span class="sd">    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]</span>
 <span class="sd">    coords = [[0, 0, 0], [0.25, 0.25, 0.25]]</span>
 <span class="sd">    elements = [&quot;Si&quot;, &quot;Si&quot;]</span>
 <span class="sd">    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)</span>
-<span class="sd">    print (Si.get_string())</span>
+<span class="sd">    #print (Si.get_string())</span>
+<span class="sd">    print (Si.get_primitive_atoms)</span>
+<span class="sd">    print (Si.raw_distance_matrix)</span>
 <span class="sd">    import sys</span>
 <span class="sd">    sys.exit()</span>
 <span class="sd">    #print (Si.props)</span>

@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>jarvis.ai.pkgs.lgbm.classification &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jarvis.ai.pkgs.lgbm.classification</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">jarvis.ai.pkgs.sklearn.classification</span> <span class="kn">import</span> <span class="n">classification</span> <span class="k">as</span> <span class="n">sk_classification</span>
+<span class="kn">from</span> <span class="nn">lightgbm</span> <span class="kn">import</span> <span class="n">LGBMClassifier</span>
+<span class="kn">from</span> <span class="nn">jarvis.ai.pkgs.utils</span> <span class="kn">import</span> <span class="n">get_ml_data</span><span class="p">,</span> <span class="n">binary_class_dat</span>
+
+
+<div class="viewcode-block" id="classification"><a class="viewcode-back" href="../../../../../jarvis.ai.pkgs.lgbm.html#jarvis.ai.pkgs.lgbm.classification.classification">[docs]</a><span class="k">def</span> <span class="nf">classification</span><span class="p">(</span>
+    <span class="n">X</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">Y</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">preprocess</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">models</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;my_model&quot;</span><span class="p">,</span>
+    <span class="n">save_model</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">sk_classification</span><span class="p">(</span>
+        <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
+        <span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span>
+        <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span>
+        <span class="n">preprocess</span><span class="o">=</span><span class="n">preprocess</span><span class="p">,</span>
+        <span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="n">save_model</span><span class="o">=</span><span class="n">save_model</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">info</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="nb">property</span> <span class="o">=</span> <span class="s2">&quot;exfoliation_energy&quot;</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mi">100</span>
+    <span class="c1">#property = &#39;optb88vdw_bandgap&#39;</span>
+    <span class="c1">#tol=0.05</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">jid</span> <span class="o">=</span> <span class="n">get_ml_data</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;cfid_3d&quot;</span><span class="p">,</span> <span class="n">ml_property</span><span class="o">=</span><span class="nb">property</span><span class="p">)</span>
+    <span class="c1">#X_class, Y_class = binary_class_dat(X=X, Y=Y, tol=tol)</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;lennnn&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+    <span class="c1">#models = [LGBMClassifier(n_estimators=1000,max_depth=50,num_leaves=100)]</span>
+    <span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">LGBMClassifier</span><span class="p">()]</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">classification</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">models</span><span class="o">=</span><span class="n">models</span><span class="p">,</span> <span class="n">preprocess</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">save_model</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;LGBMClassifier&#39;</span><span class="p">][</span><span class="s1">&#39;roc_auc&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

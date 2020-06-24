@@ -95,6 +95,7 @@ Example function
 >>> dft_3d = data(dataset='dft_3d')
 >>> print (len(dft_3d))
 36099
+>>> from jarvis.db.restapi import data_json, upload_sample_data
 
 References
 -----------------
