@@ -6,21 +6,21 @@
 .. image:: https://ci.appveyor.com/api/projects/status/d8na8vyfm7ulya9p/branch/master?svg=true
        :target: https://ci.appveyor.com/project/knc6/jarvis-63tl9      
 .. image:: https://readthedocs.org/projects/jarvis-tools/badge/?version=latest
-       :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest
-.. image:: https://api.codacy.com/project/badge/Grade/be8fa78b1c0a49c280415ce061163e77
-       :target: https://www.codacy.com/app/knc6/jarvisutm_source=github.com&amp;utm_medium=referral&amp;utm_content=usnistgov/jarvis&amp;utm_campaign=Badge_Grade
+       :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest 
+.. image:: https://api.codacy.com/project/badge/Grade/be8fa78b1c0a49c280415ce061163e77 
+       :target: https://www.codacy.com/app/knc6/jarvisutm_source=github.com&amp;utm_medium=referral&amp;utm_content=usnistgov/jarvis&amp;utm_campaign=Badge_Grade |
+.. image:: https://codecov.io/gh/usnistgov/jarvis/branch/master/graph/badge.svg
+       :target: https://codecov.io/gh/usnistgov/jarvis        
 .. image::  https://img.shields.io/pypi/dm/jarvis-tools.svg      
-        :target: https://img.shields.io/pypi/dm/jarvis-tools.svg
+        :target: https://img.shields.io/pypi/dm/jarvis-tools.svg 
 .. image:: https://pepy.tech/badge/jarvis-tools
-        :target: https://pepy.tech/badge/jarvis-tools
+        :target: https://pepy.tech/badge/jarvis-tools  
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3903515.svg
         :target: https://doi.org/10.5281/zenodo.3903515  
 .. image:: https://img.shields.io/github/v/tag/usnistgov/jarvis
         :target: https://github.com/usnistgov/jarvis
 .. image:: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis
-        :target: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis
-.. image:: https://codecov.io/gh/usnistgov/jarvis/branch/master/graph/badge.svg
-        :target: https://codecov.io/gh/usnistgov/jarvis      
+        :target: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis    
 .. image:: https://img.shields.io/github/repo-size/usnistgov/jarvis   
         :target: https://github.com/usnistgov/jarvis
 .. image:: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fjarvisnist
@@ -136,13 +136,15 @@ References
 
 External links
 -----------------------------------------
+      https://figshare.com/authors/Kamal_Choudhary/4445539
+         
       https://pypi.org/project/jarvis-tools
       
       https://jarvis-tools.readthedocs.io/en/latest/
       
       https://www.slideshare.net/KAMALCHOUDHARY4
 
-      https://figshare.com/authors/Kamal_Choudhary/4445539
+   
 
 
 Correspondence
