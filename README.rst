@@ -28,7 +28,7 @@
         
 ========================================================================================
 
-JARVIS-tools: an open-source software package for data-driven atomistic materials design
+JARVIS-Tools: an open-source software package for data-driven atomistic materials design
 =========================================================================================
 
 .. image:: https://www.ctcms.nist.gov/~knc6/jlogo.png
