@@ -56,8 +56,11 @@
     <span class="sd">&quot;&quot;&quot;Check type and shape of np.ndarray</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">    </span>
 <span class="sd">      x: array to check</span>
+<span class="sd">      </span>
 <span class="sd">      type_: the type of the array (int, float), None to not check</span>
+<span class="sd">      </span>
 <span class="sd">      shape: the shape of the array, None to not check, -1 to ignore a</span>
 <span class="sd">        dimension</span>
 
@@ -84,9 +87,11 @@
 <span class="sd">    This could be extended to any dimension</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">    </span>
 <span class="sd">      dims: sequence of ints of length 3</span>
 
 <span class="sd">    Returns:</span>
+<span class="sd">    </span>
 <span class="sd">      an array of shape (np.prod(dims), 3) with each index having a</span>
 <span class="sd">      different arrangement of arange.</span>
 
@@ -146,9 +151,13 @@
     <span class="sd">&quot;&quot;&quot;Calcuate a dictionary of structure data</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">    </span>
 <span class="sd">      coords: the coordinates for each element</span>
+<span class="sd">      </span>
 <span class="sd">      box: the lattic matrix</span>
+<span class="sd">      </span>
 <span class="sd">      all_symbs: the elements</span>
+<span class="sd">      </span>
 <span class="sd">      c_size: the c size</span>
 
 <span class="sd">    Returns:</span>
@@ -304,13 +313,21 @@
 <div class="viewcode-block" id="NeighborsAnalysis.get_dist_cutoffs"><a class="viewcode-back" href="../../../../jarvis.analysis.structure.html#jarvis.analysis.structure.neighbors.NeighborsAnalysis.get_dist_cutoffs">[docs]</a>    <span class="k">def</span> <span class="nf">get_dist_cutoffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_cut</span><span class="o">=</span><span class="mf">5.0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper function to get dufferent type of distance cut-offs</span>
+<span class="sd">        </span>
 <span class="sd">        Args:</span>
+<span class="sd">        </span>
 <span class="sd">            s: Structure object</span>
+<span class="sd">            </span>
 <span class="sd">        Returns:</span>
+<span class="sd">        </span>
 <span class="sd">               rcut: max-cutoff to ensure all the element-combinations are included, used in calculating angluar distribution upto first neighbor</span>
+<span class="sd">               </span>
 <span class="sd">               rcut1: decide first cut-off based on total RDF and a buffer (previously used in dihedrals, but not used now in the code)</span>
+<span class="sd">               </span>
 <span class="sd">               rcut2: second neighbor cut-off</span>
+<span class="sd">               </span>
 <span class="sd">               rcut_dihed: specialized cut-off for dihedrals to avaoid large bonds such as N-N, uses average bond-distance and standard deviations</span>
+<span class="sd">               </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rdf</span><span class="p">()</span>
@@ -343,15 +360,25 @@
 <div class="viewcode-block" id="NeighborsAnalysis.ang_dist"><a class="viewcode-back" href="../../../../jarvis.analysis.structure.html#jarvis.analysis.structure.neighbors.NeighborsAnalysis.ang_dist">[docs]</a>    <span class="k">def</span> <span class="nf">ang_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nbor_info</span><span class="o">=</span><span class="p">{},</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get  angular distribution function upto first neighbor</span>
+<span class="sd">        </span>
 <span class="sd">        Args:</span>
-<span class="sd">        struct_info: struct information</span>
-<span class="sd">        max_n: maximum number of neigbors</span>
-<span class="sd">        c_size: max. cell size</span>
-<span class="sd">        plot: whether to plot distributions</span>
-<span class="sd">        max_cut: max. bond cut-off for angular distribution</span>
+<span class="sd">        </span>
+<span class="sd">            struct_info: struct information</span>
+<span class="sd">            </span>
+<span class="sd">            max_n: maximum number of neigbors</span>
+<span class="sd">            </span>
+<span class="sd">            c_size: max. cell size</span>
+<span class="sd">            </span>
+<span class="sd">            plot: whether to plot distributions</span>
+<span class="sd">            </span>
+<span class="sd">            max_cut: max. bond cut-off for angular distribution</span>
+<span class="sd">            </span>
 <span class="sd">        Retruns:</span>
-<span class="sd">         ang_hist1: Angular distribution upto first cut-off</span>
-<span class="sd">         ang_bins1: angle bins</span>
+<span class="sd">        </span>
+<span class="sd">            ang_hist1: Angular distribution upto first cut-off</span>
+<span class="sd">            </span>
+<span class="sd">            ang_bins1: angle bins</span>
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># rcut1,rcut2=self.get_dist_cutoffs()</span>

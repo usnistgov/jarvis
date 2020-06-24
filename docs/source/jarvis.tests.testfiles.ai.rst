@@ -12,6 +12,14 @@ jarvis.tests.testfiles.ai.test\_desc module
    :undoc-members:
    :show-inheritance:
 
+jarvis.tests.testfiles.ai.test\_pkgs module
+-------------------------------------------
+
+.. automodule:: jarvis.tests.testfiles.ai.test_pkgs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------

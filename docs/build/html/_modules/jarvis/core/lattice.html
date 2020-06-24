@@ -50,10 +50,15 @@
 <span class="sd">    Returns the value with its absolute value capped at max_abs_val.</span>
 <span class="sd">    Particularly useful in passing values to trignometric functions where</span>
 <span class="sd">    numerical errors may result in an argument &gt; 1 being passed in.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
+<span class="sd">    </span>
 <span class="sd">        val (float): Input value.</span>
+<span class="sd">        </span>
 <span class="sd">        max_abs_val (float): The maximum absolute value for val. Defaults to 1.</span>
+<span class="sd">        </span>
 <span class="sd">    Returns:</span>
+<span class="sd">    </span>
 <span class="sd">        val if abs(val) &lt; 1 else sign of val * max_abs_val.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">max_abs_val</span><span class="p">),</span> <span class="o">-</span><span class="n">max_abs_val</span><span class="p">)</span></div>
@@ -350,10 +355,13 @@
 <span class="sd">        possible, with &quot;good&quot; defined by orthongonality of the lattice vectors.</span>
 <span class="sd">        This basis is used for all the periodic boundary condition calculations.</span>
 <span class="sd">        Adapted from pymatgen</span>
+<span class="sd">        </span>
 <span class="sd">        Args:</span>
-<span class="sd">            delta (float): Reduction parameter. Default of 0.75 is usually</span>
-<span class="sd">                fine.</span>
+<span class="sd">        </span>
+<span class="sd">            delta (float): Reduction parameter. Default of 0.75 is usually fine.</span>
+<span class="sd">            </span>
 <span class="sd">        Returns:</span>
+<span class="sd">        </span>
 <span class="sd">            Reduced lattice matrix, mapping to get to that lattice.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Transpose the lattice matrix first so that basis vectors are columns.</span>
@@ -427,8 +435,14 @@
 
 <div class="viewcode-block" id="Lattice.get_lll_reduced_lattice"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.lattice.Lattice.get_lll_reduced_lattice">[docs]</a>    <span class="k">def</span> <span class="nf">get_lll_reduced_lattice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.75</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        :param delta: Delta parameter.</span>
-<span class="sd">        :return: LLL reduced Lattice.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">        </span>
+<span class="sd">           delta: Delta parameter.</span>
+<span class="sd">          </span>
+<span class="sd">        Returns:</span>
+<span class="sd">        </span>
+<span class="sd">             LLL reduced Lattice.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">delta</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lll_matrix_mappings</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_lll_matrix_mappings</span><span class="p">[</span><span class="n">delta</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_lll</span><span class="p">()</span>

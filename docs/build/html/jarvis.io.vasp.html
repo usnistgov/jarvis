@@ -47,7 +47,7 @@
 <dt id="jarvis.io.vasp.inputs.Incar">
 <em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.inputs.</code><code class="sig-name descname">Incar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tags</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>VASP INCAR files as python dictionary</p>
+<p>VASP INCAR files as python dictionary of keys and values</p>
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Incar.from_dict">
 <code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.from_dict" title="Permalink to this definition">¶</a></dt>
@@ -56,7 +56,8 @@
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Incar.from_file">
 <em class="property">static </em><code class="sig-name descname">from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'INCAR'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.from_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Read INCAR file</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Incar.from_string">
@@ -66,22 +67,26 @@
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Incar.get">
 <code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">'POTIM'</span></em>, <em class="sig-param"><span class="n">temp</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the value of a key</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Incar.to_dict">
 <code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.to_dict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Convert into dictionary</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Incar.update">
 <code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Provide the new tags as a dictionary to update Incar object</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Incar.write_file">
 <code class="sig-name descname">write_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.write_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Write Incar to a file</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -98,7 +103,8 @@
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.IndividualPotcarData.from_string">
 <code class="sig-name descname">from_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#IndividualPotcarData.from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.IndividualPotcarData.from_string" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Some of the contents in the POTCAR</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -110,12 +116,14 @@
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Kpoints.get_ibz_kp">
 <code class="sig-name descname">get_ibz_kp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Kpoints.get_ibz_kp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Kpoints.get_ibz_kp" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Read the Kpoints in the line-mode</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Kpoints.get_mesh_kp">
 <code class="sig-name descname">get_mesh_kp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Kpoints.get_mesh_kp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Kpoints.get_mesh_kp" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Read Kpoints as grid</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Kpoints.read">
@@ -128,11 +136,11 @@
 <dt id="jarvis.io.vasp.inputs.Poscar">
 <em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.inputs.</code><code class="sig-name descname">Poscar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em>, <em class="sig-param"><span class="n">comment</span><span class="o">=</span><span class="default_value">'System'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class defining Poscar object 
-Args:</p>
+<p>Class defining Poscar object</p>
+<p>Args:</p>
 <blockquote>
-<div><p>atoms : Atoms object
-comment : Header of Poscar file</p>
+<div><p>atoms : Atoms object</p>
+<p>comment : Header of Poscar file</p>
 </div></blockquote>
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Poscar.from_file">
@@ -143,12 +151,14 @@ comment : Header of Poscar file</p>
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Poscar.from_string">
 <em class="property">static </em><code class="sig-name descname">from_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lines</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.from_string" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Read Poscar from strings, useful in reading files/streams</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="jarvis.io.vasp.inputs.Poscar.write_file">
 <code class="sig-name descname">write_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.write_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Write the Poscar object to a file</p>
+</dd></dl>
 
 </dd></dl>
 

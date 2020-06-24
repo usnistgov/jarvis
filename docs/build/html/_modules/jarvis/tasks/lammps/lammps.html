@@ -68,11 +68,16 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">pair_style</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">pair_coeff</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">control_file</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Used in defining a LAMMPS job</span>
+
 <span class="sd">        Args:</span>
+<span class="sd">        </span>
 <span class="sd">            pair_style :  LAMMPS pair_style, e.g. &quot;eam/alloy&quot; </span>
+<span class="sd">            </span>
 <span class="sd">            pair_coeff : path for pair-coefficients file</span>
+<span class="sd">            </span>
 <span class="sd">            control_file :  control-file with units, include modules </span>
 <span class="sd">                          for running LAMMPS calculation , see examples</span>
+<span class="sd">                          </span>
 <span class="sd">            name : generic name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pair_style</span> <span class="o">=</span> <span class="n">pair_style</span>
@@ -91,12 +96,19 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generic function for high-throughput LAMMPS calculations using eam/alloy</span>
+
 <span class="sd">        Args:</span>
+<span class="sd">        </span>
 <span class="sd">            atoms :  Atoms object</span>
+<span class="sd">            </span>
 <span class="sd">            ff_path :  inter-atomic potential path</span>
+<span class="sd">            </span>
 <span class="sd">            lammps_cmd : LAMMPS executable path</span>
+<span class="sd">            </span>
 <span class="sd">            enforce_conventional_structure :  whether to enforce conventional cell</span>
+<span class="sd">            </span>
 <span class="sd">            enforce_c_size : minimum cell-sizes</span>
+<span class="sd">            </span>
 <span class="sd">            extend : used for round-off during making supercells</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -193,16 +205,27 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Used for defining a LAMMPS job</span>
+
 <span class="sd">        Args:</span>
+<span class="sd">        </span>
 <span class="sd">            atoms :  Atoms object</span>
+<span class="sd">            </span>
 <span class="sd">            element_order : element order used in accessing force-field parameters</span>
+<span class="sd">            </span>
 <span class="sd">            parameters :  LAMMPS input parameter dictionary</span>
+<span class="sd">            </span>
 <span class="sd">            lammps_cmd : LAMMPS executable path</span>
+<span class="sd">            </span>
 <span class="sd">            output_file :  standard output file</span>
+<span class="sd">            </span>
 <span class="sd">            stderr_file :  standard error file</span>
+<span class="sd">            </span>
 <span class="sd">            jobname :  Job name</span>
+<span class="sd">            </span>
 <span class="sd">            attempts :  number of attempts before crashing the job, TODO</span>
+<span class="sd">            </span>
 <span class="sd">            copy_files : copy certain files before a job</span>
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>

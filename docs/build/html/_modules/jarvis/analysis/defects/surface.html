@@ -48,8 +48,7 @@
 <span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="kn">import</span> <span class="n">norm</span><span class="p">,</span> <span class="n">solve</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">gcd</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="c1">#from pymatgen.analysis.wulff import WulffShape</span>
-<span class="c1">#from pymatgen.core.lattice import Lattice</span>
+
 
 
 <div class="viewcode-block" id="ext_gcd"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.surface.ext_gcd">[docs]</a><span class="k">def</span> <span class="nf">ext_gcd</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
@@ -83,7 +82,7 @@
         <span class="n">from_conventional_structure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get surface object of arbitrary atoms object</span>
+<span class="sd">        Get surface object of arbitrary atoms object and miller index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">from_conventional_structure</span><span class="p">:</span>
