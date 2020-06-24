@@ -21,9 +21,12 @@
         :target: https://codecov.io/gh/usnistgov/jarvis      
 .. image:: https://img.shields.io/github/repo-size/usnistgov/jarvis   
         :target: https://github.com/usnistgov/jarvis
-.. image:: https://img.shields.io/twitter/follow/jarvisnist.svg?style=social&label=Follow
+.. image:: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fjarvisnist
         :target: https://twitter.com/jarvisnist
-
+.. image:: https://img.shields.io/badge/Facebook-Follow-Blue.svg
+        :target: https://www.facebook.com/jarvisnist/
+.. image:: https://img.shields.io/badge/LinkedIn-Follow-Blue.svg
+        :target: https://www.linkedin.com/company/jarvisnist
 
         
 ========================================================================================
