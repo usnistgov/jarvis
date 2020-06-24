@@ -6,17 +6,9 @@ import string
 from jarvis.core.specie import Specie
 from collections import OrderedDict
 from collections import defaultdict
+from jarvis.core.utils import gcd
 import re
 
-def gcd(a, b):
-    """Calculate the Greatest Common Divisor of a and b.
-
-    Unless b==0, the result will have the same sign as b (so that when
-    b is divided by it, the result comes out positive).
-    """
-    while b:
-        a, b = b, a % b
-    return a
 
 
 class Composition(object):
@@ -33,7 +25,8 @@ class Composition(object):
         self._content = content
    
     @staticmethod 
-    def from_string(value):
+
+    def from_string(value,sort=True):
         re_formula = re.compile('([A-Z][a-z]?)([0-9\.]*)')
         d = defaultdict(float)
         for elt, amt in re_formula.findall(value):
@@ -45,7 +38,8 @@ class Composition(object):
                 d[elt] += int(float(amt))
             else:
                 d[elt] += float(amt)
-        comp = Composition(dict(d))
+
+        comp = Composition(dict(d),sort=sort)
         return comp
 
     def reduce(self):
