@@ -18,11 +18,9 @@
         :target: https://doi.org/10.5281/zenodo.3903515  
 .. image:: https://img.shields.io/github/v/tag/usnistgov/jarvis
         :target: https://github.com/usnistgov/jarvis
-.. image:: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis
-        :target: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis    
+    
 .. image:: https://img.shields.io/github/repo-size/usnistgov/jarvis   
         :target: https://github.com/usnistgov/jarvis
-|
 .. image:: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fjarvisnist
         :target: https://twitter.com/jarvisnist
 .. image:: https://img.shields.io/badge/Facebook-Follow-Blue.svg
