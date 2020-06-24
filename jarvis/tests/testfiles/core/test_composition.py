@@ -12,3 +12,5 @@ def test_comp():
         round(cc.weight, 4),
         cc.to_dict(),
     ) == ("AB2", "Li2O4", "LiO2", 77.8796, comp)
+    c=Composition.from_string('Al2O3Al5Co6O1')
+    assert c.formula=='Al7O4Co6'
