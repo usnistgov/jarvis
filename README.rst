@@ -15,6 +15,8 @@
         :target: https://pepy.tech/badge/jarvis-tools
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3903515.svg
         :target: https://doi.org/10.5281/zenodo.3903515  
+.. image:: https://img.shields.io/github/v/tag/usnistgov/jarvis
+        :target: https://github.com/usnistgov/jarvis
 .. image:: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis
         :target: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis
 .. image:: https://codecov.io/gh/usnistgov/jarvis/branch/master/graph/badge.svg
@@ -52,7 +54,7 @@ classical force-field/molecular dynamics and machine-learning. The jarvis-tools 
   ``JARVIS-Het.``     Heterostructure design tools for 2D materials in the JARVIS-DFT database. Some of the properties available are: work function, Band-alignment, and Heterostructure classification. JARVIS-Heterostructure website: https://www.ctcms.nist.gov/jarvish/
   ``JARVIS-PV``       Solar-cell/Photovoltaic cell design tools. Dataset is made available and the website will be available soon.
   ``JARVIS-STM``      Scanning-tunneling microscopy images for 2D materials. Dataset is made available and the website will be available soon.
-  ``JARVIS-WTB``      Wannier Tight Binding Hamiltonian parameter dataset. Dataset will be made available and the website will be available soon.
+  ``JARVIS-WTB``      Wannier Tight Binding Hamiltonian parameter dataset. Website: https://www.ctcms.nist.gov/jarviswtb .
   ``JARVIS-EFG``      Electric field gradient dataset. Dataset will be made available and the website will be available soon.
   ===============  =======================================================================
 
