@@ -19,12 +19,16 @@
         :target: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis
 .. image:: https://codecov.io/gh/usnistgov/jarvis/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/usnistgov/jarvis      
+.. image:: https://img.shields.io/github/repo-size/usnistgov/jarvis   
+        :target: https://github.com/usnistgov/jarvis
+.. image:: https://img.shields.io/twitter/follow/jarvisnist.svg?style=social&label=Follow
+        :target: https://twitter.com/jarvisnist
 
 
         
 ========================================================================================
 
-jarvis-tools: an open-source software package for data-driven atomistic materials design
+JARVIS-tools: an open-source software package for data-driven atomistic materials design
 =========================================================================================
 
 .. image:: https://www.ctcms.nist.gov/~knc6/jlogo.png
@@ -100,7 +104,7 @@ Example function
 >>> dft_3d = data(dataset='dft_3d')
 >>> print (len(dft_3d))
 36099
->>> from jarvis.db.restapi import data_json, upload_sample_data
+
 
 References
 -----------------
