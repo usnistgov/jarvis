@@ -25,6 +25,7 @@ class Composition(object):
         self._content = content
    
     @staticmethod 
+
     def from_string(value,sort=True):
         re_formula = re.compile('([A-Z][a-z]?)([0-9\.]*)')
         d = defaultdict(float)
@@ -37,6 +38,7 @@ class Composition(object):
                 d[elt] += int(float(amt))
             else:
                 d[elt] += float(amt)
+
         comp = Composition(dict(d),sort=sort)
         return comp
 

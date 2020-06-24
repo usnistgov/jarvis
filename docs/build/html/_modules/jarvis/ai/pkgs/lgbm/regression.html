@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>jarvis.ai.pkgs.lgbm.regression &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script src="../../../../../_static/jquery.js"></script>
+    <script src="../../../../../_static/underscore.js"></script>
+    <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jarvis.ai.pkgs.lgbm.regression</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">label_binarize</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">VarianceThreshold</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<span class="kn">import</span> <span class="nn">lightgbm</span> <span class="k">as</span> <span class="nn">lgb</span>
+<span class="kn">from</span> <span class="nn">jarvis.ai.pkgs.utils</span> <span class="kn">import</span> <span class="n">get_ml_data</span>
+<span class="kn">from</span> <span class="nn">jarvis.ai.pkgs.utils</span> <span class="kn">import</span> <span class="n">regr_scores</span>
+<span class="kn">from</span> <span class="nn">jarvis.ai.descriptors.cfid</span> <span class="kn">import</span> <span class="n">feat_names</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pickle</span><span class="o">,</span> <span class="nn">joblib</span><span class="o">,</span> <span class="nn">json</span>
+
+
+<div class="viewcode-block" id="regression"><a class="viewcode-back" href="../../../../../jarvis.ai.pkgs.lgbm.html#jarvis.ai.pkgs.lgbm.regression.regression">[docs]</a><span class="k">def</span> <span class="nf">regression</span><span class="p">(</span>
+    <span class="n">X</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">Y</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">jid</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">preprocess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">feature_importance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">save_model</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">feat_names</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;my_model&quot;</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="p">{},</span>
+<span class="p">):</span>
+    <span class="n">lgbm</span> <span class="o">=</span> <span class="n">lgb</span><span class="o">.</span><span class="n">LGBMRegressor</span><span class="p">(</span>
+        <span class="n">n_estimators</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;n_estimators&quot;</span><span class="p">],</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;learning_rate&quot;</span><span class="p">],</span>
+        <span class="n">num_leaves</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;num_leaves&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">()</span>
+
+    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">jid_train</span><span class="p">,</span> <span class="n">jid_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">jid</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span>
+    <span class="p">)</span>
+    <span class="n">pipe</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;stdscal&quot;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span>
+            <span class="p">(</span><span class="s2">&quot;vart&quot;</span><span class="p">,</span> <span class="n">VarianceThreshold</span><span class="p">(</span><span class="mf">1e-4</span><span class="p">)),</span>
+            <span class="p">(</span><span class="s2">&quot;est&quot;</span><span class="p">,</span> <span class="n">lgbm</span><span class="p">),</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">preprocess</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">pipe</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">lgbm</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+    <span class="n">reg_sc</span> <span class="o">=</span> <span class="n">regr_scores</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;reg_scores&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reg_sc</span>
+
+    <span class="k">if</span> <span class="n">feature_importance</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">imp_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;imp_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">imp_data</span>
+        <span class="k">if</span> <span class="n">preprocess</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">feat_imp</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">feature_importances_</span>
+            <span class="n">feat_imp</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">feat_imp</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">feat_imp</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">feat_imp</span><span class="p">)):</span>
+                <span class="n">imp_data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">feat_imp</span><span class="p">[</span><span class="n">f</span><span class="p">],</span> <span class="n">feat_names</span><span class="p">[</span><span class="n">f</span><span class="p">]])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">feat_imp</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;est&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">feature_importances_</span>
+            <span class="n">feat_imp</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">feat_imp</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">feat_imp</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">keep_indices</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">named_steps</span><span class="p">[</span><span class="s2">&quot;vart&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get_support</span><span class="p">(</span><span class="n">indices</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">feat_imp</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">new_feat_imp</span> <span class="o">=</span> <span class="n">feat_imp</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+            <span class="n">new_indices</span> <span class="o">=</span> <span class="n">keep_indices</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_feat_imp</span><span class="p">)):</span>
+                <span class="n">imp_data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">new_feat_imp</span><span class="p">[</span><span class="n">f</span><span class="p">],</span> <span class="n">feat_names</span><span class="p">[</span><span class="n">new_indices</span><span class="p">[</span><span class="n">f</span><span class="p">]]])</span>
+
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="n">model_name</span><span class="p">,</span>
+        <span class="nb">round</span><span class="p">(</span><span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;mae&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="nb">round</span><span class="p">(</span><span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;rmse&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="nb">round</span><span class="p">(</span><span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;r2&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;pred&quot;</span><span class="p">],</span> <span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;DFT&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;ML&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">save_model</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">pk</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;.pk&quot;</span><span class="p">)</span>
+        <span class="n">jb</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;.jb&quot;</span><span class="p">)</span>
+        <span class="c1"># js = str(model_name )+str(&#39;.js&#39;)</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">pk</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">))</span>
+        <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">jb</span><span class="p">)</span>
+        <span class="c1"># TODO: implemet something like sklearn-json</span>
+        <span class="c1"># json.dump(model.get_params(), open(js, &quot;w&quot;))</span>
+    <span class="k">return</span> <span class="n">info</span></div>
+
+
+<div class="viewcode-block" id="parameters_dict"><a class="viewcode-back" href="../../../../../jarvis.ai.pkgs.lgbm.html#jarvis.ai.pkgs.lgbm.regression.parameters_dict">[docs]</a><span class="k">def</span> <span class="nf">parameters_dict</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Example optimized parameters&quot;&quot;&quot;</span>
+
+    <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;optb88vdw_bandgap&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">324</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.06414333047469417</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;mbj_bandgap&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">210</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.04727272041771037</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">121</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;epsx&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">139</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.10098329400041395</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">527</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;epsy&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">161</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.264679564828344</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;epsz&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">161</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.264679564828344</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;mepsx&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.05374708509141705</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">242</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;mepsy&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.12048289662270327</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">398</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;mepsz&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">89</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.09718152788954888</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">938</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;encut&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">376</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.08982089572506267</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">762</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;kpoint_length_unit&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">236</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.03234907667844313</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">794</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;bulk_modulus_kv&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">380</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.08621497083536021</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">202</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;shear_modulus_gv&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">284</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.017555838240950795</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">579</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;formation_energy_peratom&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">1170</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.15375236057119931</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">273</span><span class="p">,</span>
+            <span class="c1">#&quot;num_leaves&quot;: 73,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;exfoliation_energy&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">47</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.0734095239247927</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">326</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;max_ir_mode&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.0734095239247927</span><span class="p">,</span>
+            <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">parameters</span></div>
+
+
+<span class="c1">#&quot;&quot;&quot;</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="nb">property</span> <span class="o">=</span> <span class="s2">&quot;exfoliation_energy&quot;</span>
+    <span class="nb">property</span><span class="o">=</span><span class="s1">&#39;formation_energy_peratom&#39;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">parameters_dict</span><span class="p">()[</span><span class="nb">property</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">jid</span> <span class="o">=</span> <span class="n">get_ml_data</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;cfid_3d&quot;</span><span class="p">,</span> <span class="n">ml_property</span><span class="o">=</span><span class="nb">property</span><span class="p">)</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">feat_names</span><span class="p">()</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">regression</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">jid</span> <span class="o">=</span> <span class="n">jid</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">feat_names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+<span class="c1">#&quot;&quot;&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

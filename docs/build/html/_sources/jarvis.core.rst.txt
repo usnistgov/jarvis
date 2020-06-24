@@ -52,6 +52,14 @@ jarvis.core.specie module
    :undoc-members:
    :show-inheritance:
 
+jarvis.core.utils module
+------------------------
+
+.. automodule:: jarvis.core.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------

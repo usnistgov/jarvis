@@ -75,15 +75,15 @@
 <em class="property">property </em><code class="sig-name descname">check_polar</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.check_polar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the surface structure is polar
 by comparing atom types at top and bottom.
-Applicable for sufcae with vaccums only.
-Args:</p>
+Applicable for sufcae with vaccums only.</p>
+<p>Args:</p>
 <blockquote>
 <div><p><a class="reference external" href="file:atoms">file:atoms</a> object (surface with vacuum)</p>
 </div></blockquote>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>polar:True/False</p>
-</dd>
-</dl>
+<p>Returns:</p>
+<blockquote>
+<div><p>polar:True/False</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -122,6 +122,11 @@ Args:</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.get_primitive_atoms">
+<em class="property">property </em><code class="sig-name descname">get_primitive_atoms</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.get_primitive_atoms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="jarvis.core.atoms.Atoms.get_string">
 <code class="sig-name descname">get_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.get_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.get_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get string representation of the atoms object</p>
@@ -154,11 +159,10 @@ Args:</p>
 <dt id="jarvis.core.atoms.Atoms.make_supercell_matrix">
 <code class="sig-name descname">make_supercell_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scaling_matrix</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.make_supercell_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.make_supercell_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adapted from Pymatgen
-Makes a supercell. Allowing to have sites outside the unit cell
-Args:</p>
-<blockquote>
-<div><dl>
-<dt>scaling_matrix: A scaling matrix for transforming the lattice</dt><dd><p>vectors. Has to be all integers. Several options are possible:
+Makes a supercell. Allowing to have sites outside the unit cell</p>
+<dl>
+<dt>Args:</dt><dd><p>scaling_matrix: A scaling matrix for transforming the lattice
+vectors. Has to be all integers. Several options are possible:
 a. A full 3x3 scaling matrix defining the linear combination</p>
 <blockquote>
 <div><p>the old lattice vectors. E.g., [[2,1,0],[0,3,0],[0,0,
@@ -167,16 +171,19 @@ a. A full 3x3 scaling matrix defining the linear combination</p>
 vectors of the original structure.</p>
 </div></blockquote>
 <ol class="loweralpha simple" start="2">
-<li><p>An sequence of three scaling factors. E.g., [2, 1, 1]
-specifies that the supercell should have dimensions 2a x b x
-c.</p></li>
-<li><p>A number, which simply scales all lattice vectors by the
-same factor.</p></li>
+<li><p>An sequence of three scaling factors. E.g., [2, 1, 1]</p></li>
 </ol>
-</dd>
-</dl>
+<blockquote>
+<div><p>specifies that the supercell should have dimensions 2a x b x
+c.</p>
 </div></blockquote>
-<dl class="simple">
+<ol class="loweralpha simple" start="3">
+<li><p>A number, which simply scales all lattice vectors by the</p></li>
+</ol>
+<blockquote>
+<div><p>same factor.</p>
+</div></blockquote>
+</dd>
 <dt>Returns:</dt><dd><p>Supercell structure. Note that a Structure is always returned,
 even if the input structure is a subclass of Structure. This is
 to avoid different arguments signatures from causing problems. If
@@ -203,6 +210,11 @@ this method in the subclass.</p>
 <code class="sig-name descname">pymatgen_converter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.pymatgen_converter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.pymatgen_converter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get pymatgen representation of the atoms object</p>
 </dd></dl>
+
+<dl class="py method">
+<dt id="jarvis.core.atoms.Atoms.raw_distance_matrix">
+<em class="property">property </em><code class="sig-name descname">raw_distance_matrix</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.raw_distance_matrix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="jarvis.core.atoms.Atoms.remove_site_by_index">
@@ -255,7 +267,7 @@ this method in the subclass.</p>
 <p>Modules handling chemical composition</p>
 <dl class="py class">
 <dt id="jarvis.core.composition.Composition">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.core.composition.</code><code class="sig-name descname">Composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">content</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">sort</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/composition.html#Composition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.composition.Composition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">jarvis.core.composition.</code><code class="sig-name descname">Composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">content</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">sort</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/composition.html#Composition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.composition.Composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt id="jarvis.core.composition.Composition.formula">
@@ -627,14 +639,14 @@ b is divided by it, the result comes out positive).</p>
 <dl class="py method">
 <dt id="jarvis.core.lattice.Lattice.get_lll_reduced_lattice">
 <code class="sig-name descname">get_lll_reduced_lattice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">delta</span><span class="o">=</span><span class="default_value">0.75</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.get_lll_reduced_lattice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.get_lll_reduced_lattice" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>delta</strong> – Delta parameter.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>LLL reduced Lattice.</p>
-</dd>
-</dl>
+<dd><p>Args:</p>
+<blockquote>
+<div><p>delta: Delta parameter.</p>
+</div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div><p>LLL reduced Lattice.</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -723,16 +735,16 @@ b is divided by it, the result comes out positive).</p>
 <code class="sig-prename descclassname">jarvis.core.lattice.</code><code class="sig-name descname">abs_cap</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">max_abs_val</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#abs_cap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.abs_cap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the value with its absolute value capped at max_abs_val.
 Particularly useful in passing values to trignometric functions where
-numerical errors may result in an argument &gt; 1 being passed in.
-Args:</p>
+numerical errors may result in an argument &gt; 1 being passed in.</p>
+<p>Args:</p>
 <blockquote>
-<div><p>val (float): Input value.
-max_abs_val (float): The maximum absolute value for val. Defaults to 1.</p>
+<div><p>val (float): Input value.</p>
+<p>max_abs_val (float): The maximum absolute value for val. Defaults to 1.</p>
 </div></blockquote>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>val if abs(val) &lt; 1 else sign of val * max_abs_val.</p>
-</dd>
-</dl>
+<p>Returns:</p>
+<blockquote>
+<div><p>val if abs(val) &lt; 1 else sign of val * max_abs_val.</p>
+</div></blockquote>
 </dd></dl>
 
 </div>
@@ -753,21 +765,23 @@ max_abs_val (float): The maximum absolute value for val. Defaults to 1.</p>
 <dt id="jarvis.core.specie.Specie">
 <em class="property">class </em><code class="sig-prename descclassname">jarvis.core.specie.</code><code class="sig-name descname">Specie</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbol</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/specie.html#Specie"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.specie.Specie" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Specie object for chemistry information
-&gt;&gt;&gt; el = Specie(‘Al’)
-&gt;&gt;&gt; el.Z
-13
-&gt;&gt;&gt; round(el.atomic_mass,2)
-26.98
-&gt;&gt;&gt; el.symbol
-‘Al’
-&gt;&gt;&gt; round(el.get_chgdescrp_arr[1],2)
-12.17
-&gt;&gt;&gt; round(el.get_descrp_arr[1],2)
-2792.11
-&gt;&gt;&gt; el = Specie(‘asdfg’)
-&gt;&gt;&gt; el.element_property(“asdfg”)
-nan</p>
+<p>Specie object for chemistry information</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">el</span> <span class="o">=</span> <span class="n">Specie</span><span class="p">(</span><span class="s1">&#39;Al&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">el</span><span class="o">.</span><span class="n">Z</span>
+<span class="go">13</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">atomic_mass</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">26.98</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">el</span><span class="o">.</span><span class="n">symbol</span>
+<span class="go">&#39;Al&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">get_chgdescrp_arr</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">12.17</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">get_descrp_arr</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">2792.11</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">el</span> <span class="o">=</span> <span class="n">Specie</span><span class="p">(</span><span class="s1">&#39;asdfg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">el</span><span class="o">.</span><span class="n">element_property</span><span class="p">(</span><span class="s2">&quot;asdfg&quot;</span><span class="p">)</span>
+<span class="go">nan</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt id="jarvis.core.specie.Specie.Z">
 <em class="property">property </em><code class="sig-name descname">Z</code><a class="headerlink" href="#jarvis.core.specie.Specie.Z" title="Permalink to this definition">¶</a></dt>
@@ -796,24 +810,28 @@ nan</p>
 <dt id="jarvis.core.specie.Specie.get_chgdescrp_arr">
 <em class="property">property </em><code class="sig-name descname">get_chgdescrp_arr</code><a class="headerlink" href="#jarvis.core.specie.Specie.get_chgdescrp_arr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get charge descriptors for an element</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>elm: element name</p>
-</dd>
-<dt>Returns:</dt><dd><p>arr: array value</p>
-</dd>
-</dl>
+<p>Args:</p>
+<blockquote>
+<div><p>elm: element name</p>
+</div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div><p>arr: array value</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
 <dt id="jarvis.core.specie.Specie.get_descrp_arr">
 <em class="property">property </em><code class="sig-name descname">get_descrp_arr</code><a class="headerlink" href="#jarvis.core.specie.Specie.get_descrp_arr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get chemical descriptors for an element</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>elm: element name</p>
-</dd>
-<dt>Returns:</dt><dd><p>arr: array value</p>
-</dd>
-</dl>
+<p>Args:</p>
+<blockquote>
+<div><p>elm: element name</p>
+</div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div><p>arr: array value</p>
+</div></blockquote>
 </dd></dl>
 
 </dd></dl>
@@ -821,15 +839,33 @@ nan</p>
 <dl class="py function">
 <dt id="jarvis.core.specie.get_descrp_arr_name">
 <code class="sig-prename descclassname">jarvis.core.specie.</code><code class="sig-name descname">get_descrp_arr_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">elm</span><span class="o">=</span><span class="default_value">'Al'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/specie.html#get_descrp_arr_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.specie.get_descrp_arr_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get chemical descriptors for an element
-Args:</p>
+<dd><p>Get chemical descriptors for an element</p>
+<p>Args:</p>
 <blockquote>
 <div><p>elm: element name</p>
 </div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div><p>arr: array value</p>
+</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.core.utils">
+<span id="jarvis-core-utils-module"></span><h2>jarvis.core.utils module<a class="headerlink" href="#module-jarvis.core.utils" title="Permalink to this headline">¶</a></h2>
+<p>Set of useful utility functions</p>
+<dl class="py function">
+<dt id="jarvis.core.utils.get_counts">
+<code class="sig-prename descclassname">jarvis.core.utils.</code><code class="sig-name descname">get_counts</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span><span class="o">=</span><span class="default_value">['W', 'W', 'Mo', 'Mo', 'S', 'S']</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#get_counts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.get_counts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get number of unique elements and their counts</p>
 <dl class="simple">
-<dt>Returns:</dt><dd><p>arr: array value</p>
+<dt>Args:</dt><dd><p>array of elements</p>
 </dd>
 </dl>
+<p>Returns:</p>
+<blockquote>
+<div><p>ordereddict, e.g.OrderedDict([(‘W’, 2), (‘Mo’, 2), (‘S’, 2)])</p>
+</div></blockquote>
 </dd></dl>
 
 </div>
@@ -854,6 +890,7 @@ Args:</p>
 <li><a class="reference internal" href="#module-jarvis.core.lattice">jarvis.core.lattice module</a></li>
 <li><a class="reference internal" href="#module-jarvis.core.pdb">jarvis.core.pdb module</a></li>
 <li><a class="reference internal" href="#module-jarvis.core.specie">jarvis.core.specie module</a></li>
+<li><a class="reference internal" href="#module-jarvis.core.utils">jarvis.core.utils module</a></li>
 <li><a class="reference internal" href="#module-jarvis.core">Module contents</a></li>
 </ul>
 </li>

@@ -77,6 +77,59 @@ Serialization would be available soon</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-jarvis.db.restapi">
+<span id="jarvis-db-restapi-module"></span><h2>jarvis.db.restapi module<a class="headerlink" href="#module-jarvis.db.restapi" title="Permalink to this headline">¶</a></h2>
+<p>To access data in JARVIS-API, you do not need to request an account
+However, to upload your data, please request an account at <a class="reference external" href="https://jarvis.nist.gov/">https://jarvis.nist.gov/</a>
+Then install MDCS-api-tools by:</p>
+<p>git clone <a class="reference external" href="https://github.com/knc6/MDCS-api-tools.git">https://github.com/knc6/MDCS-api-tools.git</a>
+cd MDCS-api-tools
+python setup.py develop</p>
+<p>You’ll require a schema ID and a user-name to go through examples below</p>
+<dl class="py function">
+<dt id="jarvis.db.restapi.data_json">
+<code class="sig-prename descclassname">jarvis.db.restapi.</code><code class="sig-name descname">data_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">energy</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">typ</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">formula</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">sgp</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">ref</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">func</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">elem</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">encut</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">kpoints</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">el_tens</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">KV</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">GV</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">m_eg</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">b_eg</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">op_eg</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">mbj_eg</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">en_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">realx_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">imagx_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">realy_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">imagy_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">realz_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">imagz_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">men_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">mrealx_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">mimagx_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">mrealy_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">mimagy_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">mrealz_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">mimagz_arr</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">struct</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">other</span><span class="o">=</span><span class="default_value">'na'</span></em>, <em class="sig-param"><span class="n">curate_xml</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/db/restapi.html#data_json"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.db.restapi.data_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an example of how to upload JARVIS data to the API. 
+It converts input data to XML based on a template schema which must be available in the JARVIS-API.
+After the conversion, the XML could be uploaded to the API.
+Any user with registered username and password can upload.
+If they prefer to upload using their own schema, contact the developers.
+See an example: <a class="reference external" href="https://jarvis.nist.gov/data?id=5df7f05ceaf3b300338bf83f">https://jarvis.nist.gov/data?id=5df7f05ceaf3b300338bf83f</a>
+Args:</p>
+<blockquote>
+<div><p>metadata with a calculation</p>
+<p>curate_xml: for debugging set it to False, and produce XML files</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.db.restapi.delete_all">
+<code class="sig-prename descclassname">jarvis.db.restapi.</code><code class="sig-name descname">delete_all</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/db/restapi.html#delete_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.db.restapi.delete_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Caution, this deletes your documents</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.db.restapi.get_record">
+<code class="sig-prename descclassname">jarvis.db.restapi.</code><code class="sig-name descname">get_record</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span><span class="o">=</span><span class="default_value">'JVASP-1002.xml'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/db/restapi.html#get_record"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.db.restapi.get_record" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an example of how to get a particular jarvis-id document, say JVASP-1002.xml</p>
+<p>Args:</p>
+<blockquote>
+<div><p>file: name of the file</p>
+</div></blockquote>
+<p>Returns:</p>
+<blockquote>
+<div><p>data in json format</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jarvis.db.restapi.upload_sample_data">
+<code class="sig-prename descclassname">jarvis.db.restapi.</code><code class="sig-name descname">upload_sample_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curate_xml</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/db/restapi.html#upload_sample_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.db.restapi.upload_sample_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate and upload XML files
+Set curate_xml==True to upload all the XML documents</p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-jarvis.db">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.db" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -94,6 +147,7 @@ Serialization would be available soon</p>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-jarvis.db.figshare">jarvis.db.figshare module</a></li>
 <li><a class="reference internal" href="#module-jarvis.db.jsonutils">jarvis.db.jsonutils module</a></li>
+<li><a class="reference internal" href="#module-jarvis.db.restapi">jarvis.db.restapi module</a></li>
 <li><a class="reference internal" href="#module-jarvis.db">Module contents</a></li>
 </ul>
 </li>
