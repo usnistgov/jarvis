@@ -90,7 +90,8 @@ Installing jarvis-tools
 
 Example Jupyter notebooks
 -----------------------------
-Look into the notebooks folder
+
+https://github.com/knc6/jarvis-tools-notebooks
 
 Example function
 -----------------
