@@ -13,7 +13,6 @@
         :target: https://img.shields.io/pypi/dm/jarvis-tools.svg 
 .. image:: https://pepy.tech/badge/jarvis-tools
         :target: https://pepy.tech/badge/jarvis-tools  
-|
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3903515.svg
         :target: https://doi.org/10.5281/zenodo.3903515  
 .. image:: https://img.shields.io/github/v/tag/usnistgov/jarvis
