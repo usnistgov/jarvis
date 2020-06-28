@@ -91,7 +91,7 @@ Installing jarvis-tools
 Example Jupyter notebooks
 -----------------------------
 
-https://github.com/knc6/jarvis-tools-notebooks
+https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
 
 Example function
 -----------------
