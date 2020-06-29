@@ -53,6 +53,7 @@ classical force-field/molecular dynamics and machine-learning. The jarvis-tools 
   ``JARVIS-STM``      Scanning-tunneling microscopy images for 2D materials. Dataset is made available and the website will be available soon.
   ``JARVIS-WTB``      Wannier Tight Binding Hamiltonian parameter dataset. Website: https://www.ctcms.nist.gov/jarviswtb .
   ``JARVIS-EFG``      Electric field gradient dataset. Dataset will be made available and the website will be available soon.
+  ``Downloads``       Download raw metadat at: https://www.ctcms.nist.gov/~knc6/downloads.html
   ===============  =======================================================================
 
 
@@ -88,10 +89,11 @@ Example function
 References
 -----------------
 
-See `Publications related to JARVIS-Tools <https://github.com/usnistgov/jarvis/blob/zur/Publication.rst>`__
+See `Publications related to JARVIS-Tools <https://github.com/usnistgov/jarvis/blob/zur/Publications.rst>`__
 
 External links
 -----------------------------------------
+
       https://figshare.com/authors/Kamal_Choudhary/4445539
          
       https://pypi.org/project/jarvis-tools
