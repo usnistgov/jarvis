@@ -1,0 +1,31 @@
+name: JARVIS-Tools github action
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: build jarvis-tools
+    strategy:
+      max-parallel: 6
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.6, 3.7, 3.8]
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip   
+        python setup.py develop
+    - name: Test with pytest
+        python -m pip install --upgrade pip   
+        python setup.py develop
+        pip install scipy coverage lightgbm flask joblib scikit-learn pandas torch keras tensorflow pytest pytest-cov
+        pytest --cov=./
+        codecov
+        
