@@ -39,3 +39,7 @@ pytest
 coverage run -m pytest
 coverage report -m
 
+
+
+###Version change
+Change version in setup.py and jarvis/__init__.py

@@ -6,25 +6,31 @@
 .. image:: https://ci.appveyor.com/api/projects/status/d8na8vyfm7ulya9p/branch/master?svg=true
        :target: https://ci.appveyor.com/project/knc6/jarvis-63tl9      
 .. image:: https://readthedocs.org/projects/jarvis-tools/badge/?version=latest
-       :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest
-.. image:: https://api.codacy.com/project/badge/Grade/be8fa78b1c0a49c280415ce061163e77
-       :target: https://www.codacy.com/app/knc6/jarvisutm_source=github.com&amp;utm_medium=referral&amp;utm_content=usnistgov/jarvis&amp;utm_campaign=Badge_Grade
+       :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest   
+.. image:: https://codecov.io/gh/usnistgov/jarvis/branch/master/graph/badge.svg
+       :target: https://codecov.io/gh/usnistgov/jarvis  
 .. image::  https://img.shields.io/pypi/dm/jarvis-tools.svg      
-        :target: https://img.shields.io/pypi/dm/jarvis-tools.svg
+        :target: https://img.shields.io/pypi/dm/jarvis-tools.svg 
 .. image:: https://pepy.tech/badge/jarvis-tools
-        :target: https://pepy.tech/badge/jarvis-tools
+        :target: https://pepy.tech/badge/jarvis-tools  
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3903515.svg
         :target: https://doi.org/10.5281/zenodo.3903515  
-.. image:: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis
-        :target: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis
-.. image:: https://codecov.io/gh/usnistgov/jarvis/branch/master/graph/badge.svg
-        :target: https://codecov.io/gh/usnistgov/jarvis      
-
+.. image:: https://img.shields.io/github/v/tag/usnistgov/jarvis
+        :target: https://github.com/usnistgov/jarvis
+    
+.. image:: https://img.shields.io/github/repo-size/usnistgov/jarvis   
+        :target: https://github.com/usnistgov/jarvis
+.. image:: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fjarvisnist
+        :target: https://twitter.com/jarvisnist
+.. image:: https://img.shields.io/badge/Facebook-Follow-Blue.svg
+        :target: https://www.facebook.com/jarvisnist/
+.. image:: https://img.shields.io/badge/LinkedIn-Follow-Blue.svg
+        :target: https://www.linkedin.com/company/jarvisnist
 
         
 ========================================================================================
 
-jarvis-tools: an open-source software package for data-driven atomistic materials design
+JARVIS-Tools: an open-source software package for data-driven atomistic materials design
 =========================================================================================
 
 .. image:: https://www.ctcms.nist.gov/~knc6/jlogo.png
@@ -45,7 +51,7 @@ classical force-field/molecular dynamics and machine-learning. The jarvis-tools 
   ``JARVIS-Het.``     Heterostructure design tools for 2D materials in the JARVIS-DFT database. Some of the properties available are: work function, Band-alignment, and Heterostructure classification. JARVIS-Heterostructure website: https://www.ctcms.nist.gov/jarvish/
   ``JARVIS-PV``       Solar-cell/Photovoltaic cell design tools. Dataset is made available and the website will be available soon.
   ``JARVIS-STM``      Scanning-tunneling microscopy images for 2D materials. Dataset is made available and the website will be available soon.
-  ``JARVIS-WTB``      Wannier Tight Binding Hamiltonian parameter dataset. Dataset will be made available and the website will be available soon.
+  ``JARVIS-WTB``      Wannier Tight Binding Hamiltonian parameter dataset. Website: https://www.ctcms.nist.gov/jarviswtb .
   ``JARVIS-EFG``      Electric field gradient dataset. Dataset will be made available and the website will be available soon.
   ===============  =======================================================================
 
@@ -83,7 +89,8 @@ Installing jarvis-tools
 
 Example Jupyter notebooks
 -----------------------------
-Look into the notebooks folder
+
+https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
 
 Example function
 -----------------
@@ -100,7 +107,7 @@ Example function
 >>> dft_3d = data(dataset='dft_3d')
 >>> print (len(dft_3d))
 36099
->>> from jarvis.db.restapi import data_json, upload_sample_data
+
 
 References
 -----------------
@@ -127,13 +134,15 @@ References
 
 External links
 -----------------------------------------
+      https://figshare.com/authors/Kamal_Choudhary/4445539
+         
       https://pypi.org/project/jarvis-tools
       
       https://jarvis-tools.readthedocs.io/en/latest/
       
       https://www.slideshare.net/KAMALCHOUDHARY4
 
-      https://figshare.com/authors/Kamal_Choudhary/4445539
+   
 
 
 Correspondence

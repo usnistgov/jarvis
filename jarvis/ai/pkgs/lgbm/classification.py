@@ -24,7 +24,7 @@ def classification(
     )
     return info
 
-
+"""
 if __name__ == "__main__":
     property = "exfoliation_energy"
     tol=100
@@ -37,3 +37,4 @@ if __name__ == "__main__":
     models = [LGBMClassifier()]
     info = classification(X=X, Y=Y, models=models, preprocess=False, save_model=False, tol=tol)
     print (info['LGBMClassifier']['roc_auc'][0])
+"""
