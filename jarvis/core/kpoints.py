@@ -1,22 +1,18 @@
-"""
-Module for k-points used in solid-state calculations
-"""
+"""Module for k-points used n various calculations."""
 
 from jarvis.core.lattice import Lattice
-from jarvis.core.atoms import Atoms
 import numpy as np
 from numpy import linalg as LA
 from collections import OrderedDict
 import pprint
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
-from warnings import warn
-from numpy import pi, cos, sin
-from math import cos, sin, tan, e, pi, ceil
+from numpy import cos, sin
+from math import tan, pi
 from math import ceil
-#from jarvis.io.vasp.inputs import Poscar
 
 
 def generate_kgrid(grid=[5, 5, 5]):
+    """Generate k-mesh of size grid."""
     t = []
     for i in range(grid[0]):
         for j in range(grid[1]):
@@ -30,16 +26,21 @@ def generate_kgrid(grid=[5, 5, 5]):
                 )
     return t
 
-def generate_kpath(kpath = [[0,0,0],[0,0.5,.5]],num_k=5):
-        K = []
-        for i in range(len(kpath)-1):
-            dk = np.array(kpath[i+1]) - np.array(kpath[i])
-            for j in range(num_k):
-                K.append(np.array(kpath[i]) + dk * (float(j)/float(num_k)))     
-        K.append(kpath[-1])
-        return K
+
+def generate_kpath(kpath=[[0, 0, 0], [0, 0.5, .5]], num_k=5):
+    """Generate k-path with distance num_k k-points between them."""
+    K = []
+    for i in range(len(kpath) - 1):
+        dk = np.array(kpath[i + 1]) - np.array(kpath[i])
+        for j in range(num_k):
+            K.append(np.array(kpath[i]) + dk * (float(j) / float(num_k)))
+    K.append(kpath[-1])
+    return K
+
 
 class Kpoints3D(object):
+    """Handle k-points python object."""
+
     def __init__(
         self,
         kpoints=[[1, 1, 1]],
@@ -48,9 +49,7 @@ class Kpoints3D(object):
         kpoint_mode="automatic",
         header="Gamma",
     ):
-        """
-        Several types of k-points in the mesh or high-symmetry BZ
-        """
+        """Several types of k-points in the mesh or high-symmetry BZ."""
         self._kpoints = kpoints
         self._labels = labels
         self._kpoint_mode = kpoint_mode
@@ -58,6 +57,7 @@ class Kpoints3D(object):
         self._kp_weights = kpoints_weights
 
     def automatic_length_mesh(self, lattice_mat=[], length=20, header="Gamma"):
+        """Length based automatic k-points."""
         inv_lat = Lattice(lattice_mat=lattice_mat).inv_lattice()
         b1 = LA.norm(np.array(inv_lat[0]))
         b2 = LA.norm(np.array(inv_lat[1]))
@@ -65,17 +65,21 @@ class Kpoints3D(object):
         n1 = int(max(1, length * b1 + 0.5))
         n2 = int(max(1, length * b2 + 0.5))
         n3 = int(max(1, length * b3 + 0.5))
-        return Kpoints3D(kpoints=[[n1, n2, n3]], header=header, kpoint_mode="automatic")
+        return Kpoints3D(kpoints=[[n1, n2, n3]],
+                         header=header, kpoint_mode="automatic")
 
     @property
     def kpts(self):
+        """Return k-points arrays."""
         return self._kpoints
 
     @property
     def labels(self):
+        """Return k-points labels, used for high BZ points."""
         return self._labels
 
     def write_file(self, filename=""):
+        """Write k-point object to a files."""
         if self._kpoint_mode == "automatic":
             f = open(filename, "w")
             f.write("Automatic kpoint scheme\n")
@@ -113,6 +117,7 @@ class Kpoints3D(object):
             f.close()
 
     def to_dict(self):
+        """Provide dictionary representation."""
         d = OrderedDict()
         d["kpoints"] = self._kpoints
         d["labels"] = self._labels
@@ -121,6 +126,7 @@ class Kpoints3D(object):
         return d
 
     def high_symm_path(self, atoms):
+        """Get high symmetry k-points for given Atoms."""
         spg = Spacegroup3D(atoms=atoms)
         lat_sys = spg.lattice_system
         spg_symb = spg.space_group_symbol
@@ -133,7 +139,7 @@ class Kpoints3D(object):
             elif "I" in spg_symb:
                 kp = HighSymmetryKpoint3DFactory().bcc()
             else:
-                print("kpath space group  is not implemeted ", spg_symbol)
+                print("kpath space group  is not implemeted ", spg_symb)
 
         elif lat_sys == "tetragonal":
             if "P" in spg_symb:
@@ -147,7 +153,7 @@ class Kpoints3D(object):
                 else:
                     kp = HighSymmetryKpoint3DFactory().bctet2(c, a)
             else:
-                print("kpath space group is not implemeted ", spg_symbol)
+                print("kpath space group is not implemeted ", spg_symb)
 
         elif lat_sys == "orthorhombic":
             cvn = spg.conventional_standard_structure
@@ -172,7 +178,7 @@ class Kpoints3D(object):
             elif "C" in spg_symb or "A" in spg_symb:
                 kp = HighSymmetryKpoint3DFactory().orcc(a, b, c)
             else:
-                print("kpath space group is not implemeted ", spg_symbol)
+                print("kpath space group is not implemeted ", spg_symb)
 
         elif lat_sys == "hexagonal":
             kp = HighSymmetryKpoint3DFactory().hex()
@@ -198,9 +204,11 @@ class Kpoints3D(object):
 
                 kgamma = prim.angles[2]
                 if kgamma > 90:
-                    kp = HighSymmetryKpoint3DFactory().mclc1(a, b, c, alpha * pi / 180)
+                    kp = HighSymmetryKpoint3DFactory().mclc1(
+                        a, b, c, alpha * pi / 180)
                 if kgamma == 90:
-                    kp = HighSymmetryKpoint3DFactory().mclc2(a, b, c, alpha * pi / 180)
+                    kp = HighSymmetryKpoint3DFactory().mclc2(
+                        a, b, c, alpha * pi / 180)
                 if kgamma < 90:
                     if (
                         b * cos(alpha * pi / 180) / c
@@ -227,7 +235,7 @@ class Kpoints3D(object):
                             a, b, c, alpha * pi / 180
                         )
             else:
-                print("kpath space group is not implemeted ", spg_symbol)
+                print("kpath space group is not implemeted ", spg_symb)
 
         elif lat_sys == "triclinic":
             prim = spg.primitive_atoms.lattice.reciprocal_lattice()
@@ -244,17 +252,17 @@ class Kpoints3D(object):
                 kp = HighSymmetryKpoint3DFactory().trib()
 
         else:
-            print("kpath space group is not implemeted ", spg_symbol)
+            print("kpath space group is not implemeted ", spg_symb)
         # print("kp",spg_symb)
         return kp
 
     def high_kpath(self, atoms):
+        """Get high symmetry path as a dictionary."""
         return self.high_symm_path(atoms).as_dict()
 
-    def interpolated_points(self, atoms, line_density=20, coords_are_cartesian=False):
-        """
-        Useful for bandstructure, controlled by the line_density
-        """
+    def interpolated_points(self, atoms,
+                            line_density=20, coords_are_cartesian=False):
+        """Provide bandstructure k-points, controlled by the line_density."""
         list_k_points = []
         sym_point_labels = []
         spg = Spacegroup3D(atoms=atoms)
@@ -267,7 +275,8 @@ class Kpoints3D(object):
                 start = np.array(self.kpath["kpoints"][b[i - 1]])
                 end = np.array(self.kpath["kpoints"][b[i]])
                 distance = np.linalg.norm(
-                    self._prim_rec.cart_coords(start) - self._prim_rec.cart_coords(end)
+                    self._prim_rec.cart_coords(start)
+                    - self._prim_rec.cart_coords(end)
                 )
                 nb = int(ceil(distance * line_density))
                 sym_point_labels.extend([b[i - 1]] + [""] * (nb - 1) + [b[i]])
@@ -286,7 +295,8 @@ class Kpoints3D(object):
         if coords_are_cartesian:
             return list_k_points, sym_point_labels
         else:
-            frac_k_points = [self._prim_rec.frac_coords(k) for k in list_k_points]
+            frac_k_points = [self._prim_rec.frac_coords(k) for k in
+                             list_k_points]
             return frac_k_points, sym_point_labels
 
     def kpath(
@@ -297,11 +307,14 @@ class Kpoints3D(object):
         unique_kp_only=False,
         coords_are_cartesian=False,
     ):
+        """Get k-path for bandstructure calculations."""
         k_points, labels = self.interpolated_points(
-            atoms, line_density=line_density, coords_are_cartesian=coords_are_cartesian
+            atoms, line_density=line_density,
+            coords_are_cartesian=coords_are_cartesian
         )
         if unique_kp_only:
-            uniqueValues, indicesList = np.unique(k_points, axis=0, return_index=True)
+            uniqueValues, indicesList = np.unique(k_points,
+                                                  axis=0, return_index=True)
             k_points = np.array(k_points)[indicesList.astype(int)]
             labels = np.array(labels)[indicesList.astype(int)]
         return Kpoints3D(
@@ -312,22 +325,21 @@ class Kpoints3D(object):
         )
 
     def __repr__(self, indent=4):
+        """Representation for print statements."""
         return pprint.pformat(self.to_dict(), indent=indent)
 
 
 class HighSymmetryKpoint3DFactory(object):
-    def __init__(self, kpoints=[], path=[]):
-        """
-        High-symmetry k-points for different crystal-systems, similar to AFLOW and Pymatgen
-        """
+    """High-symmetry k-points for different crystal-systems."""
+
+    def __init__(self, kpoints=[], path=[], name=None):
+        """Require kpoints and path."""
         self._kpoints = kpoints
         self._path = path
+        self.name = name
 
     def cubic(self):
-        """
-        Cubic HighSymmKPath
-        :return: Dict
-        """
+        """Cubic HighSymmKPath, return: Dict."""
         self.name = "CUB"
         kpoints = {
             "\\Gamma": np.array([0.0, 0.0, 0.0]),
@@ -339,10 +351,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def fcc(self):
-        """
-        Fcc HighSymmKPath
-        :return: Dict
-        """
+        """Fcc HighSymmKPath, return: Dict."""
         self.name = "FCC"
         kpoints = {
             "\\Gamma": np.array([0.0, 0.0, 0.0]),
@@ -359,10 +368,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def bcc(self):
-        """
-        Bcc HighSymmKPath
-        :return: Dict
-        """
+        """Bcc HighSymmKPath, return: Dict."""
         self.name = "BCC"
         kpoints = {
             "\\Gamma": np.array([0.0, 0.0, 0.0]),
@@ -374,16 +380,14 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def as_dict(self):
+        """Get dictionary representation."""
         d = OrderedDict()
         d["kpoints"] = self._kpoints
         d["path"] = self._path
         return d
 
     def tet(self):
-        """
-        Tetragonal HighSymmKPath
-        :return: Dict
-        """
+        """Tetragonal HighSymmKPath, return: Dict."""
         self.name = "TET"
         kpoints = {
             "\\Gamma": np.array([0.0, 0.0, 0.0]),
@@ -401,10 +405,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def bctet1(self, c, a):
-        """
-        BCT1 HighSymmKPath
-        :return: Dict
-        """
+        """BCT1 HighSymmKPath, return: Dict."""
         self.name = "BCT1"
         eta = (1 + c ** 2 / a ** 2) / 4.0
         kpoints = {
@@ -416,14 +417,12 @@ class HighSymmetryKpoint3DFactory(object):
             "Z": np.array([eta, eta, -eta]),
             "Z_1": np.array([-eta, 1 - eta, eta]),
         }
-        path = [["\\Gamma", "X", "M", "\\Gamma", "Z", "P", "N", "Z_1", "M"], ["X", "P"]]
+        path = [["\\Gamma", "X", "M", "\\Gamma",
+                 "Z", "P", "N", "Z_1", "M"], ["X", "P"]]
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def bctet2(self, c, a):
-        """
-        BCT2 HighSymmKPath
-        :return: Dict
-        """
+        """BCT2 HighSymmKPath, return: Dict."""
         self.name = "BCT2"
         eta = (1 + a ** 2 / c ** 2) / 4.0
         zeta = a ** 2 / (2 * c ** 2)
@@ -457,10 +456,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def orc(self):
-        """
-        Orthorhombic HighSymmKPath
-        :return: Dict
-        """
+        """Orthorhombic HighSymmKPath, return: Dict."""
         self.name = "ORC"
         kpoints = {
             "\\Gamma": np.array([0.0, 0.0, 0.0]),
@@ -482,10 +478,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def orcf1(self, a, b, c):
-        """
-        Orthorhombic f1 HighSymmKPath
-        :return: Dict
-        """
+        """Orthorhombic f1 HighSymmKPath, return: Dict."""
         self.name = "ORCF1"
         zeta = (1 + a ** 2 / b ** 2 - a ** 2 / c ** 2) / 4
         eta = (1 + a ** 2 / b ** 2 + a ** 2 / c ** 2) / 4
@@ -510,10 +503,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def orcf2(self, a, b, c):
-        """
-        Orthorhombic f2 HighSymmKPath
-        :return: Dict
-        """
+        """Orthorhombic f2 HighSymmKPath, return: Dict."""
         self.name = "ORCF2"
         phi = (1 + c ** 2 / b ** 2 - c ** 2 / a ** 2) / 4
         eta = (1 + a ** 2 / b ** 2 - a ** 2 / c ** 2) / 4
@@ -542,10 +532,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def orcf3(self, a, b, c):
-        """
-        Orthorhombic f3 HighSymmKPath
-        :return: Dict
-        """
+        """Orthorhombic f3 HighSymmKPath, return: Dict."""
         self.name = "ORCF3"
         zeta = (1 + a ** 2 / b ** 2 - a ** 2 / c ** 2) / 4
         eta = (1 + a ** 2 / b ** 2 + a ** 2 / c ** 2) / 4
@@ -568,10 +555,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def orci(self, a, b, c):
-        """
-        Orthorhombic I HighSymmKPath
-        :return: Dict
-        """
+        """Orthorhombic I HighSymmKPath, return: Dict."""
         self.name = "ORCI"
         zeta = (1 + a ** 2 / c ** 2) / 4
         eta = (1 + b ** 2 / c ** 2) / 4
@@ -593,17 +577,15 @@ class HighSymmetryKpoint3DFactory(object):
             "Z": np.array([0.5, 0.5, -0.5]),
         }
         path = [
-            ["\\Gamma", "X", "L", "T", "W", "R", "X_1", "Z", "\\Gamma", "Y", "S", "W"],
+            ["\\Gamma", "X", "L", "T", "W", "R",
+             "X_1", "Z", "\\Gamma", "Y", "S", "W"],
             ["L_1", "Y"],
             ["Y_1", "Z"],
         ]
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def orcc(self, a, b, c):
-        """
-        Orthorhombic C HighSymmKPath
-        :return: Dict
-        """
+        """Orthorhombic C HighSymmKPath, return: Dict."""
         self.name = "ORCC"
         zeta = (1 + a ** 2 / b ** 2) / 4
         kpoints = {
@@ -639,10 +621,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def hex(self):
-        """
-        Hexagonal HighSymmKPath
-        :return: Dict
-        """
+        """Hexagonal HighSymmKPath, return: Dict."""
         self.name = "HEX"
         kpoints = {
             "\\Gamma": np.array([0.0, 0.0, 0.0]),
@@ -660,10 +639,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def rhl1(self, alpha):
-        """
-        Rhombohedral 1 HighSymmKPath
-        :return: Dict
-        """
+        """Rhombohedral 1 HighSymmKPath, return: Dict."""
         self.name = "RHL1"
         eta = (1 + 4 * cos(alpha)) / (2 + 4 * cos(alpha))
         nu = 3.0 / 4.0 - eta / 2.0
@@ -690,10 +666,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def rhl2(self, alpha):
-        """
-        Rhombohedral 2 HighSymmKPath
-        :return: Dict
-        """
+        """Rhombohedral 2 HighSymmKPath, return: Dict."""
         self.name = "RHL2"
         eta = 1 / (2 * tan(alpha / 2.0) ** 2)
         nu = 3.0 / 4.0 - eta / 2.0
@@ -707,14 +680,12 @@ class HighSymmetryKpoint3DFactory(object):
             "Q_1": np.array([1.0 - eta, -eta, -eta]),
             "Z": np.array([0.5, -0.5, 0.5]),
         }
-        path = [["\\Gamma", "P", "Z", "Q", "\\Gamma", "F", "P_1", "Q_1", "L", "Z"]]
+        path = [["\\Gamma", "P", "Z", "Q",
+                 "\\Gamma", "F", "P_1", "Q_1", "L", "Z"]]
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def mcl(self, b, c, beta):
-        """
-        Monoclinic 1 HighSymmKPath
-        :return: Dict
-        """
+        """Monoclinic 1 HighSymmKPath, return: Dict."""
         self.name = "MCL"
         eta = (1 - b * cos(beta) / c) / (2 * sin(beta) ** 2)
         nu = 0.5 - eta * c * cos(beta) / b
@@ -744,10 +715,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def mclc1(self, a, b, c, alpha):
-        """
-        Monoclinic C1 HighSymmKPath
-        :return: Dict
-        """
+        """Monoclinic C1 HighSymmKPath, return: Dict."""
         self.name = "MCLC1"
         zeta = (2 - b * cos(alpha) / c) / (4 * sin(alpha) ** 2)
         eta = 0.5 + 2 * zeta * c * cos(alpha) / b
@@ -782,10 +750,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def mclc2(self, a, b, c, alpha):
-        """
-        Monoclinic C2 HighSymmKPath
-        :return: Dict
-        """
+        """Monoclinic C2 HighSymmKPath, return: Dict."""
         self.name = "MCLC2"
         zeta = (2 - b * cos(alpha) / c) / (4 * sin(alpha) ** 2)
         eta = 0.5 + 2 * zeta * c * cos(alpha) / b
@@ -818,10 +783,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def mclc3(self, a, b, c, alpha):
-        """
-        Monoclinic C3 HighSymmKPath
-        :return: Dict
-        """
+        """Monoclinic C3 HighSymmKPath, return: Dict."""
         self.name = "MCLC3"
         mu = (1 + b ** 2 / a ** 2) / 4.0
         delta = b * c * cos(alpha) / (2 * a ** 2)
@@ -856,10 +818,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def mclc4(self, a, b, c, alpha):
-        """
-        Monoclinic C4 HighSymmKPath
-        :return: Dict
-        """
+        """Monoclinic C4 HighSymmKPath, return: Dict."""
         self.name = "MCLC4"
         mu = (1 + b ** 2 / a ** 2) / 4.0
         delta = b * c * cos(alpha) / (2 * a ** 2)
@@ -894,18 +853,18 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def mclc5(self, a, b, c, alpha):
-        """
-        Monoclinic C5 HighSymmKPath
-        :return: Dict
-        """
+        """Monoclinic C5 HighSymmKPath, return: Dict."""
         self.name = "MCLC5"
-        zeta = (b ** 2 / a ** 2 + (1 - b * cos(alpha) / c) / sin(alpha) ** 2) / 4
+        zeta = (b ** 2 / a ** 2 + (1 - b * cos(
+                alpha) / c) / sin(alpha) ** 2) / 4
         eta = 0.5 + 2 * zeta * c * cos(alpha) / b
-        mu = eta / 2 + b ** 2 / (4 * a ** 2) - b * c * cos(alpha) / (2 * a ** 2)
+        mu = eta / 2 + b ** 2 / (4 * a ** 2) - b * c * cos(
+            alpha) / (2 * a ** 2)
         nu = 2 * mu - zeta
         rho = 1 - zeta * a ** 2 / b ** 2
         omega = (
-            (4 * nu - 1 - b ** 2 * sin(alpha) ** 2 / a ** 2) * c / (2 * b * cos(alpha))
+            (4 * nu - 1 - b ** 2 * sin(
+             alpha) ** 2 / a ** 2) * c / (2 * b * cos(alpha))
         )
         delta = zeta * c * cos(alpha) / b + omega / 2 - 0.25
         kpoints = {
@@ -938,10 +897,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def tria(self):
-        """
-        Trigonal a HighSymmKPath
-        :return: Dict
-        """
+        """Trigonal a HighSymmKPath, return: Dict."""
         self.name = "TRI1a"
         kpoints = {
             "\\Gamma": np.array([0.0, 0.0, 0.0]),
@@ -962,10 +918,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def trib(self):
-        """
-        Trigonal b HighSymmKPath
-        :return: Dict
-        """
+        """Trigonal b HighSymmKPath, return: Dict."""
         self.name = "TRI1b"
         kpoints = {
             "\\Gamma": np.array([0.0, 0.0, 0.0]),
@@ -988,6 +941,7 @@ class HighSymmetryKpoint3DFactory(object):
 
 """
 if __name__ == "__main__":
+    from jarvis.core.atoms import Atoms
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]
@@ -1004,6 +958,6 @@ if __name__ == "__main__":
     Si = Poscar.from_file(
         "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/CONTCAR"
     ).atoms
-    kp = Kpoints3D().kpath(atoms=Si)  # automatic_length_mesh(lattice_mat=lattice_mat)
+    kp = Kpoints3D().kpath(atoms=Si)
     kp.write_file("KPOINTS")
 """

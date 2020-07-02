@@ -1,6 +1,4 @@
-"""
-Modules handling chemical composition
-"""
+"""Modules handling chemical composition."""
 # from math import gcd
 import string
 from jarvis.core.specie import Specie
@@ -10,24 +8,36 @@ from jarvis.core.utils import gcd
 import re
 
 
-
 class Composition(object):
+    """Generate composition python object."""
+
     def __init__(self, content={}, sort=False):
         """
+        Initialize with a dictionary.
+
+        This class is used in Atoms and related objects.
+
+        Args:
+            content: dictioary.
+
+            sort: whether to sort alphabetically.
+
         >>> from composition import Composition
         >>> comp = {"Li": 2, "O": 4}
         >>> cc = Composition(comp)
-        >>> print(cc.prototype, cc.formula, cc.reduced_formula, round(cc.weight,4))
+        >>> weight = round(cc.weight,4)
+        >>> print(cc.prototype,cc.formula,cc.reduced_formula,weight)
         AB2 Li2O4 LiO2 77.8796
         """
         if sort:
-            content = OrderedDict(sorted(content.items(), key=lambda x: (x[0])))
+            content = OrderedDict(sorted(content.items(),
+                                  key=lambda x: (x[0])))
         self._content = content
-   
-    @staticmethod 
 
-    def from_string(value,sort=True):
-        re_formula = re.compile('([A-Z][a-z]?)([0-9\.]*)')
+    @staticmethod
+    def from_string(value, sort=True):
+        """Generate composition from string."""
+        re_formula = re.compile(r"([A-Z][a-z]?)([0-9\.]*)")
         d = defaultdict(float)
         for elt, amt in re_formula.findall(value):
             if elt in ['D', 'T']:
@@ -39,10 +49,11 @@ class Composition(object):
             else:
                 d[elt] += float(amt)
 
-        comp = Composition(dict(d),sort=sort)
+        comp = Composition(dict(d), sort=sort)
         return comp
 
     def reduce(self):
+        """Reduce chemical formula."""
         repeat = 0
         for specie, count in self._content.items():
             if repeat == 0:
@@ -56,6 +67,7 @@ class Composition(object):
 
     @property
     def prototype(self):
+        """Get chemical prototypes such as A, AB etc."""
         proto = ""
         all_upper = string.ascii_uppercase
 
@@ -67,10 +79,12 @@ class Composition(object):
         return proto.replace("1", "")
 
     def to_dict(self):
+        """Return dictionary format."""
         return self._content
 
     @property
     def reduced_formula(self):
+        """Get reduced formula."""
         form = ""
         reduced, repeat = self.reduce()
         for specie, count in reduced.items():
@@ -83,6 +97,7 @@ class Composition(object):
 
     @property
     def formula(self):
+        """Get total chemical formula."""
         form = ""
         for specie, count in self._content.items():
             if float(count).is_integer():
@@ -93,12 +108,14 @@ class Composition(object):
 
     @property
     def weight(self):
+        """Get atomic weight."""
         wt = 0.0
         for specie, count in self._content.items():
             wt = wt + Specie(specie).atomic_mass * count
         return wt
 
     def __repr__(self):
+        """Representation of the class."""
         return str(self._content)
 
 

@@ -1,14 +1,10 @@
-"""
-Modules for handling PDB files
-"""
+"""Modules for handling PDB Protein Data Bank files."""
 import numpy as np
 from jarvis.core.atoms import Atoms, VacuumPadding
 
 
 def read_pdb(filename=""):
-    """
-    Read PDB file and make Atoms object
-    """
+    """Read PDB file and make Atoms object."""
     f = open(filename, "r")
     lines = f.read().splitlines()
     f.close()
@@ -28,7 +24,8 @@ def read_pdb(filename=""):
     box = np.zeros((3, 3))
     for j in range(3):
         box[j, j] = abs(max_c[j] - min_c[j])
-    pdb = Atoms(lattice_mat=box, elements=species, coords=coords, cartesian=True)
+    pdb = Atoms(lattice_mat=box, elements=species,
+                coords=coords, cartesian=True)
     mol = VacuumPadding(pdb, vacuum=20.0).get_effective_molecule()
     return mol
 
