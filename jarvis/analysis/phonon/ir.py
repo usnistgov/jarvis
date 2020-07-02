@@ -1,34 +1,35 @@
 """
-Modules for analyzing infrared intensities
+Modules for analyzing infrared intensities.
+
+Please find more details in https://doi.org/10.1038/s41524-020-0337-2 .
 """
-from jarvis.io.vasp.outputs import Vasprun, Outcar
+
 import numpy as np
 
 
 def normalize_vecs(phonon_eigenvectors, masses):
     """
     Return the eigenvectors after division of each component by sqrt(mass).
-    Adapted from https://github.com/JMSkelton/Phonopy-Spectroscopy/ 
-    """
 
+    Adapted from https://github.com/JMSkelton/Phonopy-Spectroscopy/
+    """
     nmodes = len(phonon_eigenvectors)
     nmasses = len(masses)
     natoms = nmasses
-
     sqrt_masses = np.sqrt(masses)
-
     eigendisplacements = np.zeros((nmodes, natoms, 3), dtype=np.float64)
-
     for i in range(0, nmodes):
         eigenvector = phonon_eigenvectors[i]
         for j in range(0, natoms):
-            eigendisplacements[i, j, :] = np.divide(eigenvector[j], sqrt_masses[j])
+            eigendisplacements[i, j, :] = np.divide(
+                eigenvector[j], sqrt_masses[j])
     return eigendisplacements
 
 
 def ir_intensity(
     phonon_eigenvectors=[], phonon_eigenvalues=[], masses=[], born_charges=[]
 ):
+    """Calculate IR intensity using DFPT."""
     eigendisplacements = normalize_vecs(phonon_eigenvectors, masses)
     becDim1, becDim2, becDim3 = np.shape(born_charges)
     freq = []
@@ -37,7 +38,6 @@ def ir_intensity(
         eigendisplacement = i
         eigDim1, eigDim2 = np.shape(eigendisplacement)
         irIntensity = 0.0
-
         for a in range(0, 3):
             sumTemp1 = 0.0
             for j in range(0, eigDim1):
@@ -50,9 +50,10 @@ def ir_intensity(
         ir_ints.append(irIntensity)
     return freq, ir_ints
 
-"""
-if __name__ == "__main__":
 
+#"""
+if __name__ == "__main__":
+    from jarvis.io.vasp.outputs import Vasprun, Outcar
     out = Outcar("../../tests/testfiles/io/vasp/OUTCAR.JVASP-39")
     vrun = Vasprun("../../tests/testfiles/io/vasp/vasprun.xml.JVASP-39")
     phonon_eigenvectors = vrun.dfpt_data["phonon_eigenvectors"]
@@ -73,4 +74,4 @@ if __name__ == "__main__":
     print (round(y[1],2))
     #for i, j in zip(phonon_eigenvalues, vrun_eigs):
     #    print(i, j)
-"""
+#"""

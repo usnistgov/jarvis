@@ -1,25 +1,21 @@
 """
-Classical Force-field Inspired Descriptors (CFID)
+Classical Force-field Inspired Descriptors (CFID).
+
 Find details in:
 https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 """
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
-from numpy.linalg import norm, solve
 from jarvis.core.specie import Specie
-import matplotlib.pyplot as plt
-from jarvis.core.atoms import Atoms, VacuumPadding
 from jarvis.core.specie import get_descrp_arr_name
-from jarvis.io.vasp.inputs import Poscar
-from collections import defaultdict
-from math import pi
-from operator import itemgetter
-import time, itertools, collections, math, os, json, sys
 import numpy as np
 from math import log
 
 
 class CFID(object):
+    """Convert Atoms class into 1557 descriptors."""
+
     def __init__(self, atoms):
+        """Initialize with jarvis.core.atoms.Atoms class."""
         self._atoms = atoms
 
     def get_comp_descp(
@@ -32,42 +28,38 @@ class CFID(object):
         print_names=False,
     ):
         """
-        Get chemo-structural CFID decriptors
+        Get chemo-structural CFID decriptors.
 
         Args:
-        
-        struct: Structure object
-        
-        jcell: whether to use cell-size descriptors
-        
-        jmean_chem: whether to use average chemical descriptors
-        
-        jmean_chg: whether to use average charge distribution descriptors
-        
-        jmean_rdf: whether to use radial distribution descriptors
-        
-        jrdf_adf: whether to use radial as well as angle distribution descriptors
-        
-        print_names: whether to print names of descriptors
-        
+
+            struct: Structure object
+
+            jcell: whether to use cell-size descriptors
+
+            jmean_chem: whether to use average chemical descriptors
+
+            jmean_chg: whether to use average charge distribution descriptors
+
+            jmean_rdf: whether to use radial distribution descriptors
+
+            jrdf_adf: whether to use radial and angle distribution descriptors
+
+            print_names: whether to print names of descriptors
+
         Returns:
-        
           cat: catenated final descriptors
-          
         """
         cat = []
         s = self._atoms
         cell = []
         mean_chem = []
         rdf = []
-        adf = []
         nn = []
         mean_chg = []
         adfa = []
         adfb = []
         ddf = []
-
-        if jmean_chem == True:
+        if jmean_chem:
             el_dict = s.composition._content
             # print (el_dict,type(el_dict))
             arr = []
@@ -77,7 +69,7 @@ class CFID(object):
             mean_chem = np.mean(np.array(arr), axis=0)
             # print ('mean_chem',len(mean_chem))
 
-        if jcell == True:
+        if jcell:
             v_pa = round(float(s.volume) / float(s.num_atoms), 5)
             logv_pa = round(log(v_pa), 5)
             pf = s.packing_fraction
@@ -85,13 +77,13 @@ class CFID(object):
             cell = np.array([v_pa, logv_pa, pf, density])
             # print ('jcell',len(cell))
 
-        if jrdf == True:
+        if jrdf:
             Nbrs = NeighborsAnalysis(s)
             _, distrdf, nn = Nbrs.get_rdf()
             rdf = np.array(distrdf)
             print("rdf", len(rdf))
 
-        if jrdf_adf == True:
+        if jrdf_adf:
             try:
                 adfa = np.zeros(179)
                 adfb = np.zeros(179)
@@ -105,7 +97,7 @@ class CFID(object):
                 adfb = distributions["adfb"]
                 ddf = distributions["ddf"]
 
-            except:
+            except Exception:
                 pass
             adfa = np.array(adfa)
             adfb = np.array(adfb)
@@ -118,7 +110,7 @@ class CFID(object):
             # print ('rdf',len(rdf))
             # print ('nn',len(nn))
 
-        if jmean_chg == True:
+        if jmean_chg:
             chgarr = []
             el_dict = s.composition._content
             for k, v in el_dict.items():
@@ -127,12 +119,14 @@ class CFID(object):
             mean_chg = np.mean(chgarr, axis=0)
             # print ('mean_chg',len(mean_chg))
 
-        if print_names == True:
+        if print_names:
             nmes = []
             chem_nm = get_descrp_arr_name()
             for d, nm in zip(
-                [mean_chem, cell, mean_chg, rdf, adfa, adfb, ddf, nn],
-                ["mean_chem", "cell", "mean_chg", "rdf", "adfa", "adfb", "ddf", "nn"],
+                [mean_chem, cell, mean_chg, rdf,
+                 adfa, adfb, ddf, nn],
+                ["mean_chem", "cell", "mean_chg",
+                 "rdf", "adfa", "adfb", "ddf", "nn"],
             ):
                 if len(d) != 0:
                     for ff, dd in enumerate(d):
@@ -147,18 +141,22 @@ class CFID(object):
             return nmes
         else:
             for d, nm in zip(
-                [mean_chem, cell, mean_chg, rdf, adfa, adfb, ddf, nn],
-                ["mean_chem", "cell", "mean_chg", "rdf", "adfa", "adfb", "ddf", "nn"],
+                [mean_chem, cell, mean_chg, rdf,
+                 adfa, adfb, ddf, nn],
+                ["mean_chem", "cell", "mean_chg",
+                 "rdf", "adfa", "adfb", "ddf", "nn"],
             ):
-                if len(d) != 0 :
-                #if d != []:
+                if len(d) != 0:
+                    # if d != []:
                     for ff, dd in enumerate(d):
                         cat.append(dd)
             cat = np.array(cat).astype(float)
         return cat
 
+
 def feat_names():
- names = [
+    """Names of the 1557 descriptors."""
+    names = [
         "bp_mult_atom_rad",
         "hfus_add_bp",
         "elec_aff_mult_voro_coord",
@@ -1715,8 +1713,10 @@ def feat_names():
         "nn_96",
         "nn_97",
         "nn_98",
-        "nn_99"]
- return names
+        "nn_99",
+    ]
+    return names
+
 
 """
 if __name__ == "__main__":

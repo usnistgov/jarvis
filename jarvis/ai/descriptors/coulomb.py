@@ -1,15 +1,15 @@
-import numpy as np
-from jarvis.core.atoms import Atoms
-from jarvis.core.specie import Specie
+"""
+Coulomb matrix for Atoms.
 
+Refer to: 10.1103/PhysRevLett.108.058301
 """
-Coulomb matrix for a structure
-Refer: 10.1103/PhysRevLett.108.058301
-"""
+
+import numpy as np
+from jarvis.core.specie import Specie
 
 
 def coulomb_matrix(atoms="", max_dim=100):
-    """
+    """Convert Atoms class to max_dim x max_dim matrix.
 
     Args:
 
@@ -18,7 +18,6 @@ def coulomb_matrix(atoms="", max_dim=100):
         max_dim: maximum number of atoms=sqrt(max_dim)
 
     Returns:
-
           z: numpy array of 1 x max_dim dimension
     """
     natoms = atoms.num_atoms
@@ -40,8 +39,10 @@ def coulomb_matrix(atoms="", max_dim=100):
     z = np.pad(tmp, (0, padding), "constant")
     return z
 
+
 """
 if __name__ == "__main__":
+    from jarvis.core.atoms import Atoms
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]

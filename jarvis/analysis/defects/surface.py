@@ -1,28 +1,22 @@
-"""
-Modules for making crystallographic plane surfaces
-"""
-from jarvis.io.vasp.inputs import Poscar
-from jarvis.core.lattice import Lattice
+"""Modules for making crystallographic plane surfaces."""
 from jarvis.core.atoms import Atoms
+from jarvis.core.utils import ext_gcd
 import numpy as np
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
-from numpy.linalg import norm, solve
+from numpy.linalg import norm
 from numpy import gcd
-import sys
-
-
-
-def ext_gcd(a, b):
-    if b == 0:
-        return 1, 0
-    elif a % b == 0:
-        return 0, 1
-    else:
-        x, y = self.ext_gcd(b, a % b)
-        return y, x - y * (a // b)
 
 
 def wulff_normals(miller_indices=[], surface_energies=[]):
+    """Obtain Wulff Normals.
+
+    Args:
+         miller_indices : Miller indices
+
+         surface_energies : corresponding surface energies
+
+    Returns: Surface normals
+    """
     max_s = min(surface_energies)
     normals = []
     for i, j in zip(miller_indices, surface_energies):
@@ -33,6 +27,8 @@ def wulff_normals(miller_indices=[], surface_energies=[]):
 
 
 class Surface(object):
+    """Get surface object of arbitrary atoms object and miller index."""
+
     def __init__(
         self,
         atoms=None,
@@ -42,8 +38,20 @@ class Surface(object):
         tol=1e-10,
         from_conventional_structure=True,
     ):
-        """
-        Get surface object of arbitrary atoms object and miller index
+        """Initialize the class.
+
+        Args:
+             atoms: jarvis.core.Atoms object
+
+             indices: Miller indices
+
+             layers: Number of surface layers
+
+             vacuum: vacuum padding
+
+             tol: tolerance during dot product
+
+             from_conventional_structure: whether to use the conv. atoms
         """
         self.indices = np.array(indices)
         if from_conventional_structure:
@@ -55,10 +63,10 @@ class Surface(object):
         self.layers = layers
 
     def make_surface(self):
+        """Generate specified surface. Modified from ase package."""
         atoms = self.atoms
-        h, k, l = self.indices
+        h_index, k_index, l_index = self.indices
         h0, k0, l0 = self.indices == 0
-
         if h0 and k0 or h0 and l0 or k0 and l0:  # if two indices are zero
             if not h0:
                 c1, c2, c3 = [(0, 1, 0), (0, 0, 1), (1, 0, 0)]
@@ -67,39 +75,36 @@ class Surface(object):
             if not l0:
                 c1, c2, c3 = [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
         else:
-            p, q = ext_gcd(k, l)
+            p, q = ext_gcd(k_index, l_index)
             a1, a2, a3 = self.atoms.lattice_mat  # .lat_lengths()
 
             # constants describing the dot product of basis c1 and c2:
             # dot(c1,c2) = k1+i*k2, i in Z
-            k1 = np.dot(p * (k * a1 - h * a2) + q * (l * a1 - h * a3), l * a2 - k * a3)
-            k2 = np.dot(l * (k * a1 - h * a2) - k * (l * a1 - h * a3), l * a2 - k * a3)
+            k1 = np.dot(p * (k_index * a1 - h_index * a2)
+                        + q * (l_index * a1 - h_index * a3),
+                        l_index * a2 - k_index * a3)
+            k2 = np.dot(l_index * (k_index * a1 - h_index * a2)
+                        - k_index * (l_index * a1 - h_index * a3),
+                        l_index * a2 - k_index * a3)
 
             if abs(k2) > self.tol:
-                i = -int(round(k1 / k2))  # i corresponding to the optimal basis
-                p, q = p + i * l, q - i * k
+                i = -int(round(k1 / k2))
+                p, q = p + i * l_index, q - i * k_index
 
-            a, b = ext_gcd(p * k + q * l, h)
+            a, b = ext_gcd(p * k_index + q * l_index, h_index)
 
-            c1 = (p * k + q * l, -p * h, -q * h)
-            c2 = np.array((0, l, -k)) // abs(gcd(l, k))
+            c1 = (p * k_index + q * l_index, -p * h_index, -q * h_index)
+            c2 = np.array((0, l_index, -k_index)) // abs(gcd(l_index, k_index))
             c3 = (b, a * p, a * q)
-        # print ('c1c2c3',c1,c2,c3)
         lattice = atoms.lattice_mat  # .lat_lengths()
         basis = np.array([c1, c2, c3])
         scaled = np.linalg.solve(basis.T, np.array(atoms.frac_coords).T).T
         scaled -= np.floor(scaled + self.tol)
-        # atoms.frac_coords=scaled
         new_coords = scaled
         tmp_cell = np.dot(basis, lattice)
         M = np.linalg.solve(lattice, tmp_cell)
-        # print ('scaled',scaled)
         cart_coords = np.dot(scaled, lattice)
-        # print ('cart_coords',cart_coords)
-        # print ('M Matric',M)
         new_coords = np.dot(cart_coords, M)
-        # print ('new_coords',new_coords)
-        # new_cart_coords=np.dot(scaled,tmp_cell)
 
         new_atoms = Atoms(
             lattice_mat=tmp_cell,
@@ -181,6 +186,7 @@ class Surface(object):
         # print (with_vacuum_atoms)
         return with_vacuum_atoms
 
+
 """
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
@@ -253,6 +259,7 @@ if __name__ == "__main__":
     ]
     nm = wulff_normals(miller_indices=ml, surface_energies=su)
     print(nm)
+    from jarvis.core.lattice import Lattice
     lat = Lattice([[4.05, 0, 0], [0, 4.05, 0], [0, 0, 4.05]])
     pmg_wulff = WulffShape(lat, ml, su)
     print(pmg_wulff.facets)

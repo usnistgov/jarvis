@@ -1,3 +1,5 @@
+"""Helper functions for ML applications."""
+
 from jarvis.db.figshare import data
 from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 import numpy as np
@@ -35,13 +37,12 @@ typical_data_ranges = {
 }
 
 
-def get_ml_data( ml_property="formation_energy_peratom", dataset = 'cfid_3d', data_ranges=typical_data_ranges):
-
+def get_ml_data(ml_property="formation_energy_peratom",
+                dataset='cfid_3d', data_ranges=typical_data_ranges):
     """
-    Provides arrays/pandas-dataframe as input for ML algorithms
+    Provide arrays/pandas-dataframe as input for ML algorithms.
 
     Args:
-
 
         ml_property: target property to train
 
@@ -50,15 +51,14 @@ def get_ml_data( ml_property="formation_energy_peratom", dataset = 'cfid_3d', da
         dataset: dataset available in jarvis or other array
 
     Returns:
-
            X, Y , ids
     """
     import pandas as pd
-    if isinstance(dataset,str):
-       dataml = data(dataset)
-       df=pd.DataFrame(dataml)
+    if isinstance(dataset, str):
+        dataml = data(dataset)
+        df = pd.DataFrame(dataml)
     else:
-       df=pd.DataFrame(dataset)
+        df = pd.DataFrame(dataset)
 
     x = []
     y = []
@@ -89,9 +89,7 @@ def get_ml_data( ml_property="formation_energy_peratom", dataset = 'cfid_3d', da
 
 
 def regr_scores(test, pred):
-
-    """
-    Generic regresion scores
+    """Provide generic regresion scores.
 
     Args:
 
@@ -100,10 +98,8 @@ def regr_scores(test, pred):
        test: held data for testing
 
     Returns:
-
         info: with metrics
     """
-
     rmse = np.sqrt(mean_squared_error(test, pred))
     r2 = r2_score(test, pred)
     mae = mean_absolute_error(test, pred)
@@ -118,10 +114,10 @@ def regr_scores(test, pred):
 
 def binary_class_dat(X=[], Y=[], tol=0.1):
     """
-    Categorize a continous dataset in 1/0 with a threshold "tol"
+    Categorize a continous dataset in 1/0 with a threshold "tol".
+
     TODO: replace with OneHotEncoder
     """
-
     Y1 = []
     for i, j in zip(X, Y):
         if j >= tol:
@@ -129,4 +125,3 @@ def binary_class_dat(X=[], Y=[], tol=0.1):
         else:
             Y1.append(0)
     return X, Y1
-

@@ -1,37 +1,20 @@
-"""
-Modules for handling crystallographic Spacegroup related operations
-"""
+"""Modules for handling crystallographic Spacegroup related operations."""
 from functools import reduce
 from jarvis.core.lattice import Lattice
 from jarvis.core.atoms import Atoms
 import spglib
 from jarvis.core.specie import Specie
-import itertools
 import numpy as np
 from numpy import sin, cos
 import itertools
-
+from fractions import gcd
 # from numpy import gcd
 # from math import gcd
 import os
 
 
-def gcd(a, b):
-    a, b = np.broadcast_arrays(a, b)
-    a = a.copy()
-    b = b.copy()
-    pos = np.nonzero(b)[0]
-    while len(pos) > 0:
-        b2 = b[pos]
-        a[pos], b[pos] = b2, a[pos] % b2
-        pos = pos[b[pos] != 0]
-    return a
-
-
-from fractions import gcd
-
-
 def unique_rows_2(a):
+    """Remove duplicate rows."""
     order = np.lexsort(a.T)
     a = a[order]
     diff = np.diff(a, axis=0)
@@ -40,14 +23,8 @@ def unique_rows_2(a):
     return a[ui]
 
 
-def unique_rows(a):
-    # https://stackoverflow.com/questions/31097247/remove-duplicate-rows-of-a-numpy-array
-    a = np.ascontiguousarray(a)
-    unique_a = np.unique(a.view([("", a.dtype)] * a.shape[1]))
-    return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
-
-
 def symmetrically_distinct_miller_indices(max_index=3, cvn_atoms=None):
+    """Get unique miller indices for max_index."""
     # Need to work on this
     r1 = list(range(1, max_index + 1))
     r2 = list(range(-max_index, 1))
@@ -55,9 +32,10 @@ def symmetrically_distinct_miller_indices(max_index=3, cvn_atoms=None):
     r3 = r1 + r2
     # r.reverse()
     r = r3
-    # print ('rrrrr',r,sorted(r))
+    # print ('sorted',r,sorted(r))
     conv_hkl_list = [
-        miller for miller in itertools.product(r, r, r) if any([i != 0 for i in miller])
+        miller for miller in
+        itertools.product(r, r, r) if any([i != 0 for i in miller])
     ]
     spg = Spacegroup3D(cvn_atoms)._dataset
     rot = spg["rotations"]
@@ -81,14 +59,14 @@ wyckoff_file = str(os.path.join(os.path.dirname(__file__), "Wyckoff.csv"))
 
 
 def parse_wyckoff_csv(wyckoff_file):
-    """Parse Wyckoff.csv
+    """Parse Wyckoff.csv from spglib.
+
     There are 530 data sets. For one example:
     9:C 1 2 1:::::::
     ::4:c:1:(x,y,z):(-x,y,-z)::
     ::2:b:2:(0,y,1/2):::
     ::2:a:2:(0,y,0):::
     """
-
     rowdata = []
     points = []
     hP_nums = [433, 436, 444, 450, 452, 458, 460]
@@ -155,20 +133,39 @@ def parse_wyckoff_csv(wyckoff_file):
 
 
 def read_wyckoff_csv(filename):
+    """Read wyckoff_csv file."""
     with open(filename) as wyckoff_file:
         return parse_wyckoff_csv(wyckoff_file)
 
 
 def get_wyckoff_position_operators(hall_number):
+    """Get all Wyckoff operations for Hall number."""
     wyckoff = read_wyckoff_csv(wyckoff_file)
     operations = wyckoff[hall_number - 1]
     return operations
 
 
 class Spacegroup3D(object):
+    """
+    Provide spacegroup related data for Atoms object.
+
+    Currently uses spglib to derive spacegroup
+    related information for 3D materials mainly
+    """
+
     def __init__(self, atoms=[], dataset={}, symprec=1e-2, angle_tolerance=5):
         """
-        Currently uses spglib to derive spacegroup related information for 3D materials mainly
+        Following information are needed for Spacegroup3D.
+
+        If dataset is not provided, the default dataset is used.
+        Args:
+            atoms: jarvis.core.Atoms
+
+            dataset: spacegroup dataset
+
+            symprec: symmetry precision
+
+            angle_tolerance: angle tolerance
         """
         self._dataset = dataset
         self._atoms = atoms
@@ -179,15 +176,17 @@ class Spacegroup3D(object):
             self._dataset = spg._dataset
 
     def spacegroup_data(self):
+        """Provide spacegroup data from spglib."""
         phonopy_atoms = (
             self._atoms.lattice_mat,
             self._atoms.frac_coords,
             self._atoms.atomic_numbers,
         )
         dataset = spglib.get_symmetry_dataset(
-            phonopy_atoms, symprec=self._symprec, angle_tolerance=self._angle_tolerance
+            phonopy_atoms, symprec=self._symprec,
+            angle_tolerance=self._angle_tolerance
         )
-        """    
+        """
         keys = ('number',
         'hall_number',
         'international',
@@ -217,16 +216,19 @@ class Spacegroup3D(object):
 
     @property
     def space_group_symbol(self):
+        """Get spacegroup symbol."""
         # spg = self.spacegroup_data()
         return self._dataset["international"]
 
     @property
     def space_group_number(self):
+        """Get spacegroup number."""
         # spg = self.spacegroup_data()
         return self._dataset["number"]
 
     @property
     def primitive_atoms(self):
+        """Get primitive atoms."""
         phonopy_atoms = (
             self._atoms.lattice_mat,
             self._atoms.frac_coords,
@@ -250,6 +252,7 @@ class Spacegroup3D(object):
 
     @property
     def refined_atoms(self):
+        """Refine atoms based on spacegroup data."""
         phonopy_atoms = (
             self._atoms.lattice_mat,
             self._atoms.frac_coords,
@@ -273,6 +276,7 @@ class Spacegroup3D(object):
 
     @property
     def crystal_system(self):
+        """Get crystal system."""
         n = self._dataset["number"]
 
         def f(i, j):
@@ -298,6 +302,7 @@ class Spacegroup3D(object):
 
     @property
     def lattice_system(self):
+        """Get lattice system."""
         n = self._dataset["number"]
         system = self.crystal_system
         if n in [146, 148, 155, 160, 161, 166, 167]:
@@ -309,13 +314,17 @@ class Spacegroup3D(object):
 
     @property
     def point_group_symbol(self):
+        """Get pointgroup."""
         return self._dataset["pointgroup"]
 
     @property
-    def conventional_standard_structure(self, tol=1e-5, international_monoclinic=True):
+    def conventional_standard_structure(
+            self, tol=1e-5,
+            international_monoclinic=True):
         """
-        Gives a structure with a conventional cell according to certain
-        standards. The standards are defined in Setyawan, W., & Curtarolo,
+        Give a conventional cell according to certain conventions.
+
+        The conventionss are defined in Setyawan, W., & Curtarolo,
         S. (2010). High-throughput electronic band structure calculations:
         Challenges and tools. Computational Materials Science,
         49(2), 299-312. doi:10.1016/j.commatsci.2010.05.010
@@ -345,7 +354,8 @@ class Spacegroup3D(object):
                 a, b = sorted(latt.abc[:2])
                 sorted_dic = sorted(
                     [
-                        {"vec": latt.matrix[i], "length": latt.abc[i], "orig_index": i}
+                        {"vec": latt.matrix[i],
+                         "length": latt.abc[i], "orig_index": i}
                         for i in [0, 1]
                     ],
                     key=lambda k: k["length"],
@@ -360,7 +370,8 @@ class Spacegroup3D(object):
                 a, b = sorted(latt.abc[1:])
                 sorted_dic = sorted(
                     [
-                        {"vec": latt.matrix[i], "length": latt.abc[i], "orig_index": i}
+                        {"vec": latt.matrix[i],
+                         "length": latt.abc[i], "orig_index": i}
                         for i in [1, 2]
                     ],
                     key=lambda k: k["length"],
@@ -416,7 +427,8 @@ class Spacegroup3D(object):
                 transf[2] = [0, 0, 1]
                 sorted_dic = sorted(
                     [
-                        {"vec": latt.matrix[i], "length": latt.abc[i], "orig_index": i}
+                        {"vec": latt.matrix[i],
+                         "length": latt.abc[i], "orig_index": i}
                         for i in [0, 1]
                     ],
                     key=lambda k: k["length"],
@@ -433,7 +445,6 @@ class Spacegroup3D(object):
                     if angles[0] > 90:
                         # if the angle is > 90 we invert a and b to get
                         # an angle < 90
-                        # print ('[-m[t[0]], -m[t[1]], m[2]]',[-m[t[0]], -m[t[1]], m[2]])
                         a, b, c, alpha, beta, gamma = Lattice(
                             [-m[t[0]], -m[t[1]], m[2]]
                         ).parameters
