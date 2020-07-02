@@ -1,37 +1,32 @@
 """
-To access data in JARVIS-API, you do not need to request an account
-However, to upload your data, please request an account at https://jarvis.nist.gov/
-Then install MDCS-api-tools by:
+Access or upload data in JARVIS-API.
 
+https://jarvis.nist.gov/
+Install MDCS-api-tools by:
 git clone https://github.com/knc6/MDCS-api-tools.git
 cd MDCS-api-tools
 python setup.py develop
-
-You'll require a schema ID and a user-name to go through examples below
+Require a schema ID and a user-name to go through examples below.
 """
 
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.db.figshare import data
-import os, glob, json, sys
-
+import os
+import numpy as np
+from jarvis.core.atoms import Atoms
+from xml.etree.ElementTree import Element, SubElement, ElementTree
 try:
-    import mdcs
     from mdcs import curate, explore
-except:
+except Exception:
     print("Please install MDCS")
     pass
-import numpy as np
-from jarvis.io.vasp.outputs import Vasprun
-from jarvis.core.atoms import Atoms
-from xml.etree.ElementTree import Element, SubElement, Comment, tostring, ElementTree
-
 try:
-  f = open("passwrd.txt", "r")  # path to your passowrd file
-  passd = f.read().splitlines()[0]
-  f.close()
-except:
-   print ('Passowrd is not provided')
-   pass
+    f = open("passwrd.txt", "r")  # path to your passowrd file
+    passd = f.read().splitlines()[0]
+    f.close()
+except Exception:
+    print("Passowrd is not provided")
+    pass
 
 user = "abc"  # your username
 schema = "5a7f2a872887d500ab0c0d02"
@@ -71,21 +66,24 @@ def data_json(
     mimagz_arr="na",
     struct="na",
     other="na",
-    curate_xml=False
+    curate_xml=False,
 ):
     """
-    This is an example of how to upload JARVIS data to the API. 
-    It converts input data to XML based on a template schema which must be available in the JARVIS-API.
+    This is an example of how to upload JARVIS data to the API.
+
+    It converts input data to XML based on a template schema,
+    which must be available in the JARVIS-API.
     After the conversion, the XML could be uploaded to the API.
     Any user with registered username and password can upload.
     If they prefer to upload using their own schema, contact the developers.
     See an example: https://jarvis.nist.gov/data?id=5df7f05ceaf3b300338bf83f
+
     Args:
 
          metadata with a calculation
-     
+
          curate_xml: for debugging set it to False, and produce XML files
-   
+
     """
 
     top = Element("JARVIS-DFT")
@@ -157,14 +155,20 @@ def data_json(
     child.text = str(other)
     filename = str(name) + str(".xml")
     ElementTree(top).write(filename)
-    if curate_xml==True:
-      curate(
-        filename, filename, schema, "https://jarvis.nist.gov/", user, passd, cert=False
-      )
+    if curate_xml:
+        curate(
+            filename,
+            filename,
+            schema,
+            "https://jarvis.nist.gov/",
+            user,
+            passd,
+            cert=False,
+        )
 
 
 def get_record(file="JVASP-1002.xml"):
-   """
+    """
    This is an example of how to get a particular jarvis-id document, say JVASP-1002.xml
 
    Args:
@@ -176,10 +180,10 @@ def get_record(file="JVASP-1002.xml"):
          data in json format
    """
 
-   r = explore.select(
+    r = explore.select(
         "https://jarvis.nist.gov/", user, passd, cert=False, title=file, format="json"
-   )
-   return r
+    )
+    return r
 
 
 def delete_all(file=""):
@@ -199,20 +203,24 @@ def upload_sample_data(curate_xml=False):
     Generate and upload XML files
     Set curate_xml==True to upload all the XML documents
     """
-    d = data('dft_2d')
+    d = data("dft_2d")
 
     count = 0
     for i in d[0:1]:
         filname = str(i["jid"]) + str(".xml")
         if not os.path.exists(filname):
             count = count + 1
-            energy = str(i["optb88vdw_total_energy"]) + str(",") + str(i["formation_energy_peratom"])
+            energy = (
+                str(i["optb88vdw_total_energy"])
+                + str(",")
+                + str(i["formation_energy_peratom"])
+            )
             atoms = Atoms.from_dict(i["atoms"])
             formula = str(atoms.composition.reduced_formula)
             sgp = str(Spacegroup3D(atoms).space_group_symbol)
             name = str(i["jid"])
             print(name)
-            ref = str("")
+            # ref = str("")
             func = str("OptB88vdW")
             elem = ""
             species = atoms.elements
@@ -226,10 +234,12 @@ def upload_sample_data(curate_xml=False):
                 + str("x")
                 + str(i["kpoints_array"][2])
             )
-            el_tens = 'na'
+            el_tens = "na"
             try:
-                el_tens = str(','.join(map(str,np.array(i["elastic_tensor"]).flatten())))
-            except:
+                el_tens = str(
+                    ",".join(map(str, np.array(i["elastic_tensor"]).flatten()))
+                )
+            except Exception:
                 pass
             KV = str(i["bulk_modulus_kv"])
             GV = str(i["shear_modulus_gv"])
@@ -241,9 +251,9 @@ def upload_sample_data(curate_xml=False):
             mrealy_arr = str(i["mepsy"])
             realz_arr = str(i["epsz"])
             mrealz_arr = str(i["mepsz"])
-            typ = str("2D") #3D
+            typ = str("2D")  # 3D
             other = str(
-                "Citation: 1) DOI:10.1038/s41598-017-05402-0, 2) DOI: 10.1038/sdata.2018.82, 3) arXiv:1804.01033v2 "
+                "Citation: 1) DOI:10.1038/s41598-017-05402-0,2) DOI: 10.1038/sdata.2018.82, 3) arXiv:1804.01033v2 "
             )
             struct = atoms.get_string()
             data_json(
@@ -269,8 +279,10 @@ def upload_sample_data(curate_xml=False):
                 realz_arr=realz_arr,
                 mrealz_arr=mrealz_arr,
                 struct=struct,
-                curate_xml=curate_xml
+                curate_xml=curate_xml,
             )
+
+
 """
 if __name__ == "__main__":
      upload_sample_data(curate_xml = False)
