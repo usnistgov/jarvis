@@ -1,11 +1,10 @@
 """
-Simple ML models for classifcation and regression, designed for educational purposes only
-__author__: = Kamal Choudhary
+Simple ML models for regression.
+
+Designed for educational purposes only.
 """
 from collections import defaultdict
 from jarvis.ai.pkgs.utils import regr_scores
-import pandas as pd
-import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.ensemble import (
     RandomForestRegressor,
@@ -13,20 +12,15 @@ from sklearn.ensemble import (
     AdaBoostRegressor,
 )
 from sklearn.svm import SVR
-from sklearn.linear_model import Lasso, LinearRegression, LogisticRegression
+from sklearn.linear_model import Lasso, LinearRegression
 from sklearn.kernel_ridge import KernelRidge
 from sklearn.neural_network import MLPRegressor
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.datasets import load_boston
-from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import label_binarize
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.pipeline import Pipeline
-from sklearn.svm import SVC
-from jarvis.ai.pkgs.utils import get_ml_data
-
+import matplotlib.pyplot as plt
 
 # Note that these models are with default parameters
 # without any hyper-parameter otimizations
@@ -44,26 +38,22 @@ simple_regr_models = [
 ]
 
 
-def regression(
-    X=[], Y=[], plot=False, models=simple_regr_models, preprocess=True, test_size=0.1
-):
+def regression(X=[], Y=[], plot=False, models=simple_regr_models,
+               preprocess=True, test_size=0.1):
     """
-    Provide model as models to get accuracy
+    Provide model as models to get accuracy.
 
     Args:
+        X: input features
 
-      X: input features
+        Y: Target data
 
-      Y: Target data
-     
-      models : collection array of models
+        models : collection array of models
 
-      plot: whether to make a parity plot with ML models
+        plot: whether to make a parity plot with ML models
 
-      preprocess: whether to apply standard preprocessing techniques
-
+        preprocess: whether to apply standard preprocessing techniques
     """
-
     X_train, X_test, y_train, y_test = train_test_split(
         X, Y, random_state=1, test_size=test_size
     )
@@ -76,23 +66,25 @@ def regression(
                 ("est", i),
             ]
         )
-        if preprocess == True:
+        if preprocess:
             model = pipe
         else:
             model = i
         model.fit(X_train, y_train)
         pred = model.predict(X_test)
         reg_sc = regr_scores(y_test, pred)
-        if plot == True:
+        if plot:
             plt.plot(
-                reg_sc["pred"], reg_sc["test"], ".", label=str(type(i).__name__)[0:4]
+                reg_sc["pred"], reg_sc["test"],
+                ".", label=str(type(i).__name__)[0:4]
             )
-        print(type(i).__name__, round(reg_sc["mae"], 3), round(reg_sc["rmse"], 3))
+        print(type(i).__name__, round(reg_sc["mae"],
+              3), round(reg_sc["rmse"], 3))
         info[type(i).__name__] = {}
         info[type(i).__name__]["mae"] = reg_sc["mae"]
         info[type(i).__name__]["rmse"] = reg_sc["rmse"]
 
-    if plot == True:
+    if plot:
         plt.legend()
         plt.xlabel("DFT")
         plt.ylabel("ML")
@@ -103,9 +95,10 @@ def regression(
 
 """
 if __name__ == "__main__":
-    X, Y, jid  = get_ml_data(dataset = 'cfid_3d', ml_property='exfoliation_energy') 
-
+    from jarvis.ai.pkgs.utils import get_ml_data
+    X, Y, jid  = get_ml_data(dataset =
+                             'cfid_3d', ml_property='exfoliation_energy')
     info = regression(X, Y, models = simple_regr_models)
     print ('info',info)
-    assert info['GradientBoostingRegressor']['mae']<50.0 
+    assert info['GradientBoostingRegressor']['mae']<50.0
 """

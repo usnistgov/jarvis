@@ -1,15 +1,14 @@
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import label_binarize
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.pipeline import Pipeline
 import lightgbm as lgb
-from jarvis.ai.pkgs.utils import get_ml_data
 from jarvis.ai.pkgs.utils import regr_scores
-from jarvis.ai.descriptors.cfid import feat_names
 from collections import defaultdict
 import numpy as np
-import pickle, joblib, json
+import pickle
+import joblib
+import matplotlib.pyplot as plt
 
 
 def regression(
@@ -42,7 +41,7 @@ def regression(
             ("est", lgbm),
         ]
     )
-    if preprocess == True:
+    if preprocess:
         model = pipe
     else:
         model = lgbm
@@ -51,10 +50,10 @@ def regression(
     reg_sc = regr_scores(y_test, pred)
     info["reg_scores"] = reg_sc
 
-    if feature_importance == True:
+    if feature_importance:
         imp_data = []
         info["imp_data"] = imp_data
-        if preprocess != True:
+        if not preprocess:
             feat_imp = model.feature_importances_
             feat_imp = 100 * np.array(
                 [float(i) / float(np.sum(feat_imp)) for i in feat_imp]
@@ -79,13 +78,14 @@ def regression(
         round(reg_sc["rmse"], 3),
         round(reg_sc["r2"], 3),
     )
-    if plot == True:
-        plt.plot(reg_sc["pred"], reg_sc["test"], ".", label=str(type(i).__name__)[0:4])
+    if plot:
+        plt.plot(reg_sc["pred"], reg_sc["test"],
+                 ".", label=str(type(model).__name__)[0:4])
         plt.legend()
         plt.xlabel("DFT")
         plt.ylabel("ML")
 
-    if save_model == True:
+    if save_model:
         pk = str(model_name) + str(".pk")
         jb = str(model_name) + str(".jb")
         # js = str(model_name )+str('.js')
@@ -164,7 +164,6 @@ def parameters_dict():
             "n_estimators": 1170,
             "learning_rate": 0.15375236057119931,
             "num_leaves": 273,
-            #"num_leaves": 73,
         },
         "exfoliation_energy": {
             "n_estimators": 47,
@@ -180,8 +179,10 @@ def parameters_dict():
     return parameters
 
 
-#"""
+"""
 if __name__ == "__main__":
+    from jarvis.ai.pkgs.utils import get_ml_data
+    from jarvis.ai.descriptors.cfid import feat_names
     property = "exfoliation_energy"
     property='formation_energy_peratom'
     params = parameters_dict()[property]
@@ -190,4 +191,4 @@ if __name__ == "__main__":
     names = feat_names()
     info = regression(X=X, Y=Y, jid = jid, config=params, feat_names=names)
     print(info)
-#"""
+"""

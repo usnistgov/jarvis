@@ -1,4 +1,5 @@
-from jarvis.io.vasp.inputs import Poscar
+"""Get formation energy."""
+
 import os
 import json
 
@@ -10,6 +11,10 @@ unary_json.close()
 
 
 def isfloat(value):
+    """Check if a number is float.
+
+    TODO: replace with isinstance.
+    """
     try:
         float(value)
         return True
@@ -18,6 +23,7 @@ def isfloat(value):
 
 
 def unary_energy(el="Na"):
+    """Provide energy per atoms of an element."""
     en = "na"
     for i, j in unary_data.items():
         if str(i) == str(el):
@@ -27,9 +33,10 @@ def unary_energy(el="Na"):
 
 def form_enp(atoms=None, total_energy=None):
     """
-    Calculate formation energy given the total energy and the atoms object
+    Calculate formation energy given the total energy and the atoms object.
+
     Currently for OptB88vdW functional based chemical potential implemented
-    but can be generalized by changing unary_energy
+    but can be generalized by changing unary_energy.
     """
     dd = atoms.composition.to_dict()
     ref = 0.0
@@ -37,7 +44,7 @@ def form_enp(atoms=None, total_energy=None):
         e1 = unary_energy(k)
         if e1 == "na":
             ref = "na"
-            ValueError("Element reference does not exist", el)
+            ValueError("Element reference does not exist", e1)
 
         else:
             ref = ref + float(v) * float(e1)
@@ -58,8 +65,9 @@ def form_enp(atoms=None, total_energy=None):
 
 """
 if __name__ == "__main__":
+    from jarvis.io.vasp.inputs import Poscar
     p = Poscar.from_file(
-        "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/POSCAR"
+        "../..//POSCAR"
     ).atoms
     total_energy = -9.974648
     fen = form_enp(atoms=p, total_energy=total_energy)
@@ -70,6 +78,7 @@ if __name__ == "__main__":
         {"comp": {"Al": 1, "O": 1}, "energy": -4.86, "id": "xyz"},
     ]
 
-    # entries = [[{'Al':2,'O':1},-0.15],[{'Al':2,'O':3},-16.065],[{'Al':1,'O':1},-2.8],[{'Al':1,'O':3},-4.865]]
+    # entries = [[{'Al':2,'O':1},-0.15],[{'Al':2,'O':3},
+     -16.065],[{'Al':1,'O':1},-2.8],[{'Al':1,'O':3},-4.865]]
     print(x)
 """

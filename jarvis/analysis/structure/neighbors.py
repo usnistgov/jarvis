@@ -1,27 +1,21 @@
-"""
-This module provides classes to specify atomic structure
-"""
-import numpy as np
-from jarvis.core.atoms import Atoms
-import matplotlib.pyplot as plt
-from operator import itemgetter
-from jarvis.io.vasp.inputs import Poscar
-import time
+"""This module provides classes to specify atomic structure."""
 
-# plt.switch_backend("agg")
+import numpy as np
+import matplotlib.pyplot as plt
 import math
 from toolz.curried import pipe
 
 
 def check_array(arr, type_=None, shape=None):
-    """Check type and shape of np.ndarray
+    """
+    Check type and shape of np.ndarray.
 
+    Follwing arguments are needed.
     Args:
-    
       x: array to check
-      
+
       type_: the type of the array (int, float), None to not check
-      
+
       shape: the shape of the array, None to not check, -1 to ignore a
         dimension
 
@@ -43,19 +37,17 @@ def check_array(arr, type_=None, shape=None):
 
 
 def special_arange(dims):
-    """Multiple dimensional arange
+    """
+    Multiple dimensional arange.
 
-    This could be extended to any dimension
-
+    This could be extended to any dimension.
     Args:
-    
+
       dims: sequence of ints of length 3
 
     Returns:
-    
       an array of shape (np.prod(dims), 3) with each index having a
       different arrangement of arange.
-
     This function implements the equivalent of a multidimensional for
     loop, which feels like multidimensional arange (see the test)
 
@@ -109,23 +101,25 @@ def special_arange(dims):
 
 
 def calc_structure_data(coords, box, all_symbs, c_size):
-    """Calcuate a dictionary of structure data
+    """
+    Calcuate a dictionary of structure data.
 
     Args:
-    
+
       coords: the coordinates for each element
-      
+
       box: the lattic matrix
-      
+
       all_symbs: the elements
-      
+
       c_size: the c size
 
     Returns:
       a set of structure data
 
     >>> coords = np.array([[0, 0, 0], [0.25, 0.2, 0.25]])
-    >>> box = np.array([[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]])
+    >>> lat = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+    >>> box = np.array(lat)
     >>> elements = ["Si", "Si"]
     >>> c_size = 10.0
     >>> data = calc_structure_data(coords, box, elements, c_size)
@@ -142,7 +136,8 @@ def calc_structure_data(coords, box, all_symbs, c_size):
         return pipe(
             dim,
             special_arange,
-            lambda x: (coords[:, None, :] + x[None, :, :]) / dim[None, None, :],
+            lambda x: (coords[:, None, :] + x[None, :, :]
+                       ) / dim[None, None, :],
             lambda x: np.reshape(x, (-1, 3)),
             lambda x: dict(
                 coords=x,
@@ -157,11 +152,12 @@ def calc_structure_data(coords, box, all_symbs, c_size):
 
 
 class NeighborsAnalysis(object):
-    def __init__(self, atoms=None):
+    """Get neighbor informations (RDF,ADF,DDF) for Atoms object."""
 
-        self._atoms = atoms
+    def __init__(self, atoms=None, rcut1=None, rcut2=None):
         """
-        This class is helpful for RDF, ADF, DDF
+        Initialize the function.
+
         >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
         >>> coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
         >>> elements = ["Si", "Si"]
@@ -170,11 +166,14 @@ class NeighborsAnalysis(object):
         >>> distributions['rdf']
         1
         """
-        rcut1, rcut2 = self.get_dist_cutoffs()
+        self._atoms = atoms
+        if rcut1 is None or rcut2 is None:
+            rcut1, rcut2 = self.get_dist_cutoffs()
         self.rcut1 = rcut1
         self.rcut2 = rcut2
 
     def get_structure_data(self, c_size=10.0):
+        """Provide non-repetitive structure information."""
         return calc_structure_data(
             self._atoms.frac_coords,
             self._atoms.lattice_mat,
@@ -183,6 +182,7 @@ class NeighborsAnalysis(object):
         )
 
     def nbor_list(self, max_n=500, rcut=10.0, c_size=12.0):
+        """Generate neighbor info."""
         nbor_info = {}
         struct_info = self.get_structure_data(c_size)
         coords = np.array(struct_info["coords"])
@@ -190,9 +190,6 @@ class NeighborsAnalysis(object):
         nat = struct_info["nat"]
         new_symbs = struct_info["new_symbs"]
         lat = np.array(struct_info["lat"])
-        znm = 0
-        bond_arr = []
-        deg_arr = []
         different_bond = {}
         nn = np.zeros((nat), dtype="int")
         # print ('max_n, nat',max_n, nat)
@@ -214,7 +211,8 @@ class NeighborsAnalysis(object):
                 if dd < rcut and dd >= 0.1:
                     sumb_i = new_symbs[i]
                     sumb_j = new_symbs[j]
-                    comb = "_".join(sorted(str(sumb_i + "_" + sumb_j).split("_")))
+                    comb = "_".join(sorted(str(sumb_i + "_" + sumb_j
+                                               ).split("_")))
                     different_bond.setdefault(comb, []).append(dd)
 
                     # print ('dd',dd)
@@ -245,18 +243,20 @@ class NeighborsAnalysis(object):
         return nbor_info
 
     def get_rdf(self, plot=False):
+        """Calculate radial distribution function."""
         nbor_info = self.nbor_list(c_size=21.0)
         # print (nbor_info['dist'].tolist())
         n_zero_d = nbor_info["dist"][np.nonzero(nbor_info["dist"])]
         # print ('n_zero_d',n_zero_d)
-        hist, bins = np.histogram(n_zero_d.ravel(), bins=np.arange(0.1, 10.2, 0.1))
+        hist, bins = np.histogram(n_zero_d.ravel(),
+                                  bins=np.arange(0.1, 10.2, 0.1))
         const = float(nbor_info["nat"]) / float(self._atoms.num_atoms)
         hist = hist / float(const)
-        # print ('nbor_info,num_atoms',nbor_info['nat'],self._atoms.num_atoms,const)
         # print ('our_hist',hist)
         # print("bins[:-1]", bins[:-1])
         # print("bins[1:]", bins[1:])
-        shell_vol = 4.0 / 3.0 * np.pi * (np.power(bins[1:], 3) - np.power(bins[:-1], 3))
+        shell_vol = 4.0 / 3.0 * np.pi * (np.power(
+            bins[1:], 3) - np.power(bins[:-1], 3))
         number_density = self._atoms.num_atoms / self._atoms.volume
         rdf = (
             hist / shell_vol / number_density / self._atoms.num_atoms
@@ -265,7 +265,7 @@ class NeighborsAnalysis(object):
         # rdf = 2*len(bins) * hist / np.sum(hist) / shell_vol / number_density
         nn = rdf / self._atoms.num_atoms
         # print ('rdf',len(rdf))
-        if plot == True:
+        if plot:
             plt.plot(bins[:-1], rdf)
             plt.savefig("rdf.png")
             plt.close()
@@ -273,24 +273,26 @@ class NeighborsAnalysis(object):
 
     def get_dist_cutoffs(self, max_cut=5.0):
         """
-        Helper function to get dufferent type of distance cut-offs
-        
-        Args:
-        
-            s: Structure object
-            
-        Returns:
-        
-               rcut: max-cutoff to ensure all the element-combinations are included, used in calculating angluar distribution upto first neighbor
-               
-               rcut1: decide first cut-off based on total RDF and a buffer (previously used in dihedrals, but not used now in the code)
-               
-               rcut2: second neighbor cut-off
-               
-               rcut_dihed: specialized cut-off for dihedrals to avaoid large bonds such as N-N, uses average bond-distance and standard deviations
-               
-        """
+        Get different distance cut-offs.
 
+        Args:
+
+            s: Structure object
+
+        Returns:
+               rcut: max-cutoff to ensure all the element-combinations
+               are included, used in calculating angluar distribution
+               upto first neighbor
+
+               rcut1: decide first cut-off based on total RDF and a buffer
+               (previously used in dihedrals, but not used now in the code)
+
+               rcut2: second neighbor cut-off
+
+               rcut_dihed: specialized cut-off for dihedrals to avaoid large
+               bonds such as N-N, uses average bond-distance and standard
+               deviations
+        """
         x, y, z = self.get_rdf()
         arr = []
         for i, j in zip(x, z):
@@ -309,7 +311,8 @@ class NeighborsAnalysis(object):
         rcut1 = (arr[io2] + arr[io1]) / float(2.0)
 
         delta = arr[io3] - arr[io2]
-        while delta < rcut_buffer and arr[io3] < max_cut and arr[io2] < max_cut:
+        while (delta < rcut_buffer and arr[io3]
+               < max_cut and arr[io2] < max_cut):
             io2 = io2 + 1
             io3 = io3 + 1
             delta = arr[io3] - arr[io2]
@@ -320,34 +323,32 @@ class NeighborsAnalysis(object):
 
     def ang_dist(self, nbor_info={}, plot=False):
         """
-        Get  angular distribution function upto first neighbor
-        
-        Args:
-        
-            struct_info: struct information
-            
-            max_n: maximum number of neigbors
-            
-            c_size: max. cell size
-            
-            plot: whether to plot distributions
-            
-            max_cut: max. bond cut-off for angular distribution
-            
-        Retruns:
-        
-            ang_hist1: Angular distribution upto first cut-off
-            
-            ang_bins1: angle bins
-            
-        """
+        Get  angular distribution function upto first neighbor.
 
+        Args:
+            struct_info: struct information
+
+            max_n: maximum number of neigbors
+
+            c_size: max. cell size
+
+            plot: whether to plot distributions
+
+            max_cut: max. bond cut-off for angular distribution
+
+        Retruns:
+
+            ang_hist1: Angular distribution upto first cut-off
+
+            ang_bins1: angle bins
+        """
         # rcut1,rcut2=self.get_dist_cutoffs()
         # rcut=rcut1
         # nbor_info=self.nbor_list()
+        znm = 0
         nat = nbor_info["nat"]
         dist = nbor_info["dist"]
-        nn_id = nbor_info["nn_id"]
+        # nn_id = nbor_info["nn_id"]
         nn = nbor_info["nn"]
         bondx = nbor_info["bondx"]
         bondy = nbor_info["bondy"]
@@ -357,9 +358,9 @@ class NeighborsAnalysis(object):
 
         for i in range(nat):
             for in1 in range(nn[i]):
-                j1 = nn_id[in1][i]
+                # j1 = nn_id[in1][i]
                 for in2 in range(in1 + 1, nn[i]):
-                    j2 = nn_id[in2][i]
+                    # j2 = nn_id[in2][i]
                     nm = dist[in1][i] * dist[in2][i]
                     if nm != 0:
                         rrx = bondx[in1][i] * bondx[in2][i]
@@ -375,7 +376,8 @@ class NeighborsAnalysis(object):
                     else:
                         znm = znm + 1
         angs = np.array([float(i) for i in ang_at.keys()])
-        norm = np.array([float(len(i)) / float(len(set(i))) for i in ang_at.values()])
+        norm = np.array([float(len(i)) / float(len(set(i)))
+                        for i in ang_at.values()])
         ang_hist, ang_bins = np.histogram(
             angs, weights=norm, bins=np.arange(1, 181.0, 1), density=False
         )
@@ -387,12 +389,13 @@ class NeighborsAnalysis(object):
         return ang_hist, ang_bins
 
     def ang_dist_first(self, plot=False):
+        """Get angular distribution upto first neighbor."""
         rcut1 = self.rcut1
-        rcut2 = self.rcut2
+        # rcut2 = self.rcut2
         nbor_info = self.nbor_list(rcut=rcut1)
         ang_hist, ang_bins = self.ang_dist(nbor_info=nbor_info)
         # print ('anghist',ang_hist)
-        if plot == True:
+        if plot:
 
             plt.plot(ang_bins[:-1], ang_hist)
             plt.savefig("adf1.png")
@@ -400,25 +403,27 @@ class NeighborsAnalysis(object):
         return ang_hist, ang_bins
 
     def ang_dist_second(self, plot=False):
+        """Get angular distribution upto second neighbor."""
         # rcut1, rcut2 = self.get_dist_cutoffs()
-        rcut1 = self.rcut1
+        # rcut1 = self.rcut1
         rcut2 = self.rcut2
         # print ('rcut1,rcut2',rcut1,rcut2)
         nbor_info = self.nbor_list(rcut=rcut2)
         ang_hist, ang_bins = self.ang_dist(nbor_info=nbor_info)
-        if plot == True:
+        if plot:
             plt.plot(ang_bins[:-1], ang_hist)
             plt.savefig("adf2.png")
             plt.close()
         return ang_hist, ang_bins
 
     def get_ddf(self, plot=False):
+        """Get dihedral distribution upto first neighbor."""
         # rcut1, rcut2 = self.get_dist_cutoffs()
         rcut1 = self.rcut1
-        rcut2 = self.rcut2
+        # rcut2 = self.rcut2
         nbor_info = self.nbor_list(rcut=rcut1)
         nat = nbor_info["nat"]
-        dist = nbor_info["dist"]
+        # dist = nbor_info["dist"]
         nn_id = nbor_info["nn_id"]
         nn = nbor_info["nn"]
         bondx = nbor_info["bondx"]
@@ -429,7 +434,8 @@ class NeighborsAnalysis(object):
             for in1 in range(nn[i]):
                 j1 = nn_id[in1][i]
                 if j1 > i:
-                    for in2 in range(nn[i]):  # all other nn of i that are not j
+                    for in2 in range(nn[i]):
+                        # all other nn of i that are not j
                         j2 = nn_id[in2][i]
                         if j2 != j1:
                             for in3 in range(
@@ -453,23 +459,26 @@ class NeighborsAnalysis(object):
                                     v12 = np.cross(v1, v2)
                                     theta = math.degrees(
                                         math.atan2(
-                                            np.linalg.norm(v2) * np.dot(v1, v23),
+                                            np.linalg.norm(
+                                                v2) * np.dot(v1, v23),
                                             np.dot(v12, v23),
                                         )
                                     )
                                     if theta < 0.00001:
                                         theta = -theta
                                     # print "theta=",theta
-                                    dih_at.setdefault(round(theta, 3), []).append(i)
+                                    dih_at.setdefault(
+                                        round(theta, 3), []).append(i)
         dih = np.array([float(i) for i in dih_at.keys()])
-        dih1 = set(dih)
+        # dih1 = set(dih)
         # print "dih",dih1
-        norm = np.array([float(len(i)) / float(len(set(i))) for i in dih_at.values()])
+        norm = np.array([float(len(i)) / float(
+                        len(set(i))) for i in dih_at.values()])
 
         dih_hist1, dih_bins1 = np.histogram(
             dih, weights=norm, bins=np.arange(1, 181.0, 1), density=False
         )
-        if plot == True:
+        if plot:
             plt.plot(dih_bins1[:-1], dih_hist1)
             plt.savefig("dihedrals.png")
             plt.close()
@@ -477,6 +486,7 @@ class NeighborsAnalysis(object):
 
     @property
     def get_all_distributions(self):
+        """Get all distributions."""
         distributions = {}
         _, rdf, nn = self.get_rdf()
         ddf, _ = self.get_ddf()
@@ -492,8 +502,10 @@ class NeighborsAnalysis(object):
 
 """
 if __name__ == "__main__":
+    from jarvis.core.atoms import Atoms
+    from jarvis.io.vasp.inputs import Poscar
     p = Poscar.from_file(
-        "/rk2/knc6/JARVIS-DFT/2D-bulk/mp-2815_bulk_PBEBO/MAIN-RELAX-bulk@mp_2815/CONTCAR"
+        "../../CONTCAR"
     ).atoms
     nb = NeighborsAnalysis(p)
     Time = time.time()
@@ -521,9 +533,8 @@ if __name__ == "__main__":
     # coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     # elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    # Si = Poscar.from_file('/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/POSCAR').atoms
     Si = Poscar.from_file(
-        "/rk2/knc6/JARVIS-DFT/Mr-French/mp-672232.vasp_PBEBO/MAIN-ELASTIC-bulk@mp-672232/POSCAR"
+        "../..//POSCAR"
     ).atoms
     x = NeighborsAnalysis(Si).get_rdf()
     print(x)
@@ -543,7 +554,8 @@ if __name__ == "__main__":
         all_distances, bins=np.arange(0, cutoff + intvl, intvl), density=False
     )  # equivalent to bon-order
     shell_vol = (
-        4.0 / 3.0 * np.pi * (np.power(dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
+        4.0 / 3.0 * np.pi * (np.power(
+                             dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
     )
     print("pmg", dist_hist)
     number_density = s.num_sites / s.volume

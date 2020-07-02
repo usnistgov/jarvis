@@ -1,15 +1,9 @@
 """
-Simple ML models for classifcation and regression, designed for educational purposes only
-__author__: = Kamal Choudhary
+Simple ML models for classifcation and regression.
+
+Designed for educational purposes only
 """
 from collections import defaultdict
-from jarvis.ai.pkgs.utils import get_ml_data, binary_class_dat
-import pandas as pd
-import numpy as np
-from sklearn.svm import SVR
-from sklearn.kernel_ridge import KernelRidge
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.datasets import load_boston
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import label_binarize
@@ -20,14 +14,17 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.multiclass import OneVsRestClassifier
 from sklearn.ensemble import (
     RandomForestClassifier,
     AdaBoostClassifier,
     GradientBoostingClassifier,
 )
 from sklearn.svm import SVC
-from jarvis.db.figshare import data
-import pickle, json, joblib
+import pickle
+import joblib
+import matplotlib.pyplot as plt
+from jarvis.ai.pkgs.utils import binary_class_dat
 
 simple_class_models = [
     DecisionTreeClassifier(),
@@ -41,11 +38,6 @@ simple_class_models = [
 ]
 
 
-
-
-
-
-
 def classify_roc_ml(
     X=[],
     y=[],
@@ -55,13 +47,13 @@ def classify_roc_ml(
     method="",
     preprocess=True,
     plot=False,
-    test_size = 0.1,
+    test_size=0.1,
 ):
     """
-    Classifcation module for ROC curve for upto three classes, can be expanded in more classes as well
+    Classifcation module for ROC curve for upto three classes.
 
+    It can be expanded in more classes as well.
     Args:
-
         X: input feature vectors
 
         y: target data obtained from binary_class_dat
@@ -76,7 +68,7 @@ def classify_roc_ml(
 
         plt: whether to plot the ROC curve
     """
-    if plot == True:
+    if plot:
         plt.close()
         plt.rcParams.update({"font.size": 22})
         plt.figure(figsize=(12, 8))
@@ -91,7 +83,7 @@ def classify_roc_ml(
             ("est", method),
         ]
     )
-    if preprocess == True:
+    if preprocess:
         model = pipe
     else:
         model = method
@@ -119,7 +111,7 @@ def classify_roc_ml(
         if name != "":
             if count < n_plot:
                 count = count + 1
-                if plot == True:
+                if plot:
                     plt.plot(
                         fpr[i],
                         tpr[i],
@@ -127,7 +119,7 @@ def classify_roc_ml(
                         lw=lw,
                         label="ROC  {0} (area = {1:0.2f})" "".format(name, roc_auc[i]),
                     )
-    if plot == True:
+    if plot:
         plt.plot([0, 1], [0, 1], "k--", lw=lw)
         plt.xlim([-0.05, 1.0])
         plt.ylim([0.0, 1.05])
@@ -139,23 +131,22 @@ def classify_roc_ml(
     return model, roc_auc
 
 
-def classification(X=[],Y=[],tol=100,plot=False, preprocess = True, models=simple_class_models, model_name='my_model', save_model = False):
-    """
-    Quickly train some of the classifcation algorithms available in scikit-learn
-    """
+def classification(X=[], Y=[], tol=100, plot=False, preprocess=True,
+                   models=simple_class_models, model_name='my_model', save_model=False):
+    """Quickly train some of the classifcation algorithms available in scikit-learn."""
     X_class, Y_class = binary_class_dat(X=X, Y=Y, tol=tol)
     info = defaultdict()
     for i in models:
-        m, r = classify_roc_ml(X=X_class, y=Y_class, method=i, preprocess = preprocess, plot=plot)
+        m, r = classify_roc_ml(X=X_class, y=Y_class, method=i,
+                               preprocess=preprocess, plot=plot)
         print(type(i).__name__, r[0])
-        info[type(i).__name__]={}
-        info[type(i).__name__]['roc_auc']=r
-        if save_model == True:
-            pk = str(model_name) +'_'+str(type(i).__name__)+'_'+ str(".pk")
-            jb = str(model_name) +'_'+str(type(i).__name__)+'_'+ str(".jb")
+        info[type(i).__name__] = {}
+        info[type(i).__name__]['roc_auc'] = r
+        if save_model:
+            pk = str(model_name) + '_' + str(type(i).__name__) + '_' + str(".pk")
+            jb = str(model_name) + '_' + str(type(i).__name__) + '_' + str(".jb")
             pickle.dump(i, open(pk, "wb"))
             joblib.dump(i, jb)
-           
     return info
 
 
