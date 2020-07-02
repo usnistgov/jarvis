@@ -1,15 +1,10 @@
-"""
-Helper functions for JSON files
-"""
+"""Helper functions for JSON files."""
 
 import json
 
 
 def loadjson(filename=""):
-    """
-    Helper function to load a json file
-    Serialization would be available soon
-    """
+    """Provide helper function to load a json file."""
     f = open(filename, "r")
     d = json.load(f)
     f.close()
@@ -17,10 +12,7 @@ def loadjson(filename=""):
 
 
 def dumpjson(data=[], filename=""):
-    """
-    Helper function to write a json file
-    Serialization would be available soon
-    """
+    """Provide helper function to write a json file."""
     f = open(filename, "w")
     f.write(json.dumps(data))
     f.close()
