@@ -1,6 +1,4 @@
-"""
-This module provides classes to specify atomic structure
-"""
+"""This module provides classes to specify atomic structure."""
 from collections import Counter
 import numpy as np
 from jarvis.core.composition import Composition

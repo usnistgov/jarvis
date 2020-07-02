@@ -1,40 +1,46 @@
 """
 Code to calculate spin-orbit spillage.
-Please cite the following paper if you use the code:
+
+Please find details in:
 https://www.nature.com/articles/s41598-019-45028-y
 https://www.nature.com/articles/s41524-020-0319-4
 """
 
-import sys
 import numpy as np
 from jarvis.io.vasp.outputs import Wavecar  # vaspwfc
-import scipy as sp
 
 
 class Spillage(object):
+    """
+    Spin-orbit spillage criteria.
+
+    Predict whether a material is topologically non-trival.
+    The spillage criteria physically signifies
+    number of band-inverted electrons.
+    A non-zero, high value (generally >0.5) suggests non-trivial behavior
+    """
+
     def __init__(self, wf_noso="", wf_so=""):
         """
-        Requires path to WAVECAR files with and without LSORBIT = .TRUE.
-        
+        Require path to WAVECAR files with and without LSORBIT = .TRUE.
+
         Args:
-        
             wf_noso : WAVECAR without spin-orbit coupling
-            
+
             wf_so : WAVECAR with spin-orbit coupling
-              
         """
-        
         self.wf_noso = wf_noso
         self.wf_so = wf_so
 
     def isclose(self, n1, n2, rel_tol=1e-7):
-
+        """Check if n1 and n2 are close."""
         if abs(n1 - n2) < rel_tol:
             return True
         else:
             return False
 
     def orth(self, A):
+        """Orthogonalize a vector."""
         u, s, vh = np.linalg.svd(A, full_matrices=False)
         M, N = A.shape
         eps = np.finfo(float).eps
@@ -44,6 +50,7 @@ class Spillage(object):
         return Q, num
 
     def overlap_so_spinpol(self):
+        """Calculate spillage."""
         noso = Wavecar(filename=self.wf_noso, lsorbit=False)
         so = Wavecar(filename=self.wf_so, lsorbit=True)
         # band gap stuff. not needed per se, just a useful sanity check
@@ -80,17 +87,18 @@ class Spillage(object):
 
         nelec = int(n_tot)
 
-        noso_homo_up = np.max(noso_bands[0, :, n_up - 1])
-        noso_lumo_up = np.min(noso_bands[0, :, n_up])
-
-        noso_homo_dn = np.max(noso_bands[1, :, n_dn - 1])
-        noso_lumo_dn = np.min(noso_bands[1, :, n_dn])
+        # noso_homo_up = np.max(noso_bands[0, :, n_up - 1])
+        # noso_lumo_up = np.min(noso_bands[0, :, n_up])
+        # noso_homo_dn = np.max(noso_bands[1, :, n_dn - 1])
+        # noso_lumo_dn = np.min(noso_bands[1, :, n_dn])
 
         so_homo = np.max(so_bands[0, :, nelec - 1])
         so_lumo = np.min(so_bands[0, :, nelec])
 
-        noso_direct_up = np.min(noso_bands[0, :, n_up] - noso_bands[0, :, n_up - 1])
-        noso_direct_dn = np.min(noso_bands[1, :, n_dn] - noso_bands[1, :, n_dn - 1])
+        # noso_direct_up = np.min(noso_bands[0, :, n_up] -
+        # noso_bands[0, :, n_up - 1])
+        # noso_direct_dn = np.min(noso_bands[1, :, n_dn] -
+        # noso_bands[1, :, n_dn - 1])
 
         so_direct = np.min(so_bands[0, :, nelec] - so_bands[0, :, nelec - 1])
 
@@ -98,7 +106,8 @@ class Spillage(object):
         noso_homo = -10000000.0
         noso_lumo = 100000000.0
         for i in range(noso_bands.shape[1]):
-            homo_k = max(noso_bands[0, i, n_up - 1], noso_bands[1, i, n_dn - 1])
+            homo_k = max(noso_bands[0, i, n_up - 1],
+                         noso_bands[1, i, n_dn - 1])
             lumo_k = min(noso_bands[0, i, n_up], noso_bands[1, i, n_dn])
             noso_direct = min(noso_direct, lumo_k - homo_k)
 
@@ -131,11 +140,14 @@ class Spillage(object):
                     gamma_k.append(nelec_tot)
                     kpoints.append(kso)
                     Mmn = 0.0
-                    vnoso = noso.readBandCoeff(ispin=1, ikpt=nk1, iband=1, norm=False)
+                    vnoso = noso.readBandCoeff(ispin=1, ikpt=nk1,
+                                               iband=1, norm=False)
                     n_noso1 = vnoso.shape[0]
-                    vnoso = noso.readBandCoeff(ispin=2, ikpt=nk1, iband=1, norm=False)
-                    n_noso2 = vnoso.shape[0]
-                    vso = so.readBandCoeff(ispin=1, ikpt=nk2, iband=1, norm=False)
+                    vnoso = noso.readBandCoeff(ispin=2, ikpt=nk1,
+                                               iband=1, norm=False)
+                    # n_noso2 = vnoso.shape[0]
+                    vso = so.readBandCoeff(ispin=1, ikpt=nk2,
+                                           iband=1, norm=False)
                     n_so = vso.shape[0]
                     vs = min(n_noso1 * 2, n_so)
                     Vnoso = np.zeros((vs, nelec_tot), dtype=complex)
@@ -143,19 +155,23 @@ class Spillage(object):
 
                     # prepare matricies
                     for n1 in range(1, nelec_up + 1):
-                        Vnoso[0 : vs // 2, n1 - 1] = noso.readBandCoeff(
+                        Vnoso[0:vs // 2, n1 - 1] = noso.readBandCoeff(
                             ispin=1, ikpt=nk1, iband=n1, norm=False
-                        )[0 : vs // 2]
+                        )[0:vs // 2]
                     for n1 in range(1, nelec_dn + 1):
-                        Vnoso[vs // 2 : vs, n1 - 1 + nelec_up] = noso.readBandCoeff(
-                            ispin=2, ikpt=nk1, iband=n1, norm=False
-                        )[0 : vs // 2]
+                        Vnoso[vs // 2:vs,
+                              n1 - 1 + nelec_up] = noso.readBandCoeff(
+                                  ispin=2, ikpt=nk1, iband=n1, norm=False
+                        )[0:vs // 2]
 
                     for n1 in range(1, nelec_tot + 1):
-                        t = so.readBandCoeff(ispin=1, ikpt=nk2, iband=n1, norm=False)
-                        Vso[0 : vs // 2, n1 - 1] = t[0 : vs // 2]
-                        Vso[vs // 2 : vs, n1 - 1] = t[n_so // 2 : n_so // 2 + vs // 2]
-                    Qnoso, num_noso = self.orth(Vnoso)  # make orthonormal basis?
+                        t = so.readBandCoeff(ispin=1, ikpt=nk2,
+                                             iband=n1, norm=False)
+                        Vso[0:vs // 2, n1 - 1] = t[0:vs // 2]
+                        Vso[vs // 2:vs, n1 - 1] = t[n_so // 2:
+                                                    n_so // 2 + vs // 2]
+                    # make orthonormal basis?
+                    Qnoso, num_noso = self.orth(Vnoso)
 
                     Qso, num_so = self.orth(Vso)
 
@@ -224,12 +240,12 @@ class Spillage(object):
         info["noso_homo"] = noso_homo
         return info
 
+
 """
 if __name__ == "__main__":
     # JVASP-1044
-
-    wf_noso = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-MAGSCFBAND-bulk@JVASP-1067_mp-541837/WAVECAR"  # sys.argv[1]
-    wf_so = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/WAVECAR"  # sys.argv[2]
+    wf_noso = "../../tests/testfiles/analysis/spillage/WAVECAR.nosoc"
+    wf_so = "../../tests/testfiles/analysis/spillage/WAVECAR.soc"
     spl = Spillage(wf_noso=wf_noso, wf_so=wf_so)
     info = spl.overlap_so_spinpol()
     print(info["spillage"])

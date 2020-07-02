@@ -1,48 +1,42 @@
 """
-Modules for calculating theoretical solar-cell efficiency
-See: https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166
+Modules for calculating theoretical solar-cell efficiency.
+
+Please find more detailsin:
+ https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166
 """
 import numpy as np
 import os
-from jarvis.io.vasp.outputs import Vasprun
 from scipy.interpolate import interp1d
 from numpy import interp
 import scipy.constants as constants
 from scipy.integrate import simps
-from scipy.constants import physical_constants, speed_of_light
 import matplotlib.pyplot as plt
 
 
-
-
 class SolarEfficiency(object):
+    """Calculate theoretical solar-efficiency using SLME or SQ approach."""
+
     def __init__(self, formalism="slme"):
-        """
-        Calculates theoretical solar cell efficiency using SLME or SQ approach
-        See https://pubs.acs.org/doi/10.1021/acs.chemmater.9b02166
-        """
+        """Use SLME or SQ formalisms."""
         self.formalism = formalism
 
     def calculate_SQ(
         self, bandgap_ev, temperature=300, fr=1, plot_current_voltage=False
     ):
         """
-        
-        Args:
-        
-              bandgap_ev: bandga in electron-volt
-              
-              temperature: temperature in K
-     
-                 
-        """
+        Calcualte efficeincy using shockley queisser formalism.
 
+        Requires only two inputs unlike SLME.
+        Args:
+              bandgap_ev: bandga in electron-volt
+
+              temperature: temperature in K
+        """
         # Defining constants for tidy equations
         c = constants.c  # speed of light, m/s
         h = constants.h  # Planck's constant J*s (W)
         h_e = constants.h / constants.e  # Planck's constant eV*s
         k = constants.k  # Boltzmann's constant J/K
-        k_e = constants.k / constants.e  # Boltzmann's constant eV/K
         e = constants.e  # Coulomb
 
         # Load the Air Mass 1.5 Global tilt solar spectrum
@@ -63,7 +57,7 @@ class SolarEfficiency(object):
             solar_spectra_wavelength_meters / (h * c)
         )
 
-        ### Calculation of total solar power incoming
+        # Calculation of total solar power incoming
         power_in = simps(solar_spectra_irradiance, solar_spectra_wavelength)
 
         # calculation of blackbody irradiance spectra
@@ -73,15 +67,15 @@ class SolarEfficiency(object):
             2.0 * h * c ** 2 / (solar_spectra_wavelength_meters ** 5)
         ) * (
             1.0
-            / (
-                (np.exp(h * c / (solar_spectra_wavelength_meters * k * temperature)))
-                - 1.0
-            )
+            / ((np.exp(
+                h * c / (solar_spectra_wavelength_meters * k * temperature)))
+               - 1.0
+               )
         )
 
         # I've removed a pi in the equation above - Marnik Bercx
 
-        # now to convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)
+        # Convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)
         blackbody_photon_flux = blackbody_irradiance * (
             solar_spectra_wavelength_meters / (h * c)
         )
@@ -105,7 +99,8 @@ class SolarEfficiency(object):
 
         bandgap_blackbody = (
             (2.0 * h * c ** 2 / (bandgap_wavelength ** 5))
-            * (1.0 / ((np.exp(h * c / (bandgap_wavelength * k * temperature))) - 1.0))
+            * (1.0 / ((np.exp(
+               h * c / (bandgap_wavelength * k * temperature))) - 1.0))
             * (bandgap_wavelength / (h * c))
         )
 
@@ -118,17 +113,20 @@ class SolarEfficiency(object):
         )
 
         integration_solar_flux = np.concatenate(
-            (solar_spectra_photon_flux[:bandgap_index], bandgap_irradiance), axis=0
+            (solar_spectra_photon_flux[:bandgap_index],
+             bandgap_irradiance), axis=0
         )
 
         integration_blackbody = np.concatenate(
-            (blackbody_photon_flux[:bandgap_index], np.array([bandgap_blackbody])),
+            (blackbody_photon_flux[:bandgap_index],
+             np.array([bandgap_blackbody])),
             axis=0,
         )
 
         #  Numerically integrating irradiance over wavelength array
         # Note: elementary charge, not math e!  ## units of A/m**2   W/(V*m**2)
-        J_0_r = e * np.pi * simps(integration_blackbody, integration_wavelength)
+        J_0_r = e * np.pi * simps(integration_blackbody,
+                                  integration_wavelength)
 
         J_0 = J_0_r / fr
 
@@ -186,43 +184,34 @@ class SolarEfficiency(object):
         plot_current_voltage=False,
     ):
         """
-            Calculate the
-            IMPORTANT NOTES:
-            1) Material calculated absorbance is assumed to be in m^-1, not cm^-1!
-                (Most sources will provide absorbance in cm^-1, so be careful.)
-            2) The default is to remove absorbance below the direct allowed gap.
-                This is for dealing with broadening applied in DFT absorbance
-                calculations. Probably not desired for experimental data.
-            3) We can calculate at different temperatures if we want to, but 25 C /
-                293.15 K is the standard temperature assumed if not specified
-            4) If absorbance is in cm^-1, multiply values by 100 to match units
-                assumed in code
-                
-            Args:
-                material_energy_for_absorbance_data:
-                
-                material_absorbance_data:
-                
-                material_direct_allowed_gap:
-                
-                material_indirect_gap:
-                
-                thickness:
-                
-                temperature:
-                
-                absorbance_in_inverse_centimeters:
-                
-                cut_off_absorbance_below_direct_allowed_gap:
-                
-                plot_current_voltage:
-                
-            Returns:
-            
-                The calculated maximum efficiency.
-                
-            """
+        Calculate spectroscopic limited maximum efficiency.
 
+        Reuires more info than SQ.
+        Args:
+            material_energy_for_absorbance_data:
+            energy grid for absorbance data
+
+            material_absorbance_data: absorption coefficient in m^-1
+
+            material_direct_allowed_gap: direct bandgap in eV
+
+            material_indirect_gap: indirect bandgap in eV
+
+            thickness: thickness of the material in m
+
+            temperature: working temperature in K
+
+            absorbance_in_inverse_centimeters:
+            whether the absorbance data is in the unit of cm^-1
+
+            cut_off_absorbance_below_direct_allowed_gap:
+            whether to discard all absorption below bandgap
+
+            plot_current_voltage: whether to plot the current-voltage curve
+
+        Returns:
+            The calculated maximum efficiency.
+        """
         # Defining constants for tidy equations
         c = constants.c  # speed of light, m/s
         h = constants.h  # Planck's constant J*s (W)
@@ -268,14 +257,15 @@ class SolarEfficiency(object):
         ) * (
             1.0
             / (
-                (np.exp(h * c / (solar_spectra_wavelength_meters * k * temperature)))
+                (np.exp(
+                 h * c / (solar_spectra_wavelength_meters * k * temperature)))
                 - 1.0
             )
         )
 
         # I've removed a pi in the equation above - Marnik Bercx
 
-        # now to convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)
+        # Convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)
         blackbody_photon_flux = blackbody_irradiance * (
             solar_spectra_wavelength_meters / (h * c)
         )
@@ -289,11 +279,12 @@ class SolarEfficiency(object):
 
         # creates cubic spline interpolating function, set up to use end values
         #  as the guesses if leaving the region where data exists
-        material_absorbance_data_function = interp1d(
+        material_absorbance = interp1d(
             material_wavelength_for_absorbance_data,
             material_absorbance_data,
             kind="cubic",
-            fill_value=(material_absorbance_data[0], material_absorbance_data[-1]),
+            fill_value=(material_absorbance_data[0],
+                        material_absorbance_data[-1]),
             bounds_error=False,
         )
 
@@ -301,15 +292,15 @@ class SolarEfficiency(object):
             len(solar_spectra_wavelength_meters)
         )
         for i in range(0, len(solar_spectra_wavelength_meters)):
-            ## Cutting off absorption data below the gap. This is done to deal
+            # Cutting off absorption data below the gap. This is done to deal
             # with VASPs broadening of the calculated absorption data
 
             if (
                 solar_spectra_wavelength[i]
                 < 1e9 * ((c * h_e) / material_direct_allowed_gap)
-                or cut_off_absorbance_below_direct_allowed_gap == False
+                or not cut_off_absorbance_below_direct_allowed_gap
             ):
-                material_interpolated_absorbance[i] = material_absorbance_data_function(
+                material_interpolated_absorbance[i] = material_absorbance(
                     solar_spectra_wavelength[i]
                 )
 
@@ -333,7 +324,8 @@ class SolarEfficiency(object):
         #  Numerically integrating irradiance over wavelength array
         # elementary charge, not math e!  ### units of A/m**2   W/(V*m**2)
         J_sc = e * simps(
-            solar_spectra_photon_flux * absorbed_by_wavelength, solar_spectra_wavelength
+            solar_spectra_photon_flux * absorbed_by_wavelength,
+            solar_spectra_wavelength
         )
 
         #    J[i] = J_sc - J_0*(1 - exp( e*V[i]/(k*T) ) )
@@ -374,9 +366,10 @@ class SolarEfficiency(object):
 
         return efficiency
 
+
 """
 if __name__ == "__main__":
-
+    from jarvis.io.vasp.outputs import Vasprun
     v = Vasprun(
         "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-MBJ-bulk@mp-149/vasprun.xml"
     )

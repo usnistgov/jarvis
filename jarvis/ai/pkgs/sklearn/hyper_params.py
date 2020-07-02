@@ -1,11 +1,14 @@
 """
-Set of ranges for hyperparameters
-# Modified from  https://github.com/EpistasisLab/tpot/blob/815b0e28c7c8c4935363298bb6ce4713d280cece/tpot/config/regressor.py
+Set of ranges for hyperparameters.
+
+# Modified from  https://github.com/EpistasisLab/tpot
 """
 
 import numpy as np
 
+
 def classification_regression_params():
+    """Set of hyperparameters."""
     regressor_config_dict = {
         "sklearn.linear_model.ElasticNetCV": {
             "l1_ratio": np.arange(0.0, 1.01, 0.05),
@@ -49,7 +52,8 @@ def classification_regression_params():
             "loss": ["epsilon_insensitive", "squared_epsilon_insensitive"],
             "dual": [True, False],
             "tol": [1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
-            "C": [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0],
+            "C": [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1.0,
+                  5.0, 10.0, 15.0, 20.0, 25.0],
             "epsilon": [1e-4, 1e-3, 1e-2, 1e-1, 1.0],
         },
         "sklearn.ensemble.RandomForestRegressor": {
@@ -70,7 +74,8 @@ def classification_regression_params():
             "objective": ["reg:squarederror"],
         },
         # Preprocesssors
-        "sklearn.preprocessing.Binarizer": {"threshold": np.arange(0.0, 1.01, 0.05)},
+        "sklearn.preprocessing.Binarizer":
+        {"threshold": np.arange(0.0, 1.01, 0.05)},
         "sklearn.decomposition.FastICA": {"tol": np.arange(0.0, 1.01, 0.05)},
         "sklearn.cluster.FeatureAgglomeration": {
             "linkage": ["ward", "complete", "average"],
@@ -189,11 +194,13 @@ def classification_regression_params():
             "loss": ["hinge", "squared_hinge"],
             "dual": [True, False],
             "tol": [1e-5, 1e-4, 1e-3, 1e-2, 1e-1],
-            "C": [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0],
+            "C": [1e-4, 1e-3, 1e-2, 1e-1,
+                  0.5, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0],
         },
         "sklearn.linear_model.LogisticRegression": {
             "penalty": ["l1", "l2"],
-            "C": [1e-4, 1e-3, 1e-2, 1e-1, 0.5, 1.0, 5.0, 10.0, 15.0, 20.0, 25.0],
+            "C": [1e-4, 1e-3, 1e-2, 1e-1, 0.5,
+                  1.0, 5.0, 10.0, 15.0, 20.0, 25.0],
             "dual": [True, False],
         },
         "xgboost.XGBClassifier": {
@@ -205,7 +212,8 @@ def classification_regression_params():
             "nthread": [1],
         },
         # Preprocesssors
-        "sklearn.preprocessing.Binarizer": {"threshold": np.arange(0.0, 1.01, 0.05)},
+        "sklearn.preprocessing.Binarizer":
+        {"threshold": np.arange(0.0, 1.01, 0.05)},
         "sklearn.decomposition.FastICA": {"tol": np.arange(0.0, 1.01, 0.05)},
         "sklearn.cluster.FeatureAgglomeration": {
             "linkage": ["ward", "complete", "average"],
@@ -283,6 +291,3 @@ def classification_regression_params():
         },
     }
     return regressor_config_dict, classifier_config_dict
-
-
-

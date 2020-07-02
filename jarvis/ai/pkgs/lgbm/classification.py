@@ -1,6 +1,4 @@
-from jarvis.ai.pkgs.sklearn.classification import classification as sk_classification
-from lightgbm import LGBMClassifier
-from jarvis.ai.pkgs.utils import get_ml_data, binary_class_dat
+from jarvis.ai.pkgs.sklearn.classification import classification as sk_cl
 
 
 def classification(
@@ -13,7 +11,7 @@ def classification(
     model_name="my_model",
     save_model=False,
 ):
-    info = sk_classification(
+    info = sk_cl(
         X=X,
         Y=Y,
         tol=tol,
@@ -24,8 +22,10 @@ def classification(
     )
     return info
 
+
 """
 if __name__ == "__main__":
+    from jarvis.ai.pkgs.utils import get_ml_data, binary_class_dat
     property = "exfoliation_energy"
     tol=100
     #property = 'optb88vdw_bandgap'
@@ -35,6 +35,7 @@ if __name__ == "__main__":
     print ('lennnn',len(X))
     #models = [LGBMClassifier(n_estimators=1000,max_depth=50,num_leaves=100)]
     models = [LGBMClassifier()]
-    info = classification(X=X, Y=Y, models=models, preprocess=False, save_model=False, tol=tol)
+    info = classification(X=X, Y=Y, models=models,
+    preprocess=False, save_model=False, tol=tol)
     print (info['LGBMClassifier']['roc_auc'][0])
 """

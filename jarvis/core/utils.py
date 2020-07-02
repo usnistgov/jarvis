@@ -1,8 +1,8 @@
-"""
-Set of useful utility functions
-"""
+"""Set of useful utility functions."""
+
 from collections import defaultdict, OrderedDict
 import numpy as np
+import random
 
 def get_counts(array=['W','W','Mo','Mo','S','S']):
     """
@@ -35,4 +35,26 @@ def gcd(a, b):
     while b:
         a, b = b, a % b
     return a
+
+def ext_gcd(a, b):
+    """GCD module from ase"""
+    if b == 0:
+        return 1, 0
+    elif a % b == 0:
+        return 0, 1
+    else:
+        x, y = ext_gcd(b, a % b)
+        return y, x - y * (a // b)
+
+def rand_select(x=[]):
+    """Select randomly with index info."""
+    info = {}
+    for i, ii in enumerate(x):
+        info.setdefault(ii, []).append(i)
+    selected = {}
+    for i, j in info.items():
+        chosen = random.choice(j)
+        selected.setdefault(i, chosen)
+    return selected
+
 
