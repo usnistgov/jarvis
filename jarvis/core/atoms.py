@@ -1,21 +1,17 @@
 """This module provides classes to specify atomic structure."""
-from collections import Counter
 import numpy as np
 from jarvis.core.composition import Composition
 from jarvis.core.specie import Specie
 from jarvis.core.lattice import Lattice
-import matplotlib.pyplot as plt
 from collections import OrderedDict
-import pprint
-import math
-from numpy.linalg import norm, solve
 from jarvis.core.utils import get_counts
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
 
 
-
 class Atoms(object):
+    """Generate Atoms python object."""
+
     def __init__(
         self,
         lattice_mat=None,
@@ -26,9 +22,10 @@ class Atoms(object):
         show_props=False,
     ):
         """
-        
-        Create atomic structure with lattice, coordinates, atom type and other information
-        
+        Create atomic structure.
+
+        Requires lattice, coordinates, atom type  information.
+
         >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
         >>> coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
         >>> elements = ["Si", "Si"]
@@ -50,16 +47,13 @@ class Atoms(object):
         >>> Si.cart_coords[0][0]
         0.0
         >>> coords = [[0, 0, 0], [1.3575 , 1.22175, 1.22175]]
-        >>> Si = Atoms(lattice_mat=box, coords=coords, elements=elements,cartesian=True)
         >>> round(Si.density,2)
         2.33
         >>> Si.spacegroup()
         'C2/m (12)'
         >>> Si.pymatgen_converter()!={}
         True
-        
         """
-
         self.lattice_mat = np.array(lattice_mat)
         self.show_props = show_props
         self.lattice = Lattice(lattice_mat)
@@ -69,7 +63,7 @@ class Atoms(object):
         self.props = props
         if self.props is None:
             self.props = ["" for i in range(len(self.elements))]
-        if self.cartesian == True:
+        if self.cartesian:
             self.cart_coords = self.coords
             self.frac_coords = np.array(self.lattice.frac_coords(self.coords))
             # print ('TRUE')
@@ -81,17 +75,17 @@ class Atoms(object):
     @property
     def check_polar(self):
         """
-            Check if the surface structure is polar
-            by comparing atom types at top and bottom.
-            Applicable for sufcae with vaccums only.
-            
-            Args:
-            
-                 file:atoms object (surface with vacuum)
-                 
-            Returns:
-            
-                   polar:True/False   
+        Check if the surface structure is polar.
+
+        Comparing atom types at top and bottom.
+        Applicable for sufcae with vaccums only.
+
+        Args:
+
+             file:atoms object (surface with vacuum)
+
+        Returns:
+               polar:True/False
         """
         up = 0
         dn = 0
@@ -113,16 +107,12 @@ class Atoms(object):
         return polar
 
     def apply_strain(self, strain):
-        """
-        Apply a strain(e.g. 0.01) to the lattice.
-        """
+        """Apply a strain(e.g. 0.01) to the lattice."""
         s = (1 + np.array(strain)) * np.eye(3)
         self.lattice_mat = np.dot(self.lattice_mat.T, s).T
 
     def to_dict(self):
-        """
-        Dictionary representation of the atoms object
-        """
+        """Provide dictionary representation of the atoms object."""
         d = OrderedDict()
         d["lattice_mat"] = self.lattice_mat.tolist()
         d["coords"] = np.array(self.coords).tolist()
@@ -135,9 +125,7 @@ class Atoms(object):
 
     @classmethod
     def from_dict(self, d={}):
-        """
-        Form atoms object from the dictionary
-        """
+        """Form atoms object from the dictionary."""
         return Atoms(
             lattice_mat=d["lattice_mat"],
             elements=d["elements"],
@@ -147,15 +135,12 @@ class Atoms(object):
         )
 
     def remove_site_by_index(self, site=0):
-        """
-        Remove an atom by its index number
-        """
+        """Remove an atom by its index number."""
         new_els = []
         new_coords = []
         new_props = []
         for ii, i in enumerate(self.frac_coords):
             if ii != site:
-                # print(self.elements, len(self.elements), len(self.frac_coords))
                 new_els.append(self.elements[ii])
                 new_coords.append(self.frac_coords[ii])
                 new_props.append(self.props[ii])
@@ -166,21 +151,28 @@ class Atoms(object):
             props=new_props,
             cartesian=False,
         )
-    
+
     @property
     def get_primitive_atoms(self):
+        """Get primitive Atoms using spacegroup information."""
         from jarvis.analysis.structure.spacegroup import Spacegroup3D
         return Spacegroup3D(self).primitive_atoms
 
     @property
     def raw_distance_matrix(self):
+        """Provide distance matrix."""
         coords = np.array(self.cart_coords)
         z = (coords[:, None, :] - coords[None, :, :]) ** 2
         return np.sum(z, axis=-1) ** 0.5
 
     def center(self, axis=2, vacuum=18.0, about=None):
         """
-        Center structure with vacuum padding os size:vacuum in a direction:axis
+        Center structure with vacuum padding.
+
+        Args:
+          vacuum:vacuum size
+
+          axis: direction
         """
         cell = self.lattice_mat
         p = self.cart_coords
@@ -214,7 +206,8 @@ class Atoms(object):
                 lng = 0.0  # Do not change unit cell size!
             top = lng + height - p1
             shf = 0.5 * (top - p0)
-            cosphi = np.dot(cell[i], dirs[i]) / np.sqrt(np.dot(cell[i], cell[i]))
+            cosphi = np.dot(cell[i],
+                            dirs[i]) / np.sqrt(np.dot(cell[i], cell[i]))
             longer[i] = lng / cosphi
             shift[i] = shf / cosphi
 
@@ -232,24 +225,21 @@ class Atoms(object):
                 new_coords -= vector / 2.0
             new_coords += about
         atoms = Atoms(
-            lattice_mat=cell, elements=self.elements, coords=new_coords, cartesian=True
+            lattice_mat=cell, elements=self.elements,
+            coords=new_coords, cartesian=True
         )
         return atoms
 
     @property
     def volume(self):
-        """
-        Get volume of the atoms object
-        """
+        """Get volume of the atoms object."""
         m = self.lattice_mat
         vol = float(abs(np.dot(np.cross(m[0], m[1]), m[2])))
         return vol
 
     @property
     def composition(self):
-        """
-        Get composition of the atoms object
-        """
+        """Get composition of the atoms object."""
         comp = {}
         for i in self.elements:
             comp[i] = comp.setdefault(i, 0) + 1
@@ -257,9 +247,7 @@ class Atoms(object):
 
     @property
     def density(self):
-        """
-        Get density in g/cm3 of the atoms object
-        """
+        """Get density in g/cm3 of the atoms object."""
         den = float(self.composition.weight * amu_gm) / (
             float(self.volume) * (ang_cm) ** 3
         )
@@ -267,9 +255,7 @@ class Atoms(object):
 
     @property
     def atomic_numbers(self):
-        """
-        Get list of atomic numbers of atoms in the atoms object
-        """
+        """Get list of atomic numbers of atoms in the atoms object."""
         numbers = []
         for i in self.elements:
             numbers.append(Specie(i).Z)
@@ -277,15 +263,11 @@ class Atoms(object):
 
     @property
     def num_atoms(self):
-        """
-        Get number of atoms
-        """
+        """Get number of atoms."""
         return len(self.coords)
 
     def get_center_of_mass(self):
-        """
-        Get center of mass of the atoms object
-        """
+        """Get center of mass of the atoms object."""
         # atomic_mass
         m = []
         for i in self.elements:
@@ -296,17 +278,16 @@ class Atoms(object):
         return com
 
     def get_origin(self):
-        """
-        Get center of mass of the atoms object
-        """
+        """Get center of mass of the atoms object."""
         # atomic_mass
         return self.frac_coords.mean(axis=0)
 
     def center_around_origin(self, new_origin=[0.0, 0.0, 0.5]):
+        """Center around given origin."""
         lat = self.lattice_mat
         typ_sp = self.elements
         natoms = self.num_atoms
-        abc = self.lattice.lat_lengths()
+        # abc = self.lattice.lat_lengths()
         COM = self.get_origin()
         # COM = self.get_center_of_mass()
         x = np.zeros((natoms))
@@ -319,13 +300,12 @@ class Atoms(object):
             y[i] = self.frac_coords[i][1] - COM[1] + new_origin[1]
             z[i] = self.frac_coords[i][2] - COM[2] + new_origin[2]
             coords.append([x[i], y[i], z[i]])
-        struct = Atoms(lattice_mat=lat, elements=typ_sp, coords=coords, cartesian=False)
+        struct = Atoms(lattice_mat=lat,
+                       elements=typ_sp, coords=coords, cartesian=False)
         return struct
 
     def pymatgen_converter(self):
-        """
-        Get pymatgen representation of the atoms object
-        """
+        """Get pymatgen representation of the atoms object."""
         try:
             from pymatgen.core.structure import Structure
 
@@ -335,26 +315,21 @@ class Atoms(object):
                 self.frac_coords,
                 coords_are_cartesian=False,
             )
-        except:
+        except Exception:
             pass
 
     def spacegroup(self, symprec=1e-3):
-        """
-        Get spacegroup of the atoms object
-        """
-
+        """Get spacegroup of the atoms object."""
         import spglib
-
         sg = spglib.get_spacegroup(
-            (self.lattice_mat, self.frac_coords, self.atomic_numbers), symprec=symprec
+            (self.lattice_mat, self.frac_coords,
+             self.atomic_numbers), symprec=symprec
         )
         return sg
 
     @property
     def packing_fraction(self):
-        """
-        Get packing fraction of the atoms object
-        """
+        """Get packing fraction of the atoms object."""
         total_rad = 0
         for i in self.elements:
             total_rad = total_rad + Specie(i).atomic_rad ** 3
@@ -363,12 +338,16 @@ class Atoms(object):
 
     def lattice_points_in_supercell(self, supercell_matrix):
         """
-        Adapted from Pymatgen
+        Adapted from Pymatgen.
+
         Returns the list of points on the original lattice contained in the
         supercell in fractional coordinates (with the supercell basis).
         e.g. [[2,0,0],[0,1,0],[0,0,1]] returns [[0,0,0],[0.5,0,0]]
+
         Args:
+
             supercell_matrix: 3x3 matrix describing the supercell
+
         Returns:
             numpy array of the fractional coordinates
         """
@@ -389,9 +368,12 @@ class Atoms(object):
         mins = np.min(d_points, axis=0)
         maxes = np.max(d_points, axis=0) + 1
 
-        ar = np.arange(mins[0], maxes[0])[:, None] * np.array([1, 0, 0])[None, :]
-        br = np.arange(mins[1], maxes[1])[:, None] * np.array([0, 1, 0])[None, :]
-        cr = np.arange(mins[2], maxes[2])[:, None] * np.array([0, 0, 1])[None, :]
+        ar = np.arange(mins[0],
+                       maxes[0])[:, None] * np.array([1, 0, 0])[None, :]
+        br = np.arange(mins[1],
+                       maxes[1])[:, None] * np.array([0, 1, 0])[None, :]
+        cr = np.arange(mins[2],
+                       maxes[2])[:, None] * np.array([0, 0, 1])[None, :]
 
         all_points = ar[:, None, None] + br[None, :, None] + cr[None, None, :]
         all_points = all_points.reshape((-1, 3))
@@ -407,8 +389,9 @@ class Atoms(object):
 
     def make_supercell_matrix(self, scaling_matrix):
         """
-        Adapted from Pymatgen
-        Makes a supercell. Allowing to have sites outside the unit cell
+        Adapted from Pymatgen.
+
+        Makes a supercell. Allowing to have sites outside the unit cell.
 
         Args:
             scaling_matrix: A scaling matrix for transforming the lattice
@@ -454,9 +437,7 @@ class Atoms(object):
         )
 
     def make_supercell(self, dim=[2, 2, 2]):
-        """
-        Make supercell of dimension dim
-        """
+        """Make supercell of dimension dim."""
         dim = np.array(dim)
         if dim.shape == (3, 3):
             dim = np.array([int(np.linalg.norm(v)) for v in dim])
@@ -470,17 +451,17 @@ class Atoms(object):
         new_symbs = []  # np.chararray((new_nat))
         props = []  # self.props
 
-        count = 0
+        ct = 0
         for i in range(nat):
             for j in range(dim[0]):
                 for k in range(dim[1]):
-                    for l in range(dim[2]):
+                    for m in range(dim[2]):
                         props.append(self.props[i])
-                        new_coords[count][0] = (coords[i][0] + j) / float(dim[0])
-                        new_coords[count][1] = (coords[i][1] + k) / float(dim[1])
-                        new_coords[count][2] = (coords[i][2] + l) / float(dim[2])
+                        new_coords[ct][0] = (coords[i][0] + j) / float(dim[0])
+                        new_coords[ct][1] = (coords[i][1] + k) / float(dim[1])
+                        new_coords[ct][2] = (coords[i][2] + m) / float(dim[2])
                         new_symbs.append(all_symbs[i])
-                        count = count + 1
+                        ct = ct + 1
 
         nat = new_nat
 
@@ -506,9 +487,7 @@ class Atoms(object):
         return super_cell
 
     def get_string(self):
-        """
-        Get string representation of the atoms object
-        """
+        """Get string representation of the atoms object."""
         system = str(self.composition.reduced_formula)
         header = (
 
@@ -551,10 +530,9 @@ class Atoms(object):
         rest = ""
         for ii, i in enumerate(coords_ordered):
 
-            if self.show_props == True:
-                rest = (
-                    rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
-                )
+            if self.show_props:
+                rest = rest + " ".join(
+                    map(str, i)) + " " + str(props_ordered[ii]) + "\n"
             else:
                 rest = rest + " ".join(map(str, i)) + "\n"
 
@@ -563,6 +541,7 @@ class Atoms(object):
         return result
 
     def get_lll_reduced_structure(self):
+        """Get LLL algorithm based reduced structure."""
         reduced_latt = self.lattice.get_lll_reduced_lattice()
         if reduced_latt != self.lattice:
             return Atoms(
@@ -580,6 +559,7 @@ class Atoms(object):
             )
 
     def __repr__(self):
+        """Get representation during print statement."""
         system = str(self.composition.reduced_formula)
         header = (
 
@@ -605,12 +585,12 @@ class Atoms(object):
             + str(self.lattice_mat[2][2])
             + "\n"
         )
-        order = np.argsort(self.elements)
+        # order = np.argsort(self.elements)
         coords = self.frac_coords
-        coords_ordered = np.array(coords)#[order]
-        elements_ordered = np.array(self.elements)#[order]
-        props_ordered = np.array(self.props)#[order]
-        check_selective_dynamics = False
+        coords_ordered = np.array(coords)  # [order]
+        elements_ordered = np.array(self.elements)  # [order]
+        props_ordered = np.array(self.props)  # [order]
+        # check_selective_dynamics = False # TODO
         counts = get_counts(elements_ordered)
         if "T" in "".join(map(str, self.props[0])):
             middle = (
@@ -630,9 +610,10 @@ class Atoms(object):
         rest = ""
 
         for ii, i in enumerate(coords_ordered):
-            if self.show_props == True:
+            if self.show_props:
                 rest = (
-                    rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
+                    rest + " ".join(
+                        map(str, i)) + " " + str(props_ordered[ii]) + "\n"
                 )
             else:
                 rest = rest + " ".join(map(str, i)) + "\n"
@@ -641,21 +622,22 @@ class Atoms(object):
         return result
 
 
-
-
 class VacuumPadding(object):
-    """
-    Adds vaccum padding to make 2D structure or making molecules
-    """
+    """Adds vaccum padding to make 2D structure or making molecules."""
 
     def __init__(self, atoms, vacuum=20.0):
+        """
+        Initialize object.
+
+        Args:
+            atoms: Atoms object
+            vacuum:  vacuum padding
+        """
         self.atoms = atoms
         self.vacuum = vacuum
 
     def get_effective_2d_slab(self):
-        """
-        Adds 2D vacuum to a system
-        """
+        """Add 2D vacuum to a system."""
         z_coord = []
         for i in self.atoms.frac_coords:
             tmp = i[2]
@@ -670,10 +652,9 @@ class VacuumPadding(object):
         thickness = abs(zmaxp - zminp)
         padding = self.vacuum + thickness
 
-        lattice_mat = self.atoms.lattice_mat
+        # lattice_mat = self.atoms.lattice_mat
         # lattice_mat[2][2] = padding
         # elements = self.atoms.elements
-        # atoms = Atoms(lattice_mat = lattice_mat, coords = self.atoms.cart_coords, elements = elements, cartesian = True)
         # atoms = atoms.center(vacuum=0.0)
         new_lat = self.atoms.lattice_mat
         a1 = new_lat[0]
@@ -685,7 +666,7 @@ class VacuumPadding(object):
                 a2,
                 np.cross(a1, a2)
                 * np.dot(a3, np.cross(a1, a2))
-                / norm(np.cross(a1, a2)) ** 2,
+                / np.linalg.norm(np.cross(a1, a2)) ** 2,
             ]
         )
 
@@ -740,14 +721,13 @@ class VacuumPadding(object):
         frac[:, 2] = frac[:, 2] - np.mean(frac[:, 2]) + 0.5
         frac[:, 2] = frac[:, 2] - np.mean(frac[:, 2]) + 0.5
         with_vacuum_atoms = Atoms(
-            lattice_mat=new_lat, elements=elements, coords=frac, cartesian=False
+            lattice_mat=new_lat,
+            elements=elements, coords=frac, cartesian=False
         )
         return with_vacuum_atoms
 
     def get_effective_molecule(self):
-        """
-        Adds vacuum around a system
-        """
+        """Add vacuum around a system."""
         x_coord = []
         y_coord = []
         z_coord = []
@@ -797,11 +777,10 @@ class VacuumPadding(object):
         frac[:, 1] = frac[:, 1] - np.mean(frac[:, 1]) + 0.5
         frac[:, 2] = frac[:, 2] - np.mean(frac[:, 2]) + 0.5
         with_vacuum_atoms = Atoms(
-            lattice_mat=lattice_mat, elements=elements, coords=frac, cartesian=False
+            lattice_mat=lattice_mat,
+            elements=elements, coords=frac, cartesian=False
         )
         return with_vacuum_atoms
-
-
 
 
 """
@@ -821,7 +800,6 @@ if __name__ == "__main__":
     print (d)
     a=Atoms.from_dict(d)
     print (a)
-     
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     Si.props = ["a", "a"]
     # spg = Spacegroup3D(Si)
@@ -841,13 +819,4 @@ if __name__ == "__main__":
     #print (pmg)
     # print (Si.get_center_of_mass())
     # print (Si.get_string())
-# if __name__=='__main__':
-#    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-#    coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
-#    elements = ["Si", "Si"]
-#    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-#    comp=Si.composition
-#    #print (comp,Si.density)
-#    print (Si.atomic_numbers)
-#   print (Si.pymatgen_converter().composition.weight,Si.composition.weight,Si.density)
 """
