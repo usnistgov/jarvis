@@ -53,44 +53,21 @@ classical force-field/molecular dynamics and machine-learning. The jarvis-tools 
   ``JARVIS-STM``      Scanning-tunneling microscopy images for 2D materials. Dataset is made available and the website will be available soon.
   ``JARVIS-WTB``      Wannier Tight Binding Hamiltonian parameter dataset. Website: https://www.ctcms.nist.gov/jarviswtb .
   ``JARVIS-EFG``      Electric field gradient dataset. Dataset will be made available and the website will be available soon.
+  ``Downloads``       Download raw metadat at: https://www.ctcms.nist.gov/~knc6/downloads.html
   ===============  =======================================================================
 
 
+Installation
+---------------
 
-Installing jarvis-tools
-----------------------------------------
+See `Installation instructions <https://github.com/usnistgov/jarvis/blob/zur/Installation.rst>`__
 
-- We recommend installing miniconda environment from https://conda.io/miniconda.html ::
-
-      bash Miniconda3-latest-Linux-x86_64.sh (for linux)
-      bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
-      Download 32/64 bit python 3.6 miniconda exe and install (for windows)
-      Now, let's make a conda environment just for JARVIS::
-      conda create --name my_jarvis python=3.6
-      source activate my_jarvis
-
-- Git clone install (Recommended)::
-
-      pip install numpy scipy matplotlib
-      git clone https://github.com/usnistgov/jarvis.git
-      cd jarvis
-      python setup.py install
-
-
-- Alternative pip install::
-
-      pip install numpy scipy matplotlib
-      pip install jarvis-tools
-
-- Alternative nix install::
-  Nix allows a robust and reproducible package for Linux. To generate a Nix environment for using JARVIS, follow the `Nix instructions`_.
-
-.. _`Nix instructions`: ./nix/README.md
 
 Example Jupyter notebooks
 -----------------------------
 
-https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
+Find several `Google Colab Notebooks <https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks>`__
+
 
 Example function
 -----------------
@@ -111,29 +88,12 @@ Example function
 
 References
 -----------------
-- JARVIS-FF:
-      1) Evaluation and comparison of classical interatomic potentials through a user-friendly interactive web-interface, Nature: Sci Data. 4, 160125 (2017). https://www.nature.com/articles/sdata2016125
-      2) High-throughput assessment of vacancy formation and surface energies of materials using classical force-fields, J. Phys. Cond. Matt. 30, 395901(2018). http://iopscience.iop.org/article/10.1088/1361-648X/aadaff/meta
 
-- JARVIS-DFT:
-      3) High-throughput Identification and Characterization of Two-dimensional Materials using Density functional theory, Scientific Reports 7, 5179 (2017). https://www.nature.com/articles/s41598-017-05402-0
-      4) Computational Screening of High-performance Optoelectronic Materials using OptB88vdW and TBmBJ Formalisms, Scientific Data 5, 180082 (2018). https://www.nature.com/articles/sdata201882
-      5) Elastic properties of bulk and low-dimensional materials using van der Waals density functional, Phys. Rev. B, 98, 014107 (2018). https://journals.aps.org/prb/abstract/10.1103/PhysRevB.98.014107
-      6) High-throughput Discovery of Topologically Non-trivial Materials using Spin-orbit Spillage, Nature: Sci. Rep. 9, 8534,(2019), https://www.nature.com/articles/s41598-019-45028-y
-      7) Computational Search for Magnetic and Non-magnetic 2D Topological Materials using Unified Spin-orbit Spillage Screening, npj Comp. Mat., 6, 49 (2020). https://www.nature.com/articles/s41524-020-0319-4 .
- 
-
-- JARVIS-ML:
-      8) Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018). https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
-      9) Convergence and machine learning predictions of Monkhorst-Pack k-points and plane-wave cut-off in high-throughput DFT calculations, Comp. Mat. Sci. 161, 300 (2019). https://www.sciencedirect.com/science/article/pii/S0927025619300813?via%3Dihub
-      10) Materials science in the artificial intelligence age: high-throughput library generation, machine learning, and a pathway from correlations to the underpinning physics, MRS Comm., 1-18, 2019. https://doi.org/10.1557/mrc.2019.95
-      11) Enhancing materials property prediction by leveraging computational and experimental data using deep transfer learning, Nature Comm., 10, 1, (2019). https://www.nature.com/articles/s41467-019-13297-w
-      12) Accelerated Discovery of Efficient Solar-cell Materials using Quantum and Machine-learning Methods, Chem. Mater., https://pubs.acs.org/doi/10.1021/acs.chemmater.9b02166
-      13) High-throughput Density Functional Perturbation Theory and Machine Learning Predictions of Infrared, Piezoelectric and Dielectric Responses, https://arxiv.org/abs/1910.01183.
-      14) Data-driven Discovery of 3D and 2D Thermoelectric Materials , https://arxiv.org/abs/1903.06651.
+See `Publications related to JARVIS-Tools <https://github.com/usnistgov/jarvis/blob/zur/Publications.rst>`__
 
 External links
 -----------------------------------------
+
       https://figshare.com/authors/Kamal_Choudhary/4445539
          
       https://pypi.org/project/jarvis-tools
