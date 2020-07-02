@@ -1,17 +1,17 @@
-"""
-Modules related to chemistry of periodic-table elements
-"""
+"""Modules related to chemistry of periodic-table elements."""
 
 import os
 import json
 import numpy as np
 
-el_chem_json_file = str(os.path.join(os.path.dirname(__file__), "Elements.json"))
+el_chem_json_file = str(os.path.join(
+                        os.path.dirname(__file__), "Elements.json"))
 el_chem_json = open(el_chem_json_file, "r")
 chem_data = json.load(el_chem_json)
 el_chem_json.close()
 
-el_chrg_json_file = str(os.path.join(os.path.dirname(__file__), "element_charge.json"))
+el_chrg_json_file = str(os.path.join(
+                        os.path.dirname(__file__), "element_charge.json"))
 el_chrg_json = open(el_chrg_json_file, "r")
 chrg_data = json.load(el_chrg_json)
 el_chrg_json.close()
@@ -19,33 +19,35 @@ el_chrg_json.close()
 
 def get_descrp_arr_name(elm="Al"):
     """
-      Get chemical descriptors for an element
-      
-      Args:
-      
+    Get chemical descriptors for an element.
+
+    Can be used in JARVIS-ML.
+
+    Args:
+
            elm: element name
-           
-      Returns:
-      
+
+    Returns:
              arr: array value
-      """
+    """
     arr = []
     try:
         dat = chem_data
-
         d = dat[elm]
         arr = []
         for k, v in d.items():
             arr.append(k)
-    except:
+    except Exception:
         pass
     return arr
 
 
 class Specie(object):
     """
-    Specie object for chemistry information
-    
+    Specie object for chemistry information.
+
+    Used in defining chemistry of a material.
+
     >>> el = Specie('Al')
     >>> el.Z
     13
@@ -60,38 +62,36 @@ class Specie(object):
     >>> el = Specie('asdfg')
     >>> el.element_property("asdfg")
     nan
-    
+
     """
 
     def __init__(self, symbol=""):
+        """Initialize with periodic table element."""
         self.symbol = symbol
         self._data = chem_data
 
     @property
     def Z(self):
-        """
-        Atomic number
-        """
+        """Get atomic number."""
         return self.element_property("Z")
 
     @property
     def atomic_mass(self):
-        """
-        Atomic mass
-        """
+        """Get atomic mass."""
         return self.element_property("atom_mass")
 
     @property
     def get_chgdescrp_arr(self, elm=""):
         """
-        Get charge descriptors for an element
+        Get charge descriptors for an element.
+
+        Gives 378 array data.
 
         Args:
-        
+
            elm: element name
-           
+
         Returns:
-        
              arr: array value
         """
         arr = []
@@ -105,14 +105,15 @@ class Specie(object):
     @property
     def get_descrp_arr(self, elm=""):
         """
-        Get chemical descriptors for an element
+        Get chemical descriptors for an element.
+
+        Gives 438 array data.
 
         Args:
-        
+
            elm: element name
-           
+
         Returns:
-        
              arr: array value
         """
         arr = []
@@ -126,18 +127,15 @@ class Specie(object):
 
     @property
     def atomic_rad(self):
-        """
-        Atomic radii
-        """
+        """Get atomic radii."""
         return self.element_property("atom_rad")
 
     def element_property(self, key=""):
         """
-        Get element property from the list of keys
-        """
-        val = np.nan
-        try:
-            keys = [
+        Get element property from the list of keys.
+
+        These 84 keys are:
+        keys = [
                 "is_halogen",
                 "row",
                 "GV",
@@ -223,10 +221,14 @@ class Specie(object):
                 "mop_eg",
                 "hfus",
             ]
+        """
+        val = np.nan
+        try:
             val = self._data[self.symbol][key]
-        except:
+        except Exception:
             pass
         return val
+
 
 """
 if __name__ == "__main__":
