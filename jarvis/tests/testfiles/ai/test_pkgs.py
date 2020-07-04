@@ -7,6 +7,8 @@ from jarvis.ai.pkgs.lgbm.regression import parameters_dict as l_params
 from jarvis.ai.pkgs.lgbm.classification import classification as l_classification
 from jarvis.ai.descriptors.cfid import feat_names
 from lightgbm import LGBMClassifier
+import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 
 property = "exfoliation_energy"
 
@@ -25,7 +27,7 @@ def test_lgbm_classification():
     property = "exfoliation_energy"
     tol=100
     models = [LGBMClassifier(n_estimators=10,  num_leaves=2)]
-    info = l_classification(X=X, Y=Y, models=models, preprocess=True, save_model=False, tol=tol)
+    info = l_classification(X=X, Y=Y, plot = True, models=models, preprocess=True, save_model=True, tol=tol)
     assert info['LGBMClassifier']['roc_auc'][0]>0.0
 
 def test_hyperparams():

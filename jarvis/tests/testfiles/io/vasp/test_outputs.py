@@ -146,7 +146,11 @@ def test_vrun():
     assert (round(opt_vrun.get_dir_gap, 2)) == (2.62)
     assert (vrun.total_dos[0][0]) == -8.1917
     # TODO Serious issue: assert (opt_vrun.total_dos[0][0]) == -8.1917
-
+    assert (vrun.eigenvalues[0][0][0][0]) == -6.1917
+    assert (opt_vrun.eigenvalues[0][0][0][0]) == -6.1917
+    assert vrun.is_spin_polarized==True
+    assert opt_vrun.is_spin_polarized==False
+    assert vrun.is_spin_orbit==False
 def test_osz():
     assert (float(osz.magnetic_moment)) == (0.0)
 
@@ -168,6 +172,7 @@ def test_dfpt():
    assert (bec, eig, pz)==(2.52, 19.58,-0.26756) 
    # print (vrun.all_stresses)
    assert vrun.all_stresses[0][0][0]==-14.79381147
+   assert vrun.all_forces[0][0][0]==0
 def test_waveder():
    assert np.iscomplex(wder.get_orbital_derivative_between_states(0,0,0,0,0)) == True
    assert (complex(wder.get_orbital_derivative_between_states(0,0,0,0,0)).real) == -2.216161544844864e-15
