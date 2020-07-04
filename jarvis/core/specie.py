@@ -81,7 +81,7 @@ class Specie(object):
         return self.element_property("atom_mass")
 
     @property
-    def get_chgdescrp_arr(self, elm=""):
+    def get_chgdescrp_arr(self):
         """
         Get charge descriptors for an element.
 
@@ -103,7 +103,7 @@ class Specie(object):
         return arr
 
     @property
-    def get_descrp_arr(self, elm=""):
+    def get_descrp_arr(self):
         """
         Get chemical descriptors for an element.
 

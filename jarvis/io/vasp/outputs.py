@@ -580,6 +580,7 @@ class Vasprun(object):
         """Get total density of states."""
         energies = []
         spin_up = []
+        spin_dn = []
         spin_up_data = np.array(
             [
                 [float(j) for j in i.split()]
