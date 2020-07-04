@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.ai.pkgs.lgbm package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.ai.pkgs.lgbm package &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -42,28 +44,33 @@
 </div>
 <div class="section" id="module-jarvis.ai.pkgs.lgbm.classification">
 <span id="jarvis-ai-pkgs-lgbm-classification-module"></span><h2>jarvis.ai.pkgs.lgbm.classification module<a class="headerlink" href="#module-jarvis.ai.pkgs.lgbm.classification" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
+<p>Module for LightGBM classification.</p>
+<dl class="function">
 <dt id="jarvis.ai.pkgs.lgbm.classification.classification">
-<code class="sig-prename descclassname">jarvis.ai.pkgs.lgbm.classification.</code><code class="sig-name descname">classification</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">Y</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">preprocess</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">models</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">model_name</span><span class="o">=</span><span class="default_value">'my_model'</span></em>, <em class="sig-param"><span class="n">save_model</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/lgbm/classification.html#classification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.lgbm.classification.classification" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">jarvis.ai.pkgs.lgbm.classification.</code><code class="descname">classification</code><span class="sig-paren">(</span><em>X=[]</em>, <em>Y=[]</em>, <em>tol=100</em>, <em>plot=False</em>, <em>preprocess=False</em>, <em>models=[]</em>, <em>model_name='my_model'</em>, <em>save_model=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/lgbm/classification.html#classification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.lgbm.classification.classification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide function for classification models.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.ai.pkgs.lgbm.regression">
 <span id="jarvis-ai-pkgs-lgbm-regression-module"></span><h2>jarvis.ai.pkgs.lgbm.regression module<a class="headerlink" href="#module-jarvis.ai.pkgs.lgbm.regression" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
+<p>Modules for LightGBM regression.</p>
+<dl class="function">
 <dt id="jarvis.ai.pkgs.lgbm.regression.parameters_dict">
-<code class="sig-prename descclassname">jarvis.ai.pkgs.lgbm.regression.</code><code class="sig-name descname">parameters_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/lgbm/regression.html#parameters_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.lgbm.regression.parameters_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Example optimized parameters</p>
+<code class="descclassname">jarvis.ai.pkgs.lgbm.regression.</code><code class="descname">parameters_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/lgbm/regression.html#parameters_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.lgbm.regression.parameters_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give example optimized parameters.</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="jarvis.ai.pkgs.lgbm.regression.regression">
-<code class="sig-prename descclassname">jarvis.ai.pkgs.lgbm.regression.</code><code class="sig-name descname">regression</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">Y</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">jid</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">test_size</span><span class="o">=</span><span class="default_value">0.1</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">preprocess</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">feature_importance</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">save_model</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">feat_names</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">model_name</span><span class="o">=</span><span class="default_value">'my_model'</span></em>, <em class="sig-param"><span class="n">config</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/lgbm/regression.html#regression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.lgbm.regression.regression" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">jarvis.ai.pkgs.lgbm.regression.</code><code class="descname">regression</code><span class="sig-paren">(</span><em>X=[]</em>, <em>Y=[]</em>, <em>jid=[]</em>, <em>test_size=0.1</em>, <em>plot=False</em>, <em>preprocess=True</em>, <em>feature_importance=True</em>, <em>save_model=False</em>, <em>feat_names=[]</em>, <em>model_name='my_model'</em>, <em>config={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/lgbm/regression.html#regression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.lgbm.regression.regression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get generic regression model.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.ai.pkgs.lgbm">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.ai.pkgs.lgbm" title="Permalink to this headline">¶</a></h2>
+<p>LighGBM applications.</p>
 </div>
 </div>
 
@@ -92,15 +99,17 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -114,12 +123,12 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.ai.pkgs.sklearn package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.ai.pkgs.sklearn package &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -42,19 +44,20 @@
 </div>
 <div class="section" id="module-jarvis.ai.pkgs.sklearn.classification">
 <span id="jarvis-ai-pkgs-sklearn-classification-module"></span><h2>jarvis.ai.pkgs.sklearn.classification module<a class="headerlink" href="#module-jarvis.ai.pkgs.sklearn.classification" title="Permalink to this headline">¶</a></h2>
-<p>Simple ML models for classifcation and regression, designed for educational purposes only
-__author__: = Kamal Choudhary</p>
-<dl class="py function">
+<p>Simple ML models for classifcation and regression.</p>
+<p>Designed for educational purposes only</p>
+<dl class="function">
 <dt id="jarvis.ai.pkgs.sklearn.classification.classification">
-<code class="sig-prename descclassname">jarvis.ai.pkgs.sklearn.classification.</code><code class="sig-name descname">classification</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">Y</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">preprocess</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">models</span><span class="o">=</span><span class="default_value">[DecisionTreeClassifier(ccp_alpha=0.0, class_weight=None, criterion='gini', max_depth=None, max_features=None, max_leaf_nodes=None, min_impurity_decrease=0.0, min_impurity_split=None, min_samples_leaf=1, min_samples_split=2, min_weight_fraction_leaf=0.0, presort='deprecated', random_state=None, splitter='best'), MLPClassifier(activation='relu', alpha=0.0001, batch_size='auto', beta_1=0.9, beta_2=0.999, early_stopping=False, epsilon=1e-08, hidden_layer_sizes=100, learning_rate='constant', learning_rate_init=0.001, max_fun=15000, max_iter=200, momentum=0.9, n_iter_no_change=10, nesterovs_momentum=True, power_t=0.5, random_state=None, shuffle=True, solver='adam', tol=0.0001, validation_fraction=0.1, verbose=False, warm_start=False), GradientBoostingClassifier(ccp_alpha=0.0, criterion='friedman_mse', init=None, learning_rate=0.1, loss='deviance', max_depth=3, max_features=None, max_leaf_nodes=None, min_impurity_decrease=0.0, min_impurity_split=None, min_samples_leaf=1, min_samples_split=2, min_weight_fraction_leaf=0.0, n_estimators=100, n_iter_no_change=None, presort='deprecated', random_state=None, subsample=1.0, tol=0.0001, validation_fraction=0.1, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski', metric_params=None, n_jobs=None, n_neighbors=5, p=2, weights='uniform'), GaussianProcessClassifier(copy_X_train=True, kernel=None, max_iter_predict=100, multi_class='one_vs_rest', n_jobs=None, n_restarts_optimizer=0, optimizer='fmin_l_bfgs_b', random_state=None, warm_start=False), RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight=None, criterion='gini', max_depth=None, max_features='auto', max_leaf_nodes=None, max_samples=None, min_impurity_decrease=0.0, min_impurity_split=None, min_samples_leaf=1, min_samples_split=2, min_weight_fraction_leaf=0.0, n_estimators=100, n_jobs=None, oob_score=False, random_state=None, verbose=0, warm_start=False), AdaBoostClassifier(algorithm='SAMME.R', base_estimator=None, learning_rate=1.0, n_estimators=50, random_state=None), SVC(C=1.0, break_ties=False, cache_size=200, class_weight=None, coef0=0.0, decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf', max_iter=- 1, probability=False, random_state=None, shrinking=True, tol=0.001, verbose=False)]</span></em>, <em class="sig-param"><span class="n">model_name</span><span class="o">=</span><span class="default_value">'my_model'</span></em>, <em class="sig-param"><span class="n">save_model</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/sklearn/classification.html#classification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.sklearn.classification.classification" title="Permalink to this definition">¶</a></dt>
-<dd><p>Quickly train some of the classifcation algorithms available in scikit-learn</p>
+<code class="descclassname">jarvis.ai.pkgs.sklearn.classification.</code><code class="descname">classification</code><span class="sig-paren">(</span><em>X=[], Y=[], tol=100, plot=False, preprocess=True, models=[DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,             max_features=None, max_leaf_nodes=None,             min_impurity_split=1e-07, min_samples_leaf=1,             min_samples_split=2, min_weight_fraction_leaf=0.0,             presort=False, random_state=None, splitter='best'), MLPClassifier(activation='relu', alpha=0.0001, batch_size='auto', beta_1=0.9,        beta_2=0.999, early_stopping=False, epsilon=1e-08,        hidden_layer_sizes=(100,), learning_rate='constant',        learning_rate_init=0.001, max_iter=200, momentum=0.9,        nesterovs_momentum=True, power_t=0.5, random_state=None,        shuffle=True, solver='adam', tol=0.0001, validation_fraction=0.1,        verbose=False, warm_start=False), GradientBoostingClassifier(criterion='friedman_mse', init=None,               learning_rate=0.1, loss='deviance', max_depth=3,               max_features=None, max_leaf_nodes=None,               min_impurity_split=1e-07, min_samples_leaf=1,               min_samples_split=2, min_weight_fraction_leaf=0.0,               n_estimators=100, presort='auto', random_state=None,               subsample=1.0, verbose=0, warm_start=False), KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',            metric_params=None, n_jobs=1, n_neighbors=5, p=2,            weights='uniform'), GaussianProcessClassifier(copy_X_train=True, kernel=None,              max_iter_predict=100, multi_class='one_vs_rest', n_jobs=1,              n_restarts_optimizer=0, optimizer='fmin_l_bfgs_b',              random_state=None, warm_start=False), RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',             max_depth=None, max_features='auto', max_leaf_nodes=None,             min_impurity_split=1e-07, min_samples_leaf=1,             min_samples_split=2, min_weight_fraction_leaf=0.0,             n_estimators=10, n_jobs=1, oob_score=False, random_state=None,             verbose=0, warm_start=False), AdaBoostClassifier(algorithm='SAMME.R', base_estimator=None,           learning_rate=1.0, n_estimators=50, random_state=None), SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,   decision_function_shape=None, degree=3, gamma='auto', kernel='rbf',   max_iter=-1, probability=False, random_state=None, shrinking=True,   tol=0.001, verbose=False)], model_name='my_model', save_model=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/sklearn/classification.html#classification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.sklearn.classification.classification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quickly train some of the classifcation algorithms in scikit-learn.</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="jarvis.ai.pkgs.sklearn.classification.classify_roc_ml">
-<code class="sig-prename descclassname">jarvis.ai.pkgs.sklearn.classification.</code><code class="sig-name descname">classify_roc_ml</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">classes</span><span class="o">=</span><span class="default_value">[0, 1, 2]</span></em>, <em class="sig-param"><span class="n">names</span><span class="o">=</span><span class="default_value">['High val', 'Low val', '']</span></em>, <em class="sig-param"><span class="n">n_plot</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">preprocess</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">test_size</span><span class="o">=</span><span class="default_value">0.1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/sklearn/classification.html#classify_roc_ml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.sklearn.classification.classify_roc_ml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Classifcation module for ROC curve for upto three classes, can be expanded in more classes as well</p>
-<p>Args:</p>
+<code class="descclassname">jarvis.ai.pkgs.sklearn.classification.</code><code class="descname">classify_roc_ml</code><span class="sig-paren">(</span><em>X=[], y=[], classes=[0, 1, 2], names=['High val', 'Low val', ''], n_plot=1, method='', preprocess=True, plot=False, test_size=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/sklearn/classification.html#classify_roc_ml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.sklearn.classification.classify_roc_ml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Classifcation module for ROC curve for upto three classes.</p>
+<p>It can be expanded in more classes as well.
+Args:</p>
 <blockquote>
 <div><p>X: input feature vectors</p>
 <p>y: target data obtained from binary_class_dat</p>
@@ -69,35 +72,38 @@ __author__: = Kamal Choudhary</p>
 </div>
 <div class="section" id="module-jarvis.ai.pkgs.sklearn.hyper_params">
 <span id="jarvis-ai-pkgs-sklearn-hyper-params-module"></span><h2>jarvis.ai.pkgs.sklearn.hyper_params module<a class="headerlink" href="#module-jarvis.ai.pkgs.sklearn.hyper_params" title="Permalink to this headline">¶</a></h2>
-<p>Set of ranges for hyperparameters
-# Modified from  <a class="reference external" href="https://github.com/EpistasisLab/tpot/blob/815b0e28c7c8c4935363298bb6ce4713d280cece/tpot/config/regressor.py">https://github.com/EpistasisLab/tpot/blob/815b0e28c7c8c4935363298bb6ce4713d280cece/tpot/config/regressor.py</a></p>
-<dl class="py function">
+<p>Set of ranges for hyperparameters.</p>
+<p># Modified from  <a class="reference external" href="https://github.com/EpistasisLab/tpot">https://github.com/EpistasisLab/tpot</a></p>
+<dl class="function">
 <dt id="jarvis.ai.pkgs.sklearn.hyper_params.classification_regression_params">
-<code class="sig-prename descclassname">jarvis.ai.pkgs.sklearn.hyper_params.</code><code class="sig-name descname">classification_regression_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/sklearn/hyper_params.html#classification_regression_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.sklearn.hyper_params.classification_regression_params" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">jarvis.ai.pkgs.sklearn.hyper_params.</code><code class="descname">classification_regression_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/sklearn/hyper_params.html#classification_regression_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.sklearn.hyper_params.classification_regression_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set of hyperparameters.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.ai.pkgs.sklearn.regression">
 <span id="jarvis-ai-pkgs-sklearn-regression-module"></span><h2>jarvis.ai.pkgs.sklearn.regression module<a class="headerlink" href="#module-jarvis.ai.pkgs.sklearn.regression" title="Permalink to this headline">¶</a></h2>
-<p>Simple ML models for classifcation and regression, designed for educational purposes only
-__author__: = Kamal Choudhary</p>
-<dl class="py function">
+<p>Simple ML models for regression.</p>
+<p>Designed for educational purposes only.</p>
+<dl class="function">
 <dt id="jarvis.ai.pkgs.sklearn.regression.regression">
-<code class="sig-prename descclassname">jarvis.ai.pkgs.sklearn.regression.</code><code class="sig-name descname">regression</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">Y</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">plot</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">models</span><span class="o">=</span><span class="default_value">[GaussianProcessRegressor(alpha=1e-10, copy_X_train=True, kernel=None, n_restarts_optimizer=0, normalize_y=False, optimizer='fmin_l_bfgs_b', random_state=None), RandomForestRegressor(bootstrap=True, ccp_alpha=0.0, criterion='mse', max_depth=None, max_features='auto', max_leaf_nodes=None, max_samples=None, min_impurity_decrease=0.0, min_impurity_split=None, min_samples_leaf=1, min_samples_split=2, min_weight_fraction_leaf=0.0, n_estimators=100, n_jobs=None, oob_score=False, random_state=None, verbose=0, warm_start=False), GradientBoostingRegressor(alpha=0.9, ccp_alpha=0.0, criterion='friedman_mse', init=None, learning_rate=0.1, loss='ls', max_depth=3, max_features=None, max_leaf_nodes=None, min_impurity_decrease=0.0, min_impurity_split=None, min_samples_leaf=1, min_samples_split=2, min_weight_fraction_leaf=0.0, n_estimators=100, n_iter_no_change=None, presort='deprecated', random_state=None, subsample=1.0, tol=0.0001, validation_fraction=0.1, verbose=0, warm_start=False), AdaBoostRegressor(base_estimator=None, learning_rate=1.0, loss='linear', n_estimators=50, random_state=None), SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='scale', kernel='rbf', max_iter=- 1, shrinking=True, tol=0.001, verbose=False), Lasso(alpha=1.0, copy_X=True, fit_intercept=True, max_iter=1000, normalize=False, positive=False, precompute=False, random_state=None, selection='cyclic', tol=0.0001, warm_start=False), LinearRegression(copy_X=True, fit_intercept=True, n_jobs=None, normalize=False), KernelRidge(alpha=1, coef0=1, degree=3, gamma=None, kernel='linear', kernel_params=None), MLPRegressor(activation='relu', alpha=0.0001, batch_size='auto', beta_1=0.9, beta_2=0.999, early_stopping=False, epsilon=1e-08, hidden_layer_sizes=100, learning_rate='constant', learning_rate_init=0.001, max_fun=15000, max_iter=200, momentum=0.9, n_iter_no_change=10, nesterovs_momentum=True, power_t=0.5, random_state=None, shuffle=True, solver='adam', tol=0.0001, validation_fraction=0.1, verbose=False, warm_start=False), DecisionTreeRegressor(ccp_alpha=0.0, criterion='mse', max_depth=None, max_features=None, max_leaf_nodes=None, min_impurity_decrease=0.0, min_impurity_split=None, min_samples_leaf=1, min_samples_split=2, min_weight_fraction_leaf=0.0, presort='deprecated', random_state=None, splitter='best')]</span></em>, <em class="sig-param"><span class="n">preprocess</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">test_size</span><span class="o">=</span><span class="default_value">0.1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/sklearn/regression.html#regression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.sklearn.regression.regression" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide model as models to get accuracy</p>
-<p>Args:</p>
-<blockquote>
-<div><p>X: input features</p>
+<code class="descclassname">jarvis.ai.pkgs.sklearn.regression.</code><code class="descname">regression</code><span class="sig-paren">(</span><em>X=[], Y=[], plot=False, models=[GaussianProcessRegressor(alpha=1e-10, copy_X_train=True, kernel=None,              n_restarts_optimizer=0, normalize_y=False,              optimizer='fmin_l_bfgs_b', random_state=None), RandomForestRegressor(bootstrap=True, criterion='mse', max_depth=None,            max_features='auto', max_leaf_nodes=None,            min_impurity_split=1e-07, min_samples_leaf=1,            min_samples_split=2, min_weight_fraction_leaf=0.0,            n_estimators=10, n_jobs=1, oob_score=False, random_state=None,            verbose=0, warm_start=False), GradientBoostingRegressor(alpha=0.9, criterion='friedman_mse', init=None,              learning_rate=0.1, loss='ls', max_depth=3, max_features=None,              max_leaf_nodes=None, min_impurity_split=1e-07,              min_samples_leaf=1, min_samples_split=2,              min_weight_fraction_leaf=0.0, n_estimators=100,              presort='auto', random_state=None, subsample=1.0, verbose=0,              warm_start=False), AdaBoostRegressor(base_estimator=None, learning_rate=1.0, loss='linear',          n_estimators=50, random_state=None), SVR(C=1.0, cache_size=200, coef0=0.0, degree=3, epsilon=0.1, gamma='auto',   kernel='rbf', max_iter=-1, shrinking=True, tol=0.001, verbose=False), Lasso(alpha=1.0, copy_X=True, fit_intercept=True, max_iter=1000,    normalize=False, positive=False, precompute=False, random_state=None,    selection='cyclic', tol=0.0001, warm_start=False), LinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=False), KernelRidge(alpha=1, coef0=1, degree=3, gamma=None, kernel='linear',       kernel_params=None), MLPRegressor(activation='relu', alpha=0.0001, batch_size='auto', beta_1=0.9,        beta_2=0.999, early_stopping=False, epsilon=1e-08,        hidden_layer_sizes=(100,), learning_rate='constant',        learning_rate_init=0.001, max_iter=200, momentum=0.9,        nesterovs_momentum=True, power_t=0.5, random_state=None,        shuffle=True, solver='adam', tol=0.0001, validation_fraction=0.1,        verbose=False, warm_start=False), DecisionTreeRegressor(criterion='mse', max_depth=None, max_features=None,            max_leaf_nodes=None, min_impurity_split=1e-07,            min_samples_leaf=1, min_samples_split=2,            min_weight_fraction_leaf=0.0, presort=False, random_state=None,            splitter='best')], preprocess=True, test_size=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/sklearn/regression.html#regression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.sklearn.regression.regression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide model as models to get accuracy.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">X: input features</p>
 <p>Y: Target data</p>
 <p>models : collection array of models</p>
 <p>plot: whether to make a parity plot with ML models</p>
-<p>preprocess: whether to apply standard preprocessing techniques</p>
-</div></blockquote>
+<p class="last">preprocess: whether to apply standard preprocessing techniques</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.ai.pkgs.sklearn">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.ai.pkgs.sklearn" title="Permalink to this headline">¶</a></h2>
+<p>Modules for scikit-learn appications.</p>
 </div>
 </div>
 
@@ -127,15 +133,17 @@ __author__: = Kamal Choudhary</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -149,12 +157,12 @@ __author__: = Kamal Choudhary</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

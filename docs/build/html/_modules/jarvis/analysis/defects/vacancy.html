@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.analysis.defects.vacancy &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.analysis.defects.vacancy &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -37,34 +39,16 @@
           <div class="body" role="main">
             
   <h1>Source code for jarvis.analysis.defects.vacancy</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Modules for making point-defect vacancies</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Modules for making point-defect vacancies.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pprint</span>
-<span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Poscar</span>
-<span class="kn">from</span> <span class="nn">jarvis.core.lattice</span> <span class="kn">import</span> <span class="n">Lattice</span>
-<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="n">Spacegroup3D</span>
-
-
-<div class="viewcode-block" id="rand_select"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.vacancy.rand_select">[docs]</a><span class="k">def</span> <span class="nf">rand_select</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[]):</span>
-    <span class="n">uniq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-        <span class="n">info</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-    <span class="n">selected</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">chosen</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
-        <span class="n">selected</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">chosen</span><span class="p">)</span>
-    <span class="c1"># print (info)</span>
-    <span class="c1"># print (selected)</span>
-    <span class="k">return</span> <span class="n">selected</span></div>
+<span class="kn">from</span> <span class="nn">jarvis.core.utils</span> <span class="kn">import</span> <span class="n">rand_select</span>
 
 
 <div class="viewcode-block" id="Vacancy"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.vacancy.Vacancy">[docs]</a><span class="k">class</span> <span class="nc">Vacancy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Obtain vacancy defects in Atoms class using Wyckoff data.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -74,7 +58,19 @@
         <span class="n">symbol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get vacancy structures based on Wyckoff positions</span>
+<span class="sd">        Initialize the method.</span>
+
+<span class="sd">        Arguments are given below.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            atoms: jarvis.core.Atoms object.</span>
+
+<span class="sd">            defect_index: atoms index for defect.</span>
+
+<span class="sd">            defect_structure:  Atoms with defect.</span>
+
+<span class="sd">            wyckoff_multiplicity: Wyckoff multiplicity.</span>
+
+<span class="sd">            symbol: Elemenyt symbol.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span> <span class="o">=</span> <span class="n">atoms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_defect_index</span> <span class="o">=</span> <span class="n">defect_index</span>
@@ -85,6 +81,7 @@
 <div class="viewcode-block" id="Vacancy.generate_defects"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.vacancy.Vacancy.generate_defects">[docs]</a>    <span class="k">def</span> <span class="nf">generate_defects</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">enforce_c_size</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">on_conventional_cell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="mi">1</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Provide function to generate defects.&quot;&quot;&quot;</span>
         <span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span>
         <span class="k">if</span> <span class="n">on_conventional_cell</span><span class="p">:</span>
             <span class="n">atoms</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">conventional_standard_structure</span>
@@ -98,10 +95,6 @@
             <span class="c1"># atoms = atoms.make_supercell([dim1, dim2, dim3])</span>
             <span class="n">supercell_size</span> <span class="o">=</span> <span class="p">[</span><span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">,</span> <span class="n">dim3</span><span class="p">]</span>
 
-        <span class="n">element_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">))</span>
-        <span class="c1">#print(&quot;s_size=&quot;, supercell_size, a, b, c, atoms.lattice.lat_lengths())</span>
-        <span class="c1">#print(&quot;s_sizeomg=&quot;, atoms.pymatgen_converter().lattice.abc)</span>
-        <span class="c1">#print(atoms)</span>
         <span class="n">spg</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
         <span class="n">wyckoffs</span> <span class="o">=</span> <span class="n">spg</span><span class="o">.</span><span class="n">_dataset</span><span class="p">[</span><span class="s2">&quot;wyckoffs&quot;</span><span class="p">]</span>
         <span class="n">atoms</span><span class="o">.</span><span class="n">props</span> <span class="o">=</span> <span class="n">wyckoffs</span>
@@ -121,6 +114,7 @@
         <span class="k">return</span> <span class="n">vacs</span></div>
 
 <div class="viewcode-block" id="Vacancy.to_dict"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.vacancy.Vacancy.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert to a dictionary.&quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;defect_structure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defect_structure</span>
@@ -130,11 +124,13 @@
         <span class="k">return</span> <span class="n">d</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Representation of the class as dict.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span></div>
 
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">    from jarvis.io.vasp.inputs import Poscar</span>
 
 <span class="sd">    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]</span>
 <span class="sd">    coords = [[0, 0, 0], [0.25, 0.25, 0.25]]</span>
@@ -163,15 +159,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -185,13 +183,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

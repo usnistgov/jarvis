@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.io.wannier.outputs &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.io.wannier.outputs &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -38,27 +40,26 @@
             
   <h1>Source code for jarvis.io.wannier.outputs</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Class for reading wannier outouts such as</span>
-<span class="sd">wannier90.wout and wannier90_hr.dat</span>
+<span class="sd">Class for reading wannier outouts.</span>
+
+<span class="sd">Such as wannier90.wout and wannier90_hr.dat</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">copy</span> <span class="k">as</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">Kpoints3D</span>
-<span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">generate_kgrid</span>
-<span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Poscar</span>
 <span class="kn">from</span> <span class="nn">jarvis.io.vasp.outputs</span> <span class="kn">import</span> <span class="n">Vasprun</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
 
 
-<div class="viewcode-block" id="get_projectors_for_formula"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.get_projectors_for_formula">[docs]</a><span class="k">def</span> <span class="nf">get_projectors_for_formula</span><span class="p">(</span><span class="n">semi_core_states</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">formula_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Bi&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Se&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}):</span>
+<div class="viewcode-block" id="get_projectors_for_formula"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.get_projectors_for_formula">[docs]</a><span class="k">def</span> <span class="nf">get_projectors_for_formula</span><span class="p">(</span>
+    <span class="n">semi_core_states</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">formula_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Bi&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Se&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get semi core states from formula dict.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">semi_core_states</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">path_semi_core</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;default_semicore.json&quot;</span><span class="p">)</span>
@@ -76,8 +77,12 @@
 <div class="viewcode-block" id="get_orbitals"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.get_orbitals">[docs]</a><span class="k">def</span> <span class="nf">get_orbitals</span><span class="p">(</span>
     <span class="n">projection_info</span><span class="o">=</span><span class="p">[[</span><span class="s2">&quot;Bi&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">]],</span> <span class="p">[</span><span class="s2">&quot;Se&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">]]],</span>
     <span class="n">desired_orbitals</span><span class="o">=</span><span class="p">[[</span><span class="s2">&quot;Bi&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">]],</span>
-    <span class="n">soc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ncells</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">supercell</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span><span class="n">surfaceonly</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">soc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">ncells</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">supercell</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+    <span class="n">surfaceonly</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get spdf orbitals.&quot;&quot;&quot;</span>
     <span class="c1"># projection_info example for Bi2Se3 with s and p orbital projections</span>
     <span class="c1"># [[&quot;Bi&quot;, 2, [&quot;s&quot;,&quot;p&quot;]], [&quot;Se&quot;, 3, [&quot;s&quot;,&quot;p&quot;]]]</span>
 
@@ -182,30 +187,29 @@
             <span class="n">new_orbs</span> <span class="o">=</span> <span class="n">projection_dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span>
             <span class="n">inds</span> <span class="o">+=</span> <span class="n">new_orbs</span>
 
-
-        <span class="k">if</span> <span class="n">ncells</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">surfaceonly</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ncells</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">surfaceonly</span><span class="p">:</span>
 
             <span class="n">inds_super</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncells</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inds</span><span class="p">:</span>
-                    <span class="n">inds_super</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="n">nwan</span><span class="p">)</span>
+                    <span class="n">inds_super</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="n">nwan</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">inds_super</span>
 
-        <span class="k">elif</span> <span class="n">ncells</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">surfaceonly</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">ncells</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">surfaceonly</span><span class="p">:</span>
             <span class="n">inds_super</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">ncells</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">ncells</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]:</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inds</span><span class="p">:</span>
-                    <span class="n">inds_super</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="n">nwan</span><span class="p">)</span>
+                    <span class="n">inds_super</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="n">nwan</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">inds_super</span>
-
-
 
     <span class="k">return</span> <span class="n">inds</span></div>
 
 
 <div class="viewcode-block" id="WannierHam"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam">[docs]</a><span class="k">class</span> <span class="nc">WannierHam</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct WannierHamltonian object.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;wannier90_hr.dat&quot;</span><span class="p">,</span>
@@ -217,6 +221,7 @@
         <span class="n">H</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">HR</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the class.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nr</span> <span class="o">=</span> <span class="n">nr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nwan</span> <span class="o">=</span> <span class="n">nwan</span>
@@ -230,6 +235,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">read_ham</span><span class="p">()</span>
 
 <div class="viewcode-block" id="WannierHam.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert to dictionary.&quot;&quot;&quot;</span>
         <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">info</span><span class="p">[</span><span class="s2">&quot;nr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nr</span>
         <span class="n">info</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
@@ -243,6 +249,7 @@
 
 <div class="viewcode-block" id="WannierHam.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load from dictionary.&quot;&quot;&quot;</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">WannierHam</span><span class="p">(</span>
             <span class="n">nr</span><span class="o">=</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;nr&quot;</span><span class="p">],</span>
             <span class="n">nwan</span><span class="o">=</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;nwan&quot;</span><span class="p">],</span>
@@ -255,9 +262,10 @@
         <span class="k">return</span> <span class="n">w</span></div>
 
 <div class="viewcode-block" id="WannierHam.read_ham"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.read_ham">[docs]</a>    <span class="k">def</span> <span class="nf">read_ham</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read _hr.dat file..&quot;&quot;&quot;</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
-        <span class="n">allines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="c1"># allines = f.readlines()</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nwan</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
@@ -291,9 +299,9 @@
             <span class="c1"># print (&#39;lines[i].split()[0:5]&#39;,c,self.nwan**2)#,self.sym_r[rnum])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">H_int</span><span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]]</span>
             <span class="c1"># print (&#39;lines[i][5]&#39;,lines[i])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">H_val</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">5</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span>
-                <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">6</span><span class="p">]</span>
-            <span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sym_r</span><span class="p">[</span><span class="n">rnum</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">H_val</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">5</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">6</span><span class="p">])</span>
+            <span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sym_r</span><span class="p">[</span><span class="n">rnum</span><span class="p">])</span>
             <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="c1"># print (self.H_int[0,:])</span>
@@ -360,7 +368,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">HR</span></div>
 
 <div class="viewcode-block" id="WannierHam.get_ind"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.get_ind">[docs]</a>    <span class="k">def</span> <span class="nf">get_ind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nxyz</span><span class="p">):</span>
-
+        <span class="sd">&quot;&quot;&quot;Get index.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">nxyz</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ind</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
             <span class="n">nxyz</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ind</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
@@ -368,9 +376,7 @@
         <span class="p">]</span></div>
 
 <div class="viewcode-block" id="WannierHam.solve_ham"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.solve_ham">[docs]</a>    <span class="k">def</span> <span class="nf">solve_ham</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">proj</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
-        <span class="c1"># print (&#39;solve&#39;, self.nwan, self.R.shape, self.HR.shape)</span>
-
+        <span class="sd">&quot;&quot;&quot;Solve Wannier Hamiltonian at a k-point.&quot;&quot;&quot;</span>
         <span class="n">nr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># print (&#39;nr==&#39;,nr,self.nr)</span>
         <span class="n">hk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">nwan</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nwan</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
@@ -399,6 +405,7 @@
         <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">vect</span><span class="p">,</span> <span class="n">p</span></div>
 
 <div class="viewcode-block" id="WannierHam.band_structure_eigs"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.band_structure_eigs">[docs]</a>    <span class="k">def</span> <span class="nf">band_structure_eigs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">efermi</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get eigenvalues for band eigenvalues.&quot;&quot;&quot;</span>
         <span class="n">eigs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">kpath</span><span class="p">:</span>
             <span class="c1"># print (i)</span>
@@ -409,6 +416,7 @@
 <div class="viewcode-block" id="WannierHam.get_bandstructure_plot"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.get_bandstructure_plot">[docs]</a>    <span class="k">def</span> <span class="nf">get_bandstructure_plot</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">efermi</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;bs.png&quot;</span><span class="p">,</span> <span class="n">yrange</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get bandstructure plot..&quot;&quot;&quot;</span>
         <span class="n">kpoints</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">()</span><span class="o">.</span><span class="n">interpolated_points</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>  <span class="c1"># _path</span>
 
         <span class="c1"># print (&#39;kpath&#39;,kpoints)</span>
@@ -433,7 +441,7 @@
         <span class="n">kp_labels</span><span class="o">=</span><span class="p">[],</span>
         <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;compare.png&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-
+        <span class="sd">&quot;&quot;&quot;Compare DFT and Wannier bands to check accuracy.&quot;&quot;&quot;</span>
         <span class="n">vrun</span> <span class="o">=</span> <span class="n">Vasprun</span><span class="p">(</span><span class="n">vasprun_path</span><span class="p">)</span>
         <span class="n">kpoints</span> <span class="o">=</span> <span class="n">vrun</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">_kpoints</span>
         <span class="n">fermi</span> <span class="o">=</span> <span class="n">vrun</span><span class="o">.</span><span class="n">efermi</span>
@@ -445,7 +453,11 @@
         <span class="n">nwann</span> <span class="o">=</span> <span class="n">eigs_wan</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">&quot;eigs.shape,eigs_vrun.shape&quot;</span><span class="p">,</span> <span class="n">eigs_wan</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">eigs_vrun</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">nbands</span><span class="p">,</span> <span class="n">nwann</span>
+            <span class="s2">&quot;eigs.shape,eigs_vrun.shape&quot;</span><span class="p">,</span>
+            <span class="n">eigs_wan</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+            <span class="n">eigs_vrun</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+            <span class="n">nbands</span><span class="p">,</span>
+            <span class="n">nwann</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">min_arr</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">erange</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">energy_tol</span><span class="p">,</span> <span class="n">energy_tol</span><span class="p">]</span>
@@ -465,7 +477,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MAX diff&quot;</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">min_arr</span><span class="p">))</span>
             <span class="n">maxdiff</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">min_arr</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;maxdiff&quot;</span><span class="p">,</span> <span class="n">maxdiff</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">eigs_wan</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">eigs_vrun</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
@@ -485,15 +497,6 @@
         <span class="c1"># print (info)</span>
         <span class="k">return</span> <span class="n">info</span>  <span class="c1"># ,eigs_wan.T,eigs_vrun.T</span></div>
 
-    <span class="c1"># def generate_kgrid(self, grid):</span>
-    <span class="c1">#</span>
-    <span class="c1">#    t = []</span>
-    <span class="c1">#    for i in range(grid[0]):</span>
-    <span class="c1">#        for j in range(grid[1]):</span>
-    <span class="c1">#            for k in range(grid[2]):</span>
-    <span class="c1">#                t.append([float(i)/(float(grid[0])) , float(j)/(float(grid[1])), float(k)/(float(grid[2]))])</span>
-    <span class="c1">#    return t</span>
-
 <div class="viewcode-block" id="WannierHam.dos"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.dos">[docs]</a>    <span class="k">def</span> <span class="nf">dos</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">kpoints</span><span class="o">=</span><span class="p">[],</span>
@@ -505,7 +508,7 @@
         <span class="n">pdf</span><span class="o">=</span><span class="s2">&quot;dos.pdf&quot;</span><span class="p">,</span>
         <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-
+        <span class="sd">&quot;&quot;&quot;Get density of states.&quot;&quot;&quot;</span>
         <span class="c1"># plt.clf()</span>
 
         <span class="c1"># kgrid = generate_kgrid(grid)</span>
@@ -534,7 +537,9 @@
             <span class="c1"># plt.xlim(xrange)</span>
 
         <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
-            <span class="n">xrange</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xrange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="p">(</span><span class="n">xrange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">xrange</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nenergy</span><span class="p">)</span>
+            <span class="n">xrange</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">xrange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-5</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">xrange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">xrange</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nenergy</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="n">dos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">energies</span><span class="p">))</span>
         <span class="n">pdos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">energies</span><span class="p">))</span>
@@ -550,21 +555,23 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">energies</span><span class="p">)):</span>
             <span class="n">arg</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">energies</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
             <span class="n">dos</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">proj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">proj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">pdos</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">*</span> <span class="n">pvals</span><span class="p">)</span>
 
         <span class="n">de</span> <span class="o">=</span> <span class="n">energies</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">energies</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">dos</span> <span class="o">=</span> <span class="n">dos</span> <span class="o">/</span> <span class="n">sig</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">proj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">proj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pdos</span> <span class="o">=</span> <span class="n">pdos</span> <span class="o">/</span> <span class="n">sig</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;np.sum(dos) &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dos</span> <span class="o">*</span> <span class="n">de</span><span class="p">))</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">proj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">proj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;np.sum(pdos) &quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pdos</span> <span class="o">*</span> <span class="n">de</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">energies</span><span class="p">,</span> <span class="n">dos</span><span class="p">,</span> <span class="n">pdos</span></div>
 
-<div class="viewcode-block" id="WannierHam.generate_supercell"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.generate_supercell">[docs]</a>    <span class="k">def</span> <span class="nf">generate_supercell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supercell</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-
+<div class="viewcode-block" id="WannierHam.generate_supercell"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.generate_supercell">[docs]</a>    <span class="k">def</span> <span class="nf">generate_supercell</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">supercell</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate supercell.&quot;&quot;&quot;</span>
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
         <span class="n">nw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nwan</span>
@@ -581,7 +588,11 @@
             <span class="k">return</span> <span class="n">cellnew</span><span class="p">,</span> <span class="n">subnew</span>
 
         <span class="k">def</span> <span class="nf">subcell_index</span><span class="p">(</span><span class="n">ss</span><span class="p">):</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="n">ss</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">supercell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">supercell</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">ss</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">supercell</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">ss</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ss</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">supercell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">supercell</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">ss</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">supercell</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">ss</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="p">)</span>
             <span class="k">return</span> <span class="nb">range</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">nw</span><span class="p">,</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">nw</span><span class="p">)</span>
 
         <span class="n">RH_new</span> <span class="o">=</span> <span class="p">{}</span>
@@ -608,12 +619,14 @@
                         <span class="p">):</span>
                             <span class="k">continue</span>
 
-                        <span class="c1">#                        print &#39;rs&#39;, rold, subcell, &#39;new&#39;, cellnew, subnew</span>
                         <span class="k">if</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">cellnew</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">RH_new</span><span class="p">:</span>
                             <span class="k">if</span> <span class="n">sparse</span><span class="p">:</span>
+                                <span class="n">sps</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span>  <span class="c1"># TO CHECK</span>
                                 <span class="n">RH_new</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">cellnew</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span>
                                     <span class="n">cellnew</span><span class="p">,</span>
-                                    <span class="n">sps</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">((</span><span class="n">NWAN</span><span class="p">,</span> <span class="n">NWAN</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">),</span>
+                                    <span class="n">sps</span><span class="o">.</span><span class="n">lil_matrix</span><span class="p">(</span>
+                                        <span class="p">(</span><span class="n">NWAN</span><span class="p">,</span> <span class="n">NWAN</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span>
+                                    <span class="p">),</span>
                                 <span class="p">]</span>
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="n">RH_new</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">cellnew</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span>
@@ -628,10 +641,11 @@
                         <span class="n">r1</span> <span class="o">=</span> <span class="n">subcell_index</span><span class="p">(</span><span class="n">subcell</span><span class="p">)</span>
                         <span class="n">r2</span> <span class="o">=</span> <span class="n">subcell_index</span><span class="p">(</span><span class="n">subnew</span><span class="p">)</span>
 
-                        <span class="c1">#                        print r1,r2,h_temp.shape, RH_new[tuple(cellnew)][1][r1,r2].shape</span>
                         <span class="k">for</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">r1</span><span class="p">):</span>
                             <span class="k">for</span> <span class="n">d1</span><span class="p">,</span> <span class="n">d2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">r2</span><span class="p">):</span>
-                                <span class="n">RH_new</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">cellnew</span><span class="p">)][</span><span class="mi">1</span><span class="p">][</span><span class="n">c2</span><span class="p">,</span> <span class="n">d2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h_temp</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">d1</span><span class="p">]</span>
+                                <span class="n">RH_new</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">cellnew</span><span class="p">)][</span><span class="mi">1</span><span class="p">][</span><span class="n">c2</span><span class="p">,</span> <span class="n">d2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">h_temp</span><span class="p">[</span>
+                                    <span class="n">c1</span><span class="p">,</span> <span class="n">d1</span>
+                                <span class="p">]</span>
 
         <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
@@ -641,11 +655,11 @@
         <span class="c1"># if sparse:</span>
         <span class="c1">#    hbig.sparse = True</span>
 
-        <span class="n">nwan</span> <span class="o">=</span> <span class="n">NWAN</span>
+        <span class="c1"># nwan = NWAN</span>
         <span class="n">hbig</span><span class="o">.</span><span class="n">nwan</span> <span class="o">=</span> <span class="n">NWAN</span>
         <span class="c1"># hbig.nr = rn</span>
 
-        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nr</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="c1"># R = np.zeros((nr, 3), dtype=float)</span>
         <span class="n">hbig</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nr</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">sparse</span><span class="p">:</span>
             <span class="c1"># HR = sps.lil_matrix((nr, NWAN ** 2), dtype=complex)</span>
@@ -673,10 +687,14 @@
 
 
 <div class="viewcode-block" id="Wannier90wout"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.Wannier90wout">[docs]</a><span class="k">class</span> <span class="nc">Wannier90wout</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct wannier90.out related object.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wout_path</span><span class="o">=</span><span class="s2">&quot;wannier90.wout&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize with file path.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wout</span> <span class="o">=</span> <span class="n">wout_path</span>
 
 <div class="viewcode-block" id="Wannier90wout.give_wannier_centers"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.Wannier90wout.give_wannier_centers">[docs]</a>    <span class="k">def</span> <span class="nf">give_wannier_centers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get wannier charge centers.&quot;&quot;&quot;</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wout</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -687,80 +705,12 @@
                 <span class="n">final</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">if</span> <span class="n">final</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s2">&quot;WF centre and spread&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
-                    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+                    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+                    <span class="p">]</span>
                     <span class="n">wan_cnts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">wan_cnts</span></div></div>
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">if __name__ == &quot;__main__&quot;:</span>
-<span class="sd">    hr = &quot;../../tests/testfiles/io/wannier/wannier90_hr.dat&quot;</span>
-<span class="sd">    w = WannierHam(filename=hr)  # get_bandstructure_plot(atoms=p)</span>
-<span class="sd">    big = w.generate_supercell()</span>
-
-<span class="sd">    pp = get_projectors_for_formula()</span>
-<span class="sd">    x = get_orbitals()</span>
-<span class="sd">    print(w.nwan, big.nwan)</span>
-<span class="sd">    sys.exit()</span>
-
-<span class="sd">    # info = w.to_dict()</span>
-<span class="sd">    # print (info[&#39;nwan&#39;])</span>
-<span class="sd">    # ww = WannierHam()</span>
-<span class="sd">    # dd = WannierHam.from_dict(info)</span>
-<span class="sd">    # print (dd.to_dict()[&#39;nwan&#39;])</span>
-<span class="sd">    energies, dos, pdos = w.dos([5, 5, 5])</span>
-<span class="sd">    print(round(dos[75], 3))</span>
-<span class="sd">    # w.compare_dft_wann(vasprun_path=run)</span>
-<span class="sd">    import sys</span>
-
-<span class="sd">    vrun = Vasprun(run)</span>
-<span class="sd">    eigs_wan = w.band_structure_eigs(</span>
-<span class="sd">        kpath=vrun.kpoints._kpoints, efermi=vrun.efermi</span>
-<span class="sd">    )  # .T</span>
-<span class="sd">    eigs_vrun = vrun.eigenvalues[0][:, :, 0]  # .T</span>
-<span class="sd">    nbands = eigs_vrun.shape[1]</span>
-<span class="sd">    nwann = eigs_wan.shape[1]</span>
-<span class="sd">    fermi = vrun.efermi</span>
-<span class="sd">    print(&quot;eigs.shape,eigs_vrun.shape&quot;, eigs_wan.shape, eigs_vrun.shape, nbands, nwann)</span>
-<span class="sd">    min_arr = []</span>
-<span class="sd">    erange = [-2 - fermi, 2 + fermi]</span>
-<span class="sd">    for k in range(len(eigs_vrun)):</span>
-<span class="sd">        for n in eigs_wan[k]:</span>
-<span class="sd">            diff_arr = []</span>
-<span class="sd">            if n &gt; erange[0] and n &lt; erange[1]:</span>
-<span class="sd">                for v in eigs_vrun[k]:</span>
-<span class="sd">                    diff = abs(n - v)</span>
-<span class="sd">                    diff_arr.append(diff)</span>
-<span class="sd">            if diff_arr != []:</span>
-<span class="sd">                tmp = np.min(diff_arr)</span>
-<span class="sd">                min_arr.append(tmp)</span>
-<span class="sd">    maxdiff = &quot;na&quot;</span>
-<span class="sd">    if min_arr != []:</span>
-<span class="sd">        # print (&#39;min_arr&#39;,min_arr)</span>
-<span class="sd">        print(&quot;MAX diff&quot;, max(min_arr))</span>
-<span class="sd">        maxdiff = max(min_arr)</span>
-<span class="sd">    print(&quot;maxdiff&quot;, maxdiff)</span>
-
-<span class="sd">    wout = &quot;/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90.wout&quot;</span>
-<span class="sd">    centers = Wannier90wout(wout_path=wout).give_wannier_centers()</span>
-<span class="sd">    # print (centers)</span>
-
-<span class="sd">    # val,vect,p = WannierHam(filename=hr).solve_ham()</span>
-<span class="sd">    # print (&#39;val=&#39;,val)</span>
-<span class="sd">    # print (&#39;vect=&#39;,vect)</span>
-<span class="sd">    # print (&#39;p=&#39;,p)</span>
-
-<span class="sd">    p = Poscar.from_file(</span>
-<span class="sd">        &quot;/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/POSCAR&quot;</span>
-<span class="sd">    ).atoms</span>
-<span class="sd">    print(p)</span>
-<span class="sd">    WannierHam(filename=hr).get_bandstructure_plot(atoms=p)</span>
-
-<span class="sd">    # R,H, HR = WannierHam(filename=hr).read_ham()</span>
-<span class="sd">    # print (&#39;R&#39;,R)</span>
-<span class="sd">    # print ()</span>
-<span class="sd">    # print ()</span>
-<span class="sd">    # print (&#39;HR&#39;,HR)</span>
-<span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 
           </div>
@@ -769,15 +719,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -791,13 +743,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

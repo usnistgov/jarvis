@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.io.vasp.inputs &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.io.vasp.inputs &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -37,10 +39,7 @@
           <div class="body" role="main">
             
   <h1>Source code for jarvis.io.vasp.inputs</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Modules handling input files for VASP calculations</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span></span><span class="sd">&quot;&quot;&quot;Modules handling input files for VASP calculations.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pprint</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -53,32 +52,29 @@
 
 <div class="viewcode-block" id="Poscar"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Poscar">[docs]</a><span class="k">class</span> <span class="nc">Poscar</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class defining Poscar object </span>
+<span class="sd">    Class defining Poscar object.</span>
+
+<span class="sd">    Constructued from the Atoms object.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">    </span>
 <span class="sd">        atoms : Atoms object</span>
-<span class="sd">        </span>
+
 <span class="sd">        comment : Header of Poscar file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;System&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the Poscar object.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">comment</span>
 
 <div class="viewcode-block" id="Poscar.from_file"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Poscar.from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;POSCAR&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read simple POSCAR file from the path</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Read simple POSCAR file from the path.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="Poscar.write_file"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Poscar.write_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Write the Poscar object to a file</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
+        <span class="sd">&quot;&quot;&quot;Write the Poscar object to a file.&quot;&quot;&quot;</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
         <span class="n">header</span> <span class="o">=</span> <span class="p">(</span>
             <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
@@ -102,12 +98,12 @@
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
+        <span class="c1"># order = np.argsort(self.atoms.elements)</span>
         <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">frac_coords</span>
-        <span class="n">coords_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span><span class="c1">#[order]</span>
-        <span class="n">elements_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span><span class="c1">#[order]</span>
-        <span class="n">props_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">props</span><span class="p">)</span><span class="c1">#[order]</span>
-        <span class="n">check_selective_dynamics</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">coords_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span>  <span class="c1"># [order]</span>
+        <span class="n">elements_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>  <span class="c1"># [order]</span>
+        <span class="n">props_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">props</span><span class="p">)</span>  <span class="c1"># [order]</span>
+        <span class="c1"># check_selective_dynamics = False</span>
         <span class="n">counts</span> <span class="o">=</span> <span class="n">get_counts</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;T&quot;</span> <span class="ow">in</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">props</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
             <span class="n">middle</span> <span class="o">=</span> <span class="p">(</span>
@@ -127,7 +123,8 @@
         <span class="n">rest</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="c1"># print (&#39;repr&#39;,self.frac_coords, self.frac_coords.shape)</span>
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coords_ordered</span><span class="p">):</span>
-            <span class="n">rest</span> <span class="o">=</span> <span class="n">rest</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">props_ordered</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">p_ordered</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">props_ordered</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+            <span class="n">rest</span> <span class="o">=</span> <span class="n">rest</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">p_ordered</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">header</span> <span class="o">+</span> <span class="n">middle</span> <span class="o">+</span> <span class="n">rest</span>
 
@@ -136,10 +133,7 @@
 
 <div class="viewcode-block" id="Poscar.from_string"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Poscar.from_string">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read Poscar from strings, useful in reading files/streams</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
+        <span class="sd">&quot;&quot;&quot;Read Poscar from strings, useful in reading files/streams.&quot;&quot;&quot;</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
         <span class="n">comment</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -147,7 +141,7 @@
         <span class="n">lattice_mat</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">text</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()])</span>
         <span class="n">lattice_mat</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">text</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()])</span>
         <span class="n">lattice_mat</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">text</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()])</span>
-        <span class="n">lattice_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lattice_mat</span><span class="p">)</span>
+        <span class="n">lattice_mat</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lattice_mat</span><span class="p">)</span>
 
         <span class="n">uniq_elements</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
         <span class="n">element_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">text</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()])</span>
@@ -171,11 +165,12 @@
             <span class="n">cartesian</span><span class="o">=</span><span class="n">cartesian</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="c1"># print (atoms)</span>
-        <span class="n">formula</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">composition</span><span class="o">.</span><span class="n">formula</span>
+        <span class="c1"># formula = atoms.composition.formula</span>
 
         <span class="k">return</span> <span class="n">Poscar</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Represent the Poscar class.&quot;&quot;&quot;</span>
         <span class="n">header</span> <span class="o">=</span> <span class="p">(</span>
             <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">1.0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -203,7 +198,7 @@
         <span class="n">coords_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
         <span class="n">elements_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
         <span class="n">props_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">props</span><span class="p">)[</span><span class="n">order</span><span class="p">]</span>
-        <span class="n">check_selective_dynamics</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># check_selective_dynamics = False</span>
         <span class="n">counts</span> <span class="o">=</span> <span class="n">get_counts</span><span class="p">(</span><span class="n">elements_ordered</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;T&quot;</span> <span class="ow">in</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">props</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
             <span class="n">middle</span> <span class="o">=</span> <span class="p">(</span>
@@ -223,34 +218,28 @@
         <span class="n">rest</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="c1"># print (&#39;repr&#39;,self.frac_coords, self.frac_coords.shape)</span>
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coords_ordered</span><span class="p">):</span>
-            <span class="n">rest</span> <span class="o">=</span> <span class="n">rest</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">props_ordered</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">p_ordered</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">props_ordered</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span>
+            <span class="n">rest</span> <span class="o">=</span> <span class="n">rest</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">p_ordered</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">header</span> <span class="o">+</span> <span class="n">middle</span> <span class="o">+</span> <span class="n">rest</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
 
 <div class="viewcode-block" id="Incar"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar">[docs]</a><span class="k">class</span> <span class="nc">Incar</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    VASP INCAR files as python dictionary of keys and values</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Make VASP INCAR files as python dictionary of keys and values.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize with a dictionary.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span> <span class="o">=</span> <span class="n">tags</span>
 
 <div class="viewcode-block" id="Incar.from_file"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.from_file">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;INCAR&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read INCAR file</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
+        <span class="sd">&quot;&quot;&quot;Read INCAR file.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="Incar.update"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Provide the new tags as a dictionary to update Incar object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="c1">#print(&quot;selftags1=&quot;, self._tags)</span>
+        <span class="sd">&quot;&quot;&quot;Provide the new tags as a dictionary to update Incar object.&quot;&quot;&quot;</span>
+        <span class="c1"># print(&quot;selftags1=&quot;, self._tags)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span> <span class="o">!=</span> <span class="p">{}:</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>  <span class="c1"># .strip(&#39; &#39;)</span>
@@ -259,30 +248,26 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;selftags2=&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Incar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Incar.get"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;POTIM&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the value of a key</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setting the temp value to the key&quot;</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+    <span class="c1"># def get(self, key=&quot;POTIM&quot;, temp=0.5):</span>
+    <span class="c1">#    &quot;&quot;&quot;Get the value of a key.&quot;&quot;&quot;</span>
+    <span class="c1">#    if key in list(self._tags.keys()):</span>
+    <span class="c1">#        return self._tags[key]</span>
+    <span class="c1">#    else:</span>
+    <span class="c1">#        self._tags[key] = temp</span>
+    <span class="c1">#        print(&quot;Setting the temp value to the key&quot;, temp, key)</span>
+    <span class="c1">#        return self._tags[key]</span>
 
 <div class="viewcode-block" id="Incar.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert into dictionary</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
+        <span class="sd">&quot;&quot;&quot;Convert into dictionary.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span></div>
 
 <div class="viewcode-block" id="Incar.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.from_dict">[docs]</a>    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Construct from dictionary.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Incar</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Incar.from_string"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.from_string">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct from string.&quot;&quot;&quot;</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
         <span class="n">tags</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
@@ -293,13 +278,11 @@
         <span class="k">return</span> <span class="n">Incar</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Representation of the class.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tags</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Incar.write_file"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.write_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Write Incar to a file</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
+        <span class="sd">&quot;&quot;&quot;Write Incar to a file.&quot;&quot;&quot;</span>
         <span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -310,18 +293,14 @@
 
 
 <div class="viewcode-block" id="IndividualPotcarData"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.IndividualPotcarData">[docs]</a><span class="k">class</span> <span class="nc">IndividualPotcarData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class for individual POTCAR file handling</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Class for individual POTCAR file handling.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Intialize with some key info.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
 
 <div class="viewcode-block" id="IndividualPotcarData.from_string"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.IndividualPotcarData.from_string">[docs]</a>    <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Some of the contents in the POTCAR</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
+        <span class="sd">&quot;&quot;&quot;Generate some of the contents in the POTCAR.&quot;&quot;&quot;</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
         <span class="n">individual_data</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="n">individual_data</span><span class="p">[</span><span class="s2">&quot;header1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -329,20 +308,24 @@
         <span class="n">individual_data</span><span class="p">[</span><span class="s2">&quot;VRHFIN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">individual_data</span><span class="p">[</span><span class="s2">&quot;element&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">individual_data</span><span class="p">[</span><span class="s2">&quot;LEXCH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">individual_data</span><span class="p">[</span><span class="s2">&quot;EATOM&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">individual_data</span><span class="p">[</span><span class="s2">&quot;EATOM&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
         <span class="n">individual_data</span><span class="p">[</span><span class="s2">&quot;TITEL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">IndividualPotcarData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">individual_data</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="IndividualPotcarData.from_file"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.IndividualPotcarData.from_file">[docs]</a>    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;POTCAR&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read from file.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">IndividualPotcarData</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reprent the class.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Potcar"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Potcar">[docs]</a><span class="k">class</span> <span class="nc">Potcar</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct muti-atoms Postcar.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">elements</span><span class="o">=</span><span class="p">[],</span>
@@ -350,6 +333,7 @@
         <span class="n">pot_json_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">potcar_strings</span><span class="o">=</span><span class="p">{},</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the Potcar class.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="o">=</span> <span class="n">elements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pot_type</span> <span class="o">=</span> <span class="n">pot_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span> <span class="o">=</span> <span class="n">potcar_strings</span>
@@ -384,9 +368,12 @@
                     <span class="n">potcar_strings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span> <span class="o">=</span> <span class="n">potcar_strings</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of elements is not same as potcar_strings&quot;</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Number of elements not same as potcar_strings&quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Potcar.catenate_potcar_files"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Potcar.catenate_potcar_files">[docs]</a>    <span class="k">def</span> <span class="nf">catenate_potcar_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination_filename</span><span class="o">=</span><span class="s2">&quot;POTCAR&quot;</span><span class="p">,</span> <span class="n">filenames</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="Potcar.catenate_potcar_files"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Potcar.catenate_potcar_files">[docs]</a>    <span class="k">def</span> <span class="nf">catenate_potcar_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination_filename</span><span class="o">=</span><span class="s2">&quot;POTCAR&quot;</span><span class="p">,</span>
+                              <span class="n">filenames</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;Catenate potcars of sifferent elements.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">destination_filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
@@ -394,6 +381,7 @@
                         <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Potcar.list_potcar_files"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Potcar.list_potcar_files">[docs]</a>    <span class="k">def</span> <span class="nf">list_potcar_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;List POTCAR files.&quot;&quot;&quot;</span>
         <span class="n">pot_files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">vasp_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;JARVIS_VASP_PSP_DIR&quot;</span><span class="p">])</span>
         <span class="n">vasp_psp_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">vasp_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pot_type</span><span class="p">))</span>
@@ -404,19 +392,21 @@
         <span class="k">return</span> <span class="n">pot_files</span></div>
 
 <div class="viewcode-block" id="Potcar.write_file"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Potcar.write_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;POTCAR&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write POTCAR file.&quot;&quot;&quot;</span>
         <span class="n">pot_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_potcar_files</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">catenate_potcar_files</span><span class="p">(</span><span class="n">destination_filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">filenames</span><span class="o">=</span><span class="n">pot_files</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">catenate_potcar_files</span><span class="p">(</span><span class="n">destination_filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                                   <span class="n">filenames</span><span class="o">=</span><span class="n">pot_files</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Represent Potcar.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pot_type</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="Kpoints"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Kpoints">[docs]</a><span class="k">class</span> <span class="nc">Kpoints</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    VASP KPOINTS as object</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Make VASP KPOINTS as object.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize Kpoints from filename else read from file-stream.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
             <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
@@ -426,7 +416,7 @@
 
 <div class="viewcode-block" id="Kpoints.read"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Kpoints.read">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">):</span>
-
+        <span class="sd">&quot;&quot;&quot;Read from an open file.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mesh_kp</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="n">lines</span><span class="p">)</span>
         <span class="k">elif</span> <span class="s2">&quot;Reciprocal&quot;</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
@@ -435,22 +425,14 @@
             <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;K-point scheme is not implemented&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Kpoints.get_mesh_kp"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Kpoints.get_mesh_kp">[docs]</a>    <span class="k">def</span> <span class="nf">get_mesh_kp</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-        <span class="c1">#print(&quot;lines&quot;, lines)</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read Kpoints as grid</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
+        <span class="sd">&quot;&quot;&quot;Read Kpoints as grid.&quot;&quot;&quot;</span>
         <span class="n">grid</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
-        <span class="c1"># print (grid)</span>
         <span class="n">kpts</span> <span class="o">=</span> <span class="n">generate_kgrid</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
         <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">(</span><span class="n">kpoints</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kpts</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">kpoints</span></div>
 
 <div class="viewcode-block" id="Kpoints.get_ibz_kp"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Kpoints.get_ibz_kp">[docs]</a>    <span class="k">def</span> <span class="nf">get_ibz_kp</span><span class="p">(</span><span class="n">lines</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read the Kpoints in the line-mode</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
+        <span class="sd">&quot;&quot;&quot;Read the Kpoints in the line-mode.&quot;&quot;&quot;</span>
         <span class="n">kp_labels</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">all_kp</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">kp_labels_points</span> <span class="o">=</span> <span class="p">[]</span>
@@ -473,12 +455,9 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">kp_labels</span><span class="p">,</span> <span class="n">kp_labels_points</span><span class="p">):</span>
             <span class="n">labels</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
         <span class="n">all_kp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_kp</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
-        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">(</span><span class="n">kpoints</span><span class="o">=</span><span class="n">all_kp</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">kpoint_mode</span><span class="o">=</span><span class="s2">&quot;linemode&quot;</span><span class="p">)</span>
+        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">(</span><span class="n">kpoints</span><span class="o">=</span><span class="n">all_kp</span><span class="p">,</span>
+                            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">kpoint_mode</span><span class="o">=</span><span class="s2">&quot;linemode&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">kpoints</span></div></div>
-        <span class="c1"># print (&#39;kp_labels&#39;,labels,len(all_kp))</span>
-        <span class="c1"># print (&#39;kp2&#39;,kp_labels_points, kp_labels,np.array(all_kp,dtype=&#39;float&#39;))</span>
-
-        <span class="c1"># return kp_labels_points, kp_labels,np.array(all_kp,dtype=&#39;float&#39;)</span>
 
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -494,25 +473,6 @@
 <span class="sd">    import sys</span>
 
 <span class="sd">    sys.exit()</span>
-<span class="sd">    kp = Kpoints(filename=&quot;../../examples/vasp/SiOptb88/MAIN-RELAX-bulk@mp_149/KPOINTS&quot;)</span>
-
-<span class="sd">    p = Poscar.from_file(</span>
-<span class="sd">        filename=&quot;/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/POSCAR&quot;</span>
-<span class="sd">    )</span>
-<span class="sd">    p.write_file(&quot;POSCAR&quot;)</span>
-<span class="sd">    from jarvis.db.jsonutils import dumpjson</span>
-
-<span class="sd">    dumpjson(p.atoms.to_dict(), &quot;pp.json&quot;)</span>
-<span class="sd">    # print (p.atoms*[3,3,3])</span>
-<span class="sd">    # p = Incar.from_file(filename=&#39;/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/INCAR&#39;)</span>
-<span class="sd">    # print (p)</span>
-<span class="sd">    # p.write_file(&#39;pp&#39;)</span>
-<span class="sd">    # elements=[&#39;S&#39;,&#39;P&#39;]</span>
-<span class="sd">    # p=Potcar(elements=elements)</span>
-<span class="sd">    # print (p)</span>
-<span class="sd">    # p.write_file(&#39;POTCAR&#39;)</span>
-<span class="sd">    # inp=IndividualPotcarData.from_file(&#39;POTCAR&#39;)</span>
-<span class="sd">    # print (inp)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 
@@ -522,15 +482,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -544,13 +506,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

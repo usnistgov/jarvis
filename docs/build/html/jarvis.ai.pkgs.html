@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.ai.pkgs package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.ai.pkgs package &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -64,47 +66,49 @@
 </div>
 <div class="section" id="module-jarvis.ai.pkgs.utils">
 <span id="jarvis-ai-pkgs-utils-module"></span><h2>jarvis.ai.pkgs.utils module<a class="headerlink" href="#module-jarvis.ai.pkgs.utils" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
+<p>Helper functions for ML applications.</p>
+<dl class="function">
 <dt id="jarvis.ai.pkgs.utils.binary_class_dat">
-<code class="sig-prename descclassname">jarvis.ai.pkgs.utils.</code><code class="sig-name descname">binary_class_dat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">Y</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/utils.html#binary_class_dat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.utils.binary_class_dat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Categorize a continous dataset in 1/0 with a threshold “tol”
-TODO: replace with OneHotEncoder</p>
+<code class="descclassname">jarvis.ai.pkgs.utils.</code><code class="descname">binary_class_dat</code><span class="sig-paren">(</span><em>X=[]</em>, <em>Y=[]</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/utils.html#binary_class_dat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.utils.binary_class_dat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Categorize a continous dataset in 1/0 with a threshold “tol”.</p>
+<p>TODO: replace with OneHotEncoder</p>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="jarvis.ai.pkgs.utils.get_ml_data">
-<code class="sig-prename descclassname">jarvis.ai.pkgs.utils.</code><code class="sig-name descname">get_ml_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ml_property</span><span class="o">=</span><span class="default_value">'formation_energy_peratom'</span></em>, <em class="sig-param"><span class="n">dataset</span><span class="o">=</span><span class="default_value">'cfid_3d'</span></em>, <em class="sig-param"><span class="n">data_ranges</span><span class="o">=</span><span class="default_value">{'bulk_modulus_kv': [0, 250], 'dfpt_piezo_max_dielectric': [0, 100], 'dfpt_piezo_max_dij': [0, 3000], 'dfpt_piezo_max_eij': [0, 10], 'ehull': [0, 1], 'electron_avg_effective_masses_300K': [0, 3], 'encut': [0, 2000], 'epsx': [0, 60], 'epsy': [0, 60], 'epsz': [0, 60], 'exfoliation_energy': [0, 1000], 'formation_energy_peratom': [- 5, 5], 'hole_avg_effective_masses_300K': [0, 3], 'kpoint_length_unit': [0, 200], 'magmom_oszicar': [0, 10], 'max_ir_mode': [0, 4000], 'mbj_bandgap': [0, 10], 'mepsx': [0, 60], 'mepsy': [0, 60], 'mepsz': [0, 60], 'n-Seebeck': [- 600, 10], 'n-powerfact': [0, 5000], 'optb88vdw_bandgap': [0, 10], 'p-Seebeck': [- 10, 600], 'p-powerfact': [0, 5000], 'shear_modulus_gv': [0, 250], 'slme': [0, 40], 'spillage': [0, 4], 'total_energy_per_atom': [- 10, 3]}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/utils.html#get_ml_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.utils.get_ml_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provides arrays/pandas-dataframe as input for ML algorithms</p>
+<code class="descclassname">jarvis.ai.pkgs.utils.</code><code class="descname">get_ml_data</code><span class="sig-paren">(</span><em>ml_property='formation_energy_peratom', dataset='cfid_3d', data_ranges={'bulk_modulus_kv': [0, 250], 'dfpt_piezo_max_dielectric': [0, 100], 'dfpt_piezo_max_dij': [0, 3000], 'dfpt_piezo_max_eij': [0, 10], 'ehull': [0, 1], 'electron_avg_effective_masses_300K': [0, 3], 'encut': [0, 2000], 'epsx': [0, 60], 'epsy': [0, 60], 'epsz': [0, 60], 'exfoliation_energy': [0, 1000], 'formation_energy_peratom': [-5, 5], 'hole_avg_effective_masses_300K': [0, 3], 'kpoint_length_unit': [0, 200], 'magmom_oszicar': [0, 10], 'max_ir_mode': [0, 4000], 'mbj_bandgap': [0, 10], 'mepsx': [0, 60], 'mepsy': [0, 60], 'mepsz': [0, 60], 'n-Seebeck': [-600, 10], 'n-powerfact': [0, 5000], 'optb88vdw_bandgap': [0, 10], 'p-Seebeck': [-10, 600], 'p-powerfact': [0, 5000], 'shear_modulus_gv': [0, 250], 'slme': [0, 40], 'spillage': [0, 4], 'total_energy_per_atom': [-10, 3]}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/utils.html#get_ml_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.utils.get_ml_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide arrays/pandas-dataframe as input for ML algorithms.</p>
 <p>Args:</p>
 <blockquote>
 <div><p>ml_property: target property to train</p>
 <p>data_ranges: range for filtering data</p>
 <p>dataset: dataset available in jarvis or other array</p>
 </div></blockquote>
-<p>Returns:</p>
-<blockquote>
-<div><p>X, Y , ids</p>
-</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>X, Y , ids</dd>
+</dl>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="jarvis.ai.pkgs.utils.regr_scores">
-<code class="sig-prename descclassname">jarvis.ai.pkgs.utils.</code><code class="sig-name descname">regr_scores</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">test</span></em>, <em class="sig-param"><span class="n">pred</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/utils.html#regr_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.utils.regr_scores" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generic regresion scores</p>
+<code class="descclassname">jarvis.ai.pkgs.utils.</code><code class="descname">regr_scores</code><span class="sig-paren">(</span><em>test</em>, <em>pred</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/utils.html#regr_scores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.utils.regr_scores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide generic regresion scores.</p>
 <p>Args:</p>
 <blockquote>
 <div><p>pred: predicted values</p>
 <p>test: held data for testing</p>
 </div></blockquote>
-<p>Returns:</p>
-<blockquote>
-<div><p>info: with metrics</p>
-</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>info: with metrics</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.ai.pkgs">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.ai.pkgs" title="Permalink to this headline">¶</a></h2>
+<p>Applications of AI packages.</p>
 </div>
 </div>
 
@@ -133,15 +137,17 @@ TODO: replace with OneHotEncoder</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -155,12 +161,12 @@ TODO: replace with OneHotEncoder</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

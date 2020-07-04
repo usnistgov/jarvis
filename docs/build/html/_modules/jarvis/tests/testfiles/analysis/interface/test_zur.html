@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.tests.testfiles.analysis.interface.test_zur &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.tests.testfiles.analysis.interface.test_zur &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../../../../" src="../../../../../../_static/documentation_options.js"></script>
-    <script src="../../../../../../_static/jquery.js"></script>
-    <script src="../../../../../../_static/underscore.js"></script>
-    <script src="../../../../../../_static/doctools.js"></script>
-    <script src="../../../../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../" src="../../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -37,7 +39,13 @@
           <div class="body" role="main">
             
   <h1>Source code for jarvis.tests.testfiles.analysis.interface.test_zur</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">jarvis.analysis.interface.zur</span> <span class="kn">import</span> <span class="n">ZSLGenerator</span><span class="p">,</span> <span class="n">mismatch_strts</span><span class="p">,</span> <span class="n">get_hetero</span><span class="p">,</span><span class="n">make_interface</span>
+<span></span><span class="kn">from</span> <span class="nn">jarvis.analysis.interface.zur</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ZSLGenerator</span><span class="p">,</span>
+    <span class="n">get_hetero_type</span><span class="p">,</span>
+    <span class="n">mismatch_strts</span><span class="p">,</span>
+    <span class="n">get_hetero</span><span class="p">,</span>
+    <span class="n">make_interface</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
 <span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Poscar</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -50,33 +58,43 @@
 
 <div class="viewcode-block" id="test_zur"><a class="viewcode-back" href="../../../../../../jarvis.tests.testfiles.analysis.interface.html#jarvis.tests.testfiles.analysis.interface.test_zur.test_zur">[docs]</a><span class="k">def</span> <span class="nf">test_zur</span><span class="p">():</span>
     <span class="n">info</span> <span class="o">=</span> <span class="n">mismatch_strts</span><span class="p">(</span><span class="n">film</span><span class="o">=</span><span class="n">s4</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="n">s2</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;film_sl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;subs_sl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
-    <span class="n">combined</span>  <span class="o">=</span> <span class="n">get_hetero</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">seperation</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="n">make_interface</span><span class="p">(</span><span class="n">film</span><span class="o">=</span><span class="n">s4</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span><span class="n">subs</span><span class="o">=</span><span class="n">s2</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
-    <span class="n">combined</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;interface&#39;</span><span class="p">]</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="n">combined</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;film_sl&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;subs_sl&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">get_hetero</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">seperation</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">make_interface</span><span class="p">(</span><span class="n">film</span><span class="o">=</span><span class="n">s4</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="n">s2</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;interface&quot;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>
     <span class="n">info</span> <span class="o">=</span> <span class="n">mismatch_strts</span><span class="p">(</span><span class="n">film</span><span class="o">=</span><span class="n">s2</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="n">s3</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;film_sl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;subs_sl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
-    <span class="n">combined</span>  <span class="o">=</span> <span class="n">get_hetero</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">seperation</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="n">make_interface</span><span class="p">(</span><span class="n">film</span><span class="o">=</span><span class="n">s2</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span><span class="n">subs</span><span class="o">=</span><span class="n">s3</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
-    <span class="n">combined</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;interface&#39;</span><span class="p">]</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="n">combined</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;film_sl&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;subs_sl&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">get_hetero</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">seperation</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">make_interface</span><span class="p">(</span><span class="n">film</span><span class="o">=</span><span class="n">s2</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="n">s3</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;interface&quot;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>
     <span class="n">info</span> <span class="o">=</span> <span class="n">mismatch_strts</span><span class="p">(</span><span class="n">film</span><span class="o">=</span><span class="n">s1</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="n">s2</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;film_sl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;subs_sl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
-    <span class="n">combined</span>  <span class="o">=</span> <span class="n">get_hetero</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">seperation</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="n">make_interface</span><span class="p">(</span><span class="n">film</span><span class="o">=</span><span class="n">s1</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span><span class="n">subs</span><span class="o">=</span><span class="n">s2</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
-    <span class="n">combined</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;interface&#39;</span><span class="p">]</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="n">combined</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;film_sl&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;subs_sl&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">get_hetero</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">seperation</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">make_interface</span><span class="p">(</span><span class="n">film</span><span class="o">=</span><span class="n">s1</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="n">s2</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;interface&quot;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>
     <span class="k">assert</span> <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;mismatch_u&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;mismatch_angle&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span> <span class="o">==</span> <span class="p">(</span>
         <span class="mf">0.002</span><span class="p">,</span>
         <span class="mf">0.0</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
-<span class="c1">#test_zur()</span>
+<div class="viewcode-block" id="test_type"><a class="viewcode-back" href="../../../../../../jarvis.tests.testfiles.analysis.interface.html#jarvis.tests.testfiles.analysis.interface.test_zur.test_type">[docs]</a><span class="k">def</span> <span class="nf">test_type</span><span class="p">():</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">B</span><span class="p">[</span><span class="s2">&quot;scf_vbm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span>
+    <span class="n">B</span><span class="p">[</span><span class="s2">&quot;scf_cbm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span>
+    <span class="n">B</span><span class="p">[</span><span class="s2">&quot;avg_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">A</span><span class="p">[</span><span class="s2">&quot;scf_vbm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">7</span>
+    <span class="n">A</span><span class="p">[</span><span class="s2">&quot;scf_cbm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">6</span>
+    <span class="n">A</span><span class="p">[</span><span class="s2">&quot;avg_max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+    <span class="n">int_type</span><span class="p">,</span> <span class="n">stack</span> <span class="o">=</span> <span class="n">get_hetero_type</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">int_type</span><span class="p">,</span> <span class="n">stack</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="s2">&quot;III&quot;</span><span class="p">,</span> <span class="s2">&quot;BA&quot;</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -85,15 +103,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -107,13 +127,13 @@
         <li class="right" >
           <a href="../../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

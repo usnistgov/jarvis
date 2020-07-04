@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.analysis.thermodynamics.energetics &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.analysis.thermodynamics.energetics &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -37,7 +39,8 @@
           <div class="body" role="main">
             
   <h1>Source code for jarvis.analysis.thermodynamics.energetics</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Poscar</span>
+<span></span><span class="sd">&quot;&quot;&quot;Get formation energy.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
@@ -49,6 +52,10 @@
 
 
 <div class="viewcode-block" id="isfloat"><a class="viewcode-back" href="../../../../jarvis.analysis.thermodynamics.html#jarvis.analysis.thermodynamics.energetics.isfloat">[docs]</a><span class="k">def</span> <span class="nf">isfloat</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check if a number is float.</span>
+
+<span class="sd">    TODO: replace with isinstance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
@@ -57,6 +64,7 @@
 
 
 <div class="viewcode-block" id="unary_energy"><a class="viewcode-back" href="../../../../jarvis.analysis.thermodynamics.html#jarvis.analysis.thermodynamics.energetics.unary_energy">[docs]</a><span class="k">def</span> <span class="nf">unary_energy</span><span class="p">(</span><span class="n">el</span><span class="o">=</span><span class="s2">&quot;Na&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Provide energy per atoms of an element.&quot;&quot;&quot;</span>
     <span class="n">en</span> <span class="o">=</span> <span class="s2">&quot;na&quot;</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">unary_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">el</span><span class="p">):</span>
@@ -66,9 +74,10 @@
 
 <div class="viewcode-block" id="form_enp"><a class="viewcode-back" href="../../../../jarvis.analysis.thermodynamics.html#jarvis.analysis.thermodynamics.energetics.form_enp">[docs]</a><span class="k">def</span> <span class="nf">form_enp</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">total_energy</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate formation energy given the total energy and the atoms object</span>
+<span class="sd">    Calculate formation energy given the total energy and the atoms object.</span>
+
 <span class="sd">    Currently for OptB88vdW functional based chemical potential implemented</span>
-<span class="sd">    but can be generalized by changing unary_energy</span>
+<span class="sd">    but can be generalized by changing unary_energy.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dd</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">composition</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
     <span class="n">ref</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -76,7 +85,7 @@
         <span class="n">e1</span> <span class="o">=</span> <span class="n">unary_energy</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">e1</span> <span class="o">==</span> <span class="s2">&quot;na&quot;</span><span class="p">:</span>
             <span class="n">ref</span> <span class="o">=</span> <span class="s2">&quot;na&quot;</span>
-            <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Element reference does not exist&quot;</span><span class="p">,</span> <span class="n">el</span><span class="p">)</span>
+            <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Element reference does not exist&quot;</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ref</span> <span class="o">=</span> <span class="n">ref</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">e1</span><span class="p">)</span>
@@ -97,8 +106,9 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">    from jarvis.io.vasp.inputs import Poscar</span>
 <span class="sd">    p = Poscar.from_file(</span>
-<span class="sd">        &quot;/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/POSCAR&quot;</span>
+<span class="sd">        &quot;../..//POSCAR&quot;</span>
 <span class="sd">    ).atoms</span>
 <span class="sd">    total_energy = -9.974648</span>
 <span class="sd">    fen = form_enp(atoms=p, total_energy=total_energy)</span>
@@ -109,7 +119,8 @@
 <span class="sd">        {&quot;comp&quot;: {&quot;Al&quot;: 1, &quot;O&quot;: 1}, &quot;energy&quot;: -4.86, &quot;id&quot;: &quot;xyz&quot;},</span>
 <span class="sd">    ]</span>
 
-<span class="sd">    # entries = [[{&#39;Al&#39;:2,&#39;O&#39;:1},-0.15],[{&#39;Al&#39;:2,&#39;O&#39;:3},-16.065],[{&#39;Al&#39;:1,&#39;O&#39;:1},-2.8],[{&#39;Al&#39;:1,&#39;O&#39;:3},-4.865]]</span>
+<span class="sd">    # entries = [[{&#39;Al&#39;:2,&#39;O&#39;:1},-0.15],[{&#39;Al&#39;:2,&#39;O&#39;:3},</span>
+<span class="sd">     -16.065],[{&#39;Al&#39;:1,&#39;O&#39;:1},-2.8],[{&#39;Al&#39;:1,&#39;O&#39;:3},-4.865]]</span>
 <span class="sd">    print(x)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
@@ -120,15 +131,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -142,13 +155,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

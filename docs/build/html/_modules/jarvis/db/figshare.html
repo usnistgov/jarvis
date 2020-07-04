@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.db.figshare &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.db.figshare &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -38,36 +40,42 @@
             
   <h1>Source code for jarvis.db.figshare</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Downloads files from https://figshare.com/authors/Kamal_Choudhary/4445539</span>
+<span class="sd">Downloads files from Figshare.</span>
+
+<span class="sd">Main page: https://figshare.com/authors/Kamal_Choudhary/4445539</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">zipfile</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">jarvis.db.jsonutils</span> <span class="kn">import</span> <span class="n">loadjson</span>
 
+
 <div class="viewcode-block" id="datasets"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.figshare.datasets">[docs]</a><span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get collection of dataset names and URLs.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s1">&#39;dft_2d&#39;</span><span class="p">:</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ndownloader.figshare.com/files/22471019&quot;</span>
         <span class="n">js_tag</span> <span class="o">=</span> <span class="s1">&#39;jdft_2d-4-26-2020.json&#39;</span>
-        <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Downloading 2D dataset ...&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Obtaining 2D dataset ...&#39;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s1">&#39;dft_3d&#39;</span><span class="p">:</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ndownloader.figshare.com/files/22471022&quot;</span>
-        <span class="n">js_tag</span> <span class="o">=</span> <span class="s1">&#39;jdft_3d-4-26-2020.json&#39;</span> 
-        <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Downloading 3D dataset ...&#39;</span><span class="p">)</span>
+        <span class="n">js_tag</span> <span class="o">=</span> <span class="s1">&#39;jdft_3d-4-26-2020.json&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Obtaining 3D dataset ...&#39;</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s1">&#39;cfid_3d&#39;</span><span class="p">:</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ndownloader.figshare.com/files/22470818&quot;</span>
-        <span class="n">js_tag</span> <span class="o">=</span> <span class="s1">&#39;jml_3d-4-26-2020.json&#39;</span> 
-        <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Downloading 3D CFID dataset ...&#39;</span><span class="p">)</span>
+        <span class="n">js_tag</span> <span class="o">=</span> <span class="s1">&#39;jml_3d-4-26-2020.json&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Obtaining 3D CFID dataset ...&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Dataset doesnt exist&#39;</span><span class="p">,</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Dataset doesnt exist&#39;</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">url</span><span class="p">,</span> <span class="n">js_tag</span></div>
 
-    
 
-<div class="viewcode-block" id="data"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.figshare.data">[docs]</a><span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;dft_2d&#39;</span><span class="p">)</span> <span class="p">:</span>
+<div class="viewcode-block" id="data"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.figshare.data">[docs]</a><span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;dft_2d&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Provide main function to download datasets.&quot;&quot;&quot;</span>
     <span class="n">url</span><span class="p">,</span> <span class="n">js_tag</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span><span class="n">js_tag</span> <span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span>  <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="n">js_tag</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="n">zfile</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;tmp.zip&quot;</span><span class="p">))</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">zfile</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span>
@@ -75,16 +83,15 @@
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zipObj</span><span class="p">:</span>
-            <span class="c1">#zipObj.extract(path)</span>
+            <span class="c1"># zipObj.extract(path)</span>
             <span class="n">zipObj</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">zfile</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">loadjson</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-
-
 <div class="viewcode-block" id="get_ff_eneleast"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.figshare.get_ff_eneleast">[docs]</a><span class="k">def</span> <span class="nf">get_ff_eneleast</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Get JARVIS-FF related data.&quot;&quot;&quot;</span>
     <span class="n">jff1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;jff1.json&quot;</span><span class="p">))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">jff1</span><span class="p">):</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://ndownloader.figshare.com/files/10307139&quot;</span><span class="p">)</span>
@@ -93,7 +100,6 @@
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="n">data_ff1</span> <span class="o">=</span> <span class="n">loadjson</span><span class="p">(</span><span class="n">jff1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data_ff1</span></div>
-
 
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -116,15 +122,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -138,13 +146,13 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

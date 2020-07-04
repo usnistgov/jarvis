@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.analysis.defects package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.analysis.defects package &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -42,56 +44,60 @@
 </div>
 <div class="section" id="module-jarvis.analysis.defects.surface">
 <span id="jarvis-analysis-defects-surface-module"></span><h2>jarvis.analysis.defects.surface module<a class="headerlink" href="#module-jarvis.analysis.defects.surface" title="Permalink to this headline">¶</a></h2>
-<p>Modules for making crystallographic plane surfaces</p>
-<dl class="py class">
+<p>Modules for making crystallographic plane surfaces.</p>
+<dl class="class">
 <dt id="jarvis.analysis.defects.surface.Surface">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.analysis.defects.surface.</code><code class="sig-name descname">Surface</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">indices</span><span class="o">=</span><span class="default_value">[0, 0, 1]</span></em>, <em class="sig-param"><span class="n">layers</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">vacuum</span><span class="o">=</span><span class="default_value">18.0</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">1e-10</span></em>, <em class="sig-param"><span class="n">from_conventional_structure</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/surface.html#Surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.surface.Surface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.analysis.defects.surface.</code><code class="descname">Surface</code><span class="sig-paren">(</span><em>atoms=None, indices=[0, 0, 1], layers=3, vacuum=18.0, tol=1e-10, from_conventional_structure=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/surface.html#Surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.surface.Surface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Get surface object of arbitrary atoms object and miller index.</p>
+<dl class="method">
 <dt id="jarvis.analysis.defects.surface.Surface.make_surface">
-<code class="sig-name descname">make_surface</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/surface.html#Surface.make_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.surface.Surface.make_surface" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">make_surface</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/surface.html#Surface.make_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.surface.Surface.make_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate specified surface. Modified from ase package.</p>
+</dd></dl>
 
 </dd></dl>
 
-<dl class="py function">
-<dt id="jarvis.analysis.defects.surface.ext_gcd">
-<code class="sig-prename descclassname">jarvis.analysis.defects.surface.</code><code class="sig-name descname">ext_gcd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/surface.html#ext_gcd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.surface.ext_gcd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
+<dl class="function">
 <dt id="jarvis.analysis.defects.surface.wulff_normals">
-<code class="sig-prename descclassname">jarvis.analysis.defects.surface.</code><code class="sig-name descname">wulff_normals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">miller_indices</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">surface_energies</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/surface.html#wulff_normals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.surface.wulff_normals" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">jarvis.analysis.defects.surface.</code><code class="descname">wulff_normals</code><span class="sig-paren">(</span><em>miller_indices=[]</em>, <em>surface_energies=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/surface.html#wulff_normals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.surface.wulff_normals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain Wulff Normals.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">miller_indices : Miller indices</p>
+<p class="last">surface_energies : corresponding surface energies</p>
+</dd>
+</dl>
+<p>Returns: Surface normals</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.analysis.defects.vacancy">
 <span id="jarvis-analysis-defects-vacancy-module"></span><h2>jarvis.analysis.defects.vacancy module<a class="headerlink" href="#module-jarvis.analysis.defects.vacancy" title="Permalink to this headline">¶</a></h2>
-<p>Modules for making point-defect vacancies</p>
-<dl class="py class">
+<p>Modules for making point-defect vacancies.</p>
+<dl class="class">
 <dt id="jarvis.analysis.defects.vacancy.Vacancy">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.analysis.defects.vacancy.</code><code class="sig-name descname">Vacancy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">defect_structure</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">defect_index</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wyckoff_multiplicity</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">symbol</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/vacancy.html#Vacancy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.vacancy.Vacancy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.analysis.defects.vacancy.</code><code class="descname">Vacancy</code><span class="sig-paren">(</span><em>atoms=None</em>, <em>defect_structure=None</em>, <em>defect_index=None</em>, <em>wyckoff_multiplicity=None</em>, <em>symbol=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/vacancy.html#Vacancy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.vacancy.Vacancy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Obtain vacancy defects in Atoms class using Wyckoff data.</p>
+<dl class="method">
 <dt id="jarvis.analysis.defects.vacancy.Vacancy.generate_defects">
-<code class="sig-name descname">generate_defects</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">enforce_c_size</span><span class="o">=</span><span class="default_value">10.0</span></em>, <em class="sig-param"><span class="n">on_conventional_cell</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">extend</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/vacancy.html#Vacancy.generate_defects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.vacancy.Vacancy.generate_defects" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="jarvis.analysis.defects.vacancy.Vacancy.to_dict">
-<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/vacancy.html#Vacancy.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.vacancy.Vacancy.to_dict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<code class="descname">generate_defects</code><span class="sig-paren">(</span><em>enforce_c_size=10.0</em>, <em>on_conventional_cell=False</em>, <em>extend=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/vacancy.html#Vacancy.generate_defects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.vacancy.Vacancy.generate_defects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide function to generate defects.</p>
 </dd></dl>
 
-<dl class="py function">
-<dt id="jarvis.analysis.defects.vacancy.rand_select">
-<code class="sig-prename descclassname">jarvis.analysis.defects.vacancy.</code><code class="sig-name descname">rand_select</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/vacancy.html#rand_select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.vacancy.rand_select" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="jarvis.analysis.defects.vacancy.Vacancy.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/vacancy.html#Vacancy.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.vacancy.Vacancy.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert to a dictionary.</p>
+</dd></dl>
+
+</dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.analysis.defects">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.analysis.defects" title="Permalink to this headline">¶</a></h2>
+<p>Modules for defect generation in solids.</p>
 </div>
 </div>
 
@@ -120,15 +126,17 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -142,12 +150,12 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

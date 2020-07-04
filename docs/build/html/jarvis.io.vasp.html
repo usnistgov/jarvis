@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.io.vasp package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.io.vasp package &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -42,529 +44,575 @@
 </div>
 <div class="section" id="module-jarvis.io.vasp.inputs">
 <span id="jarvis-io-vasp-inputs-module"></span><h2>jarvis.io.vasp.inputs module<a class="headerlink" href="#module-jarvis.io.vasp.inputs" title="Permalink to this headline">¶</a></h2>
-<p>Modules handling input files for VASP calculations</p>
-<dl class="py class">
+<p>Modules handling input files for VASP calculations.</p>
+<dl class="class">
 <dt id="jarvis.io.vasp.inputs.Incar">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.inputs.</code><code class="sig-name descname">Incar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tags</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.inputs.</code><code class="descname">Incar</code><span class="sig-paren">(</span><em>tags={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>VASP INCAR files as python dictionary of keys and values</p>
-<dl class="py method">
+<p>Make VASP INCAR files as python dictionary of keys and values.</p>
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.Incar.from_dict">
-<code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.from_dict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">from_dict</code><span class="sig-paren">(</span><em>data={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct from dictionary.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="staticmethod">
 <dt id="jarvis.io.vasp.inputs.Incar.from_file">
-<em class="property">static </em><code class="sig-name descname">from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'INCAR'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.from_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read INCAR file</p>
+<em class="property">static </em><code class="descname">from_file</code><span class="sig-paren">(</span><em>filename='INCAR'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read INCAR file.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="staticmethod">
 <dt id="jarvis.io.vasp.inputs.Incar.from_string">
-<em class="property">static </em><code class="sig-name descname">from_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lines</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.from_string" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="jarvis.io.vasp.inputs.Incar.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="o">=</span><span class="default_value">'POTIM'</span></em>, <em class="sig-param"><span class="n">temp</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the value of a key</p>
+<em class="property">static </em><code class="descname">from_string</code><span class="sig-paren">(</span><em>lines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct from string.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.Incar.to_dict">
-<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.to_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert into dictionary</p>
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert into dictionary.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.Incar.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provide the new tags as a dictionary to update Incar object</p>
+<code class="descname">update</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide the new tags as a dictionary to update Incar object.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.Incar.write_file">
-<code class="sig-name descname">write_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.write_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write Incar to a file</p>
+<code class="descname">write_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.write_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write Incar to a file.</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.io.vasp.inputs.IndividualPotcarData">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.inputs.</code><code class="sig-name descname">IndividualPotcarData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#IndividualPotcarData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.IndividualPotcarData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.inputs.</code><code class="descname">IndividualPotcarData</code><span class="sig-paren">(</span><em>data={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#IndividualPotcarData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.IndividualPotcarData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class for individual POTCAR file handling</p>
-<dl class="py method">
+<p>Class for individual POTCAR file handling.</p>
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.IndividualPotcarData.from_file">
-<code class="sig-name descname">from_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#IndividualPotcarData.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.IndividualPotcarData.from_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">from_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#IndividualPotcarData.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.IndividualPotcarData.from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read from file.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.IndividualPotcarData.from_string">
-<code class="sig-name descname">from_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#IndividualPotcarData.from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.IndividualPotcarData.from_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Some of the contents in the POTCAR</p>
+<code class="descname">from_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#IndividualPotcarData.from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.IndividualPotcarData.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate some of the contents in the POTCAR.</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.io.vasp.inputs.Kpoints">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.inputs.</code><code class="sig-name descname">Kpoints</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Kpoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Kpoints" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.inputs.</code><code class="descname">Kpoints</code><span class="sig-paren">(</span><em>filename=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Kpoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Kpoints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>VASP KPOINTS as object</p>
-<dl class="py method">
+<p>Make VASP KPOINTS as object.</p>
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.Kpoints.get_ibz_kp">
-<code class="sig-name descname">get_ibz_kp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Kpoints.get_ibz_kp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Kpoints.get_ibz_kp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read the Kpoints in the line-mode</p>
+<code class="descname">get_ibz_kp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Kpoints.get_ibz_kp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Kpoints.get_ibz_kp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the Kpoints in the line-mode.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.Kpoints.get_mesh_kp">
-<code class="sig-name descname">get_mesh_kp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Kpoints.get_mesh_kp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Kpoints.get_mesh_kp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read Kpoints as grid</p>
+<code class="descname">get_mesh_kp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Kpoints.get_mesh_kp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Kpoints.get_mesh_kp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read Kpoints as grid.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="classmethod">
 <dt id="jarvis.io.vasp.inputs.Kpoints.read">
-<em class="property">classmethod </em><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lines</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Kpoints.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Kpoints.read" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">classmethod </em><code class="descname">read</code><span class="sig-paren">(</span><em>lines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Kpoints.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Kpoints.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read from an open file.</p>
+</dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.io.vasp.inputs.Poscar">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.inputs.</code><code class="sig-name descname">Poscar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em>, <em class="sig-param"><span class="n">comment</span><span class="o">=</span><span class="default_value">'System'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.inputs.</code><code class="descname">Poscar</code><span class="sig-paren">(</span><em>atoms</em>, <em>comment='System'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class defining Poscar object</p>
-<p>Args:</p>
-<blockquote>
-<div><p>atoms : Atoms object</p>
-<p>comment : Header of Poscar file</p>
-</div></blockquote>
-<dl class="py method">
+<p>Class defining Poscar object.</p>
+<p>Constructued from the Atoms object.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">atoms : Atoms object</p>
+<p class="last">comment : Header of Poscar file</p>
+</dd>
+</dl>
+<dl class="staticmethod">
 <dt id="jarvis.io.vasp.inputs.Poscar.from_file">
-<em class="property">static </em><code class="sig-name descname">from_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'POSCAR'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.from_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read simple POSCAR file from the path</p>
+<em class="property">static </em><code class="descname">from_file</code><span class="sig-paren">(</span><em>filename='POSCAR'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read simple POSCAR file from the path.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="staticmethod">
 <dt id="jarvis.io.vasp.inputs.Poscar.from_string">
-<em class="property">static </em><code class="sig-name descname">from_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lines</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.from_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read Poscar from strings, useful in reading files/streams</p>
+<em class="property">static </em><code class="descname">from_string</code><span class="sig-paren">(</span><em>lines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read Poscar from strings, useful in reading files/streams.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.Poscar.write_file">
-<code class="sig-name descname">write_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.write_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write the Poscar object to a file</p>
+<code class="descname">write_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.write_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the Poscar object to a file.</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.io.vasp.inputs.Potcar">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.inputs.</code><code class="sig-name descname">Potcar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">elements</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">pot_type</span><span class="o">=</span><span class="default_value">'POT_GGA_PAW_PBE'</span></em>, <em class="sig-param"><span class="n">pot_json_path</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">potcar_strings</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.inputs.</code><code class="descname">Potcar</code><span class="sig-paren">(</span><em>elements=[]</em>, <em>pot_type='POT_GGA_PAW_PBE'</em>, <em>pot_json_path=''</em>, <em>potcar_strings={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Construct muti-atoms Postcar.</p>
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.Potcar.catenate_potcar_files">
-<code class="sig-name descname">catenate_potcar_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">destination_filename</span><span class="o">=</span><span class="default_value">'POTCAR'</span></em>, <em class="sig-param"><span class="n">filenames</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar.catenate_potcar_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar.catenate_potcar_files" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">catenate_potcar_files</code><span class="sig-paren">(</span><em>destination_filename='POTCAR'</em>, <em>filenames=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar.catenate_potcar_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar.catenate_potcar_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Catenate potcars of sifferent elements.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.Potcar.list_potcar_files">
-<code class="sig-name descname">list_potcar_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar.list_potcar_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar.list_potcar_files" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">list_potcar_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar.list_potcar_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar.list_potcar_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>List POTCAR files.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.Potcar.write_file">
-<code class="sig-name descname">write_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'POTCAR'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar.write_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">write_file</code><span class="sig-paren">(</span><em>filename='POTCAR'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar.write_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write POTCAR file.</p>
+</dd></dl>
 
 </dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.io.vasp.outputs">
 <span id="jarvis-io-vasp-outputs-module"></span><h2>jarvis.io.vasp.outputs module<a class="headerlink" href="#module-jarvis.io.vasp.outputs" title="Permalink to this headline">¶</a></h2>
-<p>Modules for analzing VASP outputs</p>
-<dl class="py class">
+<p>Modules for analzing VASP outputs.</p>
+<dl class="class">
 <dt id="jarvis.io.vasp.outputs.Chgcar">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.outputs.</code><code class="sig-name descname">Chgcar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">atoms</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">chg</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">chgdif</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">aug</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">augdiff</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nsets</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.outputs.</code><code class="descname">Chgcar</code><span class="sig-paren">(</span><em>filename=''</em>, <em>atoms=None</em>, <em>chg=[]</em>, <em>chgdif=None</em>, <em>aug=None</em>, <em>augdiff=None</em>, <em>nsets=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Class handling VASP CHGCAR file data.</p>
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Chgcar.chg_set">
-<code class="sig-name descname">chg_set</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em>, <em class="sig-param"><span class="n">start</span></em>, <em class="sig-param"><span class="n">end</span></em>, <em class="sig-param"><span class="n">volume</span></em>, <em class="sig-param"><span class="n">ng</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.chg_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.chg_set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">chg_set</code><span class="sig-paren">(</span><em>text</em>, <em>start</em>, <em>end</em>, <em>volume</em>, <em>ng</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.chg_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.chg_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return CHGCAR sets.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Chgcar.is_spin_orbit">
-<code class="sig-name descname">is_spin_orbit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.is_spin_orbit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.is_spin_orbit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">is_spin_orbit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.is_spin_orbit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.is_spin_orbit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the calculations is spin-orbit, LSORBIT=T.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Chgcar.is_spin_polarized">
-<code class="sig-name descname">is_spin_polarized</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.is_spin_polarized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.is_spin_polarized" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">is_spin_polarized</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.is_spin_polarized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.is_spin_polarized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the calculations is spin-polarized, ISPIN=2.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Chgcar.read_file">
-<code class="sig-name descname">read_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.read_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.read_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">read_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.read_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.read_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read CHGCAR.</p>
+</dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.io.vasp.outputs.Oszicar">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.outputs.</code><code class="sig-name descname">Oszicar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Oszicar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.outputs.</code><code class="descname">Oszicar</code><span class="sig-paren">(</span><em>filename</em>, <em>data={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Oszicar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Construct Oszicar object.</p>
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Oszicar.electronic_steps">
-<em class="property">property </em><code class="sig-name descname">electronic_steps</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar.electronic_steps" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">electronic_steps</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar.electronic_steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all electronic steps realted data.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Oszicar.ionic_steps">
-<em class="property">property </em><code class="sig-name descname">ionic_steps</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar.ionic_steps" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">ionic_steps</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar.ionic_steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all ionic steps realted data.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Oszicar.magnetic_moment">
-<em class="property">property </em><code class="sig-name descname">magnetic_moment</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar.magnetic_moment" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">magnetic_moment</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar.magnetic_moment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get magnetic moment.</p>
+</dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.io.vasp.outputs.Outcar">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.outputs.</code><code class="sig-name descname">Outcar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Outcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.outputs.</code><code class="descname">Outcar</code><span class="sig-paren">(</span><em>filename</em>, <em>data={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Outcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Construct OUTCAR object.</p>
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Outcar.converged">
-<em class="property">property </em><code class="sig-name descname">converged</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.converged" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">converged</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.converged" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if calculation is converged.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Outcar.efg_tensor_diag">
-<em class="property">property </em><code class="sig-name descname">efg_tensor_diag</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.efg_tensor_diag" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">efg_tensor_diag</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.efg_tensor_diag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get electric field gradient tensor.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Outcar.elastic_props">
-<code class="sig-name descname">elastic_props</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vacuum</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Outcar.elastic_props"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.elastic_props" title="Permalink to this definition">¶</a></dt>
-<dd><p>Obtain elastic tensor and calculate related properties
-Args:</p>
-<blockquote>
-<div><p>outcar: OUTCAR file path
-vacuum: whether the structure has vaccum such as 2D materials
-for vacuum structures bulk and shear mod. needs extra attenstion
+<code class="descname">elastic_props</code><span class="sig-paren">(</span><em>atoms=None</em>, <em>vacuum=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Outcar.elastic_props"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.elastic_props" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain elastic tensor and calculate related properties.</p>
+<p>For 3D and 2D cases.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">outcar: OUTCAR file path</p>
+<p class="last">vacuum: whether the structure has vaccum such as 2D materials
+for vacuum structures bulk and shear mod. Needs extra attention
 and elastic tensor are in Nm^-1 rather than GPa</p>
-</div></blockquote>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>info: data for elastic tensor (in string and object representation), bulk, shear modulus, and phonon modes</p>
 </dd>
+<dt>Returns:</dt>
+<dd>info: data for elastic tensor
+(in string and object representation),
+bulk, shear modulus, and phonon modes</dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Outcar.nions">
-<em class="property">property </em><code class="sig-name descname">nions</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.nions" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">nions</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.nions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get number of ions.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Outcar.phonon_eigenvalues">
-<em class="property">property </em><code class="sig-name descname">phonon_eigenvalues</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.phonon_eigenvalues" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">phonon_eigenvalues</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.phonon_eigenvalues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get phonon eigenvalues.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Outcar.piezoelectric_tensor">
-<em class="property">property </em><code class="sig-name descname">piezoelectric_tensor</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.piezoelectric_tensor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">piezoelectric_tensor</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.piezoelectric_tensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get piezoelectric tensor.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Outcar.quad_mom">
-<em class="property">property </em><code class="sig-name descname">quad_mom</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.quad_mom" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">quad_mom</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.quad_mom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get quadrupole momemnt.</p>
+</dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.io.vasp.outputs.Vasprun">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.outputs.</code><code class="sig-name descname">Vasprun</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'vasprun.xml'</span></em>, <em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Vasprun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.outputs.</code><code class="descname">Vasprun</code><span class="sig-paren">(</span><em>filename='vasprun.xml'</em>, <em>data={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Vasprun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Construct vasprun.xml handling object.</p>
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.all_energies">
-<em class="property">property </em><code class="sig-name descname">all_energies</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.all_energies" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">all_energies</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.all_energies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all total energies.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.all_forces">
-<em class="property">property </em><code class="sig-name descname">all_forces</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.all_forces" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">all_forces</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.all_forces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all forces.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.all_input_parameters">
-<em class="property">property </em><code class="sig-name descname">all_input_parameters</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.all_input_parameters" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">all_input_parameters</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.all_input_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all explicit input parameters. Need to add a few more.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.all_stresses">
-<em class="property">property </em><code class="sig-name descname">all_stresses</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.all_stresses" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">all_stresses</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.all_stresses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all stresses.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.all_structures">
-<em class="property">property </em><code class="sig-name descname">all_structures</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.all_structures" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">all_structures</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.all_structures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all structures.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.avg_absorption_coefficient">
-<em class="property">property </em><code class="sig-name descname">avg_absorption_coefficient</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.avg_absorption_coefficient" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">avg_absorption_coefficient</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.avg_absorption_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get average absoprtion coefficient. Used in solar-cell module.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.dfpt_data">
-<em class="property">property </em><code class="sig-name descname">dfpt_data</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.dfpt_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">dfpt_data</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.dfpt_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get DFPT IBRION=8 related data.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.dielectric_loptics">
-<em class="property">property </em><code class="sig-name descname">dielectric_loptics</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.dielectric_loptics" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">dielectric_loptics</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.dielectric_loptics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get real and imag. dielectric function data.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.efermi">
-<em class="property">property </em><code class="sig-name descname">efermi</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.efermi" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">efermi</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.efermi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Fermi-energy.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.eigenvalues">
-<em class="property">property </em><code class="sig-name descname">eigenvalues</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.eigenvalues" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">eigenvalues</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.eigenvalues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all eigenvalues.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.elements">
-<em class="property">property </em><code class="sig-name descname">elements</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.elements" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">elements</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get atom elements.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.final_energy">
-<em class="property">property </em><code class="sig-name descname">final_energy</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.final_energy" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">final_energy</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.final_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get final energy.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Vasprun.get_bandstructure">
-<code class="sig-name descname">get_bandstructure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">E_low</span><span class="o">=</span><span class="default_value">- 4</span></em>, <em class="sig-param"><span class="n">E_high</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">spin</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">zero_efermi</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">kpoints_file_path</span><span class="o">=</span><span class="default_value">'.'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Vasprun.get_bandstructure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.get_bandstructure" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">get_bandstructure</code><span class="sig-paren">(</span><em>E_low=-4</em>, <em>E_high=4</em>, <em>spin=0</em>, <em>zero_efermi=True</em>, <em>kpoints_file_path='.'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Vasprun.get_bandstructure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.get_bandstructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get electronic bandstructure plot.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.get_dir_gap">
-<em class="property">property </em><code class="sig-name descname">get_dir_gap</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.get_dir_gap" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">get_dir_gap</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.get_dir_gap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get direct bandgap.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.get_indir_gap">
-<em class="property">property </em><code class="sig-name descname">get_indir_gap</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.get_indir_gap" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">get_indir_gap</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.get_indir_gap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get indirect bandgap.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.is_spin_orbit">
-<em class="property">property </em><code class="sig-name descname">is_spin_orbit</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.is_spin_orbit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">is_spin_orbit</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.is_spin_orbit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the calculation is spin orbit.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.is_spin_polarized">
-<em class="property">property </em><code class="sig-name descname">is_spin_polarized</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.is_spin_polarized" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">is_spin_polarized</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.is_spin_polarized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the calculation is spin polarized.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.kpoints">
-<em class="property">property </em><code class="sig-name descname">kpoints</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.kpoints" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">kpoints</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.kpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Kpoints.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.num_atoms">
-<em class="property">property </em><code class="sig-name descname">num_atoms</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.num_atoms" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">num_atoms</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.num_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get number of simulation atoms.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.num_types">
-<em class="property">property </em><code class="sig-name descname">num_types</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.num_types" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">num_types</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.num_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get number of atom types.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.total_dos">
-<em class="property">property </em><code class="sig-name descname">total_dos</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.total_dos" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">total_dos</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.total_dos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get total density of states.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Vasprun.vrun_structure_to_atoms">
-<code class="sig-name descname">vrun_structure_to_atoms</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Vasprun.vrun_structure_to_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.vrun_structure_to_atoms" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">vrun_structure_to_atoms</code><span class="sig-paren">(</span><em>s={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Vasprun.vrun_structure_to_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.vrun_structure_to_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert structure to Atoms object.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Vasprun.xml_to_dict">
-<code class="sig-name descname">xml_to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Vasprun.xml_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.xml_to_dict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">xml_to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Vasprun.xml_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.xml_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XML to dictionary.</p>
+</dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.io.vasp.outputs.Wavecar">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.outputs.</code><code class="sig-name descname">Wavecar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'WAVECAR'</span></em>, <em class="sig-param"><span class="n">lsorbit</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">lgamma</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">recl</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nspin</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rtag</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nkpts</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nbands</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">encut</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lattice_mat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nplws</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">wfc</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">efermi</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kvecs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">energies</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">occs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">gvec</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.outputs.</code><code class="descname">Wavecar</code><span class="sig-paren">(</span><em>filename='WAVECAR'</em>, <em>lsorbit=False</em>, <em>lgamma=False</em>, <em>recl=None</em>, <em>nspin=None</em>, <em>rtag=None</em>, <em>nkpts=None</em>, <em>nbands=None</em>, <em>encut=None</em>, <em>lattice_mat=None</em>, <em>nplws=None</em>, <em>wfc=None</em>, <em>efermi=None</em>, <em>kvecs=None</em>, <em>energies=None</em>, <em>occs=None</em>, <em>gvec=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class for VASP Pseudowavefunction stored in WAVECAR</p>
-<dl>
-<dt>The format of VASP WAVECAR, as shown in</dt><dd><p><a class="reference external" href="http://www.andrew.cmu.edu/user/feenstra/wavetrans/">http://www.andrew.cmu.edu/user/feenstra/wavetrans/</a></p>
-</dd>
-<dt>is:</dt><dd><p>Record-length #spin components RTAG(a value specifying the precision)
+<p>Class for VASP Pseudowavefunction stored in WAVECAR.</p>
+<dl class="docutils">
+<dt>The format of VASP WAVECAR, as shown in</dt>
+<dd><a class="reference external" href="http://www.andrew.cmu.edu/user/feenstra/wavetrans/">http://www.andrew.cmu.edu/user/feenstra/wavetrans/</a></dd>
+<dt>is:</dt>
+<dd><p class="first">Record-length #spin components RTAG(a value specifying the precision)
 #k-points #bands ENCUT(maximum energy for plane waves)
 LatVec-A
 LatVec-B
 LatVec-C
 Loop over spin</p>
 <blockquote>
-<div><dl>
-<dt>Loop over k-points</dt><dd><p>#plane waves, k vector
+<div><dl class="docutils">
+<dt>Loop over k-points</dt>
+<dd><p class="first">#plane waves, k vector
 Loop over bands</p>
 <blockquote>
-<div><p>band energy, band occupation</p>
-</div></blockquote>
+<div>band energy, band occupation</div></blockquote>
 <p>End loop over bands
 Loop over bands</p>
 <blockquote>
-<div><dl class="simple">
-<dt>Loop over plane waves</dt><dd><p>Plane-wave coefficient</p>
-</dd>
+<div><dl class="docutils">
+<dt>Loop over plane waves</dt>
+<dd>Plane-wave coefficient</dd>
 </dl>
 <p>End loop over plane waves</p>
 </div></blockquote>
-<p>End loop over bands</p>
+<p class="last">End loop over bands</p>
 </dd>
 </dl>
 <p>End loop over k-points</p>
 </div></blockquote>
-<p>End loop over spin</p>
+<p class="last">End loop over spin</p>
 </dd>
 </dl>
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Wavecar.checkIndex">
-<code class="sig-name descname">checkIndex</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ispin</span></em>, <em class="sig-param"><span class="n">ikpt</span></em>, <em class="sig-param"><span class="n">iband</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.checkIndex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.checkIndex" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the index is valid!</p>
+<code class="descname">checkIndex</code><span class="sig-paren">(</span><em>ispin</em>, <em>ikpt</em>, <em>iband</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.checkIndex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.checkIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the index is valid.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Wavecar.gvectors">
-<code class="sig-name descname">gvectors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ikpt</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.gvectors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.gvectors" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Generate the G-vectors that satisfies the following relation</dt><dd><p>(G + k)**2 / 2 &lt; ENCUT</p>
-</dd>
+<code class="descname">gvectors</code><span class="sig-paren">(</span><em>ikpt=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.gvectors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.gvectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the G-vectors.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>satisfies the following relation</dt>
+<dd>(G + k)**2 / 2 &lt; ENCUT</dd>
 </dl>
+</div></blockquote>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Wavecar.isSocWfc">
-<code class="sig-name descname">isSocWfc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.isSocWfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.isSocWfc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Is the WAVECAR from an SOC calculation?</p>
+<code class="descname">isSocWfc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.isSocWfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.isSocWfc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the WAVECAR is from an SOC calculation.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Wavecar.readBandCoeff">
-<code class="sig-name descname">readBandCoeff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ispin</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">ikpt</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">iband</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">norm</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.readBandCoeff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.readBandCoeff" title="Permalink to this definition">¶</a></dt>
+<code class="descname">readBandCoeff</code><span class="sig-paren">(</span><em>ispin=1</em>, <em>ikpt=1</em>, <em>iband=1</em>, <em>norm=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.readBandCoeff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.readBandCoeff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read the planewave coefficients of specified KS states.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Wavecar.readWFBand">
-<code class="sig-name descname">readWFBand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ispin</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">ikpt</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">iband</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.readWFBand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.readWFBand" title="Permalink to this definition">¶</a></dt>
+<code class="descname">readWFBand</code><span class="sig-paren">(</span><em>ispin=1</em>, <em>ikpt=1</em>, <em>iband=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.readWFBand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.readWFBand" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract KS energies and Fermi occupations from WAVECAR.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Wavecar.readWFHeader">
-<code class="sig-name descname">readWFHeader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.readWFHeader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.readWFHeader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read the system information from WAVECAR, which is written in the first
-two record.</p>
+<code class="descname">readWFHeader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.readWFHeader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.readWFHeader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the system information from WAVECAR.</p>
+<p>It is written in the first two record.</p>
 <p>rec1: recl, nspin, rtag
 rec2: nkpts, nbands, encut, ((cell(i,j) i=1, 3), j=1, 3)</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Wavecar.setWFPrec">
-<code class="sig-name descname">setWFPrec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.setWFPrec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.setWFPrec" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Set wavefunction coefficients precision:</dt><dd><p>TAG = 45200: single precision complex, np.complex64, or complex(qs)
-TAG = 45210: double precision complex, np.complex128, or complex(q)</p>
-</dd>
-</dl>
+<code class="descname">setWFPrec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.setWFPrec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.setWFPrec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set wavefunction coefficients precision.</p>
+<blockquote>
+<div>TAG = 45200: single precision complex, np.complex64, or complex(qs)
+TAG = 45210: double precision complex, np.complex128, or complex(q)</div></blockquote>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Wavecar.whereRec">
-<code class="sig-name descname">whereRec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ispin</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">ikpt</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">iband</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.whereRec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.whereRec" title="Permalink to this definition">¶</a></dt>
+<code class="descname">whereRec</code><span class="sig-paren">(</span><em>ispin=1</em>, <em>ikpt=1</em>, <em>iband=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Wavecar.whereRec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Wavecar.whereRec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the rec position for specified KS state.</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.io.vasp.outputs.Waveder">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.vasp.outputs.</code><code class="sig-name descname">Waveder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">gamma_only</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Waveder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.outputs.</code><code class="descname">Waveder</code><span class="sig-paren">(</span><em>filename</em>, <em>gamma_only=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Waveder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class for reading a WAVEDER file.
-The LOPTICS tag produces a WAVEDER file.
+<p>Class for reading a WAVEDER file.</p>
+<p>The LOPTICS tag produces a WAVEDER file.
 The WAVEDER contains the derivative of the orbitals with respect to k.</p>
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Waveder.cder_data">
-<em class="property">property </em><code class="sig-name descname">cder_data</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder.cder_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the orbital derivative between states</p>
+<code class="descname">cder_data</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder.cder_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the orbital derivative between states.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Waveder.get_orbital_derivative_between_states">
-<code class="sig-name descname">get_orbital_derivative_between_states</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">band_i</span></em>, <em class="sig-param"><span class="n">band_j</span></em>, <em class="sig-param"><span class="n">kpoint</span></em>, <em class="sig-param"><span class="n">spin</span></em>, <em class="sig-param"><span class="n">cart_dir</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Waveder.get_orbital_derivative_between_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder.get_orbital_derivative_between_states" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method returning a value
-between bands band_i and band_j for k-point index, spin-channel and cartesian direction.
-Args:</p>
+<code class="descname">get_orbital_derivative_between_states</code><span class="sig-paren">(</span><em>band_i</em>, <em>band_j</em>, <em>kpoint</em>, <em>spin</em>, <em>cart_dir</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Waveder.get_orbital_derivative_between_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder.get_orbital_derivative_between_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a valuebetween bands band_i and band_j.</p>
+<p>For k-point index, spin-channel and cartesian direction.</p>
+<p>Args:</p>
 <blockquote>
-<div><p>band_i (Integer): Index of band i
-band_j (Integer): Index of band j
-kpoint (Integer): Index of k-point
-spin   (Integer): Index of spin-channel (0 or 1)
-cart_dir (Integer): Index of cartesian direction (0,1,2)</p>
+<div><p>band_i (Integer): Index of band i</p>
+<p>band_j (Integer): Index of band j</p>
+<p>kpoint (Integer): Index of k-point</p>
+<p>spin   (Integer): Index of spin-channel (0 or 1)</p>
+<p>cart_dir (Integer): Index of cartesian direction (0,1,2)</p>
 </div></blockquote>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>a float value</p>
-</dd>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>a float value</dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Waveder.nbands">
-<em class="property">property </em><code class="sig-name descname">nbands</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder.nbands" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of bands in the calculation</p>
+<code class="descname">nbands</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder.nbands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of bands in the calculation.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Waveder.nelect">
-<em class="property">property </em><code class="sig-name descname">nelect</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder.nelect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of electrons in the calculation</p>
+<code class="descname">nelect</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder.nelect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of electrons in the calculation.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Waveder.nkpoints">
-<em class="property">property </em><code class="sig-name descname">nkpoints</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder.nkpoints" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of k-points in the calculation</p>
+<code class="descname">nkpoints</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Waveder.nkpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of k-points in the calculation.</p>
 </dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-jarvis.io.vasp.vasp_constant">
-<span id="jarvis-io-vasp-vasp-constant-module"></span><h2>jarvis.io.vasp.vasp_constant module<a class="headerlink" href="#module-jarvis.io.vasp.vasp_constant" title="Permalink to this headline">¶</a></h2>
-<p>Physical constants used in VASP</p>
 </div>
 <div class="section" id="module-jarvis.io.vasp">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.io.vasp" title="Permalink to this headline">¶</a></h2>
+<p>Methods for handling input/output files for VASP.</p>
 </div>
 </div>
 
@@ -580,7 +628,6 @@ cart_dir (Integer): Index of cartesian direction (0,1,2)</p>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-jarvis.io.vasp.inputs">jarvis.io.vasp.inputs module</a></li>
 <li><a class="reference internal" href="#module-jarvis.io.vasp.outputs">jarvis.io.vasp.outputs module</a></li>
-<li><a class="reference internal" href="#module-jarvis.io.vasp.vasp_constant">jarvis.io.vasp.vasp_constant module</a></li>
 <li><a class="reference internal" href="#module-jarvis.io.vasp">Module contents</a></li>
 </ul>
 </li>
@@ -594,15 +641,17 @@ cart_dir (Integer): Index of cartesian direction (0,1,2)</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -616,12 +665,12 @@ cart_dir (Integer): Index of cartesian direction (0,1,2)</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

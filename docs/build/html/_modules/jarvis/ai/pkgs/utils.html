@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.ai.pkgs.utils &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.ai.pkgs.utils &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -37,7 +39,9 @@
           <div class="body" role="main">
             
   <h1>Source code for jarvis.ai.pkgs.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">jarvis.db.figshare</span> <span class="kn">import</span> <span class="n">data</span>
+<span></span><span class="sd">&quot;&quot;&quot;Helper functions for ML applications.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">jarvis.db.figshare</span> <span class="kn">import</span> <span class="n">data</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">r2_score</span><span class="p">,</span> <span class="n">mean_squared_error</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -74,13 +78,12 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="get_ml_data"><a class="viewcode-back" href="../../../../jarvis.ai.pkgs.html#jarvis.ai.pkgs.utils.get_ml_data">[docs]</a><span class="k">def</span> <span class="nf">get_ml_data</span><span class="p">(</span> <span class="n">ml_property</span><span class="o">=</span><span class="s2">&quot;formation_energy_peratom&quot;</span><span class="p">,</span> <span class="n">dataset</span> <span class="o">=</span> <span class="s1">&#39;cfid_3d&#39;</span><span class="p">,</span> <span class="n">data_ranges</span><span class="o">=</span><span class="n">typical_data_ranges</span><span class="p">):</span>
-
+<div class="viewcode-block" id="get_ml_data"><a class="viewcode-back" href="../../../../jarvis.ai.pkgs.html#jarvis.ai.pkgs.utils.get_ml_data">[docs]</a><span class="k">def</span> <span class="nf">get_ml_data</span><span class="p">(</span><span class="n">ml_property</span><span class="o">=</span><span class="s2">&quot;formation_energy_peratom&quot;</span><span class="p">,</span>
+                <span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;cfid_3d&#39;</span><span class="p">,</span> <span class="n">data_ranges</span><span class="o">=</span><span class="n">typical_data_ranges</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Provides arrays/pandas-dataframe as input for ML algorithms</span>
+<span class="sd">    Provide arrays/pandas-dataframe as input for ML algorithms.</span>
 
 <span class="sd">    Args:</span>
-
 
 <span class="sd">        ml_property: target property to train</span>
 
@@ -89,15 +92,14 @@
 <span class="sd">        dataset: dataset available in jarvis or other array</span>
 
 <span class="sd">    Returns:</span>
-
 <span class="sd">           X, Y , ids</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
-       <span class="n">dataml</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
-       <span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dataml</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">dataml</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dataml</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-       <span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 
     <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
@@ -128,9 +130,7 @@
 
 
 <div class="viewcode-block" id="regr_scores"><a class="viewcode-back" href="../../../../jarvis.ai.pkgs.html#jarvis.ai.pkgs.utils.regr_scores">[docs]</a><span class="k">def</span> <span class="nf">regr_scores</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
-
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generic regresion scores</span>
+    <span class="sd">&quot;&quot;&quot;Provide generic regresion scores.</span>
 
 <span class="sd">    Args:</span>
 
@@ -139,10 +139,8 @@
 <span class="sd">       test: held data for testing</span>
 
 <span class="sd">    Returns:</span>
-
 <span class="sd">        info: with metrics</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">pred</span><span class="p">))</span>
     <span class="n">r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
     <span class="n">mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
@@ -157,10 +155,10 @@
 
 <div class="viewcode-block" id="binary_class_dat"><a class="viewcode-back" href="../../../../jarvis.ai.pkgs.html#jarvis.ai.pkgs.utils.binary_class_dat">[docs]</a><span class="k">def</span> <span class="nf">binary_class_dat</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="p">[],</span> <span class="n">Y</span><span class="o">=</span><span class="p">[],</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Categorize a continous dataset in 1/0 with a threshold &quot;tol&quot;</span>
+<span class="sd">    Categorize a continous dataset in 1/0 with a threshold &quot;tol&quot;.</span>
+
 <span class="sd">    TODO: replace with OneHotEncoder</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">Y1</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">tol</span><span class="p">:</span>
@@ -168,7 +166,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">Y1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y1</span></div>
-
 </pre></div>
 
           </div>
@@ -177,15 +174,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -199,13 +198,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>
