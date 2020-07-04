@@ -1,23 +1,20 @@
-"""
-Module for LAMMPS input files
-"""
+"""Module for writing LAMMPS input files."""
 
-from jarvis.io.vasp.inputs import Poscar
-from jarvis.core.atoms import Atoms
 import numpy as np
-from jarvis.analysis.structure.spacegroup import Spacegroup3D
 import pprint
 from collections import OrderedDict
 from jarvis.core.atoms import Atoms
 from jarvis.core.specie import Specie
-import os
 
 
 class LammpsData(object):
-    def __init__(
-        self, lammps_box=[], species=[], charges=[], cart_coords=[], element_order=[]
-    ):
+    """Construct Lammps data file."""
 
+    def __init__(
+        self, lammps_box=[], species=[],
+        charges=[], cart_coords=[], element_order=[]
+    ):
+        """Provide following information."""
         self._lammps_box = lammps_box
         self._species = species
         self._charges = charges
@@ -25,8 +22,9 @@ class LammpsData(object):
         self._element_order = element_order
 
     def lammps_to_atoms(self):
-        n_atoms = len(self._species)
-        n_atom_types = len(self._element_order)
+        """Convert Lammps data to Atoms object."""
+        # n_atoms = len(self._species)
+        # n_atom_types = len(self._element_order)
         box = self._lammps_box
         xhi = box[1]
         xlo = box[0]
@@ -42,13 +40,16 @@ class LammpsData(object):
         )
         elements = [self._element_order[i - 1] for i in self._species]
         atoms = Atoms(
-            lattice_mat=lat, elements=elements, coords=self._cart_coords, cartesian=True
+            lattice_mat=lat, elements=elements,
+            coords=self._cart_coords, cartesian=True
         )
         return atoms
 
     def atoms_to_lammps(self, atoms, origin=(0, 0, 0)):
+        """Convert Atoms object to Lammps data."""
+        # n_atoms = len(self._species)
         elements = atoms.elements
-        num_atoms = atoms.num_atoms
+        # num_atoms = atoms.num_atoms
         a, b, c = atoms.lattice.abc
         xlo, ylo, zlo = origin
         xhi = a + xlo
@@ -65,7 +66,7 @@ class LammpsData(object):
         box = np.array([xlo, xhi, ylo, yhi, zlo, zhi, xy, xz, yz])
         new_coords = (np.dot(rot_matrix, atoms.cart_coords.T)).T
         unique_elements = list(set(elements))
-        n_atom_types = len(unique_elements)
+        # n_atom_types = len(unique_elements)
         n_atoms = len(elements)
         if self._charges == []:
             self._charges = np.zeros(n_atoms)
@@ -88,13 +89,15 @@ class LammpsData(object):
         element_order=["O", "Al"],
         potential_file="pot.mod",
     ):
+        """Read Lammps data file."""
+        # n_atoms = len(self._species)
         if element_order == []:
             # Reading potential file for element order
             pot_file = open(potential_file, "r")
             lines = pot_file.read().splitlines()
             pot_file.close()
             symb = []
-            count = 0
+            # count = 0
 
             for i, line in enumerate(lines):
                 if "pair_coeff" in line.split():
@@ -108,7 +111,7 @@ class LammpsData(object):
                                 # count=count+1
                                 # if count >4:
                                 symb.append(Specie(el).symbol)
-                        except:
+                        except Exception:
                             pass
         else:
             symb = [Specie(i).symbol for i in element_order]
@@ -136,7 +139,8 @@ class LammpsData(object):
                 xz = float(line.split()[1])
                 yz = float(line.split()[2])
         if len(symb) != ntypes:
-            ValueError("Something wrong in atom type assignment", len(symb), ntypes)
+            ValueError("Something wrong in atom type assignment",
+                       len(symb), ntypes)
         lat = np.array(
             [[xhi - xlo, 0.0, 0.0], [xy, yhi - ylo, 0.0], [xz, yz, zhi - zlo]]
         )
@@ -161,11 +165,14 @@ class LammpsData(object):
         typ_sp = [str(i, "utf-8") for i in typ]
         # print ('typ_sp',typ_sp)
         atoms = Atoms(
-            lattice_mat=lat, elements=typ_sp, coords=np.array(coords), cartesian=True
+            lattice_mat=lat, elements=typ_sp,
+            coords=np.array(coords), cartesian=True
         )
         return atoms
 
     def write_file(self, filename="lammps.data"):
+        """Write Lammps data input file."""
+        # n_atoms = len(self._species)
         n_atoms = len(self._species)
         n_atom_types = len(self._element_order)
         box = self._lammps_box
@@ -193,10 +200,13 @@ class LammpsData(object):
             s = self._species[i]
             r = self._cart_coords[i]
             charge = self._charges[i]
-            f.write("%6d %3d %6f %s %s %s\n" % (i + 1, s, charge, r[0], r[1], r[2]))
+            f.write("%6d %3d %6f %s %s %s\n" % (i + 1,
+                    s, charge, r[0], r[1], r[2]))
         f.close()
 
     def to_dict(self):
+        """Convert the infor to a dictionary."""
+        # n_atoms = len(self._species)
         d = OrderedDict()
         d["box"] = self._lammps_box
         d["species"] = self._species
@@ -207,13 +217,25 @@ class LammpsData(object):
 
     # def from_dict(self):
 
+        d["box"] = self._lammps_box
+        d["species"] = self._species
+        d["charges"] = self._charges
+        d["cart_coords"] = self._charges
+        d["element_order"] = self._element_order
+        return d
+
+    # def from_dict(self):
+
     def __repr__(self, indent=4):
+        """Print method."""
         return pprint.pformat(self.to_dict(), indent=indent)
 
 
 class LammpsInput(object):
-    def __init__(self, LammpsDataObj=None, pbc=["p", "p", "p"]):
+    """Construct LAMMPS input."""
 
+    def __init__(self, LammpsDataObj=None, pbc=["p", "p", "p"]):
+        """Require LammpsData class and periodic boundary conditions."""
         self.LammpsDataObj = LammpsDataObj
         self.pbc = pbc
 
@@ -227,20 +249,26 @@ class LammpsInput(object):
         parameters={},
     ):
         """
-                write lammps input file
-                from ase with custom modifications
-                LAMMPS input is devided into three parts
-                
-                Args:
-                    lammps_in: generally"init.mod", with unit and conversion factor information
-                    
-                    lammps_in1: generally "potential.mod", with force-field/potential style and element tyoe information
-                    
-                    lammps_in2: generally "in.elastic", a generic main input file to be fed in LAMMPS usin lmp_*<...,parameters['exec']
-                    
-                    parameters: input parameters
-                    
-            """
+        Write lammps input file.
+
+        From ase with custom modifications
+        LAMMPS input is devided into three parts
+
+        Args:
+            lammps_in: generally"init.mod",
+            with unit and conversion factor information
+
+            lammps_in1: generally "potential.mod",
+            with force-field/potential style and
+            element type information
+
+            lammps_in2: generally "in.elastic",
+            a generic main input file to be fed
+            in LAMMPS usin lmp_*<...,parameters['exec']
+
+            parameters: input parameters
+
+        """
         f = open(lammps_in, "w")
         f1 = open(lammps_in1, "w")  # potential.mod
         f2 = open(lammps_in2, "w")
@@ -276,14 +304,7 @@ class LammpsInput(object):
             if key in parameters:
                 f.write("%s %s \n" % (key, parameters[key]))
         f.write("\n")
-        # If no_data_file,
-        # write the simulation box and the atoms
-        # species = [tos for tos in Poscar(structure).site_symbols]
-        # species = [tos.symbol for tos in structure.types_of_specie]
-        # n_atom_types = len(species)
-        # species_i = dict([(s, i + 1) for i, s in enumerate(species)])
         f.write("read_data %s\n" % "data")
-        # interaction
         f.write("\n### interactions \n")
         if "lib" in parameters:
             lib = parameters["lib"]
@@ -291,14 +312,7 @@ class LammpsInput(object):
         if ("pair_style" in parameters) and ("pair_coeff" in parameters):
             pair_style = parameters["pair_style"]
             f1.write("pair_style %s \n" % pair_style)
-            symbols = self.LammpsDataObj._element_order  # atoms.get_chemical_symbols()
-            # species = [tos.symbol.replace("Mo","M") for tos in structure.types_of_specie] #For REBO Mo-S
-            # species = [tos.symbol for tos in structure.types_of_specie]
-            # print("site symbolss", Poscar(structure).site_symbols)
-            # species = [tos for tos in Poscar(structure).site_symbols]
-            # if parameters["pair_style"] == "rebomos":
-
-            #    species = [tos.replace("Mo", "M") for tos in Poscar(structure).site_symbols]
+            symbols = self.LammpsDataObj._element_order
             tag = ""
             for i in symbols:
                 tag = tag + " " + i
@@ -314,10 +328,13 @@ class LammpsInput(object):
             for i in masses:
                 count = count + 1
                 f.write("mass" + " " + str(count) + " " + str(i) + "\n")
+
         else:
+
             # default interaction
             f.write(
-                "pair_style lj/cut 2.5 \n" + "pair_coeff * * 1 1 \n" + "mass * 1.0 \n"
+                "pair_style lj/cut 2.5 \n"
+                + "pair_coeff * * 1 1 \n" + "mass * 1.0 \n"
             )
         f1.write("neighbor 1.0 nsq\n")
         f1.write("neigh_modify once no every 1 delay 0 check yes\n")
@@ -326,35 +343,10 @@ class LammpsInput(object):
             f1.write("min_modify           dmax ${dmax} line quadratic\n")
         f1.write("thermo          1\n")
         f1.write(
-            "thermo_style custom step temp press cpu pxx pyy pzz pxy pxz pyz ke pe etotal vol lx ly lz atoms\n"
+            "thermo_style custom step temp press cpu pxx pyy pzz\
+             pxy pxz pyz ke pe etotal vol lx ly lz atoms\n"
         )
-        # f1.write('thermo_style custom step temp pe press pxx pyy pzz pxy pxz pyz lx ly lz vol\n' )
         f1.write("thermo_modify norm no\n")
-        #   if 'thermo_style' in parameters:
-        #       f.write('thermo_style %s\n' % parameters['thermo_style'])
-        #   else:
-        #       f.write(('thermo_style custom %s\n') %
-        #               (' '.join(self._custom_thermo_args)))
-        #   if 'thermo_modify' in parameters:
-        #       f.write('thermo_modify %s\n' % parameters['thermo_modify'])
-        #   else:
-        #       f.write('thermo_modify flush yes\n')
-        #   if 'thermo' in parameters:
-        #       f.write('thermo %s\n' % parameters['thermo'])
-        #   else:
-        #       f.write('thermo 1\n')
-        #   if 'minimize' in parameters:
-        #       f.write('minimize %s\n' % parameters['minimize'])
-        #   if 'run' in parameters:
-        #       f.write('run %s\n' % parameters['run'])
-        #   if not (('minimize' in parameters) or ('run' in parameters)):
-        #       f.write('run 0\n')
-        #   if 'dump' in parameters:
-        #       f.write('dump %s\n' % parameters['dump'])
-        #   else:
-        #       f.write('dump dump_all all custom 1 %s id type x y z vx vy vz fx fy fz\n' % lammps_trj)
-        #   f.write('print __end_of_ase_invoked_calculation__\n')
-        #   f.write('log /dev/stdout\n')
         if "fix" in parameters:
             if parameters["fix"]:
                 for i in parameters["fix"]:
@@ -362,6 +354,7 @@ class LammpsInput(object):
         f.close()
         f1.close()
         f2.close()
+
 
 """
 if __name__ == "__main__":

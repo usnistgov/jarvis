@@ -22,24 +22,12 @@ jobs:
     - name: Lint with pycodestyle
       run: |
         pip install pycodestyle --upgrade
-        pycodestyle jarvis
-    - name: Lint with mypy
-      run: |
-        pip install mypy --upgrade
-        mypy jarvis
+        pycodestyle --ignore E203,W503 --exclude=examples,testfiles jarvis
     - name: Lint with flake8
       run: |
         pip install flake8 --upgrade
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 --count --show-source --statistics jarvis
-        # exit-zero treats all errors as warnings.
-        flake8 --count --exit-zero --max-complexity=20 --statistics jarvis
-    - name: Lint with pylint
-      run: |
-        pip install --upgrade "pylint!=2.5" 
-
-        pylint --exit-zero jarvis
+        flake8 --ignore E203,W503 --exclude=examples,tests --statistics --count --exit-zero jarvis
     - name: Lint with pydoctstyle
       run: |
         pip install pydocstyle --upgrade
-        pydocstyle --count jarvis
+        pydocstyle --match-dir=core --match-dir=io --match-dir=io --match-dir=ai --match-dir=analysis --match-dir=db --match-dir=tasks --count jarvis

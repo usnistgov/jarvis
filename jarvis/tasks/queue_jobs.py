@@ -1,9 +1,12 @@
-from subprocess import Popen, PIPE
+"""Modules for job submission."""
+
 import os
 import subprocess
 
 
 class Queue(object):
+    """Construct HPC Job class."""
+
     def __init__(
         self,
         q_type="head_node",
@@ -12,6 +15,7 @@ class Queue(object):
         job_check_cmd="",
         job_id="",
     ):
+        """Initialize the class."""
         self.q_type = q_type
         self.q_parameters = q_parameters
         self.job_sub_cmd = job_sub_cmd
@@ -19,6 +23,7 @@ class Queue(object):
         self.job_id = job_id
 
     def head_node(self, submit_cmd=None):
+        """Select if run on the head node, not recommended."""
         os.system(submit_cmd)
 
     def pbs(
@@ -43,7 +48,7 @@ class Queue(object):
         post_job_lines=None,
         submit_cmd=None,
     ):
-
+        """Select if run using PBS script."""
         f = open(filename, "w")
         f.write("%s\n" % shell)
         f.write("#PBS -l nodes=%d:ppn=%d\n" % (nnodes, cores))
@@ -55,7 +60,9 @@ class Queue(object):
             if isinstance(walltime, str):
                 f.write("#PBS -l walltime=%s\n" % walltime)
             else:
-                ValueError("Plese provide walltime in a string format", walltime)
+                ValueError(
+                    "Plese provide walltime in a string format", walltime
+                )
         if queue is not None:
             f.write("#PBS -q %s\n" % queue)
         if account is not None:
@@ -113,7 +120,7 @@ class Queue(object):
         post_job_lines=None,
         submit_cmd=None,
     ):
-
+        """Select if run using SLURM script."""
         f = open(filename, "w")
         f.write("%s\n" % shell)
         f.write("#SBATCH --nodes=%d\n" % (nnodes))
@@ -123,7 +130,9 @@ class Queue(object):
             if isinstance(walltime, str):
                 f.write("#SBATCH --time=%s\n" % walltime)
             else:
-                ValueError("Plese provide walltime in a string format", walltime)
+                ValueError(
+                    "Plese provide walltime in a string format", walltime
+                )
 
         if queue is not None:
             f.write("#SBATCH --partition=%s\n" % (queue))
@@ -158,7 +167,9 @@ class Queue(object):
                 f.write(str(stdout))
 
 
+"""
 if __name__ == "__main__":
     Queue().pbs()
     Queue().slurm(filename="ll")
     Queue().head_node("echo ABC")
+"""

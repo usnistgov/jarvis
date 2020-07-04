@@ -1,3 +1,5 @@
+"""Module for LightGBM classification."""
+
 from jarvis.ai.pkgs.sklearn.classification import classification as sk_cl
 
 
@@ -11,6 +13,7 @@ def classification(
     model_name="my_model",
     save_model=False,
 ):
+    """Provide function for classification models."""
     info = sk_cl(
         X=X,
         Y=Y,

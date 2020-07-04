@@ -1,25 +1,24 @@
 """
-Class for reading wannier outouts such as
-wannier90.wout and wannier90_hr.dat
+Class for reading wannier outouts.
+
+Such as wannier90.wout and wannier90_hr.dat
 """
 
-import sys
-import matplotlib
 import os
 import json
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy as sp
 import math
 import time
-import copy as copy
 from jarvis.core.kpoints import Kpoints3D
-from jarvis.core.kpoints import generate_kgrid
-from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.vasp.outputs import Vasprun
+import scipy
 
 
-def get_projectors_for_formula(semi_core_states=None, formula_dict={"Bi": 2, "Se": 3}):
+def get_projectors_for_formula(
+    semi_core_states=None, formula_dict={"Bi": 2, "Se": 3}
+):
+    """Get semi core states from formula dict."""
     if semi_core_states is None:
         path_semi_core = str(
             os.path.join(os.path.dirname(__file__), "default_semicore.json")
@@ -37,8 +36,12 @@ def get_projectors_for_formula(semi_core_states=None, formula_dict={"Bi": 2, "Se
 def get_orbitals(
     projection_info=[["Bi", 2, ["s", "p"]], ["Se", 3, ["s", "p"]]],
     desired_orbitals=[["Bi", "p"]],
-    soc=True, ncells = 1, supercell = [1,1,6],surfaceonly = False
+    soc=True,
+    ncells=1,
+    supercell=[1, 1, 6],
+    surfaceonly=False,
 ):
+    """Get spdf orbitals."""
     # projection_info example for Bi2Se3 with s and p orbital projections
     # [["Bi", 2, ["s","p"]], ["Se", 3, ["s","p"]]]
 
@@ -143,30 +146,29 @@ def get_orbitals(
             new_orbs = projection_dict[tuple(d)]
             inds += new_orbs
 
-
-        if ncells > 1 and surfaceonly == False:
+        if ncells > 1 and not surfaceonly:
 
             inds_super = []
             for n in range(ncells):
                 for i in inds:
-                    inds_super.append(i+ n * nwan)
+                    inds_super.append(i + n * nwan)
 
             return inds_super
 
-        elif ncells > 1 and surfaceonly == True:
+        elif ncells > 1 and surfaceonly:
             inds_super = []
-            for n in [0, ncells-1]:
+            for n in [0, ncells - 1]:
                 for i in inds:
-                    inds_super.append(i+ n * nwan)
+                    inds_super.append(i + n * nwan)
 
             return inds_super
-
-
 
     return inds
 
 
 class WannierHam(object):
+    """Construct WannierHamltonian object."""
+
     def __init__(
         self,
         filename="wannier90_hr.dat",
@@ -178,6 +180,7 @@ class WannierHam(object):
         H=None,
         HR=None,
     ):
+        """Initialize the class."""
         self.filename = filename
         self.nr = nr
         self.nwan = nwan
@@ -191,6 +194,7 @@ class WannierHam(object):
             self.read_ham()
 
     def to_dict(self):
+        """Convert to dictionary."""
         info = {}
         info["nr"] = self.nr
         info["filename"] = self.filename
@@ -204,6 +208,7 @@ class WannierHam(object):
 
     @classmethod
     def from_dict(self, info):
+        """Load from dictionary."""
         w = WannierHam(
             nr=info["nr"],
             nwan=info["nwan"],
@@ -216,9 +221,10 @@ class WannierHam(object):
         return w
 
     def read_ham(self):
+        """Read _hr.dat file.."""
         f = open(self.filename, "r")
         lines = f.read().splitlines()
-        allines = f.readlines()
+        # allines = f.readlines()
         f.close()
         self.nwan = int(lines[1])
         self.nr = int(lines[2])
@@ -252,9 +258,9 @@ class WannierHam(object):
             # print ('lines[i].split()[0:5]',c,self.nwan**2)#,self.sym_r[rnum])
             self.H_int[c, :] = [int(j) for j in lines[i].split()[0:5]]
             # print ('lines[i][5]',lines[i])
-            self.H_val[c] = (float(lines[i].split()[5]) + 1j * float(
-                lines[i].split()[6]
-            )) / float(self.sym_r[rnum])
+            self.H_val[c] = (
+                float(lines[i].split()[5]) + 1j * float(lines[i].split()[6])
+            ) / float(self.sym_r[rnum])
             c += 1
 
         # print (self.H_int[0,:])
@@ -321,7 +327,7 @@ class WannierHam(object):
         return self.R, self.H, self.HR
 
     def get_ind(self, nxyz):
-
+        """Get index."""
         return [
             nxyz[0] - self.ind[0][0],
             nxyz[1] - self.ind[1][0],
@@ -329,9 +335,7 @@ class WannierHam(object):
         ]
 
     def solve_ham(self, k=[0, 0, 0], proj=None):
-
-        # print ('solve', self.nwan, self.R.shape, self.HR.shape)
-
+        """Solve Wannier Hamiltonian at a k-point."""
         nr = self.R.shape[0]
         # print ('nr==',nr,self.nr)
         hk = np.zeros((self.nwan, self.nwan), dtype=complex)
@@ -360,6 +364,7 @@ class WannierHam(object):
         return val.real, vect, p
 
     def band_structure_eigs(self, kpath=None, proj=None, efermi=0.0):
+        """Get eigenvalues for band eigenvalues."""
         eigs = []
         for i in kpath:
             # print (i)
@@ -370,6 +375,7 @@ class WannierHam(object):
     def get_bandstructure_plot(
         self, atoms=None, efermi=0.0, filename="bs.png", yrange=[-4, 4]
     ):
+        """Get bandstructure plot.."""
         kpoints, labels = Kpoints3D().interpolated_points(atoms)  # _path
 
         # print ('kpath',kpoints)
@@ -394,7 +400,7 @@ class WannierHam(object):
         kp_labels=[],
         filename="compare.png",
     ):
-
+        """Compare DFT and Wannier bands to check accuracy."""
         vrun = Vasprun(vasprun_path)
         kpoints = vrun.kpoints._kpoints
         fermi = vrun.efermi
@@ -406,7 +412,11 @@ class WannierHam(object):
         nwann = eigs_wan.shape[1]
         info = {}
         print(
-            "eigs.shape,eigs_vrun.shape", eigs_wan.shape, eigs_vrun.shape, nbands, nwann
+            "eigs.shape,eigs_vrun.shape",
+            eigs_wan.shape,
+            eigs_vrun.shape,
+            nbands,
+            nwann,
         )
         min_arr = []
         erange = [-energy_tol, energy_tol]
@@ -426,7 +436,7 @@ class WannierHam(object):
             print("MAX diff", max(min_arr))
             maxdiff = max(min_arr)
         print("maxdiff", maxdiff)
-        if plot == True:
+        if plot:
             for i, ii in enumerate(eigs_wan.T):
                 plt.plot(ii, color="b")
             for i, ii in enumerate(eigs_vrun.T):
@@ -446,15 +456,6 @@ class WannierHam(object):
         # print (info)
         return info  # ,eigs_wan.T,eigs_vrun.T
 
-    # def generate_kgrid(self, grid):
-    #
-    #    t = []
-    #    for i in range(grid[0]):
-    #        for j in range(grid[1]):
-    #            for k in range(grid[2]):
-    #                t.append([float(i)/(float(grid[0])) , float(j)/(float(grid[1])), float(k)/(float(grid[2]))])
-    #    return t
-
     def dos(
         self,
         kpoints=[],
@@ -466,7 +467,7 @@ class WannierHam(object):
         pdf="dos.pdf",
         show=True,
     ):
-
+        """Get density of states."""
         # plt.clf()
 
         # kgrid = generate_kgrid(grid)
@@ -495,7 +496,9 @@ class WannierHam(object):
             # plt.xlim(xrange)
 
         energies = np.arange(
-            xrange[0], xrange[1] + 1e-5, (xrange[1] - xrange[0]) / float(nenergy)
+            xrange[0],
+            xrange[1] + 1e-5,
+            (xrange[1] - xrange[0]) / float(nenergy),
         )
         dos = np.zeros(np.size(energies))
         pdos = np.zeros(np.size(energies))
@@ -511,21 +514,23 @@ class WannierHam(object):
         for i in range(np.size(energies)):
             arg = c * (v - energies[i]) ** 2
             dos[i] = np.sum(np.exp(arg))
-            if not proj is None:
+            if proj is not None:
                 pdos[i] = np.sum(np.exp(arg) * pvals)
 
         de = energies[1] - energies[0]
         dos = dos / sig / (2.0 * np.pi) ** 0.5 / float(nk)
-        if not proj is None:
+        if proj is not None:
             pdos = pdos / sig / (2.0 * np.pi) ** 0.5 / float(nk)
         print("np.sum(dos) ", np.sum(dos * de))
-        if not proj is None:
+        if proj is not None:
             print("np.sum(pdos) ", np.sum(pdos * de))
 
         return energies, dos, pdos
 
-    def generate_supercell(self, supercell=[2, 2, 2], index=[0, 0, 1], sparse=False):
-
+    def generate_supercell(
+        self, supercell=[2, 2, 2], index=[0, 0, 1], sparse=False
+    ):
+        """Generate supercell."""
         t0 = time.time()
 
         nw = self.nwan
@@ -542,7 +547,11 @@ class WannierHam(object):
             return cellnew, subnew
 
         def subcell_index(ss):
-            t = ss[0] * supercell[1] * supercell[2] + ss[1] * supercell[2] + ss[2]
+            t = (
+                ss[0] * supercell[1] * supercell[2]
+                + ss[1] * supercell[2]
+                + ss[2]
+            )
             return range(t * nw, (t + 1) * nw)
 
         RH_new = {}
@@ -569,12 +578,14 @@ class WannierHam(object):
                         ):
                             continue
 
-                        #                        print 'rs', rold, subcell, 'new', cellnew, subnew
                         if tuple(cellnew) not in RH_new:
                             if sparse:
+                                sps = scipy.sparse.csr_matrix  # TO CHECK
                                 RH_new[tuple(cellnew)] = [
                                     cellnew,
-                                    sps.lil_matrix((NWAN, NWAN), dtype=complex),
+                                    sps.lil_matrix(
+                                        (NWAN, NWAN), dtype=complex
+                                    ),
                                 ]
                             else:
                                 RH_new[tuple(cellnew)] = [
@@ -589,10 +600,11 @@ class WannierHam(object):
                         r1 = subcell_index(subcell)
                         r2 = subcell_index(subnew)
 
-                        #                        print r1,r2,h_temp.shape, RH_new[tuple(cellnew)][1][r1,r2].shape
                         for c1, c2 in enumerate(r1):
                             for d1, d2 in enumerate(r2):
-                                RH_new[tuple(cellnew)][1][c2, d2] += h_temp[c1, d1]
+                                RH_new[tuple(cellnew)][1][c2, d2] += h_temp[
+                                    c1, d1
+                                ]
 
         t2 = time.time()
 
@@ -602,11 +614,11 @@ class WannierHam(object):
         # if sparse:
         #    hbig.sparse = True
 
-        nwan = NWAN
+        # nwan = NWAN
         hbig.nwan = NWAN
         # hbig.nr = rn
 
-        R = np.zeros((nr, 3), dtype=float)
+        # R = np.zeros((nr, 3), dtype=float)
         hbig.R = np.zeros((nr, 3), dtype=float)
         if sparse:
             # HR = sps.lil_matrix((nr, NWAN ** 2), dtype=complex)
@@ -634,10 +646,14 @@ class WannierHam(object):
 
 
 class Wannier90wout(object):
+    """Construct wannier90.out related object."""
+
     def __init__(self, wout_path="wannier90.wout"):
+        """Initialize with file path."""
         self.wout = wout_path
 
     def give_wannier_centers(self):
+        """Get wannier charge centers."""
         f = open(self.wout, "r")
         lines = f.read().splitlines()
         f.close()
@@ -648,77 +664,9 @@ class Wannier90wout(object):
                 final = True
             if final:
                 if "WF centre and spread" in i:
-                    tmp = [float(j) for j in i.split("(")[1].split(")")[0].split(",")]
+                    tmp = [
+                        float(j)
+                        for j in i.split("(")[1].split(")")[0].split(",")
+                    ]
                     wan_cnts.append(tmp)
         return wan_cnts
-
-"""
-if __name__ == "__main__":
-    hr = "../../tests/testfiles/io/wannier/wannier90_hr.dat"
-    w = WannierHam(filename=hr)  # get_bandstructure_plot(atoms=p)
-    big = w.generate_supercell()
-
-    pp = get_projectors_for_formula()
-    x = get_orbitals()
-    print(w.nwan, big.nwan)
-    sys.exit()
-
-    # info = w.to_dict()
-    # print (info['nwan'])
-    # ww = WannierHam()
-    # dd = WannierHam.from_dict(info)
-    # print (dd.to_dict()['nwan'])
-    energies, dos, pdos = w.dos([5, 5, 5])
-    print(round(dos[75], 3))
-    # w.compare_dft_wann(vasprun_path=run)
-    import sys
-
-    vrun = Vasprun(run)
-    eigs_wan = w.band_structure_eigs(
-        kpath=vrun.kpoints._kpoints, efermi=vrun.efermi
-    )  # .T
-    eigs_vrun = vrun.eigenvalues[0][:, :, 0]  # .T
-    nbands = eigs_vrun.shape[1]
-    nwann = eigs_wan.shape[1]
-    fermi = vrun.efermi
-    print("eigs.shape,eigs_vrun.shape", eigs_wan.shape, eigs_vrun.shape, nbands, nwann)
-    min_arr = []
-    erange = [-2 - fermi, 2 + fermi]
-    for k in range(len(eigs_vrun)):
-        for n in eigs_wan[k]:
-            diff_arr = []
-            if n > erange[0] and n < erange[1]:
-                for v in eigs_vrun[k]:
-                    diff = abs(n - v)
-                    diff_arr.append(diff)
-            if diff_arr != []:
-                tmp = np.min(diff_arr)
-                min_arr.append(tmp)
-    maxdiff = "na"
-    if min_arr != []:
-        # print ('min_arr',min_arr)
-        print("MAX diff", max(min_arr))
-        maxdiff = max(min_arr)
-    print("maxdiff", maxdiff)
-
-    wout = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90.wout"
-    centers = Wannier90wout(wout_path=wout).give_wannier_centers()
-    # print (centers)
-
-    # val,vect,p = WannierHam(filename=hr).solve_ham()
-    # print ('val=',val)
-    # print ('vect=',vect)
-    # print ('p=',p)
-
-    p = Poscar.from_file(
-        "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/POSCAR"
-    ).atoms
-    print(p)
-    WannierHam(filename=hr).get_bandstructure_plot(atoms=p)
-
-    # R,H, HR = WannierHam(filename=hr).read_ham()
-    # print ('R',R)
-    # print ()
-    # print ()
-    # print ('HR',HR)
-"""

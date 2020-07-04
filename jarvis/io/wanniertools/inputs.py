@@ -1,14 +1,14 @@
-"""
-Class for writing wt.in for wanniertools
-"""
+"""Class for writing wt.in for wanniertools."""
+
 import os
-from jarvis.io.vasp.inputs import Poscar
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.io.wannier.outputs import Wannier90wout
 import json
 
 
 class WTin(object):
+    """Construct wt.in object."""
+
     def __init__(
         self,
         atoms=None,
@@ -23,6 +23,7 @@ class WTin(object):
         exclude=0,
         nwan=10,
     ):
+        """Initialize class."""
         self.atoms = atoms
         self.nelect = nelect
         self.wannierout = wannierout
@@ -36,7 +37,10 @@ class WTin(object):
         if self.semi_core_states is None:
             path_semi_core = str(
                 os.path.join(
-                    os.path.dirname(__file__), "..", "wannier", "default_semicore.json"
+                    os.path.dirname(__file__),
+                    "..",
+                    "wannier",
+                    "default_semicore.json",
                 )
             )
             f = open(path_semi_core, "r")
@@ -45,7 +49,10 @@ class WTin(object):
             self.semi_core_states = semi_core_states
 
     def get_ibz_kp(self):
-        frac_k_points, k_points_labels = Kpoints3D().interpolated_points(self.atoms)
+        """Get high-symmetry k-points."""
+        frac_k_points, k_points_labels = Kpoints3D().interpolated_points(
+            self.atoms
+        )
         lines = []
         for i, j in zip(frac_k_points, k_points_labels):
             if j != "":
@@ -71,23 +78,27 @@ class WTin(object):
         return lines
 
     def semi_core_wt(self, string=""):
+        """Get emi-core states."""
         try:
             string = string.replace("p", "px,py,pz")
-        except:
+        except Exception:
             pass
         try:
             string = string.replace("d", "dxy,dxz,dyz,dx2-y2,dz2")
-        except:
+        except Exception:
             pass
         try:
-            string = string.replace("f", "fz3,fxz2,fyz2,fxyz,fzx2y2,fxx23y2,fy3x2y2")
-        except:
+            string = string.replace(
+                "f", "fz3,fxz2,fyz2,fxyz,fzx2y2,fxx23y2,fy3x2y2"
+            )
+        except Exception:
             pass
         return string
 
     def write_wt_in(self):
+        """Write et.in."""
         strt = self.atoms
-        nwan = self.nwan
+        # nwan = self.nwan
         exclude = self.exclude
 
         f = open(self.wtin, "w")
@@ -100,7 +111,9 @@ class WTin(object):
         line = str("/ \n")
         f.write(line)
 
-        wan_cts = Wannier90wout(wout_path=self.wannierout).give_wannier_centers()
+        wan_cts = Wannier90wout(
+            wout_path=self.wannierout
+        ).give_wannier_centers()
 
         control = {
             "BulkBand_calc": "T",
@@ -112,7 +125,7 @@ class WTin(object):
             "BerryCurvature_calc": "F",
         }
         nele = self.nelect
-        if self.soc == True:
+        if self.soc:
             soc = 1
         else:
             soc = 0
@@ -165,7 +178,11 @@ class WTin(object):
             "KPATH_BULK": kp_dat,
             "KPATH_SLAB": [2, "K 0.33 0.67 G 0.0 0.0", "G 0.0 0.0 M 0.5 0.5"],
             "KPLANE_SLAB": ["-0.1 -0.1", "0.2  0.0", "0.0  0.2"],
-            "KPLANE_BULK": ["0.0 0.0  0.00", "1.00  0.00  0.00 ", " 0.00  1.00  0.00"],
+            "KPLANE_BULK": [
+                "0.0 0.0  0.00",
+                "1.00  0.00  0.00 ",
+                " 0.00  1.00  0.00",
+            ],
             "KCUBE_BULK": [
                 "-0.50 -0.50 -0.50",
                 "1.00  0.00  0.00",
@@ -174,7 +191,11 @@ class WTin(object):
             ],
         }
         print(kp_dat)
-        wt_dict = {"&CONTROL": control, "&SYSTEM": system, "&PARAMETERS": parameters}
+        wt_dict = {
+            "&CONTROL": control,
+            "&SYSTEM": system,
+            "&PARAMETERS": parameters,
+        }
 
         for i, j in wt_dict.items():
             line = str(i) + "\n"
@@ -291,12 +312,13 @@ class WTin(object):
 
 """
 if __name__ == "__main__":
-    hr = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90_hr.dat"
-    wout = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90.wout"
+    from jarvis.io.vasp.inputs import Poscar
+    hr = "wannier90_hr.dat"
+    wout = "MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/wannier90.wout"
     centers = Wannier90wout(wout_path=wout).give_wannier_centers()
 
     p = Poscar.from_file(
-        "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/POSCAR"
+        "MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/POSCAR"
     ).atoms
     lines = WTin(atoms=p).get_ibz_kp()
     # print(lines)
