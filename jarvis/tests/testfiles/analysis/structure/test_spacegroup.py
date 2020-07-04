@@ -11,6 +11,9 @@ s1 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "..","defects","PO
 s2 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "..","..","io","wannier","POSCAR")).atoms
 s3 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-tetragonal")).atoms
 s4 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-Cmcm")).atoms
+s5 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-Aem2")).atoms
+s6 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-C2m")).atoms
+s7 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-Pc")).atoms
 
 def test_spg():
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
@@ -47,6 +50,19 @@ def test_spg():
     cvn = spg.conventional_standard_structure
     assert spg.space_group_number==63
 
+    spg = Spacegroup3D(atoms=s5)
+    print (spg.space_group_number)
+    cvn = spg.conventional_standard_structure
+    assert spg.space_group_number==39
    
+    spg = Spacegroup3D(atoms=s6)
+    print (spg.space_group_number)
+    cvn = spg.conventional_standard_structure
+    assert spg.space_group_number==12
+
+    spg = Spacegroup3D(atoms=s7)
+    print (spg.space_group_number)
+    cvn = spg.conventional_standard_structure
+    assert spg.space_group_number==7
 
 #test_spg()

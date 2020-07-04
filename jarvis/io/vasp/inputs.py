@@ -207,14 +207,14 @@ class Incar(object):
         print("selftags2=", self._tags)
         return Incar(self._tags)
 
-    def get(self, key="POTIM", temp=0.5):
-        """Get the value of a key."""
-        if key in list(self._tags.keys()):
-            return self._tags[key]
-        else:
-            self._tags[key] = temp
-            print("Setting the temp value to the key", temp, key)
-            return self._tags[key]
+    # def get(self, key="POTIM", temp=0.5):
+    #    """Get the value of a key."""
+    #    if key in list(self._tags.keys()):
+    #        return self._tags[key]
+    #    else:
+    #        self._tags[key] = temp
+    #        print("Setting the temp value to the key", temp, key)
+    #        return self._tags[key]
 
     def to_dict(self):
         """Convert into dictionary."""
