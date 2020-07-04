@@ -56,10 +56,18 @@ kp2 = os.path.join(
 
 def test_inputs():
     p = Poscar.from_file(pos)
+    print(p)
     new_file, filename = tempfile.mkstemp()
     p.write_file(filename)
     i = Incar.from_file(inc)
     assert (round(p.atoms.density, 2), i.to_dict()["ISIF"]) == (2.25, "3")
+    f = open(pos,'r')
+    lines=f.read()
+    f.close()
+    p = Poscar.from_string(lines)
+    assert (round(p.atoms.density, 2), i.to_dict()["ISIF"]) == (2.25, "3")
+    d = i.to_dict()
+    ii = Incar.from_dict(d)
 
 def test_kpoints():
     new_file, filename = tempfile.mkstemp()
