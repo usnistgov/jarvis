@@ -52,7 +52,7 @@ def ir_intensity(
     return freq, ir_ints
 
 
-# """
+"""
 if __name__ == "__main__":
     from jarvis.io.vasp.outputs import Vasprun, Outcar
 
@@ -76,4 +76,4 @@ if __name__ == "__main__":
     print(round(y[1], 2))
     # for i, j in zip(phonon_eigenvalues, vrun_eigs):
     #    print(i, j)
-# """
+"""

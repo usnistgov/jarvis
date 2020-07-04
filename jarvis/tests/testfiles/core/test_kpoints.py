@@ -1,6 +1,17 @@
 from jarvis.core.kpoints import Kpoints3D, generate_kpath, generate_kgrid, HighSymmetryKpoint3DFactory
 from jarvis.core.atoms import Atoms
+from jarvis.io.vasp.inputs import Poscar
+import os
+import tempfile
 
+
+s1 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "..","analysis","structure","POSCAR")).atoms
+s2 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "..","analysis","structure","POSCAR-Aem2")).atoms
+s3 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "..","analysis","structure","POSCAR-C2m")).atoms
+s4 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "..","analysis","structure","POSCAR-Cmcm")).atoms
+s5 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "..","analysis","structure","POSCAR-P-1")).atoms
+s6 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "..","analysis","structure","POSCAR-tetragonal")).atoms
+s7 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "..","analysis","structure","POSCAR-Pc")).atoms
 
 def test_kp():
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
@@ -13,10 +24,15 @@ def test_kp():
     x, y = kp.interpolated_points(Si)
     kpath = generate_kpath(kpath = [[0,0,0],[0,0.5,.5]],num_k=5)
     kps = generate_kgrid(grid=[5, 5, 5])
-    
-    # for i,j in zip(x,y):
-    #   print (i,j)
-    # print (len(x))
+    new_file, filename = tempfile.mkstemp()
+    kp.write_file(filename)   
+    sym = kp.high_symm_path(s1)._path 
+    sym = kp.high_symm_path(s2)._path 
+    sym = kp.high_symm_path(s3)._path 
+    sym = kp.high_symm_path(s4)._path 
+    sym = kp.high_symm_path(s5)._path 
+    sym = kp.high_symm_path(s6)._path 
+    sym = kp.high_symm_path(s7)._path 
     assert (len(x), x[0][0], y[0], kpath[0][0],kps[0][0]) == (166, 0, "\Gamma", 0.0, 0.0)
 
 def test_highsym():
