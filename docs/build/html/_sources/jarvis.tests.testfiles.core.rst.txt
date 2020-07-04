@@ -8,55 +8,55 @@ jarvis.tests.testfiles.core.test\_atoms module
 ----------------------------------------------
 
 .. automodule:: jarvis.tests.testfiles.core.test_atoms
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 jarvis.tests.testfiles.core.test\_composition module
 ----------------------------------------------------
 
 .. automodule:: jarvis.tests.testfiles.core.test_composition
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 jarvis.tests.testfiles.core.test\_kpoints module
 ------------------------------------------------
 
 .. automodule:: jarvis.tests.testfiles.core.test_kpoints
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 jarvis.tests.testfiles.core.test\_latice module
 -----------------------------------------------
 
 .. automodule:: jarvis.tests.testfiles.core.test_latice
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 jarvis.tests.testfiles.core.test\_pdb module
 --------------------------------------------
 
 .. automodule:: jarvis.tests.testfiles.core.test_pdb
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 jarvis.tests.testfiles.core.test\_specie module
 -----------------------------------------------
 
 .. automodule:: jarvis.tests.testfiles.core.test_specie
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Module contents
 ---------------
 
 .. automodule:: jarvis.tests.testfiles.core
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:

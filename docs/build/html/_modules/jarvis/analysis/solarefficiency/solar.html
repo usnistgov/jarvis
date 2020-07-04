@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.analysis.solarefficiency.solar &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.analysis.solarefficiency.solar &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -38,50 +40,44 @@
             
   <h1>Source code for jarvis.analysis.solarefficiency.solar</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Modules for calculating theoretical solar-cell efficiency</span>
-<span class="sd">See: https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166</span>
+<span class="sd">Modules for calculating theoretical solar-cell efficiency.</span>
+
+<span class="sd">Please find more detailsin:</span>
+<span class="sd"> https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">jarvis.io.vasp.outputs</span> <span class="kn">import</span> <span class="n">Vasprun</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">interp</span>
 <span class="kn">import</span> <span class="nn">scipy.constants</span> <span class="k">as</span> <span class="nn">constants</span>
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">simps</span>
-<span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">physical_constants</span><span class="p">,</span> <span class="n">speed_of_light</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 
-
-
 <div class="viewcode-block" id="SolarEfficiency"><a class="viewcode-back" href="../../../../jarvis.analysis.solarefficiency.html#jarvis.analysis.solarefficiency.solar.SolarEfficiency">[docs]</a><span class="k">class</span> <span class="nc">SolarEfficiency</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate theoretical solar-efficiency using SLME or SQ approach.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formalism</span><span class="o">=</span><span class="s2">&quot;slme&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates theoretical solar cell efficiency using SLME or SQ approach</span>
-<span class="sd">        See https://pubs.acs.org/doi/10.1021/acs.chemmater.9b02166</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Use SLME or SQ formalisms.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">formalism</span> <span class="o">=</span> <span class="n">formalism</span>
 
 <div class="viewcode-block" id="SolarEfficiency.calculate_SQ"><a class="viewcode-back" href="../../../../jarvis.analysis.solarefficiency.html#jarvis.analysis.solarefficiency.solar.SolarEfficiency.calculate_SQ">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_SQ</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">bandgap_ev</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">fr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">plot_current_voltage</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">        </span>
-<span class="sd">              bandgap_ev: bandga in electron-volt</span>
-<span class="sd">              </span>
-<span class="sd">              temperature: temperature in K</span>
-<span class="sd">     </span>
-<span class="sd">                 </span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        Calcualte efficeincy using shockley queisser formalism.</span>
 
+<span class="sd">        Requires only two inputs unlike SLME.</span>
+<span class="sd">        Args:</span>
+<span class="sd">              bandgap_ev: bandga in electron-volt</span>
+
+<span class="sd">              temperature: temperature in K</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Defining constants for tidy equations</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span>  <span class="c1"># speed of light, m/s</span>
         <span class="n">h</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">h</span>  <span class="c1"># Planck&#39;s constant J*s (W)</span>
         <span class="n">h_e</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">h</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">e</span>  <span class="c1"># Planck&#39;s constant eV*s</span>
         <span class="n">k</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span>  <span class="c1"># Boltzmann&#39;s constant J/K</span>
-        <span class="n">k_e</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">k</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">e</span>  <span class="c1"># Boltzmann&#39;s constant eV/K</span>
         <span class="n">e</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">e</span>  <span class="c1"># Coulomb</span>
 
         <span class="c1"># Load the Air Mass 1.5 Global tilt solar spectrum</span>
@@ -102,7 +98,7 @@
             <span class="n">solar_spectra_wavelength_meters</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="c1">### Calculation of total solar power incoming</span>
+        <span class="c1"># Calculation of total solar power incoming</span>
         <span class="n">power_in</span> <span class="o">=</span> <span class="n">simps</span><span class="p">(</span><span class="n">solar_spectra_irradiance</span><span class="p">,</span> <span class="n">solar_spectra_wavelength</span><span class="p">)</span>
 
         <span class="c1"># calculation of blackbody irradiance spectra</span>
@@ -112,15 +108,15 @@
             <span class="mf">2.0</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">c</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">solar_spectra_wavelength_meters</span> <span class="o">**</span> <span class="mi">5</span><span class="p">)</span>
         <span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
             <span class="mf">1.0</span>
-            <span class="o">/</span> <span class="p">(</span>
-                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="p">(</span><span class="n">solar_spectra_wavelength_meters</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">temperature</span><span class="p">)))</span>
-                <span class="o">-</span> <span class="mf">1.0</span>
-            <span class="p">)</span>
+            <span class="o">/</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="n">h</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="p">(</span><span class="n">solar_spectra_wavelength_meters</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">temperature</span><span class="p">)))</span>
+               <span class="o">-</span> <span class="mf">1.0</span>
+               <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># I&#39;ve removed a pi in the equation above - Marnik Bercx</span>
 
-        <span class="c1"># now to convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)</span>
+        <span class="c1"># Convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)</span>
         <span class="n">blackbody_photon_flux</span> <span class="o">=</span> <span class="n">blackbody_irradiance</span> <span class="o">*</span> <span class="p">(</span>
             <span class="n">solar_spectra_wavelength_meters</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span>
         <span class="p">)</span>
@@ -144,7 +140,8 @@
 
         <span class="n">bandgap_blackbody</span> <span class="o">=</span> <span class="p">(</span>
             <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">c</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">bandgap_wavelength</span> <span class="o">**</span> <span class="mi">5</span><span class="p">))</span>
-            <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="p">(</span><span class="n">bandgap_wavelength</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">temperature</span><span class="p">)))</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+               <span class="n">h</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="p">(</span><span class="n">bandgap_wavelength</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">temperature</span><span class="p">)))</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))</span>
             <span class="o">*</span> <span class="p">(</span><span class="n">bandgap_wavelength</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">c</span><span class="p">))</span>
         <span class="p">)</span>
 
@@ -157,17 +154,20 @@
         <span class="p">)</span>
 
         <span class="n">integration_solar_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">solar_spectra_photon_flux</span><span class="p">[:</span><span class="n">bandgap_index</span><span class="p">],</span> <span class="n">bandgap_irradiance</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">(</span><span class="n">solar_spectra_photon_flux</span><span class="p">[:</span><span class="n">bandgap_index</span><span class="p">],</span>
+             <span class="n">bandgap_irradiance</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
         <span class="p">)</span>
 
         <span class="n">integration_blackbody</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">blackbody_photon_flux</span><span class="p">[:</span><span class="n">bandgap_index</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">bandgap_blackbody</span><span class="p">])),</span>
+            <span class="p">(</span><span class="n">blackbody_photon_flux</span><span class="p">[:</span><span class="n">bandgap_index</span><span class="p">],</span>
+             <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">bandgap_blackbody</span><span class="p">])),</span>
             <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1">#  Numerically integrating irradiance over wavelength array</span>
         <span class="c1"># Note: elementary charge, not math e!  ## units of A/m**2   W/(V*m**2)</span>
-        <span class="n">J_0_r</span> <span class="o">=</span> <span class="n">e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">simps</span><span class="p">(</span><span class="n">integration_blackbody</span><span class="p">,</span> <span class="n">integration_wavelength</span><span class="p">)</span>
+        <span class="n">J_0_r</span> <span class="o">=</span> <span class="n">e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">simps</span><span class="p">(</span><span class="n">integration_blackbody</span><span class="p">,</span>
+                                  <span class="n">integration_wavelength</span><span class="p">)</span>
 
         <span class="n">J_0</span> <span class="o">=</span> <span class="n">J_0_r</span> <span class="o">/</span> <span class="n">fr</span>
 
@@ -225,43 +225,34 @@
         <span class="n">plot_current_voltage</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            Calculate the</span>
-<span class="sd">            IMPORTANT NOTES:</span>
-<span class="sd">            1) Material calculated absorbance is assumed to be in m^-1, not cm^-1!</span>
-<span class="sd">                (Most sources will provide absorbance in cm^-1, so be careful.)</span>
-<span class="sd">            2) The default is to remove absorbance below the direct allowed gap.</span>
-<span class="sd">                This is for dealing with broadening applied in DFT absorbance</span>
-<span class="sd">                calculations. Probably not desired for experimental data.</span>
-<span class="sd">            3) We can calculate at different temperatures if we want to, but 25 C /</span>
-<span class="sd">                293.15 K is the standard temperature assumed if not specified</span>
-<span class="sd">            4) If absorbance is in cm^-1, multiply values by 100 to match units</span>
-<span class="sd">                assumed in code</span>
-<span class="sd">                </span>
-<span class="sd">            Args:</span>
-<span class="sd">                material_energy_for_absorbance_data:</span>
-<span class="sd">                </span>
-<span class="sd">                material_absorbance_data:</span>
-<span class="sd">                </span>
-<span class="sd">                material_direct_allowed_gap:</span>
-<span class="sd">                </span>
-<span class="sd">                material_indirect_gap:</span>
-<span class="sd">                </span>
-<span class="sd">                thickness:</span>
-<span class="sd">                </span>
-<span class="sd">                temperature:</span>
-<span class="sd">                </span>
-<span class="sd">                absorbance_in_inverse_centimeters:</span>
-<span class="sd">                </span>
-<span class="sd">                cut_off_absorbance_below_direct_allowed_gap:</span>
-<span class="sd">                </span>
-<span class="sd">                plot_current_voltage:</span>
-<span class="sd">                </span>
-<span class="sd">            Returns:</span>
-<span class="sd">            </span>
-<span class="sd">                The calculated maximum efficiency.</span>
-<span class="sd">                </span>
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">        Calculate spectroscopic limited maximum efficiency.</span>
 
+<span class="sd">        Reuires more info than SQ.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            material_energy_for_absorbance_data:</span>
+<span class="sd">            energy grid for absorbance data</span>
+
+<span class="sd">            material_absorbance_data: absorption coefficient in m^-1</span>
+
+<span class="sd">            material_direct_allowed_gap: direct bandgap in eV</span>
+
+<span class="sd">            material_indirect_gap: indirect bandgap in eV</span>
+
+<span class="sd">            thickness: thickness of the material in m</span>
+
+<span class="sd">            temperature: working temperature in K</span>
+
+<span class="sd">            absorbance_in_inverse_centimeters:</span>
+<span class="sd">            whether the absorbance data is in the unit of cm^-1</span>
+
+<span class="sd">            cut_off_absorbance_below_direct_allowed_gap:</span>
+<span class="sd">            whether to discard all absorption below bandgap</span>
+
+<span class="sd">            plot_current_voltage: whether to plot the current-voltage curve</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The calculated maximum efficiency.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Defining constants for tidy equations</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span>  <span class="c1"># speed of light, m/s</span>
         <span class="n">h</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">h</span>  <span class="c1"># Planck&#39;s constant J*s (W)</span>
@@ -307,14 +298,15 @@
         <span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
             <span class="mf">1.0</span>
             <span class="o">/</span> <span class="p">(</span>
-                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="p">(</span><span class="n">solar_spectra_wavelength_meters</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">temperature</span><span class="p">)))</span>
+                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                 <span class="n">h</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="p">(</span><span class="n">solar_spectra_wavelength_meters</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">temperature</span><span class="p">)))</span>
                 <span class="o">-</span> <span class="mf">1.0</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
         <span class="c1"># I&#39;ve removed a pi in the equation above - Marnik Bercx</span>
 
-        <span class="c1"># now to convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)</span>
+        <span class="c1"># Convert the irradiance from Power/m**2(m) into photon#/s*m**2(m)</span>
         <span class="n">blackbody_photon_flux</span> <span class="o">=</span> <span class="n">blackbody_irradiance</span> <span class="o">*</span> <span class="p">(</span>
             <span class="n">solar_spectra_wavelength_meters</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span>
         <span class="p">)</span>
@@ -328,11 +320,12 @@
 
         <span class="c1"># creates cubic spline interpolating function, set up to use end values</span>
         <span class="c1">#  as the guesses if leaving the region where data exists</span>
-        <span class="n">material_absorbance_data_function</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
+        <span class="n">material_absorbance</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
             <span class="n">material_wavelength_for_absorbance_data</span><span class="p">,</span>
             <span class="n">material_absorbance_data</span><span class="p">,</span>
             <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span>
-            <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="n">material_absorbance_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">material_absorbance_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="n">material_absorbance_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">material_absorbance_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
             <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -340,15 +333,15 @@
             <span class="nb">len</span><span class="p">(</span><span class="n">solar_spectra_wavelength_meters</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">solar_spectra_wavelength_meters</span><span class="p">)):</span>
-            <span class="c1">## Cutting off absorption data below the gap. This is done to deal</span>
+            <span class="c1"># Cutting off absorption data below the gap. This is done to deal</span>
             <span class="c1"># with VASPs broadening of the calculated absorption data</span>
 
             <span class="k">if</span> <span class="p">(</span>
                 <span class="n">solar_spectra_wavelength</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                 <span class="o">&lt;</span> <span class="mf">1e9</span> <span class="o">*</span> <span class="p">((</span><span class="n">c</span> <span class="o">*</span> <span class="n">h_e</span><span class="p">)</span> <span class="o">/</span> <span class="n">material_direct_allowed_gap</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="n">cut_off_absorbance_below_direct_allowed_gap</span> <span class="o">==</span> <span class="kc">False</span>
+                <span class="ow">or</span> <span class="ow">not</span> <span class="n">cut_off_absorbance_below_direct_allowed_gap</span>
             <span class="p">):</span>
-                <span class="n">material_interpolated_absorbance</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">material_absorbance_data_function</span><span class="p">(</span>
+                <span class="n">material_interpolated_absorbance</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">material_absorbance</span><span class="p">(</span>
                     <span class="n">solar_spectra_wavelength</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                 <span class="p">)</span>
 
@@ -372,7 +365,8 @@
         <span class="c1">#  Numerically integrating irradiance over wavelength array</span>
         <span class="c1"># elementary charge, not math e!  ### units of A/m**2   W/(V*m**2)</span>
         <span class="n">J_sc</span> <span class="o">=</span> <span class="n">e</span> <span class="o">*</span> <span class="n">simps</span><span class="p">(</span>
-            <span class="n">solar_spectra_photon_flux</span> <span class="o">*</span> <span class="n">absorbed_by_wavelength</span><span class="p">,</span> <span class="n">solar_spectra_wavelength</span>
+            <span class="n">solar_spectra_photon_flux</span> <span class="o">*</span> <span class="n">absorbed_by_wavelength</span><span class="p">,</span>
+            <span class="n">solar_spectra_wavelength</span>
         <span class="p">)</span>
 
         <span class="c1">#    J[i] = J_sc - J_0*(1 - exp( e*V[i]/(k*T) ) )</span>
@@ -413,9 +407,10 @@
 
         <span class="k">return</span> <span class="n">efficiency</span></div></div>
 
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">if __name__ == &quot;__main__&quot;:</span>
-
+<span class="sd">    from jarvis.io.vasp.outputs import Vasprun</span>
 <span class="sd">    v = Vasprun(</span>
 <span class="sd">        &quot;/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-MBJ-bulk@mp-149/vasprun.xml&quot;</span>
 <span class="sd">    )</span>
@@ -438,15 +433,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -460,13 +457,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

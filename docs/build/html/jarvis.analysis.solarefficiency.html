@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.analysis.solarefficiency package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.analysis.solarefficiency package &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -42,65 +44,52 @@
 </div>
 <div class="section" id="module-jarvis.analysis.solarefficiency.solar">
 <span id="jarvis-analysis-solarefficiency-solar-module"></span><h2>jarvis.analysis.solarefficiency.solar module<a class="headerlink" href="#module-jarvis.analysis.solarefficiency.solar" title="Permalink to this headline">¶</a></h2>
-<p>Modules for calculating theoretical solar-cell efficiency
-See: <a class="reference external" href="https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166">https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166</a></p>
-<dl class="py class">
+<p>Modules for calculating theoretical solar-cell efficiency.</p>
+<dl class="docutils">
+<dt>Please find more detailsin:</dt>
+<dd><a class="reference external" href="https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166">https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166</a></dd>
+</dl>
+<dl class="class">
 <dt id="jarvis.analysis.solarefficiency.solar.SolarEfficiency">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.analysis.solarefficiency.solar.</code><code class="sig-name descname">SolarEfficiency</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">formalism</span><span class="o">=</span><span class="default_value">'slme'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/solarefficiency/solar.html#SolarEfficiency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.solarefficiency.solar.SolarEfficiency" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.analysis.solarefficiency.solar.</code><code class="descname">SolarEfficiency</code><span class="sig-paren">(</span><em>formalism='slme'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/solarefficiency/solar.html#SolarEfficiency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.solarefficiency.solar.SolarEfficiency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Calculate theoretical solar-efficiency using SLME or SQ approach.</p>
+<dl class="method">
 <dt id="jarvis.analysis.solarefficiency.solar.SolarEfficiency.calculate_SQ">
-<code class="sig-name descname">calculate_SQ</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bandgap_ev</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">fr</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">plot_current_voltage</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/solarefficiency/solar.html#SolarEfficiency.calculate_SQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.solarefficiency.solar.SolarEfficiency.calculate_SQ" title="Permalink to this definition">¶</a></dt>
-<dd><p>Args:</p>
+<code class="descname">calculate_SQ</code><span class="sig-paren">(</span><em>bandgap_ev</em>, <em>temperature=300</em>, <em>fr=1</em>, <em>plot_current_voltage=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/solarefficiency/solar.html#SolarEfficiency.calculate_SQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.solarefficiency.solar.SolarEfficiency.calculate_SQ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calcualte efficeincy using shockley queisser formalism.</p>
+<p>Requires only two inputs unlike SLME.
+Args:</p>
 <blockquote>
 <div><p>bandgap_ev: bandga in electron-volt</p>
 <p>temperature: temperature in K</p>
 </div></blockquote>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.analysis.solarefficiency.solar.SolarEfficiency.slme">
-<code class="sig-name descname">slme</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">material_energy_for_absorbance_data</span></em>, <em class="sig-param"><span class="n">material_absorbance_data</span></em>, <em class="sig-param"><span class="n">material_direct_allowed_gap</span></em>, <em class="sig-param"><span class="n">material_indirect_gap</span></em>, <em class="sig-param"><span class="n">thickness</span><span class="o">=</span><span class="default_value">5e-05</span></em>, <em class="sig-param"><span class="n">temperature</span><span class="o">=</span><span class="default_value">293.15</span></em>, <em class="sig-param"><span class="n">absorbance_in_inverse_centimeters</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cut_off_absorbance_below_direct_allowed_gap</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">plot_current_voltage</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/solarefficiency/solar.html#SolarEfficiency.slme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.solarefficiency.solar.SolarEfficiency.slme" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the
-IMPORTANT NOTES:
-1) Material calculated absorbance is assumed to be in m^-1, not cm^-1!</p>
+<code class="descname">slme</code><span class="sig-paren">(</span><em>material_energy_for_absorbance_data</em>, <em>material_absorbance_data</em>, <em>material_direct_allowed_gap</em>, <em>material_indirect_gap</em>, <em>thickness=5e-05</em>, <em>temperature=293.15</em>, <em>absorbance_in_inverse_centimeters=False</em>, <em>cut_off_absorbance_below_direct_allowed_gap=True</em>, <em>plot_current_voltage=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/solarefficiency/solar.html#SolarEfficiency.slme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.solarefficiency.solar.SolarEfficiency.slme" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate spectroscopic limited maximum efficiency.</p>
+<p>Reuires more info than SQ.
+Args:</p>
 <blockquote>
-<div><p>(Most sources will provide absorbance in cm^-1, so be careful.)</p>
+<div><p>material_energy_for_absorbance_data:
+energy grid for absorbance data</p>
+<p>material_absorbance_data: absorption coefficient in m^-1</p>
+<p>material_direct_allowed_gap: direct bandgap in eV</p>
+<p>material_indirect_gap: indirect bandgap in eV</p>
+<p>thickness: thickness of the material in m</p>
+<p>temperature: working temperature in K</p>
+<p>absorbance_in_inverse_centimeters:
+whether the absorbance data is in the unit of cm^-1</p>
+<p>cut_off_absorbance_below_direct_allowed_gap:
+whether to discard all absorption below bandgap</p>
+<p>plot_current_voltage: whether to plot the current-voltage curve</p>
 </div></blockquote>
-<ol class="arabic simple" start="2">
-<li><dl class="simple">
-<dt>The default is to remove absorbance below the direct allowed gap.</dt><dd><p>This is for dealing with broadening applied in DFT absorbance
-calculations. Probably not desired for experimental data.</p>
-</dd>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>The calculated maximum efficiency.</dd>
 </dl>
-</li>
-<li><dl class="simple">
-<dt>We can calculate at different temperatures if we want to, but 25 C /</dt><dd><p>293.15 K is the standard temperature assumed if not specified</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>If absorbance is in cm^-1, multiply values by 100 to match units</dt><dd><p>assumed in code</p>
-</dd>
-</dl>
-</li>
-</ol>
-<dl>
-<dt>Args:</dt><dd><p>material_energy_for_absorbance_data:</p>
-<p>material_absorbance_data:</p>
-<p>material_direct_allowed_gap:</p>
-<p>material_indirect_gap:</p>
-<p>thickness:</p>
-<p>temperature:</p>
-<p>absorbance_in_inverse_centimeters:</p>
-<p>cut_off_absorbance_below_direct_allowed_gap:</p>
-<p>plot_current_voltage:</p>
-</dd>
-</dl>
-<p>Returns:</p>
-<blockquote>
-<div><p>The calculated maximum efficiency.</p>
-</div></blockquote>
 </dd></dl>
 
 </dd></dl>
@@ -108,6 +97,7 @@ calculations. Probably not desired for experimental data.</p>
 </div>
 <div class="section" id="module-jarvis.analysis.solarefficiency">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.analysis.solarefficiency" title="Permalink to this headline">¶</a></h2>
+<p>Modules for predicting theoretical solar-efficiency.</p>
 </div>
 </div>
 
@@ -135,15 +125,17 @@ calculations. Probably not desired for experimental data.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -157,12 +149,12 @@ calculations. Probably not desired for experimental data.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

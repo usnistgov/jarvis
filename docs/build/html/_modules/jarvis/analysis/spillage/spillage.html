@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.analysis.spillage.spillage &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.analysis.spillage.spillage &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -39,41 +41,47 @@
   <h1>Source code for jarvis.analysis.spillage.spillage</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Code to calculate spin-orbit spillage.</span>
-<span class="sd">Please cite the following paper if you use the code:</span>
+
+<span class="sd">Please find details in:</span>
 <span class="sd">https://www.nature.com/articles/s41598-019-45028-y</span>
 <span class="sd">https://www.nature.com/articles/s41524-020-0319-4</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">jarvis.io.vasp.outputs</span> <span class="kn">import</span> <span class="n">Wavecar</span>  <span class="c1"># vaspwfc</span>
-<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
 
 
 <div class="viewcode-block" id="Spillage"><a class="viewcode-back" href="../../../../jarvis.analysis.spillage.html#jarvis.analysis.spillage.spillage.Spillage">[docs]</a><span class="k">class</span> <span class="nc">Spillage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Spin-orbit spillage criteria.</span>
+
+<span class="sd">    Predict whether a material is topologically non-trival.</span>
+<span class="sd">    The spillage criteria physically signifies</span>
+<span class="sd">    number of band-inverted electrons.</span>
+<span class="sd">    A non-zero, high value (generally &gt;0.5) suggests non-trivial behavior</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wf_noso</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">wf_so</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Requires path to WAVECAR files with and without LSORBIT = .TRUE.</span>
-<span class="sd">        </span>
+<span class="sd">        Require path to WAVECAR files with and without LSORBIT = .TRUE.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">        </span>
 <span class="sd">            wf_noso : WAVECAR without spin-orbit coupling</span>
-<span class="sd">            </span>
+
 <span class="sd">            wf_so : WAVECAR with spin-orbit coupling</span>
-<span class="sd">              </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        
         <span class="bp">self</span><span class="o">.</span><span class="n">wf_noso</span> <span class="o">=</span> <span class="n">wf_noso</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wf_so</span> <span class="o">=</span> <span class="n">wf_so</span>
 
 <div class="viewcode-block" id="Spillage.isclose"><a class="viewcode-back" href="../../../../jarvis.analysis.spillage.html#jarvis.analysis.spillage.spillage.Spillage.isclose">[docs]</a>    <span class="k">def</span> <span class="nf">isclose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">rel_tol</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">):</span>
-
+        <span class="sd">&quot;&quot;&quot;Check if n1 and n2 are close.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n1</span> <span class="o">-</span> <span class="n">n2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">rel_tol</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="Spillage.orth"><a class="viewcode-back" href="../../../../jarvis.analysis.spillage.html#jarvis.analysis.spillage.spillage.Spillage.orth">[docs]</a>    <span class="k">def</span> <span class="nf">orth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Orthogonalize a vector.&quot;&quot;&quot;</span>
         <span class="n">u</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">vh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">M</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">eps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
@@ -83,6 +91,7 @@
         <span class="k">return</span> <span class="n">Q</span><span class="p">,</span> <span class="n">num</span></div>
 
 <div class="viewcode-block" id="Spillage.overlap_so_spinpol"><a class="viewcode-back" href="../../../../jarvis.analysis.spillage.html#jarvis.analysis.spillage.spillage.Spillage.overlap_so_spinpol">[docs]</a>    <span class="k">def</span> <span class="nf">overlap_so_spinpol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate spillage.&quot;&quot;&quot;</span>
         <span class="n">noso</span> <span class="o">=</span> <span class="n">Wavecar</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wf_noso</span><span class="p">,</span> <span class="n">lsorbit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">so</span> <span class="o">=</span> <span class="n">Wavecar</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wf_so</span><span class="p">,</span> <span class="n">lsorbit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># band gap stuff. not needed per se, just a useful sanity check</span>
@@ -119,17 +128,18 @@
 
         <span class="n">nelec</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_tot</span><span class="p">)</span>
 
-        <span class="n">noso_homo_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">noso_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="n">n_up</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="n">noso_lumo_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">noso_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="n">n_up</span><span class="p">])</span>
-
-        <span class="n">noso_homo_dn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">noso_bands</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="n">n_dn</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="n">noso_lumo_dn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">noso_bands</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="n">n_dn</span><span class="p">])</span>
+        <span class="c1"># noso_homo_up = np.max(noso_bands[0, :, n_up - 1])</span>
+        <span class="c1"># noso_lumo_up = np.min(noso_bands[0, :, n_up])</span>
+        <span class="c1"># noso_homo_dn = np.max(noso_bands[1, :, n_dn - 1])</span>
+        <span class="c1"># noso_lumo_dn = np.min(noso_bands[1, :, n_dn])</span>
 
         <span class="n">so_homo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">so_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="n">nelec</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
         <span class="n">so_lumo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">so_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="n">nelec</span><span class="p">])</span>
 
-        <span class="n">noso_direct_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">noso_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="n">n_up</span><span class="p">]</span> <span class="o">-</span> <span class="n">noso_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="n">n_up</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
-        <span class="n">noso_direct_dn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">noso_bands</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="n">n_dn</span><span class="p">]</span> <span class="o">-</span> <span class="n">noso_bands</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="n">n_dn</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># noso_direct_up = np.min(noso_bands[0, :, n_up] -</span>
+        <span class="c1"># noso_bands[0, :, n_up - 1])</span>
+        <span class="c1"># noso_direct_dn = np.min(noso_bands[1, :, n_dn] -</span>
+        <span class="c1"># noso_bands[1, :, n_dn - 1])</span>
 
         <span class="n">so_direct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">so_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="n">nelec</span><span class="p">]</span> <span class="o">-</span> <span class="n">so_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="n">nelec</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
 
@@ -137,7 +147,8 @@
         <span class="n">noso_homo</span> <span class="o">=</span> <span class="o">-</span><span class="mf">10000000.0</span>
         <span class="n">noso_lumo</span> <span class="o">=</span> <span class="mf">100000000.0</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">noso_bands</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
-            <span class="n">homo_k</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">noso_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">n_up</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">noso_bands</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">n_dn</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">homo_k</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">noso_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">n_up</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                         <span class="n">noso_bands</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">n_dn</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
             <span class="n">lumo_k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">noso_bands</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">n_up</span><span class="p">],</span> <span class="n">noso_bands</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">n_dn</span><span class="p">])</span>
             <span class="n">noso_direct</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">noso_direct</span><span class="p">,</span> <span class="n">lumo_k</span> <span class="o">-</span> <span class="n">homo_k</span><span class="p">)</span>
 
@@ -170,11 +181,14 @@
                     <span class="n">gamma_k</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nelec_tot</span><span class="p">)</span>
                     <span class="n">kpoints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kso</span><span class="p">)</span>
                     <span class="n">Mmn</span> <span class="o">=</span> <span class="mf">0.0</span>
-                    <span class="n">vnoso</span> <span class="o">=</span> <span class="n">noso</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span><span class="n">ispin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ikpt</span><span class="o">=</span><span class="n">nk1</span><span class="p">,</span> <span class="n">iband</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">vnoso</span> <span class="o">=</span> <span class="n">noso</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span><span class="n">ispin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ikpt</span><span class="o">=</span><span class="n">nk1</span><span class="p">,</span>
+                                               <span class="n">iband</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                     <span class="n">n_noso1</span> <span class="o">=</span> <span class="n">vnoso</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">vnoso</span> <span class="o">=</span> <span class="n">noso</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span><span class="n">ispin</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ikpt</span><span class="o">=</span><span class="n">nk1</span><span class="p">,</span> <span class="n">iband</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                    <span class="n">n_noso2</span> <span class="o">=</span> <span class="n">vnoso</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">vso</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span><span class="n">ispin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ikpt</span><span class="o">=</span><span class="n">nk2</span><span class="p">,</span> <span class="n">iband</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">vnoso</span> <span class="o">=</span> <span class="n">noso</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span><span class="n">ispin</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ikpt</span><span class="o">=</span><span class="n">nk1</span><span class="p">,</span>
+                                               <span class="n">iband</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="c1"># n_noso2 = vnoso.shape[0]</span>
+                    <span class="n">vso</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span><span class="n">ispin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ikpt</span><span class="o">=</span><span class="n">nk2</span><span class="p">,</span>
+                                           <span class="n">iband</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                     <span class="n">n_so</span> <span class="o">=</span> <span class="n">vso</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">vs</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_noso1</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_so</span><span class="p">)</span>
                     <span class="n">Vnoso</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">vs</span><span class="p">,</span> <span class="n">nelec_tot</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
@@ -182,19 +196,23 @@
 
                     <span class="c1"># prepare matricies</span>
                     <span class="k">for</span> <span class="n">n1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nelec_up</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                        <span class="n">Vnoso</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">noso</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span>
+                        <span class="n">Vnoso</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">noso</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span>
                             <span class="n">ispin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ikpt</span><span class="o">=</span><span class="n">nk1</span><span class="p">,</span> <span class="n">iband</span><span class="o">=</span><span class="n">n1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span>
-                        <span class="p">)[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+                        <span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
                     <span class="k">for</span> <span class="n">n1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nelec_dn</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                        <span class="n">Vnoso</span><span class="p">[</span><span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span> <span class="p">:</span> <span class="n">vs</span><span class="p">,</span> <span class="n">n1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">nelec_up</span><span class="p">]</span> <span class="o">=</span> <span class="n">noso</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span>
-                            <span class="n">ispin</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ikpt</span><span class="o">=</span><span class="n">nk1</span><span class="p">,</span> <span class="n">iband</span><span class="o">=</span><span class="n">n1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span>
-                        <span class="p">)[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+                        <span class="n">Vnoso</span><span class="p">[</span><span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:</span><span class="n">vs</span><span class="p">,</span>
+                              <span class="n">n1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">nelec_up</span><span class="p">]</span> <span class="o">=</span> <span class="n">noso</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span>
+                                  <span class="n">ispin</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ikpt</span><span class="o">=</span><span class="n">nk1</span><span class="p">,</span> <span class="n">iband</span><span class="o">=</span><span class="n">n1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span>
+                        <span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
 
                     <span class="k">for</span> <span class="n">n1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nelec_tot</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-                        <span class="n">t</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span><span class="n">ispin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ikpt</span><span class="o">=</span><span class="n">nk2</span><span class="p">,</span> <span class="n">iband</span><span class="o">=</span><span class="n">n1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                        <span class="n">Vso</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span> <span class="p">:</span> <span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
-                        <span class="n">Vso</span><span class="p">[</span><span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span> <span class="p">:</span> <span class="n">vs</span><span class="p">,</span> <span class="n">n1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">n_so</span> <span class="o">//</span> <span class="mi">2</span> <span class="p">:</span> <span class="n">n_so</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
-                    <span class="n">Qnoso</span><span class="p">,</span> <span class="n">num_noso</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orth</span><span class="p">(</span><span class="n">Vnoso</span><span class="p">)</span>  <span class="c1"># make orthonormal basis?</span>
+                        <span class="n">t</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">readBandCoeff</span><span class="p">(</span><span class="n">ispin</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ikpt</span><span class="o">=</span><span class="n">nk2</span><span class="p">,</span>
+                                             <span class="n">iband</span><span class="o">=</span><span class="n">n1</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="n">Vso</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+                        <span class="n">Vso</span><span class="p">[</span><span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:</span><span class="n">vs</span><span class="p">,</span> <span class="n">n1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">n_so</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:</span>
+                                                    <span class="n">n_so</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">vs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+                    <span class="c1"># make orthonormal basis?</span>
+                    <span class="n">Qnoso</span><span class="p">,</span> <span class="n">num_noso</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orth</span><span class="p">(</span><span class="n">Vnoso</span><span class="p">)</span>
 
                     <span class="n">Qso</span><span class="p">,</span> <span class="n">num_so</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orth</span><span class="p">(</span><span class="n">Vso</span><span class="p">)</span>
 
@@ -263,12 +281,12 @@
         <span class="n">info</span><span class="p">[</span><span class="s2">&quot;noso_homo&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">noso_homo</span>
         <span class="k">return</span> <span class="n">info</span></div></div>
 
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">if __name__ == &quot;__main__&quot;:</span>
 <span class="sd">    # JVASP-1044</span>
-
-<span class="sd">    wf_noso = &quot;/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-MAGSCFBAND-bulk@JVASP-1067_mp-541837/WAVECAR&quot;  # sys.argv[1]</span>
-<span class="sd">    wf_so = &quot;/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/WAVECAR&quot;  # sys.argv[2]</span>
+<span class="sd">    wf_noso = &quot;../../tests/testfiles/analysis/spillage/WAVECAR.nosoc&quot;</span>
+<span class="sd">    wf_so = &quot;../../tests/testfiles/analysis/spillage/WAVECAR.soc&quot;</span>
 <span class="sd">    spl = Spillage(wf_noso=wf_noso, wf_so=wf_so)</span>
 <span class="sd">    info = spl.overlap_so_spinpol()</span>
 <span class="sd">    print(info[&quot;spillage&quot;])</span>
@@ -281,15 +299,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -303,13 +323,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

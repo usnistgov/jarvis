@@ -5,15 +5,14 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
 
-   jarvis.ai.descriptors
-   jarvis.ai.pkgs
+    jarvis.ai.descriptors
+    jarvis.ai.pkgs
 
 Module contents
 ---------------
 
 .. automodule:: jarvis.ai
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:

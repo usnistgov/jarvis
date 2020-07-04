@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.io.lammps package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.io.lammps package &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -42,53 +44,66 @@
 </div>
 <div class="section" id="module-jarvis.io.lammps.inputs">
 <span id="jarvis-io-lammps-inputs-module"></span><h2>jarvis.io.lammps.inputs module<a class="headerlink" href="#module-jarvis.io.lammps.inputs" title="Permalink to this headline">¶</a></h2>
-<p>Module for LAMMPS input files</p>
-<dl class="py class">
+<p>Module for writing LAMMPS input files.</p>
+<dl class="class">
 <dt id="jarvis.io.lammps.inputs.LammpsData">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.lammps.inputs.</code><code class="sig-name descname">LammpsData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lammps_box</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">species</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">charges</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">cart_coords</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">element_order</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.lammps.inputs.</code><code class="descname">LammpsData</code><span class="sig-paren">(</span><em>lammps_box=[]</em>, <em>species=[]</em>, <em>charges=[]</em>, <em>cart_coords=[]</em>, <em>element_order=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Construct Lammps data file.</p>
+<dl class="method">
 <dt id="jarvis.io.lammps.inputs.LammpsData.atoms_to_lammps">
-<code class="sig-name descname">atoms_to_lammps</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em>, <em class="sig-param"><span class="n">origin</span><span class="o">=</span><span class="default_value">0, 0, 0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.atoms_to_lammps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.atoms_to_lammps" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">atoms_to_lammps</code><span class="sig-paren">(</span><em>atoms</em>, <em>origin=(0</em>, <em>0</em>, <em>0)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.atoms_to_lammps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.atoms_to_lammps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert Atoms object to Lammps data.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.lammps.inputs.LammpsData.lammps_to_atoms">
-<code class="sig-name descname">lammps_to_atoms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.lammps_to_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.lammps_to_atoms" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">lammps_to_atoms</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.lammps_to_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.lammps_to_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert Lammps data to Atoms object.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.lammps.inputs.LammpsData.read_data">
-<code class="sig-name descname">read_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'lammps.data'</span></em>, <em class="sig-param"><span class="n">element_order</span><span class="o">=</span><span class="default_value">['O', 'Al']</span></em>, <em class="sig-param"><span class="n">potential_file</span><span class="o">=</span><span class="default_value">'pot.mod'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.read_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.read_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">read_data</code><span class="sig-paren">(</span><em>filename='lammps.data', element_order=['O', 'Al'], potential_file='pot.mod'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.read_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.read_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read Lammps data file.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.lammps.inputs.LammpsData.to_dict">
-<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.to_dict" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the infor to a dictionary.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.io.lammps.inputs.LammpsData.write_file">
-<code class="sig-name descname">write_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'lammps.data'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.write_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">write_file</code><span class="sig-paren">(</span><em>filename='lammps.data'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsData.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsData.write_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write Lammps data input file.</p>
+</dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.io.lammps.inputs.LammpsInput">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.io.lammps.inputs.</code><code class="sig-name descname">LammpsInput</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">LammpsDataObj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pbc</span><span class="o">=</span><span class="default_value">['p', 'p', 'p']</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsInput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsInput" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.lammps.inputs.</code><code class="descname">LammpsInput</code><span class="sig-paren">(</span><em>LammpsDataObj=None, pbc=['p', 'p', 'p']</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsInput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsInput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Construct LAMMPS input.</p>
+<dl class="method">
 <dt id="jarvis.io.lammps.inputs.LammpsInput.write_lammps_in">
-<code class="sig-name descname">write_lammps_in</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lammps_in</span><span class="o">=</span><span class="default_value">'init.mod'</span></em>, <em class="sig-param"><span class="n">lammps_in1</span><span class="o">=</span><span class="default_value">'potential.mod'</span></em>, <em class="sig-param"><span class="n">lammps_in2</span><span class="o">=</span><span class="default_value">'in.main'</span></em>, <em class="sig-param"><span class="n">lammps_trj</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">lammps_data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">parameters</span><span class="o">=</span><span class="default_value">{}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsInput.write_lammps_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsInput.write_lammps_in" title="Permalink to this definition">¶</a></dt>
-<dd><p>write lammps input file
-from ase with custom modifications
+<code class="descname">write_lammps_in</code><span class="sig-paren">(</span><em>lammps_in='init.mod'</em>, <em>lammps_in1='potential.mod'</em>, <em>lammps_in2='in.main'</em>, <em>lammps_trj=None</em>, <em>lammps_data=None</em>, <em>parameters={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/inputs.html#LammpsInput.write_lammps_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.inputs.LammpsInput.write_lammps_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write lammps input file.</p>
+<p>From ase with custom modifications
 LAMMPS input is devided into three parts</p>
-<dl>
-<dt>Args:</dt><dd><p>lammps_in: generally”init.mod”, with unit and conversion factor information</p>
-<p>lammps_in1: generally “potential.mod”, with force-field/potential style and element tyoe information</p>
-<p>lammps_in2: generally “in.elastic”, a generic main input file to be fed in LAMMPS usin lmp_*&lt;…,parameters[‘exec’]</p>
-<p>parameters: input parameters</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">lammps_in: generally”init.mod”,
+with unit and conversion factor information</p>
+<p>lammps_in1: generally “potential.mod”,
+with force-field/potential style and
+element type information</p>
+<p>lammps_in2: generally “in.elastic”,
+a generic main input file to be fed
+in LAMMPS usin lmp_*&lt;…,parameters[‘exec’]</p>
+<p class="last">parameters: input parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -98,29 +113,30 @@ LAMMPS input is devided into three parts</p>
 </div>
 <div class="section" id="module-jarvis.io.lammps.outputs">
 <span id="jarvis-io-lammps-outputs-module"></span><h2>jarvis.io.lammps.outputs module<a class="headerlink" href="#module-jarvis.io.lammps.outputs" title="Permalink to this headline">¶</a></h2>
-<p>Functions to analze LAMMPS output</p>
-<dl class="py function">
+<p>Function to analze LAMMPS output.</p>
+<dl class="function">
 <dt id="jarvis.io.lammps.outputs.analyze_log">
-<code class="sig-prename descclassname">jarvis.io.lammps.outputs.</code><code class="sig-name descname">analyze_log</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log</span><span class="o">=</span><span class="default_value">'log.lammps'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/outputs.html#analyze_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.outputs.analyze_log" title="Permalink to this definition">¶</a></dt>
-<dd><p>Analyzes log.lammps file,
-Please note, the output format heavily depends on the input file
-A generic inpu is taken here</p>
+<code class="descclassname">jarvis.io.lammps.outputs.</code><code class="descname">analyze_log</code><span class="sig-paren">(</span><em>log='log.lammps'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/lammps/outputs.html#analyze_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.lammps.outputs.analyze_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analyzes log.lammps file.</p>
+<p>Please note, the output format heavily depends on the input file
+A generic input is taken here.</p>
 <p>Args:</p>
 <blockquote>
-<div><p>log: path to log.lammps file</p>
-</div></blockquote>
-<p>Returns:</p>
-<blockquote>
-<div><p>en: energy/atom</p>
+<div>log: path to log.lammps file</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd><p class="first">en: energy/atom</p>
 <p>press: pressure</p>
 <p>toten: total energy</p>
-<p>cij: elastic constants</p>
-</div></blockquote>
+<p class="last">cij: elastic constants</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.io.lammps">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.io.lammps" title="Permalink to this headline">¶</a></h2>
+<p>Modules for reading and writing LAMMPS files.</p>
 </div>
 </div>
 
@@ -149,15 +165,17 @@ A generic inpu is taken here</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -171,12 +189,12 @@ A generic inpu is taken here</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

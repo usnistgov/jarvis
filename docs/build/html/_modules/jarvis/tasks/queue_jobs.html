@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.tasks.queue_jobs &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.tasks.queue_jobs &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/jquery.js"></script>
-    <script src="../../../_static/underscore.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -37,12 +39,15 @@
           <div class="body" role="main">
             
   <h1>Source code for jarvis.tasks.queue_jobs</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
+<span></span><span class="sd">&quot;&quot;&quot;Modules for job submission.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 
 
 <div class="viewcode-block" id="Queue"><a class="viewcode-back" href="../../../jarvis.tasks.html#jarvis.tasks.queue_jobs.Queue">[docs]</a><span class="k">class</span> <span class="nc">Queue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct HPC Job class.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">q_type</span><span class="o">=</span><span class="s2">&quot;head_node&quot;</span><span class="p">,</span>
@@ -51,6 +56,7 @@
         <span class="n">job_check_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">job_id</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the class.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_type</span> <span class="o">=</span> <span class="n">q_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_parameters</span> <span class="o">=</span> <span class="n">q_parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">job_sub_cmd</span> <span class="o">=</span> <span class="n">job_sub_cmd</span>
@@ -58,6 +64,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="o">=</span> <span class="n">job_id</span>
 
 <div class="viewcode-block" id="Queue.head_node"><a class="viewcode-back" href="../../../jarvis.tasks.html#jarvis.tasks.queue_jobs.Queue.head_node">[docs]</a>    <span class="k">def</span> <span class="nf">head_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submit_cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Select if run on the head node, not recommended.&quot;&quot;&quot;</span>
         <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">submit_cmd</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Queue.pbs"><a class="viewcode-back" href="../../../jarvis.tasks.html#jarvis.tasks.queue_jobs.Queue.pbs">[docs]</a>    <span class="k">def</span> <span class="nf">pbs</span><span class="p">(</span>
@@ -82,7 +89,7 @@
         <span class="n">post_job_lines</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">submit_cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-
+        <span class="sd">&quot;&quot;&quot;Select if run using PBS script.&quot;&quot;&quot;</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">shell</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#PBS -l nodes=</span><span class="si">%d</span><span class="s2">:ppn=</span><span class="si">%d</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nnodes</span><span class="p">,</span> <span class="n">cores</span><span class="p">))</span>
@@ -94,7 +101,9 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">walltime</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#PBS -l walltime=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">walltime</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Plese provide walltime in a string format&quot;</span><span class="p">,</span> <span class="n">walltime</span><span class="p">)</span>
+                <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Plese provide walltime in a string format&quot;</span><span class="p">,</span> <span class="n">walltime</span>
+                <span class="p">)</span>
         <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#PBS -q </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">queue</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">account</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -152,7 +161,7 @@
         <span class="n">post_job_lines</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">submit_cmd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-
+        <span class="sd">&quot;&quot;&quot;Select if run using SLURM script.&quot;&quot;&quot;</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">shell</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#SBATCH --nodes=</span><span class="si">%d</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nnodes</span><span class="p">))</span>
@@ -162,7 +171,9 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">walltime</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#SBATCH --time=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">walltime</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Plese provide walltime in a string format&quot;</span><span class="p">,</span> <span class="n">walltime</span><span class="p">)</span>
+                <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Plese provide walltime in a string format&quot;</span><span class="p">,</span> <span class="n">walltime</span>
+                <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#SBATCH --partition=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">queue</span><span class="p">))</span>
@@ -197,10 +208,12 @@
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">stdout</span><span class="p">))</span></div></div>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">Queue</span><span class="p">()</span><span class="o">.</span><span class="n">pbs</span><span class="p">()</span>
-    <span class="n">Queue</span><span class="p">()</span><span class="o">.</span><span class="n">slurm</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;ll&quot;</span><span class="p">)</span>
-    <span class="n">Queue</span><span class="p">()</span><span class="o">.</span><span class="n">head_node</span><span class="p">(</span><span class="s2">&quot;echo ABC&quot;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">    Queue().pbs()</span>
+<span class="sd">    Queue().slurm(filename=&quot;ll&quot;)</span>
+<span class="sd">    Queue().head_node(&quot;echo ABC&quot;)</span>
+<span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 
           </div>
@@ -209,15 +222,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -231,13 +246,13 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

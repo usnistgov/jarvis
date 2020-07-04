@@ -5,6 +5,6 @@ Module contents
 ---------------
 
 .. automodule:: jarvis.examples.vasp
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:

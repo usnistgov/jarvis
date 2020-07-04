@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.tests.testfiles.core.test_kpoints &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.tests.testfiles.core.test_kpoints &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-    <script src="../../../../../_static/jquery.js"></script>
-    <script src="../../../../../_static/underscore.js"></script>
-    <script src="../../../../../_static/doctools.js"></script>
-    <script src="../../../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -37,8 +39,45 @@
           <div class="body" role="main">
             
   <h1>Source code for jarvis.tests.testfiles.core.test_kpoints</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">Kpoints3D</span><span class="p">,</span> <span class="n">generate_kpath</span><span class="p">,</span> <span class="n">generate_kgrid</span>
+<span></span><span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Kpoints3D</span><span class="p">,</span>
+    <span class="n">generate_kpath</span><span class="p">,</span>
+    <span class="n">generate_kgrid</span><span class="p">,</span>
+    <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Poscar</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+
+
+<span class="n">s1</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis&quot;</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="s2">&quot;POSCAR&quot;</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">atoms</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis&quot;</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="s2">&quot;POSCAR-Aem2&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">atoms</span>
+<span class="n">s3</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis&quot;</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="s2">&quot;POSCAR-C2m&quot;</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">atoms</span>
+<span class="n">s4</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis&quot;</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="s2">&quot;POSCAR-Cmcm&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">atoms</span>
+<span class="n">s5</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis&quot;</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="s2">&quot;POSCAR-P-1&quot;</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">atoms</span>
+<span class="n">s6</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis&quot;</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="s2">&quot;POSCAR-tetragonal&quot;</span>
+    <span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">atoms</span>
+<span class="n">s7</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis&quot;</span><span class="p">,</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span> <span class="s2">&quot;POSCAR-Pc&quot;</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">atoms</span>
 
 
 <div class="viewcode-block" id="test_kp"><a class="viewcode-back" href="../../../../../jarvis.tests.testfiles.core.html#jarvis.tests.testfiles.core.test_kpoints.test_kp">[docs]</a><span class="k">def</span> <span class="nf">test_kp</span><span class="p">():</span>
@@ -50,14 +89,76 @@
     <span class="n">kp</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span><span class="n">lattice_mat</span><span class="o">=</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
     <span class="n">sym</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">high_symm_path</span><span class="p">(</span><span class="n">Si</span><span class="p">)</span><span class="o">.</span><span class="n">_path</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">interpolated_points</span><span class="p">(</span><span class="n">Si</span><span class="p">)</span>
-    <span class="n">kpath</span> <span class="o">=</span> <span class="n">generate_kpath</span><span class="p">(</span><span class="n">kpath</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="p">]],</span><span class="n">num_k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">kpath</span> <span class="o">=</span> <span class="n">generate_kpath</span><span class="p">(</span><span class="n">kpath</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]],</span> <span class="n">num_k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
     <span class="n">kps</span> <span class="o">=</span> <span class="n">generate_kgrid</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
-    
-    <span class="c1"># for i,j in zip(x,y):</span>
-    <span class="c1">#   print (i,j)</span>
-    <span class="c1"># print (len(x))</span>
-    <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kpath</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">kps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="p">(</span><span class="mi">166</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;\Gamma&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span></div>
+    <span class="n">new_file</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">()</span>
+    <span class="n">kp</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">high_symm_path</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span><span class="o">.</span><span class="n">_path</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">high_symm_path</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span><span class="o">.</span><span class="n">_path</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">high_symm_path</span><span class="p">(</span><span class="n">s3</span><span class="p">)</span><span class="o">.</span><span class="n">_path</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">high_symm_path</span><span class="p">(</span><span class="n">s4</span><span class="p">)</span><span class="o">.</span><span class="n">_path</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">high_symm_path</span><span class="p">(</span><span class="n">s5</span><span class="p">)</span><span class="o">.</span><span class="n">_path</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">high_symm_path</span><span class="p">(</span><span class="n">s6</span><span class="p">)</span><span class="o">.</span><span class="n">_path</span>
+    <span class="n">sym</span> <span class="o">=</span> <span class="n">kp</span><span class="o">.</span><span class="n">high_symm_path</span><span class="p">(</span><span class="n">s7</span><span class="p">)</span><span class="o">.</span><span class="n">_path</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kpath</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">kps</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="p">(</span>
+        <span class="mi">166</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;\Gamma&quot;</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="test_highsym"><a class="viewcode-back" href="../../../../../jarvis.tests.testfiles.core.html#jarvis.tests.testfiles.core.test_kpoints.test_highsym">[docs]</a><span class="k">def</span> <span class="nf">test_highsym</span><span class="p">():</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">cubic</span><span class="p">()</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">fcc</span><span class="p">()</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">bcc</span><span class="p">()</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">tet</span><span class="p">()</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">bctet1</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">bctet2</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">orc</span><span class="p">()</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">orcf1</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">orcf2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">orcf3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">orci</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">orcc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">rhl1</span><span class="p">(</span><span class="mi">47</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">rhl2</span><span class="p">(</span><span class="mi">47</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">mcl</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">47</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">mclc1</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">47</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">mclc2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">47</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">mclc3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">47</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">mclc4</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">47</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">mclc5</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">47</span><span class="p">)</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">tria</span><span class="p">()</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">kpts</span> <span class="o">=</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">()</span><span class="o">.</span><span class="n">trib</span><span class="p">()</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+<span class="c1"># test_highsym()</span>
 <span class="c1"># test_kp()</span>
 </pre></div>
 
@@ -67,15 +168,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -89,13 +192,13 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>
