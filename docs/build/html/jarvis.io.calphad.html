@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.io.calphad package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.io.calphad package &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -42,21 +44,25 @@
 </div>
 <div class="section" id="module-jarvis.io.calphad.write_decorated_poscar">
 <span id="jarvis-io-calphad-write-decorated-poscar-module"></span><h2>jarvis.io.calphad.write_decorated_poscar module<a class="headerlink" href="#module-jarvis.io.calphad.write_decorated_poscar" title="Permalink to this headline">¶</a></h2>
+<p>Module handling input generation for CALPHAD.</p>
 <p>CALPHAD requies to fix symmetry during IBRION = 7 optimization
 This module writes the POSCAR accordingly.</p>
-<dl class="py function">
+<dl class="function">
 <dt id="jarvis.io.calphad.write_decorated_poscar.decorate_T_F">
-<code class="sig-prename descclassname">jarvis.io.calphad.write_decorated_poscar.</code><code class="sig-name descname">decorate_T_F</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">options</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">coord</span><span class="o">=</span><span class="default_value">[]</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/calphad/write_decorated_poscar.html#decorate_T_F"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.calphad.write_decorated_poscar.decorate_T_F" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">jarvis.io.calphad.write_decorated_poscar.</code><code class="descname">decorate_T_F</code><span class="sig-paren">(</span><em>options=[]</em>, <em>coord=[]</em>, <em>tol=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/calphad/write_decorated_poscar.html#decorate_T_F"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.calphad.write_decorated_poscar.decorate_T_F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Freeze coordinates based on symmetry.</p>
+</dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="jarvis.io.calphad.write_decorated_poscar.get_selective_dyn_decorated_atoms">
-<code class="sig-prename descclassname">jarvis.io.calphad.write_decorated_poscar.</code><code class="sig-name descname">get_selective_dyn_decorated_atoms</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">atoms</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/calphad/write_decorated_poscar.html#get_selective_dyn_decorated_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.calphad.write_decorated_poscar.get_selective_dyn_decorated_atoms" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descclassname">jarvis.io.calphad.write_decorated_poscar.</code><code class="descname">get_selective_dyn_decorated_atoms</code><span class="sig-paren">(</span><em>atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/calphad/write_decorated_poscar.html#get_selective_dyn_decorated_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.calphad.write_decorated_poscar.get_selective_dyn_decorated_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Freeze coordinates based on symmetry.</p>
+</dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.io.calphad">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.io.calphad" title="Permalink to this headline">¶</a></h2>
+<p>Modules for generating CALPHAD input or related files.</p>
 </div>
 </div>
 
@@ -84,15 +90,17 @@ This module writes the POSCAR accordingly.</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -106,12 +114,12 @@ This module writes the POSCAR accordingly.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

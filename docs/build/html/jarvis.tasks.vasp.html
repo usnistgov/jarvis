@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.tasks.vasp package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.tasks.vasp package &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -40,187 +42,178 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-jarvis.tasks.vasp.error_handlers">
-<span id="jarvis-tasks-vasp-error-handlers-module"></span><h2>jarvis.tasks.vasp.error_handlers module<a class="headerlink" href="#module-jarvis.tasks.vasp.error_handlers" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="jarvis.tasks.vasp.error_handlers.VaspJobErrorHandlers">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.tasks.vasp.error_handlers.</code><code class="sig-name descname">VaspJobErrorHandlers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">run_directory</span></em>, <em class="sig-param"><span class="n">jobid</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">all_errors</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/error_handlers.html#VaspJobErrorHandlers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.error_handlers.VaspJobErrorHandlers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt id="jarvis.tasks.vasp.error_handlers.VaspJobErrorHandlers.check_errors">
-<code class="sig-name descname">check_errors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logfile</span><span class="o">=</span><span class="default_value">'vasp.out'</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="o">=</span><span class="default_value">18000</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/error_handlers.html#VaspJobErrorHandlers.check_errors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.error_handlers.VaspJobErrorHandlers.check_errors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="jarvis.tasks.vasp.error_handlers.VaspJobErrorHandlers.correct_errors">
-<code class="sig-name descname">correct_errors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/error_handlers.html#VaspJobErrorHandlers.correct_errors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.error_handlers.VaspJobErrorHandlers.correct_errors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-jarvis.tasks.vasp.vasp">
 <span id="jarvis-tasks-vasp-vasp-module"></span><h2>jarvis.tasks.vasp.vasp module<a class="headerlink" href="#module-jarvis.tasks.vasp.vasp" title="Permalink to this headline">¶</a></h2>
-<p>Class for running VASP jobs</p>
-<dl class="py class">
+<p>Modules for high-throughput VASP calculations.</p>
+<dl class="class">
 <dt id="jarvis.tasks.vasp.vasp.GenericIncars">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.tasks.vasp.vasp.</code><code class="sig-name descname">GenericIncars</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">incar</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">pot_type</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#GenericIncars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.GenericIncars" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.tasks.vasp.vasp.</code><code class="descname">GenericIncars</code><span class="sig-paren">(</span><em>name=''</em>, <em>incar={}</em>, <em>pot_type=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#GenericIncars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.GenericIncars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class containing several generic Incar object for different psuedopotentials</p>
-<dl class="py method">
+<p>Construct class containing severalgeneric Incar object.</p>
+<p>For different psuedopotentials</p>
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.GenericIncars.lda">
-<code class="sig-name descname">lda</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#GenericIncars.lda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.GenericIncars.lda" title="Permalink to this definition">¶</a></dt>
-<dd><p>LDA functional</p>
+<code class="descname">lda</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#GenericIncars.lda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.GenericIncars.lda" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select LDA functional.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.GenericIncars.optb88vdw">
-<code class="sig-name descname">optb88vdw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#GenericIncars.optb88vdw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.GenericIncars.optb88vdw" title="Permalink to this definition">¶</a></dt>
-<dd><p>OptB88vdW functional</p>
+<code class="descname">optb88vdw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#GenericIncars.optb88vdw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.GenericIncars.optb88vdw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select OptB88vdW functional.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.GenericIncars.pbe">
-<code class="sig-name descname">pbe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#GenericIncars.pbe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.GenericIncars.pbe" title="Permalink to this definition">¶</a></dt>
-<dd><p>GGA-PBE functional</p>
+<code class="descname">pbe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#GenericIncars.pbe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.GenericIncars.pbe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select GGA-PBE functional.</p>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.tasks.vasp.vasp.</code><code class="sig-name descname">JobFactory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">use_incar_dict</span><span class="o">=</span><span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">pot_type</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.tasks.vasp.vasp.</code><code class="descname">JobFactory</code><span class="sig-paren">(</span><em>name=''</em>, <em>use_incar_dict={}</em>, <em>pot_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Provide sets of VASP calculations.</p>
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory.all_optb88vdw_props">
-<code class="sig-name descname">all_optb88vdw_props</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mat</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.all_optb88vdw_props"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.all_optb88vdw_props" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used for OptB88vdW functional based high-throughput calculations
-This will converge k-points, cut-offs, and then carry several property calculations.</p>
-<p>Args:</p>
-<blockquote>
-<div><p>mat : Poscar object</p>
-</div></blockquote>
+<code class="descname">all_optb88vdw_props</code><span class="sig-paren">(</span><em>mat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.all_optb88vdw_props"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.all_optb88vdw_props" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for OptB88vdW functional based high-throughput calculations.</p>
+<p>This will converge k-points, cut-offs,
+and then carry several property calculations.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>mat : Poscar object</dd>
+</dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory.band_structure">
-<code class="sig-name descname">band_structure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">encut</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">line_density</span><span class="o">=</span><span class="default_value">20</span></em>, <em class="sig-param"><span class="n">nbands</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">copy_prev_chgcar</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.band_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.band_structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used in band-structure calculations</p>
-<p>Args:</p>
-<blockquote>
-<div><p>mat :  Poscar object</p>
+<code class="descname">band_structure</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=None</em>, <em>line_density=20</em>, <em>nbands=None</em>, <em>copy_prev_chgcar=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.band_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.band_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use in band-structure calculations.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">mat :  Poscar object</p>
 <p>encut :  Plane-wave cut-off, 1.3 times will be used</p>
 <p>nbands : number of bands, increased to threee times</p>
-<p>line_density :  number of k-points between two high-symmetry k-points</p>
-<p>copy_prev_chgcar :  path of CHGCAR file for Non-SCF step</p>
-</div></blockquote>
+<dl class="docutils">
+<dt>line_density <span class="classifier-delimiter">:</span> <span class="classifier">number of k-points between two</span></dt>
+<dd>high-symmetry k-points</dd>
+</dl>
+<p class="last">copy_prev_chgcar :  path of CHGCAR file for Non-SCF step</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory.converg_encut">
-<code class="sig-name descname">converg_encut</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">encut</span><span class="o">=</span><span class="default_value">500</span></em>, <em class="sig-param"><span class="n">mat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">starting_length</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.001</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.converg_encut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.converg_encut" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to converg plane-wave cut-off</p>
-<p>Args:</p>
-<blockquote>
-<div><p>encut: intial cutoff</p>
-<p>mat: Poscar object</p>
-</div></blockquote>
-<p>Returns:</p>
-<blockquote>
-<div><p>encut: converged cut-off</p>
-</div></blockquote>
+<code class="descname">converg_encut</code><span class="sig-paren">(</span><em>encut=500</em>, <em>mat=None</em>, <em>starting_length=10</em>, <em>tol=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.converg_encut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.converg_encut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide function to converg plane-wave cut-off.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">encut: intial cutoff</p>
+<p class="last">mat: Poscar object</p>
+</dd>
+<dt>Returns:</dt>
+<dd>encut: converged cut-off</dd>
+</dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory.converg_kpoint">
-<code class="sig-name descname">converg_kpoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">length</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">mat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">encut</span><span class="o">=</span><span class="default_value">500</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.001</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.converg_kpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.converg_kpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to converg K-points</p>
-<p>Args:</p>
-<blockquote>
-<div><p>lenght: K-point line density</p>
-<p>mat: Poscar object with structure information</p>
-</div></blockquote>
-<p>Returns:</p>
-<blockquote>
-<div><p>length1: K-point line density</p>
-</div></blockquote>
+<code class="descname">converg_kpoint</code><span class="sig-paren">(</span><em>length=0</em>, <em>mat=None</em>, <em>encut=500</em>, <em>tol=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.converg_kpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.converg_kpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide function to converg K-points.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">lenght: K-point line density</p>
+<p class="last">mat: Poscar object with structure information</p>
+</dd>
+<dt>Returns:</dt>
+<dd>length1: K-point line density</dd>
+</dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory.elastic">
-<code class="sig-name descname">elastic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">encut</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nbands</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">potim</span><span class="o">=</span><span class="default_value">0.015</span></em>, <em class="sig-param"><span class="n">npar</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">length</span><span class="o">=</span><span class="default_value">20</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.elastic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.elastic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used for elastic property calculations using IBRION = 6
-Enforces conventional standard structure</p>
-<p>Args:</p>
-<blockquote>
-<div><p>mat :  Poscar object</p>
+<code class="descname">elastic</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=None</em>, <em>nbands=None</em>, <em>potim=0.015</em>, <em>npar=None</em>, <em>length=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.elastic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.elastic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for elastic property calculations using IBRION = 6.</p>
+<p>Enforces conventional standard structure.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">mat :  Poscar object</p>
 <p>encut :  Plane-wave cut-off, 1.3 times will be used</p>
 <p>nbands : number of bands, generally high-value recommended</p>
 <p>npar : NPAR tag, see VASP manual, set it as number of cores</p>
-<p>length :  K-points in length unit</p>
-</div></blockquote>
+<p class="last">length :  K-points in length unit</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory.loptics">
-<code class="sig-name descname">loptics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">encut</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nbands</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">length</span><span class="o">=</span><span class="default_value">20</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.loptics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.loptics" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used in linear-optics calculations</p>
-<p>Args:</p>
-<blockquote>
-<div><p>mat :  Poscar object</p>
+<code class="descname">loptics</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=None</em>, <em>nbands=None</em>, <em>length=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.loptics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.loptics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use in linear-optics calculations.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">mat :  Poscar object</p>
 <p>encut :  Plane-wave cut-off, 1.3 times will be used</p>
 <p>nbands : number of bands, increased to threee times</p>
-<p>length :  K-points in length unit</p>
-</div></blockquote>
+<p class="last">length :  K-points in length unit</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory.mbj_loptics">
-<code class="sig-name descname">mbj_loptics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">encut</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nbands</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">length</span><span class="o">=</span><span class="default_value">20</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.mbj_loptics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.mbj_loptics" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used for TBmBJ meta-GGA calculation</p>
-<p>Args:</p>
-<blockquote>
-<div><p>mat :  Poscar object</p>
+<code class="descname">mbj_loptics</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=None</em>, <em>nbands=None</em>, <em>length=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.mbj_loptics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.mbj_loptics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for TBmBJ meta-GGA calculation.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">mat :  Poscar object</p>
 <p>encut :  Plane-wave cut-off, 1.3 times will be used</p>
 <p>nbands : number of bands, increased to threee times</p>
-<p>length :  K-points in length unit</p>
-</div></blockquote>
+<p class="last">length :  K-points in length unit</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory.optimize_geometry">
-<code class="sig-name descname">optimize_geometry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">encut</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">length</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.optimize_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.optimize_geometry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used in optimizing lattice-parameter and internal psotions</p>
-<p>Args:</p>
-<blockquote>
-<div><p>mat :  Poscar object</p>
+<code class="descname">optimize_geometry</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=None</em>, <em>length=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.optimize_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.optimize_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use in optimizing lattice-parameter and internal psotions.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">mat :  Poscar object</p>
 <p>encut :  Plane-wave cut-off</p>
-<p>length :  K-points in length unit</p>
-</div></blockquote>
+<p class="last">length :  K-points in length unit</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.tasks.vasp.vasp.VaspJobs">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.tasks.vasp.vasp.</code><code class="sig-name descname">VaspJobs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">poscar</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kpoints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">incar</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">potcar</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vasp_cmd</span><span class="o">=</span><span class="default_value">'mpirun /users/knc6/VASP/vasp54/src/vasp.5.4.1DobbySOC2/bin/vasp_std'</span></em>, <em class="sig-param"><span class="n">output_file</span><span class="o">=</span><span class="default_value">'vasp.out'</span></em>, <em class="sig-param"><span class="n">stderr_file</span><span class="o">=</span><span class="default_value">'std_err.txt'</span></em>, <em class="sig-param"><span class="n">jobname</span><span class="o">=</span><span class="default_value">'test'</span></em>, <em class="sig-param"><span class="n">pot_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">copy_files</span><span class="o">=</span><span class="default_value">['/users/knc6/bin/vdw_kernel.bindat']</span></em>, <em class="sig-param"><span class="n">attempts</span><span class="o">=</span><span class="default_value">5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.tasks.vasp.vasp.</code><code class="descname">VaspJobs</code><span class="sig-paren">(</span><em>poscar=None, kpoints=None, incar=None, potcar=None, vasp_cmd='mpirun vasp_std', output_file='vasp.out', stderr_file='std_err.txt', jobname='test', pot_type=None, copy_files=['/users/knc6/bin/vdw_kernel.bindat'], attempts=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Construct a VASP calculation job.</p>
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.VaspJobs.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use subprocess to tun a job</p>
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use subprocess to tun a job.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.VaspJobs.runjob">
-<code class="sig-name descname">runjob</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs.runjob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs.runjob" title="Permalink to this definition">¶</a></dt>
-<dd><p>Main function for running a generic VASP calculation</p>
+<code class="descname">runjob</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs.runjob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs.runjob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide main function for running a generic VASP calculation.</p>
 </dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.VaspJobs.write_jobsub_py">
-<code class="sig-name descname">write_jobsub_py</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">'jobsub.py'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs.write_jobsub_py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs.write_jobsub_py" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes a generic python file for running jobs</p>
+<code class="descname">write_jobsub_py</code><span class="sig-paren">(</span><em>filename='jobsub.py'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs.write_jobsub_py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs.write_jobsub_py" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a generic python file for running jobs.</p>
 </dd></dl>
 
 </dd></dl>
@@ -228,6 +221,7 @@ Enforces conventional standard structure</p>
 </div>
 <div class="section" id="module-jarvis.tasks.vasp">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.tasks.vasp" title="Permalink to this headline">¶</a></h2>
+<p>Modules for running high-throughput VASP calculations.</p>
 </div>
 </div>
 
@@ -241,7 +235,6 @@ Enforces conventional standard structure</p>
   <ul>
 <li><a class="reference internal" href="#">jarvis.tasks.vasp package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-jarvis.tasks.vasp.error_handlers">jarvis.tasks.vasp.error_handlers module</a></li>
 <li><a class="reference internal" href="#module-jarvis.tasks.vasp.vasp">jarvis.tasks.vasp.vasp module</a></li>
 <li><a class="reference internal" href="#module-jarvis.tasks.vasp">Module contents</a></li>
 </ul>
@@ -256,15 +249,17 @@ Enforces conventional standard structure</p>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -278,12 +273,12 @@ Enforces conventional standard structure</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

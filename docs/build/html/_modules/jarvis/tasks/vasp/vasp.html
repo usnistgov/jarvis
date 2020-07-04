@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.tasks.vasp.vasp &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.tasks.vasp.vasp &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-    <script src="../../../../_static/jquery.js"></script>
-    <script src="../../../../_static/underscore.js"></script>
-    <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -37,15 +39,12 @@
           <div class="body" role="main">
             
   <h1>Source code for jarvis.tasks.vasp.vasp</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Class for running VASP jobs</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Modules for high-throughput VASP calculations.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">jarvis.io.vasp.outputs</span> <span class="kn">import</span> <span class="n">Outcar</span><span class="p">,</span> <span class="n">Vasprun</span>
 <span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Poscar</span><span class="p">,</span> <span class="n">Incar</span><span class="p">,</span> <span class="n">Potcar</span>
-<span class="kn">from</span> <span class="nn">jarvis.db.jsonutils</span> <span class="kn">import</span> <span class="n">loadjson</span><span class="p">,</span> <span class="n">dumpjson</span>
+<span class="kn">from</span> <span class="nn">jarvis.db.jsonutils</span> <span class="kn">import</span> <span class="n">loadjson</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">Kpoints3D</span> <span class="k">as</span> <span class="n">Kpoints</span>
-<span class="kn">from</span> <span class="nn">jarvis.tasks.queue_jobs</span> <span class="kn">import</span> <span class="n">Queue</span>
 <span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="n">Spacegroup3D</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -54,16 +53,20 @@
 
 
 <div class="viewcode-block" id="JobFactory"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory">[docs]</a><span class="k">class</span> <span class="nc">JobFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Provide sets of VASP calculations.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">use_incar_dict</span><span class="o">=</span><span class="p">{},</span> <span class="n">pot_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Generic class for running variations of VASP calculations</span>
-<span class="sd">        </span>
+<span class="sd">        Provide generic class for running variations of VASP calculations.</span>
+
+<span class="sd">        Minimum arguments given below.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">        </span>
 <span class="sd">            name : generic name</span>
-<span class="sd">            </span>
-<span class="sd">            use_incar_dict : dictionary with INCAR parameters that would be repreated</span>
-<span class="sd">            </span>
+
+<span class="sd">            use_incar_dict : dictionary with INCAR parameters</span>
+<span class="sd">                             that would be repreated</span>
+
 <span class="sd">            pot_type : pseudopotential type</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
@@ -72,11 +75,12 @@
 
 <div class="viewcode-block" id="JobFactory.all_optb88vdw_props"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.all_optb88vdw_props">[docs]</a>    <span class="k">def</span> <span class="nf">all_optb88vdw_props</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Used for OptB88vdW functional based high-throughput calculations</span>
-<span class="sd">        This will converge k-points, cut-offs, and then carry several property calculations.</span>
-<span class="sd">        </span>
+<span class="sd">        Use for OptB88vdW functional based high-throughput calculations.</span>
+
+<span class="sd">        This will converge k-points, cut-offs,</span>
+<span class="sd">        and then carry several property calculations.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">        </span>
 <span class="sd">            mat : Poscar object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">optb88</span> <span class="o">=</span> <span class="n">GenericIncars</span><span class="p">()</span><span class="o">.</span><span class="n">optb88vdw</span><span class="p">()</span>
@@ -108,25 +112,30 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="JobFactory.elastic"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.elastic">[docs]</a>    <span class="k">def</span> <span class="nf">elastic</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">potim</span><span class="o">=</span><span class="mf">0.015</span><span class="p">,</span> <span class="n">npar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">encut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">nbands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">potim</span><span class="o">=</span><span class="mf">0.015</span><span class="p">,</span>
+        <span class="n">npar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Used for elastic property calculations using IBRION = 6</span>
-<span class="sd">        Enforces conventional standard structure</span>
-<span class="sd">        </span>
+<span class="sd">        Use for elastic property calculations using IBRION = 6.</span>
+
+<span class="sd">        Enforces conventional standard structure.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">        </span>
 <span class="sd">            mat :  Poscar object</span>
-<span class="sd">            </span>
+
 <span class="sd">            encut :  Plane-wave cut-off, 1.3 times will be used</span>
-<span class="sd">            </span>
+
 <span class="sd">            nbands : number of bands, generally high-value recommended</span>
-<span class="sd">            </span>
+
 <span class="sd">            npar : NPAR tag, see VASP manual, set it as number of cores</span>
-<span class="sd">            </span>
+
 <span class="sd">            length :  K-points in length unit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
         <span class="n">cvn</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">conventional_standard_structure</span>
         <span class="n">comment</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">comment</span>
@@ -164,16 +173,15 @@
 
 <div class="viewcode-block" id="JobFactory.mbj_loptics"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.mbj_loptics">[docs]</a>    <span class="k">def</span> <span class="nf">mbj_loptics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Used for TBmBJ meta-GGA calculation</span>
-<span class="sd">        </span>
+<span class="sd">        Use for TBmBJ meta-GGA calculation.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">        </span>
 <span class="sd">            mat :  Poscar object</span>
-<span class="sd">            </span>
+
 <span class="sd">            encut :  Plane-wave cut-off, 1.3 times will be used</span>
-<span class="sd">            </span>
+
 <span class="sd">            nbands : number of bands, increased to threee times</span>
-<span class="sd">            </span>
+
 <span class="sd">            length :  K-points in length unit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
@@ -211,16 +219,15 @@
 
 <div class="viewcode-block" id="JobFactory.loptics"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.loptics">[docs]</a>    <span class="k">def</span> <span class="nf">loptics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Used in linear-optics calculations</span>
-<span class="sd">        </span>
+<span class="sd">        Use in linear-optics calculations.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">        </span>
 <span class="sd">            mat :  Poscar object</span>
-<span class="sd">            </span>
+
 <span class="sd">            encut :  Plane-wave cut-off, 1.3 times will be used</span>
-<span class="sd">            </span>
+
 <span class="sd">            nbands : number of bands, increased to threee times</span>
-<span class="sd">            </span>
+
 <span class="sd">            length :  K-points in length unit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
@@ -254,21 +261,26 @@
         <span class="k">return</span> <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span></div>
 
 <div class="viewcode-block" id="JobFactory.band_structure"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.band_structure">[docs]</a>    <span class="k">def</span> <span class="nf">band_structure</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">line_density</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">nbands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy_prev_chgcar</span><span class="o">=</span><span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">encut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">line_density</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">nbands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">copy_prev_chgcar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Used in band-structure calculations</span>
-<span class="sd">        </span>
+<span class="sd">        Use in band-structure calculations.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">        </span>
 <span class="sd">            mat :  Poscar object</span>
-<span class="sd">            </span>
+
 <span class="sd">            encut :  Plane-wave cut-off, 1.3 times will be used</span>
-<span class="sd">            </span>
+
 <span class="sd">            nbands : number of bands, increased to threee times</span>
-<span class="sd">            </span>
-<span class="sd">            line_density :  number of k-points between two high-symmetry k-points</span>
-<span class="sd">            </span>
+
+<span class="sd">            line_density :  number of k-points between two</span>
+<span class="sd">                            high-symmetry k-points</span>
+
 <span class="sd">            copy_prev_chgcar :  path of CHGCAR file for Non-SCF step</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
@@ -302,14 +314,13 @@
 
 <div class="viewcode-block" id="JobFactory.optimize_geometry"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.optimize_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Used in optimizing lattice-parameter and internal psotions</span>
-<span class="sd">        </span>
+<span class="sd">        Use in optimizing lattice-parameter and internal psotions.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">        </span>
 <span class="sd">            mat :  Poscar object</span>
-<span class="sd">            </span>
+
 <span class="sd">            encut :  Plane-wave cut-off</span>
-<span class="sd">            </span>
+
 <span class="sd">            length :  K-points in length unit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
@@ -339,18 +350,18 @@
         <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span></div>
 
-<div class="viewcode-block" id="JobFactory.converg_encut"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.converg_encut">[docs]</a>    <span class="k">def</span> <span class="nf">converg_encut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">starting_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
+<div class="viewcode-block" id="JobFactory.converg_encut"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.converg_encut">[docs]</a>    <span class="k">def</span> <span class="nf">converg_encut</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">starting_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.001</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Function to converg plane-wave cut-off</span>
-<span class="sd">        </span>
+<span class="sd">        Provide function to converg plane-wave cut-off.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">        </span>
 <span class="sd">            encut: intial cutoff</span>
-<span class="sd">            </span>
+
 <span class="sd">            mat: Poscar object</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns:</span>
-<span class="sd">        </span>
 <span class="sd">               encut: converged cut-off</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pot_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span>
@@ -359,7 +370,7 @@
         <span class="n">convg_encut1</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">convg_encut2</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">while</span> <span class="n">convg_encut2</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">convg_encut2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">convg_encut1</span><span class="p">:</span>
             <span class="c1"># while convg_encut1 !=True and  convg_encut2 !=True:</span>
             <span class="c1"># tol = 0.001  # change 0.001</span>
             <span class="n">encut_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -376,14 +387,21 @@
             <span class="p">)</span>  <span class="c1"># Auto_Kpoints(mat=mat, length=length)</span>
             <span class="nb">print</span><span class="p">(</span>
                 <span class="s2">&quot;running smart_converge for&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut</span><span class="p">),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut</span><span class="p">),</span>
             <span class="p">)</span>
             <span class="n">en2</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">VaspJobs</span><span class="p">(</span>
                 <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                 <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut</span><span class="p">),</span>
+                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut</span><span class="p">),</span>
             <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
             <span class="k">while</span> <span class="nb">abs</span><span class="p">(</span><span class="n">en2</span> <span class="o">-</span> <span class="n">en1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">:</span>
                 <span class="n">en1</span> <span class="o">=</span> <span class="n">en2</span>
@@ -396,14 +414,21 @@
                 <span class="c1"># incar = Incar.from_dict(incar_dict)</span>
                 <span class="nb">print</span><span class="p">(</span>
                     <span class="s2">&quot;running smart_converge for&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut</span><span class="p">),</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut</span><span class="p">),</span>
                 <span class="p">)</span>
                 <span class="n">en2</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">VaspJobs</span><span class="p">(</span>
                     <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut</span><span class="p">),</span>
+                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut</span><span class="p">),</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
             <span class="n">convg_encut1</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -418,7 +443,10 @@
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                 <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut2</span><span class="p">),</span>
+                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut2</span><span class="p">),</span>
             <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
             <span class="n">encut3</span> <span class="o">=</span> <span class="n">encut2</span> <span class="o">+</span> <span class="mi">50</span>
@@ -430,7 +458,10 @@
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                 <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut3</span><span class="p">),</span>
+                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut3</span><span class="p">),</span>
             <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
             <span class="n">encut4</span> <span class="o">=</span> <span class="n">encut3</span> <span class="o">+</span> <span class="mi">50</span>
@@ -441,7 +472,10 @@
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                 <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut4</span><span class="p">),</span>
+                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut4</span><span class="p">),</span>
             <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
             <span class="n">encut5</span> <span class="o">=</span> <span class="n">encut4</span> <span class="o">+</span> <span class="mi">50</span>
@@ -453,7 +487,10 @@
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut5</span><span class="p">),</span>
+                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut5</span><span class="p">),</span>
             <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
             <span class="n">encut6</span> <span class="o">=</span> <span class="n">encut5</span> <span class="o">+</span> <span class="mi">50</span>
@@ -465,11 +502,12 @@
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut6</span><span class="p">),</span>
+                <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">encut6</span><span class="p">),</span>
             <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
-            <span class="c1"># if en3-en2&gt;tol or en4-en2&gt;tol or en5-en2&gt;tol or en6-en2&gt;tol or en7-en2&gt;tol:</span>
-            <span class="c1"># if abs(en3-en2)&gt;tol and abs(en4-en2)&gt;tol and abs(en5-en2)&gt;tol and abs(en6-en2)&gt;tol and abs(en7-en2)&gt;tol:</span>
             <span class="k">if</span> <span class="p">(</span>
                 <span class="nb">abs</span><span class="p">(</span><span class="n">en3</span> <span class="o">-</span> <span class="n">en2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span>
                 <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">en4</span> <span class="o">-</span> <span class="n">en2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span>
@@ -491,26 +529,23 @@
 
 <div class="viewcode-block" id="JobFactory.converg_kpoint"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.converg_kpoint">[docs]</a>    <span class="k">def</span> <span class="nf">converg_kpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Function to converg K-points</span>
-<span class="sd">        </span>
+<span class="sd">        Provide function to converg K-points.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">        </span>
 <span class="sd">            lenght: K-point line density</span>
-<span class="sd">            </span>
+
 <span class="sd">            mat: Poscar object with structure information</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns:</span>
-<span class="sd">        </span>
 <span class="sd">               length1: K-point line density</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">pot_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span>
         <span class="n">en1</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10000</span>
         <span class="n">convg_kp1</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">convg_kp2</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">length1</span> <span class="o">=</span> <span class="n">length</span>
         <span class="n">kp_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">while</span> <span class="n">convg_kp2</span> <span class="o">!=</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">convg_kp2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">convg_kp1</span><span class="p">:</span>
             <span class="c1"># while convg_kp1 !=True and  convg_kp2 !=True:</span>
             <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
             <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">})</span>
@@ -528,7 +563,10 @@
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length1</span><span class="p">),</span>
+                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length1</span><span class="p">),</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
                 <span class="k">while</span> <span class="nb">abs</span><span class="p">(</span><span class="n">en2</span> <span class="o">-</span> <span class="n">en1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">:</span>
@@ -536,7 +574,7 @@
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Incrementing length&quot;</span><span class="p">,</span> <span class="n">length1</span><span class="p">)</span>
                     <span class="k">while</span> <span class="n">mesh</span> <span class="ow">in</span> <span class="n">kp_list</span><span class="p">:</span>
                         <span class="n">length1</span> <span class="o">=</span> <span class="n">length1</span> <span class="o">+</span> <span class="mi">5</span>
-                        <span class="c1">##Assuming you are not super unlucky</span>
+                        <span class="c1"># Assuming you are not super unlucky</span>
                         <span class="c1"># kpoints = Auto_Kpoints(mat=mat, length=length1)</span>
                         <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
                             <span class="n">lattice_mat</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length1</span>
@@ -561,14 +599,14 @@
                         <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">length1</span> <span class="o">=</span> <span class="n">length1</span> <span class="o">+</span> <span class="mi">5</span>
-                        <span class="c1">##Assuming you are not super unlucky</span>
-                        <span class="c1">#            kpoints = Auto_Kpoints(mat=mat, length=length1)</span>
+                        <span class="c1"># Assuming you are not super unlucky</span>
+                        <span class="c1"># kpoints = Auto_Kpoints(mat=mat, length=length1)</span>
                         <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
                             <span class="n">lattice_mat</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length1</span>
                         <span class="p">)</span>  <span class="c1"># Auto_Kpoints(mat=mat, length=length)</span>
                         <span class="n">mesh</span> <span class="o">=</span> <span class="n">kpoints</span><span class="o">.</span><span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                         <span class="n">kp_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-                        <span class="n">en2</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">Vaspjobs</span><span class="p">(</span>
+                        <span class="n">en2</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">VaspJobs</span><span class="p">(</span>
                             <span class="n">mat</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
                             <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                             <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
@@ -593,7 +631,10 @@
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length3</span><span class="p">),</span>
+                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length3</span><span class="p">),</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
                 <span class="n">length4</span> <span class="o">=</span> <span class="n">length3</span> <span class="o">+</span> <span class="mi">5</span>
@@ -608,7 +649,10 @@
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length4</span><span class="p">),</span>
+                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length4</span><span class="p">),</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
                 <span class="n">length5</span> <span class="o">=</span> <span class="n">length4</span> <span class="o">+</span> <span class="mi">5</span>
@@ -623,7 +667,10 @@
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length5</span><span class="p">),</span>
+                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length5</span><span class="p">),</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
                 <span class="n">length6</span> <span class="o">=</span> <span class="n">length5</span> <span class="o">+</span> <span class="mi">5</span>
@@ -638,7 +685,10 @@
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length6</span><span class="p">),</span>
+                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length6</span><span class="p">),</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
                 <span class="n">length7</span> <span class="o">=</span> <span class="n">length6</span> <span class="o">+</span> <span class="mi">5</span>
                 <span class="c1"># kpoints = Auto_Kpoints(mat=mat, length=length7)</span>
@@ -652,11 +702,12 @@
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
-                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length7</span><span class="p">),</span>
+                    <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">length7</span><span class="p">),</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
-                <span class="c1"># if en3-en2&gt;tol or en4-en2&gt;tol or en5-en2&gt;tol or en6-en2&gt;tol or en7-en2&gt;tol:</span>
-                <span class="c1"># if abs(en3-en2)&gt;tol and abs(en4-en2)&gt;tol and abs(en5-en2)&gt;tol and abs(en6-en2)&gt;tol and abs(en7-en2)&gt;tol:</span>
                 <span class="k">if</span> <span class="p">(</span>
                     <span class="nb">abs</span><span class="p">(</span><span class="n">en3</span> <span class="o">-</span> <span class="n">en2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span>
                     <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="n">en4</span> <span class="o">-</span> <span class="n">en2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span>
@@ -707,20 +758,26 @@
                     <span class="n">en1</span> <span class="o">=</span> <span class="n">en3</span>
                     <span class="n">length1</span> <span class="o">=</span> <span class="n">length3</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;KPOINTS convergence achieved for &quot;</span><span class="p">,</span> <span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span> <span class="n">length1</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;KPOINTS convergence achieved for &quot;</span><span class="p">,</span>
+                        <span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span>
+                        <span class="n">length1</span><span class="p">,</span>
+                    <span class="p">)</span>
                     <span class="n">convg_kp2</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="n">length1</span></div></div>
 
 
 <div class="viewcode-block" id="VaspJobs"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.VaspJobs">[docs]</a><span class="k">class</span> <span class="nc">VaspJobs</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct a VASP calculation job.&quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">poscar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">kpoints</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">incar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">potcar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">vasp_cmd</span><span class="o">=</span><span class="s2">&quot;mpirun /users/knc6/VASP/vasp54/src/vasp.5.4.1DobbySOC2/bin/vasp_std&quot;</span><span class="p">,</span>
+        <span class="n">vasp_cmd</span><span class="o">=</span><span class="s2">&quot;mpirun vasp_std&quot;</span><span class="p">,</span>
         <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;vasp.out&quot;</span><span class="p">,</span>
         <span class="n">stderr_file</span><span class="o">=</span><span class="s2">&quot;std_err.txt&quot;</span><span class="p">,</span>
         <span class="n">jobname</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
@@ -729,32 +786,31 @@
         <span class="n">attempts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Class defninig a typical VASP calculation</span>
-<span class="sd">        </span>
+<span class="sd">        Define a typical VASP calculation.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">        </span>
 <span class="sd">            poscar :  Poscar object</span>
-<span class="sd">            </span>
+
 <span class="sd">            incar : Incar object</span>
-<span class="sd">            </span>
+
 <span class="sd">            kpoints : Kpoints object</span>
-<span class="sd">            </span>
+
 <span class="sd">            potcar : Potcar object</span>
-<span class="sd">            </span>
+
 <span class="sd">            vasp_cmd :  path to vasp executable</span>
-<span class="sd">            </span>
+
 <span class="sd">            output_file : standard output file</span>
-<span class="sd">            </span>
+
 <span class="sd">            stderr_file : standard error output file</span>
-<span class="sd">            </span>
+
 <span class="sd">            jobname : job name</span>
-<span class="sd">            </span>
+
 <span class="sd">            pot_type :  pseudopotential type</span>
-<span class="sd">            </span>
+
 <span class="sd">            copy_files :  file(s) to be copied</span>
-<span class="sd">            </span>
+
 <span class="sd">            attempts :  used in error handling</span>
-<span class="sd">            </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">poscar</span> <span class="o">=</span> <span class="n">poscar</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span> <span class="o">=</span> <span class="n">kpoints</span>
@@ -778,61 +834,65 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">potcar</span> <span class="o">=</span> <span class="n">Potcar</span><span class="p">(</span><span class="n">elements</span><span class="o">=</span><span class="n">new_symb</span><span class="p">,</span> <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VaspJobs.run"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.VaspJobs.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Use subprocess to tun a job</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Use subprocess to tun a job.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_std</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">1</span>
         <span class="p">)</span> <span class="k">as</span> <span class="n">f_err</span><span class="p">:</span>
             <span class="c1"># use line buffering for stderr</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">f_std</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">f_err</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">f_std</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">f_err</span>
+            <span class="p">)</span>
             <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">p</span></div>
 
 <div class="viewcode-block" id="VaspJobs.write_jobsub_py"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.VaspJobs.write_jobsub_py">[docs]</a>    <span class="k">def</span> <span class="nf">write_jobsub_py</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;jobsub.py&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Writes a generic python file for running jobs</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Write a generic python file for running jobs.&quot;&quot;&quot;</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;from jarvis.io.vasp.inputs import Poscar, Incar, Potcar&quot;</span><span class="p">)</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;from jarvis.core.kpoints import Kpoints3D as Kpoints&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;from jarvis.io.vasp.inputs import Poscar, Incar, Potcar&quot;</span>
+        <span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;from jarvis.core.kpoints import Kpoints3D as Kpoints&quot;</span>
+        <span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s1">&#39;pos=Poscar.from_file(&quot;POSCAR&quot;)&#39;</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s1">&#39;inc=Poscar.from_file(&quot;INCAR&quot;)&#39;</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s1">&#39;pot=Potcar.from_file(&quot;POTCAR&quot;)&#39;</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s1">&#39;kp=Kpoints.from_file(&quot;KPOINTS&quot;)&#39;</span><span class="p">)</span>
         <span class="n">line</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;job = VaspJobs(poscar=pos, kpoints=kp,potcar=pot, incar=inc, jobname=&quot;</span><span class="p">)</span>
+            <span class="s2">&quot;job = VaspJobs(poscar=pos, &quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;kpoints=kp,potcar=pot, &quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;incar=inc, jobname=&quot;</span>
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobname</span><span class="p">)</span>
             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;).runjob()&quot;</span><span class="p">)</span>
         <span class="p">)</span>
+
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="VaspJobs.runjob"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.VaspJobs.runjob">[docs]</a>    <span class="k">def</span> <span class="nf">runjob</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Main function for running a generic VASP calculation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
+        <span class="sd">&quot;&quot;&quot;Provide main function for running a generic VASP calculation.&quot;&quot;&quot;</span>
         <span class="c1"># poscar=self.poscar</span>
         <span class="c1"># incar=self.incar</span>
         <span class="c1"># kpoints=self.kpoints</span>
         <span class="c1"># copy_files=self.copy_files</span>
 
-        <span class="n">cwd</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+        <span class="c1"># cwd = str(os.getcwd())</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobname</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
             <span class="n">jobname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">poscar</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
-        <span class="n">job_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobname</span><span class="p">)</span>
-        <span class="n">run_file</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobname</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span>
+        <span class="c1"># job_dir = str(self.jobname)</span>
+        <span class="n">run_file</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobname</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">run_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobname</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">poscar</span><span class="o">.</span><span class="n">comment</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Surf&quot;</span><span class="p">):</span>
             <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">kpts</span> <span class="o">=</span> <span class="p">[[</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">pol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">poscar</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">check_polar</span>
-                <span class="k">if</span> <span class="n">pol</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">pol</span><span class="p">:</span>
                     <span class="n">COM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">poscar</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_center_of_mass</span><span class="p">()</span>
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;COM=&quot;</span><span class="p">,</span> <span class="n">COM</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found polar surface, will be setting dipole corrections&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found polar surface,setting dipole corrections&quot;</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                         <span class="p">{</span>
                             <span class="s2">&quot;LDIPOL&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
@@ -845,16 +905,24 @@
                             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">COM</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
                         <span class="p">}</span>
                     <span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Polar surface encountered in run_job&quot;</span><span class="p">,</span> <span class="n">poscar</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;Polar surface encountered in run_job&quot;</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">poscar</span><span class="o">.</span><span class="n">comment</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="k">pass</span>
         <span class="n">wait</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">json_file</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobname</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;json should be here=&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">json_file</span><span class="p">))</span>
-        <span class="c1"># print (&#39;json should be=&#39;,json_file,run_file,os.getcwd())</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;json should be here=&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">json_file</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;json should be=&quot;</span><span class="p">,</span> <span class="n">json_file</span><span class="p">,</span> <span class="n">run_file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">json_file</span><span class="p">)):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">data_cal</span> <span class="o">=</span> <span class="n">loadjson</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">json_file</span><span class="p">))</span>
+                <span class="n">data_cal</span> <span class="o">=</span> <span class="n">loadjson</span><span class="p">(</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+                <span class="p">)</span>
                 <span class="n">tmp_outcar</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
                     <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
@@ -864,7 +932,7 @@
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;outcar is&quot;</span><span class="p">,</span> <span class="n">tmp_outcar</span><span class="p">)</span>
                 <span class="n">wait</span> <span class="o">=</span> <span class="n">Outcar</span><span class="p">(</span><span class="n">tmp_outcar</span><span class="p">)</span><span class="o">.</span><span class="n">converged</span>  <span class="c1"># True</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;outcar status&quot;</span><span class="p">,</span> <span class="n">wait</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">wait</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
                     <span class="n">f_energy</span> <span class="o">=</span> <span class="n">data_cal</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;final_energy&quot;</span><span class="p">]</span>
                     <span class="n">contcar</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
@@ -873,10 +941,10 @@
                         <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/CONTCAR&quot;</span><span class="p">)</span>
                     <span class="p">)</span>
                     <span class="k">return</span> <span class="n">f_energy</span><span class="p">,</span> <span class="n">contcar</span>
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="k">pass</span>
         <span class="n">attempt</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">while</span> <span class="n">wait</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">wait</span><span class="p">:</span>
             <span class="n">attempt</span> <span class="o">=</span> <span class="n">attempt</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">:</span>
                 <span class="n">wait</span> <span class="o">=</span> <span class="kc">True</span>
@@ -893,22 +961,28 @@
                 <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">run_dir</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;OUTCAR&quot;</span><span class="p">):</span>
                     <span class="k">try</span><span class="p">:</span>
-                        <span class="n">wait</span> <span class="o">=</span> <span class="n">main_outcar</span><span class="p">(</span><span class="s2">&quot;OUTCAR&quot;</span><span class="p">)</span>  <span class="c1"># Vasprun(&quot;vasprun.xml&quot;).converged</span>
+                        <span class="n">wait</span> <span class="o">=</span> <span class="n">Outcar</span><span class="p">(</span>
+                            <span class="s2">&quot;OUTCAR&quot;</span>
+                        <span class="p">)</span><span class="o">.</span><span class="n">converged</span>  <span class="c1"># Vasprun(&quot;vasprun.xml&quot;).converged</span>
                         <span class="c1"># wait=Vasprun(&quot;vasprun.xml&quot;).converged</span>
-                    <span class="k">except</span><span class="p">:</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                         <span class="k">pass</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">potcar</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="s2">&quot;POTCAR&quot;</span><span class="p">)</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FOUND OLD CONTCAR in&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
                         <span class="n">copy_cmd</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;cp CONTCAR POSCAR&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">poscar</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="s2">&quot;POSCAR&quot;</span><span class="p">)</span>
-                        <span class="n">pos</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;CONTCAR&quot;</span><span class="p">)</span>
+                        <span class="c1"># pos = Poscar.from_file(&quot;CONTCAR&quot;)</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;copy_cmd=&quot;</span><span class="p">,</span> <span class="n">copy_cmd</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="s2">&quot;ELAST&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">jobname</span> <span class="ow">and</span> <span class="s2">&quot;LEPSILON&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">jobname</span><span class="p">:</span>
-                            <span class="c1"># Because in ELASTIC calculations structures are deformed</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="s2">&quot;ELAST&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">jobname</span>
+                            <span class="ow">and</span> <span class="s2">&quot;LEPSILON&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">jobname</span>
+                        <span class="p">):</span>
+                            <span class="c1"># Because in ELASTIC calculations</span>
+                            <span class="c1"># structures are deformed</span>
                             <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">copy_cmd</span><span class="p">)</span>
                         <span class="c1"># time.sleep(3)</span>
-                    <span class="k">except</span><span class="p">:</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                         <span class="k">pass</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">incar</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="s2">&quot;INCAR&quot;</span><span class="p">)</span>
@@ -925,20 +999,20 @@
                     <span class="n">wait</span> <span class="o">=</span> <span class="n">Outcar</span><span class="p">(</span>
                         <span class="s2">&quot;OUTCAR&quot;</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">converged</span>  <span class="c1"># Vasprun(&quot;vasprun.xml&quot;).converged</span>
-                <span class="k">except</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="k">pass</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;End of the first loop&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">wait</span><span class="p">)</span>
 
         <span class="n">f_energy</span> <span class="o">=</span> <span class="s2">&quot;na&quot;</span>
-        <span class="n">enp</span> <span class="o">=</span> <span class="s2">&quot;na&quot;</span>
+        <span class="c1"># enp = &quot;na&quot;</span>
         <span class="n">contcar</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;CONTCAR&quot;</span><span class="p">)</span>
         <span class="n">final_str</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">contcar</span><span class="p">)</span><span class="o">.</span><span class="n">atoms</span>
         <span class="n">vrun</span> <span class="o">=</span> <span class="n">Vasprun</span><span class="p">(</span><span class="s2">&quot;vasprun.xml&quot;</span><span class="p">)</span>
         <span class="n">f_energy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">vrun</span><span class="o">.</span><span class="n">final_energy</span><span class="p">)</span>
-        <span class="n">enp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">f_energy</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">final_str</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
-        <span class="n">natoms</span> <span class="o">=</span> <span class="n">final_str</span><span class="o">.</span><span class="n">num_atoms</span>
+        <span class="c1"># enp = float(f_energy) / float(final_str.num_atoms)</span>
+        <span class="c1"># natoms = final_str.num_atoms</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;../&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">wait</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">wait</span><span class="p">:</span>
             <span class="n">data_cal</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">data_cal</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="p">{</span>
@@ -960,18 +1034,19 @@
 
 <div class="viewcode-block" id="GenericIncars"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.GenericIncars">[docs]</a><span class="k">class</span> <span class="nc">GenericIncars</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class containing several generic Incar object for different psuedopotentials</span>
+<span class="sd">    Construct class containing severalgeneric Incar object.</span>
+
+<span class="sd">    For different psuedopotentials</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">incar</span><span class="o">=</span><span class="p">{},</span> <span class="n">pot_type</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Intialize with the name of func. and other parameters.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">incar</span> <span class="o">=</span> <span class="n">incar</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span> <span class="o">=</span> <span class="n">pot_type</span>
 
 <div class="viewcode-block" id="GenericIncars.optb88vdw"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.GenericIncars.optb88vdw">[docs]</a>    <span class="k">def</span> <span class="nf">optb88vdw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        OptB88vdW functional</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Select OptB88vdW functional.&quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">PREC</span><span class="o">=</span><span class="s2">&quot;Accurate&quot;</span><span class="p">,</span>
             <span class="n">ISMEAR</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -989,12 +1064,12 @@
             <span class="n">LWAVE</span><span class="o">=</span><span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">inc</span> <span class="o">=</span> <span class="n">Incar</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">GenericIncars</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;optb88vdw&quot;</span><span class="p">,</span> <span class="n">incar</span><span class="o">=</span><span class="n">inc</span><span class="p">,</span> <span class="n">pot_type</span><span class="o">=</span><span class="s2">&quot;POT_GGA_PAW_PBE&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">GenericIncars</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;optb88vdw&quot;</span><span class="p">,</span> <span class="n">incar</span><span class="o">=</span><span class="n">inc</span><span class="p">,</span> <span class="n">pot_type</span><span class="o">=</span><span class="s2">&quot;POT_GGA_PAW_PBE&quot;</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GenericIncars.pbe"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.GenericIncars.pbe">[docs]</a>    <span class="k">def</span> <span class="nf">pbe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        GGA-PBE functional</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Select GGA-PBE functional.&quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">PREC</span><span class="o">=</span><span class="s2">&quot;Accurate&quot;</span><span class="p">,</span>
             <span class="n">ISMEAR</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -1011,9 +1086,7 @@
         <span class="k">return</span> <span class="n">GenericIncars</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;pbe&quot;</span><span class="p">,</span> <span class="n">incar</span><span class="o">=</span><span class="n">inc</span><span class="p">,</span> <span class="n">pot_type</span><span class="o">=</span><span class="s2">&quot;POT_GGA_PAW_PBE&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GenericIncars.lda"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.GenericIncars.lda">[docs]</a>    <span class="k">def</span> <span class="nf">lda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        LDA functional</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Select LDA functional.&quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
             <span class="n">PREC</span><span class="o">=</span><span class="s2">&quot;Accurate&quot;</span><span class="p">,</span>
             <span class="n">ISMEAR</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -1027,46 +1100,6 @@
         <span class="p">)</span>
         <span class="n">inc</span> <span class="o">=</span> <span class="n">Incar</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">GenericIncars</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;lda&quot;</span><span class="p">,</span> <span class="n">incar</span><span class="o">=</span><span class="n">inc</span><span class="p">,</span> <span class="n">pot_type</span><span class="o">=</span><span class="s2">&quot;POT_LDA_PAW&quot;</span><span class="p">)</span></div></div>
-
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">if __name__ == &quot;__main__&quot;:</span>
-
-<span class="sd">    p = Poscar.from_file(</span>
-<span class="sd">        &quot;/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/CONTCAR&quot;</span>
-<span class="sd">    )</span>
-<span class="sd">    p = Poscar.from_file(</span>
-<span class="sd">        &quot;/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CONTCAR&quot;</span>
-<span class="sd">    )</span>
-<span class="sd">    # p.write_file(&#39;POSCAR&#39;)</span>
-<span class="sd">    inc = Incar.from_file(</span>
-<span class="sd">        &quot;/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO/MAIN-RELAX-bulk@mp_541837/INCAR&quot;</span>
-<span class="sd">    )</span>
-<span class="sd">    inc = Incar.from_file(</span>
-<span class="sd">        &quot;/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/INCAR&quot;</span>
-<span class="sd">    )</span>
-<span class="sd">    # inc.write_file(&#39;INCAR&#39;)</span>
-<span class="sd">    kp = Kpoints().automatic_length_mesh(lattice_mat=p.atoms.lattice_mat)</span>
-<span class="sd">    # kp.write_file(&#39;KPOINTS&#39;)</span>
-<span class="sd">    # pot=Potcar(elements=p.atoms.elements)</span>
-<span class="sd">    new_symb = list(set(p.atoms.elements))</span>
-<span class="sd">    potcar = Potcar(elements=new_symb)</span>
-<span class="sd">    # job = VaspJobs(poscar=p, kpoints=kp, incar=inc, jobname=&quot;testt&quot;).write_jobsub_py()</span>
-<span class="sd">    # job = VaspJobs(poscar=p, kpoints=kp,pot_type=&#39;POT_GGA_PAW_PBE&#39;, incar=inc, jobname=&quot;testt&quot;).runjob()</span>
-<span class="sd">    # print(&#39;optb88vdw incar&#39;,GenericIncars().optb88vdw().incar)</span>
-<span class="sd">    # JobFactory(</span>
-<span class="sd">    #    use_incar_dict=GenericIncars().optb88vdw().incar,</span>
-<span class="sd">    #    pot_type=GenericIncars().optb88vdw().pot_type,</span>
-<span class="sd">    # ).converg_encut(mat=p)</span>
-<span class="sd">    # ).converg_kpoint(mat=p)</span>
-<span class="sd">    # ).optimize_geometry(mat=p, encut=500, length=0)</span>
-<span class="sd">    # ).band_structure(mat=p, encut=500, nbands=100)</span>
-<span class="sd">    # ).loptics(mat=p, encut=500, nbands=100)</span>
-<span class="sd">    # ).mbj_loptics(mat=p, encut=500, nbands=100)</span>
-<span class="sd">    # ).elastic(mat=p, encut=500, nbands=100)</span>
-
-<span class="sd">    JobFactory().all_optb88vdw_props(mat=p)</span>
-<span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 
           </div>
@@ -1075,15 +1108,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -1097,13 +1132,13 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

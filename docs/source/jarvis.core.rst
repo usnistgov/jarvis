@@ -8,63 +8,63 @@ jarvis.core.atoms module
 ------------------------
 
 .. automodule:: jarvis.core.atoms
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 jarvis.core.composition module
 ------------------------------
 
 .. automodule:: jarvis.core.composition
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 jarvis.core.kpoints module
 --------------------------
 
 .. automodule:: jarvis.core.kpoints
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 jarvis.core.lattice module
 --------------------------
 
 .. automodule:: jarvis.core.lattice
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
-jarvis.core.pdb module
-----------------------
+jarvis.core.pdb\_atoms module
+-----------------------------
 
-.. automodule:: jarvis.core.pdb
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. automodule:: jarvis.core.pdb_atoms
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 jarvis.core.specie module
 -------------------------
 
 .. automodule:: jarvis.core.specie
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 jarvis.core.utils module
 ------------------------
 
 .. automodule:: jarvis.core.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Module contents
 ---------------
 
 .. automodule:: jarvis.core
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    :members:
+    :undoc-members:
+    :show-inheritance:

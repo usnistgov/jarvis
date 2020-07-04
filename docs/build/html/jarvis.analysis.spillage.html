@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.analysis.spillage package &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.analysis.spillage package &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -42,34 +44,43 @@
 </div>
 <div class="section" id="module-jarvis.analysis.spillage.spillage">
 <span id="jarvis-analysis-spillage-spillage-module"></span><h2>jarvis.analysis.spillage.spillage module<a class="headerlink" href="#module-jarvis.analysis.spillage.spillage" title="Permalink to this headline">¶</a></h2>
-<p>Code to calculate spin-orbit spillage.
-Please cite the following paper if you use the code:
+<p>Code to calculate spin-orbit spillage.</p>
+<p>Please find details in:
 <a class="reference external" href="https://www.nature.com/articles/s41598-019-45028-y">https://www.nature.com/articles/s41598-019-45028-y</a>
 <a class="reference external" href="https://www.nature.com/articles/s41524-020-0319-4">https://www.nature.com/articles/s41524-020-0319-4</a></p>
-<dl class="py class">
+<dl class="class">
 <dt id="jarvis.analysis.spillage.spillage.Spillage">
-<em class="property">class </em><code class="sig-prename descclassname">jarvis.analysis.spillage.spillage.</code><code class="sig-name descname">Spillage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wf_noso</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">wf_so</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/spillage/spillage.html#Spillage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.spillage.spillage.Spillage" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.analysis.spillage.spillage.</code><code class="descname">Spillage</code><span class="sig-paren">(</span><em>wf_noso=''</em>, <em>wf_so=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/spillage/spillage.html#Spillage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.spillage.spillage.Spillage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
+<p>Spin-orbit spillage criteria.</p>
+<p>Predict whether a material is topologically non-trival.
+The spillage criteria physically signifies
+number of band-inverted electrons.
+A non-zero, high value (generally &gt;0.5) suggests non-trivial behavior</p>
+<dl class="method">
 <dt id="jarvis.analysis.spillage.spillage.Spillage.isclose">
-<code class="sig-name descname">isclose</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n1</span></em>, <em class="sig-param"><span class="n">n2</span></em>, <em class="sig-param"><span class="n">rel_tol</span><span class="o">=</span><span class="default_value">1e-07</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/spillage/spillage.html#Spillage.isclose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.spillage.spillage.Spillage.isclose" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">isclose</code><span class="sig-paren">(</span><em>n1</em>, <em>n2</em>, <em>rel_tol=1e-07</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/spillage/spillage.html#Spillage.isclose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.spillage.spillage.Spillage.isclose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if n1 and n2 are close.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.analysis.spillage.spillage.Spillage.orth">
-<code class="sig-name descname">orth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/spillage/spillage.html#Spillage.orth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.spillage.spillage.Spillage.orth" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">orth</code><span class="sig-paren">(</span><em>A</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/spillage/spillage.html#Spillage.orth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.spillage.spillage.Spillage.orth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Orthogonalize a vector.</p>
+</dd></dl>
 
-<dl class="py method">
+<dl class="method">
 <dt id="jarvis.analysis.spillage.spillage.Spillage.overlap_so_spinpol">
-<code class="sig-name descname">overlap_so_spinpol</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/spillage/spillage.html#Spillage.overlap_so_spinpol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.spillage.spillage.Spillage.overlap_so_spinpol" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="descname">overlap_so_spinpol</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/spillage/spillage.html#Spillage.overlap_so_spinpol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.spillage.spillage.Spillage.overlap_so_spinpol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate spillage.</p>
+</dd></dl>
 
 </dd></dl>
 
 </div>
 <div class="section" id="module-jarvis.analysis.spillage">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.analysis.spillage" title="Permalink to this headline">¶</a></h2>
+<p>Module to predict topological SOC spillage.</p>
 </div>
 </div>
 
@@ -97,15 +108,17 @@ Please cite the following paper if you use the code:
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -119,12 +132,12 @@ Please cite the following paper if you use the code:
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>

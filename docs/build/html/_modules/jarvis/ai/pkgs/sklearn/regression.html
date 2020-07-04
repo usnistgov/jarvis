@@ -1,18 +1,20 @@
 
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>jarvis.ai.pkgs.sklearn.regression &#8212; jarvis-tools 2020.10.05 documentation</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.ai.pkgs.sklearn.regression &#8212; JARVIS-Tools v2020.7.4 documentation</title>
     <link rel="stylesheet" href="../../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
     
-    <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-    <script src="../../../../../_static/jquery.js"></script>
-    <script src="../../../../../_static/underscore.js"></script>
-    <script src="../../../../../_static/doctools.js"></script>
-    <script src="../../../../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
@@ -26,7 +28,7 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -38,13 +40,12 @@
             
   <h1>Source code for jarvis.ai.pkgs.sklearn.regression</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Simple ML models for classifcation and regression, designed for educational purposes only</span>
-<span class="sd">__author__: = Kamal Choudhary</span>
+<span class="sd">Simple ML models for regression.</span>
+
+<span class="sd">Designed for educational purposes only.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span> <span class="nn">jarvis.ai.pkgs.utils</span> <span class="kn">import</span> <span class="n">regr_scores</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.gaussian_process</span> <span class="kn">import</span> <span class="n">GaussianProcessRegressor</span>
 <span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">RandomForestRegressor</span><span class="p">,</span>
@@ -52,20 +53,15 @@
     <span class="n">AdaBoostRegressor</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVR</span>
-<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">Lasso</span><span class="p">,</span> <span class="n">LinearRegression</span><span class="p">,</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">Lasso</span><span class="p">,</span> <span class="n">LinearRegression</span>
 <span class="kn">from</span> <span class="nn">sklearn.kernel_ridge</span> <span class="kn">import</span> <span class="n">KernelRidge</span>
 <span class="kn">from</span> <span class="nn">sklearn.neural_network</span> <span class="kn">import</span> <span class="n">MLPRegressor</span>
 <span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="kn">import</span> <span class="n">DecisionTreeRegressor</span>
-<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_boston</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_curve</span><span class="p">,</span> <span class="n">auc</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">label_binarize</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span>
 <span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">VarianceThreshold</span>
 <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
-<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
-<span class="kn">from</span> <span class="nn">jarvis.ai.pkgs.utils</span> <span class="kn">import</span> <span class="n">get_ml_data</span>
-
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="c1"># Note that these models are with default parameters</span>
 <span class="c1"># without any hyper-parameter otimizations</span>
@@ -83,26 +79,22 @@
 <span class="p">]</span>
 
 
-<div class="viewcode-block" id="regression"><a class="viewcode-back" href="../../../../../jarvis.ai.pkgs.sklearn.html#jarvis.ai.pkgs.sklearn.regression.regression">[docs]</a><span class="k">def</span> <span class="nf">regression</span><span class="p">(</span>
-    <span class="n">X</span><span class="o">=</span><span class="p">[],</span> <span class="n">Y</span><span class="o">=</span><span class="p">[],</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">models</span><span class="o">=</span><span class="n">simple_regr_models</span><span class="p">,</span> <span class="n">preprocess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span>
-<span class="p">):</span>
+<div class="viewcode-block" id="regression"><a class="viewcode-back" href="../../../../../jarvis.ai.pkgs.sklearn.html#jarvis.ai.pkgs.sklearn.regression.regression">[docs]</a><span class="k">def</span> <span class="nf">regression</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="p">[],</span> <span class="n">Y</span><span class="o">=</span><span class="p">[],</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">models</span><span class="o">=</span><span class="n">simple_regr_models</span><span class="p">,</span>
+               <span class="n">preprocess</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Provide model as models to get accuracy</span>
+<span class="sd">    Provide model as models to get accuracy.</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">        X: input features</span>
 
-<span class="sd">      X: input features</span>
+<span class="sd">        Y: Target data</span>
 
-<span class="sd">      Y: Target data</span>
-<span class="sd">     </span>
-<span class="sd">      models : collection array of models</span>
+<span class="sd">        models : collection array of models</span>
 
-<span class="sd">      plot: whether to make a parity plot with ML models</span>
+<span class="sd">        plot: whether to make a parity plot with ML models</span>
 
-<span class="sd">      preprocess: whether to apply standard preprocessing techniques</span>
-
+<span class="sd">        preprocess: whether to apply standard preprocessing techniques</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
         <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="n">test_size</span>
     <span class="p">)</span>
@@ -115,23 +107,25 @@
                 <span class="p">(</span><span class="s2">&quot;est&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
             <span class="p">]</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="n">preprocess</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">preprocess</span><span class="p">:</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">pipe</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">i</span>
         <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
         <span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
         <span class="n">reg_sc</span> <span class="o">=</span> <span class="n">regr_scores</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-                <span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;pred&quot;</span><span class="p">],</span> <span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;pred&quot;</span><span class="p">],</span> <span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
             <span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;mae&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;rmse&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;mae&quot;</span><span class="p">],</span>
+              <span class="mi">3</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;rmse&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
         <span class="n">info</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">info</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">][</span><span class="s2">&quot;mae&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;mae&quot;</span><span class="p">]</span>
         <span class="n">info</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">][</span><span class="s2">&quot;rmse&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reg_sc</span><span class="p">[</span><span class="s2">&quot;rmse&quot;</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="n">plot</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;DFT&quot;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;ML&quot;</span><span class="p">)</span>
@@ -142,11 +136,12 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">if __name__ == &quot;__main__&quot;:</span>
-<span class="sd">    X, Y, jid  = get_ml_data(dataset = &#39;cfid_3d&#39;, ml_property=&#39;exfoliation_energy&#39;) </span>
-
+<span class="sd">    from jarvis.ai.pkgs.utils import get_ml_data</span>
+<span class="sd">    X, Y, jid  = get_ml_data(dataset =</span>
+<span class="sd">                             &#39;cfid_3d&#39;, ml_property=&#39;exfoliation_energy&#39;)</span>
 <span class="sd">    info = regression(X, Y, models = simple_regr_models)</span>
 <span class="sd">    print (&#39;info&#39;,info)</span>
-<span class="sd">    assert info[&#39;GradientBoostingRegressor&#39;][&#39;mae&#39;]&lt;50.0 </span>
+<span class="sd">    assert info[&#39;GradientBoostingRegressor&#39;][&#39;mae&#39;]&lt;50.0</span>
 <span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 
@@ -156,15 +151,17 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -178,13 +175,13 @@
         <li class="right" >
           <a href="../../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../../index.html">jarvis-tools 2020.10.05 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, Kamal Choudhary.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
 </html>
