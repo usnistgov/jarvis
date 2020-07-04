@@ -22,7 +22,7 @@ copyright = '2020, Kamal Choudhary'
 author = 'Kamal Choudhary'
 
 # The full version, including alpha/beta/rc tags
-release = '2020.10.05'
+release = '2020.7.4'
 
 
 # -- General configuration ---------------------------------------------------
