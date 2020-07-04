@@ -1,29 +1,24 @@
-"""
-Functions to analze LAMMPS output
-"""
-
-import sys
+"""Function to analze LAMMPS output."""
 
 
 def analyze_log(log="log.lammps"):
+    """
+    Analyzes log.lammps file.
 
-    """ 
-    Analyzes log.lammps file,
     Please note, the output format heavily depends on the input file
-    A generic inpu is taken here
-    
+    A generic input is taken here.
+
     Args:
-    
+
         log: path to log.lammps file
-        
+
     Returns:
-    
           en: energy/atom
-          
+
           press: pressure
-          
+
           toten: total energy
-          
+
           cij: elastic constants
     """
     en = 0
@@ -38,7 +33,7 @@ def analyze_log(log="log.lammps"):
     c13 = 0
     c23 = 0
     c14 = 0
-    c15 = 0
+    # c15 = 0
     c16 = 0
     c14 = 0
     c24 = 0
@@ -58,10 +53,11 @@ def analyze_log(log="log.lammps"):
                 toten = float(lines[i - 1].split()[12])
                 press = float(lines[i - 1].split()[2])
                 press = float(press) * 0.0001
-                en = float(lines[i - 1].split()[12]) / float(lines[i - 1].split()[17])
+                denom = float(lines[i - 1].split()[17])
+                en = float(lines[i - 1].split()[12]) / denom
                 break
         logfile.close()
-    except:
+    except Exception:
         pass
     try:
         logfile = open(log, "r")
@@ -108,7 +104,7 @@ def analyze_log(log="log.lammps"):
             if 'print "Elastic Constant C56all = ${C56all} ${cunits}"' in line:
                 c56 = ((str((lines[i + 1])).split("=")[1]).split("GPa"))[0]
         logfile.close()
-    except:
+    except Exception:
         pass
     return (
         round(en, 2),
@@ -124,6 +120,7 @@ def analyze_log(log="log.lammps"):
         round(float(c55), 1),
         round(float(c66), 1),
         round(float(c14), 1),
+        # round(float(c15), 1),
         round(float(c16), 1),
         round(float(c24), 1),
         round(float(c25), 1),
@@ -136,9 +133,10 @@ def analyze_log(log="log.lammps"):
         round(float(c56), 1),
     )
 
+
 """
 if __name__ == "__main__":
-    lg = "/rk2/knc6/JARVIS-FF/ALLOY8/Mishin_updated-Ni-Al-Co-2013.eam.alloy_nist/bulk@mp-134_fold/bulk@mp-134/log.lammps"
+    lg = "log.lammps"
     x = analyze_log(lg)
     print(x)
 """

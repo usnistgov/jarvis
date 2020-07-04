@@ -1,7 +1,4 @@
-"""
-Modules handling input files for VASP calculations
-"""
-from collections import Counter
+"""Modules handling input files for VASP calculations."""
 import pprint
 import json
 import os
@@ -14,32 +11,29 @@ from jarvis.core.utils import get_counts
 
 class Poscar(object):
     """
-    Class defining Poscar object 
+    Class defining Poscar object.
+
+    Constructued from the Atoms object.
 
     Args:
-    
         atoms : Atoms object
-        
+
         comment : Header of Poscar file
     """
 
     def __init__(self, atoms, comment="System"):
+        """Initialize the Poscar object."""
         self.atoms = atoms
         self.comment = comment
 
     @staticmethod
     def from_file(filename="POSCAR"):
-        """
-        Read simple POSCAR file from the path
-        """
+        """Read simple POSCAR file from the path."""
         with open(filename, "r") as f:
             return Poscar.from_string(f.read())
 
     def write_file(self, filename):
-        """
-        Write the Poscar object to a file
-        """
-        
+        """Write the Poscar object to a file."""
         f = open(filename, "w")
         header = (
             str(self.comment)
@@ -63,12 +57,12 @@ class Poscar(object):
             + str(self.atoms.lattice_mat[2][2])
             + "\n"
         )
-        order = np.argsort(self.atoms.elements)
+        # order = np.argsort(self.atoms.elements)
         coords = self.atoms.frac_coords
-        coords_ordered = np.array(coords)#[order]
-        elements_ordered = np.array(self.atoms.elements)#[order]
-        props_ordered = np.array(self.atoms.props)#[order]
-        check_selective_dynamics = False
+        coords_ordered = np.array(coords)  # [order]
+        elements_ordered = np.array(self.atoms.elements)  # [order]
+        props_ordered = np.array(self.atoms.props)  # [order]
+        # check_selective_dynamics = False
         counts = get_counts(elements_ordered)
         if "T" in "".join(map(str, self.atoms.props[0])):
             middle = (
@@ -88,7 +82,8 @@ class Poscar(object):
         rest = ""
         # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
-            rest = rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
+            p_ordered = str(props_ordered[ii])
+            rest = rest + " ".join(map(str, i)) + " " + str(p_ordered) + "\n"
 
         result = header + middle + rest
 
@@ -97,10 +92,7 @@ class Poscar(object):
 
     @staticmethod
     def from_string(lines):
-        """
-        Read Poscar from strings, useful in reading files/streams
-        """
-        
+        """Read Poscar from strings, useful in reading files/streams."""
         text = lines.splitlines()
         comment = text[0]
         scale = float(text[1])
@@ -108,7 +100,7 @@ class Poscar(object):
         lattice_mat.append([float(i) for i in text[2].split()])
         lattice_mat.append([float(i) for i in text[3].split()])
         lattice_mat.append([float(i) for i in text[4].split()])
-        lattice_mat = np.array(lattice_mat)
+        lattice_mat = scale * np.array(lattice_mat)
 
         uniq_elements = text[5].split()
         element_count = np.array([int(i) for i in text[6].split()])
@@ -132,11 +124,12 @@ class Poscar(object):
             cartesian=cartesian,
         )
         # print (atoms)
-        formula = atoms.composition.formula
+        # formula = atoms.composition.formula
 
         return Poscar(atoms, comment=comment)
 
     def __repr__(self):
+        """Represent the Poscar class."""
         header = (
             str(self.comment)
             + str("\n1.0\n")
@@ -164,7 +157,7 @@ class Poscar(object):
         coords_ordered = np.array(coords)[order]
         elements_ordered = np.array(self.atoms.elements)[order]
         props_ordered = np.array(self.atoms.props)[order]
-        check_selective_dynamics = False
+        # check_selective_dynamics = False
         counts = get_counts(elements_ordered)
         if "T" in "".join(map(str, self.atoms.props[0])):
             middle = (
@@ -184,34 +177,28 @@ class Poscar(object):
         rest = ""
         # print ('repr',self.frac_coords, self.frac_coords.shape)
         for ii, i in enumerate(coords_ordered):
-            rest = rest + " ".join(map(str, i)) + " " + str(props_ordered[ii]) + "\n"
+            p_ordered = str(props_ordered[ii])
+            rest = rest + " ".join(map(str, i)) + " " + str(p_ordered) + "\n"
         result = header + middle + rest
         return result
 
 
 class Incar(object):
-    """
-    VASP INCAR files as python dictionary of keys and values
-    """
+    """Make VASP INCAR files as python dictionary of keys and values."""
 
     def __init__(self, tags={}):
+        """Initialize with a dictionary."""
         self._tags = tags
 
     @staticmethod
     def from_file(filename="INCAR"):
-        """
-        Read INCAR file
-        """
-        
+        """Read INCAR file."""
         with open(filename, "r") as f:
             return Incar.from_string(f.read())
 
     def update(self, d={}):
-        """
-        Provide the new tags as a dictionary to update Incar object
-        """
-        
-        #print("selftags1=", self._tags)
+        """Provide the new tags as a dictionary to update Incar object."""
+        # print("selftags1=", self._tags)
         if self._tags != {}:
             for i, j in self._tags.items():
                 self._tags[i] = j  # .strip(' ')
@@ -221,10 +208,7 @@ class Incar(object):
         return Incar(self._tags)
 
     def get(self, key="POTIM", temp=0.5):
-        """
-        Get the value of a key
-        """
-        
+        """Get the value of a key."""
         if key in list(self._tags.keys()):
             return self._tags[key]
         else:
@@ -233,17 +217,16 @@ class Incar(object):
             return self._tags[key]
 
     def to_dict(self):
-        """
-        Convert into dictionary
-        """
-        
+        """Convert into dictionary."""
         return self._tags
 
     def from_dict(self, data={}):
+        """Construct from dictionary."""
         return Incar(tags=data)
 
     @staticmethod
     def from_string(lines):
+        """Construct from string."""
         text = lines.splitlines()
         tags = OrderedDict()
         for i in text:
@@ -254,13 +237,11 @@ class Incar(object):
         return Incar(tags=tags)
 
     def __repr__(self):
+        """Representation of the class."""
         return str(self._tags)
 
     def write_file(self, filename):
-        """
-        Write Incar to a file
-        """
-        
+        """Write Incar to a file."""
         tags = self._tags
         lines = ""
         for i, j in tags.items():
@@ -271,18 +252,14 @@ class Incar(object):
 
 
 class IndividualPotcarData(object):
-    """
-    Class for individual POTCAR file handling
-    """
+    """Class for individual POTCAR file handling."""
 
     def __init__(self, data={}):
+        """Intialize with some key info."""
         self._data = data
 
     def from_string(lines):
-        """
-        Some of the contents in the POTCAR
-        """
-        
+        """Generate some of the contents in the POTCAR."""
         text = lines.splitlines()
         individual_data = OrderedDict()
         individual_data["header1"] = text[0]
@@ -290,20 +267,24 @@ class IndividualPotcarData(object):
         individual_data["VRHFIN"] = text[3].split("=")[1]
         individual_data["element"] = text[3].split("=")[1].split(":")[0]
         individual_data["LEXCH"] = text[4].split("=")[1].replace(" ", "")
-        individual_data["EATOM"] = text[5].split("=")[1].split()[0].replace(" ", "")
+        tmp = text[5].split("=")[1].split()[0].replace(" ", "")
+        individual_data["EATOM"] = tmp
         individual_data["TITEL"] = text[7].split("=")[1].replace(" ", "")
-
         return IndividualPotcarData(data=individual_data)
 
     def from_file(filename="POTCAR"):
+        """Read from file."""
         with open(filename, "r") as f:
             return IndividualPotcarData.from_string(f.read())
 
     def __repr__(self):
+        """Reprent the class."""
         return pprint.pformat(self._data, indent=4)
 
 
 class Potcar(object):
+    """Construct muti-atoms Postcar."""
+
     def __init__(
         self,
         elements=[],
@@ -311,6 +292,7 @@ class Potcar(object):
         pot_json_path="",
         potcar_strings={},
     ):
+        """Initialize the Potcar class."""
         self._elements = elements
         self._pot_type = pot_type
         self._potcar_strings = potcar_strings
@@ -345,9 +327,12 @@ class Potcar(object):
                     potcar_strings.setdefault(i, j)
             self._potcar_strings = potcar_strings
             if len(self._elements) != len(self._potcar_strings.keys()):
-                raise ValueError("Number of elements is not same as potcar_strings")
+                msg = "Number of elements not same as potcar_strings"
+                raise ValueError(msg)
 
-    def catenate_potcar_files(self, destination_filename="POTCAR", filenames=[]):
+    def catenate_potcar_files(self, destination_filename="POTCAR",
+                              filenames=[]):
+        """Catenate potcars of sifferent elements."""
         with open(destination_filename, "w") as outfile:
             for fname in filenames:
                 with open(fname) as infile:
@@ -355,6 +340,7 @@ class Potcar(object):
                         outfile.write(line)
 
     def list_potcar_files(self):
+        """List POTCAR files."""
         pot_files = []
         vasp_dir = str(os.environ["JARVIS_VASP_PSP_DIR"])
         vasp_psp_dir = str(os.path.join(vasp_dir, self._pot_type))
@@ -365,19 +351,21 @@ class Potcar(object):
         return pot_files
 
     def write_file(self, filename="POTCAR"):
+        """Write POTCAR file."""
         pot_files = self.list_potcar_files()
-        self.catenate_potcar_files(destination_filename=filename, filenames=pot_files)
+        self.catenate_potcar_files(destination_filename=filename,
+                                   filenames=pot_files)
 
     def __repr__(self):
+        """Represent Potcar."""
         return str(str(self._pot_type) + "\n" + str(self._potcar_strings))
 
 
 class Kpoints(object):
-    """
-    VASP KPOINTS as object
-    """
+    """Make VASP KPOINTS as object."""
 
     def __init__(self, filename=""):
+        """Initialize Kpoints from filename else read from file-stream."""
         self.filename = filename
         if filename != "":
             f = open(self.filename, "r")
@@ -387,7 +375,7 @@ class Kpoints(object):
 
     @classmethod
     def read(self, lines):
-
+        """Read from an open file."""
         if lines[1] == "0":
             return self.get_mesh_kp(lines=lines)
         elif "Reciprocal" in lines[2]:
@@ -396,22 +384,14 @@ class Kpoints(object):
             ValueError("K-point scheme is not implemented")
 
     def get_mesh_kp(lines=""):
-        #print("lines", lines)
-        """
-        Read Kpoints as grid
-        """
-        
+        """Read Kpoints as grid."""
         grid = [int(i) for i in lines[3].split()]
-        # print (grid)
         kpts = generate_kgrid(grid)
         kpoints = Kpoints3D(kpoints=np.array(kpts))
         return kpoints
 
     def get_ibz_kp(lines=""):
-        """
-        Read the Kpoints in the line-mode
-        """
-        
+        """Read the Kpoints in the line-mode."""
         kp_labels = []
         all_kp = []
         kp_labels_points = []
@@ -434,12 +414,9 @@ class Kpoints(object):
         for i, j in zip(kp_labels, kp_labels_points):
             labels[j] = i
         all_kp = np.array(all_kp, dtype="float")
-        kpoints = Kpoints3D(kpoints=all_kp, labels=labels, kpoint_mode="linemode")
+        kpoints = Kpoints3D(kpoints=all_kp,
+                            labels=labels, kpoint_mode="linemode")
         return kpoints
-        # print ('kp_labels',labels,len(all_kp))
-        # print ('kp2',kp_labels_points, kp_labels,np.array(all_kp,dtype='float'))
-
-        # return kp_labels_points, kp_labels,np.array(all_kp,dtype='float')
 
 
 """
@@ -455,23 +432,4 @@ if __name__ == "__main__":
     import sys
 
     sys.exit()
-    kp = Kpoints(filename="../../examples/vasp/SiOptb88/MAIN-RELAX-bulk@mp_149/KPOINTS")
-
-    p = Poscar.from_file(
-        filename="/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/POSCAR"
-    )
-    p.write_file("POSCAR")
-    from jarvis.db.jsonutils import dumpjson
-
-    dumpjson(p.atoms.to_dict(), "pp.json")
-    # print (p.atoms*[3,3,3])
-    # p = Incar.from_file(filename='/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/INCAR')
-    # print (p)
-    # p.write_file('pp')
-    # elements=['S','P']
-    # p=Potcar(elements=elements)
-    # print (p)
-    # p.write_file('POTCAR')
-    # inp=IndividualPotcarData.from_file('POTCAR')
-    # print (inp)
 """
