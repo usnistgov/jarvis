@@ -1,16 +1,15 @@
-"""
-Class for writing inputs for BoltzTrap calculations
-"""
+"""Class for writing inputs for BoltzTrap calculations."""
 import numpy as np
 from jarvis.io.vasp.outputs import Vasprun
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
-import os
 
 Ry_to_ev = 13.6056980659
 Angs_to_Bohr = 1.88973
 
 
 class WriteInputs(object):
+    """Write input files for BoltzTrap."""
+
     def __init__(
         self,
         vasprun_path="",
@@ -27,7 +26,36 @@ class WriteInputs(object):
         struct=None,
         intrans=None,
     ):
+        """
+        Require following information.
 
+        energy: energy window.
+
+        struct: Atoms object.
+
+        intrans: name of intrans.
+
+        vasprun_path:  path of vasprun file.
+
+        dos_type: type of densit of states.
+
+        tmax: maximum temperature.
+
+        tgrid: temperature grid.
+
+        doping: doping levels
+
+        run_type:
+
+        symprec: symmetry precision.
+
+        energy_grid: energy grid.
+
+        lpfac:
+
+        energy_span_around_fermi:
+
+        """
         self.energy = energy
         self.struct = struct
         self.intrans = intrans
@@ -47,6 +75,7 @@ class WriteInputs(object):
             self.doping.append(1e22)
 
     def write_intrans(self, filename="boltztrap.intrans"):
+        """Write BoltzTrap input intrans file."""
         f = open(filename, "w")
         scissor = 0.0
         nelect = int(float(self.vrun.all_input_parameters["NELECT"]))
@@ -94,10 +123,10 @@ class WriteInputs(object):
         )
 
         f.write(self.dos_type + "\n")
-        self.tauref = 0
+        self.taurf = 0
         self.tauexp = 0
         self.tauen = 0
-        f.write("{} {} {} 0 0 0\n".format(self.tauref, self.tauexp, self.tauen))
+        f.write("{} {} {} 0 0 0\n".format(self.taurf, self.tauexp, self.tauen))
 
         f.write("{}\n".format(2 * len(self.doping)))
         for i in self.doping:
@@ -107,6 +136,7 @@ class WriteInputs(object):
         f.close()
 
     def write_struct(self, filename="boltztrap.struct"):
+        """Write BoltzTrap based struct file."""
         atoms = self.vrun.all_structures[-1]
         spg = Spacegroup3D(atoms)
         spg_symb = spg.space_group_symbol
@@ -134,11 +164,12 @@ class WriteInputs(object):
         f.close()
 
     def write_energy(self, filename="boltztrap.energyso", trim=0.1):
+        """Write energy information from DFT."""
         kpoints = self.vrun.kpoints._kpoints
         eigs_up, eigs_dn = self.vrun.eigenvalues
         ef = self.vrun.efermi
         target = 2 * int(len(eigs_dn[0]) * (1 - trim))  # +1
-        print("target", target)
+        # print("target", target)
         f = open(filename, "w")
         line = str("system \n") + str(len(kpoints)) + "\n"
         f.write(line)

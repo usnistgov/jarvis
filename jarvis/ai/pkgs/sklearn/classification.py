@@ -117,7 +117,8 @@ def classify_roc_ml(
                         tpr[i],
                         color=color,
                         lw=lw,
-                        label="ROC  {0} (area = {1:0.2f})" "".format(name, roc_auc[i]),
+                        label="ROC  {0} (area = {1:0.2f})"
+                        "".format(name, roc_auc[i]),
                     )
     if plot:
         plt.plot([0, 1], [0, 1], "k--", lw=lw)
@@ -131,20 +132,41 @@ def classify_roc_ml(
     return model, roc_auc
 
 
-def classification(X=[], Y=[], tol=100, plot=False, preprocess=True,
-                   models=simple_class_models, model_name='my_model', save_model=False):
-    """Quickly train some of the classifcation algorithms available in scikit-learn."""
+def classification(
+    X=[],
+    Y=[],
+    tol=100,
+    plot=False,
+    preprocess=True,
+    models=simple_class_models,
+    model_name="my_model",
+    save_model=False,
+):
+    """Quickly train some of the classifcation algorithms in scikit-learn."""
     X_class, Y_class = binary_class_dat(X=X, Y=Y, tol=tol)
     info = defaultdict()
     for i in models:
-        m, r = classify_roc_ml(X=X_class, y=Y_class, method=i,
-                               preprocess=preprocess, plot=plot)
+        m, r = classify_roc_ml(
+            X=X_class, y=Y_class, method=i, preprocess=preprocess, plot=plot
+        )
         print(type(i).__name__, r[0])
         info[type(i).__name__] = {}
-        info[type(i).__name__]['roc_auc'] = r
+        info[type(i).__name__]["roc_auc"] = r
         if save_model:
-            pk = str(model_name) + '_' + str(type(i).__name__) + '_' + str(".pk")
-            jb = str(model_name) + '_' + str(type(i).__name__) + '_' + str(".jb")
+            pk = (
+                str(model_name)
+                + "_"
+                + str(type(i).__name__)
+                + "_"
+                + str(".pk")
+            )
+            jb = (
+                str(model_name)
+                + "_"
+                + str(type(i).__name__)
+                + "_"
+                + str(".jb")
+            )
             pickle.dump(i, open(pk, "wb"))
             joblib.dump(i, jb)
     return info
@@ -152,7 +174,8 @@ def classification(X=[], Y=[], tol=100, plot=False, preprocess=True,
 
 """
 if __name__ == "__main__":
-    X, Y, jid  = get_ml_data(dataset = 'cfid_3d', ml_property='exfoliation_energy')
+    X, Y, jid  = get_ml_data(dataset = 'cfid_3d',
+                             ml_property='exfoliation_energy')
     X_class, Y_class = binary_class_dat(X=X, Y=Y, tol=100)
     info = classification(X=X,Y=Y,tol=100)
     print (info)

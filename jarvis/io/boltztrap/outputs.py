@@ -1,6 +1,5 @@
-"""
-Class for analyzing BoltzTrap outputs
-"""
+"""Class for analyzing BoltzTrap outputs."""
+
 import os
 import numpy as np
 from collections import OrderedDict, defaultdict
@@ -9,6 +8,8 @@ Ry_to_ev = 13.6056980659
 
 
 class BoltzTrapOutput(object):
+    """Analyze BoltzTrap output."""
+
     def __init__(
         self,
         path="",
@@ -17,9 +18,7 @@ class BoltzTrapOutput(object):
         condtens_fixdoping=[],
         halltens_fixdoping=[],
     ):
-        """
-        Specify boltztrap folder  as path to analze data
-        """
+        """Specify boltztrap folder  as path to analze data."""
         self.outtrans_data = outtrans_data
         self.intrans_data = intrans_data
         self.condtens_fixdoping = condtens_fixdoping
@@ -27,6 +26,7 @@ class BoltzTrapOutput(object):
         self.path = path
 
     def read_intrans(self, filename=""):
+        """Read intrans file."""
         if filename == "":
             filename = os.path.join(self.path, "boltztrap.intrans")
         f = open(filename, "r")
@@ -36,6 +36,7 @@ class BoltzTrapOutput(object):
         return lines
 
     def read_outputtrans(self, filename=""):
+        """Read outtrans file."""
         gap = "na"
         Ef = "na"
         vbm = "na"
@@ -73,12 +74,14 @@ class BoltzTrapOutput(object):
         return info
 
     def dopinglevel_for_excessN(self, excessN):
+        """Return doping level for excees concentration."""
         excessN_doping = self.read_outputtrans()["excessN_doping"]
         for i, j in excessN_doping.items():
             if np.isclose(i, excessN):
                 return j
 
     def read_condtens_fixdoping(self, filename=""):
+        """Read condtens_fixdoping file."""
         if filename == "":
             filename = os.path.join(self.path, "boltztrap.condtens_fixdoping")
         f = open(filename, "r")
@@ -123,6 +126,7 @@ class BoltzTrapOutput(object):
         return all_data
 
     def read_halltens_fixdoping(self, filename=""):
+        """Read halltens file."""
         if filename == "":
             filename = os.path.join(self.path, "boltztrap.halltens_fixdoping")
         f = open(filename, "r")
@@ -161,6 +165,7 @@ class BoltzTrapOutput(object):
         return all_data
 
     def to_dict(self):
+        """Return output as a dictionary."""
         d = OrderedDict()
         d["path"] = self.path
         d["outtrans_data"] = self.read_outputtrans()  # self.outtrans_data
@@ -173,17 +178,18 @@ class BoltzTrapOutput(object):
         ] = self.read_condtens_fixdoping()  # self.condtens_fixdoping
         return d
 
+
 """
 if __name__ == "__main__":
-    condtens_fix = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/boltztrap/boltztrap.condtens_fixdoping"
+    condtens_fix = "boltztrap/boltztrap.condtens_fixdoping"
     b = BoltzTrapOutput(
-        path="/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/boltztrap"
+        path="boltztrap"
     ).read_condtens_fixdoping()
     b = BoltzTrapOutput(
-        path="/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/boltztrap"
+        path="boltztrap"
     ).read_outputtrans()
     b = BoltzTrapOutput(
-        path="/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/boltztrap"
+        path="boltztrap"
     ).to_dict()
     print(b)
 """

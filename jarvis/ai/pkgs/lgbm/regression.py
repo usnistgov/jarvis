@@ -1,3 +1,5 @@
+"""Modules for LightGBM regression."""
+
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import VarianceThreshold
@@ -24,6 +26,7 @@ def regression(
     model_name="my_model",
     config={},
 ):
+    """Get generic regression model."""
     lgbm = lgb.LGBMRegressor(
         n_estimators=config["n_estimators"],
         learning_rate=config["learning_rate"],
@@ -97,8 +100,7 @@ def regression(
 
 
 def parameters_dict():
-    """Example optimized parameters"""
-
+    """Give example optimized parameters."""
     parameters = {
         "optb88vdw_bandgap": {
             "n_estimators": 324,

@@ -15,6 +15,7 @@ import os
 import numpy as np
 from jarvis.core.atoms import Atoms
 from xml.etree.ElementTree import Element, SubElement, ElementTree
+
 try:
     from mdcs import curate, explore
 except Exception:
@@ -69,7 +70,7 @@ def data_json(
     curate_xml=False,
 ):
     """
-    This is an example of how to upload JARVIS data to the API.
+    Give an example of how to upload JARVIS data to the API.
 
     It converts input data to XML based on a template schema,
     which must be available in the JARVIS-API.
@@ -79,13 +80,10 @@ def data_json(
     See an example: https://jarvis.nist.gov/data?id=5df7f05ceaf3b300338bf83f
 
     Args:
-
          metadata with a calculation
 
          curate_xml: for debugging set it to False, and produce XML files
-
     """
-
     top = Element("JARVIS-DFT")
     child = SubElement(top, "energy-ev")
     child.text = str(energy)
@@ -169,27 +167,30 @@ def data_json(
 
 def get_record(file="JVASP-1002.xml"):
     """
-   This is an example of how to get a particular jarvis-id document, say JVASP-1002.xml
+    Give an example of how to get a particular jarvis-id document.
 
-   Args:
+    Example: JVASP-1002.xml
+
+    Args:
 
        file: name of the file
 
-   Returns:
-
+    Returns:
          data in json format
-   """
-
+    """
     r = explore.select(
-        "https://jarvis.nist.gov/", user, passd, cert=False, title=file, format="json"
+        "https://jarvis.nist.gov/",
+        user,
+        passd,
+        cert=False,
+        title=file,
+        format="json",
     )
     return r
 
 
 def delete_all(file=""):
-    """
-    Caution, this deletes your documents
-    """
+    """Provide methods for caution, this deletes your documents."""
     r = explore.select_all(
         "https://jarvis.nist.gov/", user, passd, cert=False, format="json"
     )
@@ -200,8 +201,9 @@ def delete_all(file=""):
 
 def upload_sample_data(curate_xml=False):
     """
-    Generate and upload XML files
-    Set curate_xml==True to upload all the XML documents
+    Generate and upload XML files.
+
+    Set curate_xml==True to upload all the XML documents.
     """
     d = data("dft_2d")
 
@@ -253,7 +255,8 @@ def upload_sample_data(curate_xml=False):
             mrealz_arr = str(i["mepsz"])
             typ = str("2D")  # 3D
             other = str(
-                "Citation: 1) DOI:10.1038/s41598-017-05402-0,2) DOI: 10.1038/sdata.2018.82, 3) arXiv:1804.01033v2 "
+                "Citation: 1) DOI:10.1038/s41598-017-05402-0"
+                + ",2) DOI: 10.1038/sdata.2018.82, 3) arXiv:1804.01033v2 "
             )
             struct = atoms.get_string()
             data_json(

@@ -1,13 +1,13 @@
-"""
-Class for writing Wannier90 input files
-"""
-from jarvis.core.atoms import Atoms
+"""Class for writing Wannier90 input files."""
+
 import os
 import json
 import shutil
 
 
 class Wannier90win(object):
+    """Class for writing wannier90.win."""
+
     def __init__(
         self,
         struct="",
@@ -22,31 +22,34 @@ class Wannier90win(object):
         semi_core_states=None,
     ):
         """
-        
-        Information ndeeded for writing wannier90.win
-        
+
+        Provide information ndeeded for writing wannier90.win.
+
+        At least Atoms object needed.
+
         Args:
-        
             struct : Atoms object
-            
+
             efermi : Fermi-energy
-            
-            soc : spin-orbit coupling True/False 
-            
+
+            soc : spin-orbit coupling True/False
+
             dis_num_iter : number of disentanglement iteration steps
                            generally 100-200 is enough
-                           
+
             num_iter : number of wannierisation iterations
-            
-            kmesh_tol : important for wannier convergence, try to increase/decrease if 
+
+            kmesh_tol : important for wannier convergence,
+                        try to increase/decrease if
                         wannierization fails
-                        
+
             dis_mix_ratio : mixing ratio for the disentanglement routine
-            
+
             frozen_tol :  disentanglement inner (frozen) window with +/- values
-            
-            semi_core_states : important to specify according to pseudopotentials
-                              A generic one is given for GGA-PBE, change if you use
+
+            semi_core_states : important to specify according to
+                              pseudopotentials. A generic one is
+                              given for GGA-PBE, change if you use
                               different POTCARs
         """
         self.struct = struct
@@ -61,7 +64,9 @@ class Wannier90win(object):
         self.kmesh_tol = kmesh_tol
         if self.semi_core_states is None:
             path_semi_core = str(
-                os.path.join(os.path.dirname(__file__), "default_semicore.json")
+                os.path.join(
+                    os.path.dirname(__file__), "default_semicore.json"
+                )
             )
             f = open(path_semi_core, "r")
             semi_core_states = json.load(f)
@@ -69,8 +74,8 @@ class Wannier90win(object):
             self.semi_core_states = semi_core_states
 
     def write_win(self, name="win.input"):
-
-        if self.soc == True:
+        """Write .win file."""
+        if self.soc:
             mult = 2
         else:
             mult = 1
@@ -128,7 +133,9 @@ class Wannier90win(object):
         f.write(line)
         line = str("num_iter =") + str(self.num_iter) + str("\n")
         f.write(line)
-        line = str("num_print_cycles =") + str(self.num_print_cycles) + str("\n")
+        line = (
+            str("num_print_cycles =") + str(self.num_print_cycles) + str("\n")
+        )
         f.write(line)
         line = str("begin projections") + str("\n")
         f.write(line)
@@ -146,9 +153,7 @@ class Wannier90win(object):
         nbands=18,
         soc="",
     ):
-        """
-        Helper function to write hr_plot or write_hr as .true. 
-        """
+        """Write hr_plot or write_hr as .true."""
         f = open(prev_win, "r")
         lines = f.read().splitlines()
         f.close()
@@ -170,6 +175,7 @@ class Wannier90win(object):
 
 """
 if __name__ == "__main__":
+    from jarvis.core.atoms import Atoms
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]

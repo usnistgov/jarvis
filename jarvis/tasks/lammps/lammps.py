@@ -1,19 +1,15 @@
-"""
-Modules for running LAMMPS calculations
-"""
+"""Modules for running LAMMPS calculations."""
 
 from jarvis.analysis.structure.spacegroup import (
     Spacegroup3D,
     symmetrically_distinct_miller_indices,
 )
-from jarvis.core.atoms import Atoms
-from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.lammps.inputs import LammpsInput, LammpsData
 from jarvis.tasks.lammps.templates.templates import GenericInputs
 from jarvis.io.lammps.outputs import analyze_log
 from jarvis.analysis.defects.vacancy import Vacancy
 from jarvis.analysis.defects.surface import Surface
-
+import shutil
 import os
 import subprocess
 import json
@@ -21,24 +17,21 @@ import sys
 
 
 class JobFactory(object):
-
-    """
-    Class for generic LAMMPS calculations
-    """
+    """Class for generic LAMMPS calculations."""
 
     def __init__(self, name="", pair_style="", pair_coeff="", control_file=""):
         """
-        Used in defining a LAMMPS job
+        Use in defining a LAMMPS job.
 
+        With following arguments.
         Args:
-        
-            pair_style :  LAMMPS pair_style, e.g. "eam/alloy" 
-            
+            pair_style :  LAMMPS pair_style, e.g. "eam/alloy"
+
             pair_coeff : path for pair-coefficients file
-            
-            control_file :  control-file with units, include modules 
+
+            control_file :  control-file with units, include modules
                           for running LAMMPS calculation , see examples
-                          
+
             name : generic name
         """
         self.pair_style = pair_style
@@ -56,23 +49,23 @@ class JobFactory(object):
         extend=1,
     ):
         """
-        Generic function for high-throughput LAMMPS calculations using eam/alloy
+        Provide generic function for LAMMPS calculations using eam/alloy.
 
+        Must provide Atoms class and path to force-field.
         Args:
-        
             atoms :  Atoms object
-            
+
             ff_path :  inter-atomic potential path
-            
+
             lammps_cmd : LAMMPS executable path
-            
-            enforce_conventional_structure :  whether to enforce conventional cell
-            
+
+            enforce_conventional_structure :
+            whether to enforce conventional cell
+
             enforce_c_size : minimum cell-sizes
-            
+
             extend : used for round-off during making supercells
         """
-
         if enforce_conventional_structure:
             atoms = Spacegroup3D(atoms).conventional_standard_structure
 
@@ -94,11 +87,16 @@ class JobFactory(object):
         }
         parameters["control_file"] = "inelast.mod"
         en, final_str, forces = LammpsJob(
-            atoms=atoms, jobname="ELASTIC", parameters=parameters, lammps_cmd=lammps_cmd
+            atoms=atoms,
+            jobname="ELASTIC",
+            parameters=parameters,
+            lammps_cmd=lammps_cmd,
         ).runjob()
         print("en, final_str, forces", en, final_str, forces)
 
-        indices = symmetrically_distinct_miller_indices(max_index=1, cvn_atoms=atoms)
+        indices = symmetrically_distinct_miller_indices(
+            max_index=1, cvn_atoms=atoms
+        )
         for i in indices:
             surf = Surface(atoms=final_str, indices=i).make_surface()
             jobname = str("Surf-") + str("_".join(map(str, i)))
@@ -129,23 +127,21 @@ class JobFactory(object):
                 lammps_cmd=lammps_cmd,
             ).runjob()
 
-    def optimize_and_elastic(self):
-        pass
+    # def optimize_and_elastic(self):
+    #     pass
 
-    def surface_energy(self):
-        pass
+    # def surface_energy(self):
+    #     pass
 
-    def vacancy(self):
-        pass
+    # def vacancy(self):
+    #     pass
 
-    def phonon(self):
-        pass
+    # def phonon(self):
+    #     pass
 
 
 class LammpsJob(object):
-    """
-    Class representing a LAMMPS job
-    """
+    """Construct a class representing a LAMMPS job."""
 
     def __init__(
         self,
@@ -165,30 +161,30 @@ class LammpsJob(object):
         element_order=[],
     ):
         """
-        Used for defining a LAMMPS job
+        Use for defining a LAMMPS job.
+
+        Provide follwoing arguments.
 
         Args:
-        
             atoms :  Atoms object
-            
-            element_order : element order used in accessing force-field parameters
-            
-            parameters :  LAMMPS input parameter dictionary
-            
-            lammps_cmd : LAMMPS executable path
-            
-            output_file :  standard output file
-            
-            stderr_file :  standard error file
-            
-            jobname :  Job name
-            
-            attempts :  number of attempts before crashing the job, TODO
-            
-            copy_files : copy certain files before a job
-            
-        """
 
+            element_order :
+            element order used in accessing force-field parameters
+
+            parameters :  LAMMPS input parameter dictionary
+
+            lammps_cmd : LAMMPS executable path
+
+            output_file :  standard output file
+
+            stderr_file :  standard error file
+
+            jobname :  Job name
+
+            attempts :  number of attempts before crashing the job, TODO
+
+            copy_files : copy certain files before a job
+        """
         self.atoms = atoms
         self.element_order = element_order
         self.parameters = parameters
@@ -200,13 +196,13 @@ class LammpsJob(object):
         self.copy_files = copy_files
 
     def write_input(self):
-        """
-        Writes LAMMPS input files
-        """
+        """Write LAMMPS input files."""
         lmp = LammpsData().atoms_to_lammps(atoms=self.atoms)
         self.element_order = lmp._element_order
         lmp.write_file("data")
-        LammpsInput(LammpsDataObj=lmp).write_lammps_in(parameters=self.parameters)
+        LammpsInput(LammpsDataObj=lmp).write_lammps_in(
+            parameters=self.parameters
+        )
         for i in self.copy_files:
             shutil.copy2(i, ".")
         if "control_file" in self.parameters:
@@ -214,9 +210,7 @@ class LammpsJob(object):
                 GenericInputs().elastic_general(path=".")
 
     def run(self):
-        """
-        Subprocess run a job
-        """
+        """Run a job with subprocess."""
         with open(self.output_file, "w") as f_std, open(
             self.stderr_file, "w", buffering=1
         ) as f_err:
@@ -227,12 +221,10 @@ class LammpsJob(object):
         return p
 
     def runjob(self):
-        """
-        Generic LAMMPS job submission
-        """
+        """Constrct  a generic LAMMPS job submission."""
         attempt = 0
         wait = False
-        while wait == False:
+        while not wait:
             attempt = attempt + 1
             if attempt == self.attempts:
                 wait = True
@@ -270,7 +262,7 @@ class LammpsJob(object):
                         c56,
                     ) = analyze_log("./log.lammps")
                     wait = True
-                except:
+                except Exception:
                     pass
                 # print ('toten',toten)
             else:
@@ -304,15 +296,19 @@ class LammpsJob(object):
                         c56,
                     ) = analyze_log("./log.lammps")
                     wait = True
-                except:
+                except Exception:
                     pass
             pot = os.path.join(os.getcwd(), "potential.mod")
             # print ('toten2',toten,pot)
             initial_str = LammpsData().read_data(
-                filename="data", element_order=self.element_order, potential_file=pot
+                filename="data",
+                element_order=self.element_order,
+                potential_file=pot,
             )
             final_str = LammpsData().read_data(
-                potential_file=pot, filename="data0", element_order=self.element_order
+                potential_file=pot,
+                filename="data0",
+                element_order=self.element_order,
             )
             forces = []
 
@@ -336,33 +332,3 @@ class LammpsJob(object):
             f_json.write(json.dumps(data_cal))
             f_json.close()
             return en, final_str, forces
-
-
-"""
-if __name__ == "__main__":
-    p = Poscar.from_file(
-        "/rk2/knc6/JARVIS-FF/COMB/ffield.comb3.NiAlO_nist/bulk@mp-1143_fold/bulk@mp-1143/new_pymatgen_slab.vasp"
-    )
-    atoms = Poscar.from_file(
-        "/rk2/knc6/JARVIS-FF/FS/Al1.eam.fs_nist/bulk@mp-134_fold/mp-134/new_pymatgen_slab.vasp"
-    ).atoms
-
-    cvn = Spacegroup3D(atoms).conventional_standard_structure
-    parameters = {
-        "pair_style": "eam/alloy",
-        "pair_coeff": "/data/knc6/JARVIS-FF-NEW/FS/Al1.eam.fs",
-        "atom_style": "charge",
-        "control_file": "inelast.mod",
-    }
-
-    cmd = "/users/knc6/Software/LAMMPS/lammps-master/src/lmp_serial<in.main"
-    # LammpsJob(atoms=cvn, parameters=parameters, lammps_cmd=cmd).runjob()
-    # final_str = LammpsData().read_data(
-    #            potential_file='/users/knc6/Software/J2020/jarvis/jarvis/tasks/lammps/ELASTIC/potential.mod', filename="/users/knc6/Software/J2020/jarvis/jarvis/tasks/lammps/ELASTIC/data", element_order=[])
-    # print ('final_str',final_str)
-
-    cmd = "/users/knc6/Software/LAMMPS/lammps-master/src/lmp_serial<in.main"
-    JobFactory().all_props_eam_alloy(
-        atoms=cvn, ff_path="/data/knc6/JARVIS-FF-NEW/FS/Al1.eam.fs", lammps_cmd=cmd
-    )
-"""

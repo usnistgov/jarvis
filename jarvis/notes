@@ -43,3 +43,10 @@ coverage report -m
 
 ###Version change
 Change version in setup.py and jarvis/__init__.py
+
+
+###Linting
+flake8 --ignore E203,W503 *.py
+black -l 79 *.py
+pycodestyle --ignore E203,W503 *.py
+

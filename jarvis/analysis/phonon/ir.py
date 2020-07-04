@@ -22,7 +22,8 @@ def normalize_vecs(phonon_eigenvectors, masses):
         eigenvector = phonon_eigenvectors[i]
         for j in range(0, natoms):
             eigendisplacements[i, j, :] = np.divide(
-                eigenvector[j], sqrt_masses[j])
+                eigenvector[j], sqrt_masses[j]
+            )
     return eigendisplacements
 
 
@@ -51,9 +52,10 @@ def ir_intensity(
     return freq, ir_ints
 
 
-#"""
+# """
 if __name__ == "__main__":
     from jarvis.io.vasp.outputs import Vasprun, Outcar
+
     out = Outcar("../../tests/testfiles/io/vasp/OUTCAR.JVASP-39")
     vrun = Vasprun("../../tests/testfiles/io/vasp/vasprun.xml.JVASP-39")
     phonon_eigenvectors = vrun.dfpt_data["phonon_eigenvectors"]
@@ -70,8 +72,8 @@ if __name__ == "__main__":
     for i, j in zip(x, y):
         if j > 0.1:
             print(i, j)
-    print ()
-    print (round(y[1],2))
-    #for i, j in zip(phonon_eigenvalues, vrun_eigs):
+    print()
+    print(round(y[1], 2))
+    # for i, j in zip(phonon_eigenvalues, vrun_eigs):
     #    print(i, j)
-#"""
+# """

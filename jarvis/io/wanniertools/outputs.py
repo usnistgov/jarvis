@@ -1,13 +1,15 @@
-"""
-Class for analyzing  WT.out file
-"""
+"""Class for analyzing  WT.out file."""
 
 
 class WTOut(object):
+    """Construct WT.out related object."""
+
     def __init__(self, path=""):
+        """Initialize with path to WT.out file."""
         self.path = path
 
     def get_z2_index(self):
+        """Get Z2 index."""
         f = open(self.path, "r")
         lines = f.read().splitlines()
         f.close()
@@ -45,6 +47,7 @@ class WTOut(object):
         return index
 
     def get_chern_number(self):
+        """Get Chern index."""
         f = open(self.path, "r")
         lines = f.read().splitlines()
         f.close()
@@ -56,14 +59,14 @@ class WTOut(object):
                         tmp = float(lines[j + k].split(":")[1])
                         if tmp not in chrn:
                             chrn.append(tmp)
-        except:
+        except Exception:
             pass
         return chrn
 
 
 """
 if __name__ == "__main__":
-    wt = "/rk2/knc6/Chern3D/JVASP-1067_mp-541837_PBEBO/MAIN-WANN-SOC-bulk@JVASP-1067_mp-541837/WT.out"
+    wt = "WT.out"
     z2 = WTOut(path=wt).get_z2_index()
     print(z2)
     chrn = WTOut(path=wt).get_chern_number()
