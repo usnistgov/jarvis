@@ -60,7 +60,7 @@ classical force-field/molecular dynamics and machine-learning. The jarvis-tools 
 Installation
 ---------------
 
-See `Installation instructions <https://github.com/usnistgov/jarvis/blob/zur/Installation.rst>`__
+See `Installation instructions <https://github.com/usnistgov/jarvis/blob/master/Installation.rst>`__
 
 
 Example Jupyter notebooks
@@ -89,7 +89,7 @@ Example function
 References
 -----------------
 
-See `Publications related to JARVIS-Tools <https://github.com/usnistgov/jarvis/blob/zur/Publications.rst>`__
+See `Publications related to JARVIS-Tools <https://github.com/usnistgov/jarvis/blob/master/Publications.rst>`__
 
 External links
 -----------------------------------------
