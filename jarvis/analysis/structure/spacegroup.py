@@ -569,7 +569,7 @@ class Spacegroup3D(object):
             ]
 
             def is_all_acute_or_obtuse(m):
-                recp_angles = np.array(Lattice(m).reciprocal_lattice.angles)
+                recp_angles = np.array(Lattice(m).reciprocal_lattice().angles)
                 return np.all(recp_angles <= 90) or np.all(recp_angles > 90)
 
             if is_all_acute_or_obtuse(test_matrix):
