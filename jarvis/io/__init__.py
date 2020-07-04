@@ -1,1 +1,1 @@
-"""Modules for reading, writing, analyzing infromation from different softwares."""
+"""For reading, writing, analyzing infromation from different softwares."""
