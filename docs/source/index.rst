@@ -21,7 +21,9 @@ Sets up high-throughput calculations and analysis for several applications such 
    :maxdepth: 2
    :numbered: 3
    :caption: Contents:
-
+   
+.. image:: https://www.ctcms.nist.gov/~knc6/images/logo/jarvis-mission.png
+   :target: https://jarvis.nist.gov/
 
 **Correspondence**
 ^^^^^^^^^^^^^^^^^^^^^
