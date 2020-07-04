@@ -3,7 +3,8 @@ import numpy as np
 import os
 from jarvis.analysis.phonon.ir import ir_intensity
 import matplotlib.pyplot as plt
-plt.switch_backend('agg')
+
+plt.switch_backend("agg")
 vrun = Vasprun(
     filename=os.path.join(
         os.path.dirname(__file__),
@@ -47,17 +48,17 @@ opt_vrun = Vasprun(
     )
 )
 band_kp = os.path.join(
-        os.path.dirname(__file__),
-        "..",
-        "..",
-        "..",
-        "..",
-        "examples",
-        "vasp",
-        "SiOptb88",
-        "MAIN-BAND-bulk@mp_149",
-        "KPOINTS",
-    )
+    os.path.dirname(__file__),
+    "..",
+    "..",
+    "..",
+    "..",
+    "examples",
+    "vasp",
+    "SiOptb88",
+    "MAIN-BAND-bulk@mp_149",
+    "KPOINTS",
+)
 
 chg = Chgcar(
     filename=os.path.join(
@@ -142,17 +143,20 @@ def test_vrun():
     # print ('gapp',round(vrun.get_indir_gap,2))
     assert (round(vrun.get_indir_gap, 2)) == (0.73)
     assert (round(vrun.get_dir_gap, 2)) == (2.62)
-    vrun.get_bandstructure(kpoints_file_path = band_kp)
+    vrun.get_bandstructure(kpoints_file_path=band_kp)
     assert (round(opt_vrun.get_dir_gap, 2)) == (2.62)
     assert (vrun.total_dos[0][0]) == -8.1917
     # TODO Serious issue: assert (opt_vrun.total_dos[0][0]) == -8.1917
     assert (vrun.eigenvalues[0][0][0][0]) == -6.1917
     assert (opt_vrun.eigenvalues[0][0][0][0]) == -6.1917
-    assert vrun.is_spin_polarized==True
-    assert opt_vrun.is_spin_polarized==False
-    assert vrun.is_spin_orbit==False
+    assert vrun.is_spin_polarized == True
+    assert opt_vrun.is_spin_polarized == False
+    assert vrun.is_spin_orbit == False
+
+
 def test_osz():
     assert (float(osz.magnetic_moment)) == (0.0)
+    assert osz.electronic_steps[0][2] == "0.747368666078E+01"
 
 
 def test_out():
@@ -162,21 +166,32 @@ def test_out():
     assert out_efg.quad_mom[0][0] == 0.023
     assert out_efg.converged == True
 
+
 def test_dfpt():
-   vrun = Vasprun(os.path.join(os.path.dirname(__file__), "vasprun.xml.JVASP-39"))
-   out = Outcar(os.path.join(os.path.dirname(__file__), "OUTCAR.JVASP-39"))
-   bec = round(vrun.dfpt_data['born_charges'][0][0][0],2)
-   eig = round(out.phonon_eigenvalues[2],2)
-   ionic_pz,total_pz = out.piezoelectric_tensor
-   pz = total_pz[2][0]
-   assert (bec, eig, pz)==(2.52, 19.58,-0.26756) 
-   # print (vrun.all_stresses)
-   assert vrun.all_stresses[0][0][0]==-14.79381147
-   assert vrun.all_forces[0][0][0]==0
+    vrun = Vasprun(os.path.join(os.path.dirname(__file__), "vasprun.xml.JVASP-39"))
+    out = Outcar(os.path.join(os.path.dirname(__file__), "OUTCAR.JVASP-39"))
+    bec = round(vrun.dfpt_data["born_charges"][0][0][0], 2)
+    eig = round(out.phonon_eigenvalues[2], 2)
+    ionic_pz, total_pz = out.piezoelectric_tensor
+    pz = total_pz[2][0]
+    assert (bec, eig, pz) == (2.52, 19.58, -0.26756)
+    # print (vrun.all_stresses)
+    assert vrun.all_stresses[0][0][0] == -14.79381147
+    assert vrun.all_forces[0][0][0] == 0
+    assert vrun.all_energies[0] == -24.86360178
+    assert vrun.all_structures[0].volume == 42.60334334259966
+
+
 def test_waveder():
-   assert np.iscomplex(wder.get_orbital_derivative_between_states(0,0,0,0,0)) == True
-   assert (complex(wder.get_orbital_derivative_between_states(0,0,0,0,0)).real) == -2.216161544844864e-15
-   assert (wder.nbands, wder.nkpoints, wder.nelect) == (36, 56, 8)
+    assert (
+        np.iscomplex(wder.get_orbital_derivative_between_states(0, 0, 0, 0, 0)) == True
+    )
+    assert (
+        complex(wder.get_orbital_derivative_between_states(0, 0, 0, 0, 0)).real
+    ) == -2.216161544844864e-15
+    assert (wder.nbands, wder.nkpoints, wder.nelect) == (36, 56, 8)
+
+
 def test_ir():
     vrun = Vasprun(os.path.join(os.path.dirname(__file__), "vasprun.xml.JVASP-39"))
     out = Outcar(os.path.join(os.path.dirname(__file__), "OUTCAR.JVASP-39"))
@@ -191,10 +206,9 @@ def test_ir():
         masses=masses,
         born_charges=born_charges,
     )
-    assert round(y[2],2)==1.38
+    assert round(y[2], 2) == 1.38
+
 
 def test_wavecar():
-   gvec = wf_noso.gvectors() 
-   assert (gvec.shape)==(555,3)
-
-
+    gvec = wf_noso.gvectors()
+    assert (gvec.shape) == (555, 3)

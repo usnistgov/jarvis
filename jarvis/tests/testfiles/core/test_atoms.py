@@ -28,20 +28,20 @@ def test_basic_atoms():
     strng = Si.get_string()
     scell_nat = Si.make_supercell([2, 2, 2]).num_atoms
     scell_nat2 = Si.make_supercell_matrix([[2, 0, 0], [0, 2, 0], [0, 0, 2]]).num_atoms
-    #print("scell_nat,scell_nat2", scell_nat, scell_nat2)
-    #print(Si.make_supercell([2, 2, 2]))
-    #print()
-    #print(Si.make_supercell_matrix([[2, 0, 0], [0, 2, 0], [0, 0, 2]]))
+    # print("scell_nat,scell_nat2", scell_nat, scell_nat2)
+    # print(Si.make_supercell([2, 2, 2]))
+    # print()
+    # print(Si.make_supercell_matrix([[2, 0, 0], [0, 2, 0], [0, 0, 2]]))
     com = round(Si.get_center_of_mass()[0], 3)
     rem = (Si.make_supercell([2, 2, 2]).remove_site_by_index(site=0)).num_atoms
     prim = Si.get_primitive_atoms
-    print (prim.cart_coords)
-    assert round(prim.cart_coords[0][0],2)==round(4.37815150,2)
-    #print ('raw_distance_matrix', prim.raw_distance_matrix)
-    #print ('raw_distance_matrix', Si.raw_distance_matrix)
-    #print ('distance_matrix', Si.pymatgen_converter().distance_matrix)
-    assert round(prim.raw_distance_matrix[0][1],2)==round(4.42386329832851,2)
-   
+    print(prim.cart_coords)
+    assert round(prim.cart_coords[0][0], 2) == round(4.37815150, 2)
+    # print ('raw_distance_matrix', prim.raw_distance_matrix)
+    # print ('raw_distance_matrix', Si.raw_distance_matrix)
+    # print ('distance_matrix', Si.pymatgen_converter().distance_matrix)
+    assert round(prim.raw_distance_matrix[0][1], 2) == round(4.42386329832851, 2)
+
     d = Si.to_dict()
     new_at = Atoms.from_dict(d)
     angs_a = d["angles"][0]
@@ -96,7 +96,6 @@ def test_basic_atoms():
         2.33,
     )
     cc = Si.center()
-
 
 
 test_basic_atoms()
