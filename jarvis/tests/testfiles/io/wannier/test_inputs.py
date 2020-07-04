@@ -6,9 +6,27 @@ from jarvis.io.vasp.inputs import Poscar
 win = os.path.join(os.path.dirname(__file__), "win.input")
 
 
-s1 = Poscar.from_file(os.path.join(os.path.dirname(__file__),"..","..","analysis","structure", "POSCAR")).atoms
-s2 = Poscar.from_file(os.path.join(os.path.dirname(__file__),"..","..","analysis","structure", "POSCAR-Cmcm")).atoms
-s3 = Poscar.from_file(os.path.join(os.path.dirname(__file__),"..","..","analysis","structure", "POSCAR-tetragonal")).atoms
+s1 = Poscar.from_file(
+    os.path.join(
+        os.path.dirname(__file__), "..", "..", "analysis", "structure", "POSCAR"
+    )
+).atoms
+s2 = Poscar.from_file(
+    os.path.join(
+        os.path.dirname(__file__), "..", "..", "analysis", "structure", "POSCAR-Cmcm"
+    )
+).atoms
+s3 = Poscar.from_file(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "..",
+        "analysis",
+        "structure",
+        "POSCAR-tetragonal",
+    )
+).atoms
+
 
 def test_win():
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
@@ -18,7 +36,6 @@ def test_win():
     Wannier90win(struct=Si, efermi=0.0).write_win(name=win)
     assert (os.path.isfile(win)) == (True)
     os.remove(win)
-
 
     Wannier90win(struct=s1, efermi=0.0).write_win(name=win)
     assert (os.path.isfile(win)) == (True)
@@ -31,5 +48,3 @@ def test_win():
     Wannier90win(struct=s3, efermi=0.0).write_win(name=win)
     assert (os.path.isfile(win)) == (True)
     os.remove(win)
-
-

@@ -3,8 +3,15 @@ from jarvis.analysis.phonon.ir import ir_intensity
 
 import os
 
-out = Outcar(os.path.join(os.path.dirname(__file__), "..","..", "io", "vasp", "OUTCAR.JVASP-39"))
-vrun = Vasprun(os.path.join(os.path.dirname(__file__), "..","..", "io", "vasp", "vasprun.xml.JVASP-39"))
+out = Outcar(
+    os.path.join(os.path.dirname(__file__), "..", "..", "io", "vasp", "OUTCAR.JVASP-39")
+)
+vrun = Vasprun(
+    os.path.join(
+        os.path.dirname(__file__), "..", "..", "io", "vasp", "vasprun.xml.JVASP-39"
+    )
+)
+
 
 def test_ir():
     phonon_eigenvectors = vrun.dfpt_data["phonon_eigenvectors"]
@@ -18,4 +25,4 @@ def test_ir():
         masses=masses,
         born_charges=born_charges,
     )
-    assert x[0]==713.8676686817399
+    assert x[0] == 713.8676686817399

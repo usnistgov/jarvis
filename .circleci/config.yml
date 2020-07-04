@@ -52,7 +52,7 @@ jobs:
             pip install pytest pytest-cov
             pytest --cov=./
             codecov
-            codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
+            # codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
       - run: python --version ; pip --version ; pwd ; ls
 
       #- save_cache:
