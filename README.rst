@@ -37,6 +37,8 @@ JARVIS-Tools: an open-source software package for data-driven atomistic material
 NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) is an integrated framework for computational science using density functional theory,
 classical force-field/molecular dynamics and machine-learning. The jarvis-tools package consists of scripts used in generating and analyzing the dataset. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/).
 
+For more details, checkout our latest article:  `JARVIS: An Integrated Infrastructure for Data-driven Materials Design <https://arxiv.org/abs/2007.01831>`__
+
 .. image:: https://www.ctcms.nist.gov/~knc6/images/logo/jarvis-mission.png
    :target: https://jarvis.nist.gov/
 
