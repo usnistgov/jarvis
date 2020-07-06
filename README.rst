@@ -7,7 +7,7 @@
        :target: https://ci.appveyor.com/project/knc6/jarvis-63tl9      
 .. image:: https://readthedocs.org/projects/jarvis-tools/badge/?version=latest
        :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest   
-.. image:: https://codecov.io/gh/knc6/jarvis/branch/master/graph/badge.svg
+.. image:: https://img.shields.io/codecov/c/github/knc6/jarvis
        :target: https://codecov.io/gh/knc6/jarvis  
 .. image::  https://img.shields.io/pypi/dm/jarvis-tools.svg      
         :target: https://img.shields.io/pypi/dm/jarvis-tools.svg 
