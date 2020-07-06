@@ -64,13 +64,13 @@ For more details, checkout our latest article:  `JARVIS: An Integrated Infrastru
 Installation
 ---------------
 
-See `Installation instructions <https://github.com/usnistgov/jarvis/blob/master/Installation.rst>`__
+Please see `Installation instructions <https://github.com/usnistgov/jarvis/blob/master/Installation.rst>`__
 
 
 Example Jupyter notebooks
 -----------------------------
 
-Find several `Google Colab Notebooks <https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks>`__
+Please find several `Google Colab Notebooks <https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks>`__
 
 
 Example function
@@ -93,7 +93,7 @@ Example function
 References
 -----------------
 
-See `Publications related to JARVIS-Tools <https://github.com/usnistgov/jarvis/blob/master/Publications.rst>`__
+Please see `Publications related to JARVIS-Tools <https://github.com/usnistgov/jarvis/blob/master/Publications.rst>`__
 
 External links
 -----------------------------------------
