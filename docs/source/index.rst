@@ -17,6 +17,9 @@ Sets up high-throughput calculations and analysis for several applications such 
  * Classical-force field (FF) [https://www.ctcms.nist.gov/~knc6/periodic.html]
  * Machine-learning (ML) [https://www.ctcms.nist.gov/jarvisml/]
 
+For more details, checkout our latest article: 
+ * JARVIS: An Integrated Infrastructure for Data-driven Materials Design [https://arxiv.org/abs/2007.01205]
+
 .. toctree::
    :maxdepth: 2
    :numbered: 3
@@ -29,6 +32,11 @@ Sets up high-throughput calculations and analysis for several applications such 
 ^^^^^^^^^^^^^^^^^^^^^
 
 Please report bugs as Github issues (https://github.com/usnistgov/jarvis/issues) or email to kamal.choudhary@nist.gov.
+
+**References**
+^^^^^^^^^^^^^^^^^^^^^
+
+Please find publications related to JARVIS-Tools (https://github.com/usnistgov/jarvis/blob/master/Publications.rst)
 
 
 **Funding**
