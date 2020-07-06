@@ -23,3 +23,4 @@
       15) High-throughput Density Functional Perturbation Theory and Machine Learning Predictions of Infrared, Piezoelectric and Dielectric Responses, https://www.nature.com/articles/s41524-020-0337-2.
       16) Data-driven Discovery of 3D and 2D Thermoelectric Materials , https://iopscience.iop.org/article/10.1088/1361-648X/aba06b/meta.
       17) Efficient Computational Design of 2D van der Waals Heterostructures: Band-Alignment, Lattice-Mismatch, Web-app Generation and Machine-learning. https://arxiv.org/abs/2004.03025 .
+      18) Density Functional Theory and Deep-learning to Accelerate Data Analytics in Scanning Tunneling Microscopy, https://arxiv.org/abs/1912.09027 
