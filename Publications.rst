@@ -12,15 +12,16 @@
       7) High-throughput Discovery of Topologically Non-trivial Materials using Spin-orbit Spillage, Nature: Sci. Rep. 9, 8534,(2019), https://www.nature.com/articles/s41598-019-45028-y
       8) Computational Search for Magnetic and Non-magnetic 2D Topological Materials using Unified Spin-orbit Spillage Screening, npj Comp. Mat., 6, 49 (2020). https://www.nature.com/articles/s41524-020-0319-4 .
       9) Density Functional Theory based Electric Field Gradient Database. https://arxiv.org/abs/2005.09255 .
+      10) Database of Wannier Tight-binding Hamiltonians using High-throughput Density Functional Theory. https://arxiv.org/abs/2007.01205 .
 
 
 - JARVIS-ML:
-      10) Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018). https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
-      11) Convergence and machine learning predictions of Monkhorst-Pack k-points and plane-wave cut-off in high-throughput DFT calculations, Comp. Mat. Sci. 161, 300 (2019). https://www.sciencedirect.com/science/article/pii/S0927025619300813?via%3Dihub
-      12) Materials science in the artificial intelligence age: high-throughput library generation, machine learning, and a pathway from correlations to the underpinning physics, MRS Comm., 1-18, 2019. https://doi.org/10.1557/mrc.2019.95
-      13) Enhancing materials property prediction by leveraging computational and experimental data using deep transfer learning, Nature Comm., 10, 1, (2019). https://www.nature.com/articles/s41467-019-13297-w
-      14) Accelerated Discovery of Efficient Solar-cell Materials using Quantum and Machine-learning Methods, Chem. Mater., https://pubs.acs.org/doi/10.1021/acs.chemmater.9b02166
-      15) High-throughput Density Functional Perturbation Theory and Machine Learning Predictions of Infrared, Piezoelectric and Dielectric Responses, https://www.nature.com/articles/s41524-020-0337-2.
-      16) Data-driven Discovery of 3D and 2D Thermoelectric Materials , https://iopscience.iop.org/article/10.1088/1361-648X/aba06b/meta.
-      17) Efficient Computational Design of 2D van der Waals Heterostructures: Band-Alignment, Lattice-Mismatch, Web-app Generation and Machine-learning. https://arxiv.org/abs/2004.03025 .
-      18) Density Functional Theory and Deep-learning to Accelerate Data Analytics in Scanning Tunneling Microscopy, https://arxiv.org/abs/1912.09027 
+      11) Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018). https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
+      12) Convergence and machine learning predictions of Monkhorst-Pack k-points and plane-wave cut-off in high-throughput DFT calculations, Comp. Mat. Sci. 161, 300 (2019). https://www.sciencedirect.com/science/article/pii/S0927025619300813?via%3Dihub
+      13) Materials science in the artificial intelligence age: high-throughput library generation, machine learning, and a pathway from correlations to the underpinning physics, MRS Comm., 1-18, 2019. https://doi.org/10.1557/mrc.2019.95
+      14) Enhancing materials property prediction by leveraging computational and experimental data using deep transfer learning, Nature Comm., 10, 1, (2019). https://www.nature.com/articles/s41467-019-13297-w
+      15) Accelerated Discovery of Efficient Solar-cell Materials using Quantum and Machine-learning Methods, Chem. Mater., https://pubs.acs.org/doi/10.1021/acs.chemmater.9b02166
+      16) High-throughput Density Functional Perturbation Theory and Machine Learning Predictions of Infrared, Piezoelectric and Dielectric Responses, https://www.nature.com/articles/s41524-020-0337-2.
+      17) Data-driven Discovery of 3D and 2D Thermoelectric Materials , https://iopscience.iop.org/article/10.1088/1361-648X/aba06b/meta.
+      18) Efficient Computational Design of 2D van der Waals Heterostructures: Band-Alignment, Lattice-Mismatch, Web-app Generation and Machine-learning. https://arxiv.org/abs/2004.03025 .
+      19) Density Functional Theory and Deep-learning to Accelerate Data Analytics in Scanning Tunneling Microscopy, https://arxiv.org/abs/1912.09027 
