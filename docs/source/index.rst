@@ -18,7 +18,7 @@ Sets up high-throughput calculations and analysis for several applications such 
  * Machine-learning (ML) [https://www.ctcms.nist.gov/jarvisml/]
 
 For more details, checkout our latest article: 
- * JARVIS: An Integrated Infrastructure for Data-driven Materials Design [https://arxiv.org/abs/2007.01205]
+ * JARVIS: An Integrated Infrastructure for Data-driven Materials Design [https://arxiv.org/abs/2007.01831]
 
 .. toctree::
    :maxdepth: 2
