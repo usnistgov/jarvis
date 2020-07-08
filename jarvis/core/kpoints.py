@@ -27,7 +27,7 @@ def generate_kgrid(grid=[5, 5, 5]):
     return t
 
 
-def generate_kpath(kpath=[[0, 0, 0], [0, 0.5, .5]], num_k=5):
+def generate_kpath(kpath=[[0, 0, 0], [0, 0.5, 0.5]], num_k=5):
     """Generate k-path with distance num_k k-points between them."""
     K = []
     for i in range(len(kpath) - 1):
@@ -65,8 +65,9 @@ class Kpoints3D(object):
         n1 = int(max(1, length * b1 + 0.5))
         n2 = int(max(1, length * b2 + 0.5))
         n3 = int(max(1, length * b3 + 0.5))
-        return Kpoints3D(kpoints=[[n1, n2, n3]],
-                         header=header, kpoint_mode="automatic")
+        return Kpoints3D(
+            kpoints=[[n1, n2, n3]], header=header, kpoint_mode="automatic"
+        )
 
     @property
     def kpts(self):
@@ -205,10 +206,12 @@ class Kpoints3D(object):
                 kgamma = prim.angles[2]
                 if kgamma > 90:
                     kp = HighSymmetryKpoint3DFactory().mclc1(
-                        a, b, c, alpha * pi / 180)
+                        a, b, c, alpha * pi / 180
+                    )
                 if kgamma == 90:
                     kp = HighSymmetryKpoint3DFactory().mclc2(
-                        a, b, c, alpha * pi / 180)
+                        a, b, c, alpha * pi / 180
+                    )
                 if kgamma < 90:
                     if (
                         b * cos(alpha * pi / 180) / c
@@ -260,8 +263,9 @@ class Kpoints3D(object):
         """Get high symmetry path as a dictionary."""
         return self.high_symm_path(atoms).as_dict()
 
-    def interpolated_points(self, atoms,
-                            line_density=20, coords_are_cartesian=False):
+    def interpolated_points(
+        self, atoms, line_density=20, coords_are_cartesian=False
+    ):
         """Provide bandstructure k-points, controlled by the line_density."""
         list_k_points = []
         sym_point_labels = []
@@ -279,6 +283,7 @@ class Kpoints3D(object):
                     - self._prim_rec.cart_coords(end)
                 )
                 nb = int(ceil(distance * line_density))
+                print("nb", nb, distance, line_density)
                 sym_point_labels.extend([b[i - 1]] + [""] * (nb - 1) + [b[i]])
                 list_k_points.extend(
                     [
@@ -295,8 +300,9 @@ class Kpoints3D(object):
         if coords_are_cartesian:
             return list_k_points, sym_point_labels
         else:
-            frac_k_points = [self._prim_rec.frac_coords(k) for k in
-                             list_k_points]
+            frac_k_points = [
+                self._prim_rec.frac_coords(k) for k in list_k_points
+            ]
             return frac_k_points, sym_point_labels
 
     def kpath(
@@ -309,12 +315,14 @@ class Kpoints3D(object):
     ):
         """Get k-path for bandstructure calculations."""
         k_points, labels = self.interpolated_points(
-            atoms, line_density=line_density,
-            coords_are_cartesian=coords_are_cartesian
+            atoms,
+            line_density=line_density,
+            coords_are_cartesian=coords_are_cartesian,
         )
         if unique_kp_only:
-            uniqueValues, indicesList = np.unique(k_points,
-                                                  axis=0, return_index=True)
+            uniqueValues, indicesList = np.unique(
+                k_points, axis=0, return_index=True
+            )
             k_points = np.array(k_points)[indicesList.astype(int)]
             labels = np.array(labels)[indicesList.astype(int)]
         return Kpoints3D(
@@ -417,8 +425,10 @@ class HighSymmetryKpoint3DFactory(object):
             "Z": np.array([eta, eta, -eta]),
             "Z_1": np.array([-eta, 1 - eta, eta]),
         }
-        path = [["\\Gamma", "X", "M", "\\Gamma",
-                 "Z", "P", "N", "Z_1", "M"], ["X", "P"]]
+        path = [
+            ["\\Gamma", "X", "M", "\\Gamma", "Z", "P", "N", "Z_1", "M"],
+            ["X", "P"],
+        ]
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def bctet2(self, c, a):
@@ -577,8 +587,20 @@ class HighSymmetryKpoint3DFactory(object):
             "Z": np.array([0.5, 0.5, -0.5]),
         }
         path = [
-            ["\\Gamma", "X", "L", "T", "W", "R",
-             "X_1", "Z", "\\Gamma", "Y", "S", "W"],
+            [
+                "\\Gamma",
+                "X",
+                "L",
+                "T",
+                "W",
+                "R",
+                "X_1",
+                "Z",
+                "\\Gamma",
+                "Y",
+                "S",
+                "W",
+            ],
             ["L_1", "Y"],
             ["Y_1", "Z"],
         ]
@@ -680,8 +702,9 @@ class HighSymmetryKpoint3DFactory(object):
             "Q_1": np.array([1.0 - eta, -eta, -eta]),
             "Z": np.array([0.5, -0.5, 0.5]),
         }
-        path = [["\\Gamma", "P", "Z", "Q",
-                 "\\Gamma", "F", "P_1", "Q_1", "L", "Z"]]
+        path = [
+            ["\\Gamma", "P", "Z", "Q", "\\Gamma", "F", "P_1", "Q_1", "L", "Z"]
+        ]
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
     def mcl(self, b, c, beta):
@@ -855,16 +878,19 @@ class HighSymmetryKpoint3DFactory(object):
     def mclc5(self, a, b, c, alpha):
         """Monoclinic C5 HighSymmKPath, return: Dict."""
         self.name = "MCLC5"
-        zeta = (b ** 2 / a ** 2 + (1 - b * cos(
-                alpha) / c) / sin(alpha) ** 2) / 4
+        zeta = (
+            b ** 2 / a ** 2 + (1 - b * cos(alpha) / c) / sin(alpha) ** 2
+        ) / 4
         eta = 0.5 + 2 * zeta * c * cos(alpha) / b
-        mu = eta / 2 + b ** 2 / (4 * a ** 2) - b * c * cos(
-            alpha) / (2 * a ** 2)
+        mu = (
+            eta / 2 + b ** 2 / (4 * a ** 2) - b * c * cos(alpha) / (2 * a ** 2)
+        )
         nu = 2 * mu - zeta
         rho = 1 - zeta * a ** 2 / b ** 2
         omega = (
-            (4 * nu - 1 - b ** 2 * sin(
-             alpha) ** 2 / a ** 2) * c / (2 * b * cos(alpha))
+            (4 * nu - 1 - b ** 2 * sin(alpha) ** 2 / a ** 2)
+            * c
+            / (2 * b * cos(alpha))
         )
         delta = zeta * c * cos(alpha) / b + omega / 2 - 0.25
         kpoints = {
