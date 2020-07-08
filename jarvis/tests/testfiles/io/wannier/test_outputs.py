@@ -15,7 +15,12 @@ plt.switch_backend("agg")
 new_file, filename = tempfile.mkstemp()
 atoms = Poscar.from_file(
     os.path.join(
-        os.path.dirname(__file__), "..", "..", "analysis", "structure", "POSCAR"
+        os.path.dirname(__file__),
+        "..",
+        "..",
+        "analysis",
+        "structure",
+        "POSCAR",
     )
 ).atoms
 wann_soc_win_hr = os.path.join(os.path.dirname(__file__), "wannier90_hr.dat")
@@ -25,7 +30,19 @@ soc_scfband_vrun = os.path.join(
 )  # for JVASP-1067
 
 
-def test_outputs():
+def test_outputs_bi2se3():
+    pp = get_projectors_for_formula(formula_dict={"Cr": 1, "I": 3})[0]
+    orb = get_orbitals()[0]
+    x = get_orbitals(
+        projection_info=[["Cr", 4, ["s", "d"]], ["I", 3, ["s", "p"]]],
+        desired_orbitals=[["Cr", "d"]],
+    )
+    print(x)
+    x = get_orbitals(
+        projection_info=[["Cr", 4, ["s", "d"]], ["I", 3, ["s", "p"]]],
+        desired_orbitals=[["Cr", "s"]],
+    )
+    print(x)
     w = WannierHam(filename=wann_soc_win_hr)
     new_file, filename = tempfile.mkstemp()
     comp = w.compare_dft_wann(
@@ -50,14 +67,14 @@ def test_outputs():
     # print (x,pp)
 
     # print (round(dos[75],3))
-    assert (round(maxdiff, 2), round(dos[75], 3), pp[0][0], orb, w.nwan, big.nwan) == (
-        0.12,
-        3.02,
-        "Bi",
-        1,
-        40,
-        320,
-    )
+    assert (
+        round(maxdiff, 2),
+        round(dos[75], 3),
+        pp[0][0],
+        orb,
+        w.nwan,
+        big.nwan,
+    ) == (0.12, 3.02, "Bi", 1, 40, 320,)
 
 
 def test_wann_cent():
@@ -66,5 +83,5 @@ def test_wann_cent():
     assert (len(centers)) == (40)
 
 
-test_outputs()
+# test_outputs_cri3()
 # test_wann_cent()
