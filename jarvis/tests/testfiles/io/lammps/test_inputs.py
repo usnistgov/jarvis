@@ -17,7 +17,7 @@ pot =(
         "lammps",
         "Al03.eam.alloy_nist",
         "bulk@mp-134_fold",
-        "Surf-3_1_1@vac25@size20",
+        "bulk@cellmax4",
         "potential.mod",
     )
 )
@@ -53,10 +53,10 @@ def test_inputs():
     )
 
     assert (lmp._lammps_box[1], atoms.num_atoms) == (5.43, 8)
-    os.remove(data)
-    os.remove(init)
-    os.remove(inm)
-    os.remove(pot)
+    #os.remove(data)
+    #os.remove(init)
+    #os.remove(inm)
+    #os.remove(pot)
 
 
 # test_inputs()
