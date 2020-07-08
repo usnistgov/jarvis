@@ -23,7 +23,7 @@
         :target: https://github.com/usnistgov/jarvis
 .. image:: https://app.codacy.com/project/badge/Grade/be8fa78b1c0a49c280415ce061163e77    
         :target: https://www.codacy.com/manual/knc6/jarvis?utm_source=github.com&amp
-.. image:: https://img.shields.io/github/commit-activity/m/usnistgov/jarvis   
+.. image:: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis   
         :target: https://github.com/usnistgov/jarvis
 .. image:: https://img.shields.io/github/repo-size/usnistgov/jarvis   
         :target: https://github.com/usnistgov/jarvis
