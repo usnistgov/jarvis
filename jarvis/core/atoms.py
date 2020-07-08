@@ -5,6 +5,7 @@ from jarvis.core.specie import Specie
 from jarvis.core.lattice import Lattice
 from collections import OrderedDict
 from jarvis.core.utils import get_counts
+
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
 
@@ -66,11 +67,9 @@ class Atoms(object):
         if self.cartesian:
             self.cart_coords = self.coords
             self.frac_coords = np.array(self.lattice.frac_coords(self.coords))
-            # print ('TRUE')
         else:
             self.frac_coords = self.coords
             self.cart_coords = np.array(self.lattice.cart_coords(self.coords))
-            # print ('FALSE')
 
     @property
     def check_polar(self):
@@ -99,7 +98,7 @@ class Atoms(object):
                 dn = dn + Specie(element).Z
         polar = False
         if up != dn:
-            print("polar")
+            print("Seems like a polar materials.")
             polar = True
         if up == dn:
             print("Non-polar")
@@ -156,6 +155,7 @@ class Atoms(object):
     def get_primitive_atoms(self):
         """Get primitive Atoms using spacegroup information."""
         from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
         return Spacegroup3D(self).primitive_atoms
 
     @property
@@ -206,8 +206,9 @@ class Atoms(object):
                 lng = 0.0  # Do not change unit cell size!
             top = lng + height - p1
             shf = 0.5 * (top - p0)
-            cosphi = np.dot(cell[i],
-                            dirs[i]) / np.sqrt(np.dot(cell[i], cell[i]))
+            cosphi = np.dot(cell[i], dirs[i]) / np.sqrt(
+                np.dot(cell[i], cell[i])
+            )
             longer[i] = lng / cosphi
             shift[i] = shf / cosphi
 
@@ -225,8 +226,10 @@ class Atoms(object):
                 new_coords -= vector / 2.0
             new_coords += about
         atoms = Atoms(
-            lattice_mat=cell, elements=self.elements,
-            coords=new_coords, cartesian=True
+            lattice_mat=cell,
+            elements=self.elements,
+            coords=new_coords,
+            cartesian=True,
         )
         return atoms
 
@@ -300,8 +303,9 @@ class Atoms(object):
             y[i] = self.frac_coords[i][1] - COM[1] + new_origin[1]
             z[i] = self.frac_coords[i][2] - COM[2] + new_origin[2]
             coords.append([x[i], y[i], z[i]])
-        struct = Atoms(lattice_mat=lat,
-                       elements=typ_sp, coords=coords, cartesian=False)
+        struct = Atoms(
+            lattice_mat=lat, elements=typ_sp, coords=coords, cartesian=False
+        )
         return struct
 
     def pymatgen_converter(self):
@@ -321,9 +325,10 @@ class Atoms(object):
     def spacegroup(self, symprec=1e-3):
         """Get spacegroup of the atoms object."""
         import spglib
+
         sg = spglib.get_spacegroup(
-            (self.lattice_mat, self.frac_coords,
-             self.atomic_numbers), symprec=symprec
+            (self.lattice_mat, self.frac_coords, self.atomic_numbers),
+            symprec=symprec,
         )
         return sg
 
@@ -368,12 +373,18 @@ class Atoms(object):
         mins = np.min(d_points, axis=0)
         maxes = np.max(d_points, axis=0) + 1
 
-        ar = np.arange(mins[0],
-                       maxes[0])[:, None] * np.array([1, 0, 0])[None, :]
-        br = np.arange(mins[1],
-                       maxes[1])[:, None] * np.array([0, 1, 0])[None, :]
-        cr = np.arange(mins[2],
-                       maxes[2])[:, None] * np.array([0, 0, 1])[None, :]
+        ar = (
+            np.arange(mins[0], maxes[0])[:, None]
+            * np.array([1, 0, 0])[None, :]
+        )
+        br = (
+            np.arange(mins[1], maxes[1])[:, None]
+            * np.array([0, 1, 0])[None, :]
+        )
+        cr = (
+            np.arange(mins[2], maxes[2])[:, None]
+            * np.array([0, 0, 1])[None, :]
+        )
 
         all_points = ar[:, None, None] + br[None, :, None] + cr[None, None, :]
         all_points = all_points.reshape((-1, 3))
@@ -446,7 +457,6 @@ class Atoms(object):
         nat = len(coords)
 
         new_nat = nat * dim[0] * dim[1] * dim[2]
-        # print ('new_nat,dim',new_nat,dim)
         new_coords = np.zeros((new_nat, 3))
         new_symbs = []  # np.chararray((new_nat))
         props = []  # self.props
@@ -486,60 +496,6 @@ class Atoms(object):
         )
         return super_cell
 
-    def get_string(self):
-        """Get string representation of the atoms object."""
-        system = str(self.composition.reduced_formula)
-        header = (
-
-            str(system)
-            + str("\n1.0\n")
-
-            + str(self.lattice_mat[0][0])
-            + " "
-            + str(self.lattice_mat[0][1])
-            + " "
-            + str(self.lattice_mat[0][2])
-            + "\n"
-            + str(self.lattice_mat[1][0])
-            + " "
-            + str(self.lattice_mat[1][1])
-            + " "
-            + str(self.lattice_mat[1][2])
-            + "\n"
-            + str(self.lattice_mat[2][0])
-            + " "
-            + str(self.lattice_mat[2][1])
-            + " "
-            + str(self.lattice_mat[2][2])
-            + "\n"
-        )
-        order = np.argsort(self.elements)
-        coords = self.frac_coords
-
-        coords_ordered = np.array(coords)[order]
-        elements_ordered = np.array(self.elements)[order]
-        props_ordered = np.array(self.props)[order]
-        counts = get_counts(elements_ordered)
-
-        middle = (
-            " ".join(map(str, counts.keys()))
-            + "\n"
-            + " ".join(map(str, counts.values()))
-            + "\ndirect\n"
-        )
-        rest = ""
-        for ii, i in enumerate(coords_ordered):
-
-            if self.show_props:
-                rest = rest + " ".join(
-                    map(str, i)) + " " + str(props_ordered[ii]) + "\n"
-            else:
-                rest = rest + " ".join(map(str, i)) + "\n"
-
-        result = header + middle + rest
-
-        return result
-
     def get_lll_reduced_structure(self):
         """Get LLL algorithm based reduced structure."""
         reduced_latt = self.lattice.get_lll_reduced_lattice()
@@ -560,12 +516,24 @@ class Atoms(object):
 
     def __repr__(self):
         """Get representation during print statement."""
-        system = str(self.composition.reduced_formula)
-        header = (
+        return self.get_string()
 
+    def get_string(self, cart=True, sort_order="X"):
+        """
+        Convert Atoms to string.
+
+        Optional arguments below.
+
+        Args:
+          cart:True/False for cartesian/fractional coords.
+
+          sort_order: sort by chemical properties of
+                    elements. Default electronegativity.
+        """
+        system = str(self.composition.formula)
+        header = (
             str(system)
             + str("\n1.0\n")
-
             + str(self.lattice_mat[0][0])
             + " "
             + str(self.lattice_mat[0][1])
@@ -585,35 +553,52 @@ class Atoms(object):
             + str(self.lattice_mat[2][2])
             + "\n"
         )
-        # order = np.argsort(self.elements)
-        coords = self.frac_coords
-        coords_ordered = np.array(coords)  # [order]
-        elements_ordered = np.array(self.elements)  # [order]
-        props_ordered = np.array(self.props)  # [order]
+        if sort_order is None:
+            order = np.argsort(self.elements)
+        else:
+            order = np.argsort(
+                [Specie(i).element_property(sort_order) for i in self.elements]
+            )
+        if cart:
+            coords = self.cart_coords
+        else:
+            coords = self.frac_coords
+        coords_ordered = np.array(coords)[order]
+        elements_ordered = np.array(self.elements)[order]
+        props_ordered = np.array(self.props)[order]
         # check_selective_dynamics = False # TODO
         counts = get_counts(elements_ordered)
+        cart_frac = ""
+        if cart:
+            cart_frac = "\nCartesian\n"
+        else:
+            cart_frac = "\nDirect\n"
+
         if "T" in "".join(map(str, self.props[0])):
             middle = (
                 " ".join(map(str, counts.keys()))
                 + "\n"
                 + " ".join(map(str, counts.values()))
                 + "\nSelective dynamics\n"
-                + "Direct\n"
+                + cart_frac
             )
         else:
             middle = (
                 " ".join(map(str, counts.keys()))
                 + "\n"
                 + " ".join(map(str, counts.values()))
-                + "\ndirect\n"
+                + cart_frac
             )
         rest = ""
 
         for ii, i in enumerate(coords_ordered):
             if self.show_props:
                 rest = (
-                    rest + " ".join(
-                        map(str, i)) + " " + str(props_ordered[ii]) + "\n"
+                    rest
+                    + " ".join(map(str, i))
+                    + " "
+                    + str(props_ordered[ii])
+                    + "\n"
                 )
             else:
                 rest = rest + " ".join(map(str, i)) + "\n"
@@ -673,7 +658,6 @@ class VacuumPadding(object):
         a1 = new_lat[0]
         a2 = new_lat[1]
         a3 = new_lat[2]
-        # print("a1,a2,a3", new_lat)
 
         latest_lat = np.array(
             [
@@ -722,7 +706,9 @@ class VacuumPadding(object):
         frac[:, 2] = frac[:, 2] - np.mean(frac[:, 2]) + 0.5
         with_vacuum_atoms = Atoms(
             lattice_mat=new_lat,
-            elements=elements, coords=frac, cartesian=False
+            elements=elements,
+            coords=frac,
+            cartesian=False,
         )
         return with_vacuum_atoms
 
@@ -778,9 +764,58 @@ class VacuumPadding(object):
         frac[:, 2] = frac[:, 2] - np.mean(frac[:, 2]) + 0.5
         with_vacuum_atoms = Atoms(
             lattice_mat=lattice_mat,
-            elements=elements, coords=frac, cartesian=False
+            elements=elements,
+            coords=frac,
+            cartesian=False,
         )
         return with_vacuum_atoms
+
+
+def add_atoms(top, bottom, distance=[0, 0, 5]):
+    """
+    Add top and bottom Atoms with a distance array.
+
+    Bottom Atoms lattice-matrix is chosen as final lattice.
+    """
+    top = top.center_around_origin([0, 0, 0])
+    bottom = bottom.center_around_origin(distance)
+    elements = []
+    coords = []
+    lattice_mat = bottom.lattice_mat
+    for i, j in zip(bottom.elements, bottom.cart_coords):
+        elements.append(i)
+        coords.append(j)
+    for i, j in zip(top.elements, top.cart_coords):
+        elements.append(i)
+        coords.append(j)
+
+    order = np.argsort(np.array(elements))
+    elements = np.array(elements)[order]
+    coords = np.array(coords)[order]
+    combined = Atoms(
+        lattice_mat=lattice_mat,
+        coords=coords,
+        elements=elements,
+        cartesian=True,
+    ).center_around_origin()
+    return combined
+
+
+def fix_pbc(atoms):
+    """Use for making Atoms with vacuum."""
+    new_f_coords = []
+    for i in atoms.frac_coords:
+        if i[2] > 0.5:
+            i[2] = i[2] - 1
+        if i[2] < -0.5:
+            i[2] = i[2] + 1
+        new_f_coords.append(i)
+    return Atoms(
+        lattice_mat=atoms.lattice_mat,
+        elements=atoms.elements,
+        coords=new_f_coords,
+        cartesian=False,
+    )
 
 
 """

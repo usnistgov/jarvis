@@ -23,7 +23,7 @@ def test_solar():
     en, abz = v.avg_absorption_coefficient
     abz = abz * 100
     eff_slme = SolarEfficiency().slme(
-        en, abz, indirgap, indirgap, plot_current_voltage=False
+        en, abz, indirgap, indirgap, plot_current_voltage=True
     )
     # print("SLME", 100 * eff)
     eff_sq = SolarEfficiency().calculate_SQ(indirgap)
