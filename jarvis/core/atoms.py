@@ -106,7 +106,7 @@ class Atoms(object):
         return polar
 
     def apply_strain(self, strain):
-        """Apply a strain(e.g. 0.01) to the lattice."""
+        """Apply a strain(e.g. 0.01, [0,0,.01]) to the lattice."""
         s = (1 + np.array(strain)) * np.eye(3)
         self.lattice_mat = np.dot(self.lattice_mat.T, s).T
 
@@ -312,7 +312,6 @@ class Atoms(object):
         """Get pymatgen representation of the atoms object."""
         try:
             from pymatgen.core.structure import Structure
-
             return Structure(
                 self.lattice_mat,
                 self.elements,
