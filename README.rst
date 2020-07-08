@@ -7,8 +7,6 @@
         :target: https://ci.appveyor.com/project/knc6/jarvis-63tl9 
 .. image:: https://github.com/usnistgov/jarvis/workflows/JARVIS-Tools%20github%20action/badge.svg
         :target: https://github.com/usnistgov/jarvis
-.. image:: https://github.com/usnistgov/jarvis/workflows/JARVIS-Tools%20github%20action/badge.svg
-        :target: https://github.com/usnistgov/jarvis
 .. image:: https://github.com/usnistgov/jarvis/workflows/JARVIS-Tools%20linting/badge.svg
         :target: https://github.com/usnistgov/jarvis
 .. image:: https://readthedocs.org/projects/jarvis-tools/badge/?version=latest
