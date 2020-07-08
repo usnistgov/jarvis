@@ -95,8 +95,7 @@ def test_zur():
         0.0,
     )
 
-test_zur()
-
+# test_zur()
 def test_type():
     B = {}
     B["scf_vbm"] = -5
@@ -108,3 +107,32 @@ def test_type():
     A["avg_max"] = -2
     int_type, stack = get_hetero_type(A=A, B=B)
     assert (int_type, stack) == ("III", "BA")
+    print (int_type, stack)
+    int_type, stack = get_hetero_type(A=B, B=A)
+    print (int_type, stack)
+
+
+    B = {}
+    B["scf_vbm"] = -5
+    B["scf_cbm"] = -4
+    B["avg_max"] = -1
+    A = {}
+    A["scf_vbm"] = -7
+    A["scf_cbm"] = -3
+    A["avg_max"] = -1
+    int_type, stack = get_hetero_type(A=B, B=A)
+    print (int_type, stack)
+
+
+
+    B = {}
+    B["scf_vbm"] = -4
+    B["scf_cbm"] = -2
+    B["avg_max"] = -1
+    A = {}
+    A["scf_vbm"] = -7
+    A["scf_cbm"] = -3
+    A["avg_max"] = -1
+    int_type, stack = get_hetero_type(A=B, B=A)
+    print (int_type, stack)
+#test_type()

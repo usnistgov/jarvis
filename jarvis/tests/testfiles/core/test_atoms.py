@@ -1,5 +1,6 @@
 from jarvis.core.atoms import Atoms, VacuumPadding
 import os
+from jarvis.db.figshare import get_jid_data, data
 
 poscar_path = os.path.join(
     os.path.dirname(__file__),
@@ -96,7 +97,16 @@ def test_basic_atoms():
         2.33,
     )
     cc = Si.center()
+    cc = Si.center(axis=[0,0,1])
 
-
-test_basic_atoms()
+    m1 = Atoms.from_dict(get_jid_data('JVASP-6640')['atoms'])
+    assert m1.check_polar==True
+    print ('Strain test')
+    print (m1)
+    m1.apply_strain(0.1)
+    print (m1)
+    assert (m1.lattice_mat[2][2]==32.8717576)
+    m1.apply_strain([0,0,.1])
+    assert (m1.lattice_mat[2][2]==36.158933360000006)
+# test_basic_atoms()
 # def test_basic_atoms():
