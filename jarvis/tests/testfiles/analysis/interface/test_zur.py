@@ -95,7 +95,7 @@ def test_zur():
         0.0,
     )
 
-# test_zur()
+
 def test_type():
     B = {}
     B["scf_vbm"] = -5
