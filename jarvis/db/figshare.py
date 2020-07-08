@@ -10,27 +10,27 @@ import requests
 from jarvis.db.jsonutils import loadjson
 
 
-def datasets(dataset=''):
+def datasets(dataset=""):
     """Get collection of dataset names and URLs."""
-    if dataset == 'dft_2d':
+    if dataset == "dft_2d":
         url = "https://ndownloader.figshare.com/files/22471019"
-        js_tag = 'jdft_2d-4-26-2020.json'
-        print('Obtaining 2D dataset ...')
-    elif dataset == 'dft_3d':
+        js_tag = "jdft_2d-4-26-2020.json"
+        print("Obtaining 2D dataset ...")
+    elif dataset == "dft_3d":
         url = "https://ndownloader.figshare.com/files/22471022"
-        js_tag = 'jdft_3d-4-26-2020.json'
-        print('Obtaining 3D dataset ...')
+        js_tag = "jdft_3d-4-26-2020.json"
+        print("Obtaining 3D dataset ...")
 
-    elif dataset == 'cfid_3d':
+    elif dataset == "cfid_3d":
         url = "https://ndownloader.figshare.com/files/22470818"
-        js_tag = 'jml_3d-4-26-2020.json'
-        print('Obtaining 3D CFID dataset ...')
+        js_tag = "jml_3d-4-26-2020.json"
+        print("Obtaining 3D CFID dataset ...")
     else:
-        ValueError('Dataset doesnt exist', dataset)
+        ValueError("Dataset doesnt exist", dataset)
     return url, js_tag
 
 
-def data(dataset='dft_2d'):
+def data(dataset="dft_2d"):
     """Provide main function to download datasets."""
     url, js_tag = datasets(dataset)
     path = str(os.path.join(os.path.dirname(__file__), js_tag))
@@ -41,12 +41,20 @@ def data(dataset='dft_2d'):
         f.write(r.content)
         f.close()
 
-        with zipfile.ZipFile(zfile, 'r') as zipObj:
+        with zipfile.ZipFile(zfile, "r") as zipObj:
             # zipObj.extract(path)
             zipObj.extractall(os.path.join(os.path.dirname(__file__)))
         os.remove(zfile)
     data = loadjson(path)
     return data
+
+
+def get_jid_data(jid="JVASP-667", dataset="dft_2d"):
+    """Get info for a jid and dataset."""
+    d = data(dataset)
+    for i in d:
+        if i["jid"] == jid:
+            return i
 
 
 def get_ff_eneleast():

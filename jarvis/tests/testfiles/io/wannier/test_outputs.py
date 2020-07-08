@@ -25,7 +25,13 @@ soc_scfband_vrun = os.path.join(
 )  # for JVASP-1067
 
 
-def test_outputs():
+def test_outputs_bi2se3():
+    pp = get_projectors_for_formula(formula_dict={"Cr": 1, "I": 3})[0]
+    orb = get_orbitals()[0]
+    x = get_orbitals(
+        projection_info=[["Cr", 4, ["s", "d"]], ["I", 3, ["s", "p"]]],
+        desired_orbitals=[["Cr", "d"]],
+    )
     w = WannierHam(filename=wann_soc_win_hr)
     new_file, filename = tempfile.mkstemp()
     comp = w.compare_dft_wann(
@@ -66,5 +72,5 @@ def test_wann_cent():
     assert (len(centers)) == (40)
 
 
-test_outputs()
+# test_outputs_cri3()
 # test_wann_cent()
