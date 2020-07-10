@@ -16,7 +16,7 @@ def get_2d_hetero_jids(jid1='JVASP-664',jid2='JVASP-52'):
     m2 = get_jid_data(jid2)['atoms']
     mat1= Atoms.from_dict(m1)
     mat2= Atoms.from_dict(m2)
-    info = make_interface(film=mat1.center_around_origin(), subs=mat2.center_around_origin())
+    info = make_interface(film=mat1.center_around_origin(), subs=mat2.center_around_origin(), atol=1,ltol=0.1, max_area=400, max_area_ratio_tol=1)
     combined = info["interface"]
     return combined
 
@@ -52,50 +52,32 @@ def test_zur():
     combined = info["interface"]
     print(combined)
 
-  
-    """
-    jid1='JVASP-664'
-    jid2='JVASP-652'
-    jid2='JVASP-76195'
-    mos2 = get_jid_data(jid1)['atoms']
-    cri3 = get_jid_data(jid2)['atoms']
-    mat1= Atoms.from_dict(mos2)
-    mat2= Atoms.from_dict(cri3)
-    info = make_interface(film=mat1.center_around_origin(), subs=mat2.center_around_origin())
-    combined = info["interface"]
-    #combined = get_hetero(s2.atoms.center_around_origin(), s2.atoms.center_around_origin(), seperation=3).center_around_origin()
-    #print (s2.atoms.center_around_origin().center(vacuum=18))   
-    print ()
-    print ()
-    print ()
-    print('combined')
-    print(get_2d_hetero_jids(jid1=jid1,jid2=jid2))
+
+    assert (round(info["mismatch_u"], 3), round(info["mismatch_angle"], 3)) == (
+        0.002,
+        0.0,
+    )
+
+def test_2d_interface():
+    jids=['JVASP-688', 'JVASP-664','JVASP-652', 'JVASP-6841', 'JVASP-5983', 'JVASP-60244']
+    jids=['JVASP-652', 'JVASP-664']
     count=0
     for i in jids:
       for j in jids:
        if count<100 and i!=j:
-        try:
+        #try:
          intf=get_2d_hetero_jids(jid1=i,jid2=j)
          ats=(intf.get_string(cart=False))
-         if intf.num_atoms<20:
-          
+         if intf.num_atoms<200:
+
           count=count+1
           print (i,j)
           print (ats)
           print ()
           print ()
           print ()
-        except:
-          pass 
-    #add_atoms(s2.atoms.center_around_origin(), s2.atoms.center_around_origin())
-    #Poscar(combined).write_file('tmp')
-    """
-    assert (round(info["mismatch_u"], 3), round(info["mismatch_angle"], 3)) == (
-        0.002,
-        0.0,
-    )
-
-
+        #except:
+        #  pass
 def test_type():
     B = {}
     B["scf_vbm"] = -5
@@ -135,4 +117,24 @@ def test_type():
     A["avg_max"] = -1
     int_type, stack = get_hetero_type(A=B, B=A)
     print (int_type, stack)
-#test_type()
+
+def test_2d_hetero():
+    count=0
+    for i in jids:
+      for j in jids:
+       if count<100 and i!=j:
+        try:
+         intf=get_2d_hetero_jids(jid1=i,jid2=j)
+         ats=(intf.get_string(cart=False))
+         if intf.num_atoms<20:
+
+          count=count+1
+          print (i,j)
+          print (ats)
+          print ()
+          print ()
+          print ()
+        except:
+          pass
+    
+    

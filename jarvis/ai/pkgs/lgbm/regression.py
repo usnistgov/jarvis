@@ -82,8 +82,12 @@ def regression(
         round(reg_sc["r2"], 3),
     )
     if plot:
-        plt.plot(reg_sc["pred"], reg_sc["test"],
-                 ".", label=str(type(model).__name__)[0:4])
+        plt.plot(
+            reg_sc["pred"],
+            reg_sc["test"],
+            ".",
+            label=str(type(model).__name__)[0:4],
+        )
         plt.legend()
         plt.xlabel("DFT")
         plt.ylabel("ML")
