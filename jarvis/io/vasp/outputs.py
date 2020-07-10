@@ -10,6 +10,7 @@ import xmltodict
 from jarvis.core.kpoints import Kpoints3D as Kpoints
 from jarvis.io.vasp.inputs import Poscar
 from matplotlib import pyplot as plt
+import scipy
 
 RYTOEV = 13.605826
 AUTOA = 0.529177249
@@ -331,6 +332,43 @@ class Vasprun(object):
             nelect = int(float(self.all_input_parameters["NELECT"]))
             gap = min(cat[:, nelect]) - max(cat[:, nelect - 1])
         return gap
+
+    @property
+    def fermi_velocities(self):
+        """Get fermi velocities in m/s."""
+        # TODO: check for other materials than graphene
+        fermi_velocities = []
+        fermi_k = []
+        bands_cross_fermi = []
+        h_bar = 6.582119569e-16  # reduced Planck const. eV s
+        strt = self.all_structures[-1]
+        lat = strt.lattice.reciprocal_lattice()
+        kpoints_frac = self.kpoints.kpts
+        kpoints_cart = [lat.cart_coords(i) for i in kpoints_frac]
+        kpoints = np.array(kpoints_cart)
+        for i, ii in enumerate(self.eigenvalues):
+            for j, jj in enumerate(ii.T):
+                for k, kk in enumerate(jj):
+                    if max(kk) > self.efermi and min(kk) < self.efermi:
+                        bands_cross_fermi.append(kk)
+        for i in bands_cross_fermi:
+            for j, jj in enumerate(i):
+                if j < len(i) - 1:
+                    if (i[j] < self.efermi < i[j + 1]) or (
+                        i[j] > self.efermi > i[j + 1]
+                    ):
+                        # dk = np.sqrt(
+                        #     (kpoints[j + 1][0] - kpoints[j][0]) ** 2
+                        #     + (kpoints[j + 1][1] - kpoints[j][1]) ** 2
+                        # )
+                        dk = np.linalg.norm(kpoints[j + 1] - kpoints[j])
+                        v_f = abs((i[j + 1] - i[j]) / (h_bar * dk))
+                        fermi_velocities.append(v_f)
+                        fermi_k.append(kpoints[j])
+        # Convert to m/s
+        # For graphene: ~0.85e6 m/s
+        fermi_velocities = 1e-10 * np.array(fermi_velocities)
+        return fermi_velocities, fermi_k, bands_cross_fermi
 
     @property
     def elements(self):
