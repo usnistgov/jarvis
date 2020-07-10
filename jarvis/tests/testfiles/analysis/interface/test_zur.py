@@ -29,7 +29,6 @@ s4 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-7517
 # Good 2D examples
 jids=['JVASP-688', 'JVASP-664', 'JVASP-667', 'JVASP-661','JVASP-652', 'JVASP-676', 'JVASP-6841', 'JVASP-771', 'JVASP-780', 'JVASP-5899', 'JVASP-646', 'JVASP-5956', 'JVASP-649', 'JVASP-658', 'JVASP-744', 'JVASP-5872', 'JVASP-76196', 'JVASP-5983', 'JVASP-20002', 'JVASP-27836', 'JVASP-27862', 'JVASP-6838', 'JVASP-687', 'JVASP-6613', 'JVASP-6667', 'JVASP-6028', 'JVASP-6079', 'JVASP-5944', 'JVASP-680', 'JVASP-6955', 'JVASP-6901', 'JVASP-19987', 'JVASP-6238', 'JVASP-13600', 'JVASP-27940', 'JVASP-27775', 'JVASP-27780', 'JVASP-730', 'JVASP-5929', 'JVASP-19989', 'JVASP-792', 'JVASP-6268', 'JVASP-6181', 'JVASP-12027', 'JVASP-27785', 'JVASP-28152', 'JVASP-28268', 'JVASP-6994', 'JVASP-31373', 'JVASP-762', 'JVASP-756', 'JVASP-27724', 'JVASP-13514', 'JVASP-19987', 'JVASP-31368', 'JVASP-6007', 'JVASP-741', 'JVASP-720', 'JVASP-789', 'JVASP-777', 'JVASP-5932', 'JVASP-728', 'JVASP-673', 'JVASP-60477', 'JVASP-6742', 'JVASP-12064', 'JVASP-6034', 'JVASP-5935', 'JVASP-60525', 'JVASP-14431', 'JVASP-13632', 'JVASP-31379', 'JVASP-28106', 'JVASP-27864', 'JVASP-27855', 'JVASP-5950', 'JVASP-696', 'JVASP-783', 'JVASP-13526', 'JVASP-13541', 'JVASP-31353', 'JVASP-5926', 'JVASP-5959', 'JVASP-726', 'JVASP-60244', 'JVASP-13536', 'JVASP-27940', 'JVASP-60497', 'JVASP-705', 'JVASP-27978', 'JVASP-27865', 'JVASP-5977', 'JVASP-5974', 'JVASP-750', 'JVASP-738', 'JVASP-655', 'JVASP-31356', 'JVASP-6862', 'JVASP-765', 'JVASP-13586']
 
-
 def test_zur():
     info = mismatch_strts(film=s4.atoms, subs=s2.atoms)
     a = info["film_sl"].center_around_origin()
@@ -53,12 +52,11 @@ def test_zur():
     combined = info["interface"]
     print(combined)
 
-  
+
     assert (round(info["mismatch_u"], 3), round(info["mismatch_angle"], 3)) == (
         0.002,
         0.0,
     )
-
 
 def test_2d_interface():
     jids=['JVASP-688', 'JVASP-664','JVASP-652', 'JVASP-6841', 'JVASP-5983', 'JVASP-60244']
@@ -71,7 +69,7 @@ def test_2d_interface():
          intf=get_2d_hetero_jids(jid1=i,jid2=j)
          ats=(intf.get_string(cart=False))
          if intf.num_atoms<200:
-          
+
           count=count+1
           print (i,j)
           print (ats)
@@ -79,8 +77,7 @@ def test_2d_interface():
           print ()
           print ()
         #except:
-        #  pass 
-
+        #  pass
 def test_type():
     B = {}
     B["scf_vbm"] = -5
@@ -121,7 +118,6 @@ def test_type():
     int_type, stack = get_hetero_type(A=B, B=A)
     print (int_type, stack)
 
-
 def test_2d_hetero():
     count=0
     for i in jids:
@@ -131,7 +127,7 @@ def test_2d_hetero():
          intf=get_2d_hetero_jids(jid1=i,jid2=j)
          ats=(intf.get_string(cart=False))
          if intf.num_atoms<20:
-          
+
           count=count+1
           print (i,j)
           print (ats)
@@ -139,6 +135,6 @@ def test_2d_hetero():
           print ()
           print ()
         except:
-          pass 
-
-test_2d_interface()
+          pass
+    
+    
