@@ -39,6 +39,7 @@ def test_win():
 
     Wannier90win(struct=s1, efermi=0.0).write_win(name=win)
     assert (os.path.isfile(win)) == (True)
+    Wannier90win(struct=s1, efermi=0.0).write_hr_win(prev_win=win)
     os.remove(win)
 
     Wannier90win(struct=s2, efermi=0.0).write_win(name=win)
