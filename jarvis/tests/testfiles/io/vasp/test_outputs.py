@@ -1,4 +1,11 @@
-from jarvis.io.vasp.outputs import Vasprun, Oszicar, Wavecar, Waveder, Chgcar, Outcar
+from jarvis.io.vasp.outputs import (
+    Vasprun,
+    Oszicar,
+    Wavecar,
+    Waveder,
+    Chgcar,
+    Outcar,
+)
 import numpy as np
 import os
 from jarvis.analysis.phonon.ir import ir_intensity
@@ -118,13 +125,23 @@ wder = Waveder(
 )
 wf_noso = Wavecar(
     filename=os.path.join(
-        os.path.dirname(__file__), "..", "..", "analysis", "spillage", "WAVECAR.nosoc"
+        os.path.dirname(__file__),
+        "..",
+        "..",
+        "analysis",
+        "spillage",
+        "WAVECAR.nosoc",
     ),
     lsorbit=False,
 )
 wf_so = Wavecar(
     filename=os.path.join(
-        os.path.dirname(__file__), "..", "..", "analysis", "spillage", "WAVECAR.soc"
+        os.path.dirname(__file__),
+        "..",
+        "..",
+        "analysis",
+        "spillage",
+        "WAVECAR.soc",
     ),
     lsorbit=True,
 )
@@ -132,11 +149,11 @@ wf_so = Wavecar(
 
 def test_chgcar():
     # print (chg.is_spin_polarized(), chg.is_spin_orbit(), np.array(chg.chg).shape)
-    assert (chg.is_spin_polarized(), chg.is_spin_orbit(), np.array(chg.chg).shape) == (
-        True,
-        False,
-        (2, 56, 56, 56),
-    )
+    assert (
+        chg.is_spin_polarized(),
+        chg.is_spin_orbit(),
+        np.array(chg.chg).shape,
+    ) == (True, False, (2, 56, 56, 56),)
 
 
 def test_vrun():
@@ -152,6 +169,7 @@ def test_vrun():
     assert vrun.is_spin_polarized == True
     assert opt_vrun.is_spin_polarized == False
     assert vrun.is_spin_orbit == False
+    assert list(vrun.fermi_velocities[0]) == []
 
 
 def test_osz():
@@ -161,14 +179,18 @@ def test_osz():
 
 def test_out():
     assert (round(out.elastic_props()["KV"], 2)) == (87.27)
-    out_efg = Outcar(os.path.join(os.path.dirname(__file__), "OUTCAR.EFG-JVASP-12148"))
+    out_efg = Outcar(
+        os.path.join(os.path.dirname(__file__), "OUTCAR.EFG-JVASP-12148")
+    )
     assert out_efg.efg_tensor_diag[0][0] == -4.766
     assert out_efg.quad_mom[0][0] == 0.023
     assert out_efg.converged == True
 
 
 def test_dfpt():
-    vrun = Vasprun(os.path.join(os.path.dirname(__file__), "vasprun.xml.JVASP-39"))
+    vrun = Vasprun(
+        os.path.join(os.path.dirname(__file__), "vasprun.xml.JVASP-39")
+    )
     out = Outcar(os.path.join(os.path.dirname(__file__), "OUTCAR.JVASP-39"))
     bec = round(vrun.dfpt_data["born_charges"][0][0][0], 2)
     eig = round(out.phonon_eigenvalues[2], 2)
@@ -184,7 +206,8 @@ def test_dfpt():
 
 def test_waveder():
     assert (
-        np.iscomplex(wder.get_orbital_derivative_between_states(0, 0, 0, 0, 0)) == True
+        np.iscomplex(wder.get_orbital_derivative_between_states(0, 0, 0, 0, 0))
+        == True
     )
     assert (
         complex(wder.get_orbital_derivative_between_states(0, 0, 0, 0, 0)).real
@@ -193,7 +216,9 @@ def test_waveder():
 
 
 def test_ir():
-    vrun = Vasprun(os.path.join(os.path.dirname(__file__), "vasprun.xml.JVASP-39"))
+    vrun = Vasprun(
+        os.path.join(os.path.dirname(__file__), "vasprun.xml.JVASP-39")
+    )
     out = Outcar(os.path.join(os.path.dirname(__file__), "OUTCAR.JVASP-39"))
     phonon_eigenvectors = vrun.dfpt_data["phonon_eigenvectors"]
     vrun_eigs = vrun.dfpt_data["phonon_eigenvalues"]
