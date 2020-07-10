@@ -79,7 +79,7 @@ def test_kp():
         0.0,
         0.0,
     )
-
+    kp = Kpoints3D().kpath(atoms=Si,unique_kp_only=True)
 
 def test_extra_spgs():
     from jarvis.db.figshare import data

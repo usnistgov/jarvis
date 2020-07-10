@@ -66,7 +66,7 @@ def classify_roc_ml(
 
         preprocess: whether to apply standard preprocessing techniques
 
-        plt: whether to plot the ROC curve
+        plot: whether to plot the ROC curve
     """
     if plot:
         plt.close()

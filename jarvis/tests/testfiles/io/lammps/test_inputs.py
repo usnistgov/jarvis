@@ -2,6 +2,7 @@ from jarvis.io.lammps.inputs import LammpsData, LammpsInput
 from jarvis.core.atoms import Atoms
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 import os
+import tempfile
 
 data = os.path.join(os.path.dirname(__file__), "lammps.data")
 init = os.path.join(os.path.dirname(__file__), "init.mod")
