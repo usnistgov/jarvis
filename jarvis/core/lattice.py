@@ -346,7 +346,7 @@ class Lattice(object):
         This method returns a basis which is as "good" as
         possible, with "good" defined by orthongonality of the lattice vectors.
         This basis is used for all the periodic boundary condition calcs.
-        Adapted from pymatgen
+        Adapted from pymatgen.
 
         Args:
 

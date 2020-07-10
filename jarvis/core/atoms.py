@@ -269,6 +269,11 @@ class Atoms(object):
         """Get number of atoms."""
         return len(self.coords)
 
+    @property
+    def uniq_species(self):
+        """Get unique elements."""
+        return list(set(self.elements))
+
     def get_center_of_mass(self):
         """Get center of mass of the atoms object."""
         # atomic_mass
