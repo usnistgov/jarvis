@@ -204,7 +204,7 @@ class Incar(object):
                 self._tags[i] = j  # .strip(' ')
         for i, j in d.items():
             self._tags[i] = j
-        print("selftags2=", self._tags)
+        # print("selftags2=", self._tags)
         return Incar(self._tags)
 
     # def get(self, key="POTIM", temp=0.5):
