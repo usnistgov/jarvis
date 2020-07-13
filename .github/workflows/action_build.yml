@@ -32,4 +32,4 @@ jobs:
         coverage report -m
         codecov
         codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
-        rm -rf jarvis        
+            
