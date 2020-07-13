@@ -27,7 +27,6 @@ jobs:
         python -m pip install --upgrade pip   
         python setup.py develop
         pip install scipy coverage lightgbm flask joblib scikit-learn pandas codecov torch keras tensorflow pytest pytest-cov
-        pytest --cov=./
         coverage run -m pytest
         coverage report -m
         codecov

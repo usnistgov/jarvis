@@ -372,41 +372,41 @@ def make_interface(
     _, __, scell = film.lattice.find_matches(film_latt, ltol=ltol, atol=atol)
     scell[2] = np.array([0, 0, 1])
     scell_film = scell
-    film = film.make_supercell(scell_film)  # .center(vacuum=vacuum)
-    subs = subs.make_supercell(scell_subs)  # .center(vacuum=vacuum)
+    film_scell = film.make_supercell_matrix(scell_film)
+    subs_scell = subs.make_supercell_matrix(scell_subs)
     info["mismatch_u"] = mismatch_u
     info["mismatch_v"] = mismatch_v
     info["mismatch_angle"] = mismatch_angle
     info["area1"] = area1
     info["area2"] = area2
-    info["film_sl"] = film
-    info["subs_sl"] = subs
-    substrate_top_z = max(np.array(subs.cart_coords)[:, 2])
-    substrate_bot_z = min(np.array(subs.cart_coords)[:, 2])
-    film_top_z = max(np.array(film.cart_coords)[:, 2])
-    film_bottom_z = min(np.array(film.cart_coords)[:, 2])
+    info["film_sl"] = film_scell
+    info["subs_sl"] = subs_scell
+    substrate_top_z = max(np.array(subs_scell.cart_coords)[:, 2])
+    substrate_bot_z = min(np.array(subs_scell.cart_coords)[:, 2])
+    film_top_z = max(np.array(film_scell.cart_coords)[:, 2])
+    film_bottom_z = min(np.array(film_scell.cart_coords)[:, 2])
     thickness_sub = abs(substrate_top_z - substrate_bot_z)
     thickness_film = abs(film_top_z - film_bottom_z)
 
     min_distance = seperation + (thickness_sub)  # +thickness_film/ 2.0
     sub_z = (
         (vacuum + thickness_sub + thickness_film)
-        * np.array(subs.lattice_mat[2, :])
-        / np.linalg.norm(subs.lattice_mat[2, :])
+        * np.array(subs_scell.lattice_mat[2, :])
+        / np.linalg.norm(subs_scell.lattice_mat[2, :])
     )  # subs.lattice_mat[2, :]
     shift_normal = (
         sub_z / np.linalg.norm(sub_z) * min_distance / np.linalg.norm(sub_z)
     )
-    interface = add_atoms(film, subs, shift_normal).center_around_origin(
-        [0, 0, 0.5]
-    )
+    interface = add_atoms(
+        film_scell, subs_scell, shift_normal
+    ).center_around_origin([0, 0, 0.5])
     info["interface"] = VacuumPadding(
         atoms=interface, vacuum=vacuum
     ).get_effective_2d_slab()
     print("mismatch_u,mismatch_v", mismatch_u, mismatch_v)
     if mismatch_u < 0 or mismatch_v < 0:
         print("Maybe unphysical structure")
-    info['msg'] = "Maybe unphysical structure"
+    info["msg"] = "Maybe unphysical structure"
     return info
 
 

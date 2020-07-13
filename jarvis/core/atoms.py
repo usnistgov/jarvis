@@ -786,10 +786,10 @@ def add_atoms(top, bottom, distance=[0, 0, 5]):
     elements = []
     coords = []
     lattice_mat = bottom.lattice_mat
-    for i, j in zip(bottom.elements, bottom.cart_coords):
+    for i, j in zip(bottom.elements, bottom.frac_coords):
         elements.append(i)
         coords.append(j)
-    for i, j in zip(top.elements, top.cart_coords):
+    for i, j in zip(top.elements, top.frac_coords):
         elements.append(i)
         coords.append(j)
 
@@ -800,7 +800,7 @@ def add_atoms(top, bottom, distance=[0, 0, 5]):
         lattice_mat=lattice_mat,
         coords=coords,
         elements=elements,
-        cartesian=True,
+        cartesian=False,
     ).center_around_origin()
     return combined
 
@@ -820,6 +820,17 @@ def fix_pbc(atoms):
         coords=new_f_coords,
         cartesian=False,
     )
+
+def get_supercell_dims(atoms, enforce_c_size=10, extend=1):
+    """Get supercell dimensions."""
+    a = atoms.lattice.lat_lengths()[0]
+    b = atoms.lattice.lat_lengths()[1]
+    c = atoms.lattice.lat_lengths()[2]
+    dim1 = int(float(enforce_c_size) / float(a)) + extend
+    dim2 = int(float(enforce_c_size) / float(b)) + extend
+    dim3 = int(float(enforce_c_size) / float(c)) + extend
+    return [dim1, dim2, dim3]
+
 
 
 """
