@@ -10,7 +10,6 @@ import xmltodict
 from jarvis.core.kpoints import Kpoints3D as Kpoints
 from jarvis.io.vasp.inputs import Poscar
 from matplotlib import pyplot as plt
-import scipy
 
 RYTOEV = 13.605826
 AUTOA = 0.529177249
