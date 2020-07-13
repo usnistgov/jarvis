@@ -53,7 +53,6 @@ kp2 = os.path.join(
     "MAIN-BAND-bulk@mp_149",
     "KPOINTS",
 )
-pot = os.path.join(os.path.dirname(__file__), "POT_GGA_PAW_PBE", "POTCAR",)
 
 
 def test_inputs():
@@ -62,6 +61,7 @@ def test_inputs():
     new_file, filename = tempfile.mkstemp()
     p.write_file(filename)
     i = Incar.from_file(inc)
+    i.update({'ENCUT':1000})
     assert (round(p.atoms.density, 2), i.to_dict()["ISIF"]) == (2.25, "3")
     f = open(pos, "r")
     lines = f.read()
@@ -70,11 +70,14 @@ def test_inputs():
     assert (round(p.atoms.density, 2), i.to_dict()["ISIF"]) == (2.25, "3")
     d = i.to_dict()
     ii = Incar.from_dict(d)
-    potc = IndividualPotcarData(pot)
+    pot = os.path.join(os.path.dirname(__file__), "POT_GGA_PAW_PBE", "Xe","POTCAR",)
+    potc = IndividualPotcarData.from_file(pot)
     print(potc)
     os.environ["JARVIS_VASP_PSP_DIR"] = os.path.join(os.path.dirname(__file__))
     new_file, filename = tempfile.mkstemp()
-    Potcar(elements=["Xe"]).write_file(filename)
+    pot = Potcar(elements=["Xe"])
+    print(pot)
+    pot.write_file(filename)
 
 
 def test_kpoints():

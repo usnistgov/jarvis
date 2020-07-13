@@ -82,11 +82,9 @@ class Chgcar(object):
         self.atoms = Poscar.from_string(lines).atoms
         volume = self.atoms.volume
         text = lines.splitlines()
-        for ii, i in enumerate(text):
-            if i == "":
-                ng_line = text[ii + 1]
-                ng = [int(j) for j in text[ii + 1].split()]
-                found = ii
+        ng_line = text[self.atoms.num_atoms + 9]
+        ng = [int(j) for j in ng_line.split()]
+        found = self.atoms.num_atoms + 8
         nsets = 0
         for i in text:
             if "augmentation occupancies   1 " in i:
