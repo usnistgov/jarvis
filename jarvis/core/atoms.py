@@ -821,6 +821,7 @@ def fix_pbc(atoms):
         cartesian=False,
     )
 
+
 def get_supercell_dims(atoms, enforce_c_size=10, extend=1):
     """Get supercell dimensions."""
     a = atoms.lattice.lat_lengths()[0]
@@ -830,7 +831,6 @@ def get_supercell_dims(atoms, enforce_c_size=10, extend=1):
     dim2 = int(float(enforce_c_size) / float(b)) + extend
     dim3 = int(float(enforce_c_size) / float(c)) + extend
     return [dim1, dim2, dim3]
-
 
 
 """

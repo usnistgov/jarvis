@@ -1,6 +1,5 @@
 """Module for setting MAGMOM and AFM/FM orderings."""
 
-from jarvis.core.atoms import Atoms
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 import numpy as np
 
@@ -157,6 +156,7 @@ def get_unique_magnetic_structures(
 
 """
 if __name__ == "__main__":
+    from jarvis.core.atoms import Atoms
     box = [[2.715, 0, 0], [0, 2.715, 0], [0, 0, 2.715]]
     coords = [[0, 0, 0], [0.5, 0.5, 0.5]]
     elements = ["Mn", "Si"]
