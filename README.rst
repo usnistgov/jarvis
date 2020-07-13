@@ -1,7 +1,7 @@
 .. class:: center
 .. image:: https://circleci.com/gh/usnistgov/jarvis.svg?style=shield
         :target: https://circleci.com/gh/usnistgov/jarvis
-.. image:: https://travis-ci.org/usnistgov/jarvis.svg?branch=master
+.. image:: https://img.shields.io/travis/usnistgov/jarvis/master.svg?label=Travis%20CI
         :target: https://travis-ci.org/usnistgov/jarvis
 .. image:: https://ci.appveyor.com/api/projects/status/d8na8vyfm7ulya9p/branch/master?svg=true
         :target: https://ci.appveyor.com/project/knc6/jarvis-63tl9 
