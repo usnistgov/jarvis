@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.io.vasp package &#8212; JARVIS-Tools v2020.7.4 documentation</title>
+    <title>jarvis.io.vasp package &#8212; JARVIS-Tools 2020.7.14 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.7.14 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -195,7 +195,7 @@
 <p>Modules for analzing VASP outputs.</p>
 <dl class="class">
 <dt id="jarvis.io.vasp.outputs.Chgcar">
-<em class="property">class </em><code class="descclassname">jarvis.io.vasp.outputs.</code><code class="descname">Chgcar</code><span class="sig-paren">(</span><em>filename=''</em>, <em>atoms=None</em>, <em>chg=[]</em>, <em>chgdif=None</em>, <em>aug=None</em>, <em>augdiff=None</em>, <em>nsets=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.outputs.</code><code class="descname">Chgcar</code><span class="sig-paren">(</span><em>filename=''</em>, <em>atoms=None</em>, <em>chg=[]</em>, <em>chgdif=None</em>, <em>aug=None</em>, <em>augdiff=None</em>, <em>dim=None</em>, <em>nsets=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class handling VASP CHGCAR file data.</p>
 <dl class="method">
@@ -383,6 +383,12 @@ bulk, shear modulus, and phonon modes</dd>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="jarvis.io.vasp.outputs.Vasprun.fermi_velocities">
+<code class="descname">fermi_velocities</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.fermi_velocities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get fermi velocities in m/s.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.final_energy">
 <code class="descname">final_energy</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.final_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get final energy.</p>
@@ -425,6 +431,24 @@ bulk, shear modulus, and phonon modes</dd>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="jarvis.io.vasp.outputs.Vasprun.nbands">
+<code class="descname">nbands</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.nbands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get number of electronic bands.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.io.vasp.outputs.Vasprun.nkpoints">
+<code class="descname">nkpoints</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.nkpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get number of kpoints.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.io.vasp.outputs.Vasprun.nspins">
+<code class="descname">nspins</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.nspins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get total numnber of spins.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Vasprun.num_atoms">
 <code class="descname">num_atoms</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.num_atoms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of simulation atoms.</p>
@@ -434,6 +458,24 @@ bulk, shear modulus, and phonon modes</dd>
 <dt id="jarvis.io.vasp.outputs.Vasprun.num_types">
 <code class="descname">num_types</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.num_types" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of atom types.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.io.vasp.outputs.Vasprun.partial_dos_spdf">
+<code class="descname">partial_dos_spdf</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.partial_dos_spdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get partial density of states.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.io.vasp.outputs.Vasprun.projected_atoms_spins_kpoints_bands">
+<code class="descname">projected_atoms_spins_kpoints_bands</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.projected_atoms_spins_kpoints_bands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for atom,spin,kpoint and band projected bandstructures.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.io.vasp.outputs.Vasprun.projected_spins_kpoints_bands">
+<code class="descname">projected_spins_kpoints_bands</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.projected_spins_kpoints_bands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for spin, kpoint and band projected bandstructure plots.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -665,7 +707,7 @@ The WAVEDER contains the derivative of the orbitals with respect to k.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.7.14 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

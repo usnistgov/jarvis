@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.db.figshare &#8212; JARVIS-Tools v2020.7.4 documentation</title>
+    <title>jarvis.db.figshare &#8212; JARVIS-Tools 2020.7.14 documentation</title>
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools 2020.7.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -51,27 +51,27 @@
 <span class="kn">from</span> <span class="nn">jarvis.db.jsonutils</span> <span class="kn">import</span> <span class="n">loadjson</span>
 
 
-<div class="viewcode-block" id="datasets"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.figshare.datasets">[docs]</a><span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="datasets"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.figshare.datasets">[docs]</a><span class="k">def</span> <span class="nf">datasets</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get collection of dataset names and URLs.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s1">&#39;dft_2d&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s2">&quot;dft_2d&quot;</span><span class="p">:</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ndownloader.figshare.com/files/22471019&quot;</span>
-        <span class="n">js_tag</span> <span class="o">=</span> <span class="s1">&#39;jdft_2d-4-26-2020.json&#39;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Obtaining 2D dataset ...&#39;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s1">&#39;dft_3d&#39;</span><span class="p">:</span>
+        <span class="n">js_tag</span> <span class="o">=</span> <span class="s2">&quot;jdft_2d-4-26-2020.json&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Obtaining 2D dataset ...&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s2">&quot;dft_3d&quot;</span><span class="p">:</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ndownloader.figshare.com/files/22471022&quot;</span>
-        <span class="n">js_tag</span> <span class="o">=</span> <span class="s1">&#39;jdft_3d-4-26-2020.json&#39;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Obtaining 3D dataset ...&#39;</span><span class="p">)</span>
+        <span class="n">js_tag</span> <span class="o">=</span> <span class="s2">&quot;jdft_3d-4-26-2020.json&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Obtaining 3D dataset ...&quot;</span><span class="p">)</span>
 
-    <span class="k">elif</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s1">&#39;cfid_3d&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">dataset</span> <span class="o">==</span> <span class="s2">&quot;cfid_3d&quot;</span><span class="p">:</span>
         <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ndownloader.figshare.com/files/22470818&quot;</span>
-        <span class="n">js_tag</span> <span class="o">=</span> <span class="s1">&#39;jml_3d-4-26-2020.json&#39;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Obtaining 3D CFID dataset ...&#39;</span><span class="p">)</span>
+        <span class="n">js_tag</span> <span class="o">=</span> <span class="s2">&quot;jml_3d-4-26-2020.json&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Obtaining 3D CFID dataset ...&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Dataset doesnt exist&#39;</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+        <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dataset doesnt exist&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">url</span><span class="p">,</span> <span class="n">js_tag</span></div>
 
 
-<div class="viewcode-block" id="data"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.figshare.data">[docs]</a><span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;dft_2d&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="data"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.figshare.data">[docs]</a><span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;dft_2d&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Provide main function to download datasets.&quot;&quot;&quot;</span>
     <span class="n">url</span><span class="p">,</span> <span class="n">js_tag</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
     <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="n">js_tag</span><span class="p">))</span>
@@ -82,12 +82,20 @@
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zipObj</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">zfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zipObj</span><span class="p">:</span>
             <span class="c1"># zipObj.extract(path)</span>
             <span class="n">zipObj</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)))</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">zfile</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">loadjson</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="get_jid_data"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.figshare.get_jid_data">[docs]</a><span class="k">def</span> <span class="nf">get_jid_data</span><span class="p">(</span><span class="n">jid</span><span class="o">=</span><span class="s2">&quot;JVASP-667&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;dft_2d&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get info for a jid and dataset.&quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="s2">&quot;jid&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">jid</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span></div>
 
 
 <div class="viewcode-block" id="get_ff_eneleast"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.figshare.get_ff_eneleast">[docs]</a><span class="k">def</span> <span class="nf">get_ff_eneleast</span><span class="p">():</span>
@@ -146,7 +154,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools 2020.7.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>

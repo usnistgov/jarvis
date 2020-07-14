@@ -9,6 +9,8 @@ Subpackages
     jarvis.io.boltztrap
     jarvis.io.calphad
     jarvis.io.lammps
+    jarvis.io.phonopy
+    jarvis.io.qe
     jarvis.io.vasp
     jarvis.io.wannier
     jarvis.io.wanniertools

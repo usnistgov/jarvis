@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.io.lammps.inputs &#8212; JARVIS-Tools v2020.7.4 documentation</title>
+    <title>jarvis.io.lammps.inputs &#8212; JARVIS-Tools 2020.7.14 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.7.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -52,8 +52,12 @@
     <span class="sd">&quot;&quot;&quot;Construct Lammps data file.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">lammps_box</span><span class="o">=</span><span class="p">[],</span> <span class="n">species</span><span class="o">=</span><span class="p">[],</span>
-        <span class="n">charges</span><span class="o">=</span><span class="p">[],</span> <span class="n">cart_coords</span><span class="o">=</span><span class="p">[],</span> <span class="n">element_order</span><span class="o">=</span><span class="p">[]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">lammps_box</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">species</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">charges</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">cart_coords</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">element_order</span><span class="o">=</span><span class="p">[],</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provide following information.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lammps_box</span> <span class="o">=</span> <span class="n">lammps_box</span>
@@ -81,8 +85,10 @@
         <span class="p">)</span>
         <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_element_order</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_species</span><span class="p">]</span>
         <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span>
-            <span class="n">lattice_mat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span>
-            <span class="n">coords</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cart_coords</span><span class="p">,</span> <span class="n">cartesian</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">lattice_mat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span>
+            <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span>
+            <span class="n">coords</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cart_coords</span><span class="p">,</span>
+            <span class="n">cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">atoms</span></div>
 
@@ -127,13 +133,14 @@
 <div class="viewcode-block" id="LammpsData.read_data"><a class="viewcode-back" href="../../../../jarvis.io.lammps.html#jarvis.io.lammps.inputs.LammpsData.read_data">[docs]</a>    <span class="k">def</span> <span class="nf">read_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;lammps.data&quot;</span><span class="p">,</span>
-        <span class="n">element_order</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="s2">&quot;Al&quot;</span><span class="p">],</span>
+        <span class="n">element_order</span><span class="o">=</span><span class="p">[],</span>
         <span class="n">potential_file</span><span class="o">=</span><span class="s2">&quot;pot.mod&quot;</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Read Lammps data file.&quot;&quot;&quot;</span>
         <span class="c1"># n_atoms = len(self._species)</span>
         <span class="k">if</span> <span class="n">element_order</span> <span class="o">==</span> <span class="p">[]:</span>
             <span class="c1"># Reading potential file for element order</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;element_order is empty, reading from&#39;</span><span class="p">,</span> <span class="n">potential_file</span><span class="p">)</span>
             <span class="n">pot_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">potential_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">pot_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
             <span class="n">pot_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -180,8 +187,9 @@
                 <span class="n">xz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
                 <span class="n">yz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">])</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">symb</span><span class="p">)</span> <span class="o">!=</span> <span class="n">ntypes</span><span class="p">:</span>
-            <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Something wrong in atom type assignment&quot;</span><span class="p">,</span>
-                       <span class="nb">len</span><span class="p">(</span><span class="n">symb</span><span class="p">),</span> <span class="n">ntypes</span><span class="p">)</span>
+            <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Something wrong in atom type assignment&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">symb</span><span class="p">),</span> <span class="n">ntypes</span>
+            <span class="p">)</span>
         <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="p">[[</span><span class="n">xhi</span> <span class="o">-</span> <span class="n">xlo</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">xy</span><span class="p">,</span> <span class="n">yhi</span> <span class="o">-</span> <span class="n">ylo</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="n">xz</span><span class="p">,</span> <span class="n">yz</span><span class="p">,</span> <span class="n">zhi</span> <span class="o">-</span> <span class="n">zlo</span><span class="p">]]</span>
         <span class="p">)</span>
@@ -206,8 +214,10 @@
         <span class="n">typ_sp</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">typ</span><span class="p">]</span>
         <span class="c1"># print (&#39;typ_sp&#39;,typ_sp)</span>
         <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span>
-            <span class="n">lattice_mat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">typ_sp</span><span class="p">,</span>
-            <span class="n">coords</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">),</span> <span class="n">cartesian</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">lattice_mat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span>
+            <span class="n">elements</span><span class="o">=</span><span class="n">typ_sp</span><span class="p">,</span>
+            <span class="n">coords</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coords</span><span class="p">),</span>
+            <span class="n">cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">atoms</span></div>
 
@@ -241,8 +251,9 @@
             <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_species</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cart_coords</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">charge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charges</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%6d</span><span class="s2"> </span><span class="si">%3d</span><span class="s2"> </span><span class="si">%6f</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
-                    <span class="n">s</span><span class="p">,</span> <span class="n">charge</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="si">%6d</span><span class="s2"> </span><span class="si">%3d</span><span class="s2"> </span><span class="si">%6f</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">charge</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="LammpsData.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.lammps.html#jarvis.io.lammps.inputs.LammpsData.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -252,20 +263,20 @@
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;box&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lammps_box</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_species</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;charges&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charges</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;cart_coords&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charges</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;element_order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_element_order</span>
-        <span class="k">return</span> <span class="n">d</span>
-
-    <span class="c1"># def from_dict(self):</span>
-
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;box&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lammps_box</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_species</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;charges&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charges</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;cart_coords&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charges</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;cart_coords&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cart_coords</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;element_order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_element_order</span>
         <span class="k">return</span> <span class="n">d</span></div>
 
-    <span class="c1"># def from_dict(self):</span>
+<div class="viewcode-block" id="LammpsData.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.lammps.html#jarvis.io.lammps.inputs.LammpsData.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Construct from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">LammpsData</span><span class="p">(</span>
+            <span class="n">lammps_box</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;box&quot;</span><span class="p">],</span>
+            <span class="n">species</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">],</span>
+            <span class="n">charges</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;charges&quot;</span><span class="p">],</span>
+            <span class="n">cart_coords</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;cart_coords&quot;</span><span class="p">],</span>
+            <span class="n">element_order</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;element_order&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Print method.&quot;&quot;&quot;</span>
@@ -375,7 +386,8 @@
             <span class="c1"># default interaction</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
                 <span class="s2">&quot;pair_style lj/cut 2.5 </span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">+</span> <span class="s2">&quot;pair_coeff * * 1 1 </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;mass * 1.0 </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;pair_coeff * * 1 1 </span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="s2">&quot;mass * 1.0 </span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="n">f1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;neighbor 1.0 nsq</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">f1</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;neigh_modify once no every 1 delay 0 check yes</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -461,7 +473,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools v2020.7.4 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.7.14 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
