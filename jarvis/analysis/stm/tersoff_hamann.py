@@ -11,13 +11,13 @@ class TersoffHamannSTM(object):
 
     def __init__(self, chg_name="PARCHG", min_size=50.0, skew=True, zcut=None):
         """Initialize class with pathe of PARCHG and other input params."""
-        self.chgcar = Chgcar(chg_name)
-        self.atoms = self.chgcar.atoms
-        self.dim = self.chgcar.dim
+        chgcar = Chgcar(filename=chg_name)
+        self.atoms = chgcar.atoms
+        self.dim = chgcar.dim
         self.zmaxp = self.atoms.cart_coords[:, 2].max()
         self.nz = self.dim[2]
         self.chg = (
-            (self.chgcar.chg[0] * self.atoms.volume).reshape(self.dim[::-1]).T
+            (chgcar.chg[0] * self.atoms.volume).reshape(self.dim[::-1]).T
         )
         self.a = self.atoms.lattice.a
         self.b = self.atoms.lattice.b
