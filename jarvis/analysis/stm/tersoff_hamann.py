@@ -39,7 +39,7 @@ class TersoffHamannSTM(object):
         self.repeat = [rep_x, rep_y]
         self.scell = self.atoms.make_supercell_matrix([rep_x, rep_y, 1])
 
-    def constant_height(self, filename="test.jpg"):
+    def constant_height(self, filename="testh.png"):
         """Get iso-height image."""
         if not self.zcut:
             self.zcut = int((self.zmaxp + 2) / self.c * self.nz)
@@ -66,7 +66,7 @@ class TersoffHamannSTM(object):
 
         return info
 
-    def constant_current(self, tol=2, pc=None, ext=0.15, filename="testc.jpg"):
+    def constant_current(self, tol=2, pc=None, ext=0.15, filename="testc.png"):
         """Return the constant-current cut the charge density."""
         zmax_ind = int(self.zmaxp / self.c * self.nz) + 1
         # Find what z value is near the current, and take avergae
