@@ -28,6 +28,20 @@ For more details, checkout our latest article:
 .. image:: https://www.ctcms.nist.gov/~knc6/images/logo/jarvis-mission.png
    :target: https://jarvis.nist.gov/
 
+
+**Installation**
+^^^^^^^^^^^^^^^^^^^^^
+
+Please find installation instructions at https://github.com/usnistgov/jarvis/blob/master/Installation.rst .
+
+
+
+**Example notebooks**
+^^^^^^^^^^^^^^^^^^^^^
+
+Please find example notebooks at https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks  .
+
+
 **Correspondence**
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -50,3 +64,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+

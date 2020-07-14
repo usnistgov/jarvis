@@ -23,7 +23,7 @@ body {
 }
 
 div.document {
-    background-color: #1c4e63;
+    background-color: DimGray;
 }
 
 div.documentwrapper {
@@ -55,7 +55,7 @@ div.footer a {
 }
 
 div.related {
-    background-color: #133f52;
+    background-color: black;
     line-height: 30px;
     color: #ffffff;
 }
@@ -65,7 +65,24 @@ div.related a {
 }
 
 div.sphinxsidebar {
+    top: 30px;
+    bottom: 0;
+    margin: 0;
+    position: fixed;
+    overflow: auto;
+    height: auto;
 }
+/* this is nice, but it it leads to hidden headings when jumping
+   to an anchor */
+/*
+div.related {
+    position: fixed;
+}
+
+div.documentwrapper {
+    margin-top: 30px;
+}
+*/
 
 div.sphinxsidebar h3 {
     font-family: 'Trebuchet MS', sans-serif;
