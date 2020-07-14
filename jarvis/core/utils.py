@@ -1,6 +1,7 @@
 """Set of useful utility functions."""
 
 from collections import OrderedDict
+from collections import defaultdict
 import random
 
 
@@ -60,3 +61,8 @@ def rand_select(x=[]):
         chosen = random.choice(j)
         selected.setdefault(i, chosen)
     return selected
+
+
+def rec_dict():
+    """Make a recursion dictionary."""
+    return defaultdict(rec_dict)

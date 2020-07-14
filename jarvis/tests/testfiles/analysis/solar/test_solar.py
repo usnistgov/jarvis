@@ -1,6 +1,40 @@
 from jarvis.analysis.solarefficiency.solar import SolarEfficiency
 from jarvis.io.vasp.outputs import Vasprun
 import os
+import tarfile
+import matplotlib.pyplot as plt
+plt.switch_backend('agg')
+
+example_fold_tgz = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "..",
+    "..",
+    "..",
+    "examples",
+    "vasp",
+    "SiOptb88.tgz",
+)
+
+
+example_fold = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "..",
+    "..",
+    "..",
+    "examples",
+    "vasp",
+    "SiOptb88",
+)
+
+if not os.path.isdir(example_fold):
+    tar = tarfile.open(example_fold_tgz)
+    tar.extractall(example_fold)
+    tar.close()
+
+
+
 
 vrun_path = os.path.join(
     os.path.dirname(__file__),
@@ -10,6 +44,7 @@ vrun_path = os.path.join(
     "..",
     "examples",
     "vasp",
+    "SiOptb88",
     "SiOptb88",
     "MAIN-MBJ-bulk@mp_149",
     "vasprun.xml",
