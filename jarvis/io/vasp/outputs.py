@@ -28,6 +28,7 @@ class Chgcar(object):
         chgdif=None,
         aug=None,
         augdiff=None,
+        dim=None,
         nsets=1,
     ):
         """
@@ -53,6 +54,7 @@ class Chgcar(object):
         self.filename = filename
         self.atoms = atoms
         self.chg = chg
+        self.dim = dim
         self.chgdif = chgdif
         self.aug = aug
         self.augdiff = augdiff
@@ -84,6 +86,7 @@ class Chgcar(object):
         text = lines.splitlines()
         ng_line = text[self.atoms.num_atoms + 9]
         ng = [int(j) for j in ng_line.split()]
+        self.dim = np.array(ng)
         found = self.atoms.num_atoms + 8
         nsets = 0
         for i in text:
@@ -108,6 +111,7 @@ class Chgcar(object):
                 end = start + nlines
                 chg = self.chg_set(text, start, end, volume, ng)
                 self.chg.append(chg)
+        self.chg = np.array(self.chg)
 
     def chg_set(self, text, start, end, volume, ng):
         """Return CHGCAR sets."""
