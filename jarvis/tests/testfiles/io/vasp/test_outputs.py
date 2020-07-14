@@ -10,8 +10,43 @@ import numpy as np
 import os
 from jarvis.analysis.phonon.ir import ir_intensity
 import matplotlib.pyplot as plt
-
 plt.switch_backend("agg")
+
+
+import tarfile
+
+example_fold_tgz = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "..",
+    "..",
+    "..",
+    "examples",
+    "vasp",
+    "SiOptb88.tgz",
+)
+
+
+example_fold = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "..",
+    "..",
+    "..",
+    "examples",
+    "vasp",
+    "SiOptb88",
+)
+
+if not os.path.isdir(example_fold):
+    tar = tarfile.open(example_fold_tgz)
+    tar.extractall(example_fold)
+    tar.close()
+
+
+
+
+
 vrun = Vasprun(
     filename=os.path.join(
         os.path.dirname(__file__),
@@ -21,6 +56,7 @@ vrun = Vasprun(
         "..",
         "examples",
         "vasp",
+        "SiOptb88",
         "SiOptb88",
         "MAIN-RELAX-bulk@mp_149",
         "vasprun.xml",
@@ -36,6 +72,7 @@ band_vrun = Vasprun(
         "examples",
         "vasp",
         "SiOptb88",
+        "SiOptb88",
         "MAIN-BAND-bulk@mp_149",
         "vasprun.xml",
     )
@@ -50,6 +87,7 @@ opt_vrun = Vasprun(
         "examples",
         "vasp",
         "SiOptb88",
+        "SiOptb88",
         "MAIN-OPTICS-bulk@mp_149",
         "vasprun.xml",
     )
@@ -62,6 +100,7 @@ band_kp = os.path.join(
     "..",
     "examples",
     "vasp",
+    "SiOptb88",
     "SiOptb88",
     "MAIN-BAND-bulk@mp_149",
     "KPOINTS",
@@ -77,6 +116,7 @@ chg = Chgcar(
         "examples",
         "vasp",
         "SiOptb88",
+        "SiOptb88",
         "MAIN-RELAX-bulk@mp_149",
         "CHGCAR",
     )
@@ -90,6 +130,7 @@ osz = Oszicar(
         "..",
         "examples",
         "vasp",
+        "SiOptb88",
         "SiOptb88",
         "MAIN-RELAX-bulk@mp_149",
         "OSZICAR",
@@ -105,6 +146,7 @@ out = Outcar(
         "examples",
         "vasp",
         "SiOptb88",
+        "SiOptb88",
         "MAIN-ELASTIC-bulk@mp_149",
         "OUTCAR",
     )
@@ -118,6 +160,7 @@ wder = Waveder(
         "..",
         "examples",
         "vasp",
+        "SiOptb88",
         "SiOptb88",
         "MAIN-OPTICS-bulk@mp_149",
         "WAVEDER",

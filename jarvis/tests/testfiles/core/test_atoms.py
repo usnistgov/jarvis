@@ -1,6 +1,34 @@
 from jarvis.core.atoms import Atoms, VacuumPadding
 import os
 from jarvis.db.figshare import get_jid_data, data
+import tarfile
+
+example_fold_tgz = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "..",
+    "..",
+    "examples",
+    "vasp",
+    "SiOptb88.tgz",
+)
+
+
+example_fold = os.path.join(
+    os.path.dirname(__file__),
+    "..",
+    "..",
+    "..",
+    "examples",
+    "vasp",
+    "SiOptb88",
+)
+
+if not os.path.isdir(example_fold):
+    tar = tarfile.open(example_fold_tgz)
+    tar.extractall(example_fold)
+    tar.close()
+
 
 poscar_path = os.path.join(
     os.path.dirname(__file__),
@@ -9,6 +37,7 @@ poscar_path = os.path.join(
     "..",
     "examples",
     "vasp",
+    "SiOptb88",
     "SiOptb88",
     "POSCAR",
 )
