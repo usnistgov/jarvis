@@ -17,12 +17,12 @@ sys.path.insert(0, os.path.abspath('../../..'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'jarvis-tools'
+project = 'JARVIS-Tools'
 copyright = '2020, Kamal Choudhary'
 author = 'Kamal Choudhary'
 
 # The full version, including alpha/beta/rc tags
-release = '2020.7.4'
+release = '2020.7.14'
 
 
 # -- General configuration ---------------------------------------------------
