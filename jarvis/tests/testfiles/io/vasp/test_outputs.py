@@ -213,6 +213,9 @@ def test_vrun():
     assert opt_vrun.is_spin_polarized == False
     assert vrun.is_spin_orbit == False
     assert list(vrun.fermi_velocities[0]) == []
+    pdos1 = vrun.partial_dos_spdf
+    pdos2 = vrun.projected_atoms_spins_kpoints_bands
+    pdos3 = vrun.projected_spins_kpoints_bands
 
 
 def test_osz():
