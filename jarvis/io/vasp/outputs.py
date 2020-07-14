@@ -10,6 +10,7 @@ import xmltodict
 from jarvis.core.kpoints import Kpoints3D as Kpoints
 from jarvis.io.vasp.inputs import Poscar
 from matplotlib import pyplot as plt
+from jarvis.core.utils import rec_dict
 
 RYTOEV = 13.605826
 AUTOA = 0.529177249
@@ -124,524 +125,6 @@ class Chgcar(object):
         tmp = np.array(tmp).reshape(ng)
         tmp = tmp / volume
         return tmp
-
-
-class Vasprun(object):
-    """Construct vasprun.xml handling object."""
-
-    def __init__(self, filename="vasprun.xml", data={}):
-        """Intialize with filename, or optional parameters below."""
-        self._filename = filename
-        self._data = data
-        self.ionic_steps = None
-        self.electronic_steps = None
-        self.input_parameters = None
-        if self._data == {}:
-            self.xml_to_dict()
-
-    def xml_to_dict(self):
-        """Convert XML to dictionary."""
-        with open(self._filename) as fd:
-            data = xmltodict.parse(fd.read())
-            self._data = data
-            self.ionic_steps = data["modeling"]["calculation"]
-            if type(self.ionic_steps) is not list:
-                self.ionic_steps = [self.ionic_steps]
-            if self.input_parameters is None:
-                self.input_parameters = self.all_input_parameters
-
-    @property
-    def final_energy(self):
-        """Get final energy."""
-        return float(
-            self.ionic_steps[-1]["scstep"][-1]["energy"]["i"][11]["#text"]
-        )
-
-    @property
-    def efermi(self):
-        """Get Fermi-energy."""
-        return float(self.ionic_steps[-1]["dos"]["i"]["#text"])
-
-    @property
-    def num_atoms(self):
-        """Get number of simulation atoms."""
-        return self._data["modeling"]["atominfo"]["atoms"]
-
-    @property
-    def num_types(self):
-        """Get number of atom types."""
-        return int(self._data["modeling"]["atominfo"]["types"])
-
-    @property
-    def dielectric_loptics(self):
-        """Get real and imag. dielectric function data."""
-        tmp = self.ionic_steps[-1]["dielectricfunction"]["real"]["array"][
-            "set"
-        ]["r"]
-        reals = []
-        for i in range(len(tmp)):
-            reals.append([float(j) for j in tmp[i].split()])
-
-        tmp = self.ionic_steps[-1]["dielectricfunction"]["imag"]["array"][
-            "set"
-        ]["r"]
-        imags = []
-        for i in range(len(tmp)):
-            imags.append([float(j) for j in tmp[i].split()])
-        reals = np.array(reals)
-        imags = np.array(imags)
-        return reals, imags
-
-    @property
-    def avg_absorption_coefficient(self, max_axis=3):
-        """Get average absoprtion coefficient. Used in solar-cell module."""
-        eV_to_recip_cm = 1.0 / (
-            physical_constants["Planck constant in eV s"][0]
-            * speed_of_light
-            * 1e2
-        )
-        real, imag = self.dielectric_loptics
-        energies = real[:, 0]
-        epsilon_1 = np.mean(real[:, 1:max_axis], axis=1)
-        epsilon_2 = np.mean(imag[:, 1:max_axis], axis=1)
-        absorption = (
-            2
-            * np.pi
-            * np.sqrt(2.0)
-            * eV_to_recip_cm
-            * energies
-            * np.sqrt(-epsilon_1 + np.sqrt(epsilon_1 ** 2 + epsilon_2 ** 2))
-        )
-        return energies, absorption
-
-    @property
-    def dfpt_data(self, fc_mass=True):
-        """Get DFPT IBRION=8 related data."""
-        info = {}
-        hessian = []
-        data = self._data
-        for i in (data["modeling"]["calculation"]["dynmat"]["varray"])[0]["v"]:
-            hessian.append(i.split())
-        hessian = np.array(hessian, dtype="double")
-        struct = self.all_structures[-1]
-        natoms = struct.num_atoms
-        force_constants = np.zeros((natoms, natoms, 3, 3), dtype="double")
-        for i in range(natoms):
-            for j in range(natoms):
-                force_constants[i, j] = hessian[
-                    i * 3 : (i + 1) * 3, j * 3 : (j + 1) * 3
-                ]
-        masses = [Specie(i).atomic_mass for i in struct.elements]
-        if fc_mass:
-            for i in range(natoms):
-                for j in range(natoms):
-                    force_constants[i, j] *= -np.sqrt(masses[i] * masses[j])
-        born_charges = []
-        for n in range(natoms):
-            born_charges.append(
-                [
-                    i.split()
-                    for i in (data["modeling"]["calculation"]["array"]["set"])[
-                        n
-                    ]["v"]
-                ]
-            )
-        born_charges = np.array(born_charges, dtype="double")
-        phonon_eigenvals = np.array(
-            data["modeling"]["calculation"]["dynmat"]["v"]["#text"].split(),
-            dtype="double",
-        )
-        eigvecs = np.array(
-            [
-                i.split()
-                for i in (
-                    data["modeling"]["calculation"]["dynmat"]["varray"][1]["v"]
-                )
-            ],
-            dtype="float",
-        )
-        phonon_eigenvectors = []
-        for ev in eigvecs:
-            phonon_eigenvectors.append(np.array(ev).reshape(natoms, 3))
-        phonon_eigenvectors = np.array(phonon_eigenvectors, dtype="float")
-        epsilon = {}
-        for i in data["modeling"]["calculation"]["varray"]:
-            if "epsilon" in i["@name"]:
-                epsilon[i["@name"]] = np.array(
-                    [j.split() for j in i["v"]], dtype="float"
-                )
-        info["born_charges"] = born_charges
-        info["phonon_eigenvectors"] = phonon_eigenvectors
-        info["epsilon"] = epsilon
-        info["phonon_eigenvalues"] = phonon_eigenvals
-        info["masses"] = masses
-        return info
-
-    @property
-    def get_dir_gap(self):
-        """Get direct bandgap."""
-        if not self.is_spin_polarized:
-            spin_channels = 2
-            # up_gap = "na"
-            # dn_gap = "na"
-            if self.is_spin_orbit:
-                spin_channels = 1
-            levels = int(
-                float(self.all_input_parameters["NELECT"])
-                / float(spin_channels)
-            )
-            ups = self.eigenvalues[0][:, :, 0][:, levels]
-            dns = self.eigenvalues[0][:, :, 0][:, levels - 1]
-            gap = min(ups - dns)
-        else:
-            tmp = np.concatenate(
-                (self.eigenvalues[0][:, :, 0], self.eigenvalues[1][:, :, 0]),
-                axis=1,
-            )
-            cat = np.sort(tmp, axis=1)
-            nelect = int(float(self.all_input_parameters["NELECT"]))
-            ups = cat[:, nelect]
-            dns = cat[:, nelect - 1]
-            gap = min(ups - dns)
-
-        return gap
-
-    @property
-    def get_indir_gap(self):
-        """Get indirect bandgap."""
-        if not self.is_spin_polarized:
-            spin_channels = 2
-            # up_gap = "na"
-            # dn_gap = "na"
-            if self.is_spin_orbit:
-                spin_channels = 1
-            levels = int(
-                float(self.all_input_parameters["NELECT"])
-                / float(spin_channels)
-            )
-            print("levels", levels)
-            gap = min(self.eigenvalues[0][:, :, 0][:, levels]) - max(
-                self.eigenvalues[0][:, :, 0][:, levels - 1]
-            )
-
-        if self.is_spin_polarized:
-            tmp = np.concatenate(
-                (self.eigenvalues[0][:, :, 0], self.eigenvalues[1][:, :, 0]),
-                axis=1,
-            )
-            cat = np.sort(tmp, axis=1)
-            nelect = int(float(self.all_input_parameters["NELECT"]))
-            gap = min(cat[:, nelect]) - max(cat[:, nelect - 1])
-        return gap
-
-    @property
-    def fermi_velocities(self):
-        """Get fermi velocities in m/s."""
-        # TODO: check for other materials than graphene
-        fermi_velocities = []
-        fermi_k = []
-        bands_cross_fermi = []
-        h_bar = 6.582119569e-16  # reduced Planck const. eV s
-        strt = self.all_structures[-1]
-        lat = strt.lattice.reciprocal_lattice()
-        kpoints_frac = self.kpoints.kpts
-        kpoints_cart = [lat.cart_coords(i) for i in kpoints_frac]
-        kpoints = np.array(kpoints_cart)
-        for i, ii in enumerate(self.eigenvalues):
-            for j, jj in enumerate(ii.T):
-                for k, kk in enumerate(jj):
-                    if max(kk) > self.efermi and min(kk) < self.efermi:
-                        bands_cross_fermi.append(kk)
-        for i in bands_cross_fermi:
-            for j, jj in enumerate(i):
-                if j < len(i) - 1:
-                    if (i[j] < self.efermi < i[j + 1]) or (
-                        i[j] > self.efermi > i[j + 1]
-                    ):
-                        # dk = np.sqrt(
-                        #     (kpoints[j + 1][0] - kpoints[j][0]) ** 2
-                        #     + (kpoints[j + 1][1] - kpoints[j][1]) ** 2
-                        # )
-                        dk = np.linalg.norm(kpoints[j + 1] - kpoints[j])
-                        v_f = abs((i[j + 1] - i[j]) / (h_bar * dk))
-                        fermi_velocities.append(v_f)
-                        fermi_k.append(kpoints[j])
-        # Convert to m/s
-        # For graphene: ~0.85e6 m/s
-        fermi_velocities = 1e-10 * np.array(fermi_velocities)
-        return fermi_velocities, fermi_k, bands_cross_fermi
-
-    @property
-    def elements(self):
-        """Get atom elements."""
-        elements = [
-            (
-                self._data["modeling"]["atominfo"]["array"][0]["set"]["rc"][i][
-                    "c"
-                ][0]
-            )
-            for i in range(
-                len(
-                    self._data["modeling"]["atominfo"]["array"][0]["set"]["rc"]
-                )
-            )
-        ]
-        if len(elements) != self.num_atoms:
-            ValueError("Number of atoms is  not equal to number of elements")
-        elements = [str(i) for i in elements]
-        return elements
-
-    def vrun_structure_to_atoms(self, s={}):
-        """Convert structure to Atoms object."""
-        tmp = s["crystal"]["varray"][0]["v"]
-        lattice_mat = np.array([[float(j) for j in i.split()] for i in tmp])
-        frac_coords = np.array(
-            [[float(j) for j in i.split()] for i in s["varray"]["v"]]
-        )
-        elements = self.elements
-        atoms = Atoms(
-            lattice_mat=lattice_mat,
-            elements=elements,
-            coords=frac_coords,
-            cartesian=False,
-        )
-        return atoms
-
-    @property
-    def all_energies(self):
-        """Get all total energies."""
-        energies = []
-        for i in self.ionic_steps:
-            en = float(i["energy"]["i"][1]["#text"])
-            energies.append(en)
-        return np.array(energies)
-
-    @property
-    def is_spin_polarized(self):
-        """Check if the calculation is spin polarized."""
-        if self.all_input_parameters["ISPIN"] == "2":
-            return True
-        else:
-            return False
-
-    @property
-    def is_spin_orbit(self):
-        """Check if the calculation is spin orbit."""
-        if self.all_input_parameters["LSORBIT"] == "T":
-            return True
-        else:
-            return False
-
-    @property
-    def all_structures(self):
-        """Get all structures."""
-        structs = []
-        for i in self.ionic_steps:
-            s = i["structure"]
-            atoms = self.vrun_structure_to_atoms(s)
-            structs.append(atoms)
-        return structs
-
-    @property
-    def eigenvalues(self):
-        """Get all eigenvalues."""
-        nkpts = len(self.kpoints._kpoints)
-        all_up_eigs = []
-        all_dn_eigs = []
-        if self.is_spin_polarized:
-            for j in range(nkpts):
-                eigs = np.array(
-                    [
-                        [float(jj) for jj in ii.split()]
-                        for ii in (
-                            self.ionic_steps[-1]["eigenvalues"]["array"][
-                                "set"
-                            ]["set"][0]
-                        )["set"][j]["r"]
-                    ]
-                )
-                all_up_eigs.append(eigs)
-            for j in range(nkpts):
-                eigs = np.array(
-                    [
-                        [float(jj) for jj in ii.split()]
-                        for ii in (
-                            self.ionic_steps[-1]["eigenvalues"]["array"][
-                                "set"
-                            ]["set"][1]
-                        )["set"][j]["r"]
-                    ]
-                )
-                all_dn_eigs.append(eigs)
-        else:
-            for j in range(nkpts):
-                eigs = np.array(
-                    [
-                        [float(jj) for jj in ii.split()]
-                        for ii in (
-                            self.ionic_steps[-1]["eigenvalues"]["array"][
-                                "set"
-                            ]["set"]
-                        )["set"][j]["r"]
-                    ]
-                )
-                all_up_eigs.append(eigs)
-            all_dn_eigs = all_up_eigs
-
-        all_up_eigs = np.array(all_up_eigs)
-        all_dn_eigs = np.array(all_dn_eigs)
-        return all_up_eigs, all_dn_eigs
-
-    @property
-    def all_forces(self):
-        """Get all forces."""
-        forces = []
-        for m in self.ionic_steps:
-            force = np.array(
-                [[float(j) for j in i.split()] for i in m["varray"][0]["v"]]
-            )
-
-            forces.append(force)
-        return np.array(forces)
-
-    @property
-    def all_stresses(self):
-        """Get all stresses."""
-        stresses = []
-        for m in self.ionic_steps:
-            stress = np.array(
-                [[float(j) for j in i.split()] for i in m["varray"][1]["v"]]
-            )
-
-            stresses.append(stress)
-        return np.array(stresses)
-
-    @property
-    def all_input_parameters(self):
-        """Get all explicit input parameters. Need to add a few more."""
-        d = OrderedDict()
-        # import type
-        for i in self._data["modeling"]["parameters"]["separator"]:
-            for j, k in i.items():
-                if j == "i":
-                    for m in k:
-                        if "#text" in m:
-                            d[m["@name"]] = m["#text"]
-                else:
-                    if type(k) is list:
-                        for n in k:
-                            for p, q in n.items():
-                                if p == "i":
-                                    for r in q:
-                                        if "#text" in r:
-                                            d[r["@name"]] = r["#text"]
-                                else:
-                                    if type(q) is list:
-                                        for s in q:
-                                            if "#text" in s:
-                                                d[s["@name"]] = s["#text"]
-        return d
-
-    @property
-    def kpoints(self):
-        """Get Kpoints."""
-        kplist = np.array(
-            [
-                [float(j) for j in i.split()]
-                for i in self._data["modeling"]["kpoints"]["varray"][0]["v"]
-            ]
-        )
-        kpwt = np.array(
-            [
-                float(i)
-                for i in self._data["modeling"]["kpoints"]["varray"][1]["v"]
-            ]
-        )
-        return Kpoints(kpoints=kplist, kpoints_weights=kpwt)
-
-    def get_bandstructure(
-        self,
-        E_low=-4,
-        E_high=4,
-        spin=0,
-        zero_efermi=True,
-        kpoints_file_path=".",
-    ):
-        """Get electronic bandstructure plot."""
-        try:
-            f = open(kpoints_file_path, "r")
-            lines = f.read().splitlines()
-            f.close()
-            kp_labels = []
-            kp_labels_points = []
-            for ii, i in enumerate(lines):
-                if ii > 2:
-                    tmp = i.split()
-                    if len(tmp) == 5:
-                        tmp = str("$") + str(tmp[4]) + str("$")
-                        if len(kp_labels) == 0:
-                            kp_labels.append(tmp)
-                            kp_labels_points.append(ii - 3)
-                        elif tmp != kp_labels[-1]:
-                            kp_labels.append(tmp)
-                            kp_labels_points.append(ii - 3)
-
-        except Exception:
-            print("No K-points file found, still proceeding")
-            pass
-
-        tmp = 0.0
-        if zero_efermi:
-            tmp = float(self.efermi)
-        plt.clf()
-        for i, ii in enumerate(self.eigenvalues[spin][:, :, 0].T - tmp):
-            plt.plot(ii, color="r")
-
-        if self.is_spin_polarized:
-            for i, ii in enumerate(self.eigenvalues[1][:, :, 0].T - tmp):
-                plt.plot(ii, color="b")
-
-        plt.ylim([E_low, E_high])
-        plt.xticks(kp_labels_points, kp_labels)
-        plt.xlim([0, len(self.kpoints._kpoints)])
-        plt.xlabel(r"$\mathrm{Wave\ Vector}$")
-        ylabel = (
-            r"$\mathrm{E\ -\ E_f\ (eV)}$"
-            if zero_efermi
-            else r"$\mathrm{Energy\ (eV)}$"
-        )
-        plt.ylabel(ylabel)
-
-        return plt
-
-    @property
-    def total_dos(self):
-        """Get total density of states."""
-        energies = []
-        spin_up = []
-        spin_dn = []
-        spin_up_data = np.array(
-            [
-                [float(j) for j in i.split()]
-                for i in self.ionic_steps[-1]["dos"]["total"]["array"]["set"][
-                    "set"
-                ][0]["r"]
-            ]
-        )
-        energies = spin_up_data[:, 0]
-        spin_up = spin_up_data[:, 1]
-        if self.is_spin_polarized:
-            spin_dn = []
-            spin_dn_data = np.array(
-                [
-                    [float(j) for j in i.split()]
-                    for i in self.ionic_steps[-1]["dos"]["total"]["array"][
-                        "set"
-                    ]["set"][1]["r"]
-                ]
-            )
-            spin_dn = -1 * spin_dn_data[:, 1]
-        return energies, spin_up, spin_dn
 
 
 class Oszicar(object):
@@ -1324,3 +807,628 @@ class Wavecar(object):
         assert 1 <= ispin <= self._nspin, "Invalid spin index!"
         assert 1 <= ikpt <= self._nkpts, "Invalid kpoint index!"
         assert 1 <= iband <= self._nbands, "Invalid band index!"
+
+
+class Vasprun(object):
+    """Construct vasprun.xml handling object."""
+
+    def __init__(self, filename="vasprun.xml", data={}):
+        """Intialize with filename, or optional parameters below."""
+        self._filename = filename
+        self._data = data
+        self.ionic_steps = None
+        self.electronic_steps = None
+        self.input_parameters = None
+        if self._data == {}:
+            self.xml_to_dict()
+
+    def xml_to_dict(self):
+        """Convert XML to dictionary."""
+        with open(self._filename) as fd:
+            data = xmltodict.parse(fd.read())
+            self._data = data
+            self.ionic_steps = data["modeling"]["calculation"]
+            if type(self.ionic_steps) is not list:
+                self.ionic_steps = [self.ionic_steps]
+            if self.input_parameters is None:
+                self.input_parameters = self.all_input_parameters
+
+    @property
+    def final_energy(self):
+        """Get final energy."""
+        return float(
+            self.ionic_steps[-1]["scstep"][-1]["energy"]["i"][11]["#text"]
+        )
+
+    @property
+    def nbands(self):
+        """Get number of electronic bands."""
+        return int(self.all_input_parameters["NBANDS"])
+
+    @property
+    def nkpoints(self):
+        """Get number of kpoints."""
+        return len(self.kpoints.kpts)
+
+    @property
+    def nspins(self):
+        """Get total numnber of spins."""
+        nspin = 1
+        if self.is_spin_polarized:
+            nspin = 2
+        return nspin
+
+    @property
+    def efermi(self):
+        """Get Fermi-energy."""
+        return float(self.ionic_steps[-1]["dos"]["i"]["#text"])
+
+    @property
+    def num_atoms(self):
+        """Get number of simulation atoms."""
+        return int(self._data["modeling"]["atominfo"]["atoms"])
+
+    @property
+    def num_types(self):
+        """Get number of atom types."""
+        return int(self._data["modeling"]["atominfo"]["types"])
+
+    @property
+    def dielectric_loptics(self):
+        """Get real and imag. dielectric function data."""
+        tmp = self.ionic_steps[-1]["dielectricfunction"]["real"]["array"][
+            "set"
+        ]["r"]
+        reals = []
+        for i in range(len(tmp)):
+            reals.append([float(j) for j in tmp[i].split()])
+
+        tmp = self.ionic_steps[-1]["dielectricfunction"]["imag"]["array"][
+            "set"
+        ]["r"]
+        imags = []
+        for i in range(len(tmp)):
+            imags.append([float(j) for j in tmp[i].split()])
+        reals = np.array(reals)
+        imags = np.array(imags)
+        return reals, imags
+
+    @property
+    def avg_absorption_coefficient(self, max_axis=3):
+        """Get average absoprtion coefficient. Used in solar-cell module."""
+        eV_to_recip_cm = 1.0 / (
+            physical_constants["Planck constant in eV s"][0]
+            * speed_of_light
+            * 1e2
+        )
+        real, imag = self.dielectric_loptics
+        energies = real[:, 0]
+        epsilon_1 = np.mean(real[:, 1:max_axis], axis=1)
+        epsilon_2 = np.mean(imag[:, 1:max_axis], axis=1)
+        absorption = (
+            2
+            * np.pi
+            * np.sqrt(2.0)
+            * eV_to_recip_cm
+            * energies
+            * np.sqrt(-epsilon_1 + np.sqrt(epsilon_1 ** 2 + epsilon_2 ** 2))
+        )
+        return energies, absorption
+
+    @property
+    def dfpt_data(self, fc_mass=True):
+        """Get DFPT IBRION=8 related data."""
+        info = {}
+        hessian = []
+        data = self._data
+        for i in (data["modeling"]["calculation"]["dynmat"]["varray"])[0]["v"]:
+            hessian.append(i.split())
+        hessian = np.array(hessian, dtype="double")
+        struct = self.all_structures[-1]
+        natoms = struct.num_atoms
+        force_constants = np.zeros((natoms, natoms, 3, 3), dtype="double")
+        for i in range(natoms):
+            for j in range(natoms):
+                force_constants[i, j] = hessian[
+                    i * 3 : (i + 1) * 3, j * 3 : (j + 1) * 3
+                ]
+        masses = [Specie(i).atomic_mass for i in struct.elements]
+        if fc_mass:
+            for i in range(natoms):
+                for j in range(natoms):
+                    force_constants[i, j] *= -np.sqrt(masses[i] * masses[j])
+        born_charges = []
+        for n in range(natoms):
+            born_charges.append(
+                [
+                    i.split()
+                    for i in (data["modeling"]["calculation"]["array"]["set"])[
+                        n
+                    ]["v"]
+                ]
+            )
+        born_charges = np.array(born_charges, dtype="double")
+        phonon_eigenvals = np.array(
+            data["modeling"]["calculation"]["dynmat"]["v"]["#text"].split(),
+            dtype="double",
+        )
+        eigvecs = np.array(
+            [
+                i.split()
+                for i in (
+                    data["modeling"]["calculation"]["dynmat"]["varray"][1]["v"]
+                )
+            ],
+            dtype="float",
+        )
+        phonon_eigenvectors = []
+        for ev in eigvecs:
+            phonon_eigenvectors.append(np.array(ev).reshape(natoms, 3))
+        phonon_eigenvectors = np.array(phonon_eigenvectors, dtype="float")
+        epsilon = {}
+        for i in data["modeling"]["calculation"]["varray"]:
+            if "epsilon" in i["@name"]:
+                epsilon[i["@name"]] = np.array(
+                    [j.split() for j in i["v"]], dtype="float"
+                )
+        info["born_charges"] = born_charges
+        info["phonon_eigenvectors"] = phonon_eigenvectors
+        info["epsilon"] = epsilon
+        info["phonon_eigenvalues"] = phonon_eigenvals
+        info["masses"] = masses
+        return info
+
+    @property
+    def get_dir_gap(self):
+        """Get direct bandgap."""
+        if not self.is_spin_polarized:
+            spin_channels = 2
+            # up_gap = "na"
+            # dn_gap = "na"
+            if self.is_spin_orbit:
+                spin_channels = 1
+            levels = int(
+                float(self.all_input_parameters["NELECT"])
+                / float(spin_channels)
+            )
+            ups = self.eigenvalues[0][:, :, 0][:, levels]
+            dns = self.eigenvalues[0][:, :, 0][:, levels - 1]
+            gap = min(ups - dns)
+        else:
+            tmp = np.concatenate(
+                (self.eigenvalues[0][:, :, 0], self.eigenvalues[1][:, :, 0]),
+                axis=1,
+            )
+            cat = np.sort(tmp, axis=1)
+            nelect = int(float(self.all_input_parameters["NELECT"]))
+            ups = cat[:, nelect]
+            dns = cat[:, nelect - 1]
+            gap = min(ups - dns)
+
+        return gap
+
+    @property
+    def get_indir_gap(self):
+        """Get indirect bandgap."""
+        if not self.is_spin_polarized:
+            spin_channels = 2
+            # up_gap = "na"
+            # dn_gap = "na"
+            if self.is_spin_orbit:
+                spin_channels = 1
+            levels = int(
+                float(self.all_input_parameters["NELECT"])
+                / float(spin_channels)
+            )
+            print("levels", levels)
+            gap = min(self.eigenvalues[0][:, :, 0][:, levels]) - max(
+                self.eigenvalues[0][:, :, 0][:, levels - 1]
+            )
+
+        if self.is_spin_polarized:
+            tmp = np.concatenate(
+                (self.eigenvalues[0][:, :, 0], self.eigenvalues[1][:, :, 0]),
+                axis=1,
+            )
+            cat = np.sort(tmp, axis=1)
+            nelect = int(float(self.all_input_parameters["NELECT"]))
+            gap = min(cat[:, nelect]) - max(cat[:, nelect - 1])
+        return gap
+
+    @property
+    def fermi_velocities(self):
+        """Get fermi velocities in m/s."""
+        # TODO: check for other materials than graphene
+        fermi_velocities = []
+        fermi_k = []
+        bands_cross_fermi = []
+        h_bar = 6.582119569e-16  # reduced Planck const. eV s
+        strt = self.all_structures[-1]
+        lat = strt.lattice.reciprocal_lattice()
+        kpoints_frac = self.kpoints.kpts
+        kpoints_cart = [lat.cart_coords(i) for i in kpoints_frac]
+        kpoints = np.array(kpoints_cart)
+        for i, ii in enumerate(self.eigenvalues):
+            for j, jj in enumerate(ii.T):
+                for k, kk in enumerate(jj):
+                    if max(kk) > self.efermi and min(kk) < self.efermi:
+                        bands_cross_fermi.append(kk)
+        for i in bands_cross_fermi:
+            for j, jj in enumerate(i):
+                if j < len(i) - 1:
+                    if (i[j] < self.efermi < i[j + 1]) or (
+                        i[j] > self.efermi > i[j + 1]
+                    ):
+                        # dk = np.sqrt(
+                        #     (kpoints[j + 1][0] - kpoints[j][0]) ** 2
+                        #     + (kpoints[j + 1][1] - kpoints[j][1]) ** 2
+                        # )
+                        dk = np.linalg.norm(kpoints[j + 1] - kpoints[j])
+                        v_f = abs((i[j + 1] - i[j]) / (h_bar * dk))
+                        fermi_velocities.append(v_f)
+                        fermi_k.append(kpoints[j])
+        # Convert to m/s
+        # For graphene: ~0.85e6 m/s
+        fermi_velocities = 1e-10 * np.array(fermi_velocities)
+        return fermi_velocities, fermi_k, bands_cross_fermi
+
+    @property
+    def elements(self):
+        """Get atom elements."""
+        elements = [
+            (
+                self._data["modeling"]["atominfo"]["array"][0]["set"]["rc"][i][
+                    "c"
+                ][0]
+            )
+            for i in range(
+                len(
+                    self._data["modeling"]["atominfo"]["array"][0]["set"]["rc"]
+                )
+            )
+        ]
+        if len(elements) != self.num_atoms:
+            ValueError("Number of atoms is  not equal to number of elements")
+        elements = [str(i) for i in elements]
+        return elements
+
+    def vrun_structure_to_atoms(self, s={}):
+        """Convert structure to Atoms object."""
+        tmp = s["crystal"]["varray"][0]["v"]
+        lattice_mat = np.array([[float(j) for j in i.split()] for i in tmp])
+        frac_coords = np.array(
+            [[float(j) for j in i.split()] for i in s["varray"]["v"]]
+        )
+        elements = self.elements
+        atoms = Atoms(
+            lattice_mat=lattice_mat,
+            elements=elements,
+            coords=frac_coords,
+            cartesian=False,
+        )
+        return atoms
+
+    @property
+    def all_energies(self):
+        """Get all total energies."""
+        energies = []
+        for i in self.ionic_steps:
+            en = float(i["energy"]["i"][1]["#text"])
+            energies.append(en)
+        return np.array(energies)
+
+    @property
+    def is_spin_polarized(self):
+        """Check if the calculation is spin polarized."""
+        if self.all_input_parameters["ISPIN"] == "2":
+            return True
+        else:
+            return False
+
+    @property
+    def is_spin_orbit(self):
+        """Check if the calculation is spin orbit."""
+        if self.all_input_parameters["LSORBIT"] == "T":
+            return True
+        else:
+            return False
+
+    @property
+    def all_structures(self):
+        """Get all structures."""
+        structs = []
+        for i in self.ionic_steps:
+            s = i["structure"]
+            atoms = self.vrun_structure_to_atoms(s)
+            structs.append(atoms)
+        return structs
+
+    @property
+    def eigenvalues(self):
+        """Get all eigenvalues."""
+        nkpts = len(self.kpoints._kpoints)
+        all_up_eigs = []
+        all_dn_eigs = []
+        if self.is_spin_polarized:
+            for j in range(nkpts):
+                eigs = np.array(
+                    [
+                        [float(jj) for jj in ii.split()]
+                        for ii in (
+                            self.ionic_steps[-1]["eigenvalues"]["array"][
+                                "set"
+                            ]["set"][0]
+                        )["set"][j]["r"]
+                    ]
+                )
+                all_up_eigs.append(eigs)
+            for j in range(nkpts):
+                eigs = np.array(
+                    [
+                        [float(jj) for jj in ii.split()]
+                        for ii in (
+                            self.ionic_steps[-1]["eigenvalues"]["array"][
+                                "set"
+                            ]["set"][1]
+                        )["set"][j]["r"]
+                    ]
+                )
+                all_dn_eigs.append(eigs)
+        else:
+            for j in range(nkpts):
+                eigs = np.array(
+                    [
+                        [float(jj) for jj in ii.split()]
+                        for ii in (
+                            self.ionic_steps[-1]["eigenvalues"]["array"][
+                                "set"
+                            ]["set"]
+                        )["set"][j]["r"]
+                    ]
+                )
+                all_up_eigs.append(eigs)
+            all_dn_eigs = all_up_eigs
+
+        all_up_eigs = np.array(all_up_eigs)
+        all_dn_eigs = np.array(all_dn_eigs)
+        return all_up_eigs, all_dn_eigs
+
+    @property
+    def all_forces(self):
+        """Get all forces."""
+        forces = []
+        for m in self.ionic_steps:
+            force = np.array(
+                [[float(j) for j in i.split()] for i in m["varray"][0]["v"]]
+            )
+
+            forces.append(force)
+        return np.array(forces)
+
+    @property
+    def all_stresses(self):
+        """Get all stresses."""
+        stresses = []
+        for m in self.ionic_steps:
+            stress = np.array(
+                [[float(j) for j in i.split()] for i in m["varray"][1]["v"]]
+            )
+
+            stresses.append(stress)
+        return np.array(stresses)
+
+    @property
+    def all_input_parameters(self):
+        """Get all explicit input parameters. Need to add a few more."""
+        d = OrderedDict()
+        # import type
+        for i in self._data["modeling"]["parameters"]["separator"]:
+            for j, k in i.items():
+                if j == "i":
+                    for m in k:
+                        if "#text" in m:
+                            d[m["@name"]] = m["#text"]
+                else:
+                    if type(k) is list:
+                        for n in k:
+                            for p, q in n.items():
+                                if p == "i":
+                                    for r in q:
+                                        if "#text" in r:
+                                            d[r["@name"]] = r["#text"]
+                                else:
+                                    if type(q) is list:
+                                        for s in q:
+                                            if "#text" in s:
+                                                d[s["@name"]] = s["#text"]
+        return d
+
+    @property
+    def kpoints(self):
+        """Get Kpoints."""
+        kplist = np.array(
+            [
+                [float(j) for j in i.split()]
+                for i in self._data["modeling"]["kpoints"]["varray"][0]["v"]
+            ]
+        )
+        kpwt = np.array(
+            [
+                float(i)
+                for i in self._data["modeling"]["kpoints"]["varray"][1]["v"]
+            ]
+        )
+        return Kpoints(kpoints=kplist, kpoints_weights=kpwt)
+
+    def get_bandstructure(
+        self,
+        E_low=-4,
+        E_high=4,
+        spin=0,
+        zero_efermi=True,
+        kpoints_file_path=".",
+    ):
+        """Get electronic bandstructure plot."""
+        try:
+            f = open(kpoints_file_path, "r")
+            lines = f.read().splitlines()
+            f.close()
+            kp_labels = []
+            kp_labels_points = []
+            for ii, i in enumerate(lines):
+                if ii > 2:
+                    tmp = i.split()
+                    if len(tmp) == 5:
+                        tmp = str("$") + str(tmp[4]) + str("$")
+                        if len(kp_labels) == 0:
+                            kp_labels.append(tmp)
+                            kp_labels_points.append(ii - 3)
+                        elif tmp != kp_labels[-1]:
+                            kp_labels.append(tmp)
+                            kp_labels_points.append(ii - 3)
+
+        except Exception:
+            print("No K-points file found, still proceeding")
+            pass
+
+        tmp = 0.0
+        if zero_efermi:
+            tmp = float(self.efermi)
+        plt.clf()
+        for i, ii in enumerate(self.eigenvalues[spin][:, :, 0].T - tmp):
+            plt.plot(ii, color="r")
+
+        if self.is_spin_polarized:
+            for i, ii in enumerate(self.eigenvalues[1][:, :, 0].T - tmp):
+                plt.plot(ii, color="b")
+
+        plt.ylim([E_low, E_high])
+        plt.xticks(kp_labels_points, kp_labels)
+        plt.xlim([0, len(self.kpoints._kpoints)])
+        plt.xlabel(r"$\mathrm{Wave\ Vector}$")
+        ylabel = (
+            r"$\mathrm{E\ -\ E_f\ (eV)}$"
+            if zero_efermi
+            else r"$\mathrm{Energy\ (eV)}$"
+        )
+        plt.ylabel(ylabel)
+
+        return plt
+
+    @property
+    def total_dos(self):
+        """Get total density of states."""
+        energies = []
+        spin_up = []
+        spin_dn = []
+        spin_up_data = np.array(
+            [
+                [float(j) for j in i.split()]
+                for i in self.ionic_steps[-1]["dos"]["total"]["array"]["set"][
+                    "set"
+                ][0]["r"]
+            ]
+        )
+        energies = spin_up_data[:, 0]
+        spin_up = spin_up_data[:, 1]
+        if self.is_spin_polarized:
+            spin_dn = []
+            spin_dn_data = np.array(
+                [
+                    [float(j) for j in i.split()]
+                    for i in self.ionic_steps[-1]["dos"]["total"]["array"][
+                        "set"
+                    ]["set"][1]["r"]
+                ]
+            )
+            spin_dn = -1 * spin_dn_data[:, 1]
+        return energies, spin_up, spin_dn
+
+    @property
+    def partial_dos_spdf(self):
+        """Get partial density of states."""
+        info = rec_dict()
+        natoms = self.num_atoms
+        nspin = self.nspins
+        pdos_keys = self.ionic_steps[-1]["dos"]["partial"]["array"]["field"]
+        for atom in range(natoms):
+            for spin in range(nspin):
+                for k, key in enumerate(pdos_keys):
+                    vals = np.array(
+                        [
+                            ii.split()
+                            for ii in (
+                                self.ionic_steps[-1]["dos"]["partial"][
+                                    "array"
+                                ]["set"]["set"][atom]["set"][spin]["r"]
+                            )
+                        ],
+                        dtype="float",
+                    )
+
+                    info[spin][atom][key] = vals[:, k]
+        return info
+
+    @property
+    def projected_spins_kpoints_bands(self):
+        """Use for spin, kpoint and band projected bandstructure plots."""
+        info = rec_dict()
+        nspin = self.nspins
+        nkpoints = self.nkpoints
+        nbands = self.nbands
+        for spin in range(nspin):
+            for kpoint in range(nkpoints):
+                for nb in range(nbands):
+                    vals = [
+                        float(ii)
+                        for ii in (
+                            self.ionic_steps[-1]["projected"]["eigenvalues"][
+                                "array"
+                            ]["set"]["set"][spin]["set"][kpoint]["r"][nb]
+                        ).split()
+                    ]
+                    info[spin][kpoint][nb] = vals
+        return info
+
+    @property
+    def projected_atoms_spins_kpoints_bands(self):
+        """Use for atom,spin,kpoint and band projected bandstructures."""
+        info = rec_dict()
+        # orbitals = self.ionic_steps[-1]["projected"]["array"]["field"]
+        dimensions = [
+            list(i.values())[1]
+            for i in self.ionic_steps[-1]["projected"]["array"]["dimension"]
+        ]
+        natoms = self.num_atoms
+        nkpoints = self.nkpoints
+        nbands = self.nbands
+        nspin = self.nspins
+        for atom in range(natoms):
+            for spin in range(nspin):
+                for kpoint in range(nkpoints):
+                    for band in range(nbands):
+                        for orbital in dimensions:
+                            val = (
+                                (
+                                    self.ionic_steps[-1]["projected"]["array"][
+                                        "set"
+                                    ]["set"][spin]
+                                )["set"][kpoint]["set"][band]
+                            )["r"][atom].split()
+                            val = [float(v) for v in val]
+                            info[atom][spin][kpoint][band][orbital] = np.array(
+                                val
+                            )
+        return info
+
+
+"""
+if __name__ == "__main__":
+    vrun = Vasprun(
+        "vasprun.xml"
+    )
+    _, _, tdos = vrun.total_dos
+    pdos = vrun.partial_dos_spdf
+    pdos = vrun.projected_atoms_spins_kpoints_bands
+    pdos = vrun.projected_spins_kpoints_bands
+"""
