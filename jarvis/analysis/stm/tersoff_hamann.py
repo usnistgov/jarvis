@@ -132,7 +132,7 @@ class TersoffHamannSTM(object):
             "y--",
             transform=trans_data,
         )
-        print("minmaxZ", np.min(Z), np.max(Z))
+        print("min Z and maxZ", np.min(Z), np.max(Z))
         return data
 
 
