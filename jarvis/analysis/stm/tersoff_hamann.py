@@ -16,9 +16,10 @@ class TersoffHamannSTM(object):
         self.dim = chgcar.dim
         self.zmaxp = self.atoms.cart_coords[:, 2].max()
         self.nz = self.dim[2]
-        self.chg = (
-            (chgcar.chg[0] * self.atoms.volume).reshape(self.dim[::-1]).T
-        )
+        volume = self.atoms.volume
+        tmp = chgcar.chg[-1] * volume
+        chg = tmp.reshape(self.dim[::-1]).T
+        self.chg = chg
         self.a = self.atoms.lattice.a
         self.b = self.atoms.lattice.b
         self.c = self.atoms.lattice.c

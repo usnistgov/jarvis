@@ -111,7 +111,7 @@ class Chgcar(object):
                 end = start + nlines
                 chg = self.chg_set(text, start, end, volume, ng)
                 self.chg.append(chg)
-        self.chg=np.array(self.chg)
+        self.chg = np.array(self.chg)
 
     def chg_set(self, text, start, end, volume, ng):
         """Return CHGCAR sets."""
