@@ -4,6 +4,7 @@ from jarvis.analysis.structure.spacegroup import (
     Spacegroup3D,
     symmetrically_distinct_miller_indices,
 )
+from jarvis.core.atoms import Atoms
 from jarvis.io.lammps.inputs import LammpsInput, LammpsData
 from jarvis.tasks.lammps.templates.templates import GenericInputs
 from jarvis.io.lammps.outputs import analyze_log
@@ -14,6 +15,7 @@ import os
 import subprocess
 import json
 import sys
+from collections import OrderedDict
 
 
 class JobFactory(object):
@@ -194,6 +196,35 @@ class LammpsJob(object):
         self.jobname = jobname
         self.attempts = attempts
         self.copy_files = copy_files
+
+    def to_dict(self):
+        """Convert to a dictionary."""
+        d = OrderedDict()
+        d["atoms"] = self.atoms.to_dict()
+        d["element_order"] = self.element_order
+        d["parameters"] = self.parameters
+        d["lammps_cmd"] = self.lammps_cmd
+        d["output_file"] = self.output_file
+        d["stderr_file"] = self.stderr_file
+        d["jobname"] = self.jobname
+        d["attempts"] = self.attempts
+        d["copy_files"] = self.copy_files
+        return d
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Load from a dictionary."""
+        return LammpsJob(
+            atoms=Atoms.from_dict(d["atoms"]),
+            element_order=self.element_order,
+            parameters=d["parameters"],
+            lammps_cmd=d["lammps_cmd"],
+            output_file=d["output_file"],
+            stderr_file=d["stderr_file"],
+            jobname=d["jobname"],
+            attempts=d["attempts"],
+            copy_files=d["copy_files"],
+        )
 
     def write_input(self):
         """Write LAMMPS input files."""

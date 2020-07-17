@@ -98,6 +98,9 @@ kp2 = os.path.join(
 def test_inputs():
     p = Poscar.from_file(pos)
     print(p)
+    td = p.to_dict()
+    print("td is:", td)
+    fd = Poscar.from_dict(td)
     new_file, filename = tempfile.mkstemp()
     p.write_file(filename)
     i = Incar.from_file(inc)
@@ -118,6 +121,8 @@ def test_inputs():
     os.environ["JARVIS_VASP_PSP_DIR"] = os.path.join(os.path.dirname(__file__))
     new_file, filename = tempfile.mkstemp()
     pot = Potcar(elements=["Xe"])
+    td = pot.to_dict()
+    fd = Potcar.from_dict(td)
     print(pot)
     pot.write_file(filename)
 

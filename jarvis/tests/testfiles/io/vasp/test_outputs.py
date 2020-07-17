@@ -10,6 +10,7 @@ import numpy as np
 import os
 from jarvis.analysis.phonon.ir import ir_intensity
 import matplotlib.pyplot as plt
+
 plt.switch_backend("agg")
 
 
@@ -42,9 +43,6 @@ if not os.path.isdir(example_fold):
     tar = tarfile.open(example_fold_tgz)
     tar.extractall(example_fold)
     tar.close()
-
-
-
 
 
 vrun = Vasprun(
@@ -197,6 +195,8 @@ def test_chgcar():
         chg.is_spin_orbit(),
         np.array(chg.chg).shape,
     ) == (True, False, (2, 56, 56, 56),)
+    td = chg.to_dict()
+    fd = Chgcar.from_dict(td)
 
 
 def test_vrun():
@@ -216,11 +216,15 @@ def test_vrun():
     pdos1 = vrun.partial_dos_spdf
     pdos2 = vrun.projected_atoms_spins_kpoints_bands
     pdos3 = vrun.projected_spins_kpoints_bands
+    td = vrun.to_dict()
+    fd = Vasprun.from_dict(td)
 
 
 def test_osz():
     assert (float(osz.magnetic_moment)) == (0.0)
     assert osz.electronic_steps[0][2] == "0.747368666078E+01"
+    td = osz.to_dict()
+    fd = Oszicar.from_dict(td)
 
 
 def test_out():
@@ -231,6 +235,8 @@ def test_out():
     assert out_efg.efg_tensor_diag[0][0] == -4.766
     assert out_efg.quad_mom[0][0] == 0.023
     assert out_efg.converged == True
+    td = out_efg.to_dict()
+    fd = Outcar.from_dict(td)
 
 
 def test_dfpt():

@@ -30,8 +30,9 @@ class Composition(object):
         AB2 Li2O4 LiO2 77.8796
         """
         if sort:
-            content = OrderedDict(sorted(content.items(),
-                                  key=lambda x: (x[0])))
+            content = OrderedDict(
+                sorted(content.items(), key=lambda x: (x[0]))
+            )
         self._content = content
 
     @staticmethod
@@ -40,9 +41,9 @@ class Composition(object):
         re_formula = re.compile(r"([A-Z][a-z]?)([0-9\.]*)")
         d = defaultdict(float)
         for elt, amt in re_formula.findall(value):
-            if elt in ['D', 'T']:
-                elt = 'H'
-            if amt == '':
+            if elt in ["D", "T"]:
+                elt = "H"
+            if amt == "":
                 d[elt] = 1
             elif float(amt).is_integer():
                 d[elt] += int(float(amt))
@@ -81,6 +82,11 @@ class Composition(object):
     def to_dict(self):
         """Return dictionary format."""
         return self._content
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Load the class from a dictionary."""
+        return Composition(content=d)
 
     @property
     def reduced_formula(self):

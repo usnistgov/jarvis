@@ -2,6 +2,7 @@
 
 import os
 import subprocess
+from collections import OrderedDict
 
 
 class Queue(object):
@@ -25,6 +26,27 @@ class Queue(object):
     def head_node(self, submit_cmd=None):
         """Select if run on the head node, not recommended."""
         os.system(submit_cmd)
+
+    def to_dict(self):
+        """Convert class to a dictionary."""
+        d = OrderedDict()
+        d["q_type"] = self.q_type
+        d["q_parameters"] = self.q_parameters
+        d["job_sub_cmd"] = self.job_sub_cmd
+        d["job_check_cmd"] = self.job_check_cmd
+        d["job_id"] = self.job_id
+        return d
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Load from a dictionary."""
+        return Queue(
+            q_type=d["q_type"],
+            q_parameters=d["q_parameters"],
+            job_sub_cmd=d["job_sub_cmd"],
+            job_check_cmd=d["job_check_cmd"],
+            job_id=d["job_id"],
+        )
 
     def pbs(
         self,

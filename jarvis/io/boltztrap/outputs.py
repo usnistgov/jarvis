@@ -19,11 +19,30 @@ class BoltzTrapOutput(object):
         halltens_fixdoping=[],
     ):
         """Specify boltztrap folder  as path to analze data."""
-        self.outtrans_data = outtrans_data
-        self.intrans_data = intrans_data
-        self.condtens_fixdoping = condtens_fixdoping
-        self.halltens_fixdoping = halltens_fixdoping
         self.path = path
+        if outtrans_data == []:
+            outtrans_data = self.read_outputtrans()
+        self.outtrans_data = outtrans_data
+        if intrans_data == []:
+            intrans_data = self.read_intrans()
+        self.intrans_data = intrans_data
+        if condtens_fixdoping == []:
+            condtens_fixdoping = self.read_condtens_fixdoping()
+        self.condtens_fixdoping = condtens_fixdoping
+        if halltens_fixdoping == []:
+            halltens_fixdoping = self.read_condtens_fixdoping()
+        self.halltens_fixdoping = halltens_fixdoping
+
+    def to_dict(self):
+        """Return output as a dictionary."""
+        d = OrderedDict()
+        d["path"] = self.path
+        d["outtrans_data"] = self.outtrans_data
+
+        d["intrans_data"] = self.intrans_data
+        d["halltens_fixdoping"] = self.halltens_fixdoping
+        d["condtens_fixdoping"] = self.condtens_fixdoping
+        return d
 
     def read_intrans(self, filename=""):
         """Read intrans file."""
@@ -164,19 +183,16 @@ class BoltzTrapOutput(object):
         # self.halltens_fixdoping=all_data
         return all_data
 
-    def to_dict(self):
-        """Return output as a dictionary."""
-        d = OrderedDict()
-        d["path"] = self.path
-        d["outtrans_data"] = self.read_outputtrans()  # self.outtrans_data
-        d["intrans_data"] = self.read_intrans()  # self.intrans_data
-        d[
-            "halltesn_fixdoping"
-        ] = self.read_halltens_fixdoping()  # self.halltesn_fixdoping
-        d[
-            "condtens_fixdoping"
-        ] = self.read_condtens_fixdoping()  # self.condtens_fixdoping
-        return d
+    @classmethod
+    def from_dict(self, d={}):
+        """Load from a dictionary."""
+        return BoltzTrapOutput(
+            path=d["path"],
+            outtrans_data=d["outtrans_data"],
+            intrans_data=d["intrans_data"],
+            halltens_fixdoping=d["halltens_fixdoping"],
+            condtens_fixdoping=d["condtens_fixdoping"],
+        )
 
 
 """
