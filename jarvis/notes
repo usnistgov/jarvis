@@ -50,3 +50,6 @@ flake8 --ignore E203,W503 *.py
 black -l 79 *.py
 pycodestyle --ignore E203,W503 *.py
 
+
+###Delete a branch
+git push origin --delete develop

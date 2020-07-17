@@ -9,6 +9,7 @@ import subprocess
 import json
 import os
 import shutil
+from collections import OrderedDict
 
 
 class JobFactory(object):
@@ -120,7 +121,7 @@ class JobFactory(object):
             lattice_mat=p.atoms.lattice_mat, length=length
         )  # Auto_Kpoints(mat=mat, length=length)
 
-        en, contcar = VaspJobs(
+        en, contcar = VaspJob(
             poscar=p,
             incar=incar,
             pot_type=self.pot_type,
@@ -166,7 +167,7 @@ class JobFactory(object):
             lattice_mat=mat.atoms.lattice_mat, length=length
         )  # Auto_Kpoints(mat=mat, length=length)
 
-        en, contcar = VaspJobs(
+        en, contcar = VaspJob(
             poscar=mat,
             incar=incar,
             pot_type=self.pot_type,
@@ -209,7 +210,7 @@ class JobFactory(object):
             lattice_mat=mat.atoms.lattice_mat, length=length
         )  # Auto_Kpoints(mat=mat, length=length)
 
-        en, contcar = VaspJobs(
+        en, contcar = VaspJob(
             poscar=mat,
             incar=incar,
             pot_type=self.pot_type,
@@ -261,7 +262,7 @@ class JobFactory(object):
         incar.update(data)
         kpoints = Kpoints().kpath(mat.atoms, line_density=line_density)
 
-        en, contcar = VaspJobs(
+        en, contcar = VaspJob(
             poscar=mat,
             incar=incar,
             pot_type=self.pot_type,
@@ -300,7 +301,7 @@ class JobFactory(object):
         kpoints = Kpoints().automatic_length_mesh(
             lattice_mat=mat.atoms.lattice_mat, length=length
         )  # Auto_Kpoints(mat=mat, length=length)
-        en, contcar = VaspJobs(
+        en, contcar = VaspJob(
             poscar=mat,
             incar=incar,
             pot_type=self.pot_type,
@@ -352,7 +353,7 @@ class JobFactory(object):
                 + str("-")
                 + str(encut),
             )
-            en2, contc = VaspJobs(
+            en2, contc = VaspJob(
                 poscar=mat,
                 incar=incar,
                 pot_type=pot_type,
@@ -379,7 +380,7 @@ class JobFactory(object):
                     + str("-")
                     + str(encut),
                 )
-                en2, contc = VaspJobs(
+                en2, contc = VaspJob(
                     poscar=mat,
                     incar=incar,
                     pot_type=pot_type,
@@ -397,7 +398,7 @@ class JobFactory(object):
             encut2 = encut1 + 50
             incar.update({"ENCUT": encut2})
             # incar_dict["ENCUT"]= encut2
-            en3, contc = VaspJobs(
+            en3, contc = VaspJob(
                 poscar=mat,
                 incar=incar,
                 pot_type=pot_type,
@@ -412,7 +413,7 @@ class JobFactory(object):
             # incar["ENCUT"] = encut3
             incar.update({"ENCUT": encut3})
             # incar_dict["ENCUT"]= encut3
-            en4, contc = VaspJobs(
+            en4, contc = VaspJob(
                 poscar=mat,
                 incar=incar,
                 pot_type=pot_type,
@@ -426,7 +427,7 @@ class JobFactory(object):
             encut4 = encut3 + 50
             incar.update({"ENCUT": encut4})
             # incar_dict["ENCUT"]= encut4
-            en5, contc = VaspJobs(
+            en5, contc = VaspJob(
                 poscar=mat,
                 incar=incar,
                 pot_type=pot_type,
@@ -441,7 +442,7 @@ class JobFactory(object):
             # incar["ENCUT"] = encut5
             incar.update({"ENCUT": encut5})
             # incar_dict["ENCUT"]= encut5
-            en6, contc = VaspJobs(
+            en6, contc = VaspJob(
                 poscar=mat,
                 pot_type=pot_type,
                 incar=incar,
@@ -456,7 +457,7 @@ class JobFactory(object):
             # incar["ENCUT"] = encut6
             incar.update({"ENCUT": encut6})
             # incar_dict["ENCUT"]= encut6
-            en7, contc = VaspJobs(
+            en7, contc = VaspJob(
                 poscar=mat,
                 pot_type=pot_type,
                 incar=incar,
@@ -517,7 +518,7 @@ class JobFactory(object):
             mesh = kpoints.kpts[0]
             if mesh not in kp_list:
                 kp_list.append(mesh)
-                en2, contc = VaspJobs(
+                en2, contc = VaspJob(
                     poscar=mat,
                     incar=incar,
                     pot_type=pot_type,
@@ -546,7 +547,7 @@ class JobFactory(object):
                     mesh = kpoints.kpts[0]
                     if mesh not in kp_list:
                         kp_list.append(mesh)
-                        en2, contc = VaspJobs(
+                        en2, contc = VaspJob(
                             poscar=mat,
                             incar=incar,
                             pot_type=pot_type,
@@ -565,7 +566,7 @@ class JobFactory(object):
                         )  # Auto_Kpoints(mat=mat, length=length)
                         mesh = kpoints.kpts[0]
                         kp_list.append(mesh)
-                        en2, contc = VaspJobs(
+                        en2, contc = VaspJob(
                             mat=mat,
                             incar=incar,
                             kpoints=kpoints,
@@ -585,7 +586,7 @@ class JobFactory(object):
                 )  # Auto_Kpoints(mat=mat, length=length)
                 mesh = kpoints.kpts[0]
                 kp_list.append(mesh)
-                en3, contc = VaspJobs(
+                en3, contc = VaspJob(
                     poscar=mat,
                     pot_type=pot_type,
                     incar=incar,
@@ -603,7 +604,7 @@ class JobFactory(object):
                 )  # Auto_Kpoints(mat=mat, length=length)
                 mesh = kpoints.kpts[0]
                 kp_list.append(mesh)
-                en4, contc = VaspJobs(
+                en4, contc = VaspJob(
                     poscar=mat,
                     pot_type=pot_type,
                     incar=incar,
@@ -621,7 +622,7 @@ class JobFactory(object):
                 )  # Auto_Kpoints(mat=mat, length=length)
                 mesh = kpoints.kpts[0]
                 kp_list.append(mesh)
-                en5, contc = VaspJobs(
+                en5, contc = VaspJob(
                     poscar=mat,
                     incar=incar,
                     pot_type=pot_type,
@@ -639,7 +640,7 @@ class JobFactory(object):
                 )  # Auto_Kpoints(mat=mat, length=length)
                 mesh = kpoints.kpts[0]
                 kp_list.append(mesh)
-                en6, contc = VaspJobs(
+                en6, contc = VaspJob(
                     poscar=mat,
                     incar=incar,
                     pot_type=pot_type,
@@ -656,7 +657,7 @@ class JobFactory(object):
                 )  # Auto_Kpoints(mat=mat, length=length)
                 mesh = kpoints.kpts[0]
                 kp_list.append(mesh)
-                en7, contc = VaspJobs(
+                en7, contc = VaspJob(
                     poscar=mat,
                     incar=incar,
                     pot_type=pot_type,
@@ -727,7 +728,7 @@ class JobFactory(object):
         return length1
 
 
-class VaspJobs(object):
+class VaspJob(object):
     """Construct a VASP calculation job."""
 
     def __init__(
@@ -818,7 +819,7 @@ class VaspJobs(object):
         f.write("%s\n" % 'pot=Potcar.from_file("POTCAR")')
         f.write("%s\n" % 'kp=Kpoints.from_file("KPOINTS")')
         line = (
-            "job = VaspJobs(poscar=pos, "
+            "job = VaspJob(poscar=pos, "
             + "kpoints=kp,potcar=pot, "
             + "incar=inc, jobname="
             + str(self.jobname)
@@ -827,6 +828,37 @@ class VaspJobs(object):
 
         f.write("%s\n" % line)
         f.close()
+
+    def to_dict(self):
+        """Convert the class into a dictionary."""
+        info = OrderedDict()
+        info["poscar"] = self.poscar.as_dict()
+        info["kpoints"] = self.kpoints.as_dict()
+        info["incar"] = self.incar.as_dict()
+        info["potcar"] = self.potcar.as_dict()
+        info["vasp_cmd"] = self.vasp_cmd
+        info["copy_files"] = self.copy_files
+        info["attempts"] = self.attempts
+        info["output_file"] = self.output_file
+        info["stderr_file"] = self.stderr_file
+        info["jobname"] = self.jobname
+        return info
+
+    @classmethod
+    def from_dict(self, info={}):
+        """Load the class from a dictionary."""
+        return VaspJob(
+            poscar=Poscar.from_dict(info["poscar"]),
+            kpoints=Kpoints.from_dict(info["kpoints"]),
+            incar=Incar.from_dict(info["incar"]),
+            potcar=Potcar.from_dict(info["potcar"]),
+            vasp_cmd=info["vasp_cmd"],
+            copy_files=info["copy_files"],
+            attempts=info["attempts"],
+            output_file=info["output_file"],
+            stderr_file=info["stderr_file"],
+            jobname=info["jobname"],
+        )
 
     def runjob(self):
         """Provide main function for running a generic VASP calculation."""
