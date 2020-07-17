@@ -32,6 +32,19 @@ class Poscar(object):
         with open(filename, "r") as f:
             return Poscar.from_string(f.read())
 
+    def to_dict(self):
+        """Convert Poscar object to a dictionary."""
+        d = OrderedDict()
+        d["atoms"] = self.atoms.to_dict()
+        d["comment"] = self.comment
+        return d
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Construct Poscar object from a dictionary."""
+        print("dddd", d)
+        return Poscar(atoms=Atoms.from_dict(d["atoms"]), comment=d["comment"])
+
     def write_file(self, filename):
         """Write the Poscar object to a file."""
         f = open(filename, "w")
@@ -220,6 +233,7 @@ class Incar(object):
         """Convert into dictionary."""
         return self._tags
 
+    @classmethod
     def from_dict(self, data={}):
         """Construct from dictionary."""
         return Incar(tags=data)
@@ -292,7 +306,24 @@ class Potcar(object):
         pot_json_path="",
         potcar_strings={},
     ):
-        """Initialize the Potcar class."""
+        """
+        Initialize the Potcar class.
+
+        POTCAR file contains the pseudopotential for each
+        atomic species used in the calculation.
+        Args:
+            elements: atomic elements.
+
+            pot_type: Type of pseudopotential.
+            Look for VASP provided PSPs.
+            JARVIS_VASP_PSP_DIR should be in the path.
+
+            pot_json_path: Path to dictionary of chemical elements along with
+            their orbitals taken into conisideration, e.g. V_pv.
+
+            potcar_strings: One can directly provide
+            the above mentioned strings.
+        """
         self._elements = elements
         self._pot_type = pot_type
         self._potcar_strings = potcar_strings
@@ -302,6 +333,7 @@ class Potcar(object):
             pot_json_file = str(
                 os.path.join(os.path.dirname(__file__), "default_potcars.json")
             )
+            self._pot_json_path = pot_json_file
             pot_json = open(pot_json_file, "r")
             pot_json_selected = json.load(pot_json)
             pot_json.close()
@@ -330,8 +362,28 @@ class Potcar(object):
                 msg = "Number of elements not same as potcar_strings"
                 raise ValueError(msg)
 
-    def catenate_potcar_files(self, destination_filename="POTCAR",
-                              filenames=[]):
+    @classmethod
+    def from_dict(self, d={}):
+        """Build class from a dictionary."""
+        return Potcar(
+            elements=d["elements"],
+            pot_type=d["pot_type"],
+            pot_json_path=d["pot_json_path"],
+            potcar_strings=d["potcar_strings"],
+        )
+
+    def to_dict(self):
+        """Convert to a dictionary."""
+        d = OrderedDict()
+        d["elements"] = self._elements
+        d["pot_type"] = self._pot_type
+        d["pot_json_path"] = self._pot_json_path
+        d["potcar_strings"] = self._potcar_strings
+        return d
+
+    def catenate_potcar_files(
+        self, destination_filename="POTCAR", filenames=[]
+    ):
         """Catenate potcars of sifferent elements."""
         with open(destination_filename, "w") as outfile:
             for fname in filenames:
@@ -353,8 +405,9 @@ class Potcar(object):
     def write_file(self, filename="POTCAR"):
         """Write POTCAR file."""
         pot_files = self.list_potcar_files()
-        self.catenate_potcar_files(destination_filename=filename,
-                                   filenames=pot_files)
+        self.catenate_potcar_files(
+            destination_filename=filename, filenames=pot_files
+        )
 
     def __repr__(self):
         """Represent Potcar."""
@@ -414,8 +467,9 @@ class Kpoints(object):
         for i, j in zip(kp_labels, kp_labels_points):
             labels[j] = i
         all_kp = np.array(all_kp, dtype="float")
-        kpoints = Kpoints3D(kpoints=all_kp,
-                            labels=labels, kpoint_mode="linemode")
+        kpoints = Kpoints3D(
+            kpoints=all_kp, labels=labels, kpoint_mode="linemode"
+        )
         return kpoints
 
 

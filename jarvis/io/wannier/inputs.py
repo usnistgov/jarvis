@@ -3,6 +3,8 @@
 import os
 import json
 import shutil
+from collections import OrderedDict
+from jarvis.core.atoms import Atoms
 
 
 class Wannier90win(object):
@@ -72,6 +74,37 @@ class Wannier90win(object):
             semi_core_states = json.load(f)
             f.close()
             self.semi_core_states = semi_core_states
+
+    def to_dict(self):
+        """Convert to a dictionary."""
+        d = OrderedDict()
+        d["struct"] = self.struct.to_dict()
+        d["efermi"] = self.efermi
+        d["soc"] = self.soc
+        d["dis_num_iter"] = self.dis_num_iter
+        d["dis_mix_ratio"] = self.dis_mix_ratio
+        d["num_iter"] = self.num_iter
+        d["num_print_cycles"] = self.num_print_cycles
+        d["frozen_tol"] = self.frozen_tol
+        d["semi_core_states"] = self.semi_core_states
+        d["kmesh_tol"] = self.kmesh_tol
+        return d
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Convert class from a dictionary."""
+        return Wannier90win(
+            struct=Atoms.from_dict(d["struct"]),
+            efermi=d["efermi"],
+            soc=d["soc"],
+            dis_num_iter=d["dis_num_iter"],
+            dis_mix_ratio=d["dis_mix_ratio"],
+            num_iter=d["num_iter"],
+            num_print_cycles=d["num_print_cycles"],
+            frozen_tol=d["frozen_tol"],
+            semi_core_states=d["semi_core_states"],
+            kmesh_tol=d["kmesh_tol"],
+        )
 
     def write_win(self, name="win.input"):
         """Write .win file."""

@@ -63,6 +63,41 @@ class Chgcar(object):
         if self.atoms is None:
             self.read_file()
 
+    def to_dict(self):
+        """Convert to a dictionary."""
+        d = OrderedDict()
+        d["filename"] = self.filename
+        d["atoms"] = self.atoms.to_dict()
+        d["chg"] = self.chg
+        d["dim"] = self.dim
+        d["chgdif"] = self.chgdif
+        d["aug"] = self.aug
+        d["augdiff"] = self.augdiff
+        d["nsets"] = self.nsets
+        if self.atoms is not None:
+            d["atoms"] = self.atoms.to_dict()
+        else:
+            d["atoms"] = self.atoms
+        return d
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Construct class from a dictionary."""
+        if d["atoms"] is not None:
+            atoms = Atoms.from_dict(d["atoms"])
+        else:
+            atoms = None
+        return Chgcar(
+            filename=d["filename"],
+            atoms=atoms,
+            chg=d["chg"],
+            dim=d["dim"],
+            chgdif=d["chgdif"],
+            aug=d["aug"],
+            augdiff=d["augdiff"],
+            nsets=d["nsets"],
+        )
+
     def is_spin_polarized(self):
         """Check if the calculations is spin-polarized, ISPIN=2."""
         if self.nsets == 2:
@@ -140,6 +175,18 @@ class Oszicar(object):
             f.close()
             self.data = lines
 
+    @classmethod
+    def from_dict(self, d={}):
+        """Construct class from a dictionary."""
+        return Oszicar(filename=d["filename"], data=d["data"])
+
+    def to_dict(self):
+        """Convert class to a dictionary."""
+        d = OrderedDict()
+        d["filename"] = self.filename
+        d["data"] = self.data
+        return d
+
     @property
     def magnetic_moment(self):
         """Get magnetic moment."""
@@ -176,6 +223,18 @@ class Outcar(object):
             lines = f.read().splitlines()
             f.close()
             self.data = lines
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Construct class from a dictionary."""
+        return Outcar(filename=d["filename"], data=d["data"])
+
+    def to_dict(self):
+        """Convert class to a dictionary."""
+        d = OrderedDict()
+        d["filename"] = self.filename
+        d["data"] = self.data
+        return d
 
     @property
     def nions(self):
@@ -821,6 +880,18 @@ class Vasprun(object):
         self.input_parameters = None
         if self._data == {}:
             self.xml_to_dict()
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Construct class from a dictionary."""
+        return Vasprun(filename=d["filename"], data=d["data"])
+
+    def to_dict(self):
+        """Convert class to a dictionary."""
+        d = OrderedDict()
+        d["filename"] = self._filename
+        d["data"] = self._data
+        return d
 
     def xml_to_dict(self):
         """Convert XML to dictionary."""

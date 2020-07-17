@@ -4,6 +4,8 @@ import os
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.io.wannier.outputs import Wannier90wout
 import json
+from collections import OrderedDict
+from jarvis.core.atoms import Atoms
 
 
 class WTin(object):
@@ -19,7 +21,6 @@ class WTin(object):
         efermi=None,
         semi_core_states=None,
         soc=True,
-        semi_cor_states=None,
         exclude=0,
         nwan=10,
     ):
@@ -47,6 +48,37 @@ class WTin(object):
             semi_core_states = json.load(f)
             f.close()
             self.semi_core_states = semi_core_states
+
+    def to_dict(self):
+        """Convert the class to a dictionary."""
+        d = OrderedDict()
+        d["atoms"] = self.atoms.to_dict()
+        d["nelect"] = self.nelect
+        d["wannierout"] = self.wannierout
+        d["efermi"] = self.efermi
+        d["soc"] = self.soc
+        d["exclude"] = self.exclude
+        d["nwan"] = self.nwan
+        d["wtin"] = self.wtin
+        d["miller"] = self.miller
+        d["semi_core_states"] = self.semi_core_states
+        return d
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Construct class from a dictionary."""
+        return WTin(
+            atoms=Atoms.from_dict(d["atoms"]),
+            nelect=d["nelect"],
+            wannierout=d["wannierout"],
+            efermi=d["efermi"],
+            soc=d["soc"],
+            exclude=d["exclude"],
+            nwan=d["nwan"],
+            wtin=d["wtin"],
+            miller=d["miller"],
+            semi_core_states=d["semi_core_states"],
+        )
 
     def get_ibz_kp(self):
         """Get high-symmetry k-points."""

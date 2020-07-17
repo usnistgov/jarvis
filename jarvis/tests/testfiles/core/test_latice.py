@@ -5,6 +5,8 @@ import numpy as np
 def test_lat():
     box = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
     lat = Lattice(box)
+    td = lat.to_dict()
+    fd = Lattice.from_dict(td)
     frac_coords = [[0, 0, 0], [0.5, 0.5, 0.5]]
     cart_coords = [[0, 0, 0], [5, 5, 5]]
     lll = lat._calculate_lll()

@@ -99,7 +99,7 @@ class LammpsData(object):
         # n_atoms = len(self._species)
         if element_order == []:
             # Reading potential file for element order
-            print('element_order is empty, reading from', potential_file)
+            print("element_order is empty, reading from", potential_file)
             pot_file = open(potential_file, "r")
             lines = pot_file.read().splitlines()
             pot_file.close()
@@ -217,7 +217,6 @@ class LammpsData(object):
 
     def to_dict(self):
         """Convert the infor to a dictionary."""
-        # n_atoms = len(self._species)
         d = OrderedDict()
         d["box"] = self._lammps_box
         d["species"] = self._species
@@ -249,6 +248,21 @@ class LammpsInput(object):
         """Require LammpsData class and periodic boundary conditions."""
         self.LammpsDataObj = LammpsDataObj
         self.pbc = pbc
+
+    def to_dict(self):
+        """Convert to a dictionary."""
+        d = OrderedDict()
+        d["LammpsDataObj"] = self.LammpsDataObj.to_dict()
+        d["pbc"] = self.pbc
+        return d
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Costruct class from a dictionary."""
+        return LammpsInput(
+            LammpsDataObj=LammpsData.from_dict(d["LammpsDataObj"]),
+            pbc=d["pbc"],
+        )
 
     def write_lammps_in(
         self,
