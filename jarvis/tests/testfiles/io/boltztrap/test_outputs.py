@@ -51,6 +51,8 @@ bpath = os.path.join(
 def test_out():
     b = BoltzTrapOutput(path=bpath)
     x = b.to_dict()["condtens_fixdoping"]
+    td = b.to_dict()
+    fd = BoltzTrapOutput.from_dict(td)
     tmp = x["p"][300.0][4.1e-07]["cond"][0]
     assert tmp == 609055450000000.0
 

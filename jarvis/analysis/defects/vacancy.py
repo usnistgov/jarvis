@@ -3,6 +3,7 @@ import pprint
 from collections import OrderedDict
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.core.utils import rand_select
+from jarvis.core.atoms import Atoms
 
 
 class Vacancy(object):
@@ -36,6 +37,17 @@ class Vacancy(object):
         self._defect_structure = defect_structure
         self._wyckoff_multiplicity = wyckoff_multiplicity
         self._symbol = symbol
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Load from a dictionary."""
+        return Vacancy(
+            atoms=Atoms.from_dict(d["atoms"]),
+            defect_structure=Atoms.from_dict(d["defect_structure"]),
+            defect_index=d["defect_index"],
+            wyckoff_multiplicity=d["wyckoff_multiplicity"],
+            symbol=d["symbol"],
+        )
 
     def generate_defects(
         self, enforce_c_size=10.0, on_conventional_cell=False, extend=1
@@ -75,9 +87,12 @@ class Vacancy(object):
     def to_dict(self):
         """Convert to a dictionary."""
         d = OrderedDict()
-        d["atoms"] = self._atoms
-        d["defect_structure"] = self._defect_structure
-        d["defect_index"] = self._defect_structure
+        d["atoms"] = self._atoms.to_dict()
+        if self._defect_structure is not None:
+            d["defect_structure"] = self._defect_structure.to_dict()
+        else:
+            d["defect_structure"] = None
+        d["defect_index"] = self._defect_index
         d["wyckoff_multiplicity"] = self._wyckoff_multiplicity
         d["symbol"] = self._symbol
         return d

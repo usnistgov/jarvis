@@ -5,6 +5,7 @@ import numpy as np
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from numpy.linalg import norm
 from numpy import gcd
+from collections import OrderedDict
 
 
 def wulff_normals(miller_indices=[], surface_energies=[]):
@@ -54,13 +55,37 @@ class Surface(object):
              from_conventional_structure: whether to use the conv. atoms
         """
         self.indices = np.array(indices)
-        if from_conventional_structure:
+        self.from_conventional_structure = from_conventional_structure
+        if self.from_conventional_structure:
             self.atoms = Spacegroup3D(atoms).conventional_standard_structure
         else:
             self.atoms = atoms
         self.tol = tol
         self.vacuum = vacuum
         self.layers = layers
+
+    def to_dict(self):
+        """Convert to a dictionary."""
+        d = OrderedDict()
+        d["atoms"] = self.atoms.to_dict()
+        d["indices"] = self.indices
+        d["tol"] = self.tol
+        d["vacuum"] = self.vacuum
+        d["layers"] = self.layers
+        d["from_conventional_structure"] = self.from_conventional_structure
+        return d
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Construct class from a dictionary."""
+        return Surface(
+            atoms=Atoms.from_dict(d["atoms"]),
+            indices=d["indices"],
+            tol=d["tol"],
+            vacuum=d["vacuum"],
+            layers=d["layers"],
+            from_conventional_structure=d["from_conventional_structure"],
+        )
 
     def make_surface(self):
         """Generate specified surface. Modified from ase package."""
@@ -80,12 +105,16 @@ class Surface(object):
 
             # constants describing the dot product of basis c1 and c2:
             # dot(c1,c2) = k1+i*k2, i in Z
-            k1 = np.dot(p * (k_index * a1 - h_index * a2)
-                        + q * (l_index * a1 - h_index * a3),
-                        l_index * a2 - k_index * a3)
-            k2 = np.dot(l_index * (k_index * a1 - h_index * a2)
-                        - k_index * (l_index * a1 - h_index * a3),
-                        l_index * a2 - k_index * a3)
+            k1 = np.dot(
+                p * (k_index * a1 - h_index * a2)
+                + q * (l_index * a1 - h_index * a3),
+                l_index * a2 - k_index * a3,
+            )
+            k2 = np.dot(
+                l_index * (k_index * a1 - h_index * a2)
+                - k_index * (l_index * a1 - h_index * a3),
+                l_index * a2 - k_index * a3,
+            )
 
             if abs(k2) > self.tol:
                 i = -int(round(k1 / k2))

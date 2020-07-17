@@ -7,8 +7,12 @@ def test_surf():
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    s = Surface(atoms=Si, indices=[1, 1, 1]).make_surface()
+    surface = Surface(atoms=Si, indices=[1, 1, 1])
+    s = surface.make_surface()
     # print (s.lattice_mat[0][0])
+    td = surface.to_dict()
+    fd = Surface.from_dict(td)
+    print(fd)
     su = [
         0.8582640971273426,
         0.9334963319196496,

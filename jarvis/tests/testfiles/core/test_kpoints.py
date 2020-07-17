@@ -59,6 +59,8 @@ def test_kp():
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     lattice_mat = Si.lattice_mat
     kp = Kpoints3D().automatic_length_mesh(lattice_mat=lattice_mat, length=20)
+    td = kp.to_dict()
+    fd = Kpoints3D.from_dict(td)
     sym = kp.high_symm_path(Si)._path
     x, y = kp.interpolated_points(Si)
     kpath = generate_kpath(kpath=[[0, 0, 0], [0, 0.5, 0.5]], num_k=5)
@@ -79,7 +81,8 @@ def test_kp():
         0.0,
         0.0,
     )
-    kp = Kpoints3D().kpath(atoms=Si,unique_kp_only=True)
+    kp = Kpoints3D().kpath(atoms=Si, unique_kp_only=True)
+
 
 def test_extra_spgs():
     from jarvis.db.figshare import data

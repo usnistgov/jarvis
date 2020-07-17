@@ -124,7 +124,19 @@ class Kpoints3D(object):
         d["labels"] = self._labels
         d["kpoint_mode"] = self._kpoint_mode
         d["header"] = self._header
+        d["kpoints_weights"] = self._kp_weights
         return d
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Build class from a dictionary representation."""
+        return Kpoints3D(
+            kpoints=d["kpoints"],
+            labels=d["labels"],
+            kpoints_weights=d["kpoints_weights"],
+            kpoint_mode=d["kpoint_mode"],
+            header=d["header"],
+        )
 
     def high_symm_path(self, atoms):
         """Get high symmetry k-points for given Atoms."""
@@ -261,7 +273,7 @@ class Kpoints3D(object):
 
     def high_kpath(self, atoms):
         """Get high symmetry path as a dictionary."""
-        return self.high_symm_path(atoms).as_dict()
+        return self.high_symm_path(atoms).to_dict()
 
     def interpolated_points(
         self, atoms, line_density=20, coords_are_cartesian=False
@@ -387,7 +399,7 @@ class HighSymmetryKpoint3DFactory(object):
         path = [["\\Gamma", "H", "N", "\\Gamma", "P", "H"], ["P", "N"]]
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
-    def as_dict(self):
+    def to_dict(self):
         """Get dictionary representation."""
         d = OrderedDict()
         d["kpoints"] = self._kpoints
