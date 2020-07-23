@@ -318,8 +318,8 @@ def make_interface(
         max_length_tol=ltol,
         max_angle_tol=atol,
     )
-    film = fix_pbc(film.center_around_origin([0, 0, 0]))
-    subs = fix_pbc(subs.center_around_origin([0, 0, 0]))
+    film = (film.center_around_origin([0, 0, 0]))
+    subs = (subs.center_around_origin([0, 0, 0]))
     matches = list(z(film.lattice_mat[:2], subs.lattice_mat[:2], lowest=True))
     info = {}
     info["mismatch_u"] = "na"

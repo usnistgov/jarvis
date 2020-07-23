@@ -22,10 +22,10 @@ def get_2d_hetero_jids(jid1="JVASP-664", jid2="JVASP-52"):
     return combined
 
 
-s1 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-652"))
-s2 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-664"))
-s3 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-688"))
-s4 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-75175"))
+#s1 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-652"))
+#s2 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-664"))
+#s3 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-688"))
+#s4 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-JVASP-75175"))
 
 # Good 2D examples
 jids = [
@@ -143,26 +143,33 @@ def test_zur():
 
 def test_2d_interface():
     jids = [
-        "JVASP-688",
-        "JVASP-664",
+        "JVASP-649",
         "JVASP-652",
+        "JVASP-658",
+        "JVASP-664",
+        "JVASP-688",
         "JVASP-6841",
         "JVASP-5983",
         "JVASP-60244",
+        "JVASP-60389",
+        "JVASP-76195",
     ]
-    jids = ["JVASP-652", "JVASP-664"]
+    #jids = ["JVASP-652", "JVASP-664"]
     count = 0
     for i in jids:
         for j in jids:
             if count < 100 and i != j:
                 # try:
                 intf = get_2d_hetero_jids(jid1=i, jid2=j)
-                ats = intf.get_string(cart=False)
                 if intf.num_atoms < 200:
 
                     count = count + 1
                     print(i, j)
-                    print(ats)
+                    p = Poscar(intf)
+                    filename='POSCAR-'+str(i)+'_'+str(j)+'.vasp'
+                    p.comment='Surf@'+str(i)+'_'+str(j)
+ 
+                    p.write_file(filename)
                     print()
                     print()
                     print()
@@ -207,6 +214,18 @@ def test_type():
     int_type, stack = get_hetero_type(A=B, B=A)
     print(int_type, stack)
 
+jids = [
+        "JVASP-649",
+        "JVASP-652",
+        "JVASP-658",
+        "JVASP-664",
+        "JVASP-688",
+        "JVASP-6841",
+        "JVASP-5983",
+        "JVASP-60244",
+        "JVASP-60389",
+        "JVASP-76195",
+    ]
 
 def test_2d_hetero():
     count = 0
@@ -225,3 +244,5 @@ def test_2d_hetero():
                         print()
                 except:
                     pass
+
+test_2d_interface()
