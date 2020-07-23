@@ -304,7 +304,7 @@ class Potcar(object):
         elements=[],
         pot_type="POT_GGA_PAW_PBE",
         pot_json_path="",
-        potcar_strings={},
+        potcar_strings=[],
     ):
         """
         Initialize the Potcar class.
@@ -329,7 +329,7 @@ class Potcar(object):
         self._potcar_strings = potcar_strings
         self._pot_json_path = pot_json_path
 
-        if self._potcar_strings == {}:
+        if self._potcar_strings == []:
             pot_json_file = str(
                 os.path.join(os.path.dirname(__file__), "default_potcars.json")
             )
@@ -337,13 +337,16 @@ class Potcar(object):
             pot_json = open(pot_json_file, "r")
             pot_json_selected = json.load(pot_json)
             pot_json.close()
-            potcar_strings = OrderedDict()
+            potcar_strings = []  # OrderedDict()
             for i in self._elements:
-                for j, k in pot_json_selected.items():
-                    if i == j:
-                        potcar_strings.setdefault(i, k)
+                potcar_strings.append(pot_json_selected[i])
+                # for j, k in pot_json_selected.items():
+                #    if i == j:
+                #        potcar_strings.setdefault(i, k)
             self._potcar_strings = potcar_strings
-            if len(self._elements) != len(self._potcar_strings.keys()):
+            print("self._elements", self._elements)
+            print("self._potcar_strings", self._potcar_strings)
+            if len(self._elements) != len(self._potcar_strings):
                 raise ValueError(
                     "Number of elements is not same as potcar_strings",
                     self._elements,
@@ -353,12 +356,8 @@ class Potcar(object):
             pot_json = open(self._pot_json_path, "r")
             pot_json_selected = json.load(pot_json)
             pot_json.close()
-            potcar_strings = OrderedDict()
-            for i, j in pot_json_selected.items():
-                if i in self._elements:
-                    potcar_strings.setdefault(i, j)
             self._potcar_strings = potcar_strings
-            if len(self._elements) != len(self._potcar_strings.keys()):
+            if len(self._elements) != len(self._potcar_strings):
                 msg = "Number of elements not same as potcar_strings"
                 raise ValueError(msg)
 
@@ -375,10 +374,10 @@ class Potcar(object):
     def to_dict(self):
         """Convert to a dictionary."""
         d = OrderedDict()
-        d["elements"] = self._elements
+        d["elements"] = np.array(self._elements).tolist()
         d["pot_type"] = self._pot_type
         d["pot_json_path"] = self._pot_json_path
-        d["potcar_strings"] = self._potcar_strings
+        d["potcar_strings"] = np.array(self._potcar_strings).tolist()
         return d
 
     def catenate_potcar_files(
@@ -397,7 +396,7 @@ class Potcar(object):
         vasp_dir = str(os.environ["JARVIS_VASP_PSP_DIR"])
         vasp_psp_dir = str(os.path.join(vasp_dir, self._pot_type))
         potcar_strings = self._potcar_strings
-        for i, j in potcar_strings.items():
+        for j in potcar_strings:
             tmp = os.path.join(vasp_psp_dir, j, "POTCAR")
             pot_files.append(tmp)
         return pot_files
