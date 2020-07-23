@@ -48,6 +48,7 @@ class Queue(object):
             job_id=d["job_id"],
         )
 
+    @classmethod
     def pbs(
         self,
         filename="submit_job",
@@ -82,9 +83,7 @@ class Queue(object):
             if isinstance(walltime, str):
                 f.write("#PBS -l walltime=%s\n" % walltime)
             else:
-                ValueError(
-                    "Plese provide walltime in a string format", walltime
-                )
+                ValueError("Plese provide walltime in a string format", walltime)
         if queue is not None:
             f.write("#PBS -q %s\n" % queue)
         if account is not None:
@@ -120,6 +119,7 @@ class Queue(object):
 
         print("x")
 
+    @classmethod
     def slurm(
         self,
         filename="submit_job",
@@ -152,9 +152,7 @@ class Queue(object):
             if isinstance(walltime, str):
                 f.write("#SBATCH --time=%s\n" % walltime)
             else:
-                ValueError(
-                    "Plese provide walltime in a string format", walltime
-                )
+                ValueError("Plese provide walltime in a string format", walltime)
 
         if queue is not None:
             f.write("#SBATCH --partition=%s\n" % (queue))

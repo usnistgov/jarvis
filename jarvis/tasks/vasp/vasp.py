@@ -10,6 +10,7 @@ import json
 import os
 import shutil
 from collections import OrderedDict
+from jarvis.core.kpoints import Kpoints3D
 
 
 class JobFactory(object):
@@ -47,9 +48,7 @@ class JobFactory(object):
         job = JobFactory(use_incar_dict=optb88.incar, pot_type=optb88.pot_type)
         encut = job.converg_encut(mat=mat)
         length = job.converg_kpoint(mat=mat)
-        energy, contcar_path = job.optimize_geometry(
-            mat=mat, encut=encut, length=length
-        )
+        energy, contcar_path = job.optimize_geometry(mat=mat, encut=encut, length=length)
         optimized_mat = Poscar.from_file(contcar_path)
         vrun = Vasprun(contcar_path.replace("CONTCAR", "vasprun.xml"))
         chg_path = contcar_path.replace("CONTCAR", "CHGCAR")
@@ -72,13 +71,7 @@ class JobFactory(object):
         )
 
     def elastic(
-        self,
-        mat=None,
-        encut=None,
-        nbands=None,
-        potim=0.015,
-        npar=None,
-        length=20,
+        self, mat=None, encut=None, nbands=None, potim=0.015, npar=None, length=20,
     ):
         """
         Use for elastic property calculations using IBRION = 6.
@@ -221,12 +214,7 @@ class JobFactory(object):
         return en, contcar
 
     def band_structure(
-        self,
-        mat=None,
-        encut=None,
-        line_density=20,
-        nbands=None,
-        copy_prev_chgcar=None,
+        self, mat=None, encut=None, line_density=20, nbands=None, copy_prev_chgcar=None,
     ):
         """
         Use in band-structure calculations.
@@ -310,9 +298,7 @@ class JobFactory(object):
         ).runjob()
         return en, contcar
 
-    def converg_encut(
-        self, encut=500, mat=None, starting_length=10, tol=0.001
-    ):
+    def converg_encut(self, encut=500, mat=None, starting_length=10, tol=0.001):
         """
         Provide function to converg plane-wave cut-off.
 
@@ -347,21 +333,14 @@ class JobFactory(object):
             )  # Auto_Kpoints(mat=mat, length=length)
             print(
                 "running smart_converge for",
-                str(mat.comment)
-                + str("-")
-                + str("ENCUT")
-                + str("-")
-                + str(encut),
+                str(mat.comment) + str("-") + str("ENCUT") + str("-") + str(encut),
             )
             en2, contc = VaspJob(
                 poscar=mat,
                 incar=incar,
                 pot_type=pot_type,
                 kpoints=kpoints,
-                jobname=str("ENCUT")
-                + str(mat.comment)
-                + str("-")
-                + str(encut),
+                jobname=str("ENCUT") + str(mat.comment) + str("-") + str(encut),
             ).runjob()
             while abs(en2 - en1) > tol:
                 en1 = en2
@@ -374,21 +353,14 @@ class JobFactory(object):
                 # incar = Incar.from_dict(incar_dict)
                 print(
                     "running smart_converge for",
-                    str(mat.comment)
-                    + str("-")
-                    + str("ENCUT")
-                    + str("-")
-                    + str(encut),
+                    str(mat.comment) + str("-") + str("ENCUT") + str("-") + str(encut),
                 )
                 en2, contc = VaspJob(
                     poscar=mat,
                     incar=incar,
                     pot_type=pot_type,
                     kpoints=kpoints,
-                    jobname=str("ENCUT")
-                    + str(mat.comment)
-                    + str("-")
-                    + str(encut),
+                    jobname=str("ENCUT") + str(mat.comment) + str("-") + str(encut),
                 ).runjob()
             convg_encut1 = True
 
@@ -403,10 +375,7 @@ class JobFactory(object):
                 incar=incar,
                 pot_type=pot_type,
                 kpoints=kpoints,
-                jobname=str("ENCUT")
-                + str(mat.comment)
-                + str("-")
-                + str(encut2),
+                jobname=str("ENCUT") + str(mat.comment) + str("-") + str(encut2),
             ).runjob()
 
             encut3 = encut2 + 50
@@ -418,10 +387,7 @@ class JobFactory(object):
                 incar=incar,
                 pot_type=pot_type,
                 kpoints=kpoints,
-                jobname=str("ENCUT")
-                + str(mat.comment)
-                + str("-")
-                + str(encut3),
+                jobname=str("ENCUT") + str(mat.comment) + str("-") + str(encut3),
             ).runjob()
 
             encut4 = encut3 + 50
@@ -432,10 +398,7 @@ class JobFactory(object):
                 incar=incar,
                 pot_type=pot_type,
                 kpoints=kpoints,
-                jobname=str("ENCUT")
-                + str(mat.comment)
-                + str("-")
-                + str(encut4),
+                jobname=str("ENCUT") + str(mat.comment) + str("-") + str(encut4),
             ).runjob()
 
             encut5 = encut4 + 50
@@ -447,10 +410,7 @@ class JobFactory(object):
                 pot_type=pot_type,
                 incar=incar,
                 kpoints=kpoints,
-                jobname=str("ENCUT")
-                + str(mat.comment)
-                + str("-")
-                + str(encut5),
+                jobname=str("ENCUT") + str(mat.comment) + str("-") + str(encut5),
             ).runjob()
 
             encut6 = encut5 + 50
@@ -462,10 +422,7 @@ class JobFactory(object):
                 pot_type=pot_type,
                 incar=incar,
                 kpoints=kpoints,
-                jobname=str("ENCUT")
-                + str(mat.comment)
-                + str("-")
-                + str(encut6),
+                jobname=str("ENCUT") + str(mat.comment) + str("-") + str(encut6),
             ).runjob()
 
             if (
@@ -523,10 +480,7 @@ class JobFactory(object):
                     incar=incar,
                     pot_type=pot_type,
                     kpoints=kpoints,
-                    jobname=str("KPOINTS")
-                    + str(mat.comment)
-                    + str("-")
-                    + str(length1),
+                    jobname=str("KPOINTS") + str(mat.comment) + str("-") + str(length1),
                 ).runjob()
 
                 while abs(en2 - en1) > tol:
@@ -591,10 +545,7 @@ class JobFactory(object):
                     pot_type=pot_type,
                     incar=incar,
                     kpoints=kpoints,
-                    jobname=str("KPOINTS")
-                    + str(mat.comment)
-                    + str("-")
-                    + str(length3),
+                    jobname=str("KPOINTS") + str(mat.comment) + str("-") + str(length3),
                 ).runjob()
 
                 length4 = length3 + 5
@@ -609,10 +560,7 @@ class JobFactory(object):
                     pot_type=pot_type,
                     incar=incar,
                     kpoints=kpoints,
-                    jobname=str("KPOINTS")
-                    + str(mat.comment)
-                    + str("-")
-                    + str(length4),
+                    jobname=str("KPOINTS") + str(mat.comment) + str("-") + str(length4),
                 ).runjob()
 
                 length5 = length4 + 5
@@ -627,10 +575,7 @@ class JobFactory(object):
                     incar=incar,
                     pot_type=pot_type,
                     kpoints=kpoints,
-                    jobname=str("KPOINTS")
-                    + str(mat.comment)
-                    + str("-")
-                    + str(length5),
+                    jobname=str("KPOINTS") + str(mat.comment) + str("-") + str(length5),
                 ).runjob()
 
                 length6 = length5 + 5
@@ -645,10 +590,7 @@ class JobFactory(object):
                     incar=incar,
                     pot_type=pot_type,
                     kpoints=kpoints,
-                    jobname=str("KPOINTS")
-                    + str(mat.comment)
-                    + str("-")
-                    + str(length6),
+                    jobname=str("KPOINTS") + str(mat.comment) + str("-") + str(length6),
                 ).runjob()
                 length7 = length6 + 5
                 # kpoints = Auto_Kpoints(mat=mat, length=length7)
@@ -662,10 +604,7 @@ class JobFactory(object):
                     incar=incar,
                     pot_type=pot_type,
                     kpoints=kpoints,
-                    jobname=str("KPOINTS")
-                    + str(mat.comment)
-                    + str("-")
-                    + str(length7),
+                    jobname=str("KPOINTS") + str(mat.comment) + str("-") + str(length7),
                 ).runjob()
 
                 if (
@@ -719,9 +658,7 @@ class JobFactory(object):
                     length1 = length3
                 else:
                     print(
-                        "KPOINTS convergence achieved for ",
-                        mat.comment,
-                        length1,
+                        "KPOINTS convergence achieved for ", mat.comment, length1,
                     )
                     convg_kp2 = True
 
@@ -799,21 +736,15 @@ class VaspJob(object):
             self.stderr_file, "w", buffering=1
         ) as f_err:
             # use line buffering for stderr
-            p = subprocess.Popen(
-                self.vasp_cmd, shell=True, stdout=f_std, stderr=f_err
-            )
+            p = subprocess.Popen(self.vasp_cmd, shell=True, stdout=f_std, stderr=f_err)
             p.wait()
         return p
 
     def write_jobsub_py(self, filename="jobsub.py"):
         """Write a generic python file for running jobs."""
         f = open(filename, "w")
-        f.write(
-            "%s\n" % "from jarvis.io.vasp.inputs import Poscar, Incar, Potcar"
-        )
-        f.write(
-            "%s\n" % "from jarvis.core.kpoints import Kpoints3D as Kpoints"
-        )
+        f.write("%s\n" % "from jarvis.io.vasp.inputs import Poscar, Incar, Potcar")
+        f.write("%s\n" % "from jarvis.core.kpoints import Kpoints3D as Kpoints")
         f.write("%s\n" % 'pos=Poscar.from_file("POSCAR")')
         f.write("%s\n" % 'inc=Poscar.from_file("INCAR")')
         f.write("%s\n" % 'pot=Potcar.from_file("POTCAR")')
@@ -832,10 +763,10 @@ class VaspJob(object):
     def to_dict(self):
         """Convert the class into a dictionary."""
         info = OrderedDict()
-        info["poscar"] = self.poscar.as_dict()
-        info["kpoints"] = self.kpoints.as_dict()
-        info["incar"] = self.incar.as_dict()
-        info["potcar"] = self.potcar.as_dict()
+        info["poscar"] = self.poscar.to_dict()
+        info["kpoints"] = self.kpoints.to_dict()
+        info["incar"] = self.incar.to_dict()
+        info["potcar"] = self.potcar.to_dict()
         info["vasp_cmd"] = self.vasp_cmd
         info["copy_files"] = self.copy_files
         info["attempts"] = self.attempts
@@ -871,13 +802,12 @@ class VaspJob(object):
         if self.jobname == "":
             jobname = str(self.poscar.comment)
         # job_dir = str(self.jobname)
-        run_file = (
-            str(os.getcwd()) + str("/") + str(self.jobname) + str(".json")
-        )
+        run_file = str(os.getcwd()) + str("/") + str(self.jobname) + str(".json")
         run_dir = str(os.getcwd()) + str("/") + str(self.jobname)
         if self.poscar.comment.startswith("Surf"):
             [a, b, c] = self.kpoints.kpts[0]
-            self.kpoints.kpts = [[a, b, 1]]
+            # self.kpoints.kpts = [[a, b, 1]]
+            self.kpoints = Kpoints3D(kpoints=[[a, b, 1]])
             try:
                 pol = self.poscar.atoms.check_polar
                 if pol:
@@ -897,23 +827,19 @@ class VaspJob(object):
                         }
                     )
                     print(
-                        "Polar surface encountered in run_job",
-                        self.poscar.comment,
+                        "Polar surface encountered in run_job", self.poscar.comment,
                     )
             except Exception:
                 pass
         wait = False
         json_file = str(self.jobname) + str(".json")
         print(
-            "json should be here=",
-            str(os.getcwd()) + str("/") + str(json_file),
+            "json should be here=", str(os.getcwd()) + str("/") + str(json_file),
         )
         print("json should be=", json_file, run_file, os.getcwd())
         if os.path.exists(str(os.getcwd()) + str("/") + str(json_file)):
             try:
-                data_cal = loadjson(
-                    str(os.getcwd()) + str("/") + str(json_file)
-                )
+                data_cal = loadjson(str(os.getcwd()) + str("/") + str(json_file))
                 tmp_outcar = (
                     str(os.getcwd())
                     + str("/")
@@ -965,10 +891,7 @@ class VaspJob(object):
                         self.poscar.write_file("POSCAR")
                         # pos = Poscar.from_file("CONTCAR")
                         print("copy_cmd=", copy_cmd)
-                        if (
-                            "ELAST" not in jobname
-                            and "LEPSILON" not in jobname
-                        ):
+                        if "ELAST" not in jobname and "LEPSILON" not in jobname:
                             # Because in ELASTIC calculations
                             # structures are deformed
                             os.system(copy_cmd)
@@ -987,9 +910,7 @@ class VaspJob(object):
             print("Queue 1")
             if os.path.isfile("OUTCAR"):
                 try:
-                    wait = Outcar(
-                        "OUTCAR"
-                    ).converged  # Vasprun("vasprun.xml").converged
+                    wait = Outcar("OUTCAR").converged  # Vasprun("vasprun.xml").converged
                 except Exception:
                     pass
             print("End of the first loop", os.getcwd(), wait)
@@ -1055,9 +976,7 @@ class GenericIncars(object):
             LWAVE=".FALSE.",
         )
         inc = Incar(data)
-        return GenericIncars(
-            name="optb88vdw", incar=inc, pot_type="POT_GGA_PAW_PBE"
-        )
+        return GenericIncars(name="optb88vdw", incar=inc, pot_type="POT_GGA_PAW_PBE")
 
     def pbe(self):
         """Select GGA-PBE functional."""

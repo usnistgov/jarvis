@@ -2,7 +2,7 @@
 
 from itertools import product
 import numpy as np
-from jarvis.core.atoms import Atoms, add_atoms, fix_pbc, VacuumPadding
+from jarvis.core.atoms import Atoms, add_atoms, fix_pbc
 from jarvis.core.lattice import Lattice
 
 
@@ -290,12 +290,12 @@ def get_factors(n):
 def make_interface(
     film="",
     subs="",
-    atol=0.01,
-    ltol=0.03,
+    atol=1,
+    ltol=0.05,
     max_area=500,
-    max_area_ratio_tol=0.09,
-    seperation=2.0,
-    vacuum=18.0,
+    max_area_ratio_tol=1.00,
+    seperation=3.0,
+    vacuum=8.0,
 ):
     """
     Use as main function for making interfaces/heterostructures.
@@ -308,6 +308,9 @@ def make_interface(
        subs: substrate/bottom/fixed material.
 
        seperation: minimum seperation between two.
+
+       vacuum: vacuum will be added on both sides.
+       So 2*vacuum will be added.
     """
     z = ZSLGenerator(
         max_area_ratio_tol=max_area_ratio_tol,
@@ -315,12 +318,8 @@ def make_interface(
         max_length_tol=ltol,
         max_angle_tol=atol,
     )
-    film = fix_pbc(
-        film.center_around_origin([0, 0, 0])
-    )  # .get_string(cart=False)
-    subs = fix_pbc(
-        subs.center_around_origin([0, 0, 0])
-    )  # .get_string(cart=False)
+    film = fix_pbc(film.center_around_origin([0, 0, 0]))
+    subs = fix_pbc(subs.center_around_origin([0, 0, 0]))
     matches = list(z(film.lattice_mat[:2], subs.lattice_mat[:2], lowest=True))
     info = {}
     info["mismatch_u"] = "na"
@@ -387,26 +386,29 @@ def make_interface(
     film_bottom_z = min(np.array(film_scell.cart_coords)[:, 2])
     thickness_sub = abs(substrate_top_z - substrate_bot_z)
     thickness_film = abs(film_top_z - film_bottom_z)
-
-    min_distance = seperation + (thickness_sub)  # +thickness_film/ 2.0
     sub_z = (
-        (vacuum + thickness_sub + thickness_film)
+        (vacuum + substrate_top_z)
         * np.array(subs_scell.lattice_mat[2, :])
         / np.linalg.norm(subs_scell.lattice_mat[2, :])
-    )  # subs.lattice_mat[2, :]
+    )
     shift_normal = (
-        sub_z / np.linalg.norm(sub_z) * min_distance / np.linalg.norm(sub_z)
+        sub_z / np.linalg.norm(sub_z) * seperation / np.linalg.norm(sub_z)
+    )
+    tmp = (
+        thickness_film / 2 + seperation + thickness_sub / 2
+    ) / np.linalg.norm(subs_scell.lattice_mat[2, :])
+    shift_normal = (
+        tmp
+        * np.array(subs_scell.lattice_mat[2, :])
+        / np.linalg.norm(subs_scell.lattice_mat[2, :])
     )
     interface = add_atoms(
         film_scell, subs_scell, shift_normal
     ).center_around_origin([0, 0, 0.5])
-    info["interface"] = VacuumPadding(
-        atoms=interface, vacuum=vacuum
-    ).get_effective_2d_slab()
-    print("mismatch_u,mismatch_v", mismatch_u, mismatch_v)
-    if mismatch_u < 0 or mismatch_v < 0:
-        print("Maybe unphysical structure")
-    info["msg"] = "Maybe unphysical structure"
+    combined = interface.center(vacuum=vacuum).center_around_origin(
+        [0, 0, 0.5]
+    )
+    info["interface"] = combined
     return info
 
 
