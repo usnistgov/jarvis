@@ -50,6 +50,18 @@ For more details, checkout our latest article:  `JARVIS: An Integrated Infrastru
    :target: https://jarvis.nist.gov/
 
 
+Some important features
+=======================================================================
+
+- **Software workflow tasks**:  VASP, Quantum Espresso, BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM.
+
+- **HPC clusters**: PBS, Slurm.
+
+- **Examples**: Notebooks and test scripts to explain the package.
+
+- **Available datasets**: see the summary of several projects below.
+
+
 
 * A summary of the projects
 
