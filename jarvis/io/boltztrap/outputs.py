@@ -30,7 +30,7 @@ class BoltzTrapOutput(object):
             condtens_fixdoping = self.read_condtens_fixdoping()
         self.condtens_fixdoping = condtens_fixdoping
         if halltens_fixdoping == []:
-            halltens_fixdoping = self.read_condtens_fixdoping()
+            halltens_fixdoping = self.read_halltens_fixdoping()
         self.halltens_fixdoping = halltens_fixdoping
 
     def to_dict(self):
@@ -38,7 +38,6 @@ class BoltzTrapOutput(object):
         d = OrderedDict()
         d["path"] = self.path
         d["outtrans_data"] = self.outtrans_data
-
         d["intrans_data"] = self.intrans_data
         d["halltens_fixdoping"] = self.halltens_fixdoping
         d["condtens_fixdoping"] = self.condtens_fixdoping

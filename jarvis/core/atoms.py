@@ -115,7 +115,7 @@ class Atoms(object):
         d = OrderedDict()
         d["lattice_mat"] = self.lattice_mat.tolist()
         d["coords"] = np.array(self.coords).tolist()
-        d["elements"] = self.elements
+        d["elements"] = np.array(self.elements).tolist()
         d["abc"] = self.lattice.lat_lengths()
         d["angles"] = self.lattice.lat_angles()
         d["cartesian"] = self.cartesian
