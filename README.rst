@@ -59,7 +59,7 @@ Some important features
 
 - **Examples**: Notebooks and test scripts to explain the package.
 
-- **Available datasets**: see the summary of several projects.
+- **Available datasets**: `Summary of several datasets <https://github.com/usnistgov/jarvis/blob/master/DatasetSummary.rst>`__ .
 
 
 Installation
