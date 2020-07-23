@@ -1,8 +1,6 @@
 from jarvis.analysis.interface.zur import (
     ZSLGenerator,
     get_hetero_type,
-    mismatch_strts,
-    get_hetero,
     make_interface,
     add_atoms,
 )

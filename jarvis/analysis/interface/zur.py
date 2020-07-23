@@ -2,7 +2,7 @@
 
 from itertools import product
 import numpy as np
-from jarvis.core.atoms import Atoms, add_atoms, fix_pbc
+from jarvis.core.atoms import add_atoms, fix_pbc
 from jarvis.core.lattice import Lattice
 
 
@@ -412,7 +412,6 @@ def make_interface(
     return info
 
 
-
 def get_hetero_type(A={}, B={}):
     """Provide heterojunction classification using Anderson rule."""
     stack = "na"
@@ -439,7 +438,6 @@ def get_hetero_type(A={}, B={}):
     except Exception:
         pass
     return int_type, stack
-
 
 
 """
