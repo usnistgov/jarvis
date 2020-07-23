@@ -10,6 +10,7 @@ import json
 import os
 import shutil
 from collections import OrderedDict
+from jarvis.core.kpoints import Kpoints3D
 
 
 class JobFactory(object):
@@ -832,10 +833,10 @@ class VaspJob(object):
     def to_dict(self):
         """Convert the class into a dictionary."""
         info = OrderedDict()
-        info["poscar"] = self.poscar.as_dict()
-        info["kpoints"] = self.kpoints.as_dict()
-        info["incar"] = self.incar.as_dict()
-        info["potcar"] = self.potcar.as_dict()
+        info["poscar"] = self.poscar.to_dict()
+        info["kpoints"] = self.kpoints.to_dict()
+        info["incar"] = self.incar.to_dict()
+        info["potcar"] = self.potcar.to_dict()
         info["vasp_cmd"] = self.vasp_cmd
         info["copy_files"] = self.copy_files
         info["attempts"] = self.attempts
@@ -877,7 +878,8 @@ class VaspJob(object):
         run_dir = str(os.getcwd()) + str("/") + str(self.jobname)
         if self.poscar.comment.startswith("Surf"):
             [a, b, c] = self.kpoints.kpts[0]
-            self.kpoints.kpts = [[a, b, 1]]
+            # self.kpoints.kpts = [[a, b, 1]]
+            self.kpoints = Kpoints3D(kpoints=[[a, b, 1]])
             try:
                 pol = self.poscar.atoms.check_polar
                 if pol:

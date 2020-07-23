@@ -7,36 +7,29 @@ from jarvis.core.atoms import Atoms
 from jarvis.io.vasp.inputs import Poscar
 import os
 from collections import defaultdict
+from jarvis.db.jsonutils import loadjson
 
 s1 = Poscar.from_file(
     os.path.join(os.path.dirname(__file__), "..", "defects", "POSCAR-667.vasp")
 ).atoms
 s2 = Poscar.from_file(
-    os.path.join(
-        os.path.dirname(__file__), "..", "..", "io", "wannier", "POSCAR"
-    )
+    os.path.join(os.path.dirname(__file__), "..", "..", "io", "wannier", "POSCAR")
 ).atoms
-s3 = Poscar.from_file(
-    os.path.join(os.path.dirname(__file__), "POSCAR-tetragonal")
-).atoms
-s4 = Poscar.from_file(
-    os.path.join(os.path.dirname(__file__), "POSCAR-Cmcm")
-).atoms
-s5 = Poscar.from_file(
-    os.path.join(os.path.dirname(__file__), "POSCAR-Aem2")
-).atoms
-s6 = Poscar.from_file(
-    os.path.join(os.path.dirname(__file__), "POSCAR-C2m")
-).atoms
-s7 = Poscar.from_file(
-    os.path.join(os.path.dirname(__file__), "POSCAR-Pc")
-).atoms
-s8 = Poscar.from_file(
-    os.path.join(os.path.dirname(__file__), "POSCAR-P-1")
-).atoms
-s9 = Poscar.from_file(
-    os.path.join(os.path.dirname(__file__), "POSCAR-P21m")
-).atoms
+s3 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-tetragonal")).atoms
+s4 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-Cmcm")).atoms
+s5 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-Aem2")).atoms
+s6 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-C2m")).atoms
+s7 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-Pc")).atoms
+s8 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-P-1")).atoms
+s9 = Poscar.from_file(os.path.join(os.path.dirname(__file__), "POSCAR-P21m")).atoms
+
+
+def test_spg229():
+    d = loadjson(os.path.join(os.path.dirname(__file__), "spg229.json"))
+    for i in d:
+        atoms = Atoms.from_dict(i["atoms"])
+        spg = Spacegroup3D(atoms).space_group_number
+        assert spg == i["spg_number"]
 
 
 def test_spg():
