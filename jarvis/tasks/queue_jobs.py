@@ -83,7 +83,7 @@ class Queue(object):
             if isinstance(walltime, str):
                 f.write("#PBS -l walltime=%s\n" % walltime)
             else:
-                ValueError("Plese provide walltime in a string format", walltime)
+                ValueError("Provide walltime in a string format", walltime)
         if queue is not None:
             f.write("#PBS -q %s\n" % queue)
         if account is not None:
@@ -152,7 +152,7 @@ class Queue(object):
             if isinstance(walltime, str):
                 f.write("#SBATCH --time=%s\n" % walltime)
             else:
-                ValueError("Plese provide walltime in a string format", walltime)
+                ValueError("Provide walltime in a string format", walltime)
 
         if queue is not None:
             f.write("#SBATCH --partition=%s\n" % (queue))
