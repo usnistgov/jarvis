@@ -55,7 +55,7 @@ Some important features
 
 - **Software workflow tasks**:  VASP, Quantum Espresso, BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM.
 
-- **HPC clusters**: PBS, Slurm.
+- **HPC clusters**: PBS and SLURM.
 
 - **Examples**: Notebooks and test scripts to explain the package.
 
