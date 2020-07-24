@@ -2,7 +2,7 @@
 import numpy as np
 from jarvis.core.composition import Composition
 from jarvis.core.specie import Specie
-from jarvis.core.lattice import Lattice
+from jarvis.core.lattice import Lattice, lattice_coords_transformer
 from collections import OrderedDict
 from jarvis.core.utils import get_counts
 
@@ -317,6 +317,7 @@ class Atoms(object):
         """Get pymatgen representation of the atoms object."""
         try:
             from pymatgen.core.structure import Structure
+
             return Structure(
                 self.lattice_mat,
                 self.elements,
@@ -775,36 +776,6 @@ class VacuumPadding(object):
         return with_vacuum_atoms
 
 
-def add_atoms(top, bottom, distance=[0, 0, 5]):
-    """
-    Add top and bottom Atoms with a distance array.
-
-    Bottom Atoms lattice-matrix is chosen as final lattice.
-    """
-    top = top.center_around_origin([0, 0, 0])
-    bottom = bottom.center_around_origin(distance)
-    elements = []
-    coords = []
-    lattice_mat = bottom.lattice_mat
-    for i, j in zip(bottom.elements, bottom.frac_coords):
-        elements.append(i)
-        coords.append(j)
-    for i, j in zip(top.elements, top.frac_coords):
-        elements.append(i)
-        coords.append(j)
-
-    order = np.argsort(np.array(elements))
-    elements = np.array(elements)[order]
-    coords = np.array(coords)[order]
-    combined = Atoms(
-        lattice_mat=lattice_mat,
-        coords=coords,
-        elements=elements,
-        cartesian=False,
-    ).center_around_origin()
-    return combined
-
-
 def fix_pbc(atoms):
     """Use for making Atoms with vacuum."""
     new_f_coords = []
@@ -820,6 +791,52 @@ def fix_pbc(atoms):
         coords=new_f_coords,
         cartesian=False,
     )
+
+
+def add_atoms(top, bottom, distance=[0, 0, 5], apply_strain=False):
+    """
+    Add top and bottom Atoms with a distance array.
+
+    Bottom Atoms lattice-matrix is chosen as final lattice.
+    """
+    top = top.center_around_origin([0, 0, 0])
+    bottom = bottom.center_around_origin(distance)
+    strain_x = (
+        top.lattice_mat[0][0] - bottom.lattice_mat[0][0]
+    ) / bottom.lattice_mat[0][0]
+    strain_y = (
+        top.lattice_mat[1][1] - bottom.lattice_mat[1][1]
+    ) / bottom.lattice_mat[1][1]
+    if apply_strain:
+        top.apply_strain([strain_x, strain_y, 0])
+    #  print("strain_x,strain_y", strain_x, strain_y)
+    elements = []
+    coords = []
+    lattice_mat = bottom.lattice_mat
+    for i, j in zip(bottom.elements, bottom.frac_coords):
+        elements.append(i)
+        coords.append(j)
+    top_cart_coords = lattice_coords_transformer(
+        new_lattice_mat=top.lattice_mat,
+        old_lattice_mat=bottom.lattice_mat,
+        coords=top.frac_coords,
+        cartesian=False,
+    )
+    top_frac_coords = bottom.lattice.frac_coords(top_cart_coords)
+    for i, j in zip(top.elements, top_frac_coords):
+        elements.append(i)
+        coords.append(j)
+
+    order = np.argsort(np.array(elements))
+    elements = np.array(elements)[order]
+    coords = np.array(coords)[order]
+    combined = Atoms(
+        lattice_mat=lattice_mat,
+        coords=coords,
+        elements=elements,
+        cartesian=False,
+    ).center_around_origin()
+    return combined
 
 
 def get_supercell_dims(atoms, enforce_c_size=10, extend=1):

@@ -142,7 +142,7 @@ class Surface(object):
             cartesian=True,
         )
 
-        surf_atoms = new_atoms.make_supercell([1, 1, self.layers])
+        surf_atoms = new_atoms.make_supercell_matrix([1, 1, self.layers])
         # print("supercell_cart_coords", surf_atoms.frac_coords)
 
         new_lat = surf_atoms.lattice_mat  # lat_lengths()

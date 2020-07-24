@@ -296,6 +296,7 @@ def make_interface(
     max_area_ratio_tol=1.00,
     seperation=3.0,
     vacuum=8.0,
+    apply_strain=False,
 ):
     """
     Use as main function for making interfaces/heterostructures.
@@ -318,8 +319,8 @@ def make_interface(
         max_length_tol=ltol,
         max_angle_tol=atol,
     )
-    film = (film.center_around_origin([0, 0, 0]))
-    subs = (subs.center_around_origin([0, 0, 0]))
+    film = fix_pbc(film.center_around_origin([0, 0, 0]))
+    subs = fix_pbc(subs.center_around_origin([0, 0, 0]))
     matches = list(z(film.lattice_mat[:2], subs.lattice_mat[:2], lowest=True))
     info = {}
     info["mismatch_u"] = "na"
@@ -375,6 +376,7 @@ def make_interface(
     subs_scell = subs.make_supercell_matrix(scell_subs)
     info["mismatch_u"] = mismatch_u
     info["mismatch_v"] = mismatch_v
+    print("mismatch_u,mismatch_v", mismatch_u, mismatch_v)
     info["mismatch_angle"] = mismatch_angle
     info["area1"] = area1
     info["area2"] = area2
@@ -403,7 +405,7 @@ def make_interface(
         / np.linalg.norm(subs_scell.lattice_mat[2, :])
     )
     interface = add_atoms(
-        film_scell, subs_scell, shift_normal
+        film_scell, subs_scell, shift_normal, apply_strain=apply_strain
     ).center_around_origin([0, 0, 0.5])
     combined = interface.center(vacuum=vacuum).center_around_origin(
         [0, 0, 0.5]
