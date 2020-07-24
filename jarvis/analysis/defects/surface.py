@@ -190,7 +190,7 @@ class Surface(object):
             elements=surf_atoms.elements,
             coords=new_coords,
             cartesian=True,
-        )
+        ).center_around_origin()
 
         frac_coords = new_atoms.frac_coords
 
