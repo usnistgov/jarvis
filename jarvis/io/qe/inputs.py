@@ -279,5 +279,5 @@ if __name__ == "__main__":
     sp = qe.atomic_cell_params()
     print("sp", sp)
     print(qe.input_params['system_params']['nat'])
-# ~/Software/QE/q-e-qe-6.0.0Dobby/bin/pw.x -i qe.in
+#  /users/knc6/Software/QE/q-e/bin/pw.x -i qe.in
 """
