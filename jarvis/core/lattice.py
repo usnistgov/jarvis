@@ -457,6 +457,20 @@ class Lattice(object):
         return Lattice(self._lll_matrix_mappings[delta][0])
 
 
+def lattice_coords_transformer(
+    old_lattice_mat=[], new_lattice_mat=[], coords=[], cartesian=True
+):
+    """Transform coords to a new lattice."""
+    coords = np.array(coords)
+    M = np.linalg.solve(old_lattice_mat, new_lattice_mat)
+    cart_coords = coords
+    if not cartesian:
+        lat = Lattice(lattice_mat=old_lattice_mat)
+        cart_coords = lat.cart_coords(coords)
+    new_cart_coords = np.dot(cart_coords, M)
+    return new_cart_coords
+
+
 """
 if __name__ == "__main__":
 

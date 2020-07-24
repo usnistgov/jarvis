@@ -42,7 +42,6 @@ class Poscar(object):
     @classmethod
     def from_dict(self, d={}):
         """Construct Poscar object from a dictionary."""
-        print("dddd", d)
         return Poscar(atoms=Atoms.from_dict(d["atoms"]), comment=d["comment"])
 
     def write_file(self, filename):
