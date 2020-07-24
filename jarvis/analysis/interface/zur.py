@@ -445,10 +445,10 @@ def get_hetero_type(A={}, B={}):
 """
 if __name__ == "__main__":
     s1 = Poscar.from_file(
-        "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-1821-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-1821/POSCAR"
+        "MAIN-RELAX-Surf-mp-1821/POSCAR"
     )
     s2 = Poscar.from_file(
-        "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/POSCAR"
+        "MAIN-RELAX-Surf-mp-2815/POSCAR"
     )
     print(s1)
     print(s2)
@@ -459,7 +459,6 @@ if __name__ == "__main__":
     f = open("test.json", "wb")
     joblib.dump(s1, f)
     f.close()
-
     print(get_hetero(s1.atoms, s2.atoms))
     ff = open("test.json", "rb")
     dd = joblib.load(ff)
