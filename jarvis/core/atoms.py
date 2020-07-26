@@ -819,8 +819,7 @@ def add_atoms(top, bottom, distance=[0, 0, 5], apply_strain=False):
     top_cart_coords = lattice_coords_transformer(
         new_lattice_mat=top.lattice_mat,
         old_lattice_mat=bottom.lattice_mat,
-        coords=top.frac_coords,
-        cartesian=False,
+        cart_coords=top.cart_coords,
     )
     top_frac_coords = bottom.lattice.frac_coords(top_cart_coords)
     for i, j in zip(top.elements, top_frac_coords):
