@@ -461,7 +461,7 @@ def lattice_coords_transformer(
     old_lattice_mat=[], new_lattice_mat=[], cart_coords=[]
 ):
     """Transform coords to a new lattice."""
-    M = np.linalg.solve(old_lattice_mat, new_lattice_mat)
+    M = np.linalg.solve(new_lattice_mat, old_lattice_mat)
     new_cart_coords = np.dot(cart_coords, M)
     return new_cart_coords
 

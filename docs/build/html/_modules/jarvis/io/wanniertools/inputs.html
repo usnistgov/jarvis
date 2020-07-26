@@ -45,6 +45,8 @@
 <span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">Kpoints3D</span>
 <span class="kn">from</span> <span class="nn">jarvis.io.wannier.outputs</span> <span class="kn">import</span> <span class="n">Wannier90wout</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
 
 
 <div class="viewcode-block" id="WTin"><a class="viewcode-back" href="../../../../jarvis.io.wanniertools.html#jarvis.io.wanniertools.inputs.WTin">[docs]</a><span class="k">class</span> <span class="nc">WTin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -60,7 +62,6 @@
         <span class="n">efermi</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">semi_core_states</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">soc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">semi_cor_states</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">exclude</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">nwan</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
     <span class="p">):</span>
@@ -88,6 +89,37 @@
             <span class="n">semi_core_states</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">semi_core_states</span> <span class="o">=</span> <span class="n">semi_core_states</span>
+
+<div class="viewcode-block" id="WTin.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.wanniertools.html#jarvis.io.wanniertools.inputs.WTin.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert the class to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;nelect&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nelect</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;wannierout&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wannierout</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;efermi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">efermi</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;soc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">soc</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;exclude&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;nwan&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nwan</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;wtin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wtin</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;miller&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">miller</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;semi_core_states&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_core_states</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="WTin.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.wanniertools.html#jarvis.io.wanniertools.inputs.WTin.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Construct class from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">WTin</span><span class="p">(</span>
+            <span class="n">atoms</span><span class="o">=</span><span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]),</span>
+            <span class="n">nelect</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;nelect&quot;</span><span class="p">],</span>
+            <span class="n">wannierout</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;wannierout&quot;</span><span class="p">],</span>
+            <span class="n">efermi</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;efermi&quot;</span><span class="p">],</span>
+            <span class="n">soc</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;soc&quot;</span><span class="p">],</span>
+            <span class="n">exclude</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;exclude&quot;</span><span class="p">],</span>
+            <span class="n">nwan</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;nwan&quot;</span><span class="p">],</span>
+            <span class="n">wtin</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;wtin&quot;</span><span class="p">],</span>
+            <span class="n">miller</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;miller&quot;</span><span class="p">],</span>
+            <span class="n">semi_core_states</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;semi_core_states&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="WTin.get_ibz_kp"><a class="viewcode-back" href="../../../../jarvis.io.wanniertools.html#jarvis.io.wanniertools.inputs.WTin.get_ibz_kp">[docs]</a>    <span class="k">def</span> <span class="nf">get_ibz_kp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get high-symmetry k-points.&quot;&quot;&quot;</span>

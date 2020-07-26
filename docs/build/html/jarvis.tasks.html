@@ -78,22 +78,34 @@
 <em class="property">class </em><code class="descclassname">jarvis.tasks.queue_jobs.</code><code class="descname">Queue</code><span class="sig-paren">(</span><em>q_type='head_node'</em>, <em>q_parameters={}</em>, <em>job_sub_cmd=None</em>, <em>job_check_cmd=''</em>, <em>job_id=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/queue_jobs.html#Queue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.queue_jobs.Queue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Construct HPC Job class.</p>
+<dl class="classmethod">
+<dt id="jarvis.tasks.queue_jobs.Queue.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/queue_jobs.html#Queue.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.queue_jobs.Queue.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load from a dictionary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="jarvis.tasks.queue_jobs.Queue.head_node">
 <code class="descname">head_node</code><span class="sig-paren">(</span><em>submit_cmd=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/queue_jobs.html#Queue.head_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.queue_jobs.Queue.head_node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select if run on the head node, not recommended.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="jarvis.tasks.queue_jobs.Queue.pbs">
-<code class="descname">pbs</code><span class="sig-paren">(</span><em>filename='submit_job'</em>, <em>shell='#!/bin/bash'</em>, <em>nnodes=1</em>, <em>cores=16</em>, <em>walltime=None</em>, <em>queue=None</em>, <em>account=None</em>, <em>group_name=None</em>, <em>jobname='myJob'</em>, <em>jobout='job.out'</em>, <em>joberr='job.err'</em>, <em>memory=None</em>, <em>email=None</em>, <em>pre_job_lines=None</em>, <em>directory=None</em>, <em>env=None</em>, <em>job_line='echo I am here'</em>, <em>post_job_lines=None</em>, <em>submit_cmd=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/queue_jobs.html#Queue.pbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.queue_jobs.Queue.pbs" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">pbs</code><span class="sig-paren">(</span><em>filename='submit_job'</em>, <em>shell='#!/bin/bash'</em>, <em>nnodes=1</em>, <em>cores=16</em>, <em>walltime=None</em>, <em>queue=None</em>, <em>account=None</em>, <em>group_name=None</em>, <em>jobname='myJob'</em>, <em>jobout='job.out'</em>, <em>joberr='job.err'</em>, <em>memory=None</em>, <em>email=None</em>, <em>pre_job_lines=None</em>, <em>directory=None</em>, <em>env=None</em>, <em>job_line='echo I am here'</em>, <em>post_job_lines=None</em>, <em>submit_cmd=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/queue_jobs.html#Queue.pbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.queue_jobs.Queue.pbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select if run using PBS script.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="jarvis.tasks.queue_jobs.Queue.slurm">
-<code class="descname">slurm</code><span class="sig-paren">(</span><em>filename='submit_job'</em>, <em>shell='#!/bin/bash'</em>, <em>nnodes=1</em>, <em>cores=16</em>, <em>walltime=None</em>, <em>queue=None</em>, <em>account=None</em>, <em>group_name=None</em>, <em>jobname='myJob'</em>, <em>jobout='job.out'</em>, <em>joberr='job.err'</em>, <em>memory=None</em>, <em>email=None</em>, <em>pre_job_lines=None</em>, <em>directory=None</em>, <em>env=None</em>, <em>job_line='echo I am here'</em>, <em>post_job_lines=None</em>, <em>submit_cmd=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/queue_jobs.html#Queue.slurm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.queue_jobs.Queue.slurm" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">slurm</code><span class="sig-paren">(</span><em>filename='submit_job'</em>, <em>shell='#!/bin/bash'</em>, <em>nnodes=1</em>, <em>cores=16</em>, <em>walltime=None</em>, <em>queue=None</em>, <em>account=None</em>, <em>group_name=None</em>, <em>jobname='myJob'</em>, <em>jobout='job.out'</em>, <em>joberr='job.err'</em>, <em>memory=None</em>, <em>email=None</em>, <em>pre_job_lines=None</em>, <em>directory=None</em>, <em>env=None</em>, <em>job_line='echo I am here'</em>, <em>post_job_lines=None</em>, <em>submit_cmd=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/queue_jobs.html#Queue.slurm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.queue_jobs.Queue.slurm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select if run using SLURM script.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.queue_jobs.Queue.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/queue_jobs.html#Queue.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.queue_jobs.Queue.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert class to a dictionary.</p>
 </dd></dl>
 
 </dd></dl>

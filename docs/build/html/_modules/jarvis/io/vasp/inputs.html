@@ -73,6 +73,18 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
 
+<div class="viewcode-block" id="Poscar.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Poscar.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert Poscar object to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comment</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Poscar.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Poscar.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Construct Poscar object from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Poscar</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]),</span> <span class="n">comment</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;comment&quot;</span><span class="p">])</span></div>
+
 <div class="viewcode-block" id="Poscar.write_file"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Poscar.write_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Write the Poscar object to a file.&quot;&quot;&quot;</span>
         <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
@@ -261,7 +273,8 @@
         <span class="sd">&quot;&quot;&quot;Convert into dictionary.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tags</span></div>
 
-<div class="viewcode-block" id="Incar.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.from_dict">[docs]</a>    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="Incar.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Incar.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;Construct from dictionary.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Incar</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
 
@@ -331,28 +344,49 @@
         <span class="n">elements</span><span class="o">=</span><span class="p">[],</span>
         <span class="n">pot_type</span><span class="o">=</span><span class="s2">&quot;POT_GGA_PAW_PBE&quot;</span><span class="p">,</span>
         <span class="n">pot_json_path</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">potcar_strings</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">potcar_strings</span><span class="o">=</span><span class="p">[],</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize the Potcar class.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the Potcar class.</span>
+
+<span class="sd">        POTCAR file contains the pseudopotential for each</span>
+<span class="sd">        atomic species used in the calculation.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            elements: atomic elements.</span>
+
+<span class="sd">            pot_type: Type of pseudopotential.</span>
+<span class="sd">            Look for VASP provided PSPs.</span>
+<span class="sd">            JARVIS_VASP_PSP_DIR should be in the path.</span>
+
+<span class="sd">            pot_json_path: Path to dictionary of chemical elements along with</span>
+<span class="sd">            their orbitals taken into conisideration, e.g. V_pv.</span>
+
+<span class="sd">            potcar_strings: One can directly provide</span>
+<span class="sd">            the above mentioned strings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="o">=</span> <span class="n">elements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pot_type</span> <span class="o">=</span> <span class="n">pot_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span> <span class="o">=</span> <span class="n">potcar_strings</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pot_json_path</span> <span class="o">=</span> <span class="n">pot_json_path</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span> <span class="o">==</span> <span class="p">{}:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span> <span class="o">==</span> <span class="p">[]:</span>
             <span class="n">pot_json_file</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;default_potcars.json&quot;</span><span class="p">)</span>
             <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pot_json_path</span> <span class="o">=</span> <span class="n">pot_json_file</span>
             <span class="n">pot_json</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pot_json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
             <span class="n">pot_json_selected</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pot_json</span><span class="p">)</span>
             <span class="n">pot_json</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="n">potcar_strings</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="n">potcar_strings</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># OrderedDict()</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">pot_json_selected</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span>
-                        <span class="n">potcar_strings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+                <span class="n">potcar_strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pot_json_selected</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="c1"># for j, k in pot_json_selected.items():</span>
+                <span class="c1">#    if i == j:</span>
+                <span class="c1">#        potcar_strings.setdefault(i, k)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span> <span class="o">=</span> <span class="n">potcar_strings</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="c1">#  print(&quot;self._elements&quot;, self._elements)</span>
+            <span class="c1">#  print(&quot;self._potcar_strings&quot;, self._potcar_strings)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;Number of elements is not same as potcar_strings&quot;</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">,</span>
@@ -362,17 +396,33 @@
             <span class="n">pot_json</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pot_json_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
             <span class="n">pot_json_selected</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pot_json</span><span class="p">)</span>
             <span class="n">pot_json</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="n">potcar_strings</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">pot_json_selected</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">:</span>
-                    <span class="n">potcar_strings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span> <span class="o">=</span> <span class="n">potcar_strings</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span><span class="p">):</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Number of elements not same as potcar_strings&quot;</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Potcar.catenate_potcar_files"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Potcar.catenate_potcar_files">[docs]</a>    <span class="k">def</span> <span class="nf">catenate_potcar_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination_filename</span><span class="o">=</span><span class="s2">&quot;POTCAR&quot;</span><span class="p">,</span>
-                              <span class="n">filenames</span><span class="o">=</span><span class="p">[]):</span>
+<div class="viewcode-block" id="Potcar.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Potcar.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Build class from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Potcar</span><span class="p">(</span>
+            <span class="n">elements</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;elements&quot;</span><span class="p">],</span>
+            <span class="n">pot_type</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;pot_type&quot;</span><span class="p">],</span>
+            <span class="n">pot_json_path</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;pot_json_path&quot;</span><span class="p">],</span>
+            <span class="n">potcar_strings</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;potcar_strings&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Potcar.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Potcar.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;elements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;pot_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pot_type</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;pot_json_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pot_json_path</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;potcar_strings&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Potcar.catenate_potcar_files"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Potcar.catenate_potcar_files">[docs]</a>    <span class="k">def</span> <span class="nf">catenate_potcar_files</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">destination_filename</span><span class="o">=</span><span class="s2">&quot;POTCAR&quot;</span><span class="p">,</span> <span class="n">filenames</span><span class="o">=</span><span class="p">[]</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Catenate potcars of sifferent elements.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">destination_filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
@@ -386,7 +436,7 @@
         <span class="n">vasp_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;JARVIS_VASP_PSP_DIR&quot;</span><span class="p">])</span>
         <span class="n">vasp_psp_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">vasp_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pot_type</span><span class="p">))</span>
         <span class="n">potcar_strings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potcar_strings</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">potcar_strings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">potcar_strings</span><span class="p">:</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">vasp_psp_dir</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="s2">&quot;POTCAR&quot;</span><span class="p">)</span>
             <span class="n">pot_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pot_files</span></div>
@@ -394,8 +444,9 @@
 <div class="viewcode-block" id="Potcar.write_file"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.inputs.Potcar.write_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;POTCAR&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Write POTCAR file.&quot;&quot;&quot;</span>
         <span class="n">pot_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_potcar_files</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">catenate_potcar_files</span><span class="p">(</span><span class="n">destination_filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
-                                   <span class="n">filenames</span><span class="o">=</span><span class="n">pot_files</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">catenate_potcar_files</span><span class="p">(</span>
+            <span class="n">destination_filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">filenames</span><span class="o">=</span><span class="n">pot_files</span>
+        <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Represent Potcar.&quot;&quot;&quot;</span>
@@ -455,8 +506,9 @@
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">kp_labels</span><span class="p">,</span> <span class="n">kp_labels_points</span><span class="p">):</span>
             <span class="n">labels</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
         <span class="n">all_kp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">all_kp</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
-        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">(</span><span class="n">kpoints</span><span class="o">=</span><span class="n">all_kp</span><span class="p">,</span>
-                            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">kpoint_mode</span><span class="o">=</span><span class="s2">&quot;linemode&quot;</span><span class="p">)</span>
+        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">(</span>
+            <span class="n">kpoints</span><span class="o">=</span><span class="n">all_kp</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">kpoint_mode</span><span class="o">=</span><span class="s2">&quot;linemode&quot;</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">kpoints</span></div></div>
 
 

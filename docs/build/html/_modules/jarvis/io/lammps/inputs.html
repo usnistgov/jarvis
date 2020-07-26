@@ -140,7 +140,7 @@
         <span class="c1"># n_atoms = len(self._species)</span>
         <span class="k">if</span> <span class="n">element_order</span> <span class="o">==</span> <span class="p">[]:</span>
             <span class="c1"># Reading potential file for element order</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;element_order is empty, reading from&#39;</span><span class="p">,</span> <span class="n">potential_file</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;element_order is empty, reading from&quot;</span><span class="p">,</span> <span class="n">potential_file</span><span class="p">)</span>
             <span class="n">pot_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">potential_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">pot_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
             <span class="n">pot_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -258,7 +258,6 @@
 
 <div class="viewcode-block" id="LammpsData.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.lammps.html#jarvis.io.lammps.inputs.LammpsData.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert the infor to a dictionary.&quot;&quot;&quot;</span>
-        <span class="c1"># n_atoms = len(self._species)</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;box&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lammps_box</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;species&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_species</span>
@@ -290,6 +289,21 @@
         <span class="sd">&quot;&quot;&quot;Require LammpsData class and periodic boundary conditions.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">LammpsDataObj</span> <span class="o">=</span> <span class="n">LammpsDataObj</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pbc</span> <span class="o">=</span> <span class="n">pbc</span>
+
+<div class="viewcode-block" id="LammpsInput.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.lammps.html#jarvis.io.lammps.inputs.LammpsInput.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;LammpsDataObj&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LammpsDataObj</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;pbc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pbc</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="LammpsInput.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.lammps.html#jarvis.io.lammps.inputs.LammpsInput.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Costruct class from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">LammpsInput</span><span class="p">(</span>
+            <span class="n">LammpsDataObj</span><span class="o">=</span><span class="n">LammpsData</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;LammpsDataObj&quot;</span><span class="p">]),</span>
+            <span class="n">pbc</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;pbc&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="LammpsInput.write_lammps_in"><a class="viewcode-back" href="../../../../jarvis.io.lammps.html#jarvis.io.lammps.inputs.LammpsInput.write_lammps_in">[docs]</a>    <span class="k">def</span> <span class="nf">write_lammps_in</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>

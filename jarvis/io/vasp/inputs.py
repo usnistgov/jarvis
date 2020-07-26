@@ -343,8 +343,8 @@ class Potcar(object):
                 #    if i == j:
                 #        potcar_strings.setdefault(i, k)
             self._potcar_strings = potcar_strings
-            print("self._elements", self._elements)
-            print("self._potcar_strings", self._potcar_strings)
+            #  print("self._elements", self._elements)
+            #  print("self._potcar_strings", self._potcar_strings)
             if len(self._elements) != len(self._potcar_strings):
                 raise ValueError(
                     "Number of elements is not same as potcar_strings",
