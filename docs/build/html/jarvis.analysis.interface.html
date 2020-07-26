@@ -158,12 +158,6 @@ super lattice vectors.</dd>
 </dd></dl>
 
 <dl class="function">
-<dt id="jarvis.analysis.interface.zur.get_hetero">
-<code class="descclassname">jarvis.analysis.interface.zur.</code><code class="descname">get_hetero</code><span class="sig-paren">(</span><em>film</em>, <em>substrate</em>, <em>seperation=3.5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#get_hetero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.get_hetero" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate heterostructure, deprecated.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="jarvis.analysis.interface.zur.get_hetero_type">
 <code class="descclassname">jarvis.analysis.interface.zur.</code><code class="descname">get_hetero_type</code><span class="sig-paren">(</span><em>A={}</em>, <em>B={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#get_hetero_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.get_hetero_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide heterojunction classification using Anderson rule.</p>
@@ -171,23 +165,18 @@ super lattice vectors.</dd>
 
 <dl class="function">
 <dt id="jarvis.analysis.interface.zur.make_interface">
-<code class="descclassname">jarvis.analysis.interface.zur.</code><code class="descname">make_interface</code><span class="sig-paren">(</span><em>film=''</em>, <em>subs=''</em>, <em>atol=0.01</em>, <em>ltol=0.03</em>, <em>max_area=500</em>, <em>max_area_ratio_tol=0.09</em>, <em>seperation=2.0</em>, <em>vacuum=18.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#make_interface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.make_interface" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.analysis.interface.zur.</code><code class="descname">make_interface</code><span class="sig-paren">(</span><em>film=''</em>, <em>subs=''</em>, <em>atol=1</em>, <em>ltol=0.05</em>, <em>max_area=500</em>, <em>max_area_ratio_tol=1.0</em>, <em>seperation=3.0</em>, <em>vacuum=8.0</em>, <em>apply_strain=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#make_interface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.make_interface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use as main function for making interfaces/heterostructures.</p>
 <p>Return mismatch and other information as info dict.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><p class="first">film: top/film material.</p>
 <p>subs: substrate/bottom/fixed material.</p>
-<p class="last">seperation: minimum seperation between two.</p>
+<p>seperation: minimum seperation between two.</p>
+<p class="last">vacuum: vacuum will be added on both sides.
+So 2*vacuum will be added.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="jarvis.analysis.interface.zur.mismatch_strts">
-<code class="descclassname">jarvis.analysis.interface.zur.</code><code class="descname">mismatch_strts</code><span class="sig-paren">(</span><em>film=[]</em>, <em>subs=[]</em>, <em>ltol=0.05</em>, <em>atol=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/interface/zur.html#mismatch_strts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.interface.zur.mismatch_strts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return mismatch and other information as info dict.</p>
-<p>Deprecated this module will be removes in the next version.</p>
 </dd></dl>
 
 <dl class="function">

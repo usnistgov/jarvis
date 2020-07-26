@@ -50,9 +50,9 @@
 <em class="property">class </em><code class="descclassname">jarvis.io.vasp.inputs.</code><code class="descname">Incar</code><span class="sig-paren">(</span><em>tags={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Make VASP INCAR files as python dictionary of keys and values.</p>
-<dl class="method">
+<dl class="classmethod">
 <dt id="jarvis.io.vasp.inputs.Incar.from_dict">
-<code class="descname">from_dict</code><span class="sig-paren">(</span><em>data={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>data={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Incar.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Incar.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct from dictionary.</p>
 </dd></dl>
 
@@ -144,6 +144,12 @@
 <p class="last">comment : Header of Poscar file</p>
 </dd>
 </dl>
+<dl class="classmethod">
+<dt id="jarvis.io.vasp.inputs.Poscar.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct Poscar object from a dictionary.</p>
+</dd></dl>
+
 <dl class="staticmethod">
 <dt id="jarvis.io.vasp.inputs.Poscar.from_file">
 <em class="property">static </em><code class="descname">from_file</code><span class="sig-paren">(</span><em>filename='POSCAR'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.from_file" title="Permalink to this definition">¶</a></dt>
@@ -157,6 +163,12 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="jarvis.io.vasp.inputs.Poscar.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert Poscar object to a dictionary.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="jarvis.io.vasp.inputs.Poscar.write_file">
 <code class="descname">write_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Poscar.write_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Poscar.write_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write the Poscar object to a file.</p>
@@ -166,7 +178,7 @@
 
 <dl class="class">
 <dt id="jarvis.io.vasp.inputs.Potcar">
-<em class="property">class </em><code class="descclassname">jarvis.io.vasp.inputs.</code><code class="descname">Potcar</code><span class="sig-paren">(</span><em>elements=[]</em>, <em>pot_type='POT_GGA_PAW_PBE'</em>, <em>pot_json_path=''</em>, <em>potcar_strings={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.inputs.</code><code class="descname">Potcar</code><span class="sig-paren">(</span><em>elements=[]</em>, <em>pot_type='POT_GGA_PAW_PBE'</em>, <em>pot_json_path=''</em>, <em>potcar_strings=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Construct muti-atoms Postcar.</p>
 <dl class="method">
@@ -175,10 +187,22 @@
 <dd><p>Catenate potcars of sifferent elements.</p>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="jarvis.io.vasp.inputs.Potcar.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build class from a dictionary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="jarvis.io.vasp.inputs.Potcar.list_potcar_files">
 <code class="descname">list_potcar_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar.list_potcar_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar.list_potcar_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>List POTCAR files.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.vasp.inputs.Potcar.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#Potcar.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.Potcar.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert to a dictionary.</p>
 </dd></dl>
 
 <dl class="method">
@@ -204,6 +228,12 @@
 <dd><p>Return CHGCAR sets.</p>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="jarvis.io.vasp.outputs.Chgcar.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct class from a dictionary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="jarvis.io.vasp.outputs.Chgcar.is_spin_orbit">
 <code class="descname">is_spin_orbit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.is_spin_orbit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.is_spin_orbit" title="Permalink to this definition">¶</a></dt>
@@ -222,6 +252,12 @@
 <dd><p>Read CHGCAR.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="jarvis.io.vasp.outputs.Chgcar.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert to a dictionary.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -235,6 +271,12 @@
 <dd><p>Get all electronic steps realted data.</p>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="jarvis.io.vasp.outputs.Oszicar.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Oszicar.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct class from a dictionary.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Oszicar.ionic_steps">
 <code class="descname">ionic_steps</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar.ionic_steps" title="Permalink to this definition">¶</a></dt>
@@ -245,6 +287,12 @@
 <dt id="jarvis.io.vasp.outputs.Oszicar.magnetic_moment">
 <code class="descname">magnetic_moment</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar.magnetic_moment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get magnetic moment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.vasp.outputs.Oszicar.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Oszicar.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Oszicar.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert class to a dictionary.</p>
 </dd></dl>
 
 </dd></dl>
@@ -285,6 +333,12 @@ bulk, shear modulus, and phonon modes</dd>
 </dl>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="jarvis.io.vasp.outputs.Outcar.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Outcar.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct class from a dictionary.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="jarvis.io.vasp.outputs.Outcar.nions">
 <code class="descname">nions</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.nions" title="Permalink to this definition">¶</a></dt>
@@ -307,6 +361,12 @@ bulk, shear modulus, and phonon modes</dd>
 <dt id="jarvis.io.vasp.outputs.Outcar.quad_mom">
 <code class="descname">quad_mom</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.quad_mom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get quadrupole momemnt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.vasp.outputs.Outcar.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Outcar.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert class to a dictionary.</p>
 </dd></dl>
 
 </dd></dl>
@@ -394,6 +454,12 @@ bulk, shear modulus, and phonon modes</dd>
 <dd><p>Get final energy.</p>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="jarvis.io.vasp.outputs.Vasprun.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Vasprun.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct class from a dictionary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="jarvis.io.vasp.outputs.Vasprun.get_bandstructure">
 <code class="descname">get_bandstructure</code><span class="sig-paren">(</span><em>E_low=-4</em>, <em>E_high=4</em>, <em>spin=0</em>, <em>zero_efermi=True</em>, <em>kpoints_file_path='.'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Vasprun.get_bandstructure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.get_bandstructure" title="Permalink to this definition">¶</a></dt>
@@ -476,6 +542,12 @@ bulk, shear modulus, and phonon modes</dd>
 <dt id="jarvis.io.vasp.outputs.Vasprun.projected_spins_kpoints_bands">
 <code class="descname">projected_spins_kpoints_bands</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.projected_spins_kpoints_bands" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use for spin, kpoint and band projected bandstructure plots.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.vasp.outputs.Vasprun.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Vasprun.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Vasprun.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert class to a dictionary.</p>
 </dd></dl>
 
 <dl class="attribute">

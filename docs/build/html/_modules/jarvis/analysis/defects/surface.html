@@ -46,6 +46,7 @@
 <span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="n">Spacegroup3D</span>
 <span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">gcd</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 
 <div class="viewcode-block" id="wulff_normals"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.surface.wulff_normals">[docs]</a><span class="k">def</span> <span class="nf">wulff_normals</span><span class="p">(</span><span class="n">miller_indices</span><span class="o">=</span><span class="p">[],</span> <span class="n">surface_energies</span><span class="o">=</span><span class="p">[]):</span>
@@ -95,13 +96,37 @@
 <span class="sd">             from_conventional_structure: whether to use the conv. atoms</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">from_conventional_structure</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">from_conventional_structure</span> <span class="o">=</span> <span class="n">from_conventional_structure</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_conventional_structure</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">conventional_standard_structure</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vacuum</span> <span class="o">=</span> <span class="n">vacuum</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">layers</span>
+
+<div class="viewcode-block" id="Surface.to_dict"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.surface.Surface.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;indices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;tol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;vacuum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vacuum</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;layers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;from_conventional_structure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_conventional_structure</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Surface.from_dict"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.surface.Surface.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Construct class from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Surface</span><span class="p">(</span>
+            <span class="n">atoms</span><span class="o">=</span><span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]),</span>
+            <span class="n">indices</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;indices&quot;</span><span class="p">],</span>
+            <span class="n">tol</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;tol&quot;</span><span class="p">],</span>
+            <span class="n">vacuum</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;vacuum&quot;</span><span class="p">],</span>
+            <span class="n">layers</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;layers&quot;</span><span class="p">],</span>
+            <span class="n">from_conventional_structure</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;from_conventional_structure&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Surface.make_surface"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.surface.Surface.make_surface">[docs]</a>    <span class="k">def</span> <span class="nf">make_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate specified surface. Modified from ase package.&quot;&quot;&quot;</span>
@@ -121,12 +146,16 @@
 
             <span class="c1"># constants describing the dot product of basis c1 and c2:</span>
             <span class="c1"># dot(c1,c2) = k1+i*k2, i in Z</span>
-            <span class="n">k1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">k_index</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h_index</span> <span class="o">*</span> <span class="n">a2</span><span class="p">)</span>
-                        <span class="o">+</span> <span class="n">q</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_index</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h_index</span> <span class="o">*</span> <span class="n">a3</span><span class="p">),</span>
-                        <span class="n">l_index</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">-</span> <span class="n">k_index</span> <span class="o">*</span> <span class="n">a3</span><span class="p">)</span>
-            <span class="n">k2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">l_index</span> <span class="o">*</span> <span class="p">(</span><span class="n">k_index</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h_index</span> <span class="o">*</span> <span class="n">a2</span><span class="p">)</span>
-                        <span class="o">-</span> <span class="n">k_index</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_index</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h_index</span> <span class="o">*</span> <span class="n">a3</span><span class="p">),</span>
-                        <span class="n">l_index</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">-</span> <span class="n">k_index</span> <span class="o">*</span> <span class="n">a3</span><span class="p">)</span>
+            <span class="n">k1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+                <span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="n">k_index</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h_index</span> <span class="o">*</span> <span class="n">a2</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">q</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_index</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h_index</span> <span class="o">*</span> <span class="n">a3</span><span class="p">),</span>
+                <span class="n">l_index</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">-</span> <span class="n">k_index</span> <span class="o">*</span> <span class="n">a3</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">k2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+                <span class="n">l_index</span> <span class="o">*</span> <span class="p">(</span><span class="n">k_index</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h_index</span> <span class="o">*</span> <span class="n">a2</span><span class="p">)</span>
+                <span class="o">-</span> <span class="n">k_index</span> <span class="o">*</span> <span class="p">(</span><span class="n">l_index</span> <span class="o">*</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">h_index</span> <span class="o">*</span> <span class="n">a3</span><span class="p">),</span>
+                <span class="n">l_index</span> <span class="o">*</span> <span class="n">a2</span> <span class="o">-</span> <span class="n">k_index</span> <span class="o">*</span> <span class="n">a3</span><span class="p">,</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">k2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">:</span>
                 <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">k1</span> <span class="o">/</span> <span class="n">k2</span><span class="p">))</span>
@@ -154,7 +183,7 @@
             <span class="n">cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">surf_atoms</span> <span class="o">=</span> <span class="n">new_atoms</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">])</span>
+        <span class="n">surf_atoms</span> <span class="o">=</span> <span class="n">new_atoms</span><span class="o">.</span><span class="n">make_supercell_matrix</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">])</span>
         <span class="c1"># print(&quot;supercell_cart_coords&quot;, surf_atoms.frac_coords)</span>
 
         <span class="n">new_lat</span> <span class="o">=</span> <span class="n">surf_atoms</span><span class="o">.</span><span class="n">lattice_mat</span>  <span class="c1"># lat_lengths()</span>
@@ -202,7 +231,7 @@
             <span class="n">elements</span><span class="o">=</span><span class="n">surf_atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">,</span>
             <span class="n">coords</span><span class="o">=</span><span class="n">new_coords</span><span class="p">,</span>
             <span class="n">cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
 
         <span class="n">frac_coords</span> <span class="o">=</span> <span class="n">new_atoms</span><span class="o">.</span><span class="n">frac_coords</span>
 

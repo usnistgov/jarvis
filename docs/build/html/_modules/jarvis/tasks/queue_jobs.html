@@ -43,6 +43,7 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 
 <div class="viewcode-block" id="Queue"><a class="viewcode-back" href="../../../jarvis.tasks.html#jarvis.tasks.queue_jobs.Queue">[docs]</a><span class="k">class</span> <span class="nc">Queue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -67,7 +68,29 @@
         <span class="sd">&quot;&quot;&quot;Select if run on the head node, not recommended.&quot;&quot;&quot;</span>
         <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">submit_cmd</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Queue.pbs"><a class="viewcode-back" href="../../../jarvis.tasks.html#jarvis.tasks.queue_jobs.Queue.pbs">[docs]</a>    <span class="k">def</span> <span class="nf">pbs</span><span class="p">(</span>
+<div class="viewcode-block" id="Queue.to_dict"><a class="viewcode-back" href="../../../jarvis.tasks.html#jarvis.tasks.queue_jobs.Queue.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert class to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;q_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_type</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;q_parameters&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_parameters</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;job_sub_cmd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_sub_cmd</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;job_check_cmd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_check_cmd</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;job_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Queue.from_dict"><a class="viewcode-back" href="../../../jarvis.tasks.html#jarvis.tasks.queue_jobs.Queue.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Load from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Queue</span><span class="p">(</span>
+            <span class="n">q_type</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;q_type&quot;</span><span class="p">],</span>
+            <span class="n">q_parameters</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;q_parameters&quot;</span><span class="p">],</span>
+            <span class="n">job_sub_cmd</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;job_sub_cmd&quot;</span><span class="p">],</span>
+            <span class="n">job_check_cmd</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;job_check_cmd&quot;</span><span class="p">],</span>
+            <span class="n">job_id</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;job_id&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Queue.pbs"><a class="viewcode-back" href="../../../jarvis.tasks.html#jarvis.tasks.queue_jobs.Queue.pbs">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">pbs</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;submit_job&quot;</span><span class="p">,</span>
         <span class="n">shell</span><span class="o">=</span><span class="s2">&quot;#!/bin/bash&quot;</span><span class="p">,</span>
@@ -101,9 +124,7 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">walltime</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#PBS -l walltime=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">walltime</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Plese provide walltime in a string format&quot;</span><span class="p">,</span> <span class="n">walltime</span>
-                <span class="p">)</span>
+                <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Provide walltime in a string format&quot;</span><span class="p">,</span> <span class="n">walltime</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#PBS -q </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">queue</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">account</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -139,7 +160,8 @@
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Queue.slurm"><a class="viewcode-back" href="../../../jarvis.tasks.html#jarvis.tasks.queue_jobs.Queue.slurm">[docs]</a>    <span class="k">def</span> <span class="nf">slurm</span><span class="p">(</span>
+<div class="viewcode-block" id="Queue.slurm"><a class="viewcode-back" href="../../../jarvis.tasks.html#jarvis.tasks.queue_jobs.Queue.slurm">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">slurm</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;submit_job&quot;</span><span class="p">,</span>
         <span class="n">shell</span><span class="o">=</span><span class="s2">&quot;#!/bin/bash&quot;</span><span class="p">,</span>
@@ -171,9 +193,7 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">walltime</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#SBATCH --time=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">walltime</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Plese provide walltime in a string format&quot;</span><span class="p">,</span> <span class="n">walltime</span>
-                <span class="p">)</span>
+                <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Provide walltime in a string format&quot;</span><span class="p">,</span> <span class="n">walltime</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">queue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#SBATCH --partition=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">queue</span><span class="p">))</span>

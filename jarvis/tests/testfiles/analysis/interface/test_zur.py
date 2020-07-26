@@ -20,9 +20,10 @@ def get_2d_hetero_jids(jid1="JVASP-664", jid2="JVASP-52"):
     vac = max(mat1.lattice_mat[2][2], mat2.lattice_mat[2][2])
     combined = make_interface(
         film=mat1.center_around_origin(),
-        max_area=800,
+        max_area=400,
         max_area_ratio_tol=0.09,
         ltol=0.05,
+        atol=0.1,
         subs=mat2.center_around_origin(),
     )["interface"]
     return combined
@@ -134,8 +135,8 @@ jids = [
 
 
 def test_zur():
-    m1 = get_jid_data('JVASP-664')["atoms"]
-    m2 = get_jid_data('JVASP-652')["atoms"]
+    m1 = get_jid_data("JVASP-664")["atoms"]
+    m2 = get_jid_data("JVASP-652")["atoms"]
     s1 = Atoms.from_dict(m1)
     s2 = Atoms.from_dict(m2)
     info = make_interface(film=s1, subs=s2)
@@ -144,6 +145,13 @@ def test_zur():
         round(info["mismatch_u"], 3),
         round(info["mismatch_angle"], 3),
     ) == (-0.041, 0.0,)
+
+
+def test_mos2_bn():
+    intf = get_2d_hetero_jids(jid1="JVASP-688", jid2="JVASP-664")
+    print(intf)
+    print(intf.density)
+    assert round(intf.density, 4) == round(1.7346542883452571, 4)
 
 
 def test_2d_interface():
@@ -179,7 +187,7 @@ def test_2d_interface():
                     filename = "POSCAR-" + str(i) + "_" + str(j) + ".vasp"
                     p.comment = "Surf@" + str(i) + "_" + str(j)
                     print(p)
-                    #p.write_file(filename)
+                    # p.write_file(filename)
                     print()
                     print()
                     print()
@@ -276,21 +284,22 @@ def test_metal_ceramic_interface():
         subs=mat2,  # .center_around_origin(),
     )["interface"]
     print(combined)
-    #from ase.lattice.surface import surface
-    #from pymatgen.io.ase import AseAtomsAdaptor
-    #from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-    #from pymatgen.io.vasp.inputs import Poscar
-    #mat_cvn = SpacegroupAnalyzer(mat_Al.pymatgen_converter()).get_conventional_standard_structure()
-    #ase_atoms = AseAtomsAdaptor().get_atoms(mat_cvn)
-    #ase_slab = surface(ase_atoms, [1,1,1], 3)
-    #ase_slab.center(vacuum=18, axis=2)
-    #slab_pymatgen = AseAtomsAdaptor().get_structure(ase_slab)
-    #slab_pymatgen.sort()
-    #print (Poscar(slab_pymatgen))
-    #print ()
-    #print ()
-    print (mat1.center_around_origin().get_string(cart=False))
+    # from ase.lattice.surface import surface
+    # from pymatgen.io.ase import AseAtomsAdaptor
+    # from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+    # from pymatgen.io.vasp.inputs import Poscar
+    # mat_cvn = SpacegroupAnalyzer(mat_Al.pymatgen_converter()).get_conventional_standard_structure()
+    # ase_atoms = AseAtomsAdaptor().get_atoms(mat_cvn)
+    # ase_slab = surface(ase_atoms, [1,1,1], 3)
+    # ase_slab.center(vacuum=18, axis=2)
+    # slab_pymatgen = AseAtomsAdaptor().get_structure(ase_slab)
+    # slab_pymatgen.sort()
+    # print (Poscar(slab_pymatgen))
+    # print ()
+    # print ()
+    print(mat1.center_around_origin().get_string(cart=False))
 
 
-test_2d_interface()
+# test_mos2_bn()
+# test_2d_interface()
 # test_metal_ceramic_interface()

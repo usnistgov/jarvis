@@ -45,6 +45,7 @@
     <span class="n">Spacegroup3D</span><span class="p">,</span>
     <span class="n">symmetrically_distinct_miller_indices</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
 <span class="kn">from</span> <span class="nn">jarvis.io.lammps.inputs</span> <span class="kn">import</span> <span class="n">LammpsInput</span><span class="p">,</span> <span class="n">LammpsData</span>
 <span class="kn">from</span> <span class="nn">jarvis.tasks.lammps.templates.templates</span> <span class="kn">import</span> <span class="n">GenericInputs</span>
 <span class="kn">from</span> <span class="nn">jarvis.io.lammps.outputs</span> <span class="kn">import</span> <span class="n">analyze_log</span>
@@ -55,6 +56,7 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 
 <div class="viewcode-block" id="JobFactory"><a class="viewcode-back" href="../../../../jarvis.tasks.lammps.html#jarvis.tasks.lammps.lammps.JobFactory">[docs]</a><span class="k">class</span> <span class="nc">JobFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -235,6 +237,35 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">jobname</span> <span class="o">=</span> <span class="n">jobname</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attempts</span> <span class="o">=</span> <span class="n">attempts</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span> <span class="o">=</span> <span class="n">copy_files</span>
+
+<div class="viewcode-block" id="LammpsJob.to_dict"><a class="viewcode-back" href="../../../../jarvis.tasks.lammps.html#jarvis.tasks.lammps.lammps.LammpsJob.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;element_order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_order</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;lammps_cmd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lammps_cmd</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;output_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;stderr_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;jobname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobname</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;attempts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attempts</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;copy_files&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="LammpsJob.from_dict"><a class="viewcode-back" href="../../../../jarvis.tasks.lammps.html#jarvis.tasks.lammps.lammps.LammpsJob.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Load from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">LammpsJob</span><span class="p">(</span>
+            <span class="n">atoms</span><span class="o">=</span><span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]),</span>
+            <span class="n">element_order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">element_order</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">],</span>
+            <span class="n">lammps_cmd</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;lammps_cmd&quot;</span><span class="p">],</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;output_file&quot;</span><span class="p">],</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;stderr_file&quot;</span><span class="p">],</span>
+            <span class="n">jobname</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;jobname&quot;</span><span class="p">],</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;attempts&quot;</span><span class="p">],</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;copy_files&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="LammpsJob.write_input"><a class="viewcode-back" href="../../../../jarvis.tasks.lammps.html#jarvis.tasks.lammps.lammps.LammpsJob.write_input">[docs]</a>    <span class="k">def</span> <span class="nf">write_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Write LAMMPS input files.&quot;&quot;&quot;</span>

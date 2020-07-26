@@ -793,7 +793,7 @@ def fix_pbc(atoms):
     )
 
 
-def add_atoms(top, bottom, distance=[0, 0, 5], apply_strain=False):
+def add_atoms(top, bottom, distance=[0, 0, 1], apply_strain=False):
     """
     Add top and bottom Atoms with a distance array.
 
