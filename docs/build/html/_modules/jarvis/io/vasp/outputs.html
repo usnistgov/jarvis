@@ -104,6 +104,41 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">read_file</span><span class="p">()</span>
 
+<div class="viewcode-block" id="Chgcar.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Chgcar.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;chg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chg</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;dim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;chgdif&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chgdif</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;aug&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aug</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;augdiff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">augdiff</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;nsets&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsets</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Chgcar.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Chgcar.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Construct class from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">atoms</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">Chgcar</span><span class="p">(</span>
+            <span class="n">filename</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span>
+            <span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span>
+            <span class="n">chg</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;chg&quot;</span><span class="p">],</span>
+            <span class="n">dim</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;dim&quot;</span><span class="p">],</span>
+            <span class="n">chgdif</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;chgdif&quot;</span><span class="p">],</span>
+            <span class="n">aug</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;aug&quot;</span><span class="p">],</span>
+            <span class="n">augdiff</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;augdiff&quot;</span><span class="p">],</span>
+            <span class="n">nsets</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;nsets&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="Chgcar.is_spin_polarized"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Chgcar.is_spin_polarized">[docs]</a>    <span class="k">def</span> <span class="nf">is_spin_polarized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check if the calculations is spin-polarized, ISPIN=2.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nsets</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -181,6 +216,18 @@
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">lines</span>
 
+<div class="viewcode-block" id="Oszicar.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Oszicar.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Construct class from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Oszicar</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Oszicar.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Oszicar.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert class to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">magnetic_moment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get magnetic moment.&quot;&quot;&quot;</span>
@@ -217,6 +264,18 @@
             <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">lines</span>
+
+<div class="viewcode-block" id="Outcar.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Outcar.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Construct class from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Outcar</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Outcar.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Outcar.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert class to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">return</span> <span class="n">d</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">nions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -862,6 +921,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">==</span> <span class="p">{}:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xml_to_dict</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Vasprun.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Construct class from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Vasprun</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span> <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Vasprun.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert class to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+        <span class="k">return</span> <span class="n">d</span></div>
 
 <div class="viewcode-block" id="Vasprun.xml_to_dict"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.xml_to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">xml_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert XML to dictionary.&quot;&quot;&quot;</span>

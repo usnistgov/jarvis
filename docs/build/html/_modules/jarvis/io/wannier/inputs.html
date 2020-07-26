@@ -44,6 +44,8 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
 
 
 <div class="viewcode-block" id="Wannier90win"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.inputs.Wannier90win">[docs]</a><span class="k">class</span> <span class="nc">Wannier90win</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -113,6 +115,37 @@
             <span class="n">semi_core_states</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">semi_core_states</span> <span class="o">=</span> <span class="n">semi_core_states</span>
+
+<div class="viewcode-block" id="Wannier90win.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.inputs.Wannier90win.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;struct&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;efermi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">efermi</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;soc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">soc</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;dis_num_iter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dis_num_iter</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;dis_mix_ratio&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dis_mix_ratio</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;num_iter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_iter</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;num_print_cycles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_print_cycles</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;frozen_tol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frozen_tol</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;semi_core_states&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">semi_core_states</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;kmesh_tol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmesh_tol</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Wannier90win.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.inputs.Wannier90win.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Convert class from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Wannier90win</span><span class="p">(</span>
+            <span class="n">struct</span><span class="o">=</span><span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;struct&quot;</span><span class="p">]),</span>
+            <span class="n">efermi</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;efermi&quot;</span><span class="p">],</span>
+            <span class="n">soc</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;soc&quot;</span><span class="p">],</span>
+            <span class="n">dis_num_iter</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;dis_num_iter&quot;</span><span class="p">],</span>
+            <span class="n">dis_mix_ratio</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;dis_mix_ratio&quot;</span><span class="p">],</span>
+            <span class="n">num_iter</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;num_iter&quot;</span><span class="p">],</span>
+            <span class="n">num_print_cycles</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;num_print_cycles&quot;</span><span class="p">],</span>
+            <span class="n">frozen_tol</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;frozen_tol&quot;</span><span class="p">],</span>
+            <span class="n">semi_core_states</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;semi_core_states&quot;</span><span class="p">],</span>
+            <span class="n">kmesh_tol</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;kmesh_tol&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Wannier90win.write_win"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.inputs.Wannier90win.write_win">[docs]</a>    <span class="k">def</span> <span class="nf">write_win</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;win.input&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Write .win file.&quot;&quot;&quot;</span>

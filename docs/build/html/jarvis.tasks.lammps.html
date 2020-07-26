@@ -87,6 +87,12 @@ whether to enforce conventional cell</p>
 <em class="property">class </em><code class="descclassname">jarvis.tasks.lammps.lammps.</code><code class="descname">LammpsJob</code><span class="sig-paren">(</span><em>atoms=None</em>, <em>parameters={'atom_style': 'charge'</em>, <em>'control_file': 'inelast.mod'</em>, <em>'pair_coeff': 'abc.alloy'</em>, <em>'pair_style': 'eam/alloy'}</em>, <em>lammps_cmd=None</em>, <em>output_file='lammps.out'</em>, <em>stderr_file='std_err.txt'</em>, <em>jobname='testt'</em>, <em>attempts=5</em>, <em>copy_files=[]</em>, <em>element_order=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/lammps/lammps.html#LammpsJob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.lammps.lammps.LammpsJob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Construct a class representing a LAMMPS job.</p>
+<dl class="classmethod">
+<dt id="jarvis.tasks.lammps.lammps.LammpsJob.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/lammps/lammps.html#LammpsJob.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.lammps.lammps.LammpsJob.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load from a dictionary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="jarvis.tasks.lammps.lammps.LammpsJob.run">
 <code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/lammps/lammps.html#LammpsJob.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.lammps.lammps.LammpsJob.run" title="Permalink to this definition">¶</a></dt>
@@ -97,6 +103,12 @@ whether to enforce conventional cell</p>
 <dt id="jarvis.tasks.lammps.lammps.LammpsJob.runjob">
 <code class="descname">runjob</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/lammps/lammps.html#LammpsJob.runjob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.lammps.lammps.LammpsJob.runjob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constrct  a generic LAMMPS job submission.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.lammps.lammps.LammpsJob.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/lammps/lammps.html#LammpsJob.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.lammps.lammps.LammpsJob.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert to a dictionary.</p>
 </dd></dl>
 
 <dl class="method">

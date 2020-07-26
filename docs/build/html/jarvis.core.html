@@ -288,7 +288,7 @@ this method in the subclass.</dd>
 
 <dl class="function">
 <dt id="jarvis.core.atoms.add_atoms">
-<code class="descclassname">jarvis.core.atoms.</code><code class="descname">add_atoms</code><span class="sig-paren">(</span><em>top, bottom, distance=[0, 0, 5]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#add_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.add_atoms" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">jarvis.core.atoms.</code><code class="descname">add_atoms</code><span class="sig-paren">(</span><em>top, bottom, distance=[0, 0, 1], apply_strain=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#add_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.add_atoms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add top and bottom Atoms with a distance array.</p>
 <p>Bottom Atoms lattice-matrix is chosen as final lattice.</p>
 </dd></dl>
@@ -318,6 +318,12 @@ this method in the subclass.</dd>
 <dt id="jarvis.core.composition.Composition.formula">
 <code class="descname">formula</code><a class="headerlink" href="#jarvis.core.composition.Composition.formula" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get total chemical formula.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="jarvis.core.composition.Composition.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/composition.html#Composition.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.composition.Composition.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the class from a dictionary.</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -367,12 +373,6 @@ this method in the subclass.</dd>
 <em class="property">class </em><code class="descclassname">jarvis.core.kpoints.</code><code class="descname">HighSymmetryKpoint3DFactory</code><span class="sig-paren">(</span><em>kpoints=[]</em>, <em>path=[]</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>High-symmetry k-points for different crystal-systems.</p>
-<dl class="method">
-<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.as_dict">
-<code class="descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.as_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.as_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get dictionary representation.</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.bcc">
 <code class="descname">bcc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.bcc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.bcc" title="Permalink to this definition">¶</a></dt>
@@ -500,6 +500,12 @@ this method in the subclass.</dd>
 </dd></dl>
 
 <dl class="method">
+<dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get dictionary representation.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="jarvis.core.kpoints.HighSymmetryKpoint3DFactory.tria">
 <code class="descname">tria</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#HighSymmetryKpoint3DFactory.tria"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.tria" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trigonal a HighSymmKPath, return: Dict.</p>
@@ -522,6 +528,12 @@ this method in the subclass.</dd>
 <dt id="jarvis.core.kpoints.Kpoints3D.automatic_length_mesh">
 <code class="descname">automatic_length_mesh</code><span class="sig-paren">(</span><em>lattice_mat=[]</em>, <em>length=20</em>, <em>header='Gamma'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D.automatic_length_mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.automatic_length_mesh" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length based automatic k-points.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="jarvis.core.kpoints.Kpoints3D.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build class from a dictionary representation.</p>
 </dd></dl>
 
 <dl class="method">
@@ -619,12 +631,6 @@ this method in the subclass.</dd>
 <dd><p>Return lattice vector angles.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="jarvis.core.lattice.Lattice.as_dict">
-<code class="descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.as_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.as_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return lattice parameter information as a dictionary.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="jarvis.core.lattice.Lattice.b">
 <code class="descname">b</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.b" title="Permalink to this definition">¶</a></dt>
@@ -673,9 +679,9 @@ this method in the subclass.</dd>
 <dd><p>Return fractional coords from cartesian coords using Lattice.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="jarvis.core.lattice.Lattice.from_dict">
-<code class="descname">from_dict</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.from_dict" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct Lattice from lattice matrix dictionary.</p>
 </dd></dl>
 
@@ -792,6 +798,12 @@ Adapted from pymatgen.</p>
 <dd><p>Construct tetragonal Lattice from lattice parameter information.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="jarvis.core.lattice.Lattice.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return lattice parameter information as a dictionary.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="jarvis.core.lattice.Lattice.volume">
 <code class="descname">volume</code><a class="headerlink" href="#jarvis.core.lattice.Lattice.volume" title="Permalink to this definition">¶</a></dt>
@@ -815,6 +827,12 @@ numerical errors may result in an argument &gt; 1 being passed in.</p>
 <dt>Returns:</dt>
 <dd>val if abs(val) &lt; 1 else sign of val * max_abs_val.</dd>
 </dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.lattice.lattice_coords_transformer">
+<code class="descclassname">jarvis.core.lattice.</code><code class="descname">lattice_coords_transformer</code><span class="sig-paren">(</span><em>old_lattice_mat=[]</em>, <em>new_lattice_mat=[]</em>, <em>cart_coords=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#lattice_coords_transformer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.lattice_coords_transformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform coords to a new lattice.</p>
 </dd></dl>
 
 </div>

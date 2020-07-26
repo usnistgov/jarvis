@@ -165,7 +165,19 @@
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;kpoint_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kpoint_mode</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;header&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;kpoints_weights&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kp_weights</span>
         <span class="k">return</span> <span class="n">d</span></div>
+
+<div class="viewcode-block" id="Kpoints3D.from_dict"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.kpoints.Kpoints3D.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Build class from a dictionary representation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Kpoints3D</span><span class="p">(</span>
+            <span class="n">kpoints</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;kpoints&quot;</span><span class="p">],</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">],</span>
+            <span class="n">kpoints_weights</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;kpoints_weights&quot;</span><span class="p">],</span>
+            <span class="n">kpoint_mode</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;kpoint_mode&quot;</span><span class="p">],</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;header&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Kpoints3D.high_symm_path"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.kpoints.Kpoints3D.high_symm_path">[docs]</a>    <span class="k">def</span> <span class="nf">high_symm_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get high symmetry k-points for given Atoms.&quot;&quot;&quot;</span>
@@ -302,7 +314,7 @@
 
 <div class="viewcode-block" id="Kpoints3D.high_kpath"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.kpoints.Kpoints3D.high_kpath">[docs]</a>    <span class="k">def</span> <span class="nf">high_kpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get high symmetry path as a dictionary.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">high_symm_path</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">high_symm_path</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Kpoints3D.interpolated_points"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.kpoints.Kpoints3D.interpolated_points">[docs]</a>    <span class="k">def</span> <span class="nf">interpolated_points</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">line_density</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">coords_are_cartesian</span><span class="o">=</span><span class="kc">False</span>
@@ -428,7 +440,7 @@
         <span class="n">path</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">Gamma&quot;</span><span class="p">,</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;P&quot;</span><span class="p">,</span> <span class="s2">&quot;N&quot;</span><span class="p">]]</span>
         <span class="k">return</span> <span class="n">HighSymmetryKpoint3DFactory</span><span class="p">(</span><span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="HighSymmetryKpoint3DFactory.as_dict"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="HighSymmetryKpoint3DFactory.to_dict"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get dictionary representation.&quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;kpoints&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kpoints</span>

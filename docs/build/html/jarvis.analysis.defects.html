@@ -50,10 +50,22 @@
 <em class="property">class </em><code class="descclassname">jarvis.analysis.defects.surface.</code><code class="descname">Surface</code><span class="sig-paren">(</span><em>atoms=None, indices=[0, 0, 1], layers=3, vacuum=18.0, tol=1e-10, from_conventional_structure=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/surface.html#Surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.surface.Surface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Get surface object of arbitrary atoms object and miller index.</p>
+<dl class="classmethod">
+<dt id="jarvis.analysis.defects.surface.Surface.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/surface.html#Surface.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.surface.Surface.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct class from a dictionary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="jarvis.analysis.defects.surface.Surface.make_surface">
 <code class="descname">make_surface</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/surface.html#Surface.make_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.surface.Surface.make_surface" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate specified surface. Modified from ase package.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.analysis.defects.surface.Surface.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/surface.html#Surface.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.surface.Surface.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert to a dictionary.</p>
 </dd></dl>
 
 </dd></dl>
@@ -80,6 +92,12 @@
 <em class="property">class </em><code class="descclassname">jarvis.analysis.defects.vacancy.</code><code class="descname">Vacancy</code><span class="sig-paren">(</span><em>atoms=None</em>, <em>defect_structure=None</em>, <em>defect_index=None</em>, <em>wyckoff_multiplicity=None</em>, <em>symbol=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/vacancy.html#Vacancy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.vacancy.Vacancy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Obtain vacancy defects in Atoms class using Wyckoff data.</p>
+<dl class="classmethod">
+<dt id="jarvis.analysis.defects.vacancy.Vacancy.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/vacancy.html#Vacancy.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.vacancy.Vacancy.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load from a dictionary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="jarvis.analysis.defects.vacancy.Vacancy.generate_defects">
 <code class="descname">generate_defects</code><span class="sig-paren">(</span><em>enforce_c_size=10.0</em>, <em>on_conventional_cell=False</em>, <em>extend=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/defects/vacancy.html#Vacancy.generate_defects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.defects.vacancy.Vacancy.generate_defects" title="Permalink to this definition">¶</a></dt>

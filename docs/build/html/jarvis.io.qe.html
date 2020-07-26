@@ -122,9 +122,15 @@ see <a class="reference external" href="https://www.quantum-espresso.org/Doc/INP
 <p>Module for analyzing QE outputs.</p>
 <dl class="class">
 <dt id="jarvis.io.qe.outputs.QEout">
-<em class="property">class </em><code class="descclassname">jarvis.io.qe.outputs.</code><code class="descname">QEout</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/qe/outputs.html#QEout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.qe.outputs.QEout" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.qe.outputs.</code><code class="descname">QEout</code><span class="sig-paren">(</span><em>lines=None</em>, <em>filename='qe.out'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/qe/outputs.html#QEout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.qe.outputs.QEout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Module for parsing screen QE output files.</p>
+<dl class="classmethod">
+<dt id="jarvis.io.qe.outputs.QEout.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/qe/outputs.html#QEout.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.qe.outputs.QEout.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct from a dictionary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="jarvis.io.qe.outputs.QEout.get_band_enegies">
 <code class="descname">get_band_enegies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/qe/outputs.html#QEout.get_band_enegies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.qe.outputs.QEout.get_band_enegies" title="Permalink to this definition">¶</a></dt>
@@ -141,6 +147,12 @@ see <a class="reference external" href="https://www.quantum-espresso.org/Doc/INP
 <dt id="jarvis.io.qe.outputs.QEout.get_total_energy">
 <code class="descname">get_total_energy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/qe/outputs.html#QEout.get_total_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.qe.outputs.QEout.get_total_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get total energy in Ry.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.qe.outputs.QEout.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/qe/outputs.html#QEout.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.qe.outputs.QEout.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert class to a dictionary.</p>
 </dd></dl>
 
 </dd></dl>

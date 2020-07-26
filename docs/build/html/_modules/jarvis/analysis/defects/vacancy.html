@@ -44,6 +44,7 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="n">Spacegroup3D</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.utils</span> <span class="kn">import</span> <span class="n">rand_select</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
 
 
 <div class="viewcode-block" id="Vacancy"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.vacancy.Vacancy">[docs]</a><span class="k">class</span> <span class="nc">Vacancy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -77,6 +78,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_defect_structure</span> <span class="o">=</span> <span class="n">defect_structure</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wyckoff_multiplicity</span> <span class="o">=</span> <span class="n">wyckoff_multiplicity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_symbol</span> <span class="o">=</span> <span class="n">symbol</span>
+
+<div class="viewcode-block" id="Vacancy.from_dict"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.vacancy.Vacancy.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Load from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Vacancy</span><span class="p">(</span>
+            <span class="n">atoms</span><span class="o">=</span><span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]),</span>
+            <span class="n">defect_structure</span><span class="o">=</span><span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;defect_structure&quot;</span><span class="p">]),</span>
+            <span class="n">defect_index</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;defect_index&quot;</span><span class="p">],</span>
+            <span class="n">wyckoff_multiplicity</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;wyckoff_multiplicity&quot;</span><span class="p">],</span>
+            <span class="n">symbol</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;symbol&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="Vacancy.generate_defects"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.vacancy.Vacancy.generate_defects">[docs]</a>    <span class="k">def</span> <span class="nf">generate_defects</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">enforce_c_size</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">on_conventional_cell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="mi">1</span>
@@ -116,9 +128,12 @@
 <div class="viewcode-block" id="Vacancy.to_dict"><a class="viewcode-back" href="../../../../jarvis.analysis.defects.html#jarvis.analysis.defects.vacancy.Vacancy.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert to a dictionary.&quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;defect_structure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defect_structure</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;defect_index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defect_structure</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defect_structure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;defect_structure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defect_structure</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;defect_structure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;defect_index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defect_index</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;wyckoff_multiplicity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wyckoff_multiplicity</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;symbol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symbol</span>
         <span class="k">return</span> <span class="n">d</span></div>

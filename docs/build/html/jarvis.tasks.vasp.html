@@ -194,25 +194,37 @@ and then carry several property calculations.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="jarvis.tasks.vasp.vasp.VaspJobs">
-<em class="property">class </em><code class="descclassname">jarvis.tasks.vasp.vasp.</code><code class="descname">VaspJobs</code><span class="sig-paren">(</span><em>poscar=None, kpoints=None, incar=None, potcar=None, vasp_cmd='mpirun vasp_std', output_file='vasp.out', stderr_file='std_err.txt', jobname='test', pot_type=None, copy_files=['/users/knc6/bin/vdw_kernel.bindat'], attempts=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs" title="Permalink to this definition">¶</a></dt>
+<dt id="jarvis.tasks.vasp.vasp.VaspJob">
+<em class="property">class </em><code class="descclassname">jarvis.tasks.vasp.vasp.</code><code class="descname">VaspJob</code><span class="sig-paren">(</span><em>poscar=None, kpoints=None, incar=None, potcar=None, vasp_cmd='mpirun vasp_std', output_file='vasp.out', stderr_file='std_err.txt', jobname='test', pot_type=None, copy_files=['/users/knc6/bin/vdw_kernel.bindat'], attempts=5</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Construct a VASP calculation job.</p>
+<dl class="classmethod">
+<dt id="jarvis.tasks.vasp.vasp.VaspJob.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>info={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJob.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJob.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the class from a dictionary.</p>
+</dd></dl>
+
 <dl class="method">
-<dt id="jarvis.tasks.vasp.vasp.VaspJobs.run">
-<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs.run" title="Permalink to this definition">¶</a></dt>
+<dt id="jarvis.tasks.vasp.vasp.VaspJob.run">
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJob.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJob.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use subprocess to tun a job.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="jarvis.tasks.vasp.vasp.VaspJobs.runjob">
-<code class="descname">runjob</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs.runjob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs.runjob" title="Permalink to this definition">¶</a></dt>
+<dt id="jarvis.tasks.vasp.vasp.VaspJob.runjob">
+<code class="descname">runjob</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJob.runjob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJob.runjob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide main function for running a generic VASP calculation.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="jarvis.tasks.vasp.vasp.VaspJobs.write_jobsub_py">
-<code class="descname">write_jobsub_py</code><span class="sig-paren">(</span><em>filename='jobsub.py'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJobs.write_jobsub_py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJobs.write_jobsub_py" title="Permalink to this definition">¶</a></dt>
+<dt id="jarvis.tasks.vasp.vasp.VaspJob.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJob.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJob.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the class into a dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.VaspJob.write_jobsub_py">
+<code class="descname">write_jobsub_py</code><span class="sig-paren">(</span><em>filename='jobsub.py'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#VaspJob.write_jobsub_py"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.VaspJob.write_jobsub_py" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a generic python file for running jobs.</p>
 </dd></dl>
 

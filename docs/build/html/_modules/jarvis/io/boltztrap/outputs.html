@@ -60,11 +60,29 @@
         <span class="n">halltens_fixdoping</span><span class="o">=</span><span class="p">[],</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Specify boltztrap folder  as path to analze data.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">outtrans_data</span> <span class="o">=</span> <span class="n">outtrans_data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">intrans_data</span> <span class="o">=</span> <span class="n">intrans_data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">condtens_fixdoping</span> <span class="o">=</span> <span class="n">condtens_fixdoping</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">halltens_fixdoping</span> <span class="o">=</span> <span class="n">halltens_fixdoping</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="k">if</span> <span class="n">outtrans_data</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">outtrans_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_outputtrans</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outtrans_data</span> <span class="o">=</span> <span class="n">outtrans_data</span>
+        <span class="k">if</span> <span class="n">intrans_data</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">intrans_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_intrans</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intrans_data</span> <span class="o">=</span> <span class="n">intrans_data</span>
+        <span class="k">if</span> <span class="n">condtens_fixdoping</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">condtens_fixdoping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_condtens_fixdoping</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">condtens_fixdoping</span> <span class="o">=</span> <span class="n">condtens_fixdoping</span>
+        <span class="k">if</span> <span class="n">halltens_fixdoping</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="n">halltens_fixdoping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_halltens_fixdoping</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">halltens_fixdoping</span> <span class="o">=</span> <span class="n">halltens_fixdoping</span>
+
+<div class="viewcode-block" id="BoltzTrapOutput.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.boltztrap.html#jarvis.io.boltztrap.outputs.BoltzTrapOutput.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return output as a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;outtrans_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outtrans_data</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;intrans_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">intrans_data</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;halltens_fixdoping&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">halltens_fixdoping</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;condtens_fixdoping&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">condtens_fixdoping</span>
+        <span class="k">return</span> <span class="n">d</span></div>
 
 <div class="viewcode-block" id="BoltzTrapOutput.read_intrans"><a class="viewcode-back" href="../../../../jarvis.io.boltztrap.html#jarvis.io.boltztrap.outputs.BoltzTrapOutput.read_intrans">[docs]</a>    <span class="k">def</span> <span class="nf">read_intrans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Read intrans file.&quot;&quot;&quot;</span>
@@ -205,19 +223,16 @@
         <span class="c1"># self.halltens_fixdoping=all_data</span>
         <span class="k">return</span> <span class="n">all_data</span></div>
 
-<div class="viewcode-block" id="BoltzTrapOutput.to_dict"><a class="viewcode-back" href="../../../../jarvis.io.boltztrap.html#jarvis.io.boltztrap.outputs.BoltzTrapOutput.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return output as a dictionary.&quot;&quot;&quot;</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;outtrans_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_outputtrans</span><span class="p">()</span>  <span class="c1"># self.outtrans_data</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;intrans_data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_intrans</span><span class="p">()</span>  <span class="c1"># self.intrans_data</span>
-        <span class="n">d</span><span class="p">[</span>
-            <span class="s2">&quot;halltesn_fixdoping&quot;</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_halltens_fixdoping</span><span class="p">()</span>  <span class="c1"># self.halltesn_fixdoping</span>
-        <span class="n">d</span><span class="p">[</span>
-            <span class="s2">&quot;condtens_fixdoping&quot;</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_condtens_fixdoping</span><span class="p">()</span>  <span class="c1"># self.condtens_fixdoping</span>
-        <span class="k">return</span> <span class="n">d</span></div></div>
+<div class="viewcode-block" id="BoltzTrapOutput.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.boltztrap.html#jarvis.io.boltztrap.outputs.BoltzTrapOutput.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Load from a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BoltzTrapOutput</span><span class="p">(</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">],</span>
+            <span class="n">outtrans_data</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;outtrans_data&quot;</span><span class="p">],</span>
+            <span class="n">intrans_data</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;intrans_data&quot;</span><span class="p">],</span>
+            <span class="n">halltens_fixdoping</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;halltens_fixdoping&quot;</span><span class="p">],</span>
+            <span class="n">condtens_fixdoping</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;condtens_fixdoping&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div></div>
 
 
 <span class="sd">&quot;&quot;&quot;</span>

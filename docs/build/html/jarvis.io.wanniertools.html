@@ -47,9 +47,15 @@
 <p>Class for writing wt.in for wanniertools.</p>
 <dl class="class">
 <dt id="jarvis.io.wanniertools.inputs.WTin">
-<em class="property">class </em><code class="descclassname">jarvis.io.wanniertools.inputs.</code><code class="descname">WTin</code><span class="sig-paren">(</span><em>atoms=None, nelect=8, miller=[0, 0, 1], wannierout='wannier90.wout', wtin='wt.in', efermi=None, semi_core_states=None, soc=True, semi_cor_states=None, exclude=0, nwan=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wanniertools/inputs.html#WTin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wanniertools.inputs.WTin" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.io.wanniertools.inputs.</code><code class="descname">WTin</code><span class="sig-paren">(</span><em>atoms=None, nelect=8, miller=[0, 0, 1], wannierout='wannier90.wout', wtin='wt.in', efermi=None, semi_core_states=None, soc=True, exclude=0, nwan=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wanniertools/inputs.html#WTin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wanniertools.inputs.WTin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Construct wt.in object.</p>
+<dl class="classmethod">
+<dt id="jarvis.io.wanniertools.inputs.WTin.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wanniertools/inputs.html#WTin.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wanniertools.inputs.WTin.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct class from a dictionary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="jarvis.io.wanniertools.inputs.WTin.get_ibz_kp">
 <code class="descname">get_ibz_kp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wanniertools/inputs.html#WTin.get_ibz_kp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wanniertools.inputs.WTin.get_ibz_kp" title="Permalink to this definition">¶</a></dt>
@@ -60,6 +66,12 @@
 <dt id="jarvis.io.wanniertools.inputs.WTin.semi_core_wt">
 <code class="descname">semi_core_wt</code><span class="sig-paren">(</span><em>string=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wanniertools/inputs.html#WTin.semi_core_wt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wanniertools.inputs.WTin.semi_core_wt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get emi-core states.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.wanniertools.inputs.WTin.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wanniertools/inputs.html#WTin.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wanniertools.inputs.WTin.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the class to a dictionary.</p>
 </dd></dl>
 
 <dl class="method">
