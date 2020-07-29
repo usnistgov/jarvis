@@ -442,6 +442,12 @@ def get_hetero_type(A={}, B={}):
     return int_type, stack
 
 
+# Legacy functions, present so app imports won't fail.
+def mismatch_strts():
+    pass
+def get_heter():
+    pass
+
 """
 if __name__ == "__main__":
     s1 = Poscar.from_file(
