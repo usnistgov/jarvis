@@ -442,11 +442,18 @@ def get_hetero_type(A={}, B={}):
     return int_type, stack
 
 
-# Legacy functions, present so app imports won't fail.
 def mismatch_strts():
+    """
+    Return mismatch and other information as info dict.
+    Deprecated, preserved here so legacy imports work.
+    """
     pass
+
+
 def get_heter():
+    """Generate heterostructure. Deprecated also."""
     pass
+
 
 """
 if __name__ == "__main__":
