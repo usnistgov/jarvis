@@ -450,7 +450,7 @@ def mismatch_strts():
     pass
 
 
-def get_heter():
+def get_hetero():
     """Generate heterostructure. Deprecated also."""
     pass
 
