@@ -442,6 +442,19 @@ def get_hetero_type(A={}, B={}):
     return int_type, stack
 
 
+def mismatch_strts():
+    """
+    Return mismatch and other information as info dict.
+    Deprecated, preserved here so legacy imports work.
+    """
+    pass
+
+
+def get_heter():
+    """Generate heterostructure. Deprecated also."""
+    pass
+
+
 """
 if __name__ == "__main__":
     s1 = Poscar.from_file(
