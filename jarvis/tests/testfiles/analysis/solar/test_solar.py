@@ -54,7 +54,7 @@ vrun_path = os.path.join(
 def test_solar():
     v = Vasprun(vrun_path)
     dirgap = v.get_dir_gap
-    indirgap = v.get_indir_gap
+    indirgap = v.get_indir_gap[0]
     en, abz = v.avg_absorption_coefficient
     abz = abz * 100
     eff_slme = SolarEfficiency().slme(

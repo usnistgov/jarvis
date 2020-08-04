@@ -1,6 +1,7 @@
 from jarvis.core.lattice import Lattice
 import numpy as np
-
+from jarvis.db.figshare import data
+from jarvis.core.atoms import Atoms
 
 def test_lat():
     box = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
@@ -36,6 +37,11 @@ def test_lat():
         10.0,
         10.0,
     )
-
+    d=data('dft_3d')
+    for i in d:
+      if i['jid'] == 'JVASP-588':
+         atoms=Atoms.from_dict(i['atoms'])
+         lll = atoms.lattice._calculate_lll()
+         assert lll[1][0][0] == -1
 
 # test_lat()

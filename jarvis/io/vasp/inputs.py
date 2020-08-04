@@ -7,6 +7,7 @@ from jarvis.core.atoms import Atoms
 from collections import OrderedDict
 from jarvis.core.kpoints import generate_kgrid, Kpoints3D
 from jarvis.core.utils import get_counts
+from jarvis.core.specie import Specie
 
 
 class Poscar(object):
@@ -471,17 +472,56 @@ class Kpoints(object):
         return kpoints
 
 
-"""
-if __name__ == "__main__":
-
-    kp = open(
-        "../../examples/vasp/SiOptb88/MAIN-RELAX-bulk@mp_149/KPOINTS", "r"
-    )  # .read_file()
-    lines = kp.read().splitlines()
-    kp.close()
-    print('lbl',Kpoints.read(lines).labels)
-    # print (kp.kpoints)
-    import sys
-
-    sys.exit()
-"""
+def find_ldau_magmom(
+    atoms="",
+    U=3.0,
+    mag=5.0,
+    amix=0.2,
+    bmix=0.00001,
+    amixmag=0.8,
+    bmixmag=0.00001,
+    lsorbit=False,
+):
+    """Get necessary INCAR tags for DFT+U calculations."""
+    sps = atoms.uniq_species
+    LDAUL = []
+    LDAUU = []
+    LDAUTYPE = 2
+    lmix = 4
+    for i in sps:
+        el = Specie(i)
+        el_u = 0
+        el_l = -1
+        if el.element_property("is_transition_metal"):
+            el_u = U
+            el_l = 2
+        if el.element_property("is_actinoid") or el.element_property(
+            "is_lanthanoid"
+        ):
+            el_u = U
+            el_l = 3
+            lmix = 6
+        LDAUL.append(el_l)
+        LDAUU.append(el_u)
+    if 3 in LDAUL:
+        LDAUTYPE = 3
+    nat = atoms.num_atoms
+    magmom = str(nat) + str("*") + str(mag)
+    if lsorbit:
+        magmom = ""
+        tmp = " 0 0 " + str(mag)
+        for i in range(0, nat):
+            magmom = magmom + tmp
+    info = {}
+    info["LDAU"] = ".TRUE."
+    info["LDAUTYPE"] = LDAUTYPE
+    info["LDAUL"] = " ".join(str(m) for m in LDAUL)
+    info["LDAUU"] = " ".join(str(m) for m in LDAUU)
+    info["LDAUPRINT"] = 2
+    info["LMAMIX"] = lmix
+    info["MAGMOM"] = magmom
+    info["AMIX"] = amix
+    info["BMIX"] = bmix
+    info["AMIX_MAG"] = amixmag
+    info["BMIX_MAG"] = bmixmag
+    return info
