@@ -2,6 +2,7 @@
 
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 import numpy as np
+from collections import defaultdict
 
 
 def check_match(a, b, tol=1e-4):
@@ -57,7 +58,7 @@ def get_unique_magnetic_structures(
         magnetic_ions = set(atoms.elements)
 
     ss = atoms.make_supercell(dim=supercell_dim)
-    spg = Spacegroup3D(ss)
+    spg = Spacegroup3D(atoms)
 
     # apply symmetry with various tolerances until we find one that works
     worked = False
@@ -99,10 +100,7 @@ def get_unique_magnetic_structures(
     if magnetic_count > 0:
         for i in range(2 ** (magnetic_count)):
             binary_int = bin(i).replace("0b", "")  # convert to binary
-            total_int = (
-                tmp
-                + binary_int
-            )
+            total_int = tmp + binary_int
 
             for ii, d in enumerate(total_int[-magnetic_count:]):
                 if d == "0":
@@ -152,6 +150,33 @@ def get_unique_magnetic_structures(
 
     print("number of unique configs: ", len(symm_list))
     return symm_list, ss
+
+
+def tc_mean_field(atoms=None, energies=[-2, -1]):
+    """Curie temperature using mean-field theory."""
+    info = {}
+    mag_atoms = get_mag_ions(atoms)
+    deltaE = max(energies) - min(energies)
+    print(deltaE)
+    kB = 8.617333262e-05
+    elements_dict = defaultdict(int)
+    for i in atoms.elements:
+        if i in mag_atoms:
+            elements_dict[i] += 1
+    n_mag_elements = sum(elements_dict.values())
+    Tc = 2 * deltaE / (3 * kB) / n_mag_elements
+    info["Tc"] = Tc
+    info["deltaE"] = deltaE
+    info["n_mag_elements"] = n_mag_elements
+    return info
+
+
+def get_mag_ions(atoms=None):
+    """List all magnetic atoms in the Atoms object."""
+    all_mag_elements = ["Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu"]
+    els = atoms.elements
+    mag_ions = list(set(all_mag_elements).intersection(set(els)))
+    return mag_ions
 
 
 """

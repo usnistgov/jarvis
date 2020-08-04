@@ -1,4 +1,4 @@
-"""Modules for analzing VASP outputs."""
+"""Modulet for analzing VASP outputs."""
 
 from scipy.constants import physical_constants
 from scipy.constants import speed_of_light
@@ -16,6 +16,7 @@ RYTOEV = 13.605826
 AUTOA = 0.529177249
 TPI = 2 * np.pi
 HSQDTM = RYTOEV * AUTOA * AUTOA
+plt.switch_backend("agg")
 
 
 class Chgcar(object):
@@ -162,6 +163,80 @@ class Chgcar(object):
         return tmp
 
 
+class Locpot(Chgcar):
+    """Read LOCPOT files."""
+
+    def vac_potential(
+        self, direction="X", Ef=0, filename="Avg.png", plot=True
+    ):
+        """Calculate vacuum potential used in work-function calculation."""
+        atoms = self.atoms
+        cell = atoms.lattice_mat
+        chg = (self.chg[-1].T) * atoms.volume
+        latticelength = np.dot(cell, cell.T).diagonal()
+        latticelength = latticelength ** 0.5
+        ngridpts = np.array(chg.shape)
+        # totgridpts = ngridpts.prod()
+
+        if direction == "X":
+            idir = 0
+            a = 1
+            b = 2
+        elif direction == "Y":
+            a = 0
+            idir = 1
+            b = 2
+        else:
+            a = 0
+            b = 1
+            idir = 2
+        a = (idir + 1) % 3
+        b = (idir + 2) % 3
+        average = np.zeros(ngridpts[idir], np.float)
+        for ipt in range(ngridpts[idir]):
+            if direction == "X":
+                average[ipt] = chg[ipt, :, :].sum()
+            elif direction == "Y":
+                average[ipt] = chg[:, ipt, :].sum()
+            else:
+                average[ipt] = chg[:, :, ipt].sum()
+        average /= ngridpts[a] * ngridpts[b]
+        xdiff = latticelength[idir] / float(ngridpts[idir] - 1)
+        xs = []
+        ys = []
+        for i in range(ngridpts[idir]):
+            x = i * xdiff
+            xs.append(x)
+            ys.append(average[i])
+
+        avg_max = max(average)
+
+        dif = float(avg_max) - float(Ef)
+        if plt:
+            plt.xlabel("z (Angstrom)")
+            plt.plot(xs, ys, "-", linewidth=2, markersize=10)
+            horiz_line_data = np.array([avg_max for i in range(len(xs))])
+            plt.plot(xs, horiz_line_data, "-")
+            horiz_line_data = np.array([Ef for i in range(len(xs))])
+            plt.plot(xs, horiz_line_data, "-")
+            plt.ylabel("Potential (eV)")
+            ax = plt.gca()
+            ax.get_yaxis().get_major_formatter().set_useOffset(False)
+            plt.title(
+                str("Energy difference ")
+                + str(round(float(dif), 3))
+                + str(" eV"),
+                fontsize=26,
+            )
+            plt.tight_layout()
+
+            plt.savefig(filename)
+            plt.close()
+
+        print("Ef,max,wf=", Ef, avg_max, dif)
+        return avg_max, dif
+
+
 class Oszicar(object):
     """Construct Oszicar object."""
 
@@ -278,7 +353,7 @@ class Outcar(object):
 
     @property
     def efg_tensor_diag(self):
-        """Get electric field gradient tensor."""
+        """Get diagonalized electric field gradient tensor."""
         nions = self.nions
         for ii, i in enumerate(self.data):
             if "Electric field gradients after diagonalization" in i:
@@ -287,6 +362,26 @@ class Outcar(object):
         efg_arr = []
         for i in arr:
             tmp = [i.split()[1], i.split()[2], i.split()[3], i.split()[4]]
+            efg_arr.append(tmp)
+        efg_arr = np.array(efg_arr, dtype="float")
+        return efg_arr
+
+    @property
+    def efg_raw_tensor(self):
+        """Get raw electric field gradient tensor."""
+        nions = self.nions
+        for ii, i in enumerate(self.data):
+            if "Electric field gradients (V/A^2)" in i:
+                tmp = ii
+        arr = self.data[tmp + 4 : tmp + 4 + nions]
+        efg_arr = []
+        for i in arr:
+            line = i.split()
+            tmp = [
+                [line[1], line[4], line[5]],
+                [line[4], line[2], line[6]],
+                [line[5], line[6], line[3]],
+            ]
             efg_arr.append(tmp)
         efg_arr = np.array(efg_arr, dtype="float")
         return efg_arr
@@ -1091,10 +1186,11 @@ class Vasprun(object):
                 float(self.all_input_parameters["NELECT"])
                 / float(spin_channels)
             )
-            print("levels", levels)
             gap = min(self.eigenvalues[0][:, :, 0][:, levels]) - max(
                 self.eigenvalues[0][:, :, 0][:, levels - 1]
             )
+            vbm = max(self.eigenvalues[0][:, :, 0][:, levels - 1])
+            cbm = min(self.eigenvalues[0][:, :, 0][:, levels])
 
         if self.is_spin_polarized:
             tmp = np.concatenate(
@@ -1103,8 +1199,10 @@ class Vasprun(object):
             )
             cat = np.sort(tmp, axis=1)
             nelect = int(float(self.all_input_parameters["NELECT"]))
+            cbm = max(cat[:, nelect - 1])
+            vbm = min(cat[:, nelect])
             gap = min(cat[:, nelect]) - max(cat[:, nelect - 1])
-        return gap
+        return gap, cbm, vbm
 
     @property
     def fermi_velocities(self):
@@ -1494,6 +1592,22 @@ class Vasprun(object):
 
 
 """
+#loc=Locpot('/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-12406-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-12406/LOCPOT')
+loc=Locpot('/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/LOCPOT')
+vrun=Vasprun('/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/vasprun.xml')
+Ef=vrun.efermi
+gap,cbm,vbm=vrun.get_indir_gap
+#Ef=Vasprun('/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-12406-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-12406/vasprun.xml').efermi
+print (loc.atoms)
+print (loc.chg[-1].shape)
+print ('X')
+avg,dif=loc.vac_potential(Ef=Ef,direction="X")
+print ('Y')
+avg,dif=loc.vac_potential(Ef=Ef,direction="Y")
+print ('Z')
+avg,dif=loc.vac_potential(Ef=Ef,direction="Z")
+print ('cbm',cbm-avg)
+print ('vbm',vbm-avg)
 if __name__ == "__main__":
     vrun = Vasprun(
         "vasprun.xml"

@@ -829,6 +829,13 @@ def add_atoms(top, bottom, distance=[0, 0, 1], apply_strain=False):
     order = np.argsort(np.array(elements))
     elements = np.array(elements)[order]
     coords = np.array(coords)[order]
+    determnt = np.linalg.det(np.array(lattice_mat))
+    if determnt < 0.0:
+        lattice_mat = -1 * np.array(lattice_mat)
+    determnt = np.linalg.det(np.array(lattice_mat))
+    if determnt < 0.0:
+        print("Serious issue, check lattice vectors.")
+        print("Many software follow right hand basis rule only.")
     combined = Atoms(
         lattice_mat=lattice_mat,
         coords=coords,

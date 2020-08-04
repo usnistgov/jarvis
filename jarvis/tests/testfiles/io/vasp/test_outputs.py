@@ -232,11 +232,20 @@ def test_out():
     out_efg = Outcar(
         os.path.join(os.path.dirname(__file__), "OUTCAR.EFG-JVASP-12148")
     )
+    out_efg_raw = Outcar(
+        os.path.join(os.path.dirname(__file__), "OUTCAR.EFG-JVASP-12148")
+    ).efg_raw_tensor
     assert out_efg.efg_tensor_diag[0][0] == -4.766
     assert out_efg.quad_mom[0][0] == 0.023
     assert out_efg.converged == True
     td = out_efg.to_dict()
     fd = Outcar.from_dict(td)
+    print("out_efg_raw", (out_efg_raw))
+    print()
+    print("out_efg_raw", np.linalg.eig(out_efg_raw)[0])
+    print()
+    print("out_efg", out_efg.efg_tensor_diag)
+    print()
 
 
 def test_dfpt():
@@ -289,3 +298,6 @@ def test_ir():
 def test_wavecar():
     gvec = wf_noso.gvectors()
     assert (gvec.shape) == (555, 3)
+
+
+test_out()
