@@ -4,11 +4,14 @@ from jarvis.io.vasp.inputs import (
     Incar,
     Potcar,
     IndividualPotcarData,
+    find_ldau_magmom,
 )
 
 import tempfile
 import os
 import tarfile
+from jarvis.db.figshare import data
+from jarvis.core.atoms import Atoms
 
 example_fold_tgz = os.path.join(
     os.path.dirname(__file__),
@@ -132,3 +135,18 @@ def test_kpoints():
     kp_mesh = Kpoints(filename=kp1).kpoints
     kp_bz = Kpoints(filename=kp2).kpoints
     Kpoints(filename=kp2).kpoints.write_file(filename)
+
+def test_ldau():
+    d = data('dft_3d')
+    for i in d:
+      if i['jid']=='JVASP-29569':
+          atoms=Atoms.from_dict(i['atoms'])
+          ld = find_ldau_magmom(atoms=atoms,lsorbit=True)
+          ld = find_ldau_magmom(atoms=atoms,lsorbit=False)
+
+      if i['jid']=='JVASP-45':
+          atoms=Atoms.from_dict(i['atoms'])
+          ld = find_ldau_magmom(atoms=atoms,lsorbit=True)
+          assert ld['LDAUU']=='3.0 0'
+          ld = find_ldau_magmom(atoms=atoms,lsorbit=False)
+
