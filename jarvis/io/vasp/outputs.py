@@ -454,6 +454,7 @@ class Outcar(object):
         v = open(self.filename, "r")
         lines = v.read().splitlines()
         c = np.empty((6, 6), dtype=float)
+        # TODO: Use regex to simplify
         for i, line in enumerate(lines):
             if "TOTAL ELASTIC MODULI (kBar)" in line:
                 c11 = lines[i + 3].split()[1]
@@ -1591,29 +1592,3 @@ class Vasprun(object):
         return info
 
 
-"""
-#loc=Locpot('/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-12406-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-12406/LOCPOT')
-loc=Locpot('/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/LOCPOT')
-vrun=Vasprun('/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-2815/vasprun.xml')
-Ef=vrun.efermi
-gap,cbm,vbm=vrun.get_indir_gap
-#Ef=Vasprun('/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-12406-1L.vasp_PBEBO/MAIN-RELAX-Surf-mp-12406/vasprun.xml').efermi
-print (loc.atoms)
-print (loc.chg[-1].shape)
-print ('X')
-avg,dif=loc.vac_potential(Ef=Ef,direction="X")
-print ('Y')
-avg,dif=loc.vac_potential(Ef=Ef,direction="Y")
-print ('Z')
-avg,dif=loc.vac_potential(Ef=Ef,direction="Z")
-print ('cbm',cbm-avg)
-print ('vbm',vbm-avg)
-if __name__ == "__main__":
-    vrun = Vasprun(
-        "vasprun.xml"
-    )
-    _, _, tdos = vrun.total_dos
-    pdos = vrun.partial_dos_spdf
-    pdos = vrun.projected_atoms_spins_kpoints_bands
-    pdos = vrun.projected_spins_kpoints_bands
-"""

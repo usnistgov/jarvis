@@ -4,6 +4,7 @@ from jarvis.io.vasp.outputs import (
     Wavecar,
     Waveder,
     Chgcar,
+    Locpot,
     Outcar,
 )
 import numpy as np
@@ -104,6 +105,25 @@ band_kp = os.path.join(
     "KPOINTS",
 )
 
+
+
+loc = Locpot(
+    filename=os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "..",
+        "..",
+        "..",
+        "examples",
+        "vasp",
+        "SiOptb88",
+        "SiOptb88",
+        "MAIN-RELAX-bulk@mp_149",
+        "LOCPOT",
+    )
+)
+
+
 chg = Chgcar(
     filename=os.path.join(
         os.path.dirname(__file__),
@@ -194,14 +214,26 @@ def test_chgcar():
         chg.is_spin_polarized(),
         chg.is_spin_orbit(),
         np.array(chg.chg).shape,
-    ) == (True, False, (2, 56, 56, 56),)
+    ) == (True, False, (4, 56, 56, 56),)
     td = chg.to_dict()
     fd = Chgcar.from_dict(td)
 
+def test_locpot():
+    # print (chg.is_spin_polarized(), chg.is_spin_orbit(), np.array(chg.chg).shape)
+    assert (
+        loc.is_spin_polarized(),
+        loc.is_spin_orbit(),
+        np.array(chg.chg).shape,
+    ) == (False, False, (4, 56, 56, 56),)
+    vac = loc.vac_potential()[0]
+    assert round(vac,2) == round(7.62302803577618, 2)
+   
+    td = loc.to_dict()
+    fd = Locpot.from_dict(td)
 
 def test_vrun():
     # print ('gapp',round(vrun.get_indir_gap,2))
-    assert (round(vrun.get_indir_gap, 2)) == (0.73)
+    assert (round(vrun.get_indir_gap[0], 2)) == (0.73)
     assert (round(vrun.get_dir_gap, 2)) == (2.62)
     vrun.get_bandstructure(kpoints_file_path=band_kp)
     assert (round(opt_vrun.get_dir_gap, 2)) == (2.62)
@@ -218,7 +250,9 @@ def test_vrun():
     pdos3 = vrun.projected_spins_kpoints_bands
     td = vrun.to_dict()
     fd = Vasprun.from_dict(td)
-
+    vrun_dm = Vasprun(os.path.join(os.path.dirname(__file__),'JVASP-86924.xml'))
+    fv = vrun_dm.fermi_velocities
+    assert round(fv[0][0],2)==round(491630.23058338434,2)
 
 def test_osz():
     assert (float(osz.magnetic_moment)) == (0.0)
