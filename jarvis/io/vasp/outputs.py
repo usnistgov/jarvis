@@ -1590,5 +1590,3 @@ class Vasprun(object):
                                 val
                             )
         return info
-
-
