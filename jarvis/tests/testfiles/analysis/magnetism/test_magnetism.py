@@ -1,5 +1,5 @@
 from jarvis.core.atoms import Atoms
-from jarvis.analysis.magnetism.magmom_setup import get_unique_magnetic_structures
+from jarvis.analysis.magnetism.magmom_setup import get_unique_magnetic_structures, tc_mean_field, get_mag_ions
 def test_magnetism_setup():
     from jarvis.db.figshare import get_jid_data
     from jarvis.core.atoms import get_supercell_dims
@@ -14,6 +14,9 @@ def test_magnetism_setup():
     )
     
     print("dim=", dim, len(symm_list))
-    assert len(symm_list)==5
+    assert len(symm_list)==6
     assert ss.num_atoms == 16
-
+    mag_atoms=get_mag_ions(atoms)
+    assert mag_atoms==['Mn']
+    tc = tc_mean_field(atoms=atoms)
+    assert round(tc['Tc'],2)==round(7736.345414497057,2) 

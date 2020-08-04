@@ -941,6 +941,8 @@ class VaspJob(object):
             attempt = attempt + 1
             if attempt == self.attempts:
                 wait = True
+                print("Reached maximum attempts", attempt)
+                break
             # print("Setting up POTCAR")
             # if self.potcar is None:
             #  new_symb = list(set(self.poscar.atoms.elements))
