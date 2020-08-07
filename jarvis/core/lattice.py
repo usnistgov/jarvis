@@ -462,6 +462,8 @@ def lattice_coords_transformer(
 ):
     """Transform coords to a new lattice."""
     M = np.linalg.solve(new_lattice_mat, old_lattice_mat)
+    #  Maintains the z-distances - kfg
+    M[2,2] = 1.0 
     new_cart_coords = np.dot(cart_coords, M)
     return new_cart_coords
 
