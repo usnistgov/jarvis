@@ -129,7 +129,7 @@ class Lattice(object):
                 angle = 90.0
             angles.append(angle)
         if radians:
-            angles = [round(angle * np.pi / 180.0, 4) for angle in angles]
+            angles = [round(angleX * np.pi / 180.0, 4) for angleX in angles]
         return angles
 
     @property
@@ -463,7 +463,7 @@ def lattice_coords_transformer(
     """Transform coords to a new lattice."""
     M = np.linalg.solve(new_lattice_mat, old_lattice_mat)
     #  Maintains the z-distances - kfg
-    M[2,2] = 1.0
+    M[2, 2] = 1.0
     new_cart_coords = np.dot(cart_coords, M)
     return new_cart_coords
 
