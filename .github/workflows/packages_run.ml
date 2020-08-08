@@ -1,0 +1,26 @@
+name: JARVIS-Tools github action
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: build jarvis-tools
+    strategy:
+      max-parallel: 6
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.8]
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install Python dependencies
+      run: |
+        git clone https://github.com/QEF/q-e.git   
+        ./configure
+        make pw
+            
