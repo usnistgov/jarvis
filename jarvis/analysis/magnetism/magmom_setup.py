@@ -206,16 +206,3 @@ class MagneticOrdering(object):
                 count = 0
             print("Supercell dimension", dim)
         return symm_list, ss
-
-
-"""
-if __name__ == "__main__":
-    from jarvis.db.figshare import data
-    dft3d=data('dft_3d')
-    for i in dft3d:
-     if i['jid']=='JVASP-22693':
-        atoms=Atoms.from_dict(i['atoms']).get_primitive_atoms
-
-    Mag = MagneticOrdering(atoms).get_minimum_configs(min_configs=3)
-    print ('Mag',Mag)
-"""
