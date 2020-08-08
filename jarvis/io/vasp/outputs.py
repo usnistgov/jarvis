@@ -351,6 +351,7 @@ class Outcar(object):
             pass
         return cnvg
 
+
     #  @property
     def efg_tensor_diag(self, std_conv=True, prec=3):
         """Get diagonalized electric field gradient tensor."""
