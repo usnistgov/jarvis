@@ -18,7 +18,6 @@ class MagneticOrdering(object):
             if abs(a[1] - b[1]) < tol or abs(abs(a[1] - b[1]) - 1) < tol:
                 if abs(a[2] - b[2]) < tol or abs(abs(a[2] - b[2]) - 1) < tol:
                     return True
-
         return False
 
     def apply_symmetry_operations(self, atoms, spg, tol=1e-4):

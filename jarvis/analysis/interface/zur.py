@@ -445,6 +445,7 @@ def get_hetero_type(A={}, B={}):
 def mismatch_strts():
     """
     Return mismatch and other information as info dict.
+
     Deprecated, preserved here so legacy imports work.
     """
     pass
