@@ -20,7 +20,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install Python dependencies
       run: |
-        git clone https://github.com/QEF/q-e.git   
+        git clone https://github.com/QEF/q-e.git
+        cd q-e   
         ./configure
         make pw
             
