@@ -1,4 +1,4 @@
-name: Ppackage-run-test
+name: Package-run-test
 
 on: [push, pull_request]
 
