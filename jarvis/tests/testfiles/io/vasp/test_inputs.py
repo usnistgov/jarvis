@@ -116,6 +116,8 @@ def test_inputs():
     assert (round(p.atoms.density, 2), i.to_dict()["ISIF"]) == (2.25, "3")
     d = i.to_dict()
     ii = Incar.from_dict(d)
+    ii.write_file('INCAR')
+    print (ii)
     pot = os.path.join(
         os.path.dirname(__file__), "POT_GGA_PAW_PBE", "Xe", "POTCAR",
     )
