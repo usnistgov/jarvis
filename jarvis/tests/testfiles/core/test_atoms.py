@@ -1,4 +1,4 @@
-from jarvis.core.atoms import Atoms, VacuumPadding
+from jarvis.core.atoms import Atoms, VacuumPadding, get_supercell_dims
 import os
 from jarvis.db.figshare import get_jid_data, data
 import tarfile
@@ -49,6 +49,8 @@ def test_basic_atoms():
     coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
+    dim = get_supercell_dims(Si)
+    assert dim == [3, 3, 3]
     polar = Si.check_polar
     Si.props = ["a", "a"]
     vac_pad = VacuumPadding(Si)
