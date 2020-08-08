@@ -199,7 +199,7 @@ class MagneticOrdering(object):
         while len(symm_list) < min_configs:
             dim[index_to_expand[count]] += 1
             symm_list, ss = self.get_unique_magnetic_structures(
-                atoms, supercell_dim=dim, magnetic_ions=["Mn"]
+                atoms, supercell_dim=dim, magnetic_ions=self.get_mag_ions()
             )
             count = count + 1
             if count > 2:
