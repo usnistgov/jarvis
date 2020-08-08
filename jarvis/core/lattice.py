@@ -129,7 +129,7 @@ class Lattice(object):
                 angle = 90.0
             angles.append(angle)
         if radians:
-            angles = [round(angle * np.pi / 180.0, 4) for angle in angles]
+            angles = [round(angleX * np.pi / 180.0, 4) for angleX in angles]
         return angles
 
     @property
