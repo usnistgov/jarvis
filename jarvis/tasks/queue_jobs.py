@@ -146,7 +146,7 @@ class Queue(object):
         f = open(filename, "w")
         f.write("%s\n" % shell)
         f.write("#SBATCH --nodes=%d\n" % (nnodes))
-        f.write("SBATCH --ntasks-per-node=%d\n" % (cores))
+        f.write("#SBATCH --ntasks-per-node=%d\n" % (cores))
 
         if walltime is not None:
             if isinstance(walltime, str):

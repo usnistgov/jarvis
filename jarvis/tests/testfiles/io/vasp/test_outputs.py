@@ -228,8 +228,16 @@ def test_locpot():
     vac = loc.vac_potential()[0]
     assert round(vac,2) == round(7.62302803577618, 2)
    
+
     td = loc.to_dict()
     fd = Locpot.from_dict(td)
+
+    vac = loc.vac_potential(direction='Y')[0]
+    assert round(vac,2) == round(7.62302803577618, 2)
+
+    vac = loc.vac_potential(direction='Z')[0]
+    assert round(vac,2) == round(7.62302803577618, 2)
+
 
 def test_vrun():
     # print ('gapp',round(vrun.get_indir_gap,2))
@@ -269,7 +277,8 @@ def test_out():
     out_efg_raw = Outcar(
         os.path.join(os.path.dirname(__file__), "OUTCAR.EFG-JVASP-12148")
     ).efg_raw_tensor
-    assert out_efg.efg_tensor_diag[0][0] == -4.766
+    assert out_efg.efg_tensor_diag()[0][0] == -4.766
+    assert out_efg.efg_tensor_diag(std_conv=False)[0][0] == -4.766
     assert out_efg.quad_mom[0][0] == 0.023
     assert out_efg.converged == True
     td = out_efg.to_dict()
@@ -278,7 +287,7 @@ def test_out():
     print()
     print("out_efg_raw", np.linalg.eig(out_efg_raw)[0])
     print()
-    print("out_efg", out_efg.efg_tensor_diag)
+    print("out_efg", out_efg.efg_tensor_diag())
     print()
 
 
