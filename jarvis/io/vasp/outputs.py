@@ -352,8 +352,11 @@ class Outcar(object):
         return cnvg
 
     @property
-    def efg_tensor_diag(self):
+    def efg_tensor_diag(self, std_conv=True, prec=3):
         """Get diagonalized electric field gradient tensor."""
+        # std_conv: |Vzz|>=|Vyy|>=|Vxx|, eta=(Vxx-Vyy)/Vzz
+        # Note: VASP uses: |Vzz|>=|Vxx|>=|Vyy|, eta=(Vyy-Vxx)/Vzz
+        # quadrupolar parameter, Cq=e*Q*V_zz/h
         nions = self.nions
         for ii, i in enumerate(self.data):
             if "Electric field gradients after diagonalization" in i:
@@ -361,7 +364,24 @@ class Outcar(object):
         arr = self.data[tmp + 5 : tmp + 5 + nions]
         efg_arr = []
         for i in arr:
-            tmp = [i.split()[1], i.split()[2], i.split()[3], i.split()[4]]
+            if std_conv:
+                Vzz = round(float(i.split()[3]), prec)
+                Vyy = round(float(i.split()[1]), prec)
+                Vxx = round(float(i.split()[2]), prec)
+                if Vzz == 0.0:
+                    eta = 0.0
+                else:
+                    eta = (Vxx - Vyy) / Vzz
+                tmp = [Vxx, Vyy, Vzz, eta]
+            else:
+                Vzz = round(float(i.split()[3]), prec)
+                Vyy = round(float(i.split()[2]), prec)
+                Vxx = round(float(i.split()[1]), prec)
+                if Vzz == 0.0:
+                    eta = 0.0
+                else:
+                    eta = (Vyy - Vxx) / Vzz
+                tmp = [Vxx, Vyy, Vzz, eta]
             efg_arr.append(tmp)
         efg_arr = np.array(efg_arr, dtype="float")
         return efg_arr
