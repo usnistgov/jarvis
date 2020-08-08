@@ -18,11 +18,18 @@ def get_2d_hetero_jids(jid1="JVASP-664", jid2="JVASP-52"):
     mat1 = Atoms.from_dict(m1)
     mat2 = Atoms.from_dict(m2)
     vac = max(mat1.lattice_mat[2][2], mat2.lattice_mat[2][2])
+    print("jid1", jid1)
+    print(mat1)
+    print("jid2", jid2)
+    print(mat2)
     combined = make_interface(
         film=mat1.center_around_origin(),
+        # max_area=1000,
         max_area=400,
         max_area_ratio_tol=0.09,
+        # ltol=0.5,
         ltol=0.05,
+        # atol=1.1,
         atol=0.1,
         subs=mat2.center_around_origin(),
     )["interface"]
@@ -168,11 +175,12 @@ def test_2d_interface():
         "JVASP-76195",
     ]
     # jids = ["JVASP-652", "JVASP-664"]
-    jids = ["JVASP-652", "JVASP-658"]
     jids = ["JVASP-76195", "JVASP-5983"]
-    # jids = ["JVASP-76195", "JVASP-60389"]
+    jids = ["JVASP-76195", "JVASP-60389"]
     # jids = ["JVASP-76195", "JVASP-60244"]
     jids = ["JVASP-688", "JVASP-664"]
+    jids = ["JVASP-652", "JVASP-646"]
+    jids = ["JVASP-652", "JVASP-658"]  # WS2,WSe2
     count = 0
     for i in jids:
         for j in jids:
