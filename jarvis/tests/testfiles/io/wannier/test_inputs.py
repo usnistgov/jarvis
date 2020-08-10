@@ -62,3 +62,6 @@ def test_win():
     Wannier90win(struct=s3, efermi=0.0).write_win(name=win)
     assert (os.path.isfile(win)) == (True)
     os.remove(win)
+    cmd = 'rm *.win'
+    os.system(cmd)
+

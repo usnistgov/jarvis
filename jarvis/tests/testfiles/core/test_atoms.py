@@ -2,6 +2,10 @@ from jarvis.core.atoms import Atoms, VacuumPadding, get_supercell_dims
 import os
 from jarvis.db.figshare import get_jid_data, data
 import tarfile
+import tempfile
+
+new_file, filename = tempfile.mkstemp()
+
 
 example_fold_tgz = os.path.join(
     os.path.dirname(__file__),
@@ -59,7 +63,9 @@ def test_basic_atoms():
     den_lll_red = round(Si.get_lll_reduced_structure().density, 2)
     strng = Si.get_string()
     scell_nat = Si.make_supercell([2, 2, 2]).num_atoms
-    scell_nat2 = Si.make_supercell_matrix([[2, 0, 0], [0, 2, 0], [0, 0, 2]]).num_atoms
+    scell_nat2 = Si.make_supercell_matrix(
+        [[2, 0, 0], [0, 2, 0], [0, 0, 2]]
+    ).num_atoms
     # print("scell_nat,scell_nat2", scell_nat, scell_nat2)
     # print(Si.make_supercell([2, 2, 2]))
     # print()
@@ -72,13 +78,17 @@ def test_basic_atoms():
     # print ('raw_distance_matrix', prim.raw_distance_matrix)
     # print ('raw_distance_matrix', Si.raw_distance_matrix)
     # print ('distance_matrix', Si.pymatgen_converter().distance_matrix)
-    assert round(prim.raw_distance_matrix[0][1], 2) == round(4.42386329832851, 2)
+    assert round(prim.raw_distance_matrix[0][1], 2) == round(
+        4.42386329832851, 2
+    )
 
     d = Si.to_dict()
     new_at = Atoms.from_dict(d)
     angs_a = d["angles"][0]
     Si_2_den = Atoms(
-        lattice_mat=d["lattice_mat"], coords=d["coords"], elements=d["elements"]
+        lattice_mat=d["lattice_mat"],
+        coords=d["coords"],
+        elements=d["elements"],
     ).density
     Si.center_around_origin()
     # print ('scell_nat', Si_2)
@@ -128,16 +138,30 @@ def test_basic_atoms():
         2.33,
     )
     cc = Si.center()
-    cc = Si.center(axis=[0,0,1])
+    cc = Si.center(axis=[0, 0, 1])
 
-    m1 = Atoms.from_dict(get_jid_data('JVASP-6640')['atoms'])
-    assert m1.check_polar==True
-    print ('Strain test')
-    print (m1)
+    m1 = Atoms.from_dict(get_jid_data("JVASP-6640")["atoms"])
+    assert m1.check_polar == True
+    print("Strain test")
+    print(m1)
     m1.apply_strain(0.1)
-    print (m1)
-    assert (m1.lattice_mat[2][2]==32.8717576)
-    m1.apply_strain([0,0,.1])
-    assert (m1.lattice_mat[2][2]==36.158933360000006)
+    print(m1)
+    assert m1.lattice_mat[2][2] == 32.8717576
+    m1.apply_strain([0, 0, 0.1])
+    assert m1.lattice_mat[2][2] == 36.158933360000006
+    filename = "atoms.cif"
+    m1.write_cif(filename)
+    filename = "POSCAR"
+    m1.write_poscar(filename)
+    m2 = Atoms.from_poscar(filename)
+
+    filename = "atoms.xyz"
+    m1.write_xyz(filename)
+    m3 = Atoms.from_xyz(filename)
+
+    cmd = "rm atoms.xyz POSCAR atoms.cif"
+    os.system(cmd)
+
+
 # test_basic_atoms()
 # def test_basic_atoms():

@@ -1,7 +1,7 @@
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.core.atoms import Atoms
 import numpy as np
-
+import os
 
 def test_nbors():
     box = [[5.493642, 0, 0], [0, 5.493642, 0], [0, 0, 5.493642]]
@@ -21,9 +21,17 @@ def test_nbors():
     # coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     # elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    nb = NeighborsAnalysis(Si).get_all_distributions
+    nbr = NeighborsAnalysis(Si)
+    nb=nbr.get_all_distributions
     tmp = round((nb["rdf"][-3]), 2)
     assert (tmp) == (4.08)
+    nbr.get_rdf(plot=True)
+    #nbr.ang_dist(nbor_info=info,plot=True)
+    nbr.ang_dist_first(plot=True)
+    nbr.ang_dist_second(plot=True)
+    nbr.get_ddf(plot=True)
+    cmd = 'rm *.png'
+    os.system(cmd)
 
 
 # test_nbors()
