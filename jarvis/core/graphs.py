@@ -1,0 +1,180 @@
+"""Module to generate networkx graphs."""
+from jarvis.core.atoms import get_supercell_dims
+from jarvis.core.specie import Specie
+from jarvis.core.utils import random_colors
+import numpy as np
+from collections import OrderedDict
+
+
+class Graph(object):
+    """Get a graph object."""
+
+    def __init__(
+        self,
+        nodes=[],
+        node_attributes=[],
+        edges=[],
+        edge_attributes=[],
+        color_map=None,
+        labels=None,
+    ):
+        """
+        Initialize the graph object.
+
+        Args:
+            nodes: IDs of the graph nodes as integer array.
+
+            node_attributes: node features as multi-dimensional array.
+
+            edges: connectivity as a (u,v) pair where u is
+                   the source index and v the destination ID.
+
+            edge_attributes: attributes for each connectivity.
+                             as simple as euclidean distances.
+        """
+        self.nodes = nodes
+        self.node_attributes = node_attributes
+        self.edges = edges
+        self.edge_attributes = edge_attributes
+        self.color_map = color_map
+        self.labels = labels
+
+    @staticmethod
+    def from_atoms(atoms=None, rcut=8.0, features="cfid", enforce_c_size=10.0):
+        """
+        Get Networkx graph. Requires Networkx installation.
+
+        Args:
+             atoms: jarvis.core.Atoms object.
+
+             rcut: cut-off after which distance will be set to zero
+                   in the adjacency matrix.
+
+             features: Node features.
+                       'atomic_number': graph with atomic numbers only.
+                       'cfid': 438 chemical descriptors from CFID.
+                       array: array with CFID chemical descriptor names.
+                       See: jarvis/core/specie.py
+
+             enforce_c_size: minimum size of the simulation cell in Angst.
+        """
+        dim = get_supercell_dims(atoms=atoms, enforce_c_size=enforce_c_size)
+        atoms = atoms.make_supercell(dim)
+        adj = atoms.raw_distance_matrix
+        adj[adj > rcut] = 0.0
+        nodes = np.arange(atoms.num_atoms)
+        if features == "cfid":
+            node_attributes = np.array(
+                [np.array(Specie(i).get_descrp_arr) for i in atoms.elements],
+                dtype="float",
+            )
+        elif features == "atomic_number":
+            node_attributes = np.array(
+                [np.array(Specie(i).Z) for i in atoms.elements], dtype="float",
+            )
+        elif isinstance(features, list):
+            node_attributes = []
+            for i in atoms.elements:
+                tmp = []
+                for j in features:
+                    tmp.append(Specie(i).element_property(j))
+                node_attributes.append(tmp)
+            node_attributes = np.array(node_attributes, dtype="float")
+        else:
+            raise ("Please check the input options.")
+
+        uv = []
+        edge_features = []
+        for ii, i in enumerate(atoms.elements):
+            for jj, j in enumerate(atoms.elements):
+                uv.append((ii, jj))
+                edge_features.append(adj[ii, jj])
+        edge_attributes = edge_features
+        color_dict = random_colors(number_of_colors=len(nodes))
+        color_map = []
+        for ii, i in enumerate(atoms.elements):
+            color_map.append(color_dict[Specie(i).Z])
+        return Graph(
+            nodes=nodes,
+            edges=uv,
+            node_attributes=node_attributes,
+            edge_attributes=edge_attributes,
+            color_map=color_map,
+        )
+
+    def to_networkx(self):
+        """Get networkx representation."""
+        import networkx as nx
+
+        graph = nx.DiGraph()
+        graph.add_nodes_from(self.nodes)
+        graph.add_edges_from(self.edges)
+        for i, j in zip(self.edges, self.edge_attributes):
+            graph.add_edge(i[0], i[1], j)
+        return graph
+
+    @property
+    def num_nodes(self):
+        """Return number of nodes in the graph."""
+        return len(self.nodes)
+
+    @property
+    def num_edges(self):
+        """Return number of edges in the graph."""
+        return len(self.edges)
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Constuct class from a dictionary."""
+        return Graph(
+            nodes=d["nodes"],
+            edges=d["edges"],
+            node_attributes=d["node_attributes"],
+            edge_attributes=d["edge_attributes"],
+            color_map=d["color_map"],
+            labels=d["labels"],
+        )
+
+    def to_dict(self):
+        """Provide dictionary representation of the Graph object."""
+        info = OrderedDict()
+        info["nodes"] = np.array(self.nodes).tolist()
+        info["edges"] = np.array(self.edges).tolist()
+        info["node_attributes"] = np.array(self.node_attributes).tolist()
+        info["edge_attributes"] = np.array(self.edge_attributes).tolist()
+        info["color_map"] = np.array(self.color_map).tolist()
+        info["labels"] = np.array(self.labels).tolist()
+        return info
+
+    def __repr__(self):
+        """Provide representation during print statements."""
+        return "Graph({})".format(self.to_dict())
+
+    @property
+    def adjacency_matrix(self):
+        """Provide adjacency_matrix of graph."""
+        return self.edge_attributes
+
+
+"""
+if __name__ == "__main__":
+    from jarvis.core.atoms import Atoms
+    from jarvis.db.figshare import get_jid_data
+
+    atoms = Atoms.from_dict(get_jid_data("JVASP-664")["atoms"])
+    g = Graph.from_atoms(atoms=atoms,features='atomic_number')
+    g = Graph.from_atoms(atoms=atoms,features=["Z","atom_mass","max_oxid_s"])
+    g = Graph.from_atoms(atoms=atoms,features='cfid')
+    print(g)
+    d = g.to_dict()
+    g = Graph.from_dict(d)
+    num_nodes = g.num_nodes
+    num_edges = g.num_edges
+    print(num_nodes, num_edges)
+    assert num_nodes == 48
+    assert num_edges == 2304
+    assert len(g.adjacency_matrix) == 2304
+    # graph, color_map = get_networkx_graph(atoms)
+    # nx.draw(graph, node_color=color_map, with_labels=True)
+    # from jarvis.analysis.structure.neighbors import NeighborsAnalysis
+"""
