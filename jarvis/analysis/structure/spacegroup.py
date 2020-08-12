@@ -462,6 +462,7 @@ class Spacegroup3D(object):
 
                     elif angles[0] < 90:
                         transf = np.zeros(shape=(3, 3))
+                        # print ('464-470')
                         transf[0][t[0]] = 1
                         transf[1][t[1]] = 1
                         transf[2][2] = 1
@@ -474,6 +475,7 @@ class Spacegroup3D(object):
                         ]
 
                 if new_matrix is None:
+                    # print ('479-482')
                     # this if is to treat the case
                     # where alpha==90 (but we still have a monoclinic sg
                     new_matrix = [[a, 0, 0], [0, b, 0], [0, 0, c]]
@@ -507,6 +509,7 @@ class Spacegroup3D(object):
                         ]
                         continue
                     elif alpha < 90 and b < c:
+                        # print ('510-515')
                         transf = np.zeros(shape=(3, 3))
                         transf[0][t[0]] = 1
                         transf[1][t[1]] = 1
@@ -518,6 +521,7 @@ class Spacegroup3D(object):
                             [0, c * cos(alpha), c * sin(alpha)],
                         ]
                 if new_matrix is None:
+                    # print ('523-530')
                     # this if is to treat the case
                     # where alpha==90 (but we still have a monoclinic sg
                     new_matrix = [
