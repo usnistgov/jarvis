@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.io.vasp package &#8212; JARVIS-Tools 2020.7.14 documentation</title>
+    <title>jarvis.io.vasp package &#8212; JARVIS-Tools 2020.8.12 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.7.14 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -213,10 +213,16 @@
 
 </dd></dl>
 
+<dl class="function">
+<dt id="jarvis.io.vasp.inputs.find_ldau_magmom">
+<code class="descclassname">jarvis.io.vasp.inputs.</code><code class="descname">find_ldau_magmom</code><span class="sig-paren">(</span><em>atoms=''</em>, <em>U=3.0</em>, <em>mag=5.0</em>, <em>amix=0.2</em>, <em>bmix=1e-05</em>, <em>amixmag=0.8</em>, <em>bmixmag=1e-05</em>, <em>lsorbit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/inputs.html#find_ldau_magmom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.inputs.find_ldau_magmom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get necessary INCAR tags for DFT+U calculations.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-jarvis.io.vasp.outputs">
 <span id="jarvis-io-vasp-outputs-module"></span><h2>jarvis.io.vasp.outputs module<a class="headerlink" href="#module-jarvis.io.vasp.outputs" title="Permalink to this headline">¶</a></h2>
-<p>Modules for analzing VASP outputs.</p>
+<p>Modulet for analzing VASP outputs.</p>
 <dl class="class">
 <dt id="jarvis.io.vasp.outputs.Chgcar">
 <em class="property">class </em><code class="descclassname">jarvis.io.vasp.outputs.</code><code class="descname">Chgcar</code><span class="sig-paren">(</span><em>filename=''</em>, <em>atoms=None</em>, <em>chg=[]</em>, <em>chgdif=None</em>, <em>aug=None</em>, <em>augdiff=None</em>, <em>dim=None</em>, <em>nsets=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar" title="Permalink to this definition">¶</a></dt>
@@ -256,6 +262,19 @@
 <dt id="jarvis.io.vasp.outputs.Chgcar.to_dict">
 <code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Chgcar.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Chgcar.to_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert to a dictionary.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="jarvis.io.vasp.outputs.Locpot">
+<em class="property">class </em><code class="descclassname">jarvis.io.vasp.outputs.</code><code class="descname">Locpot</code><span class="sig-paren">(</span><em>filename=''</em>, <em>atoms=None</em>, <em>chg=[]</em>, <em>chgdif=None</em>, <em>aug=None</em>, <em>augdiff=None</em>, <em>dim=None</em>, <em>nsets=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Locpot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Locpot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jarvis.io.vasp.outputs.Chgcar" title="jarvis.io.vasp.outputs.Chgcar"><code class="xref py py-class docutils literal notranslate"><span class="pre">jarvis.io.vasp.outputs.Chgcar</span></code></a></p>
+<p>Read LOCPOT files.</p>
+<dl class="method">
+<dt id="jarvis.io.vasp.outputs.Locpot.vac_potential">
+<code class="descname">vac_potential</code><span class="sig-paren">(</span><em>direction='X'</em>, <em>Ef=0</em>, <em>filename='Avg.png'</em>, <em>plot=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Locpot.vac_potential"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Locpot.vac_potential" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate vacuum potential used in work-function calculation.</p>
 </dd></dl>
 
 </dd></dl>
@@ -309,9 +328,15 @@
 </dd></dl>
 
 <dl class="attribute">
+<dt id="jarvis.io.vasp.outputs.Outcar.efg_raw_tensor">
+<code class="descname">efg_raw_tensor</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.efg_raw_tensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get raw electric field gradient tensor.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="jarvis.io.vasp.outputs.Outcar.efg_tensor_diag">
-<code class="descname">efg_tensor_diag</code><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.efg_tensor_diag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get electric field gradient tensor.</p>
+<code class="descname">efg_tensor_diag</code><span class="sig-paren">(</span><em>std_conv=True</em>, <em>prec=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/vasp/outputs.html#Outcar.efg_tensor_diag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.vasp.outputs.Outcar.efg_tensor_diag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get diagonalized electric field gradient tensor.</p>
 </dd></dl>
 
 <dl class="method">
@@ -779,7 +804,7 @@ The WAVEDER contains the derivative of the orbitals with respect to k.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.7.14 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

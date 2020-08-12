@@ -20,6 +20,14 @@ jarvis.tests.testfiles.core.test\_composition module
     :undoc-members:
     :show-inheritance:
 
+jarvis.tests.testfiles.core.test\_graph module
+----------------------------------------------
+
+.. automodule:: jarvis.tests.testfiles.core.test_graph
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 jarvis.tests.testfiles.core.test\_kpoints module
 ------------------------------------------------
 
