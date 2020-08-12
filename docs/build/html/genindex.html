@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Index &#8212; JARVIS-Tools 2020.7.14 documentation</title>
+    <title>Index &#8212; JARVIS-Tools 2020.8.12 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.7.14 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -80,6 +80,8 @@
 </li>
       <li><a href="jarvis.core.html#jarvis.core.atoms.add_atoms">add_atoms() (in module jarvis.core.atoms)</a>
 </li>
+      <li><a href="jarvis.core.html#jarvis.core.graphs.Graph.adjacency_matrix">adjacency_matrix (jarvis.core.graphs.Graph attribute)</a>
+</li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.all_energies">all_energies (jarvis.io.vasp.outputs.Vasprun attribute)</a>
 </li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.all_forces">all_forces (jarvis.io.vasp.outputs.Vasprun attribute)</a>
@@ -112,7 +114,7 @@
 </li>
       <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms.apply_strain">apply_strain() (jarvis.core.atoms.Atoms method)</a>
 </li>
-      <li><a href="jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.apply_symmetry_operations">apply_symmetry_operations() (in module jarvis.analysis.magnetism.magmom_setup)</a>
+      <li><a href="jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering.apply_symmetry_operations">apply_symmetry_operations() (jarvis.analysis.magnetism.magmom_setup.MagneticOrdering method)</a>
 </li>
       <li><a href="jarvis.io.qe.html#jarvis.io.qe.inputs.QEinfile.atomic_cell_params">atomic_cell_params() (jarvis.io.qe.inputs.QEinfile method)</a>
 </li>
@@ -129,6 +131,10 @@
       <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms">Atoms (class in jarvis.core.atoms)</a>
 </li>
       <li><a href="jarvis.io.lammps.html#jarvis.io.lammps.inputs.LammpsData.atoms_to_lammps">atoms_to_lammps() (jarvis.io.lammps.inputs.LammpsData method)</a>
+</li>
+      <li><a href="jarvis.analysis.structure.html#jarvis.analysis.structure.neighbors.NeighborsAnalysis.atomwise_angle_dist">atomwise_angle_dist() (jarvis.analysis.structure.neighbors.NeighborsAnalysis method)</a>
+</li>
+      <li><a href="jarvis.analysis.structure.html#jarvis.analysis.structure.neighbors.NeighborsAnalysis.atomwise_radial_dist">atomwise_radial_dist() (jarvis.analysis.structure.neighbors.NeighborsAnalysis method)</a>
 </li>
       <li><a href="jarvis.core.html#jarvis.core.kpoints.Kpoints3D.automatic_length_mesh">automatic_length_mesh() (jarvis.core.kpoints.Kpoints3D method)</a>
 </li>
@@ -186,7 +192,7 @@
 </li>
       <li><a href="jarvis.analysis.structure.html#jarvis.analysis.structure.neighbors.check_array">check_array() (in module jarvis.analysis.structure.neighbors)</a>
 </li>
-      <li><a href="jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.check_match">check_match() (in module jarvis.analysis.magnetism.magmom_setup)</a>
+      <li><a href="jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering.check_match">check_match() (jarvis.analysis.magnetism.magmom_setup.MagneticOrdering method)</a>
 </li>
       <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms.check_polar">check_polar (jarvis.core.atoms.Atoms attribute)</a>
 </li>
@@ -276,16 +282,18 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.efermi">efermi (jarvis.io.vasp.outputs.Vasprun attribute)</a>
 </li>
-      <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Outcar.efg_tensor_diag">efg_tensor_diag (jarvis.io.vasp.outputs.Outcar attribute)</a>
+      <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Outcar.efg_raw_tensor">efg_raw_tensor (jarvis.io.vasp.outputs.Outcar attribute)</a>
+</li>
+      <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Outcar.efg_tensor_diag">efg_tensor_diag() (jarvis.io.vasp.outputs.Outcar method)</a>
 </li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.eigenvalues">eigenvalues (jarvis.io.vasp.outputs.Vasprun attribute)</a>
 </li>
       <li><a href="jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.elastic">elastic() (jarvis.tasks.vasp.vasp.JobFactory method)</a>
 </li>
-      <li><a href="jarvis.tasks.lammps.templates.html#jarvis.tasks.lammps.templates.templates.GenericInputs.elastic_general">elastic_general() (jarvis.tasks.lammps.templates.templates.GenericInputs method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="jarvis.tasks.lammps.templates.html#jarvis.tasks.lammps.templates.templates.GenericInputs.elastic_general">elastic_general() (jarvis.tasks.lammps.templates.templates.GenericInputs method)</a>
+</li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Outcar.elastic_props">elastic_props() (jarvis.io.vasp.outputs.Outcar method)</a>
 </li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Oszicar.electronic_steps">electronic_steps (jarvis.io.vasp.outputs.Oszicar attribute)</a>
@@ -314,6 +322,8 @@
 </li>
       <li><a href="jarvis.core.html#jarvis.core.lattice.Lattice.find_all_matches">find_all_matches() (jarvis.core.lattice.Lattice method)</a>
 </li>
+      <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.inputs.find_ldau_magmom">find_ldau_magmom() (in module jarvis.io.vasp.inputs)</a>
+</li>
       <li><a href="jarvis.core.html#jarvis.core.lattice.Lattice.find_matches">find_matches() (jarvis.core.lattice.Lattice method)</a>
 </li>
       <li><a href="jarvis.core.html#jarvis.core.atoms.fix_pbc">fix_pbc() (in module jarvis.core.atoms)</a>
@@ -324,6 +334,8 @@
 </li>
       <li><a href="jarvis.core.html#jarvis.core.lattice.Lattice.frac_coords">frac_coords() (jarvis.core.lattice.Lattice method)</a>
 </li>
+      <li><a href="jarvis.core.html#jarvis.core.graphs.Graph.from_atoms">from_atoms() (jarvis.core.graphs.Graph static method)</a>
+</li>
       <li><a href="jarvis.analysis.defects.html#jarvis.analysis.defects.surface.Surface.from_dict">from_dict() (jarvis.analysis.defects.surface.Surface class method)</a>
 
       <ul>
@@ -332,6 +344,8 @@
         <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms.from_dict">(jarvis.core.atoms.Atoms class method)</a>
 </li>
         <li><a href="jarvis.core.html#jarvis.core.composition.Composition.from_dict">(jarvis.core.composition.Composition class method)</a>
+</li>
+        <li><a href="jarvis.core.html#jarvis.core.graphs.Graph.from_dict">(jarvis.core.graphs.Graph class method)</a>
 </li>
         <li><a href="jarvis.core.html#jarvis.core.kpoints.Kpoints3D.from_dict">(jarvis.core.kpoints.Kpoints3D class method)</a>
 </li>
@@ -384,6 +398,8 @@
       </ul></li>
       <li><a href="jarvis.core.html#jarvis.core.lattice.Lattice.from_parameters">from_parameters() (jarvis.core.lattice.Lattice static method)</a>
 </li>
+      <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms.from_poscar">from_poscar() (jarvis.core.atoms.Atoms class method)</a>
+</li>
       <li><a href="jarvis.core.html#jarvis.core.composition.Composition.from_string">from_string() (jarvis.core.composition.Composition static method)</a>
 
       <ul>
@@ -394,6 +410,8 @@
         <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.inputs.Poscar.from_string">(jarvis.io.vasp.inputs.Poscar static method)</a>
 </li>
       </ul></li>
+      <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms.from_xyz">from_xyz() (jarvis.core.atoms.Atoms class method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -464,11 +482,13 @@
 </li>
       <li><a href="jarvis.analysis.interface.html#jarvis.analysis.interface.zur.ZSLGenerator.get_equiv_transformations">get_equiv_transformations() (jarvis.analysis.interface.zur.ZSLGenerator method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="jarvis.analysis.interface.html#jarvis.analysis.interface.zur.get_factors">get_factors() (in module jarvis.analysis.interface.zur)</a>
 </li>
       <li><a href="jarvis.db.html#jarvis.db.figshare.get_ff_eneleast">get_ff_eneleast() (in module jarvis.db.figshare)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="jarvis.analysis.interface.html#jarvis.analysis.interface.zur.get_hetero">get_hetero() (in module jarvis.analysis.interface.zur)</a>
 </li>
       <li><a href="jarvis.analysis.interface.html#jarvis.analysis.interface.zur.get_hetero_type">get_hetero_type() (in module jarvis.analysis.interface.zur)</a>
 </li>
@@ -488,7 +508,11 @@
 </li>
       <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms.get_lll_reduced_structure">get_lll_reduced_structure() (jarvis.core.atoms.Atoms method)</a>
 </li>
+      <li><a href="jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering.get_mag_ions">get_mag_ions() (jarvis.analysis.magnetism.magmom_setup.MagneticOrdering method)</a>
+</li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.inputs.Kpoints.get_mesh_kp">get_mesh_kp() (jarvis.io.vasp.inputs.Kpoints method)</a>
+</li>
+      <li><a href="jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering.get_minimum_configs">get_minimum_configs() (jarvis.analysis.magnetism.magmom_setup.MagneticOrdering method)</a>
 </li>
       <li><a href="jarvis.ai.pkgs.html#jarvis.ai.pkgs.utils.get_ml_data">get_ml_data() (in module jarvis.ai.pkgs.utils)</a>
 </li>
@@ -522,13 +546,15 @@
 </li>
       <li><a href="jarvis.io.qe.html#jarvis.io.qe.outputs.QEout.get_total_energy">get_total_energy() (jarvis.io.qe.outputs.QEout method)</a>
 </li>
-      <li><a href="jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.get_unique_magnetic_structures">get_unique_magnetic_structures() (in module jarvis.analysis.magnetism.magmom_setup)</a>
+      <li><a href="jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering.get_unique_magnetic_structures">get_unique_magnetic_structures() (jarvis.analysis.magnetism.magmom_setup.MagneticOrdering method)</a>
 </li>
       <li><a href="jarvis.analysis.structure.html#jarvis.analysis.structure.spacegroup.get_wyckoff_position_operators">get_wyckoff_position_operators() (in module jarvis.analysis.structure.spacegroup)</a>
 </li>
       <li><a href="jarvis.io.wanniertools.html#jarvis.io.wanniertools.outputs.WTOut.get_z2_index">get_z2_index() (jarvis.io.wanniertools.outputs.WTOut method)</a>
 </li>
       <li><a href="jarvis.io.wannier.html#jarvis.io.wannier.outputs.Wannier90wout.give_wannier_centers">give_wannier_centers() (jarvis.io.wannier.outputs.Wannier90wout method)</a>
+</li>
+      <li><a href="jarvis.core.html#jarvis.core.graphs.Graph">Graph (class in jarvis.core.graphs)</a>
 </li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Wavecar.gvectors">gvectors() (jarvis.io.vasp.outputs.Wavecar method)</a>
 </li>
@@ -606,6 +632,8 @@
 </li>
       <li><a href="jarvis.ai.descriptors.html#module-jarvis.ai.descriptors.coulomb">jarvis.ai.descriptors.coulomb (module)</a>
 </li>
+      <li><a href="jarvis.ai.gcn.html#module-jarvis.ai.gcn">jarvis.ai.gcn (module)</a>
+</li>
       <li><a href="jarvis.ai.pkgs.html#module-jarvis.ai.pkgs">jarvis.ai.pkgs (module)</a>
 </li>
       <li><a href="jarvis.ai.pkgs.lgbm.html#module-jarvis.ai.pkgs.lgbm">jarvis.ai.pkgs.lgbm (module)</a>
@@ -676,14 +704,16 @@
 </li>
       <li><a href="jarvis.core.html#module-jarvis.core.composition">jarvis.core.composition (module)</a>
 </li>
+      <li><a href="jarvis.core.html#module-jarvis.core.graphs">jarvis.core.graphs (module)</a>
+</li>
       <li><a href="jarvis.core.html#module-jarvis.core.kpoints">jarvis.core.kpoints (module)</a>
 </li>
       <li><a href="jarvis.core.html#module-jarvis.core.lattice">jarvis.core.lattice (module)</a>
 </li>
-      <li><a href="jarvis.core.html#module-jarvis.core.pdb_atoms">jarvis.core.pdb_atoms (module)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="jarvis.core.html#module-jarvis.core.pdb_atoms">jarvis.core.pdb_atoms (module)</a>
+</li>
       <li><a href="jarvis.core.html#module-jarvis.core.specie">jarvis.core.specie (module)</a>
 </li>
       <li><a href="jarvis.core.html#module-jarvis.core.utils">jarvis.core.utils (module)</a>
@@ -830,6 +860,8 @@
 </li>
       <li><a href="jarvis.db.html#jarvis.db.jsonutils.loadjson">loadjson() (in module jarvis.db.jsonutils)</a>
 </li>
+      <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Locpot">Locpot (class in jarvis.io.vasp.outputs)</a>
+</li>
       <li><a href="jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.loptics">loptics() (jarvis.tasks.vasp.vasp.JobFactory method)</a>
 </li>
   </ul></td>
@@ -839,6 +871,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Oszicar.magnetic_moment">magnetic_moment (jarvis.io.vasp.outputs.Oszicar attribute)</a>
+</li>
+      <li><a href="jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering">MagneticOrdering (class in jarvis.analysis.magnetism.magmom_setup)</a>
 </li>
       <li><a href="jarvis.analysis.interface.html#jarvis.analysis.interface.zur.make_interface">make_interface() (in module jarvis.analysis.interface.zur)</a>
 </li>
@@ -874,6 +908,8 @@
 </li>
       <li><a href="jarvis.io.phonopy.html#jarvis.io.phonopy.inputs.PhonopyInputs.mesh_irreps">mesh_irreps() (jarvis.io.phonopy.inputs.PhonopyInputs method)</a>
 </li>
+      <li><a href="jarvis.analysis.interface.html#jarvis.analysis.interface.zur.mismatch_strts">mismatch_strts() (in module jarvis.analysis.interface.zur)</a>
+</li>
       <li><a href="jarvis.core.html#jarvis.core.lattice.Lattice.monoclinic">monoclinic() (jarvis.core.lattice.Lattice static method)</a>
 </li>
   </ul></td>
@@ -896,14 +932,14 @@
 </li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Outcar.nions">nions (jarvis.io.vasp.outputs.Outcar attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.nkpoints">nkpoints (jarvis.io.vasp.outputs.Vasprun attribute)</a>
 
       <ul>
         <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Waveder.nkpoints">(jarvis.io.vasp.outputs.Waveder attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="jarvis.analysis.phonon.html#jarvis.analysis.phonon.ir.normalize_vecs">normalize_vecs() (in module jarvis.analysis.phonon.ir)</a>
 </li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.nspins">nspins (jarvis.io.vasp.outputs.Vasprun attribute)</a>
@@ -914,6 +950,10 @@
         <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.num_atoms">(jarvis.io.vasp.outputs.Vasprun attribute)</a>
 </li>
       </ul></li>
+      <li><a href="jarvis.core.html#jarvis.core.graphs.Graph.num_edges">num_edges (jarvis.core.graphs.Graph attribute)</a>
+</li>
+      <li><a href="jarvis.core.html#jarvis.core.graphs.Graph.num_nodes">num_nodes (jarvis.core.graphs.Graph attribute)</a>
+</li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.num_types">num_types (jarvis.io.vasp.outputs.Vasprun attribute)</a>
 </li>
   </ul></td>
@@ -1022,6 +1062,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="jarvis.core.html#jarvis.core.utils.rand_select">rand_select() (in module jarvis.core.utils)</a>
 </li>
+      <li><a href="jarvis.core.html#jarvis.core.utils.random_colors">random_colors() (in module jarvis.core.utils)</a>
+</li>
       <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms.raw_distance_matrix">raw_distance_matrix (jarvis.core.atoms.Atoms attribute)</a>
 </li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.inputs.Kpoints.read">read() (jarvis.io.vasp.inputs.Kpoints class method)</a>
@@ -1054,10 +1096,10 @@
 </li>
       <li><a href="jarvis.core.html#jarvis.core.lattice.Lattice.reciprocal_lattice">reciprocal_lattice() (jarvis.core.lattice.Lattice method)</a>
 </li>
-      <li><a href="jarvis.core.html#jarvis.core.composition.Composition.reduce">reduce() (jarvis.core.composition.Composition method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="jarvis.core.html#jarvis.core.composition.Composition.reduce">reduce() (jarvis.core.composition.Composition method)</a>
+</li>
       <li><a href="jarvis.analysis.interface.html#jarvis.analysis.interface.zur.reduce_vectors">reduce_vectors() (in module jarvis.analysis.interface.zur)</a>
 </li>
       <li><a href="jarvis.core.html#jarvis.core.composition.Composition.reduced_formula">reduced_formula (jarvis.core.composition.Composition attribute)</a>
@@ -1146,6 +1188,8 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering.tc_mean_field">tc_mean_field() (jarvis.analysis.magnetism.magmom_setup.MagneticOrdering method)</a>
+</li>
       <li><a href="jarvis.analysis.stm.html#jarvis.analysis.stm.tersoff_hamann.TersoffHamannSTM">TersoffHamannSTM (class in jarvis.analysis.stm.tersoff_hamann)</a>
 </li>
       <li><a href="jarvis.core.html#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.tet">tet() (jarvis.core.kpoints.HighSymmetryKpoint3DFactory method)</a>
@@ -1160,6 +1204,8 @@
         <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms.to_dict">(jarvis.core.atoms.Atoms method)</a>
 </li>
         <li><a href="jarvis.core.html#jarvis.core.composition.Composition.to_dict">(jarvis.core.composition.Composition method)</a>
+</li>
+        <li><a href="jarvis.core.html#jarvis.core.graphs.Graph.to_dict">(jarvis.core.graphs.Graph method)</a>
 </li>
         <li><a href="jarvis.core.html#jarvis.core.kpoints.HighSymmetryKpoint3DFactory.to_dict">(jarvis.core.kpoints.HighSymmetryKpoint3DFactory method)</a>
 </li>
@@ -1204,6 +1250,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="jarvis.core.html#jarvis.core.graphs.Graph.to_networkx">to_networkx() (jarvis.core.graphs.Graph method)</a>
+</li>
       <li><a href="jarvis.io.qe.html#jarvis.io.qe.inputs.QEinfile.to_string">to_string() (jarvis.io.qe.inputs.QEinfile method)</a>
 </li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.total_dos">total_dos (jarvis.io.vasp.outputs.Vasprun attribute)</a>
@@ -1236,6 +1284,8 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Locpot.vac_potential">vac_potential() (jarvis.io.vasp.outputs.Locpot method)</a>
+</li>
       <li><a href="jarvis.analysis.defects.html#jarvis.analysis.defects.vacancy.Vacancy">Vacancy (class in jarvis.analysis.defects.vacancy)</a>
 </li>
       <li><a href="jarvis.core.html#jarvis.core.atoms.VacuumPadding">VacuumPadding (class in jarvis.core.atoms)</a>
@@ -1278,6 +1328,8 @@
 </li>
       <li><a href="jarvis.io.vasp.html#jarvis.io.vasp.outputs.Wavecar.whereRec">whereRec() (jarvis.io.vasp.outputs.Wavecar method)</a>
 </li>
+      <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms.write_cif">write_cif() (jarvis.core.atoms.Atoms method)</a>
+</li>
       <li><a href="jarvis.io.boltztrap.html#jarvis.io.boltztrap.inputs.WriteInputs.write_energy">write_energy() (jarvis.io.boltztrap.inputs.WriteInputs method)</a>
 </li>
       <li><a href="jarvis.core.html#jarvis.core.kpoints.Kpoints3D.write_file">write_file() (jarvis.core.kpoints.Kpoints3D method)</a>
@@ -1306,11 +1358,15 @@
 </li>
       <li><a href="jarvis.io.lammps.html#jarvis.io.lammps.inputs.LammpsInput.write_lammps_in">write_lammps_in() (jarvis.io.lammps.inputs.LammpsInput method)</a>
 </li>
+      <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms.write_poscar">write_poscar() (jarvis.core.atoms.Atoms method)</a>
+</li>
       <li><a href="jarvis.io.boltztrap.html#jarvis.io.boltztrap.inputs.WriteInputs.write_struct">write_struct() (jarvis.io.boltztrap.inputs.WriteInputs method)</a>
 </li>
       <li><a href="jarvis.io.wannier.html#jarvis.io.wannier.inputs.Wannier90win.write_win">write_win() (jarvis.io.wannier.inputs.Wannier90win method)</a>
 </li>
       <li><a href="jarvis.io.wanniertools.html#jarvis.io.wanniertools.inputs.WTin.write_wt_in">write_wt_in() (jarvis.io.wanniertools.inputs.WTin method)</a>
+</li>
+      <li><a href="jarvis.core.html#jarvis.core.atoms.Atoms.write_xyz">write_xyz() (jarvis.core.atoms.Atoms method)</a>
 </li>
       <li><a href="jarvis.io.boltztrap.html#jarvis.io.boltztrap.inputs.WriteInputs">WriteInputs (class in jarvis.io.boltztrap.inputs)</a>
 </li>
@@ -1375,7 +1431,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.7.14 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
