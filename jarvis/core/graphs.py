@@ -141,13 +141,13 @@ class Graph(object):
         edge_attributes = edge_features
         color_dict = random_colors(number_of_colors=len(nodes))
         color_map = []
-        for ii, i in enumerate(atoms.elements):
-            color_map.append(color_dict[Specie(i).Z])
+        # for ii, i in enumerate(atoms.elements):
+        #    color_map.append(color_dict[Specie(i).Z])
         return Graph(
             nodes=nodes,
             edges=uv,
-            node_attributes=node_attributes,
-            edge_attributes=edge_attributes,
+            node_attributes=np.array(node_attributes),
+            edge_attributes=np.array(edge_attributes),
             color_map=color_map,
         )
 
@@ -202,7 +202,7 @@ class Graph(object):
     @property
     def adjacency_matrix(self):
         """Provide adjacency_matrix of graph."""
-        return self.edge_attributes
+        return self.edge_attributes.reshape(self.num_nodes, self.num_nodes)
 
 
 """
