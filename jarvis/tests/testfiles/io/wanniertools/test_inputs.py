@@ -17,6 +17,8 @@ def test_input():
     fd = WTin.from_dict(td)
     assert (os.path.isfile(wtin_file)) == (True)
     os.remove(wtin_file)
+    cmd = 'rm *.win'
+    os.system(cmd)
 
 
 # test_input()

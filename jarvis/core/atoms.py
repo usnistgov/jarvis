@@ -71,6 +71,156 @@ class Atoms(object):
             self.frac_coords = self.coords
             self.cart_coords = np.array(self.lattice.cart_coords(self.coords))
 
+    def write_cif(
+        self, filename="atoms.cif", comment=None, with_spg_info=True
+    ):
+        """
+        Write CIF format file from Atoms object.
+
+        Caution: can't handle fractional occupancies right now
+        """
+        if comment is None:
+            comment = "CIF file written using JARVIS-Tools package."
+        comment = comment + "\n"
+        f = open(filename, "w")
+        f.write(comment)
+        composition = self.composition
+        line = "data_" + str(composition.reduced_formula) + "\n"
+        f.write(line)
+        from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
+        if with_spg_info:
+            spg = Spacegroup3D(self)
+            line = (
+                "_symmetry_space_group_name_H-M  "
+                + str("'")
+                + str(spg.space_group_symbol)
+                + str("'")
+                + "\n"
+            )
+        else:
+            line = "_symmetry_space_group_name_H-M  " + str("'P 1'") + "\n"
+
+        f.write(line)
+        a, b, c, alpha, beta, gamma = self.lattice.parameters
+        f.write("_cell_length_a       %g\n" % a)
+        f.write("_cell_length_b       %g\n" % b)
+        f.write("_cell_length_c       %g\n" % c)
+        f.write("_cell_angle_alpha    %g\n" % alpha)
+        f.write("_cell_angle_beta     %g\n" % beta)
+        f.write("_cell_angle_gamma    %g\n" % gamma)
+        f.write("\n")
+        if with_spg_info:
+            line = (
+                "_symmetry_Int_Tables_number  "
+                + str(spg.space_group_number)
+                + "\n"
+            )
+        else:
+            line = "_symmetry_Int_Tables_number  " + str(1) + "\n"
+        f.write(line)
+
+        line = (
+            "_chemical_formula_structural  "
+            + str(composition.reduced_formula)
+            + "\n"
+        )
+        f.write(line)
+        line = "_chemical_formula_sum  " + str(composition.formula) + "\n"
+        f.write(line)
+        line = "_cell_volume  " + str(self.volume) + "\n"
+        f.write(line)
+        reduced, repeat = composition.reduce()
+        line = "_cell_formula_units_Z  " + str(repeat) + "\n"
+        f.write(line)
+        f.write("loop_\n")
+        f.write("  _symmetry_equiv_pos_site_id\n")
+        f.write(" _symmetry_equiv_pos_as_xyz\n")
+        f.write(" 1  'x, y, z'\n")
+        f.write("loop_\n")
+        f.write(" _atom_site_type_symbol\n")
+        f.write(" _atom_site_label\n")
+        f.write(" _atom_site_symmetry_multiplicity\n")
+        f.write(" _atom_site_fract_x\n")
+        f.write(" _atom_site_fract_y\n")
+        f.write(" _atom_site_fract_z\n")
+        f.write(" _atom_site_fract_occupancy\n")
+        order = np.argsort(self.elements)
+        coords_ordered = np.array(self.frac_coords)[order]
+        elements_ordered = np.array(self.elements)[order]
+        occ = 1
+        extra = 1
+        element_types = []
+        # count = 0
+        for ii, i in enumerate(elements_ordered):
+            if i not in element_types:
+                element_types.append(i)
+                count = 0
+            symbol = i
+            count = count + 1
+            label = str(i) + str(count)
+            element_types.append(i)
+            coords = coords_ordered[ii]
+            f.write(
+                " %s  %s  %s  %7.5f  %7.5f  %7.5f  %s\n"
+                % (symbol, label, occ, coords[0], coords[1], coords[2], extra)
+            )
+        f.close()
+
+    def write_poscar(self, filename="POSCAR"):
+        """Write POSCAR format file from Atoms object."""
+        from jarvis.io.vasp.inputs import Poscar
+
+        pos = Poscar(self)
+        pos.write_file(filename)
+
+    def write_xyz(self, filename="atoms.xyz"):
+        """Write XYZ format file."""
+        f = open(filename, "w")
+        line = str(self.num_atoms) + "\n"
+        f.write(line)
+        line = ",".join(map(str, np.array(self.lattice_mat).flatten())) + "\n"
+        f.write(line)
+        for i, j in zip(self.elements, self.cart_coords):
+            print(i, j[0], j[1], j[2])
+            f.write("%s %7.5f %7.5f %7.5f\n" % (i, j[0], j[1], j[2]))
+        f.close()
+
+    @classmethod
+    def from_xyz(self, filename="dsgdb9nsd_057387.xyz", box_size=40):
+        """Read XYZ file from to make Atoms object."""
+        lattice_mat = [[box_size, 0, 0], [0, box_size, 0], [0, 0, box_size]]
+        f = open(filename, "r")
+        lines = f.read().splitlines()
+        f.close()
+        coords = []
+        species = []
+        natoms = int(lines[0])
+        for i in range(natoms):
+            tmp = (lines[i + 2]).split()
+            coord = [(tmp[1]), (tmp[2]), (tmp[3])]
+            coord = [
+                0 if "*" in ii else float(ii) for ii in coord
+            ]  # dsgdb9nsd_000212.xyz
+            coords.append(coord)
+            species.append(tmp[0])
+        coords = np.array(coords)
+        atoms = Atoms(
+            lattice_mat=lattice_mat,
+            coords=coords,
+            elements=species,
+            cartesian=True,
+        ).center_around_origin(new_origin=[0.5, 0.5, 0.5])
+        # print (atoms)
+        return atoms
+
+    @classmethod
+    def from_poscar(self, filename="POSCAR"):
+        """Read POSCAR/CONTCAR file from to make Atoms object."""
+        from jarvis.io.vasp.inputs import Poscar
+
+        return Poscar.from_file(filename).atoms
+
     @property
     def check_polar(self):
         """
@@ -863,6 +1013,12 @@ if __name__ == "__main__":
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
+    Si.write_xyz("atoms.xyz")
+    from jarvis.io.vasp.inputs import Poscar
+    Si=Atoms.from_poscar('/users/knc6/POSCAR')
+    Si.write_cif()
+    Si.write_poscar()
+    print (Si.composition.reduced_formula)
     #print (Si.get_string())
     print (Si.get_primitive_atoms)
     print (Si.raw_distance_matrix)

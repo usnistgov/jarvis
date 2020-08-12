@@ -43,7 +43,7 @@ jobs:
             pip install --upgrade pip
             pip install --upgrade setuptools
             pip install numpy 
-            pip install scipy coverage lightgbm flask joblib scikit-learn pandas torch keras tensorflow
+            pip install scipy networkx coverage lightgbm flask joblib scikit-learn pandas torch keras tensorflow
             pip install codecov 
             rm -rf jarvis
             git clone  https://github.com/usnistgov/jarvis.git

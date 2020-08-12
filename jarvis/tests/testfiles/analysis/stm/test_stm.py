@@ -10,3 +10,6 @@ def test_th_stm():
     t1 = TH_STM1.constant_height()
     TH_STM2 = TersoffHamannSTM(chg_name=name) 
     t2 = TH_STM2.constant_current()
+    cmd = 'rm *.png'
+    os.system(cmd)
+

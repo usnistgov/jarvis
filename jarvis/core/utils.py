@@ -5,7 +5,7 @@ from collections import defaultdict
 import random
 
 
-def get_counts(array=['W', 'W', 'Mo', 'Mo', 'S', 'S']):
+def get_counts(array=["W", "W", "Mo", "Mo", "S", "S"]):
     """
     Get number of unique elements and their counts.
 
@@ -66,3 +66,18 @@ def rand_select(x=[]):
 def rec_dict():
     """Make a recursion dictionary."""
     return defaultdict(rec_dict)
+
+
+def random_colors(number_of_colors=110):
+    """Generate random colors for atom coloring."""
+    colors = [
+        "#" + "".join([random.choice("0123456789ABCDEF") for j in range(6)])
+        for i in range(number_of_colors)
+    ]
+    color_dict = {}
+    for i, ii in enumerate(colors):
+        color_dict[i] = ii
+    return color_dict
+
+
+# color_dict=random_colors()
