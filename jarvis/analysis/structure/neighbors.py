@@ -23,18 +23,6 @@ def check_array(arr, type_=None, shape=None):
     if not isinstance(arr, np.ndarray):
         raise TypeError("not an array", arr)
 
-    # if type_ is not None:
-    #    if not np.issubdtype(arr.dtype, type_):
-    #        raise TypeError(f"array is not type {type_}")
-
-    # if shape is not None:
-    #    if len(shape) != len(arr.shape):
-    #        raise ValueError(f"array must have {len(shape)} dimensions")
-
-    #    npshape = np.where(np.array(shape) >= 0, shape, arr.shape)
-    #    if np.any(npshape != np.array(arr.shape)):
-    #        raise ValueError(f"array must have shape {npshape}")
-
 
 def special_arange(dims):
     """
@@ -136,8 +124,8 @@ def calc_structure_data(coords, box, all_symbs, c_size):
         return pipe(
             dim,
             special_arange,
-            lambda x: (coords[:, None, :] + x[None, :, :]
-                       ) / dim[None, None, :],
+            lambda x: (coords[:, None, :] + x[None, :, :])
+            / dim[None, None, :],
             lambda x: np.reshape(x, (-1, 3)),
             lambda x: dict(
                 coords=x,
@@ -211,8 +199,9 @@ class NeighborsAnalysis(object):
                 if dd < rcut and dd >= 0.1:
                     sumb_i = new_symbs[i]
                     sumb_j = new_symbs[j]
-                    comb = "_".join(sorted(str(sumb_i + "_" + sumb_j
-                                               ).split("_")))
+                    comb = "_".join(
+                        sorted(str(sumb_i + "_" + sumb_j).split("_"))
+                    )
                     different_bond.setdefault(comb, []).append(dd)
 
                     # print ('dd',dd)
@@ -248,15 +237,20 @@ class NeighborsAnalysis(object):
         # print (nbor_info['dist'].tolist())
         n_zero_d = nbor_info["dist"][np.nonzero(nbor_info["dist"])]
         # print ('n_zero_d',n_zero_d)
-        hist, bins = np.histogram(n_zero_d.ravel(),
-                                  bins=np.arange(0.1, 10.2, 0.1))
+        hist, bins = np.histogram(
+            n_zero_d.ravel(), bins=np.arange(0.1, 10.2, 0.1)
+        )
         const = float(nbor_info["nat"]) / float(self._atoms.num_atoms)
         hist = hist / float(const)
         # print ('our_hist',hist)
         # print("bins[:-1]", bins[:-1])
         # print("bins[1:]", bins[1:])
-        shell_vol = 4.0 / 3.0 * np.pi * (np.power(
-            bins[1:], 3) - np.power(bins[:-1], 3))
+        shell_vol = (
+            4.0
+            / 3.0
+            * np.pi
+            * (np.power(bins[1:], 3) - np.power(bins[:-1], 3))
+        )
         number_density = self._atoms.num_atoms / self._atoms.volume
         rdf = (
             hist / shell_vol / number_density / self._atoms.num_atoms
@@ -311,8 +305,9 @@ class NeighborsAnalysis(object):
         rcut1 = (arr[io2] + arr[io1]) / float(2.0)
 
         delta = arr[io3] - arr[io2]
-        while (delta < rcut_buffer and arr[io3]
-               < max_cut and arr[io2] < max_cut):
+        while (
+            delta < rcut_buffer and arr[io3] < max_cut and arr[io2] < max_cut
+        ):
             io2 = io2 + 1
             io3 = io3 + 1
             delta = arr[io3] - arr[io2]
@@ -376,8 +371,9 @@ class NeighborsAnalysis(object):
                     else:
                         znm = znm + 1
         angs = np.array([float(i) for i in ang_at.keys()])
-        norm = np.array([float(len(i)) / float(len(set(i)))
-                        for i in ang_at.values()])
+        norm = np.array(
+            [float(len(i)) / float(len(set(i))) for i in ang_at.values()]
+        )
         ang_hist, ang_bins = np.histogram(
             angs, weights=norm, bins=np.arange(1, 181.0, 1), density=False
         )
@@ -459,8 +455,8 @@ class NeighborsAnalysis(object):
                                     v12 = np.cross(v1, v2)
                                     theta = math.degrees(
                                         math.atan2(
-                                            np.linalg.norm(
-                                                v2) * np.dot(v1, v23),
+                                            np.linalg.norm(v2)
+                                            * np.dot(v1, v23),
                                             np.dot(v12, v23),
                                         )
                                     )
@@ -468,12 +464,14 @@ class NeighborsAnalysis(object):
                                         theta = -theta
                                     # print "theta=",theta
                                     dih_at.setdefault(
-                                        round(theta, 3), []).append(i)
+                                        round(theta, 3), []
+                                    ).append(i)
         dih = np.array([float(i) for i in dih_at.keys()])
         # dih1 = set(dih)
         # print "dih",dih1
-        norm = np.array([float(len(i)) / float(
-                        len(set(i))) for i in dih_at.values()])
+        norm = np.array(
+            [float(len(i)) / float(len(set(i))) for i in dih_at.values()]
+        )
 
         dih_hist1, dih_bins1 = np.histogram(
             dih, weights=norm, bins=np.arange(1, 181.0, 1), density=False
@@ -499,80 +497,66 @@ class NeighborsAnalysis(object):
         distributions["nn"] = nn
         return distributions
 
+    def atomwise_radial_dist(self, rcut=10.0, c_size=0):
+        """Get pair/radial distribution for each atom."""
+        nbor_info = self.nbor_list(rcut=rcut, c_size=c_size)
+        nat = nbor_info["nat"]
+        dist = nbor_info["dist"]
+        atom_rdfs = []
+        for i in range(nat):
+            hist, bins = np.histogram(
+                dist[i], bins=np.arange(0.1, rcut + 0.2, 0.1)
+            )
+            atom_rdfs.append(hist.tolist())
+            # exact_dists = np.arange(.1, rcut+ .2, .1)[hist.nonzero()]
+            # print ('exact_dists',exact_dists)
+        return np.array(atom_rdfs)
 
-"""
-if __name__ == "__main__":
-    from jarvis.core.atoms import Atoms
-    from jarvis.io.vasp.inputs import Poscar
-    p = Poscar.from_file(
-        "../../CONTCAR"
-    ).atoms
-    nb = NeighborsAnalysis(p)
-    Time = time.time()
-    data = nb.get_structure_data()
-    tot_time = time.time() - Time
-    print("data=", data, tot_time)
-    distributions = NeighborsAnalysis(p).get_all_distributions
-    import sys
+    def atomwise_angle_dist(self, rcut=None, nbins=180, c_size=0):
+        """Get angle distribution for each atom."""
 
-    sys.exit()
+        def angle(
+            dist1, dist2, bondx1, bondx2, bondy1, bondy2, bondz1, bondz2
+        ):
+            """Get an angle."""
+            nm = dist1 * dist2
+            rrx = bondx1 * bondx2
+            rry = bondy1 * bondy2
+            rrz = bondz1 * bondz2
+            cos = (rrx + rry + rrz) / (nm)
+            if cos <= -1.0:
+                cos = cos + 0.000001
+            if cos >= 1.0:
+                cos = cos - 0.000001
+            deg = math.degrees(math.acos(cos))
+            return deg
 
-    box = [[5.493642, 0, 0], [0, 5.493642, 0], [0, 0, 5.493642]]
-    elements = ["Si", "Si", "Si", "Si", "Si", "Si", "Si", "Si"]
-    coords = [
-        [0, 0, 0],
-        [0.25, 0.25, 0.25],
-        [0.000000, 0.500000, 0.500000],
-        [0.250000, 0.750000, 0.750000],
-        [0.500000, 0.000000, 0.500000],
-        [0.750000, 0.250000, 0.750000],
-        [0.500000, 0.500000, 0.000000],
-        [0.750000, 0.750000, 0.250000],
-    ]
-    # box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-    # coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
-    # elements = ["Si", "Si"]
-    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    Si = Poscar.from_file(
-        "../..//POSCAR"
-    ).atoms
-    x = NeighborsAnalysis(Si).get_rdf()
-    print(x)
-    import sys
-
-    sys.exit()
-    # distributions = NeighborsAnalysis(Si).get_all_distributions
-    s = Si.pymatgen_converter()
-    neighbors_list = s.get_all_neighbors(12.0)
-    all_distances = np.concatenate(
-        tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_list))
-    )
-    rdf_dict = {}
-    cutoff = 10.0
-    intvl = 0.1
-    dist_hist, dist_bins = np.histogram(
-        all_distances, bins=np.arange(0, cutoff + intvl, intvl), density=False
-    )  # equivalent to bon-order
-    shell_vol = (
-        4.0 / 3.0 * np.pi * (np.power(
-                             dist_bins[1:], 3) - np.power(dist_bins[:-1], 3))
-    )
-    print("pmg", dist_hist)
-    number_density = s.num_sites / s.volume
-    rdf = dist_hist / shell_vol / number_density / len(neighbors_list)
-    plt.plot(dist_bins[:-1], rdf)
-    plt.savefig("pmgrdf.png")
-    plt.close()
-    sys.exit()
-    # print ('shell_vol',shell_vol)
-    # print ('all_distances',all_distances)
-    pmg = tuple(map(lambda x: [itemgetter(1)(e) for e in x], neighbors_list))
-    our = NeighborsAnalysis(Si).nbor_list()["dist"]
-    print(pmg, len(pmg))
-    print()
-    print(our, len(our))
-    # print(distributions['rdf'])
-    _, Nb = NeighborsAnalysis(Si).ang_dist_first()
-    _, Nb = NeighborsAnalysis(Si).ang_dist_second()
-    _, Nb = NeighborsAnalysis(Si).get_ddf()
-"""
+        if rcut is None:
+            rcut = self.rcut1
+        nbor_info = self.nbor_list(rcut=rcut, c_size=c_size)
+        atom_angles = []
+        for i in range(nbor_info["nat"]):
+            angles = [
+                angle(
+                    nbor_info["dist"][in1][i],
+                    nbor_info["dist"][in2][i],
+                    nbor_info["bondx"][in1][i],
+                    nbor_info["bondx"][in2][i],
+                    nbor_info["bondy"][in1][i],
+                    nbor_info["bondy"][in2][i],
+                    nbor_info["bondz"][in1][i],
+                    nbor_info["bondz"][in2][i],
+                )
+                for in1 in range(nbor_info["nn"][i])
+                for in2 in range(nbor_info["nn"][i])
+                if in2 > in1
+                and nbor_info["dist"][in1][i] * nbor_info["dist"][in2][i] != 0
+            ]
+            ang_hist, ang_bins = np.histogram(
+                angles, bins=np.arange(1, nbins + 2, 1), density=False
+            )
+            atom_angles.append(ang_hist)
+            # print("fff",i,ang_hist)
+            # exact_angles = np.arange(1, nbins + 2, 1)[ang_hist.nonzero()]
+            # print("exact_angles", exact_angles)
+        return atom_angles

@@ -12,6 +12,7 @@ from jarvis.ai.pkgs.lgbm.classification import (
 from jarvis.ai.descriptors.cfid import feat_names
 from lightgbm import LGBMClassifier
 import matplotlib.pyplot as plt
+import os
 
 plt.switch_backend("agg")
 
@@ -47,7 +48,8 @@ def test_lgbm_regression():
         plot=True,
         save_model=True,
     )
-
+    cmd = 'rm my_model* *.png'
+    os.system(cmd)
 
 def test_lgbm_classification():
     property = "exfoliation_energy"
@@ -62,6 +64,8 @@ def test_lgbm_classification():
         save_model=True,
         tol=tol,
     )
+    cmd = 'rm my_model* *.png'
+    os.system(cmd)
     assert info["LGBMClassifier"]["roc_auc"][0] > 0.0
 
 
