@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
 
     jarvis.ai.descriptors
+    jarvis.ai.gcn
     jarvis.ai.pkgs
 
 Module contents
