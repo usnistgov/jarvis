@@ -4,10 +4,11 @@ from jarvis.core.specie import Specie
 from jarvis.core.utils import random_colors
 import numpy as np
 from collections import OrderedDict
+from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 
 
 class Graph(object):
-    """Get a graph object."""
+    """Generate a graph object."""
 
     def __init__(
         self,
@@ -40,7 +41,17 @@ class Graph(object):
         self.labels = labels
 
     @staticmethod
-    def from_atoms(atoms=None, rcut=8.0, features="cfid", enforce_c_size=10.0):
+    def from_atoms(
+        atoms=None,
+        lengthscale=0.5,
+        variance=1.0,
+        get_prim=False,
+        zero_diag=False,
+        node_atomwise_angle_dist=False,
+        node_atomwise_rdf=False,
+        features="basic",
+        enforce_c_size=10.0,
+    ):
         """
         Get Networkx graph. Requires Networkx installation.
 
@@ -53,24 +64,50 @@ class Graph(object):
              features: Node features.
                        'atomic_number': graph with atomic numbers only.
                        'cfid': 438 chemical descriptors from CFID.
+                       'basic':10 features
                        array: array with CFID chemical descriptor names.
                        See: jarvis/core/specie.py
 
              enforce_c_size: minimum size of the simulation cell in Angst.
         """
+        if get_prim:
+            atoms = atoms.get_primitive_atoms
         dim = get_supercell_dims(atoms=atoms, enforce_c_size=enforce_c_size)
         atoms = atoms.make_supercell(dim)
-        adj = atoms.raw_distance_matrix
-        adj[adj > rcut] = 0.0
+        raw_data = np.array(atoms.raw_distance_matrix)
+        adj = variance * np.exp(-raw_data / lengthscale)
+        if zero_diag:
+            np.fill_diagonal(adj, 0.0)
         nodes = np.arange(atoms.num_atoms)
-        if features == "cfid":
+        if features == "atomic_number":
+            node_attributes = np.array(
+                [np.array(Specie(i).Z) for i in atoms.elements], dtype="float",
+            )
+        elif features == "basic":
+            feats = [
+                "Z",
+                "coulmn",
+                "row",
+                "X",
+                "atom_rad",
+                "nsvalence",
+                "npvalence",
+                "ndvalence",
+                "nfvalence",
+                "first_ion_en",
+                "elec_aff",
+            ]
+            node_attributes = []
+            for i in atoms.elements:
+                tmp = []
+                for j in feats:
+                    tmp.append(Specie(i).element_property(j))
+                node_attributes.append(tmp)
+            node_attributes = np.array(node_attributes, dtype="float")
+        elif features == "cfid":
             node_attributes = np.array(
                 [np.array(Specie(i).get_descrp_arr) for i in atoms.elements],
                 dtype="float",
-            )
-        elif features == "atomic_number":
-            node_attributes = np.array(
-                [np.array(Specie(i).Z) for i in atoms.elements], dtype="float",
             )
         elif isinstance(features, list):
             node_attributes = []
@@ -82,7 +119,18 @@ class Graph(object):
             node_attributes = np.array(node_attributes, dtype="float")
         else:
             raise ("Please check the input options.")
-
+        if node_atomwise_rdf or node_atomwise_angle_dist:
+            nbr = NeighborsAnalysis(atoms)
+        if node_atomwise_rdf:
+            node_attributes = np.concatenate(
+                (node_attributes, nbr.atomwise_radial_dist()), axis=1
+            )
+            node_attributes = np.array(node_attributes, dtype="float")
+        if node_atomwise_angle_dist:
+            node_attributes = np.concatenate(
+                (node_attributes, nbr.atomwise_angle_dist()), axis=1
+            )
+            node_attributes = np.array(node_attributes, dtype="float")
         uv = []
         edge_features = []
         for ii, i in enumerate(atoms.elements):
@@ -162,10 +210,36 @@ if __name__ == "__main__":
     from jarvis.db.figshare import get_jid_data
 
     atoms = Atoms.from_dict(get_jid_data("JVASP-664")["atoms"])
-    g = Graph.from_atoms(atoms=atoms,features='atomic_number')
-    g = Graph.from_atoms(atoms=atoms,features=["Z","atom_mass","max_oxid_s"])
-    g = Graph.from_atoms(atoms=atoms,features='cfid')
-    print(g)
+    g = Graph.from_atoms(
+        atoms=atoms,
+        features="basic",
+        get_prim=True,
+        zero_diag=True,
+        node_atomwise_angle_dist=True,
+        node_atomwise_rdf=True,
+    )
+    g = Graph.from_atoms(
+        atoms=atoms,
+        features="cfid",
+        get_prim=True,
+        zero_diag=True,
+        node_atomwise_angle_dist=True,
+        node_atomwise_rdf=True,
+    )
+    #g = Graph.from_atoms(
+    #    atoms=atoms,
+    #    features="atomic_number",
+    #    get_prim=True,
+    #    zero_diag=True,
+    #    node_atomwise_angle_dist=True,
+    #    node_atomwise_rdf=True,
+    )
+    g = Graph.from_atoms(atoms=atoms, features="basic")
+    g = Graph.from_atoms(
+        atoms=atoms, features=["Z", "atom_mass", "max_oxid_s"]
+    )
+    g = Graph.from_atoms(atoms=atoms, features="cfid")
+    # print(g)
     d = g.to_dict()
     g = Graph.from_dict(d)
     num_nodes = g.num_nodes
