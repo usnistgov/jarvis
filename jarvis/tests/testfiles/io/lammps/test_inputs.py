@@ -83,7 +83,8 @@ def test_inputs():
             "control_file": "/users/knc6/inelast.mod",
         },
     )
-
+    d=LammpsInput(LammpsDataObj=lmp).to_dict()
+    d=LammpsInput.from_dict(d)
     assert (lmp._lammps_box[1], atoms.num_atoms) == (5.43, 8)
     # os.remove(data)
     # os.remove(init)

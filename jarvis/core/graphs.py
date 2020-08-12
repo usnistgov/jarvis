@@ -81,7 +81,7 @@ class Graph(object):
         nodes = np.arange(atoms.num_atoms)
         if features == "atomic_number":
             node_attributes = np.array(
-                [np.array(Specie(i).Z) for i in atoms.elements], dtype="float",
+                [[np.array(Specie(i).Z)] for i in atoms.elements], dtype="float",
             )
         elif features == "basic":
             feats = [
@@ -226,13 +226,13 @@ if __name__ == "__main__":
         node_atomwise_angle_dist=True,
         node_atomwise_rdf=True,
     )
-    #g = Graph.from_atoms(
-    #    atoms=atoms,
-    #    features="atomic_number",
-    #    get_prim=True,
-    #    zero_diag=True,
-    #    node_atomwise_angle_dist=True,
-    #    node_atomwise_rdf=True,
+    g = Graph.from_atoms(
+        atoms=atoms,
+        features="atomic_number",
+        get_prim=True,
+        zero_diag=True,
+        node_atomwise_angle_dist=True,
+        node_atomwise_rdf=True,
     )
     g = Graph.from_atoms(atoms=atoms, features="basic")
     g = Graph.from_atoms(
