@@ -142,7 +142,15 @@ def calc_structure_data(coords, box, all_symbs, c_size):
 class NeighborsAnalysis(object):
     """Get neighbor informations (RDF,ADF,DDF) for Atoms object."""
 
-    def __init__(self, atoms=None, rcut1=None, rcut2=None):
+    def __init__(
+        self,
+        atoms=None,
+        max_n=500,
+        rcut1=None,
+        max_cut=5.0,
+        rcut2=None,
+        verbose=False,
+    ):
         """
         Initialize the function.
 
@@ -155,10 +163,19 @@ class NeighborsAnalysis(object):
         1
         """
         self._atoms = atoms
+        self.max_n = max_n
+        self.max_cut = max_cut
+        self.nb_warn = ""
         if rcut1 is None or rcut2 is None:
             rcut1, rcut2 = self.get_dist_cutoffs()
         self.rcut1 = rcut1
         self.rcut2 = rcut2
+        if self.nb_warn != "" and verbose:
+            print(self.nb_warn)
+            print(
+                "Try setting higher max_n in the NeighborsAnalysis module"
+                + atoms.get_string()
+            )
 
     def get_structure_data(self, c_size=10.0):
         """Provide non-repetitive structure information."""
@@ -169,8 +186,9 @@ class NeighborsAnalysis(object):
             c_size,
         )
 
-    def nbor_list(self, max_n=500, rcut=10.0, c_size=12.0):
+    def nbor_list(self, rcut=10.0, c_size=12.0):
         """Generate neighbor info."""
+        max_n = self.max_n
         nbor_info = {}
         struct_info = self.get_structure_data(c_size)
         coords = np.array(struct_info["coords"])
@@ -206,20 +224,25 @@ class NeighborsAnalysis(object):
 
                     # print ('dd',dd)
                     nn_index = nn[i]  # index of the neighbor
-                    nn[i] = nn[i] + 1
-                    dist[nn_index][i] = dd  # nn_index counter id
-                    nn_id[nn_index][i] = j  # exact id
-                    bondx[nn_index][i] = new_diff[0]
-                    bondy[nn_index][i] = new_diff[1]
-                    bondz[nn_index][i] = new_diff[2]
                     nn_index1 = nn[j]  # index of the neighbor
-                    nn[j] = nn[j] + 1
-                    dist[nn_index1][j] = dd  # nn_index counter id
-                    nn_id[nn_index1][j] = i  # exact id
-                    bondx[nn_index1][j] = -new_diff[0]
-                    bondy[nn_index1][j] = -new_diff[1]
-                    bondz[nn_index1][j] = -new_diff[2]
-
+                    if nn_index < max_n and nn_index1 < max_n:
+                        nn[i] = nn[i] + 1
+                        dist[nn_index][i] = dd  # nn_index counter id
+                        nn_id[nn_index][i] = j  # exact id
+                        bondx[nn_index][i] = new_diff[0]
+                        bondy[nn_index][i] = new_diff[1]
+                        bondz[nn_index][i] = new_diff[2]
+                        nn[j] = nn[j] + 1
+                        dist[nn_index1][j] = dd  # nn_index counter id
+                        nn_id[nn_index1][j] = i  # exact id
+                        bondx[nn_index1][j] = -new_diff[0]
+                        bondy[nn_index1][j] = -new_diff[1]
+                        bondz[nn_index1][j] = -new_diff[2]
+                    else:
+                        self.nb_warn = (
+                            "Very large nearest neighbors observed "
+                            + str(nn_index)
+                        )
         nbor_info["dist"] = dist
         nbor_info["nat"] = nat
         nbor_info["nn_id"] = nn_id
@@ -265,7 +288,7 @@ class NeighborsAnalysis(object):
             plt.close()
         return bins[:-1], rdf, nn
 
-    def get_dist_cutoffs(self, max_cut=5.0):
+    def get_dist_cutoffs(self):
         """
         Get different distance cut-offs.
 
@@ -287,6 +310,7 @@ class NeighborsAnalysis(object):
                bonds such as N-N, uses average bond-distance and standard
                deviations
         """
+        max_cut = self.max_cut
         x, y, z = self.get_rdf()
         arr = []
         for i, j in zip(x, z):
@@ -329,7 +353,6 @@ class NeighborsAnalysis(object):
 
             plot: whether to plot distributions
 
-            max_cut: max. bond cut-off for angular distribution
 
         Retruns:
 
