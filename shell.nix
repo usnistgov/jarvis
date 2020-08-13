@@ -18,6 +18,7 @@ in
        requests
        toolz
        pytest
+       bokeh
        networkx
      ];
      src=builtins.filterSource (path: type: type != "directory" || baseNameOf path != ".git") ./.;

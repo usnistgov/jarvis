@@ -51,6 +51,10 @@ class Graph(object):
         node_atomwise_rdf=False,
         features="basic",
         enforce_c_size=10.0,
+        max_n=100,
+        max_cut=5.0,
+        verbose=False,
+        make_colormap=True,
     ):
         """
         Get Networkx graph. Requires Networkx installation.
@@ -121,7 +125,9 @@ class Graph(object):
         else:
             raise ("Please check the input options.")
         if node_atomwise_rdf or node_atomwise_angle_dist:
-            nbr = NeighborsAnalysis(atoms)
+            nbr = NeighborsAnalysis(
+                atoms, max_n=max_n, verbose=verbose, max_cut=max_cut
+            )
         if node_atomwise_rdf:
             node_attributes = np.concatenate(
                 (node_attributes, nbr.atomwise_radial_dist()), axis=1
@@ -139,10 +145,11 @@ class Graph(object):
                 uv.append((ii, jj))
                 edge_features.append(adj[ii, jj])
         edge_attributes = edge_features
-        color_dict = random_colors(number_of_colors=len(nodes))
-        color_map = []
-        # for ii, i in enumerate(atoms.elements):
-        #    color_map.append(color_dict[Specie(i).Z])
+        if make_colormap:
+            color_dict = random_colors(number_of_colors=len(nodes))
+            color_map = []
+            for ii, i in enumerate(atoms.elements):
+                color_map.append(color_dict[Specie(i).Z])
         return Graph(
             nodes=nodes,
             edges=uv,
