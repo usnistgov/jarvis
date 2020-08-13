@@ -2,7 +2,8 @@ from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.core.atoms import Atoms
 import numpy as np
 import os
-
+import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 
 def test_nbors():
     box = [[5.493642, 0, 0], [0, 5.493642, 0], [0, 0, 5.493642]]
