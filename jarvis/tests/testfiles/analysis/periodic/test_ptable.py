@@ -7,3 +7,4 @@ def test_make_bokeh():
     plot_ptable_trend(save_plot=True,log_scale=1)
     plot_ptable_trend(save_plot=False, input_file=filename)
     os.remove("ptable.html")
+    
