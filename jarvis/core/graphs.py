@@ -146,10 +146,14 @@ class Graph(object):
                 edge_features.append(adj[ii, jj])
         edge_attributes = edge_features
         if make_colormap:
-            color_dict = random_colors(number_of_colors=len(nodes))
+            sps = atoms.uniq_species
+            color_dict = random_colors(number_of_colors=len(sps))
+            new_colors = {}
+            for i, j in color_dict.items():
+                new_colors[sps[i]] = j
             color_map = []
             for ii, i in enumerate(atoms.elements):
-                color_map.append(color_dict[Specie(i).Z])
+                color_map.append(new_colors[i])
         return Graph(
             nodes=nodes,
             edges=uv,

@@ -1,5 +1,5 @@
 """This module provides classes to specify atomic structure."""
-
+# import line_profiler
 import numpy as np
 import matplotlib.pyplot as plt
 import math
@@ -147,7 +147,7 @@ class NeighborsAnalysis(object):
         atoms=None,
         max_n=500,
         rcut1=None,
-        max_cut=5.0,
+        max_cut=10.0,
         rcut2=None,
         verbose=False,
     ):
@@ -186,13 +186,14 @@ class NeighborsAnalysis(object):
             c_size,
         )
 
+    # @profile
+    # kernprof -v -l neighbors.py
     def nbor_list(self, rcut=10.0, c_size=12.0):
         """Generate neighbor info."""
         max_n = self.max_n
         nbor_info = {}
         struct_info = self.get_structure_data(c_size)
         coords = np.array(struct_info["coords"])
-        dim = struct_info["dim"]
         nat = struct_info["nat"]
         new_symbs = struct_info["new_symbs"]
         lat = np.array(struct_info["lat"])
@@ -204,14 +205,11 @@ class NeighborsAnalysis(object):
         bondx = np.zeros((max_n, nat))
         bondy = np.zeros((max_n, nat))
         bondz = np.zeros((max_n, nat))
-        dim05 = [float(1 / 2.0) for i in dim]
         for i in range(nat):
             for j in range(i + 1, nat):
                 diff = coords[i] - coords[j]
-                for v in range(3):
-                    # if np.fabs(diff[v]) > dim05[v]:
-                    if np.fabs(diff[v]) >= dim05[v]:
-                        diff[v] = diff[v] - np.sign(diff[v])
+                ind = np.where(np.fabs(diff) > np.array([0.5, 0.5, 0.5]))
+                diff[ind] -= np.sign(diff[ind])
                 new_diff = np.dot(diff, lat)
                 dd = np.linalg.norm(new_diff)
                 if dd < rcut and dd >= 0.1:
@@ -256,18 +254,14 @@ class NeighborsAnalysis(object):
 
     def get_rdf(self, plot=False):
         """Calculate radial distribution function."""
-        nbor_info = self.nbor_list(c_size=21.0)
-        # print (nbor_info['dist'].tolist())
+        nbor_info = self.nbor_list(c_size=2 * self.max_cut + 1)
+        # nbor_info = self.nbor_list(c_size=21.0)
         n_zero_d = nbor_info["dist"][np.nonzero(nbor_info["dist"])]
-        # print ('n_zero_d',n_zero_d)
         hist, bins = np.histogram(
             n_zero_d.ravel(), bins=np.arange(0.1, 10.2, 0.1)
         )
         const = float(nbor_info["nat"]) / float(self._atoms.num_atoms)
         hist = hist / float(const)
-        # print ('our_hist',hist)
-        # print("bins[:-1]", bins[:-1])
-        # print("bins[1:]", bins[1:])
         shell_vol = (
             4.0
             / 3.0
@@ -278,10 +272,7 @@ class NeighborsAnalysis(object):
         rdf = (
             hist / shell_vol / number_density / self._atoms.num_atoms
         )  # /len(n_zero_d)
-        # rdf = 2*len(bins) * hist / np.sum(hist) / shell_vol / number_density
-        # rdf = 2*len(bins) * hist / np.sum(hist) / shell_vol / number_density
         nn = rdf / self._atoms.num_atoms
-        # print ('rdf',len(rdf))
         if plot:
             plt.plot(bins[:-1], rdf)
             plt.savefig("rdf.png")
@@ -583,3 +574,14 @@ class NeighborsAnalysis(object):
             # exact_angles = np.arange(1, nbins + 2, 1)[ang_hist.nonzero()]
             # print("exact_angles", exact_angles)
         return atom_angles
+
+"""
+if __name__ == "__main__":
+    from jarvis.core.atoms import Atoms
+
+    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+    coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
+    elements = ["Si", "Si"]
+    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
+    nb = NeighborsAnalysis(Si)
+"""
