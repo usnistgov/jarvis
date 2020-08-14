@@ -5,6 +5,8 @@ from jarvis.core.specie import Specie
 from jarvis.core.lattice import Lattice, lattice_coords_transformer
 from collections import OrderedDict
 from jarvis.core.utils import get_counts
+import itertools
+from jarvis.core.utils import get_angle
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
@@ -314,6 +316,22 @@ class Atoms(object):
         coords = np.array(self.cart_coords)
         z = (coords[:, None, :] - coords[None, :, :]) ** 2
         return np.sum(z, axis=-1) ** 0.5
+
+    @property
+    def raw_angle_matrix(self, cut_off=5.0):
+        """Provide distance matrix."""
+        coords = np.array(self.cart_coords)
+        angles = []
+        for a, b, c in itertools.product(coords, coords, coords):
+            if (
+                not np.array_equal(a, b)
+                and not np.array_equal(b, c)
+                and np.linalg.norm((a - b)) < cut_off
+                and np.linalg.norm((c - b)) < cut_off
+            ):
+                angle = get_angle(a, b, c)
+                angles.append(angle)
+        return angles
 
     def center(self, axis=2, vacuum=18.0, about=None):
         """
