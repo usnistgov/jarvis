@@ -186,70 +186,10 @@ class NeighborsAnalysis(object):
             self._atoms.elements,
             c_size,
         )
-    def nbor_list(self, max_n=500, rcut=10.0, c_size=12.0):
-        """Generate neighbor info."""
-        nbor_info = {}
-        struct_info = self.get_structure_data(c_size)
-        coords = np.array(struct_info["coords"])
-        dim = struct_info["dim"]
-        nat = struct_info["nat"]
-        new_symbs = struct_info["new_symbs"]
-        lat = np.array(struct_info["lat"])
-        different_bond = {}
-        nn = np.zeros((nat), dtype="int")
-        # print ('max_n, nat',max_n, nat)
-        dist = np.zeros((max_n, nat))
-        nn_id = np.zeros((max_n, nat), dtype="int")
-        bondx = np.zeros((max_n, nat))
-        bondy = np.zeros((max_n, nat))
-        bondz = np.zeros((max_n, nat))
-        dim05 = [float(1 / 2.0) for i in dim]
-        for i in range(nat):
-            for j in range(i + 1, nat):
-                diff = coords[i] - coords[j]
-                for v in range(3):
-                    # if np.fabs(diff[v]) > dim05[v]:
-                    if np.fabs(diff[v]) >= dim05[v]:
-                        diff[v] = diff[v] - np.sign(diff[v])
-                new_diff = np.dot(diff, lat)
-                dd = np.linalg.norm(new_diff)
-                if dd < rcut and dd >= 0.1:
-                    sumb_i = new_symbs[i]
-                    sumb_j = new_symbs[j]
-                    comb = "_".join(sorted(str(sumb_i + "_" + sumb_j
-                                               ).split("_")))
-                    different_bond.setdefault(comb, []).append(dd)
-
-                    # print ('dd',dd)
-                    nn_index = nn[i]  # index of the neighbor
-                    nn[i] = nn[i] + 1
-                    dist[nn_index][i] = dd  # nn_index counter id
-                    nn_id[nn_index][i] = j  # exact id
-                    bondx[nn_index][i] = new_diff[0]
-                    bondy[nn_index][i] = new_diff[1]
-                    bondz[nn_index][i] = new_diff[2]
-                    nn_index1 = nn[j]  # index of the neighbor
-                    nn[j] = nn[j] + 1
-                    dist[nn_index1][j] = dd  # nn_index counter id
-                    nn_id[nn_index1][j] = i  # exact id
-                    bondx[nn_index1][j] = -new_diff[0]
-                    bondy[nn_index1][j] = -new_diff[1]
-                    bondz[nn_index1][j] = -new_diff[2]
-
-        nbor_info["dist"] = dist
-        nbor_info["nat"] = nat
-        nbor_info["nn_id"] = nn_id
-        nbor_info["nn"] = nn
-        nbor_info["bondx"] = bondx
-        nbor_info["bondy"] = bondy
-        nbor_info["bondz"] = bondz
-        # print ('nat',nat)
-
-        return nbor_info
 
     # @profile
     # kernprof -v -l neighbors.py
-    def nbor_list1(self, rcut=10.0, c_size=12.0):
+    def nbor_list(self, rcut=10.0, c_size=12.0):
         """Generate neighbor info."""
         max_n = self.max_n
         nbor_info = {}
@@ -373,31 +313,33 @@ class NeighborsAnalysis(object):
         io2 = 1
         io3 = 2
         try:
-         delta = arr[io2] - arr[io1]
-         while delta < rcut_buffer and arr[io2] < max_cut:
-            io1 = io1 + 1
-            io2 = io2 + 1
-            io3 = io3 + 1
             delta = arr[io2] - arr[io1]
-         rcut1 = (arr[io2] + arr[io1]) / float(2.0)
+            while delta < rcut_buffer and arr[io2] < max_cut:
+                io1 = io1 + 1
+                io2 = io2 + 1
+                io3 = io3 + 1
+                delta = arr[io2] - arr[io1]
+            rcut1 = (arr[io2] + arr[io1]) / float(2.0)
         except Exception:
-            print ('Warning:Setting first nbr cut-off as minimum bond-angle')
-            rcut1=arr[0]
+            print("Warning:Setting first nbr cut-off as minimum bond-angle")
+            rcut1 = arr[0]
             pass
         try:
-         delta = arr[io3] - arr[io2]
-         while (
-            delta < rcut_buffer and arr[io3] < max_cut and arr[io2] < max_cut
-         ):
-            io2 = io2 + 1
-            io3 = io3 + 1
             delta = arr[io3] - arr[io2]
-         rcut2 = float(arr[io3] + arr[io2]) / float(2.0)
+            while (
+                delta < rcut_buffer
+                and arr[io3] < max_cut
+                and arr[io2] < max_cut
+            ):
+                io2 = io2 + 1
+                io3 = io3 + 1
+                delta = arr[io3] - arr[io2]
+            rcut2 = float(arr[io3] + arr[io2]) / float(2.0)
         except Exception:
-           print ('Warning:Setting first and second nbr cut-off equal')
-           print ('You might consider increasing max_n parameter')
-           rcut2=rcut1
-           pass
+            print("Warning:Setting first and second nbr cut-off equal")
+            print("You might consider increasing max_n parameter")
+            rcut2 = rcut1
+            pass
         # rcut, rcut_dihed = get_prdf(s=s)
         # rcut_dihed=min(rcut_dihed,max_dihed)
         return rcut1, rcut2
@@ -460,7 +402,7 @@ class NeighborsAnalysis(object):
             [float(len(i)) / float(len(set(i))) for i in ang_at.values()]
         )
         ang_hist, ang_bins = np.histogram(
-            angs, weights=norm, bins=np.arange(1, 181.0, 1), density=False
+            angs, weights=norm, bins=np.arange(1, 181.0, 1), density=False,
         )
         # if plot == True:
         #    plt.bar(ang_bins[:-1], ang_hist)
@@ -559,7 +501,7 @@ class NeighborsAnalysis(object):
         )
 
         dih_hist1, dih_bins1 = np.histogram(
-            dih, weights=norm, bins=np.arange(1, 181.0, 1), density=False
+            dih, weights=norm, bins=np.arange(1, 181.0, 1), density=False,
         )
         if plot:
             plt.plot(dih_bins1[:-1], dih_hist1)
@@ -584,25 +526,28 @@ class NeighborsAnalysis(object):
 
     def atomwise_radial_dist(self, rcut=10.0, c_size=0):
         """Get pair/radial distribution for each atom."""
+        if rcut < c_size:
+            rcut = c_size + 1
         nbor_info = self.nbor_list(rcut=rcut, c_size=c_size)
         nat = nbor_info["nat"]
         dist = nbor_info["dist"]
         atom_rdfs = []
+
         for i in range(nat):
             hist, bins = np.histogram(
-                dist[i], bins=np.arange(0.1, rcut + 0.2, 0.1)
+                dist[:, i], bins=np.arange(0.1, rcut + 0.2, 0.1)
             )
             atom_rdfs.append(hist.tolist())
             if self.verbose:
-             exact_dists = np.arange(.1, rcut+ .2, .1)[hist.nonzero()]
-             print ('exact_dists',exact_dists)
+                exact_dists = np.arange(0.1, rcut + 0.2, 0.1)[hist.nonzero()]
+                print("exact_dists", exact_dists)
         return np.array(atom_rdfs)
 
     def atomwise_angle_dist(self, rcut=None, nbins=180, c_size=0):
         """Get angle distribution for each atom."""
 
         def angle(
-            dist1, dist2, bondx1, bondx2, bondy1, bondy2, bondz1, bondz2
+            dist1, dist2, bondx1, bondx2, bondy1, bondy2, bondz1, bondz2,
         ):
             """Get an angle."""
             nm = dist1 * dist2
@@ -639,26 +584,51 @@ class NeighborsAnalysis(object):
                 and nbor_info["dist"][in1][i] * nbor_info["dist"][in2][i] != 0
             ]
             ang_hist, ang_bins = np.histogram(
-                angles, bins=np.arange(1, nbins + 2, 1), density=False
+                angles, bins=np.arange(1, nbins + 2, 1), density=False,
             )
             atom_angles.append(ang_hist)
             # print("fff",i,ang_hist)
             if self.verbose:
-              exact_angles = np.arange(1, nbins + 2, 1)[ang_hist.nonzero()]
-              print("exact_angles", exact_angles)
-        return atom_angles
+                exact_angles = np.arange(1, nbins + 2, 1)[ang_hist.nonzero()]
+                print("exact_angles", exact_angles)
+        # return (atom_angles)#/nbor_info['nat']
+        return np.array(atom_angles)  # /nbor_info['nat']
 
 
-#"""
+"""
 if __name__ == "__main__":
     from jarvis.core.atoms import Atoms
 
-    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-    coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
-    elements = ["Si", "Si"]
-    Si = Atoms(lattice_mat=box, coords=coords, elements=elements).make_supercell_matrix([2,2,2])
-    nb = NeighborsAnalysis(Si,verbose=True)
-    rcut1=nb.rcut1
-    print ('r1,r2',nb.rcut1,nb.rcut2)
-    a=nb.atomwise_angle_dist()
-#"""
+    box = [[5.493642, 0, 0], [0, 5.493642, 0], [0, 0, 5.493642]]
+    elements = ["Si", "Si", "Si", "Si", "Si", "Si", "Si", "Si"]
+    coords = [
+        [0, 0, 0],
+        [0.25, 0.25, 0.25],
+        [0.000000, 0.500000, 0.500000],
+        [0.250000, 0.750000, 0.750000],
+        [0.500000, 0.000000, 0.500000],
+        [0.750000, 0.250000, 0.750000],
+        [0.500000, 0.500000, 0.000000],
+        [0.750000, 0.750000, 0.250000],
+    ]
+    # box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+    # coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
+    # elements = ["Si", "Si"]
+    Si = Atoms(
+        lattice_mat=box, coords=coords, elements=elements
+    )  # .get_primitive_atoms
+    ver = False  # True
+    a = NeighborsAnalysis(Si, verbose=ver, max_cut=5).atomwise_radial_dist(
+        c_size=5
+    )
+
+    print(a[1], len(a), a[1].nonzero())
+    a = NeighborsAnalysis(Si, verbose=ver, max_cut=5).atomwise_radial_dist(
+        c_size=10
+    )
+    print(a[1], len(a), a[1].nonzero())
+    a = NeighborsAnalysis(Si, verbose=ver, max_cut=5).atomwise_radial_dist(
+        c_size=20
+    )
+    print(a[1], len(a), a[1].nonzero())
+"""
