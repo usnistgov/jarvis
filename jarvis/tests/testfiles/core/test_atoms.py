@@ -81,7 +81,7 @@ def test_basic_atoms():
     assert round(prim.raw_distance_matrix[0][1], 2) == round(
         4.42386329832851, 2
     )
-
+    print(prim.raw_angle_matrix)
     d = Si.to_dict()
     new_at = Atoms.from_dict(d)
     angs_a = d["angles"][0]

@@ -22,7 +22,7 @@ from matplotlib.cm import plasma, ScalarMappable
 def plot_ptable_trend(
     data_elements=["Rb", "S", "Se"],
     data_list=[10, 20, 30],
-    input_csv=None,
+    input_file=None,
     output_html="ptable.html",
     bokeh_palette="Plasma256",
     cmap=plasma,
@@ -36,7 +36,7 @@ def plot_ptable_trend(
     """
     Generate periodic table chemical trends.
 
-    Either provide a csv file or list of data_elements, &data_list.
+    Either provide a file or list of data_elements, &data_list.
     Note that Bokeh already provided a periodic table.
     This module will take your data to color code them.
     See an example: https://www.nature.com/articles/s41598-019-45028-y
@@ -47,11 +47,11 @@ def plot_ptable_trend(
     # Define number of and groups
     period_label = ["1", "2", "3", "4", "5", "6", "7"]
     group_range = [str(x) for x in range(1, 19)]
-    if input_csv is not None:
+    if input_file is not None:
         data_elements = []
         data_list = []
 
-        f = open(input_csv, "r")
+        f = open(input_file, "r")
         lines = f.read().splitlines()
         f.close()
         for i in lines:
