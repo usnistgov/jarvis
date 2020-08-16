@@ -1,9 +1,4 @@
-"""
-Module to access or upload data in JARVIS-API.
-
-https://jarvis.nist.gov/
-Request an account prior to access.
-"""
+"""Module to access or upload data in JARVIS-API."""
 import requests
 import pprint
 import os
@@ -13,19 +8,29 @@ class Api(object):
     """Class for handling functions for JARVIS-API."""
 
     def __init__(
-        self, base_url="https://jarvis.nist.gov", username="knc6", password="",
+        self,
+        base_url="https://jarvis.nist.gov",
+        user_info_file_path="/users/knc6/myinfo",
     ):
         """
         Intialize the class.
 
         Args:
-            base_url: For JARVIS, keep //jarvis.nist.gov"
-            username: put your username
-            password: put your password
+            base_url: For JARVIS
+
+            Request an account prior to access.
+            Store your username and password locally
+            in your a file. Format:
+            ---------------------------------------
+            username
+            password
         """
+        f = open(user_info_file_path, "r")
+        lines = f.read().splitlines()
+        f.close()
         self.base_url = base_url
-        self.username = username
-        self.password = password
+        self.username = lines[0]
+        self.password = lines[1]
 
     def get_data_by_hash_id(self, id=""):
         """Gat data file info for a hash_id."""
@@ -123,12 +128,7 @@ class Api(object):
 
 """
 if __name__ == "__main__":
-    f = open("/users/knc6/myinfo", "r")
-    lines = f.read().splitlines()
-    f.close()
-    username = lines[0]
-    password = lines[1]
-    a = Api(username=username, password=password)
+    a = Api()
     id = "5df7e8c7eaf3b300328be81b"
     x_file = "/users/knc6/Software/Devs/jarvis/jarvis/db/testxy.xml"
     t_id = "5f395d85ece4b00031fb5cfe"
