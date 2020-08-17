@@ -30,7 +30,7 @@ def plot_ptable_trend(
     width=1050,
     alpha=0.65,
     cbar_height=520,
-    cbar_font="20pt",
+    cbar_font="14pt",
     save_plot=True,
 ):
     """
@@ -174,9 +174,10 @@ def plot_ptable_trend(
         border_line_color=None,
         label_standoff=6,
         major_label_text_font_size=cbar_font,
-        location=(5, 0),
+        location=(0, 0),
         orientation="vertical",
         scale_alpha=alpha,
+        width=8,
     )
 
     if cbar_height is not None:
