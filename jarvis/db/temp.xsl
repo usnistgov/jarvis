@@ -60,34 +60,34 @@
       <td>Conventional cell</td>
     </tr>
     <tr>
-      <td>Chemical formula:<xsl:value-of select="formula"/></td>
-      <td>Formation energy/atom (eV):<xsl:value-of select="formation_energy"/></td>
+      <td>Chemical formula: <xsl:value-of select="formula"/></td>
+      <td>Formation energy/atom (eV): <xsl:value-of select="formation_energy"/></td>
       <td>a <xsl:value-of select="a_conv"/> &#8491;</td>
       <td>&#945;:<xsl:value-of select="alpha_conv"/> &#176;</td>
       <td>a <xsl:value-of select="a_prim"/> &#8491;</td>
       <td>&#945;:<xsl:value-of select="alpha_prim"/> &#176;</td>
     </tr>
     <tr>
-      <td>Space-group : <xsl:value-of select="spacegroup_number"/></td>
-      <td>Relaxed energy/atom (eV):<xsl:value-of select="relaxed_energy"/></td>
+      <td>Space-group: <xsl:value-of select="spacegroup_number"/></td>
+      <td>Relaxed energy/atom (eV): <xsl:value-of select="relaxed_energy"/></td>
       <td>b <xsl:value-of select="b_conv"/> &#8491;</td>
       <td>&#946;:<xsl:value-of select="beta_conv"/> &#176;</td>
       <td>b <xsl:value-of select="a_prim"/> &#8491;</td>
       <td>&#946;:<xsl:value-of select="alpha_prim"/> &#176;</td>
     </tr>
     <tr>
-      <td>Calculation type:<xsl:value-of select="Calculation_type"/></td>
-      <td>SCF bandgap (eV):<xsl:value-of select="scf_indir_gap"/></td>
+      <td>Material  type: <xsl:value-of select="material_type"/></td>
+      <td>SCF bandgap (eV): <xsl:value-of select="scf_indir_gap"/></td>
       <td>c <xsl:value-of select="c_conv"/> &#8491;</td>
       <td>&#947;:<xsl:value-of select="gamma_conv"/> &#176;</td>
       <td>c <xsl:value-of select="c_prim"/> &#8491;</td>
       <td>&#947;:<xsl:value-of select="gamma_prim"/> &#176;</td>
     </tr>
     <tr>
-      <td>Crystal system:<xsl:value-of select="crys_system"/></td>
-      <td>Point group:<xsl:value-of select="point_group_symbol"/></td>
-      <td>Density (gcm<sup>-3</sup>):<xsl:value-of select="density"/></td>
-      <td>Volume (<span>&#8491;</span><sup>3</sup>):<xsl:value-of select="volume"/></td>
+      <td>Crystal system: <xsl:value-of select="crys_system"/></td>
+      <td>Point group: <xsl:value-of select="point_group_symbol"/></td>
+      <td>Density (gcm<sup>-3</sup>): <xsl:value-of select="density"/></td>
+      <td>Volume (<span>&#8491;</span><sup>3</sup>): <xsl:value-of select="volume"/></td>
       <td>nAtoms_prim:<xsl:value-of select="prim_natoms"/></td>
       <td>nAtoms_conv:<xsl:value-of select="conv_natoms"/></td>
     </tr>    
@@ -275,7 +275,7 @@ Plotly.newPlot('dos', data, layout_convg);
  
   var d_up= <xsl:value-of select="basic_info/main_relax_info/main_relax_dos/spdf_dos/spin_up_d"/>;
   d_up=d_up.split(',').map(Number);
-  var d_dn= <xsl:value-of select="basic_info/main_relax_info/main_relax_dos/spdf_dos/spin_down_p"/>;
+  var d_dn= <xsl:value-of select="basic_info/main_relax_info/main_relax_dos/spdf_dos/spin_down_d"/>;
   d_dn=d_dn.split(',').map(Number);
  var keys=["spin_up_s","spin_down_s","spin_up_p","spin_down_p","spin_up_d","spin_down_d"];
 
@@ -345,33 +345,41 @@ Plotly.newPlot('dos', data, layout_convg);
 
   var x3= <xsl:value-of select="basic_info/main_relax_info/main_relax_dos/edos_energies"/>;
   x3=x3.split(',').map(Number);
-  var y3= <xsl:value-of select="basic_info/main_relax_info/main_relax_dos/elemental_dos/spin_up_info/Si"/>;
-  y3=y3.split(',').map(Number);
-  var y3a= <xsl:value-of select="basic_info/main_relax_info/main_relax_dos/elemental_dos/spin_down_info/Si"/>;
-  y3a=y3a.split(',').map(Number);
+  var y3= <xsl:value-of select="basic_info/main_relax_info/main_relax_dos/elemental_dos/spin_up_info"/>;
+  y3=y3.split(';');
+  var y3a= <xsl:value-of select="basic_info/main_relax_info/main_relax_dos/elemental_dos/spin_down_info"/>;
+  y3a=y3a.split(';');
 
- 
+ for (var i=0;i&lt;y3.length-1;i++) {
+  
   var data3 = {
     x: x3,
-    y: y3,
+    y: y3[i].split('_')[1].split(',').map(Number),
     xaxis: "x3",
     yaxis: "y3",
     type: "scatter",
+    name: y3[i].split('_')[0]
   };
 
 
  data.push(data3);
+};
 
-   var data3 = {
+ for (var i=0;i&lt;y3.length-1;i++) {
+  var data3 = {
     x: x3,
-    y: y3a,
+    y: y3a[i].split('_')[1].split(',').map(Number),
     xaxis: "x3",
     yaxis: "y3",
     type: "scatter",
+    name: y3a[i].split('_')[0]
   };
 
 
  data.push(data3);
+
+};
+
   
   dos_plotly();
 </script>
@@ -852,11 +860,11 @@ Plotly.newPlot('mbjoptics', data, layout_convg);
 
 };
 
-  var energies= <xsl:value-of select="basic_info/main_optics_mbj/main_optics_info/energies"/>;
+  var energies= <xsl:value-of select="basic_info/main_optics_mbj/main_optics_mbj_info/energies"/>;
   energies=energies.split(',').map(Number);
-  var epsilon1= <xsl:value-of select="basic_info/main_optics_mbj/main_optics_info/real_1"/>;
+  var epsilon1= <xsl:value-of select="basic_info/main_optics_mbj/main_optics_mbj_info/real_1"/>;
   epsilon1=epsilon1.split(',').map(Number);
-  var epsilon2= <xsl:value-of select="basic_info/main_optics_mbj/main_optics_info/imag_1"/>;
+  var epsilon2= <xsl:value-of select="basic_info/main_optics_mbj/main_optics_mbj_info/imag_1"/>;
   epsilon2=epsilon2.split(',').map(Number);
   
   var data1 = {
