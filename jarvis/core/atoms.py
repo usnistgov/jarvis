@@ -176,6 +176,14 @@ class Atoms(object):
         pos = Poscar(self)
         pos.write_file(filename)
 
+    @property
+    def get_xyz_string(self):
+        line = str(self.num_atoms) + "\n"
+        line += ",".join(map(str, np.array(self.lattice_mat).flatten())) + "\n"
+        for i, j in zip(self.elements, self.cart_coords):
+             line+=str(i)+str(' ')+str(j[0])+str(' ')+str(j[1])+str(' ')+str(j[2])+'\n'
+        return line
+    
     def write_xyz(self, filename="atoms.xyz"):
         """Write XYZ format file."""
         f = open(filename, "w")
@@ -184,7 +192,6 @@ class Atoms(object):
         line = ",".join(map(str, np.array(self.lattice_mat).flatten())) + "\n"
         f.write(line)
         for i, j in zip(self.elements, self.cart_coords):
-            print(i, j[0], j[1], j[2])
             f.write("%s %7.5f %7.5f %7.5f\n" % (i, j[0], j[1], j[2]))
         f.close()
 

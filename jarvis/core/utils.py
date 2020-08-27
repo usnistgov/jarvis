@@ -98,4 +98,16 @@ def get_angle(
     return angle
 
 
+def recast_array_on_uniq_array_elements(uniq=['Si','Al','O'],arr=['Si','Si','Al','Al','Si','O','O','O','O']):
+  """Recast array on uniq array elements."""
+  info={}
+  for i,ii in enumerate(uniq):
+    for j,jj in enumerate(arr):
+      if ii==jj:
+       info.setdefault(ii,[]).append(j)
+  return info
+
+def lorentzian(x,y,x0,gamma):
+    """Get Lorentzian of a function."""
+    return (y / math.pi) * ((0.5 * gamma) / ((x - x0) ** 2 + (0.5 * gamma) ** 2))
 # color_dict=random_colors()
