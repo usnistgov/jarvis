@@ -171,7 +171,7 @@ class VaspToApiXmlSchema(object):
             energies = total_dos[0]
             spdf_dos = vrun.get_spdf_dos()
             atom_dos = atom_resolved_dos = vrun.get_atom_resolved_dos()
-           
+
             # designed as dosname_dosvaluearray_color_label seperated by semicoln for for each plot. List of plots are seperated by @
             line = ""
             for i, ii in enumerate(total_dos):
@@ -209,17 +209,17 @@ class VaspToApiXmlSchema(object):
 
             line += "'</spdf_dos>"
             line += "<elemental_dos>"
-            spin_up_info=atom_dos['spin_up_info']
-            spin_down_info=atom_dos['spin_down_info']
-            line+='<spin_up_info>"'
-            for i,j in spin_up_info.items():
-                line+=str(i)+str('_')+",".join(map(str, j))+';'
-            line+='"</spin_up_info>'
-        
-            line+='<spin_down_info>"'
-            for i,j in spin_down_info.items():
-                line+=str(i)+str('_')+",".join(map(str, j))+';'
-            line+='"</spin_down_info>'
+            spin_up_info = atom_dos["spin_up_info"]
+            spin_down_info = atom_dos["spin_down_info"]
+            line += '<spin_up_info>"'
+            for i, j in spin_up_info.items():
+                line += str(i) + str("_") + ",".join(map(str, j)) + ";"
+            line += '"</spin_up_info>'
+
+            line += '<spin_down_info>"'
+            for i, j in spin_down_info.items():
+                line += str(i) + str("_") + ",".join(map(str, j)) + ";"
+            line += '"</spin_down_info>'
             line += "</elemental_dos>"
         except:
             print("Cannot get DOS data", vrun)
@@ -485,9 +485,10 @@ class VaspToApiXmlSchema(object):
                 info["packing_fr"] = packing_fr
 
                 dim = get_supercell_dims(conv_atoms)
-
+                dim=[1,1,1]
                 xyz = conv_atoms.make_supercell_matrix(dim).get_xyz_string
-                info["xyz"] = '"' + str(xyz).replace("\n", "\\n") + '"'
+                info["xyz"] = '"' + str(xyz).replace("\n", "\\n ") + '"'
+                #info["xyz"] = '"' + str(xyz).replace("\n", "\\n") + '"'
                 if include_neighbor_info:
                     nbr = NeighborsAnalysis(atoms)
                     rdf_bins, rdf_hist, nn = nbr.get_rdf()
@@ -498,10 +499,10 @@ class VaspToApiXmlSchema(object):
                     info["rdf_bins"] = "'" + ",".join(map(str, rdf_bins)) + "'"
                     info["rdf_hist"] = "'" + ",".join(map(str, rdf_hist)) + "'"
 
-                    info["ang1_bins"] = ",".join(map(str, ang1_bins))
-                    info["ang1_hist"] = ",".join(map(str, ang1_hist))
-                    info["ang2_bins"] = ",".join(map(str, ang2_bins))
-                    info["ang2_hist"] = ",".join(map(str, ang2_hist))
+                    info["ang1_bins"] = "'" + ",".join(map(str, ang1_bins))+ "'"
+                    info["ang1_hist"] = "'" + ",".join(map(str, ang1_hist))+ "'"
+                    info["ang2_bins"] = "'" + ",".join(map(str, ang2_bins))+ "'"
+                    info["ang2_hist"] = "'" + ",".join(map(str, ang2_hist))+ "'"
 
                 scf_indir_gap = vrun.get_indir_gap[0]
                 scf_dir_gap = vrun.get_dir_gap
@@ -749,10 +750,10 @@ class VaspToApiXmlSchema(object):
                 ppf = pseeb ** 2 * pcond / 1e6
                 pkappa = np.linalg.eigvals(tmp["kappa"].reshape(3, 3))
 
-                info["pseeb"] = pseeb.tolist()
-                info["pcond"] = pcond.tolist()
-                info["ppf"] = ppf.tolist()
-                info["pkappa"] = pkappa.tolist()
+                info["pseeb"] = [round(k,2) for k in pseeb.tolist()]
+                info["pcond"] = [round(k,2) for k in  pcond.tolist()]
+                info["ppf"] = [round(k,2) for k in  ppf.tolist()]
+                info["pkappa"] = [round(k,2) for k in  pkappa.tolist()]
 
         for i, j in small_n.items():
             if j["N_cm3"] == -1 * doping:
@@ -775,10 +776,10 @@ class VaspToApiXmlSchema(object):
                 npf = nseeb ** 2 * ncond / 1e6
                 nkappa = np.linalg.eigvals(tmp["kappa"].reshape(3, 3))
 
-                info["nseeb"] = np.array([np.real(r) for r in nseeb.tolist()])
-                info["ncond"] = np.array([np.real(r) for r in ncond.tolist()])
-                info["npf"] = npf.tolist()
-                info["nkappa"] = nkappa.tolist()
+                info["nseeb"] = np.array([round(np.real(r),2) for r in nseeb.tolist()])
+                info["ncond"] = np.array([round(np.real(r),2) for r in ncond.tolist()])
+                info["npf"] = [round(k,2) for k in npf.tolist()]
+                info["nkappa"] = [round(k,2) for k in nkappa.tolist()]
         line = ""
         for i, j in info.items():
             if isinstance(j, list):
@@ -944,9 +945,12 @@ class VaspToApiXmlSchema(object):
                 """
 
 
-VaspToApiXmlSchema(
-    folder="/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
-).write_xml(filename="JVASP-1002.xml")
+folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
+filename = "JVASP-1002.xml"
+
+folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
+filename = "JVASP-1067.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
 # directories = ["/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"]
 # filenames = ["JVASP-1002.xml"]

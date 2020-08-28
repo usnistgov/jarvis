@@ -42,10 +42,7 @@
 
 <body>
 
-<!--'<ddd><plotlydictionary>'+(json.dumps(x)).replace('<>','^^').replace('<\>','^\^').replace('#','x')+'</plotlydictionary></ddd>' -->
-<!--<ddd><plotlydictionary>'+(json.dumps(x)).replace('<>','^^').replace('<\>','^\^').replace('#','@')+'</plotlydictionary></ddd> -->
 
-  
   
 <!-- Basic table start -->
   <table class="centered table  btn-table" >
@@ -100,7 +97,7 @@
   
   
 <!-- Basic table end -->
-
+<br></br>
 <!-- Structure viewer start -->
 <h3 style="text-align:center">Visualizing atomic structure</h3>
   <div >
@@ -134,17 +131,22 @@
   var viewer_first = $3Dmol.createViewer("geometry", {
     backgroundColor: "white",
   });
+  viewer_first.setStyle({stick:{colorscheme:"Jmol"}});
   viewer_first.addModel(data, "xyz");
   viewer_first.setStyle({ sphere: { radius: 0.7 } });
   viewer_first.addStyle({ stick: { radius: 0.2 } });
   viewer_first.zoomTo();
+  viewer_first.setClickable({},true,function(atom,viewer,event,container) {
+                       viewer.addLabel(atom.resn+":"+atom.atom,{position: atom, backgroundColor: 'darkgreen', backgroundOpacity: 0.8});
+                   });
+ 
   viewer_first.render();
 </script>
 
 
   </div>
  <!-- Structure viewer end -->
- 
+ <br></br>
 
  
  
@@ -152,8 +154,28 @@
 
 <!--Structure info statrts-->
 
+<script>
+  var x= <xsl:value-of select="basic_info/main_relax_info/rdf_hist"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("Atomic structure analysis");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+    
+    var divElement = document.createElement("div");
+    divElement.id = "structure";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);
+    
+    };
+</script>
 
-<div class="centered" id="structure"></div>
+
+
 <script>
 function structure_plotly(){
 
@@ -176,11 +198,12 @@ Plotly.newPlot('structure', data, layout_convg,{displaylogo: false});
 
    var rdf_hist= <xsl:value-of select="basic_info/main_relax_info/rdf_hist"/>;
  rdf_hist=rdf_hist.split(',').map(Number);
-   var rdf_bins= <xsl:value-of select="basic_info/main_relax_info/rdf_hist"/>;
+   var rdf_bins= <xsl:value-of select="basic_info/main_relax_info/rdf_bins"/>;
  rdf_bins=rdf_bins.split(',').map(Number);
-  //var xrd= <xsl:value-of select="basic_info/xrd_intensity"/>;
-  //xrd=xrd.split(',').map(Number);
-  
+ var ang_hist1= <xsl:value-of select="basic_info/main_relax_info/ang1_hist"/>;
+ ang_hist1=ang_hist1.split(',').map(Number);
+   var ang_bins1= <xsl:value-of select="basic_info/main_relax_info/ang1_bins"/>;
+ ang_bins1=ang_bins1.split(',').map(Number);
   
   var data1 = {
     x: rdf_bins ,
@@ -192,8 +215,8 @@ Plotly.newPlot('structure', data, layout_convg,{displaylogo: false});
   };
 
    var data2 = {
-    x: [1,2,3,4,5] ,
-    y: [1,2,3,4,5],
+    x: ang_bins1 ,
+    y: ang_hist1,
     xaxis: "x2",
     yaxis: "y2",
     type: 'bar',
@@ -206,13 +229,38 @@ Plotly.newPlot('structure', data, layout_convg,{displaylogo: false});
 </script>
 
 <!--Structure end-->  
-
+<br></br>
   
 <!--DOS start-->  
-<h3 style="text-align:center">Electronic density of states</h3>
-<div class="centered" id="dos">
 
-</div>
+<script>
+  var x= <xsl:value-of select="basic_info/main_relax_info/main_relax_dos/edos_energies"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("Electronic density of states");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+    
+    var divElement = document.createElement("div");
+    divElement.id = "dos";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);
+    
+    };
+    
+    
+</script>
+
+
+
+
+
+
+
 <script>
 function dos_plotly(){
 //  var data=[];
@@ -385,16 +433,38 @@ Plotly.newPlot('dos', data, layout_convg);
 </script>
   
 <!--DOS end-->  
-  
+  <br></br>
 
 
 
 
 <!--BANDS start--> 
-<h3 style="text-align:center">Electronic bandstructure</h3> 
-<div class="centered" id="bands"></div>
+<script>
+  var x= <xsl:value-of select="basic_info/main_band/main_bands_info/spin_up_bands_x"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("Electronic bandstructure");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+        var divElement = document.createElement("div");
+    divElement.id = "bands";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);
+    
+    
+    };
+</script>
+
+
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"> </script>
+
+
+
 <script>
  function bandplot(data){
 var plot_font = 14;
@@ -419,6 +489,9 @@ var layout_convg = {
 };
 
   var x= <xsl:value-of select="basic_info/main_band/main_bands_info/spin_up_bands_x"/>;
+
+  
+  
   x=x.split(';');
   
   var y= <xsl:value-of select="basic_info/main_band/main_bands_info/spin_up_bands_y"/>;
@@ -503,18 +576,40 @@ xaxis1: {domain: [0.2, 0.7],tickvals:kp_labels_points,ticktext:kp_labels},
 };
 
 Plotly.newPlot('bands', data,layout_convg);
+
 //bandplot(data);
 </script>
   
 <!--BANDS end-->  
-
+<br></br>
 
 
 
 
 <!--Spillage start--> 
-<h3 style="text-align:center">Spin-orbit coupling spillage</h3> 
-<div class="centered" id="spillage"></div>
+
+
+<script>
+  var x= <xsl:value-of select="basic_info/main_spillage_info/soc_bands/spin_up_bands_x"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("Spin-orbit coupling spillage");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+    
+    var divElement = document.createElement("div");
+    divElement.id = "spillage";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);
+    
+    };
+</script>
+
+
 
 <script src="https://cdn.plot.ly/plotly-latest.min.js"> </script>
 <script>
@@ -743,7 +838,7 @@ Plotly.newPlot('spillage', data,layout_convg);
 </script>
   
 <!--Spillage end-->  
-
+<br></br>
 
 
 
@@ -779,8 +874,26 @@ Plotly.newPlot('spillage', data,layout_convg);
 
 
 <!--ggaoptics start--> 
-<h3 style="text-align:center">Optoelectric properties (semi-local)</h3> 
-<div class="centered" id="ggaoptics"></div>
+ 
+<script>
+  var x= <xsl:value-of select="basic_info/main_optics_semilocal/main_optics_info/energies"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("Optoelectric properties (semi-local)");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+        var divElement = document.createElement("div");
+    divElement.id = "ggaoptics";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);
+    
+    };
+</script>
+
 <script>
 function ggaoptics_plotly(){
 
@@ -832,13 +945,36 @@ Plotly.newPlot('ggaoptics', data, layout_convg);
 </script>
 
 <!--ggaoptics end-->  
-
+<br></br>
 
 
 
 <!--mbjoptics start-->  
-<h3 style="text-align:center">Optoelectric properties (Metagga)</h3> 
-<div class="centered" id="mbjoptics"></div>
+
+
+
+<script>
+  var x= <xsl:value-of select="basic_info/main_optics_mbj/main_optics_mbj_info/energies"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("Optoelectric properties (TBmBJ)");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+    
+            var divElement = document.createElement("div");
+    divElement.id = "mbjoptics";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);
+    
+    };
+</script>
+
+
+
 
 <script>
 function mbjoptics_plotly(){
@@ -891,7 +1027,7 @@ Plotly.newPlot('mbjoptics', data, layout_convg);
 </script>
 
 <!--mbjoptics end--> 
-
+<br></br>
 
 
  
@@ -901,8 +1037,26 @@ Plotly.newPlot('mbjoptics', data, layout_convg);
 
 <!--DFPT dielectric tensor table starts--> 
 
-<h3 style="text-align:center">DFPT dielectric tensor</h3> 
-<table class="centered" style="border-spacing: 15px" id="dfpt_dielectric_tensor">  </table>
+
+<script>
+  var x= <xsl:value-of select="basic_info/main_lepsilon_info/epsilon"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("DFPT dielectric tensor");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+         var divElement = document.createElement("table");
+    divElement.id = "dfpt_dielectric_tensor";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);   
+    
+    };
+</script>
+
 
 
 
@@ -950,13 +1104,36 @@ var layout = {
 Plotly.newPlot('dfpt_dielectric_tensor',data);
 </script> 
 <!--DFPT dielectric tensor table ends-->
-
+<br></br>
 
 <!--DFPT piezoelectric tensor table starts--> 
-<h3 style="text-align:center">DFPT piezoelectric tensor</h3> 
 
-<table class="centered" style="border-spacing: 15px" id="dfpt_piezoelectric_tensor">  </table>
 
+
+<script>
+  var x= <xsl:value-of select="basic_info/main_lepsilon_info/dfpt_piezoelectric_tensor"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("DFPT piezoelectric tensor");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+    };
+    
+    
+             var divElement = document.createElement("table");
+    divElement.id = "dfpt_piezoelectric_tensor";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement); 
+    
+    
+</script>
+
+<!--<table class="centered" style="border-spacing: 15px" id="dfpt_piezoelectric_tensor">  </table>
+-->
 
 
 
@@ -1003,14 +1180,35 @@ var layout = {
 Plotly.newPlot('dfpt_piezoelectric_tensor',data);
 </script> 
 <!--DFPT piezoelectric tensor table ends-->
-
+<br></br>
 
 
 
   
 <!--IRPLOT starts-->
-  <h3 style="text-align:center">DFPT Infrared intensity</h3> 
-  <div class="centered" id="irplot"></div>
+
+  
+  <script>
+  var x= <xsl:value-of select="basic_info/main_lepsilon_info/ir_intensity"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("DFPT Infrared intensity");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+        var divElement = document.createElement("div");
+    divElement.id = "irplot";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);
+    
+    };
+</script>
+  
+  
+
 
 <script>
 var ir_data= <xsl:value-of select="basic_info/main_lepsilon_info/ir_intensity"/>;
@@ -1043,12 +1241,33 @@ Plotly.newPlot('irplot', [data],layout_convg);
   </script>
 
 <!--IRPLOT ends--> 
+<br></br>
 
 <!--Elastic tensor table starts--> 
 
- <h3 style="text-align:center">FD Elastic constant-tensor</h3> 
-<table class="centered" style="border-spacing: 15px" id="elastic_tensor">  </table>
 
+ 
+  <script>
+  var x= <xsl:value-of select="basic_info/main_elastic/main_elastic_info/cij"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("FD Elastic constant-tensor");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+    
+     var divElement = document.createElement("table");
+    divElement.id = "elastic_tensor";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement); 
+    
+    };
+</script> 
+<!--<table class="centered" style="border-spacing: 15px" id="elastic_tensor">  </table>
+-->
 
 
 
@@ -1095,10 +1314,30 @@ var layout = {
 Plotly.newPlot('elastic_tensor',data);
 </script> 
 <!--Elastic tensor table ends--> 
+<br></br>
 
 <!--Elastic tensor phdos and phbstructure starts--> 
- <h3 style="text-align:center">FD Phonon DOS at gamma-point only</h3>
-<div class="centered" id="fddos"></div>
+
+ 
+<script>
+  var x= <xsl:value-of select="basic_info/main_elastic/main_elastic_info/phonon_dos_frequencies"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("FD Phonon DOS at gamma-point only");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+    var divElement = document.createElement("div");
+    divElement.id = "fddos";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);
+    
+    };
+</script> 
+
  
 <script>
 var data=[];
@@ -1178,7 +1417,7 @@ data.push(data1);
 
   fddos_plotly(data);
 </script>
-
+<br></br>
 
 <!--Elastic tensor phdos and phbstructure ends--> 
 
@@ -1242,8 +1481,24 @@ FD phonons ends-->
 
 <!--EFG tensor table starts--> 
 
- <h3 style="text-align:center">Electric Field Gradient tensor</h3> 
-<table class="centered" style='display: block; height: 100px; overflow: auto;' id="efg_tensor">  </table>
+ <script>
+  var x= <xsl:value-of select="basic_info/efg_raw_tensor"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("EFG tensor");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+             var divElement = document.createElement("table");
+    divElement.id = "efg_tensor";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);   
+    
+    };
+</script> 
 
 
 
@@ -1252,7 +1507,12 @@ FD phonons ends-->
  var table = document.getElementById("efg_tensor");
 
      
- elasticij=<xsl:value-of select="basic_info/efg_raw_tensor"/> 
+ elasticij=<xsl:value-of select="basic_info/efg_raw_tensor"/>; 
+ console.log('efg',elasticij);
+ if (elasticij!==''){
+
+
+
  elasticij=elasticij.split(';');
  var mat=[["Element","Wyckoff","xx","xy","xz","yx","yy","yz","zx","zy","zz"],];
 
@@ -1288,11 +1548,125 @@ var layout = {
    xaxis1: {domain: [0.1, 0.5],},
    xaxis2: {domain: [0.5, 0.95],}, 
   
-}
+};
 
 Plotly.newPlot('efg_tensor',data);
+};
 </script> 
 <!--EFG tensor table ends--> 
+<br></br>
+
+
+
+
+<!--BolzTrap tensor table starts--> 
+
+ <script>
+  var x= <xsl:value-of select="basic_info/main_boltz/boltztrap_info/pseeb"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("Boltztrap data");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+             var divElement = document.createElement("table");
+    divElement.id = "boltz";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);   
+    
+    };
+</script> 
+
+
+
+
+<script> 
+ var table = document.getElementById("efg_tensor");
+
+     
+var pseeb=<xsl:value-of select="basic_info/main_boltz/boltztrap_info/pseeb"/>; 
+pseeb=pseeb.split(',').map(Number);
+var pcond=seeb=<xsl:value-of select="basic_info/main_boltz/boltztrap_info/pcond"/>;
+pcond=pcond.split(',').map(Number);
+var ppf=<xsl:value-of select="basic_info/main_boltz/boltztrap_info/ppf"/>;
+ppf=ppf.split(',').map(Number);
+var pkappa=<xsl:value-of select="basic_info/main_boltz/boltztrap_info/pkappa"/>;
+pkappa=pkappa.split(',').map(Number);
+ 
+var nseeb=<xsl:value-of select="basic_info/main_boltz/boltztrap_info/nseeb"/>;
+nseeb=nseeb.split(',').map(Number); 
+var ncond=seeb=<xsl:value-of select="basic_info/main_boltz/boltztrap_info/ncond"/>;
+ncond=ncond.split(',').map(Number);
+var npf=<xsl:value-of select="basic_info/main_boltz/boltztrap_info/npf"/>;
+npf=npf.split(',').map(Number);
+var nkappa=<xsl:value-of select="basic_info/main_boltz/boltztrap_info/nkappa"/>;
+nkappa=nkappa.split(',').map(Number);
+
+
+
+
+ elasticij=elasticij.split(';');
+ var mat=[["zz","yy","xx"],];
+
+
+
+ mat.push(pseeb);
+  mat.push(ppf);
+   mat.push(pcond);
+   
+  mat.push(nseeb);
+  mat.push(npf);
+   mat.push(ncond);
+   
+
+
+
+ var data = [{
+  type: 'table',
+ header:{values:["Data","p-Seebeck","p-Power-factor","p-Conductivity","n-Seebeck","n-Power-factor","n-Conductivity"] ,height: 30,font: {family: "Arial", size: 24, color: [""]}},
+
+  cells: {
+    values: (mat),
+    align: "center",
+    line: {color: "black", width: 1},
+    font: {family: "Arial", size: 24, color: ["black"]},
+    height: 40,
+  }
+}]
+
+
+
+
+
+
+var layout = {
+   xaxis1: {domain: [0.1, 0.5],},
+   xaxis2: {domain: [0.5, 0.95],}, 
+  
+};
+
+Plotly.newPlot('boltz',data);
+
+</script> 
+<!--BolzTrap tensor table ends--> 
+<br></br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </body>
 </html>
