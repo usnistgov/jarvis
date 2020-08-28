@@ -1104,9 +1104,10 @@ class Vasprun(object):
         return energies, absorption
 
     def phonon_data(self, fc_mass=True):
+        """Get phonon data."""
         info = {}
         hessian = []
-        data = self._data
+        # data = self._data
         for i in (self.ionic_steps[-1]["dynmat"]["varray"])[0]["v"]:
             hessian.append(i.split())
         hessian = np.array(hessian, dtype="double")
@@ -1130,9 +1131,7 @@ class Vasprun(object):
         eigvecs = np.array(
             [
                 i.split()
-                for i in (
-                    self.ionic_steps[-1]["dynmat"]["varray"][1]["v"]
-                )
+                for i in (self.ionic_steps[-1]["dynmat"]["varray"][1]["v"])
             ],
             dtype="float",
         )
@@ -1145,12 +1144,11 @@ class Vasprun(object):
         info["force_constants"] = force_constants
         return info
 
-
     @property
     def dfpt_data(self, fc_mass=True):
         """Get DFPT IBRION=8 LEPSILON lated data."""
         info = self.phonon_data(fc_mass=fc_mass)
-        data=self._data
+        data = self._data
         natoms = self.num_atoms
         born_charges = []
         for n in range(natoms):
@@ -1458,87 +1456,90 @@ class Vasprun(object):
         )
         return Kpoints(kpoints=kplist, kpoints_weights=kpwt)
 
+    def get_bandstructure(
+        self,
+        E_low=-4,
+        E_high=4,
+        spin=0,
+        zero_efermi=True,
+        kpoints_file_path="KPOINTS",
+        plot=False,
+    ):
+        """Get electronic bandstructure plot."""
+        try:
+            kp_labels = []
+            kp_labels_points = []
+            f = open(kpoints_file_path, "r")
+            lines = f.read().splitlines()
+            f.close()
+            for ii, i in enumerate(lines):
+                if ii > 2:
+                    tmp = i.split()
+                    if len(tmp) == 5:
+                        tmp = str("$") + str(tmp[4]) + str("$")
+                        if len(kp_labels) == 0:
+                            kp_labels.append(tmp)
+                            kp_labels_points.append(ii - 3)
+                        elif tmp != kp_labels[-1]:
+                            kp_labels.append(tmp)
+                            kp_labels_points.append(ii - 3)
 
-    def get_bandstructure(self,
-            E_low=-4,
-            E_high=4,
-            spin=0,
-            zero_efermi=True,
-            kpoints_file_path="KPOINTS",plot=False,
-        ):
-            """Get electronic bandstructure plot."""
-            try:
-                kp_labels = []
-                kp_labels_points = []
-                f = open(kpoints_file_path, "r")
-                lines = f.read().splitlines()
-                f.close()
-                for ii, i in enumerate(lines):
-                    if ii > 2:
-                        tmp = i.split()
-                        if len(tmp) == 5:
-                            tmp = str("$") + str(tmp[4]) + str("$")
-                            if len(kp_labels) == 0:
-                                kp_labels.append(tmp)
-                                kp_labels_points.append(ii - 3)
-                            elif tmp != kp_labels[-1]:
-                                kp_labels.append(tmp)
-                                kp_labels_points.append(ii - 3)
+        except Exception:
+            print("No K-points file found, still proceeding")
+            pass
 
-            except Exception:
-                print("No K-points file found, still proceeding")
-                pass
+        tmp = 0.0
+        info = {}
+        info["efermi"] = float(self.efermi)
+        if zero_efermi:
+            tmp = float(self.efermi)
 
-            tmp = 0.0
-            info={}
-            info['efermi']=float(self.efermi)
-            if zero_efermi:
-                tmp = float(self.efermi)
-          
-            spin_up_bands_x=[]
-            spin_up_bands_y=[]
-            spin_down_bands_x=[]
-            spin_down_bands_y=[]
-            for i, ii in enumerate(self.eigenvalues[spin][:, :, 0].T - tmp):
-                #plt.plot(ii, color="r")
-                spin_up_bands_x.append([np.arange(0,len(ii))])
-                spin_up_bands_y.append([ii])
+        spin_up_bands_x = []
+        spin_up_bands_y = []
+        spin_down_bands_x = []
+        spin_down_bands_y = []
+        for i, ii in enumerate(self.eigenvalues[spin][:, :, 0].T - tmp):
+            # plt.plot(ii, color="r")
+            spin_up_bands_x.append([np.arange(0, len(ii))])
+            spin_up_bands_y.append([ii])
+        if self.is_spin_polarized:
+            for i, ii in enumerate(self.eigenvalues[1][:, :, 0].T - tmp):
+                # plt.plot(ii, color="b")
+                spin_down_bands_x.append([np.arange(0, len(ii))])
+                spin_down_bands_y.append([ii])
+
+        info["spin_up_bands_x"] = spin_up_bands_x
+        info["spin_up_bands_y"] = spin_up_bands_y
+        info["spin_down_bands_x"] = spin_down_bands_x
+        info["spin_down_bands_y"] = spin_down_bands_y
+
+        info["kp_labels_points"] = list(kp_labels_points)
+        info["kp_labels"] = list(kp_labels)
+        if plot:
+            for i, j in zip(info["spin_up_bands_x"], info["spin_up_bands_y"]):
+                plt.plot(
+                    np.array(i).flatten(), np.array(j).flatten(), color="b"
+                )
+
             if self.is_spin_polarized:
-                for i, ii in enumerate(self.eigenvalues[1][:, :, 0].T - tmp):
-                    #plt.plot(ii, color="b")
-                    spin_down_bands_x.append([np.arange(0,len(ii))])
-                    spin_down_bands_y.append([ii])
-            
-            info['spin_up_bands_x']=(spin_up_bands_x)
-            info['spin_up_bands_y']=(spin_up_bands_y)
-            info['spin_down_bands_x']=(spin_down_bands_x)
-            info['spin_down_bands_y']=(spin_down_bands_y)
+                for i, j in zip(
+                    info["spin_down_bands_x"], info["spin_down_bands_y"]
+                ):
+                    plt.plot(
+                        np.array(i).flatten(), np.array(j).flatten(), color="r"
+                    )
 
-            info['kp_labels_points']=list(kp_labels_points)
-            info['kp_labels']=list(kp_labels)
-            if plot:
-              for i,j in zip(info['spin_up_bands_x'],info['spin_up_bands_y']):
-                plt.plot(np.array(i).flatten(),np.array(j).flatten(),color='b')
-              
-              if self.is_spin_polarized:
-                for i,j in zip(info['spin_down_bands_x'],info['spin_down_bands_y']):
-                  plt.plot(np.array(i).flatten(),np.array(j).flatten(),color='r')
-              
-              plt.ylim([E_low, E_high])
-              plt.xticks(kp_labels_points, kp_labels)
-              plt.xlim([0, len(self.kpoints._kpoints)])
-              plt.xlabel(r"$\mathrm{Wave\ Vector}$")
-              ylabel = (
-                  r"$\mathrm{E\ -\ E_f\ (eV)}$"
-                  if zero_efermi
-                  else r"$\mathrm{Energy\ (eV)}$"
-              )
-              plt.ylabel(ylabel)
-            return info
-
-
-
-
+            plt.ylim([E_low, E_high])
+            plt.xticks(kp_labels_points, kp_labels)
+            plt.xlim([0, len(self.kpoints._kpoints)])
+            plt.xlabel(r"$\mathrm{Wave\ Vector}$")
+            ylabel = (
+                r"$\mathrm{E\ -\ E_f\ (eV)}$"
+                if zero_efermi
+                else r"$\mathrm{Energy\ (eV)}$"
+            )
+            plt.ylabel(ylabel)
+        return info
 
     @property
     def total_dos(self):
@@ -1646,131 +1647,146 @@ class Vasprun(object):
                             )
         return info
 
-
-    def get_spdf_dos(self,plot=False):
-          """Get spdf resolved partial density of states."""
-          info={}
-          s=['s'];p=['px','py','pz'];d=['dxy','dyz','dxz','dz2','dx2'];f=['f-3', 'f-2', 'f-1', 'f0', 'f1', 'f2', 'f3'];
-          spin=0
-          spin_pol=self.is_spin_polarized
-          num_atoms=self.all_structures[-1].num_atoms
-          pdos=self.partial_dos_spdf  # spin,atom,spdf
-          energy=pdos[0][0]['energy']-self.efermi
-          spin_up_s=np.zeros(len(energy))
-          spin_up_p=np.zeros(len(energy))
-          spin_up_d=np.zeros(len(energy))
-          has_f_elements=False
-          if 'f1' in pdos[0][0].keys():
-            has_f_elements=True
-            spin_up_f=np.zeros(len(energy))
-          for i in range(num_atoms):
+    def get_spdf_dos(self, plot=False):
+        """Get spdf resolved partial density of states."""
+        info = {}
+        s = ["s"]
+        p = ["px", "py", "pz"]
+        d = ["dxy", "dyz", "dxz", "dz2", "dx2"]
+        f = ["f-3", "f-2", "f-1", "f0", "f1", "f2", "f3"]
+        # spin = 0
+        spin_pol = self.is_spin_polarized
+        num_atoms = self.all_structures[-1].num_atoms
+        pdos = self.partial_dos_spdf  # spin,atom,spdf
+        energy = pdos[0][0]["energy"] - self.efermi
+        spin_up_s = np.zeros(len(energy))
+        spin_up_p = np.zeros(len(energy))
+        spin_up_d = np.zeros(len(energy))
+        has_f_elements = False
+        if "f1" in pdos[0][0].keys():
+            has_f_elements = True
+            spin_up_f = np.zeros(len(energy))
+        for i in range(num_atoms):
             for j in s:
-             spin_up_s+=(pdos[0][i][j])
+                spin_up_s += pdos[0][i][j]
             for j in p:
-              spin_up_p+=(pdos[0][i][j])
+                spin_up_p += pdos[0][i][j]
             for j in d:
-              spin_up_d+=(pdos[0][i][j])
+                spin_up_d += pdos[0][i][j]
             if has_f_elements:
-              for j in f:
-                spin_up_f+=(pdos[0][i][j])
-          info['spin_up_s']=spin_up_s
-          info['spin_up_p']=spin_up_p
-          info['spin_up_d']=spin_up_d
-          info['energy']=energy
-          if has_f_elements:
-            info['spin_up_f']=spin_up_f
-          if spin_pol:
-            spin=1
-            spin_down_s=np.zeros(len(energy))
-            spin_down_p=np.zeros(len(energy))
-            spin_down_d=np.zeros(len(energy))
-            if has_f_elements:
-              spin__f=np.zeros(len(energy))
-            for i in range(num_atoms):
-              for j in s:
-                spin_down_s+=(pdos[1][i][j])
-              for j in p:
-                spin_down_p+=(pdos[1][i][j])
-              for j in d:
-                spin_down_d+=(pdos[1][i][j])
-              if has_f_elements:
                 for j in f:
-                  spin_down_f+=(pdos[1][i][j])
-
-            info['spin_down_s']=-1*spin_down_s
-            info['spin_down_p']=-1*spin_down_p
-            info['spin_down_d']=-1*spin_down_d
-            info['has_f_elements']=str(has_f_elements)
+                    spin_up_f += pdos[0][i][j]
+        info["spin_up_s"] = spin_up_s
+        info["spin_up_p"] = spin_up_p
+        info["spin_up_d"] = spin_up_d
+        info["energy"] = energy
+        if has_f_elements:
+            info["spin_up_f"] = spin_up_f
+        if spin_pol:
+            # spin = 1
+            spin_down_s = np.zeros(len(energy))
+            spin_down_p = np.zeros(len(energy))
+            spin_down_d = np.zeros(len(energy))
             if has_f_elements:
-              info['spin_down_f']=-1*spin_down_f
+                spin_down_f = np.zeros(len(energy))
+            for i in range(num_atoms):
+                for j in s:
+                    spin_down_s += pdos[1][i][j]
+                for j in p:
+                    spin_down_p += pdos[1][i][j]
+                for j in d:
+                    spin_down_d += pdos[1][i][j]
+                if has_f_elements:
+                    for j in f:
+                        spin_down_f += pdos[1][i][j]
+
+            info["spin_down_s"] = -1 * spin_down_s
+            info["spin_down_p"] = -1 * spin_down_p
+            info["spin_down_d"] = -1 * spin_down_d
+            info["has_f_elements"] = str(has_f_elements)
+            if has_f_elements:
+                info["spin_down_f"] = -1 * spin_down_f
             if plot:
-              plt.plot(info['energy'],info['spin_up_s'],color='red',label='s')
-              
-              plt.plot(info['energy'],info['spin_up_p'],color='green',label='p')
-              
-              plt.plot(info['energy'],info['spin_up_d'],color='blue',label='d')
-              if has_f_elements:
-                plt.plot(info['energy'],info['spin_up_f'],color='black',label='f')
-              if spin_pol:
-                plt.plot(info['energy'],info['spin_down_s'],color='red')
-                plt.plot(info['energy'],info['spin_down_p'],color='green')
-                plt.plot(info['energy'],info['spin_down_d'],color='blue')
-              if has_f_elements:
-                plt.plot(info['energy'],info['spin_down_f'],color='black')
-              plt.xlim([-5,10])
-              plt.legend()
-          return info
+                plt.plot(
+                    info["energy"], info["spin_up_s"], color="red", label="s"
+                )
 
+                plt.plot(
+                    info["energy"], info["spin_up_p"], color="green", label="p"
+                )
 
-    def get_atom_resolved_dos(self,plot=False):
-          """Get atom resolved density of states."""
-          spin_pol=self.is_spin_polarized
-          atoms=self.all_structures[-1]
-          num_atoms=atoms.num_atoms
-          elements=atoms.elements
-          unique_elements=atoms.uniq_species
-          pdos=self.partial_dos_spdf  # spin,atom,spdf
-          energy=pdos[0][0]['energy']-self.efermi
-          element_dict=recast_array_on_uniq_array_elements(unique_elements,elements)
-          valid_keys=[]
-          info={}
-          info['spin_up_info']={}
-          info['spin_down_info']={}
-          info['energy']=energy
-          for i in pdos[0][0].keys():
-            if 'energ' not in i:
-              valid_keys.append(i)
-          #print (valid_keys)
-          spin_up_info={}
-          for i,j in element_dict.items():
-            spin_up_info[i]=np.zeros(len(energy))
-          
-          for i,j in element_dict.items():
+                plt.plot(
+                    info["energy"], info["spin_up_d"], color="blue", label="d"
+                )
+                if has_f_elements:
+                    plt.plot(
+                        info["energy"],
+                        info["spin_up_f"],
+                        color="black",
+                        label="f",
+                    )
+                if spin_pol:
+                    plt.plot(info["energy"], info["spin_down_s"], color="red")
+                    plt.plot(
+                        info["energy"], info["spin_down_p"], color="green"
+                    )
+                    plt.plot(info["energy"], info["spin_down_d"], color="blue")
+                if has_f_elements:
+                    plt.plot(
+                        info["energy"], info["spin_down_f"], color="black"
+                    )
+                plt.xlim([-5, 10])
+                plt.legend()
+        return info
+
+    def get_atom_resolved_dos(self, plot=False):
+        """Get atom resolved density of states."""
+        # spin_pol = self.is_spin_polarized
+        atoms = self.all_structures[-1]
+        # num_atoms = atoms.num_atoms
+        elements = atoms.elements
+        unique_elements = atoms.uniq_species
+        pdos = self.partial_dos_spdf  # spin,atom,spdf
+        energy = pdos[0][0]["energy"] - self.efermi
+        element_dict = recast_array_on_uniq_array_elements(
+            unique_elements, elements
+        )
+        valid_keys = []
+        info = {}
+        info["spin_up_info"] = {}
+        info["spin_down_info"] = {}
+        info["energy"] = energy
+        for i in pdos[0][0].keys():
+            if "energ" not in i:
+                valid_keys.append(i)
+        # print (valid_keys)
+        spin_up_info = {}
+        for i, j in element_dict.items():
+            spin_up_info[i] = np.zeros(len(energy))
+
+        for i, j in element_dict.items():
             for atom in j:
-              for k in valid_keys:
-               spin_up_info[i]+=pdos[0][atom][k]
-          info['spin_up_info']=spin_up_info
-          if self.is_spin_polarized:
-            spin_down_info={}
-            for i,j in element_dict.items():
-              spin_down_info[i]=np.zeros(len(energy))
-            
-            for i,j in element_dict.items():
-              for atom in j:
                 for k in valid_keys:
-                  spin_down_info[i]+=-1*pdos[0][atom][k]   
-            info['spin_down_info']=spin_down_info
+                    spin_up_info[i] += pdos[0][atom][k]
+        info["spin_up_info"] = spin_up_info
+        if self.is_spin_polarized:
+            spin_down_info = {}
+            for i, j in element_dict.items():
+                spin_down_info[i] = np.zeros(len(energy))
+
+            for i, j in element_dict.items():
+                for atom in j:
+                    for k in valid_keys:
+                        spin_down_info[i] += -1 * pdos[0][atom][k]
+            info["spin_down_info"] = spin_down_info
             if plot:
-              for i,j in info.items() :
-                if 'spin' in i:
-                  for m,n in j.items():
+                for i, j in info.items():
+                    if "spin" in i:
+                        for m, n in j.items():
 
-                      if 'up' in i:
-                        plt.plot(info2['energy'],n,label=m)
-                      if 'down' in i:
-                        plt.plot(info2['energy'],n)
-              plt.legend()   
-          return info
-
-
-
+                            if "up" in i:
+                                plt.plot(info["energy"], n, label=m)
+                            if "down" in i:
+                                plt.plot(info["energy"], n)
+                plt.legend()
+        return info

@@ -335,7 +335,7 @@ def test_ir():
         masses=masses,
         born_charges=born_charges,
     )
-    assert round(y[2], 2) == 1.38
+    assert round(y[2], 2) == 0
 
 
 def test_wavecar():

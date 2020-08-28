@@ -28,7 +28,11 @@ def normalize_vecs(phonon_eigenvectors, masses):
 
 
 def ir_intensity(
-    phonon_eigenvectors=[], phonon_eigenvalues=[], masses=[], born_charges=[],smoothen=True
+    phonon_eigenvectors=[],
+    phonon_eigenvalues=[],
+    masses=[],
+    born_charges=[],
+    smoothen=True,
 ):
     """Calculate IR intensity using DFPT."""
     eigendisplacements = normalize_vecs(phonon_eigenvectors, masses)
@@ -50,7 +54,7 @@ def ir_intensity(
         freq.append(v * 33.35641)  # Thz to cm-1
         ir_ints.append(irIntensity)
     if smoothen:
-       freq, ir_ints=Spectrum(x=freq,y=ir_ints).smoothen_spiky_spectrum()
+        freq, ir_ints = Spectrum(x=freq, y=ir_ints).smoothen_spiky_spectrum()
     return freq, ir_ints
 
 

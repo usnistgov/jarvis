@@ -128,19 +128,21 @@
 <script>
   var data =
     <xsl:value-of select="basic_info/main_relax_info/xyz"/>;
-  var viewer_first = $3Dmol.createViewer("geometry", {
+  var viewer = $3Dmol.createViewer("geometry", {
     backgroundColor: "white",
   });
-  viewer_first.setStyle({stick:{colorscheme:"Jmol"}});
-  viewer_first.addModel(data, "xyz");
-  viewer_first.setStyle({ sphere: { radius: 0.7 } });
-  viewer_first.addStyle({ stick: { radius: 0.2 } });
-  viewer_first.zoomTo();
-  viewer_first.setClickable({},true,function(atom,viewer,event,container) {
+ // viewer.setStyle({stick:{colorscheme:"Jmol"}});
+  
+  viewer.addModel(data, "xyz");
+  viewer.setStyle({ sphere: { radius: 0.7 } });
+  
+  viewer.addStyle({ stick: { radius: 0.2 } });
+  viewer.zoomTo();
+  viewer.setClickable({},true,function(atom,viewer,event,container) {
                        viewer.addLabel(atom.resn+":"+atom.atom,{position: atom, backgroundColor: 'darkgreen', backgroundOpacity: 0.8});
                    });
  
-  viewer_first.render();
+  viewer.render();
 </script>
 
 
@@ -200,9 +202,9 @@ Plotly.newPlot('structure', data, layout_convg,{displaylogo: false});
  rdf_hist=rdf_hist.split(',').map(Number);
    var rdf_bins= <xsl:value-of select="basic_info/main_relax_info/rdf_bins"/>;
  rdf_bins=rdf_bins.split(',').map(Number);
- var ang_hist1= <xsl:value-of select="basic_info/main_relax_info/ang1_hist"/>;
+ var ang_hist1= <xsl:value-of select="basic_info/main_relax_info/ang2_hist"/>;
  ang_hist1=ang_hist1.split(',').map(Number);
-   var ang_bins1= <xsl:value-of select="basic_info/main_relax_info/ang1_bins"/>;
+   var ang_bins1= <xsl:value-of select="basic_info/main_relax_info/ang2_bins"/>;
  ang_bins1=ang_bins1.split(',').map(Number);
   
   var data1 = {
@@ -816,23 +818,70 @@ kp_labels_points=kp_labels_points.split(',').map(Number);
 var kp_labels=<xsl:value-of select="basic_info/main_spillage_info/soc_bands/kp_labels"/>;
 kp_labels=kp_labels.split(',');
 
+
+
+
+
+  var y= <xsl:value-of select="basic_info/main_spillage_info/spillage_k"/>;
+  y=y.split(',');
+  
+  var x= <xsl:value-of select="basic_info/main_spillage_info/spillage_kpoints"/>;
+  x=x.split(',');
+  var xx=[]
+  for (var i=0;i&lt;x.length;i++) {
+  xx.push(i);
+  }
+  
+  var data3 = {
+    x: xx,
+    y: y,
+  
+    showlegend: false,
+    xaxis: "x3",
+    yaxis: "y3",
+    type: 'scatter',
+      marker:{color:'blue'},
+  };
+  
+  data.push(data3);
+  
+  
+
   var layout_convg = {
 
-xaxis1: {domain: [0.0, 0.5],tickvals:kp_labels_points,ticktext:kp_labels},
+xaxis1: {domain: [0.0, 0.3],tickvals:kp_labels_points,ticktext:kp_labels},
   visible:'legendonly',
     yaxis1: {
      range: [-4, 4],
      autorange: false,
    },
   
-  xaxis2: {domain: [0.5, 1.0],tickvals:kp_labels_points,ticktext:kp_labels},
+  xaxis2: {domain: [0.35, .65],tickvals:kp_labels_points,ticktext:kp_labels},
   visible:'legendonly',
     yaxis2: {
      range: [-4, 4],
      autorange: false,
    },
+   
+   xaxis3: {domain: [0.7, .99],tickvals:kp_labels_points,ticktext:kp_labels},
+  visible:'legendonly',
+    yaxis3: {
+     
+   },  
+   
+   
 };
 
+
+
+
+
+
+  
+ 
+  
+  
+  
 Plotly.newPlot('spillage', data,layout_convg);
 //bandplot(data);
 </script>
@@ -1584,7 +1633,7 @@ Plotly.newPlot('efg_tensor',data);
 
 
 <script> 
- var table = document.getElementById("efg_tensor");
+ var table = document.getElementById("boltz");
 
      
 var pseeb=<xsl:value-of select="basic_info/main_boltz/boltztrap_info/pseeb"/>; 
@@ -1608,7 +1657,6 @@ nkappa=nkappa.split(',').map(Number);
 
 
 
- elasticij=elasticij.split(';');
  var mat=[["zz","yy","xx"],];
 
 
@@ -1656,7 +1704,85 @@ Plotly.newPlot('boltz',data);
 
 
 
+<!--Convergenece info statrts-->
 
+<script>
+  var x= <xsl:value-of select="basic_info/convergence_info/kp_values"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("K-point and cut-off convergence");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+    
+    var divElement = document.createElement("div");
+    divElement.id = "convergence";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);
+    
+    };
+</script>
+
+
+
+<script>
+function structure_plotly(){
+
+var data = [data1, data2];
+var plot_font = 14;
+var layout_convg = {
+grid: {rows: 1, columns: 2},
+  xaxis1: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
+  yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
+  yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
+  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'K-Point',font:{size: plot_font,color:"black"}}},
+  
+  showlegend: false,
+  
+};
+
+Plotly.newPlot('convergence', data, layout_convg,{displaylogo: false});
+
+};
+
+   var rdf_hist= <xsl:value-of select="basic_info/convergence_info/kp_values"/>;
+ rdf_hist=rdf_hist.split(',').map(Number);
+   var rdf_bins= <xsl:value-of select="basic_info/convergence_info/kp_based_energies"/>;
+ rdf_bins=rdf_bins.split(',').map(Number);
+ var ang_hist1= <xsl:value-of select="basic_info/convergence_info/encut_values"/>;
+ ang_hist1=ang_hist1.split(',').map(Number);
+   var ang_bins1= <xsl:value-of select="basic_info/convergence_info/encut_based_energies"/>;
+ ang_bins1=ang_bins1.split(',').map(Number);
+  
+  var data1 = {
+    x: rdf_hist ,
+    y:rdf_bins,
+    xaxis: "x1",
+    yaxis: "y1",
+    type: 'scatter',
+   
+    
+  };
+
+   var data2 = {
+    x: ang_hist1 ,
+    y: ang_bins1,
+    xaxis: "x2",
+    yaxis: "y2",
+    type: 'scatter',
+    
+  };
+
+
+
+  structure_plotly();
+</script>
+
+<!--Convergenece info end-->  
+<br></br>
 
 
 

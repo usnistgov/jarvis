@@ -178,12 +178,22 @@ class Atoms(object):
 
     @property
     def get_xyz_string(self):
+        """Get xyz string for atoms."""
         line = str(self.num_atoms) + "\n"
-        line += ",".join(map(str, np.array(self.lattice_mat).flatten())) + "\n"
+        line += " ".join(map(str, np.array(self.lattice_mat).flatten())) + "\n"
         for i, j in zip(self.elements, self.cart_coords):
-             line+=str(i)+str(' ')+str(j[0])+str(' ')+str(j[1])+str(' ')+str(j[2])+'\n'
+            line += (
+                str(i)
+                + str(" ")
+                + str(round(j[0], 4))
+                + str(" ")
+                + str(round(j[1], 4))
+                + str(" ")
+                + str(round(j[2], 4))
+                + "\n"
+            )
         return line
-    
+
     def write_xyz(self, filename="atoms.xyz"):
         """Write XYZ format file."""
         f = open(filename, "w")

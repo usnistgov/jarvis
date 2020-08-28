@@ -1,58 +1,86 @@
-from jarvis.core.atoms import Atoms
+"""Module for processing elastic tensor."""
 import numpy as np
 from collections import OrderedDict
 
+
 class ElasticTensor(object):
-   def __init__(self,et_tensor=[]):
-       self.et_tensor=et_tensor
-   
-   @property
-   def voigt_modulus(self):
-       c=self.et_tensor
-       Kv=float((c[0][0]+c[1][1]+c[2][2])+2*(c[0][1]+c[1][2]+c[2][0]))/float(9)
-       Gv=float((c[0][0]+c[1][1]+c[2][2])-(c[0][1]+c[1][2]+c[2][0])+3*(c[3][3]+c[4][4]+c[5][5]))/float(15)
-       return [Kv,Gv]
+    """Module for processing elastic tensor."""
 
-   @property
-   def compliance_tensor(self):
-       return np.linalg.inv(self.et_tensor)
+    def __init__(self, et_tensor=[]):
+        """Initialize class."""
+        self.et_tensor = et_tensor
 
-   @property
-   def reuss_modulus(self):
-       c=self.compliance_tensor
-       Kr=1/float((c[0][0]+c[1][1]+c[2][2])+2*(c[0][1]+c[1][2]+c[2][0]))
-       Gr=15/(4*(c[0][0]+c[1][1]+c[2][2])-4*(c[0][1]+c[1][2]+c[2][0])+3*(c[3][3]+c[4][4]+c[5][5]))
-       return [Kr, Gr]
+    @property
+    def voigt_modulus(self):
+        """Get Voigt modulus."""
+        c = self.et_tensor
+        Kv = float(
+            (c[0][0] + c[1][1] + c[2][2]) + 2 * (c[0][1] + c[1][2] + c[2][0])
+        ) / float(9)
+        Gv = float(
+            (c[0][0] + c[1][1] + c[2][2])
+            - (c[0][1] + c[1][2] + c[2][0])
+            + 3 * (c[3][3] + c[4][4] + c[5][5])
+        ) / float(15)
+        return [Kv, Gv]
 
-   @property
-   def average_modulus(self):
-      return (np.array(self.voigt_modulus)+np.array(self.reuss_modulus))/2
+    @property
+    def compliance_tensor(self):
+        """Get compliance."""
+        return np.linalg.inv(self.et_tensor)
 
-   @property
-   def poisson_ratio(self):
-       k,g=self.average_modulus
-       return (3*k-2*g)/(6*k+2*g)
-   @property
-   def universal_ansiotropy_ratio(self):
-      Kv,Gv=self.voigt_modulus
-      Kr,Gr=self.reuss_modulus
-      return 5*(Gv/Gr)+(Kv/Kr)-6
+    @property
+    def reuss_modulus(self):
+        """Get Reuss modulus."""
+        c = self.compliance_tensor
+        Kr = 1 / float(
+            (c[0][0] + c[1][1] + c[2][2]) + 2 * (c[0][1] + c[1][2] + c[2][0])
+        )
+        Gr = 15 / (
+            4 * (c[0][0] + c[1][1] + c[2][2])
+            - 4 * (c[0][1] + c[1][2] + c[2][0])
+            + 3 * (c[3][3] + c[4][4] + c[5][5])
+        )
+        return [Kr, Gr]
 
-   @property
-   def youngs_modulus(self):
-    k,g=self.average_modulus
-    return 9e9*k*g/(3*k+g)
+    @property
+    def average_modulus(self):
+        """Get average modulus."""
+        return (
+            np.array(self.voigt_modulus) + np.array(self.reuss_modulus)
+        ) / 2
 
-   def to_dict(self):
-     d = OrderedDict()
-     d['voigt_bulk_modulus']=self.voigt_modulus[0]
-     d['voigt_shear_modulus']=self.voigt_modulus[1]
-     d['reuss_bulk_modulus']=self.reuss_modulus[0]
-     d['reuss_shear_modulus']=self.reuss_modulus[1]
-     d['poisson_ratio']=self.poisson_ratio
-     d['youngs_modulus']=self.youngs_modulus
-     d['universal_ansiotropy_ratio']=self.universal_ansiotropy_ratio
-     return d
+    @property
+    def poisson_ratio(self):
+        """Get poisson's ratio."""
+        k, g = self.average_modulus
+        return (3 * k - 2 * g) / (6 * k + 2 * g)
+
+    @property
+    def universal_ansiotropy_ratio(self):
+        """Get universal ansiotropy ratio."""
+        Kv, Gv = self.voigt_modulus
+        Kr, Gr = self.reuss_modulus
+        return 5 * (Gv / Gr) + (Kv / Kr) - 6
+
+    @property
+    def youngs_modulus(self):
+        """Get Youngs modulus."""
+        k, g = self.average_modulus
+        return 9e9 * k * g / (3 * k + g)
+
+    def to_dict(self):
+        """Get dictionary representation."""
+        d = OrderedDict()
+        d["voigt_bulk_modulus"] = self.voigt_modulus[0]
+        d["voigt_shear_modulus"] = self.voigt_modulus[1]
+        d["reuss_bulk_modulus"] = self.reuss_modulus[0]
+        d["reuss_shear_modulus"] = self.reuss_modulus[1]
+        d["poisson_ratio"] = self.poisson_ratio
+        d["youngs_modulus"] = self.youngs_modulus
+        d["universal_ansiotropy_ratio"] = self.universal_ansiotropy_ratio
+        return d
+
 
 """
 from jarvis.io.vasp.outputs import Vasprun,Outcar
@@ -66,7 +94,8 @@ et=ElasticTensor(o.elastic_props()['cij'])
 #print (et.poisson_ratio) #0.21367500388646996
 #print (et.universal_ansiotropy_ratio) #0.21367500388646996
 #print ('j_vel',(1e9*(et.average_modulus[0])/p.density)**.5)
-#print ('j_vel',(1e9*(et.average_modulus[0]+4/3*et.average_modulus[1])/p.density)**.5)
+#print ('j_vel',(1e9*
+(et.average_modulus[0]+4/3*et.average_modulus[1])/p.density)**.5)
 k,g=et.average_modulus
 mass_density=p.density
 #print ((1e9 * (k + 4. / 3. * g) / mass_density/1.6605e3 ) ** 0.5)
@@ -74,7 +103,8 @@ print (et.to_dict())
 from pymatgen.analysis.elasticity.elastic import ElasticTensor
 et=ElasticTensor.from_voigt(o.elastic_props()['cij'])
 from pymatgen.core.structure import Structure
-pmg=Structure.from_file('../../examples/vasp/SiOptb88/SiOptb88/MAIN-ELASTIC-bulk@mp_149/POSCAR')
+pmg=Structure.from_file('../../examples/vasp/
+SiOptb88/SiOptb88/MAIN-ELASTIC-bulk@mp_149/POSCAR')
 #print (et.k_vrh,et.g_vrh)
 #print (et.long_v(pmg))
 #print ('density_j,density_p',p.density,pmg.density)

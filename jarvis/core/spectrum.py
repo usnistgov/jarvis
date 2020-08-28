@@ -18,7 +18,7 @@ class Spectrum(object):
     def rescale(self, mode="max", scaling_factor=1.0):
         """Rescale the spectrum."""
         if mode == "sum":
-            cont = np.sum(self.y, axis=0)
+            const = np.sum(self.y, axis=0)
         if mode == "max":
             const = np.max(self.y, axis=0)
         return self.y * scaling_factor / const
@@ -69,11 +69,13 @@ from jarvis.analysis.phonon.ir import ir_intensity
 import os
 
 out = Outcar(
-    os.path.join(os.path.dirname(__file__),   "../tests/testfiles/io/vasp/OUTCAR.JVASP-39")
+    os.path.join(os.path.dirname(__file__),
+     "../tests/testfiles/io/vasp/OUTCAR.JVASP-39")
 )
 vrun = Vasprun(
     os.path.join(
-        os.path.dirname(__file__),  "../tests/testfiles/io/vasp/vasprun.xml.JVASP-39"
+        os.path.dirname(__file__),
+        "../tests/testfiles/io/vasp/vasprun.xml.JVASP-39"
     )
 )
 
