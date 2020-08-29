@@ -7,8 +7,8 @@
 <style>
 .centered {
   margin: auto;
-  width: 90%;
- border: 2px solid black;
+  width: 95%;
+ border: 1px solid black;
   padding: 1px;
 }
 .right {
@@ -73,8 +73,8 @@
       <td>&#946;:<xsl:value-of select="alpha_prim"/> &#176;</td>
     </tr>
     <tr>
-      <td>Material  type: <xsl:value-of select="material_type"/></td>
-      <td>SCF bandgap (eV): <xsl:value-of select="scf_indir_gap"/></td>
+      <td>SCF direct bandgap (eV): <xsl:value-of select="scf_dir_gap"/></td>
+      <td>SCF indirect bandgap (eV): <xsl:value-of select="scf_indir_gap"/></td>
       <td>c <xsl:value-of select="c_conv"/> &#8491;</td>
       <td>&#947;:<xsl:value-of select="gamma_conv"/> &#176;</td>
       <td>c <xsl:value-of select="c_prim"/> &#8491;</td>
@@ -88,7 +88,14 @@
       <td>nAtoms_prim:<xsl:value-of select="prim_natoms"/></td>
       <td>nAtoms_conv:<xsl:value-of select="conv_natoms"/></td>
     </tr>    
-    
+    <tr>
+      <td>Data source: <xsl:value-of select="data_source"/></td>
+      <td>Material type: <xsl:value-of select="material_type"/></td>
+      <td>Magnetic moment: <xsl:value-of select="magmom"/></td>
+      <td>Exfoliation_energy: <xsl:value-of select="exfoliation_energy"/></td>
+      <td>Packing fraction:<xsl:value-of select="packing_fr"/></td>
+      <td>Number of species:<xsl:value-of select="number_uniq_species"/></td>
+    </tr>      
     
     
     
@@ -181,14 +188,18 @@
 <script>
 function structure_plotly(){
 
-var data = [data1, data2];
+var data = [data1, data2,data3,data4];
 var plot_font = 14;
 var layout_convg = {
-grid: {rows: 1, columns: 2},
-  xaxis1: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
-  yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
-  yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
-  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'K-Point',font:{size: plot_font,color:"black"}}},
+grid: {rows: 2, columns: 2,pattern: 'independent'},
+  xaxis1: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'Distance (Angst.)',font:{size: plot_font,color:"black"}}},
+  yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Distribution',font:{size: plot_font,color:"black"}}},
+  yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Distribution',font:{size: plot_font,color:"black"}}},
+  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'Angles upto first neighbor',font:{size: plot_font,color:"black"}}},
+  xaxis3: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'Angles upto second neighbor',font:{size: plot_font,color:"black"}}},
+  yaxis3:{tickfont: {size: plot_font,color:'black'},title:{text: 'Distribution',font:{size: plot_font,color:"black"}}},
+  yaxis4: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Distribution',font:{size: plot_font,color:"black"}}},
+  xaxis4: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'Dih. angles upto first neighbor',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
   
@@ -198,14 +209,23 @@ Plotly.newPlot('structure', data, layout_convg,{displaylogo: false});
 
 };
 
-   var rdf_hist= <xsl:value-of select="basic_info/main_relax_info/rdf_hist"/>;
+ var rdf_hist= <xsl:value-of select="basic_info/main_relax_info/rdf_hist"/>;
  rdf_hist=rdf_hist.split(',').map(Number);
-   var rdf_bins= <xsl:value-of select="basic_info/main_relax_info/rdf_bins"/>;
+ var rdf_bins= <xsl:value-of select="basic_info/main_relax_info/rdf_bins"/>;
  rdf_bins=rdf_bins.split(',').map(Number);
- var ang_hist1= <xsl:value-of select="basic_info/main_relax_info/ang2_hist"/>;
+ var ang_hist1= <xsl:value-of select="basic_info/main_relax_info/ang1_hist"/>;
  ang_hist1=ang_hist1.split(',').map(Number);
-   var ang_bins1= <xsl:value-of select="basic_info/main_relax_info/ang2_bins"/>;
+ var ang_bins1= <xsl:value-of select="basic_info/main_relax_info/ang1_bins"/>;
  ang_bins1=ang_bins1.split(',').map(Number);
+ var ang_hist2= <xsl:value-of select="basic_info/main_relax_info/ang2_hist"/>;
+ ang_hist2=ang_hist2.split(',').map(Number);
+ var ang_bins2= <xsl:value-of select="basic_info/main_relax_info/ang2_bins"/>;
+ ang_bins2=ang_bins2.split(',').map(Number);
+ var dhd_hist= <xsl:value-of select="basic_info/main_relax_info/dihedral_hist"/>;
+ dhd_hist=dhd_hist.split(',').map(Number);
+ var dhd_bins= <xsl:value-of select="basic_info/main_relax_info/dihedral_bins"/>;
+ dhd_bins=dhd_bins.split(',').map(Number);  
+  
   
   var data1 = {
     x: rdf_bins ,
@@ -226,7 +246,24 @@ Plotly.newPlot('structure', data, layout_convg,{displaylogo: false});
   };
 
 
+   var data3 = {
+    x: ang_bins2 ,
+    y: ang_hist2,
+    xaxis: "x3",
+    yaxis: "y3",
+    type: 'bar',
+   marker: {line:{width:.5}}
+  };
 
+  
+   var data4 = {
+    x: dhd_bins ,
+    y: dhd_hist,
+    xaxis: "x4",
+    yaxis: "y4",
+    type: 'bar',
+   marker: {line:{width:.5}}
+  };
   structure_plotly();
 </script>
 
@@ -271,10 +308,10 @@ function dos_plotly(){
 var plot_font = 14;
 var layout_convg = {
   grid: {rows: 1, columns: 3},
-  xaxis1: {visible:'legendonly',domain: [0, 0.33],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
+  xaxis1: {visible:'legendonly',domain: [0, 0.33],tickfont: {size: plot_font,color:'black'},title:{text: 'E-Ef (eV)',font:{size: plot_font,color:"black"}}},
  
-  xaxis2: {visible:'legendonly',domain: [0.33, 0.66],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
-  xaxis3: {domain: [0.66, 0.99],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
+  xaxis2: {visible:'legendonly',domain: [0.33, 0.66],tickfont: {size: plot_font,color:'black'},title:{text: 'E-Ef (eV)',font:{size: plot_font,color:"black"}}},
+  xaxis3: {domain: [0.66, 0.99],tickfont: {size: plot_font,color:'black'},title:{text: 'E-Ef (eV)',font:{size: plot_font,color:"black"}}},
  
   //title:str1.join(cnvg_kp.toString()).join(str2).join(cnvg_enc.toString()),
   title: 'BSDOS',
@@ -478,6 +515,7 @@ var layout_convg = {
 
     yaxis1: {
      range: [-4, 4],
+     title:{text: 'E-Ef(eV)',font:{size: plot_font,color:"black"}},
      autorange: false,
    },
 
@@ -950,10 +988,10 @@ var data = [data1, data2];
 var plot_font = 14;
 var layout_convg = {
 grid: {rows: 1, columns: 2},
-  xaxis1: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
-  yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
-  yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
-  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'K-Point',font:{size: plot_font,color:"black"}}},
+  xaxis1: {domain: [0.1, 0.45],range: [0, 15],tickfont: {size: plot_font,color:'black'},title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
+  yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Real part diel. function',font:{size: plot_font,color:"black"}}},
+  yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Imag. part diel. function',font:{size: plot_font,color:"black"}}},
+  xaxis2: {tickfont: {size: plot_font,color:'black'},range: [0, 15],domain: [0.55, .99],title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
   
@@ -1032,10 +1070,10 @@ var data = [data1, data2];
 var plot_font = 14;
 var layout_convg = {
 grid: {rows: 1, columns: 2},
-  xaxis1: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
-  yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
-  yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
-  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'K-Point',font:{size: plot_font,color:"black"}}},
+   xaxis1: {domain: [0.1, 0.45],range: [0, 15],tickfont: {size: plot_font,color:'black'},title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
+  yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Real part diel. function',font:{size: plot_font,color:"black"}}},
+  yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Imag. part diel. function',font:{size: plot_font,color:"black"}}},
+  xaxis2: {tickfont: {size: plot_font,color:'black'},range: [0, 15],domain: [0.55, .99],title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
   
@@ -1204,7 +1242,7 @@ Plotly.newPlot('dfpt_dielectric_tensor',data);
      
  var data = [{
   type: 'table',
- header:{values: ["eij","i1","i2","i3","i4","i5","i6"],height: 30,font: {family: "Arial", size: 24, color: ["black"]}},
+ header:{values: ["eij(Cm-2)","i1","i2","i3","i4","i5","i6"],height: 30,font: {family: "Arial", size: 24, color: ["black"]}},
 
   cells: {
     values: arr,
@@ -1280,7 +1318,7 @@ var data =
   var plot_font=14;
   var layout_convg = {
 grid: {rows: 1, columns: 2},
-  xaxis1: {domain: [0.3, 0.75],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
+  xaxis1: {domain: [0.3, 0.75],tickfont: {size: plot_font,color:'black'},title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
   
@@ -1302,7 +1340,7 @@ Plotly.newPlot('irplot', [data],layout_convg);
    console.log('header test pass');
    var header = document.createElement("h3");
    header.className="centered";
-   var text = document.createTextNode("FD Elastic constant-tensor");
+   var text = document.createTextNode("Finite-difference Elastic constant-tensor");
     header.appendChild(text);
     header.style.textAlign='center';
     document.body.appendChild(header);
@@ -1338,7 +1376,7 @@ Plotly.newPlot('irplot', [data],layout_convg);
      
  var data = [{
   type: 'table',
- header:{values: ["Cij","i1","i2","i3","i4","i5","i6"],height: 30,font: {family: "Arial", size: 24, color: ["black"]}},
+ header:{values: ["Cij (GPa)","i1","i2","i3","i4","i5","i6"],height: 30,font: {family: "Arial", size: 24, color: ["black"]}},
 
   cells: {
     values: arr,
@@ -1396,9 +1434,9 @@ function fddos_plotly(data){
 var plot_font = 14;
 var layout_convg = {
 grid: {rows: 1, columns: 2},
-  xaxis1: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
-  yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
-  yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
+  xaxis1: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
+  yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Density of states',font:{size: plot_font,color:"black"}}},
+  yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
   xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'K-Point',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
@@ -1536,7 +1574,7 @@ FD phonons ends-->
    console.log('header test pass');
    var header = document.createElement("h3");
    header.className="centered";
-   var text = document.createTextNode("EFG tensor");
+   var text = document.createTextNode("Electric Field Gradient tensor");
     header.appendChild(text);
     header.style.textAlign='center';
     document.body.appendChild(header);
@@ -1577,7 +1615,7 @@ FD phonons ends-->
 
  var data = [{
   type: 'table',
- header:{values: ["EFG"],height: 30,font: {family: "Arial", size: 24, color: [""]}},
+ header:{values: ["EFG (Vm-2)"],height: 30,font: {family: "Arial", size: 24, color: [""]}},
 
   cells: {
     values: (mat),
@@ -1674,7 +1712,7 @@ nkappa=nkappa.split(',').map(Number);
 
  var data = [{
   type: 'table',
- header:{values:["Data","p-Seebeck","p-Power-factor","p-Conductivity","n-Seebeck","n-Power-factor","n-Conductivity"] ,height: 30,font: {family: "Arial", size: 24, color: [""]}},
+ header:{values:["Data","p-Seeb.(<span>&#181;</span>V/K)","p-PF(<span>&#181;</span>W/(mK<sup>2</sup>))","p-Cond.(1/(<span>&#8486;</span>*m))","n-Seeb.(<span>&#181;</span>V/K)","n-PF(<span>&#181;</span>W/(mK<sup>2</sup>))","n-Cond.(1/(<span>&#8486;</span>*m))"] ,height: 30,font: {family: "Arial", size: 24, color: [""]}},
 
   cells: {
     values: (mat),
@@ -1735,10 +1773,10 @@ var data = [data1, data2];
 var plot_font = 14;
 var layout_convg = {
 grid: {rows: 1, columns: 2},
-  xaxis1: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
+  xaxis1: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'K-Point',font:{size: plot_font,color:"black"}}},
   yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
   yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
-  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'K-Point',font:{size: plot_font,color:"black"}}},
+  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
   

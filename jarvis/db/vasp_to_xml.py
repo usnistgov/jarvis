@@ -16,6 +16,10 @@ from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.analysis.solarefficiency.solar import SolarEfficiency
 from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
 from jarvis.analysis.thermodynamics.energetics import form_enp
+from jarvis.tasks.boltztrap.run import run_boltztrap
+from jarvis.tasks.phonopy.run import run_phonopy
+from jarvis.io.phonopy.outputs import bandstructure_plot
+from jarvis.ai.pkgs.utils import get_ml_data
 
 # from jarvis.core.utils import recast_array_on_uniq_array_elements
 import numpy as np
@@ -25,14 +29,33 @@ from jarvis.io.boltztrap.outputs import BoltzTrapOutput
 # from jarvis.core.utils import  array_to_string
 from jarvis.core.utils import stringdict_to_xml
 
+cfid_x, cfid_y, cfid_jids = get_ml_data()
+
+
+def get_cfid_descriptors(jid="JVASP-1002"):
+    """Get CFID pre-computed descriptors for a JID."""
+    for i, j in zip(cfid_x, cfid_jids):
+        if j == jid:
+            return i
+
 
 class VaspToApiXmlSchema(object):
     """Module to convert VASP data to XML schema for API."""
 
-    def __init__(self, folder="", data={}):
+    def __init__(
+        self,
+        folder="",
+        meta_data={
+            "id_file": "JARVIS-ID",
+            "ehull": "",
+            "data_source": "JARVIS-DFT-VASP",
+            "material_type": "bulk",
+            "exfoliation_energy": "",
+        },
+    ):
         """Initilize class."""
         self.folder = folder
-        self.data = data
+        self.meta_data = meta_data
 
     def ebandstruct(self, vrun="", kp=""):
         """Get electronic bandstucre related data."""
@@ -471,21 +494,17 @@ class VaspToApiXmlSchema(object):
 
     def basic_info(
         self,
-        id_file="JARVIS-ID",
-        material_type="bulk",
-        ehull="",
         include_dos_info=True,
         include_neighbor_info=True,
-        data_source="JARVIS-DFT-VASP",
+        use_cfid_data=True,
     ):
         """Get data from MAIN-RELAX folder."""
         main_folder = self.folder
         os.chdir(main_folder)
         info = {}
-        info["data_source"] = data_source
-        info["ehul"] = ehull
-        info["source_path"] = main_folder
-        info["material_type"] = material_type
+        for i, j in self.meta_data.items():
+            info[i] = j
+        id_file = self.meta_data["id_file"]
         for i in glob.glob("MAIN-RELAX*.json"):
             folder = i.split(".json")[0]
             main_vrun = os.getcwd() + "/" + folder + "/vasprun.xml"
@@ -501,6 +520,7 @@ class VaspToApiXmlSchema(object):
                 info["formula"] = formula
                 elements = ",".join(atoms.uniq_species)
                 info["elements"] = elements
+                info["number_uniq_species"] = len(atoms.uniq_species)
                 method = ""
                 try:
                     f = open(os.path.join(folder, "..", "FUNCTIONAL"), "r")
@@ -572,7 +592,7 @@ class VaspToApiXmlSchema(object):
                 info["volume"] = volume
                 packing_fr = ""
                 try:
-                    packing_fr = atoms.packing_fraction
+                    packing_fr = round(atoms.packing_fraction, 3)
                 except Exception:
                     print("Cannot calculate packing_fr, check atomic_radii")
                     pass
@@ -594,28 +614,47 @@ class VaspToApiXmlSchema(object):
                     + '"'
                 )
                 # info["xyz"] = '"' + str(xyz).replace("\n", "\\n") + '"'
+                rdf_bins = np.arange(0.1, 10.2, 0.1)
+                ang1_bins = np.arange(1, 181.0, 1)
+                ang2_bins = np.arange(1, 181.0, 1)
+                dhd_bins = np.arange(1, 181.0, 1)
+                rdf_hist = []
+                ang1_hist = []
+                ang2_hist = []
+                dhd_hist = []
+                # Use pre-computed CFID dataset with chemo-structural features
+                if use_cfid_data:
+                    try:
+                        cfid_descs = get_cfid_descriptors(jid=id)
+                        if cfid_descs is not None:
+                            include_neighbor_info = False
+                            rdf_hist = cfid_descs[820:920]
+                            ang1_hist = cfid_descs[920:1099]
+                            ang2_hist = cfid_descs[1099:1278]
+                            dhd_hist = cfid_descs[1278:1457]
+                    except Exception:
+                        print("Cannot obtain cfid dataset", id)
+                        pass
                 if include_neighbor_info:
                     nbr = NeighborsAnalysis(atoms)
                     rdf_bins, rdf_hist, nn = nbr.get_rdf()
-                    nbr = NeighborsAnalysis(atoms, max_cut=5.0)
+                    nbr = NeighborsAnalysis(atoms, max_cut=10.0)
                     ang1_hist, ang1_bins = nbr.ang_dist_first()
                     ang2_hist, ang2_bins = nbr.ang_dist_second()
                     dhd_hist, dhd_bins = nbr.get_ddf()
-                    info["rdf_bins"] = "'" + ",".join(map(str, rdf_bins)) + "'"
-                    info["rdf_hist"] = "'" + ",".join(map(str, rdf_hist)) + "'"
+                info["rdf_bins"] = "'" + ",".join(map(str, rdf_bins)) + "'"
+                info["rdf_hist"] = "'" + ",".join(map(str, rdf_hist)) + "'"
 
-                    info["ang1_bins"] = (
-                        "'" + ",".join(map(str, ang1_bins)) + "'"
-                    )
-                    info["ang1_hist"] = (
-                        "'" + ",".join(map(str, ang1_hist)) + "'"
-                    )
-                    info["ang2_bins"] = (
-                        "'" + ",".join(map(str, ang2_bins)) + "'"
-                    )
-                    info["ang2_hist"] = (
-                        "'" + ",".join(map(str, ang2_hist)) + "'"
-                    )
+                info["ang1_bins"] = "'" + ",".join(map(str, ang1_bins)) + "'"
+                info["ang1_hist"] = "'" + ",".join(map(str, ang1_hist)) + "'"
+                info["ang2_bins"] = "'" + ",".join(map(str, ang2_bins)) + "'"
+                info["ang2_hist"] = "'" + ",".join(map(str, ang2_hist)) + "'"
+                info["dihedral_bins"] = (
+                    "'" + ",".join(map(str, dhd_bins)) + "'"
+                )
+                info["dihedral_hist"] = (
+                    "'" + ",".join(map(str, dhd_hist)) + "'"
+                )
 
                 scf_indir_gap = vrun.get_indir_gap[0]
                 scf_dir_gap = vrun.get_dir_gap
@@ -748,6 +787,10 @@ class VaspToApiXmlSchema(object):
         for i, j in d.items():
             line += "<" + str(i) + ">'" + str(j) + "'</" + str(i) + ">"
         totdos = outcar.replace("OUTCAR", "total_dos.dat")
+        cwd = str(os.getcwd())
+        if not os.path.isfile(totdos):
+            run_phonopy(outcar.split("/OUTCAR")[0])
+        os.chdir(cwd)
         if os.path.isfile(totdos):
 
             mesh_yaml = outcar.replace("OUTCAR", "mesh.yaml")
@@ -784,7 +827,6 @@ class VaspToApiXmlSchema(object):
                 + ",".join(map(str, pdos))
                 + "'</phonon_dos_intensity>"
             )
-            from jarvis.io.phonopy.outputs import bandstructure_plot
 
             frequencies, distances, labels, label_points = bandstructure_plot(
                 band_yaml
@@ -842,7 +884,10 @@ class VaspToApiXmlSchema(object):
     ):
         """Get transport data."""
         info = {}
-
+        cwd = str(os.getcwd())
+        if not os.path.exists(path):
+            run_boltztrap(path.split("/boltztrap")[0])
+        os.chdir(cwd)
         all_data = BoltzTrapOutput(path).to_dict()
         # info["all_data"] = all_data
         small_p = all_data["condtens_fixdoping"]["p"][temperature]
@@ -1139,13 +1184,13 @@ class VaspToApiXmlSchema(object):
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
     filename = "JVASP-1002.xml"
+    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
     filename = "JVASP-1067.xml"
 
     folder = "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO"
     filename = "JVASP-664.xml"
-    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
     directories = ["/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"]
     filenames = ["JVASP-1002.xml"]
