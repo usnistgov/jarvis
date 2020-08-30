@@ -1,10 +1,15 @@
 """Module to predict X-ray diffraction."""
 import numpy as np
 import json
+import collections
 import os
 from jarvis.core.specie import Specie
 from jarvis.core.spectrum import Spectrum
 import itertools
+from jarvis.analysis.structure.spacegroup import (
+    symmetrically_distinct_miller_indices,
+    Spacegroup3D,
+)
 
 
 class XRD(object):
@@ -13,14 +18,14 @@ class XRD(object):
     def __init__(
         self,
         wavelength=1.54184,
-        thetas=[0, 90],
+        thetas=[0, 180],
         two_theta_array=[],
         dhkl_array=[],
         intensity_array=[],
         scaling_factor=100,
         two_theta_tol=1e-5,
-        intensity_tol=1e-5,
-        max_index=3,
+        intensity_tol=0.5,
+        max_index=5,
     ):
         """Initialize class with incident wavelength."""
         self.wavelength = wavelength
@@ -41,6 +46,7 @@ class XRD(object):
 
         Forked from https://github.com/qzhu2017/XRD.
         """
+        # atoms=Spacegroup3D(atoms).conventional_standard_structure
         rec_matrix = atoms.lattice.reciprocal_lattice_crystallographic().matrix
 
         min_r = self.wavelength / np.sin(self.max2theta / 2) / 2
@@ -54,6 +60,7 @@ class XRD(object):
             for miller in itertools.product(r, r, r)
             if any([i != 0 for i in miller])
         ]
+        # hkl_index=symmetrically_distinct_miller_indices(cvn_atoms=atoms,max_index=self.max_index)
         hkl_max = np.array([self.max_index, self.max_index, self.max_index])
         for index in hkl_index:
             d = np.linalg.norm(np.dot(index, rec_matrix))
@@ -145,22 +152,61 @@ class XRD(object):
         x = []
         y = []
         d_hkls = []
+        hkl_families = []
         for k in sorted(self.peaks.keys()):
             v = self.peaks[k]
-            if v[0] / max_intensity * 100 > self.intensity_tol:
-                x.append(k)
-                y.append(v[0])
-                print(x[-1], y[-1])
-                d_hkls.append(v[2])
+            x.append(k)
+            y.append(v[0])
+            d_hkls.append(v[2])
+            family = self.get_unique_families(v[1])
+            hkl_families.append(family)
         x = np.array(x)
         y = np.array(y)
         d_hkls = np.array(d_hkls)
         const = np.sum(y, axis=0)
         y = y * self.scaling_factor / const
-        self.intensity_array = y
-        self.two_theta_array = x
-        self.dhkl_array = d_hkls
-        return x.tolist(), d_hkls.tolist(), y.tolist()
+        screen = y > self.intensity_tol
+        self.intensity_array = y[screen]
+        self.two_theta_array = x[screen]
+        self.dhkl_array = d_hkls[screen]
+        return (
+            x[screen].tolist(),
+            d_hkls[screen].tolist(),
+            y[screen].tolist(),
+            hkl_families[screen],
+        )
+
+    def get_unique_families(self, hkls):
+        """
+        Returns unique families of Miller indices. Families must be permutations
+        of each other.
+        Args:
+            hkls ([h, k, l]): List of Miller indices.
+        Returns:
+            {hkl: multiplicity}: A dict with unique hkl and multiplicity.
+        """
+
+        def is_perm(hkl1, hkl2):
+            h1 = np.abs(hkl1)
+            h2 = np.abs(hkl2)
+            return all([i == j for i, j in zip(sorted(h1), sorted(h2))])
+
+        unique = collections.defaultdict(list)
+        for hkl1 in hkls:
+            found = False
+            for hkl2 in unique.keys():
+                if is_perm(hkl1, hkl2):
+                    found = True
+                    unique[hkl2].append(hkl1)
+                    break
+            if not found:
+                unique[hkl1].append(hkl1)
+
+        pretty_unique = {}
+        for k, v in unique.items():
+            pretty_unique[sorted(v)[-1]] = len(v)
+
+        return pretty_unique
 
 
 if __name__ == "__main__":

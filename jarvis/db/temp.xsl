@@ -47,59 +47,99 @@
 <!-- Basic table start -->
   <table class="centered table  btn-table" >
 
-    <xsl:for-each select="basic_info/main_relax_info">
+ 
     <tr>
-      <td>ID: <xsl:value-of select="id"/></td>
-      <td>Functional: <xsl:value-of select="method"/></td>
+      <td>ID: <xsl:value-of select="basic_info/main_relax_info/id"/></td>
+      <td>Functional: <xsl:value-of select="basic_info/main_relax_info/method"/></td>
       <td>Primitive cell</td>
       <td>Primitive cell</td>
       <td>Conventional cell</td>
       <td>Conventional cell</td>
     </tr>
     <tr>
-      <td>Chemical formula: <xsl:value-of select="formula"/></td>
-      <td>Formation energy/atom (eV): <xsl:value-of select="formation_energy"/></td>
-      <td>a <xsl:value-of select="a_conv"/> &#8491;</td>
-      <td>&#945;:<xsl:value-of select="alpha_conv"/> &#176;</td>
-      <td>a <xsl:value-of select="a_prim"/> &#8491;</td>
-      <td>&#945;:<xsl:value-of select="alpha_prim"/> &#176;</td>
+      <td>Chemical formula: <xsl:value-of select="basic_info/main_relax_info/formula"/></td>
+      <td>Formation energy/atom (eV): <xsl:value-of select="basic_info/main_relax_info/formation_energy"/></td>
+      <td>a <xsl:value-of select="basic_info/main_relax_info/a_conv"/> &#8491;</td>
+      <td>&#945;: <xsl:value-of select="basic_info/main_relax_info/alpha_conv"/> &#176;</td>
+      <td>a <xsl:value-of select="basic_info/main_relax_info/a_prim"/> &#8491;</td>
+      <td>&#945;: <xsl:value-of select="basic_info/main_relax_info/alpha_prim"/> &#176;</td>
     </tr>
     <tr>
-      <td>Space-group: <xsl:value-of select="spacegroup_number"/></td>
-      <td>Relaxed energy/atom (eV): <xsl:value-of select="relaxed_energy"/></td>
-      <td>b <xsl:value-of select="b_conv"/> &#8491;</td>
-      <td>&#946;:<xsl:value-of select="beta_conv"/> &#176;</td>
-      <td>b <xsl:value-of select="a_prim"/> &#8491;</td>
-      <td>&#946;:<xsl:value-of select="alpha_prim"/> &#176;</td>
+      <td>Space-group: <xsl:value-of select="basic_info/main_relax_info/spacegroup_number"/></td>
+      <td>Relaxed energy/atom (eV): <xsl:value-of select="basic_info/main_relax_info/relaxed_energy"/></td>
+      <td>b <xsl:value-of select="basic_info/main_relax_info/b_conv"/> &#8491;</td>
+      <td>&#946;: <xsl:value-of select="basic_info/main_relax_info/beta_conv"/> &#176;</td>
+      <td>b <xsl:value-of select="basic_info/main_relax_info/a_prim"/> &#8491;</td>
+      <td>&#946;: <xsl:value-of select="basic_info/main_relax_info/alpha_prim"/> &#176;</td>
     </tr>
     <tr>
-      <td>SCF direct bandgap (eV): <xsl:value-of select="scf_dir_gap"/></td>
-      <td>SCF indirect bandgap (eV): <xsl:value-of select="scf_indir_gap"/></td>
-      <td>c <xsl:value-of select="c_conv"/> &#8491;</td>
-      <td>&#947;:<xsl:value-of select="gamma_conv"/> &#176;</td>
-      <td>c <xsl:value-of select="c_prim"/> &#8491;</td>
-      <td>&#947;:<xsl:value-of select="gamma_prim"/> &#176;</td>
+      <td>Crystal system: <xsl:value-of select="basic_info/main_relax_info/crys_system"/></td>
+      <td>Point group: <xsl:value-of select="basic_info/main_relax_info/point_group_symbol"/></td>
+      
+      <td>c <xsl:value-of select="basic_info/main_relax_info/c_conv"/> &#8491;</td>
+      <td>&#947;: <xsl:value-of select="basic_info/main_relax_info/gamma_conv"/> &#176;</td>
+      <td>c <xsl:value-of select="basic_info/main_relax_info/c_prim"/> &#8491;</td>
+      <td>&#947;: <xsl:value-of select="basic_info/main_relax_info/gamma_prim"/> &#176;</td>
     </tr>
     <tr>
-      <td>Crystal system: <xsl:value-of select="crys_system"/></td>
-      <td>Point group: <xsl:value-of select="point_group_symbol"/></td>
-      <td>Density (gcm<sup>-3</sup>): <xsl:value-of select="density"/></td>
-      <td>Volume (<span>&#8491;</span><sup>3</sup>): <xsl:value-of select="volume"/></td>
-      <td>nAtoms_prim:<xsl:value-of select="prim_natoms"/></td>
-      <td>nAtoms_conv:<xsl:value-of select="conv_natoms"/></td>
+      <td>Data source: <xsl:value-of select="basic_info/main_relax_info/data_source"/></td>
+      <td>Material type: <xsl:value-of select="basic_info/main_relax_info/material_type"/></td>
+      <td>Density (gcm<sup>-3</sup>): <xsl:value-of select="basic_info/main_relax_info/density"/></td>
+      <td>Volume (<span>&#8491;</span><sup>3</sup>): <xsl:value-of select="basic_info/main_relax_info/volume"/></td>
+      <td>nAtoms_prim: <xsl:value-of select="basic_info/main_relax_info/prim_natoms"/></td>
+      <td>nAtoms_conv: <xsl:value-of select="basic_info/main_relax_info/conv_natoms"/></td>
     </tr>    
     <tr>
-      <td>Data source: <xsl:value-of select="data_source"/></td>
-      <td>Material type: <xsl:value-of select="material_type"/></td>
-      <td>Magnetic moment: <xsl:value-of select="magmom"/></td>
-      <td>Exfoliation_energy: <xsl:value-of select="exfoliation_energy"/></td>
-      <td>Packing fraction:<xsl:value-of select="packing_fr"/></td>
-      <td>Number of species:<xsl:value-of select="number_uniq_species"/></td>
+      <td>SCF direct bandgap (eV): <xsl:value-of select="basic_info/main_relax_info/scf_dir_gap"/></td>
+      <td>SCF indirect bandgap (eV): <xsl:value-of select="basic_info/main_relax_info/scf_indir_gap"/></td>
+      <td>Magnetic moment: <xsl:value-of select="basic_info/main_relax_info/magmom"/></td>
+      <td>Exfoliation_energy: <xsl:value-of select="basic_info/main_relax_info/exfoliation_energy"/></td>
+      <td>Packing fraction: <xsl:value-of select="basic_info/main_relax_info/packing_fr"/></td>
+      <td>Number of species: <xsl:value-of select="basic_info/main_relax_info/number_uniq_species"/></td>
+    </tr>   
+    
+    <tr>
+      <td>Band direct gap (eV): <xsl:value-of select="basic_info/main_band/main_bands_info/band_dir_gap"/></td>
+      <td>Band indirect gap (eV): <xsl:value-of select="basic_info/main_band/main_bands_info/band_indir_gap"/></td>
+      <td>TBmBJ direct gap (eV): <xsl:value-of select="basic_info/main_optics_mbj/main_optics_mbj_info/opto_dir_gap"/></td>
+      <td>TBmBJ indirect gap (eV): <xsl:value-of select="basic_info/main_optics_mbj/main_optics_mbj_info/opto_indir_gap"/></td>
+      <td>HSE06 direct gap (eV): <xsl:value-of select="basic_info/main_hse06_band/main_hse_bands_info/band_dir_gap"/></td>
+      <td>HSE06 indirect gap (eV): <xsl:value-of select="basic_info/main_hse06_band/main_hse_bands_info/band_indir_gap"/></td>
     </tr>      
     
+    <tr>
+      <td>Voigt bulk mod. (GPa): <xsl:value-of select="basic_info/main_elastic/main_elastic_info/voigt_bulk_modulus"/></td>
+      <td>Voigt shear mod. (GPa): <xsl:value-of select="basic_info/main_elastic/main_elastic_info/voigt_shear_modulus"/></td>
+      <td>Poisson ratio: <xsl:value-of select="basic_info/main_elastic/main_elastic_info/poisson_ratio"/></td>
+      <td>Anisotropy ratio: <xsl:value-of select="basic_info/main_elastic/main_elastic_info/universal_ansiotropy_ratio"/></td>
+      <td>Solar SLME: <xsl:value-of select="basic_info/main_optics_mbj/main_optics_mbj_info/solar_slme"/></td>
+      <td>Solar SQ: <xsl:value-of select="basic_info/main_optics_mbj/main_optics_mbj_info/solar_sq"/></td>
+    </tr>  
+
+ <!--
+     <tr>
+      <td>Max DFPT dielectric const.: <xsl:value-of select="basic_info/main_lepsilon_info/max_eps/"/></td>
+      <td>Max stress. Piezo: <xsl:value-of select="basic_info/main_lepsilon_info/max_piezo_stress_coeff/"/></td>
+      <td>Max Lin.opt. dielectric const.: <xsl:value-of select="basic_info/main_optics_semilocal/main_optics_info/max_linopt_eps"/></td>
+      <td>SOC spillage: <xsl:value-of select="basic_info/main_spillage_info/max_spillage"/></td>
+      <td>Max EFG: <xsl:value-of select="basic_info/max_efg"/></td>
+      <td>Max EFG eta: <xsl:value-of select="basic_info/max_efg_eta"/></td>
+    </tr>  
+  -->  
+      <tr>
+
+      <td>Max. IR mode: <xsl:value-of select="basic_info/main_lepsilon_info/max_ir_mode"/></td>     
+      <td>Max. Raman mode: <xsl:value-of select="basic_info/raman_dat/max_raman_mode"/></td>
+      <td>Min. IR mode: <xsl:value-of select="basic_info/main_lepsilon_info/min_ir_mode"/></td>
+      <td>Min. FD phonon: <xsl:value-of select="basic_info/main_elastic/main_elastic_info/min_fd_phonon_mode"/></td>
+      <td>Converged cut-off: <xsl:value-of select="basic_info/convergence_info/converged_encut"/></td>
+      <td>Converged K-point: <xsl:value-of select="basic_info/convergence_info/converged_kpoint_length"/></td>
+      </tr>     
+ 
+
+ 
     
-    
-    </xsl:for-each>
+   
   </table>
   
   
@@ -270,6 +310,109 @@ Plotly.newPlot('structure', data, layout_convg,{displaylogo: false});
 <!--Structure end-->  
 <br></br>
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+ <!--XRD info statrts-->
+
+<script>
+  var x= <xsl:value-of select="basic_info/main_relax_info/XRD/two_thetas"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("X-ray diffraction");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+    
+    var divElement = document.createElement("div");
+    divElement.id = "xrd";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);
+    
+    };
+</script>
+
+
+
+<script>
+function structure_plotly(){
+
+var data = [data1, data2];
+var plot_font = 14;
+var layout_convg = {
+grid: {rows: 1, columns: 2,pattern: 'independent'},
+  xaxis1: {domain: [0.1, 0.45],range: [0, 180],tickfont: {size: plot_font,color:'black'},title:{text: 'Two Theta',font:{size: plot_font,color:"black"}}},
+  yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Distribution',font:{size: plot_font,color:"black"}}},
+  yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Distribution',font:{size: plot_font,color:"black"}}},
+  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'd_hkl',font:{size: plot_font,color:"black"}}},
+ 
+  showlegend: false,
+  
+};
+
+Plotly.newPlot('xrd', data, layout_convg,{displaylogo: false});
+
+};
+
+ var two_thetas= <xsl:value-of select="basic_info/main_relax_info/XRD/two_thetas"/>;
+ two_thetas=two_thetas.split(',').map(Number);
+ var intensities= <xsl:value-of select="basic_info/main_relax_info/XRD/intensities"/>;
+ intensities=intensities.split(',').map(Number);
+ var d_hkls= <xsl:value-of select="basic_info/main_relax_info/XRD/d_hkls"/>;
+ d_hkls=d_hkls.split(',').map(Number);
+
+
+  
+  
+  var data1 = {
+    x: two_thetas ,
+    y:intensities,
+    xaxis: "x1",
+    yaxis: "y1",
+    type: 'bar',
+   
+  };
+
+   var data2 = {
+    x: d_hkls ,
+    y: intensities,
+    xaxis: "x2",
+    yaxis: "y2",
+    type: 'bar',
+
+  };
+
+
+   
+  structure_plotly();
+</script>
+
+<!--XRD end-->  
+<br></br> 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 <!--DOS start-->  
 
 <script>
@@ -314,7 +457,7 @@ var layout_convg = {
   xaxis3: {domain: [0.66, 0.99],tickfont: {size: plot_font,color:'black'},title:{text: 'E-Ef (eV)',font:{size: plot_font,color:"black"}}},
  
   //title:str1.join(cnvg_kp.toString()).join(str2).join(cnvg_enc.toString()),
-  title: 'BSDOS',
+ 
   showlegend: false,
   
 };
@@ -1330,6 +1473,66 @@ Plotly.newPlot('irplot', [data],layout_convg);
 <!--IRPLOT ends--> 
 <br></br>
 
+
+<!--RamanPLOT starts-->
+
+  
+  <script>
+  var x= <xsl:value-of select="basic_info/raman_dat/frequencies"/>;
+  if (x!==''){
+   console.log('header test pass');
+   var header = document.createElement("h3");
+   header.className="centered";
+   var text = document.createTextNode("DFPT Raman intensity");
+    header.appendChild(text);
+    header.style.textAlign='center';
+    document.body.appendChild(header);
+    
+        var divElement = document.createElement("div");
+    divElement.id = "raman";
+    divElement.setAttribute('class', 'centered');
+    document.body.appendChild(divElement);
+    
+    };
+</script>
+  
+  
+
+
+<script>
+var freqs= <xsl:value-of select="basic_info/raman_dat/frequencies"/>;
+freqs=freqs.split(',').map(Number);
+
+var ints= <xsl:value-of select="basic_info/raman_dat/activity"/>;
+ints=ints.split(',').map(Number);
+  
+
+var data = 
+  {
+    
+    x: freqs,
+    y: ints,
+    type: 'bar',
+  };
+  var plot_font=14;
+  var layout_convg = {
+grid: {rows: 1, columns: 2},
+  xaxis1: {domain: [0.3, 0.75],tickfont: {size: plot_font,color:'black'},title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
+  
+  showlegend: false,
+  
+};
+
+Plotly.newPlot('raman', [data],layout_convg);
+  </script>
+
+<!--RamanPLOT ends--> 
+<br></br>
+
+
+
+
+
 <!--Elastic tensor table starts--> 
 
 
@@ -1654,7 +1857,7 @@ Plotly.newPlot('efg_tensor',data);
    console.log('header test pass');
    var header = document.createElement("h3");
    header.className="centered";
-   var text = document.createTextNode("Boltztrap data");
+   var text = document.createTextNode("Thermoelectric data");
     header.appendChild(text);
     header.style.textAlign='center';
     document.body.appendChild(header);
@@ -1712,7 +1915,7 @@ nkappa=nkappa.split(',').map(Number);
 
  var data = [{
   type: 'table',
- header:{values:["Data","p-Seeb.(<span>&#181;</span>V/K)","p-PF(<span>&#181;</span>W/(mK<sup>2</sup>))","p-Cond.(1/(<span>&#8486;</span>*m))","n-Seeb.(<span>&#181;</span>V/K)","n-PF(<span>&#181;</span>W/(mK<sup>2</sup>))","n-Cond.(1/(<span>&#8486;</span>*m))"] ,height: 30,font: {family: "Arial", size: 24, color: [""]}},
+ header:{values:["Data","p-Seeb.(<span>&#181;</span>V/K)","p-PF(<span>&#181;</span>W/(mK<sup>2</sup>))","p-Cond.(1/(<span>&#8486;</span>*m))","n-Seeb.(<span>&#181;</span>V/K)","n-PF(<span>&#181;</span>W/(mK<sup>2</sup>))","n-Cond.(1/(<span>&#8486;</span>*m))"] ,height: 30,font: {family: "Arial", size: 14, color: [""]}},
 
   cells: {
     values: (mat),
