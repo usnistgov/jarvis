@@ -192,8 +192,10 @@ class VaspToApiXmlSchema(object):
             kp_based_energies = kp_based_energies[order].tolist()
 
             info = {}
-            info["converged_encut"] = str(list(set(encut_values))[-6])
-            info["converged_kpoint_length"] = str(list(set(kp_values))[-5])
+            info["converged_encut"] = str(sorted(list(set(encut_values)))[-6])
+            info["converged_kpoint_length"] = str(
+                sorted(list(set(kp_values)))[-6]
+            )
             info["kp_values"] = "'" + ",".join(map(str, kp_values)) + "'"
             info["kp_based_energies"] = (
                 "'" + ",".join(map(str, kp_based_energies)) + "'"
@@ -429,8 +431,8 @@ class VaspToApiXmlSchema(object):
             )
             # print("SLME", 100 * eff)
             eff_sq = SolarEfficiency().calculate_SQ(indirgap)
-            eff_slme = round(eff_slme, 2)
-            eff_sq = round(eff_sq, 2)
+            eff_slme = round(100 * eff_slme, 2)
+            eff_sq = round(100 * eff_sq, 2)
         except Exception:
             print("Cannot get solar data.")
             pass
@@ -760,9 +762,7 @@ class VaspToApiXmlSchema(object):
             + ",".join(map(str, data["epsilon"]["epsilon_ion"].flatten()))
             + "</epsilon_ion>"
         )
-        print('data["epsilon"]["epsilon"]', data["epsilon"]["epsilon"])
         max_eps = np.max(np.abs(np.array(data["epsilon"]["epsilon"])))
-        print("max_eps", max_eps)
         line += "<max_eps>" + str(max_eps) + "</max_eps>"
         born_charges = data["born_charges"]
         atoms = vrun.all_structures[-1]
@@ -1206,6 +1206,7 @@ class VaspToApiXmlSchema(object):
         main_folder = self.folder
         info = {}
         efg_dat = ""
+        max_efg = ""
         os.chdir(main_folder)
         for i in glob.glob("MAIN-LEFG*.json"):
             try:
@@ -1219,6 +1220,7 @@ class VaspToApiXmlSchema(object):
                 combs = []
                 efg = out.efg_raw_tensor
                 efg_dat = ""
+                max_efg = np.max(np.abs(np.array(efg)))
                 for k in range(natoms):
                     comb = str(atoms.elements[k]) + "," + str(wycs[k])
                     if comb not in combs:
@@ -1235,7 +1237,7 @@ class VaspToApiXmlSchema(object):
                 pass
 
         info["efg_raw_tensor"] = efg_dat
-        info["max_efg"] = np.max(np.abs(np.array(efg)))
+        info["max_efg"] = max_efg
         info["max_efg_eta"] = ""
         self.efg_raw_tensor_info = info
         os.chdir(main_folder)
@@ -1346,13 +1348,13 @@ class VaspToApiXmlSchema(object):
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
     filename = "JVASP-1002.xml"
-    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
     filename = "JVASP-1067.xml"
 
     folder = "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO"
     filename = "JVASP-664.xml"
+    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
-    directories = ["/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"]
-    filenames = ["JVASP-1002.xml"]
+    # directories = ["/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"]
+    # filenames = ["JVASP-1002.xml"]
