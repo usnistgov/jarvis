@@ -4,10 +4,12 @@ import glob
 from jarvis.core.atoms import Atoms
 import yaml
 from jarvis.core.atoms import get_supercell_dims
+from jarvis.analysis.thermodynamics.energetics import get_twod_defect_energy
 from jarvis.io.vasp.outputs import Oszicar, Vasprun, Outcar
 from matplotlib.pyplot import imread
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.analysis.topological.spillage import Spillage
+from jarvis.db.jsonutils import loadjson
 from jarvis.analysis.phonon.ir import ir_intensity
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.analysis.solarefficiency.solar import SolarEfficiency
@@ -24,17 +26,24 @@ from jarvis.io.boltztrap.outputs import BoltzTrapOutput
 from jarvis.io.vasp.outputs import parse_raman_dat
 from jarvis.core.utils import array_to_string
 from jarvis.core.utils import stringdict_to_xml
+from jarvis.ai.descriptors.cfid import CFID
+from jarvis.io.wannier.outputs import WannierHam
+
 
 cfid_x, cfid_y, cfid_jids = get_ml_data()
 # debug using xmllint --valid --noout JVASP-1002.xml
 # xmllint --format JVASP-1002.xml>out.xml
 
 
-def get_cfid_descriptors(jid="JVASP-1002"):
+def get_cfid_descriptors(jid="JVASP-1002", atoms="", make_cfid=True):
     """Get CFID pre-computed descriptors for a JID."""
     for i, j in zip(cfid_x, cfid_jids):
         if j == jid:
             return i
+    if make_cfid:
+        print("Calculating CFID descriptors.")
+        cfid = CFID(atoms)
+        return cfid.get_comp_descp().tolist()
 
 
 class VaspToApiXmlSchema(object):
@@ -53,6 +62,12 @@ class VaspToApiXmlSchema(object):
     ):
         """Initilize class."""
         self.folder = folder
+        if "1L" in folder:
+            meta_data["material_type"] = "SingleLayer"
+        if "2L" in folder:
+            meta_data["material_type"] = "BiLayer"
+        if "3L" in folder:
+            meta_data["material_type"] = "TriLayer"
         self.meta_data = meta_data
 
     def ebandstruct(self, vrun="", kp=""):
@@ -75,13 +90,25 @@ class VaspToApiXmlSchema(object):
             line += "<band_indir_gap>" + band_indir_gap + "</band_indir_gap>"
             line += "<band_dir_gap>" + band_dir_gap + "</band_dir_gap>"
 
+            fermi_velocities = ""
+            try:
+                fermi_velocities = ",".join(map(str, vrun.fermi_velocities[0]))
+            except Exception:
+                print("Cannot get the Fermi-velocity.", kp)
+                pass
+            line += (
+                '<fermi_velocities>"'
+                + fermi_velocities
+                + '"</fermi_velocities>'
+            )
+
             kp_labels = []
             kp_labels_points = []
             for ii, i in enumerate(lines):
                 if ii > 2:
                     tmp = i.split()
                     if len(tmp) == 5:
-                        tmp = str("$") + str(tmp[4]) + str("$")
+                        tmp = str(tmp[4])
                         if len(kp_labels) == 0:
                             kp_labels.append(tmp)
                             kp_labels_points.append(ii - 3)
@@ -269,6 +296,19 @@ class VaspToApiXmlSchema(object):
                 line += str(i) + str("_") + ",".join(map(str, j)) + ";"
             line += '"</spin_down_info>'
             line += "</elemental_dos>"
+
+            fermi_velocities = ""
+            try:
+                fermi_velocities = ",".join(map(str, vrun.fermi_velocities[0]))
+            except Exception:
+                print("Cannot get the dos Fermi-velocity.")
+                pass
+            line += (
+                '<fermi_velocities>"'
+                + fermi_velocities
+                + '"</fermi_velocities>'
+            )
+
         except Exception:
             print("Cannot get DOS data", vrun)
         return line
@@ -360,6 +400,210 @@ class VaspToApiXmlSchema(object):
         info["main_pbe0_bands_info"] = data
         return info
 
+    def get_wannier_lines(self, data={}, energy_tol=4):
+        """Get data for wannier- quality check."""
+        # Dense mesh
+        line = ""
+        mesh_vrun_x = []
+        mesh_vrun_y = []
+        line += (
+            "<maxdiff_mesh>"
+            + str(data["info_mesh"]["maxdiff"])
+            + "</maxdiff_mesh>"
+        )
+        line += (
+            "<maxdiff_bz>" + str(data["info_bz"]["maxdiff"]) + "</maxdiff_bz>"
+        )
+        for i, ii in enumerate(np.array(data["info_mesh"]["eigs_vrun"]).T):
+            y = ",".join(map(str, ii))
+            x = ",".join(map(str, range(0, len(ii))))
+            mesh_vrun_y.append(y)
+            mesh_vrun_x.append(x)
+        line += (
+            '<mesh_vrun_x>"'
+            + ";".join(map(str, mesh_vrun_x))
+            + '"</mesh_vrun_x>'
+        )
+        line += (
+            '<mesh_vrun_y>"'
+            + ";".join(map(str, mesh_vrun_y))
+            + '"</mesh_vrun_y>'
+        )
+
+        min_arr = []
+        erange = [-energy_tol, energy_tol]
+        dd = {}
+        kpp = data["info_mesh"]["eigs_vrun"]
+        vasp = np.array(data["info_mesh"]["eigs_vrun"])
+        wann = np.array(data["info_mesh"]["eigs_wan"])
+        for k in range(len(kpp)):
+            for n in wann[k]:
+                diff_arr = []
+                if n > erange[0] and n < erange[1]:
+                    for v in vasp[k]:
+                        diff = abs(n - v)
+                        diff_arr.append(diff)
+                if diff_arr != []:
+                    tmp = np.min(diff_arr)
+                    dd.setdefault(n, tmp)
+                    min_arr.append(tmp)
+
+        line += (
+            '<mesh_difference_values>"'
+            + str(",".join(map(str, dd.values())))
+            + '"</mesh_difference_values>'
+        )
+        line += (
+            '<mesh_difference_keys>"'
+            + str(",".join(map(str, dd.keys())))
+            + '"</mesh_difference_keys>'
+        )
+
+        mesh_wann_x = []
+        mesh_wann_y = []
+        for i, ii in enumerate(np.array(data["info_mesh"]["eigs_wan"]).T):
+            y = ",".join(map(str, ii))
+            x = ",".join(map(str, range(0, len(ii))))
+            mesh_wann_y.append(y)
+            mesh_wann_x.append(x)
+        line += (
+            '<mesh_wann_x>"'
+            + ";".join(map(str, mesh_wann_x))
+            + '"</mesh_wann_x>'
+        )
+        line += (
+            '<mesh_wann_y>"'
+            + ";".join(map(str, mesh_wann_y))
+            + '"</mesh_wann_y>'
+        )
+
+        # High symmetry BZ k-points
+
+        bz_vrun_x = []
+        bz_vrun_y = []
+        for i, ii in enumerate(np.array(data["info_bz"]["eigs_vrun"]).T):
+            y = ",".join(map(str, ii))
+            x = ",".join(map(str, range(0, len(ii))))
+            bz_vrun_y.append(y)
+            bz_vrun_x.append(x)
+        line += (
+            '<bz_vrun_x>"' + ";".join(map(str, bz_vrun_x)) + '"</bz_vrun_x>'
+        )
+        line += (
+            '<bz_vrun_y>"' + ";".join(map(str, bz_vrun_y)) + '"</bz_vrun_y>'
+        )
+
+        min_arr = []
+        erange = [-energy_tol, energy_tol]
+        dd = {}
+        kpp = data["info_bz"]["eigs_vrun"]
+        vasp = np.array(data["info_bz"]["eigs_vrun"])
+        wann = np.array(data["info_bz"]["eigs_wan"])
+        for k in range(len(kpp)):
+            for n in wann[k]:
+                diff_arr = []
+                if n > erange[0] and n < erange[1]:
+                    for v in vasp[k]:
+                        diff = abs(n - v)
+                        diff_arr.append(diff)
+                if diff_arr != []:
+                    tmp = np.min(diff_arr)
+                    dd.setdefault(n, tmp)
+                    min_arr.append(tmp)
+
+        line += (
+            '<bz_difference_values>"'
+            + str(",".join(map(str, dd.values())))
+            + '"</bz_difference_values>'
+        )
+        line += (
+            '<bz_difference_keys>"'
+            + str(",".join(map(str, dd.keys())))
+            + '"</bz_difference_keys>'
+        )
+        return line
+
+    def wannier_comparison_plot(self, energy_tol=4):
+        """Compare Wannier and DFT data on mesh and BZ."""
+        folder = self.folder
+        os.chdir(folder)
+        line = ""
+        info = {}
+
+        for i in glob.glob("MAIN-WANN*"):
+            try:
+                folder = i
+                wann_dat = os.getcwd() + "/" + folder + "/wannier90_hr.dat"
+                if os.path.exists(wann_dat):
+                    wann_json = wann_dat = (
+                        os.getcwd() + "/" + folder + "/wannier_comparison.json"
+                    )
+                    if os.path.exists(wann_json):
+                        print("Getting data from preexisiting wannier json.")
+                        data = loadjson(wann_json)
+                        line += self.get_wannier_lines(data=data, energy_tol=4)
+                    else:
+                        print("Running jarvis-wannier solver.")
+                        wann_ham = WannierHam(filename=wann_dat)
+                        bands_vrun = wann_dat.replace(
+                            "wannier90_hr.dat", "vasprun.xml"
+                        ).replace("WANN", "SOCSCFBAND")
+                        mesh_vrun = wann_dat.replace(
+                            "wannier90_hr.dat", "vasprun.xml"
+                        ).replace("WANN", "SOC")
+                        bz = wann_ham.compare_dft_wann(
+                            vasprun_path=bands_vrun, plot=False
+                        )
+                        mesh = wann_ham.compare_dft_wann(
+                            vasprun_path=mesh_vrun, plot=False
+                        )
+                        data = {}
+                        data["info_bz"] = bz
+                        data["info_mesh"] = mesh
+                        line += self.get_wannier_lines(data=data, energy_tol=4)
+
+            except Exception:
+                print("Cannot get wannier data.", folder)
+                pass
+        info["wannier_band_comparison"] = line
+        return info
+
+    def vacancy_formation_optb88vdw(self):
+        """Get vacancy formation energy data."""
+        folder = self.folder
+        os.chdir(folder)
+
+        line = ""
+        info = {}
+
+        try:
+            vac_path = os.path.join(folder, "MAIN-VACANCY")
+            if os.path.exists(vac_path):
+                for i in glob.glob(vac_path + "/JVASP*"):
+                    vac_vrun_path = os.path.join(
+                        folder, "MAIN-VACANCY", i, "vasprun.xml"
+                    )
+                    outcar = Outcar(
+                        os.path.join(folder, "MAIN-VACANCY", i, "OUTCAR")
+                    )
+                    if outcar.converged:
+                        vac_vrun = Vasprun(vac_vrun_path)
+                        tmp = i.split("/")[-1].split("_")
+                        jid = tmp[0]
+                        atom = tmp[2]
+                        Ef = get_twod_defect_energy(
+                            vrun=vac_vrun, jid=jid, atom=atom
+                        )
+                        line += (
+                            jid + "_" + atom + "_" + str(round(Ef, 3)) + ","
+                        )
+        except Exception:
+            print("Cannot get vacancy info.", folder)
+            pass
+        info["vacancy_formation_energy"] = line
+        os.chdir(folder)
+        return info
+
     def loptics_optoelectronics(self, vrun=""):
         """Get optoelctronic data."""
         line = ""
@@ -395,6 +639,19 @@ class VaspToApiXmlSchema(object):
                 pass
 
             line += "<max_linopt_eps>" + lopt + "</max_linopt_eps>"
+            fermi_velocities = ""
+            try:
+                fermi_velocities = ",".join(
+                    map(str, lvrun.fermi_velocities[0])
+                )
+            except Exception:
+                print("Cannot get the lepsilon Fermi-velocity.", vrun)
+                pass
+            line += (
+                '<fermi_velocities>"'
+                + fermi_velocities
+                + '"</fermi_velocities>'
+            )
             for i in np.arange(1, reals.shape[1]):
                 line += (
                     "<real_"
@@ -661,12 +918,16 @@ class VaspToApiXmlSchema(object):
                     .get_xyz_string
                 )
                 info["xyz"] = '"' + str(xyz).replace("\n", "\\n") + '"'
-                info["poscar"] = (
+                info["poscar_conv"] = (
                     '"'
                     + str(
                         conv_atoms.make_supercell_matrix(dim).get_string()
                     ).replace("\n", "\\n")
                     + '"'
+                )
+
+                info["contcar"] = (
+                    '"' + str(atoms.get_string()).replace("\n", "\\n") + '"'
                 )
 
                 # info["xyz"] = '"' + str(xyz).replace("\n", "\\n") + '"'
@@ -682,7 +943,7 @@ class VaspToApiXmlSchema(object):
                 # Use pre-computed CFID dataset with chemo-structural features
                 if use_cfid_data:
                     try:
-                        cfid_descs = get_cfid_descriptors(jid=id)
+                        cfid_descs = get_cfid_descriptors(jid=id, atoms=atoms)
                         if cfid_descs is not None:
                             include_neighbor_info = False
                             rdf_hist = cfid_descs[820:920]
@@ -870,8 +1131,17 @@ class VaspToApiXmlSchema(object):
         except Exception:
             print("Cannot get Outcar phonons.")
             pass
-        cij = np.array(out.elastic_props()["cij"])
+        vacuum = False
+        atoms = None
+        unit_system = "GPa"
+        if "Layer" in self.meta_data["material_type"]:
+            vacuum = True
+            atoms = Atoms.from_poscar(outcar.replace("OUTCAR", "POSCAR"))
+            unit_system = "Nm^-1"
+        cij = np.array(out.elastic_props(atoms=atoms, vacuum=vacuum)["cij"])
         d = ElasticTensor(cij).to_dict()
+        if "Layer" in self.meta_data["material_type"]:
+            d = {}
         line = ""
         line += (
             '<cij>"'
@@ -882,6 +1152,7 @@ class VaspToApiXmlSchema(object):
         for i, j in d.items():
             line += "<" + str(i) + ">" + str(round(j, 2)) + "</" + str(i) + ">"
         totdos = outcar.replace("OUTCAR", "total_dos.dat")
+        line += '<unit_system>"' + unit_system + '"</unit_system>'
         cwd = str(os.getcwd())
         if not os.path.isfile(totdos):
             run_phonopy(outcar.split("/OUTCAR")[0])
@@ -1257,7 +1528,11 @@ class VaspToApiXmlSchema(object):
                 + "\n"
             )
             f.write(str(line))
+            line = stringdict_to_xml(self.wannier_comparison_plot()) + "\n"
+            f.write(str(line))
 
+            line = stringdict_to_xml(self.vacancy_formation_optb88vdw()) + "\n"
+            f.write(str(line))
             line = stringdict_to_xml(self.raman_data()) + "\n"
             f.write(str(line))
 
@@ -1348,13 +1623,13 @@ class VaspToApiXmlSchema(object):
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
     filename = "JVASP-1002.xml"
+    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
     filename = "JVASP-1067.xml"
 
     folder = "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO"
     filename = "JVASP-664.xml"
-    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
     # directories = ["/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"]
     # filenames = ["JVASP-1002.xml"]
