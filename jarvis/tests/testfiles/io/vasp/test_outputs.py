@@ -257,6 +257,8 @@ def test_vrun():
     pdos1 = vrun.partial_dos_spdf
     pdos2 = vrun.projected_atoms_spins_kpoints_bands
     pdos3 = vrun.projected_spins_kpoints_bands
+    pdos4=vrun.get_atom_resolved_dos()
+    pdos5=vrun.get_spdf_dos()
     td = vrun.to_dict()
     fd = Vasprun.from_dict(td)
     vrun_dm = Vasprun(os.path.join(os.path.dirname(__file__),'JVASP-86924.xml'))
