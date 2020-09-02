@@ -156,6 +156,7 @@ def test_basic_atoms():
     assert m1.lattice_mat[2][2] == 36.158933360000006
     filename = "atoms.cif"
     m1.write_cif(filename)
+    a=Atoms.from_cif(filename)
     filename = "POSCAR"
     m1.write_poscar(filename)
     m2 = Atoms.from_poscar(filename)
