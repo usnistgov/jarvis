@@ -98,4 +98,47 @@ def get_angle(
     return angle
 
 
+def recast_array_on_uniq_array_elements(
+    uniq=["Si", "Al", "O"],
+    arr=["Si", "Si", "Al", "Al", "Si", "O", "O", "O", "O"],
+):
+    """Recast array on uniq array elements."""
+    info = {}
+    for i, ii in enumerate(uniq):
+        for j, jj in enumerate(arr):
+            if ii == jj:
+                info.setdefault(ii, []).append(j)
+    return info
+
+
+def lorentzian(x, y, x0, gamma):
+    """Get Lorentzian of a function."""
+    return (y / math.pi) * (
+        (0.5 * gamma) / ((x - x0) ** 2 + (0.5 * gamma) ** 2)
+    )
+
+
 # color_dict=random_colors()
+def stringdict_to_xml(d={}, enforce_string=False):
+    """Convert string dictionary to XML."""
+    line = ""
+    for i, j in d.items():
+        if enforce_string:
+            line += "<" + str(i) + ">'" + str(j) + "'</" + str(i) + ">"
+        else:
+            line += "<" + str(i) + ">" + str(j) + "</" + str(i) + ">"
+    return line
+
+
+def array_to_string(arr=[]):
+    """Convert 1D arry to string."""
+    return ",".join(map(str, arr))
+
+
+def check_match(a, b, tol=1e-4):
+    """Check if a and b are the same, taking into account PBCs."""
+    if abs(a[0] - b[0]) < tol or abs(abs(a[0] - b[0]) - 1) < tol:
+        if abs(a[1] - b[1]) < tol or abs(abs(a[1] - b[1]) - 1) < tol:
+            if abs(a[2] - b[2]) < tol or abs(abs(a[2] - b[2]) - 1) < tol:
+                return True
+    return False

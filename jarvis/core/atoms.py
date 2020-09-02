@@ -169,12 +169,222 @@ class Atoms(object):
             )
         f.close()
 
+    @staticmethod
+    def from_cif(filename="atoms.cif"):
+        """Read .cif file."""
+        from jarvis.analysis.structure.spacegroup import (
+            check_duplicate_coords,
+            get_new_coord_for_xyz_sym,
+        )
+
+        """Read .cif format file."""
+        # Warning: May not work for system with partial occupancy
+        f = open(filename, "r")
+        lines = f.read().splitlines()
+        f.close()
+        lat_a = ""
+        lat_b = ""
+        lat_c = ""
+        lat_alpha = ""
+        lat_beta = ""
+        lat_gamma = ""
+        # chemical_formula_structural = ""
+        # chemical_formula_sum = ""
+        # chemical_name_mineral = ""
+        sym_xyz_line = ""
+        for ii, i in enumerate(lines):
+            if "_cell_length_a" in i:
+                lat_a = float(i.split()[1].split("(")[0])
+            if "_cell_length_b" in i:
+                lat_b = float(i.split()[1].split("(")[0])
+            if "_cell_length_c" in i:
+                lat_c = float(i.split()[1].split("(")[0])
+            if "_cell_angle_alpha" in i:
+                lat_alpha = float(i.split()[1].split("(")[0])
+            if "_cell_angle_beta" in i:
+                lat_beta = float(i.split()[1].split("(")[0])
+            if "_cell_angle_gamma" in i:
+                lat_gamma = float(i.split()[1].split("(")[0])
+            # if "_chemical_formula_structural" in i:
+            #    chemical_formula_structural = i.split()[1]
+            # if "_chemical_formula_sum" in i:
+            #    chemical_formula_sum = i.split()[1]
+            # if "_chemical_name_mineral" in i:
+            #    chemical_name_mineral = i.split()[1]
+            if "_symmetry_equiv_pos_as_xyz" in i:
+                sym_xyz_line = ii
+        symm_ops = []
+        terminate = False
+        count = 0
+        while not terminate:
+            tmp = lines[sym_xyz_line + count + 1]
+            if "x" in tmp and "y" in tmp and "z" in tmp:
+                print("tmp", tmp)
+                symm_ops.append(tmp)
+                count += 1
+            else:
+                terminate = True
+        tmp_arr = [lat_a, lat_b, lat_c, lat_alpha, lat_beta, lat_gamma]
+        if any(ele == "" for ele in tmp_arr):
+            raise ValueError("Lattice information is incomplete.", tmp_arr)
+        lat = Lattice.from_parameters(
+            lat_a, lat_b, lat_c, lat_alpha, lat_beta, lat_gamma
+        )
+        terminate = False
+        atom_features = []
+        count = 0
+        beginning_atom_info_line = 0
+        for ii, i in enumerate(lines):
+            if "loop_" in i and "_atom_site" in lines[ii + count + 1]:
+                beginning_atom_info_line = ii
+        while not terminate:
+            if "_atom" in lines[beginning_atom_info_line + count + 1]:
+                atom_features.append(
+                    lines[beginning_atom_info_line + count + 1]
+                )
+            count += 1
+            if "_atom" not in lines[beginning_atom_info_line + count]:
+                terminate = True
+        terminate = False
+        count = 1
+        atom_liines = []
+        while not terminate:
+            number = beginning_atom_info_line + len(atom_features) + count
+            if number == len(lines):
+                terminate = True
+                break
+            line = lines[number]
+            # print ('tis line',line)
+            if len(line.split()) == len(atom_features):
+                atom_liines.append(line)
+                count += 1
+            else:
+                terminate = True
+        label_index = ""
+        fract_x_index = ""
+        fract_y_index = ""
+        fract_z_index = ""
+        cartn_x_index = ""
+        cartn_y_index = ""
+        cartn_z_index = ""
+        # occupancy_index = ""
+        for ii, i in enumerate(atom_features):
+            if "_atom_site_label" in i:
+                label_index = ii
+            if "fract_x" in i:
+                fract_x_index = ii
+            if "fract_y" in i:
+                fract_y_index = ii
+            if "fract_z" in i:
+                fract_z_index = ii
+            if "cartn_x" in i:
+                cartn_x_index = ii
+            if "cartn_y" in i:
+                cartn_y_index = ii
+            if "cartn_z" in i:
+                cartn_z_index = ii
+            # if "occupancy" in i:
+            #    occupancy_index = ii
+        if fract_x_index == "" and cartn_x_index == "":
+            raise ValueError("Cannot find atomic coordinate info.")
+        elements = []
+        coords = []
+        cif_atoms = None
+        if fract_x_index != "":
+            for ii, i in enumerate(atom_liines):
+                tmp = i.split()
+                tmp_lbl = list(
+                    Composition.from_string(tmp[label_index]).to_dict().keys()
+                )
+                elem = tmp_lbl[0]
+                coord = [
+                    float(tmp[fract_x_index].split("(")[0]),
+                    float(tmp[fract_y_index].split("(")[0]),
+                    float(tmp[fract_z_index].split("(")[0]),
+                ]
+                if len(tmp_lbl) > 1:
+                    raise ValueError("Check if labesl are correct.", tmp_lbl)
+                elements.append(elem)
+                coords.append(coord)
+            cif_atoms = Atoms(
+                lattice_mat=lat.matrix,
+                elements=elements,
+                coords=coords,
+                cartesian=False,
+            )
+        elif cartn_x_index != "":
+            for ii, i in enumerate(atom_liines):
+                tmp = i.split()
+                tmp_lbl = list(
+                    Composition.from_string(tmp[label_index]).to_dict().keys()
+                )
+                elem = tmp_lbl[0]
+                coord = [
+                    float(tmp[cartn_x_index].split("(")[0]),
+                    float(tmp[cartn_y_index].split("(")[0]),
+                    float(tmp[cartn_z_index].split("(")[0]),
+                ]
+                if len(tmp_lbl) > 1:
+                    raise ValueError("Check if labesl are correct.", tmp_lbl)
+                elements.append(elem)
+                coords.append(coord)
+            cif_atoms = Atoms(
+                lattice_mat=lat.matrix,
+                elements=elements,
+                coords=coords,
+                cartesian=True,
+            )
+        else:
+            raise ValueError(
+                "Cannot find atomic coordinate info from cart or frac."
+            )
+        # frac_coords=list(cif_atoms.frac_coords)
+        cif_elements = cif_atoms.elements
+        lat = cif_atoms.lattice.matrix
+        if len(symm_ops) > 1:
+            frac_coords = list(cif_atoms.frac_coords)
+            for i in symm_ops:
+                for jj, j in enumerate(frac_coords):
+                    new_c_coord = get_new_coord_for_xyz_sym(
+                        xyz_string=i, frac_coord=j
+                    )
+                    new_frac_coord = [new_c_coord][0]
+                    if not check_duplicate_coords(frac_coords, new_frac_coord):
+                        frac_coords.append(new_frac_coord)
+                        cif_elements.append(cif_elements[jj])
+            new_atoms = Atoms(
+                lattice_mat=lat,
+                coords=frac_coords,
+                elements=cif_elements,
+                cartesian=False,
+            )
+            cif_atoms = new_atoms
+        return cif_atoms
+
     def write_poscar(self, filename="POSCAR"):
         """Write POSCAR format file from Atoms object."""
         from jarvis.io.vasp.inputs import Poscar
 
         pos = Poscar(self)
         pos.write_file(filename)
+
+    @property
+    def get_xyz_string(self):
+        """Get xyz string for atoms."""
+        line = str(self.num_atoms) + "\n"
+        line += " ".join(map(str, np.array(self.lattice_mat).flatten())) + "\n"
+        for i, j in zip(self.elements, self.cart_coords):
+            line += (
+                str(i)
+                + str(" ")
+                + str(round(j[0], 4))
+                + str(" ")
+                + str(round(j[1], 4))
+                + str(" ")
+                + str(round(j[2], 4))
+                + "\n"
+            )
+        return line
 
     def write_xyz(self, filename="atoms.xyz"):
         """Write XYZ format file."""
@@ -184,7 +394,6 @@ class Atoms(object):
         line = ",".join(map(str, np.array(self.lattice_mat).flatten())) + "\n"
         f.write(line)
         for i, j in zip(self.elements, self.cart_coords):
-            print(i, j[0], j[1], j[2])
             f.write("%s %7.5f %7.5f %7.5f\n" % (i, j[0], j[1], j[2]))
         f.close()
 
@@ -1025,6 +1234,16 @@ def get_supercell_dims(atoms, enforce_c_size=10, extend=1):
     return [dim1, dim2, dim3]
 
 
+def pmg_to_atoms(pmg=""):
+    """Convert pymatgen structure to Atoms."""
+    return Atoms(
+        lattice_mat=pmg.lattice.matrix,
+        elements=[i.symbol for i in pmg.species],
+        coords=pmg.frac_coords,
+        cartesian=False,
+    )
+
+
 """
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
@@ -1035,6 +1254,11 @@ if __name__ == "__main__":
     from jarvis.io.vasp.inputs import Poscar
     Si=Atoms.from_poscar('/users/knc6/POSCAR')
     Si.write_cif()
+    a=Atoms.from_cif("atoms.cif")
+    print (a)
+    fn="/cluster/users/knc6/justback/desc_library/cod/cif/1000052.cif"
+    a=Atoms.from_cif(filename=fn)
+    print (a)
     Si.write_poscar()
     print (Si.composition.reduced_formula)
     #print (Si.get_string())
