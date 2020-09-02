@@ -2,6 +2,10 @@
 
 import os
 import json
+# from jarvis.io.vasp.outputs import Vasprun
+# import glob
+from jarvis.db.figshare import data
+from jarvis.core.atoms import Atoms
 
 # OptB88vdW energy per atoms for elements
 unary_json_file = str(os.path.join(os.path.dirname(__file__), "unary.json"))
@@ -52,6 +56,31 @@ def form_enp(atoms=None, total_energy=None):
         form_en = float(total_energy) - float(ref)
         form_en = round(float(form_en) / float(atoms.num_atoms), 5)
     return form_en
+
+
+def get_twod_defect_energy(vrun="", jid="", atom=""):
+    """Get mono 2D defect formation energy with OptB88vdW data."""
+    dft2d = data("dft_2d")
+
+    def get_enp_jid(jid=""):
+        for i in dft2d:
+            if i["jid"] == jid:
+                return (
+                    i["optb88vdw_total_energy"]
+                    / Atoms.from_dict(i["atoms"]).num_atoms
+                )
+
+        # dir='JVASP-667_C_C_c'
+        # tmp=dir.split('_')
+        # jid=tmp[0]
+        # atom=tmp[2]
+    strt = vrun.all_structures[-1]
+    natoms = strt.num_atoms
+    fin_en = vrun.final_energy
+    chem_pot = unary_energy(atom)
+    bulk_en_pa = get_enp_jid(jid)
+    Ef = fin_en - (natoms + 1) * bulk_en_pa + chem_pot
+    return Ef
 
 
 # https://wiki.fysik.dtu.dk/ase/_modules/ase/phasediagram.html#PhaseDiagram

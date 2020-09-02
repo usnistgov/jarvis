@@ -235,6 +235,10 @@ class Lattice(object):
         """Return reciprocal Lattice."""
         return Lattice(2 * np.pi * np.linalg.inv(self._lat).T)
 
+    def reciprocal_lattice_crystallographic(self):
+        """Return reciprocal Lattice without 2 * pi."""
+        return Lattice(self.reciprocal_lattice().matrix / (2 * np.pi))
+
     def get_points_in_sphere(self, frac_points, center, r):
         """
         Find all points within a sphere from the point.

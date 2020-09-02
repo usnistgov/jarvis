@@ -8,9 +8,13 @@ import numpy as np
 from numpy import sin, cos
 import itertools
 from fractions import gcd
+
 # from numpy import gcd
 # from math import gcd
 import os
+from jarvis.core.utils import check_match
+import re
+import math
 
 
 def unique_rows_2(a):
@@ -34,8 +38,9 @@ def symmetrically_distinct_miller_indices(max_index=3, cvn_atoms=None):
     r = r3
     # print ('sorted',r,sorted(r))
     conv_hkl_list = [
-        miller for miller in
-        itertools.product(r, r, r) if any([i != 0 for i in miller])
+        miller
+        for miller in itertools.product(r, r, r)
+        if any([i != 0 for i in miller])
     ]
     spg = Spacegroup3D(cvn_atoms)._dataset
     rot = spg["rotations"]
@@ -183,8 +188,9 @@ class Spacegroup3D(object):
             self._atoms.atomic_numbers,
         )
         dataset = spglib.get_symmetry_dataset(
-            phonopy_atoms, symprec=self._symprec,
-            angle_tolerance=self._angle_tolerance
+            phonopy_atoms,
+            symprec=self._symprec,
+            angle_tolerance=self._angle_tolerance,
         )
         """
         keys = ('number',
@@ -319,8 +325,8 @@ class Spacegroup3D(object):
 
     @property
     def conventional_standard_structure(
-            self, tol=1e-5,
-            international_monoclinic=True):
+        self, tol=1e-5, international_monoclinic=True
+    ):
         """
         Give a conventional cell according to certain conventions.
 
@@ -354,8 +360,11 @@ class Spacegroup3D(object):
                 a, b = sorted(latt.abc[:2])
                 sorted_dic = sorted(
                     [
-                        {"vec": latt.matrix[i],
-                         "length": latt.abc[i], "orig_index": i}
+                        {
+                            "vec": latt.matrix[i],
+                            "length": latt.abc[i],
+                            "orig_index": i,
+                        }
                         for i in [0, 1]
                     ],
                     key=lambda k: k["length"],
@@ -370,8 +379,11 @@ class Spacegroup3D(object):
                 a, b = sorted(latt.abc[1:])
                 sorted_dic = sorted(
                     [
-                        {"vec": latt.matrix[i],
-                         "length": latt.abc[i], "orig_index": i}
+                        {
+                            "vec": latt.matrix[i],
+                            "length": latt.abc[i],
+                            "orig_index": i,
+                        }
                         for i in [1, 2]
                     ],
                     key=lambda k: k["length"],
@@ -427,8 +439,11 @@ class Spacegroup3D(object):
                 transf[2] = [0, 0, 1]
                 sorted_dic = sorted(
                     [
-                        {"vec": latt.matrix[i],
-                         "length": latt.abc[i], "orig_index": i}
+                        {
+                            "vec": latt.matrix[i],
+                            "length": latt.abc[i],
+                            "orig_index": i,
+                        }
                         for i in [0, 1]
                     ],
                     key=lambda k: k["length"],
@@ -652,6 +667,73 @@ class Spacegroup3D(object):
             cartesian=False,
         )
         return new_struct
+
+
+def parse_xyz_string(xyz_string):
+    """
+    Convert xyz info to translation and rotation vectors.
+
+    Adapted from pymatgen.
+    Args:
+        xyz_string: string of the form 'x, y, z', '-x, -y, z',
+            '-2y+1/2, 3x+1/2, z-y+1/2', etc.
+    Returns:
+        translation and rotation vectors.
+    """
+    rot_matrix = np.zeros((3, 3))
+    trans = np.zeros(3)
+    toks = xyz_string.strip().replace(" ", "").lower().split(",")
+    re_rot = re.compile(r"([+-]?)([\d\.]*)/?([\d\.]*)([x-z])")
+    re_trans = re.compile(r"([+-]?)([\d\.]+)/?([\d\.]*)(?![x-z])")
+    for i, tok in enumerate(toks):
+        # build the rotation matrix
+        for m in re_rot.finditer(tok):
+            factor = -1 if m.group(1) == "-" else 1
+            if m.group(2) != "":
+                factor *= (
+                    float(m.group(2)) / float(m.group(3))
+                    if m.group(3) != ""
+                    else float(m.group(2))
+                )
+            j = ord(m.group(4)) - 120
+            rot_matrix[i, j] = factor
+        # build the translation vector
+        for m in re_trans.finditer(tok):
+            factor = -1 if m.group(1) == "-" else 1
+            num = (
+                float(m.group(2)) / float(m.group(3))
+                if m.group(3) != ""
+                else float(m.group(2))
+            )
+            trans[i] = num * factor
+    affine_matrix = np.eye(4)
+    affine_matrix[0:3][:, 0:3] = rot_matrix
+    affine_matrix[0:3][:, 3] = trans
+    return affine_matrix
+
+
+def operate_affine(cart_coord=[], affine_matrix=[]):
+    """Operate affine method."""
+    affine_point = np.array([cart_coord[0], cart_coord[1], cart_coord[2], 1])
+    return np.dot(np.array(affine_matrix), affine_point)[0:3]
+
+
+def get_new_coord_for_xyz_sym(frac_coord=[], xyz_string=""):
+    """Obtain new coord from xyz string."""
+    affine_matrix = parse_xyz_string(xyz_string)
+    coord = operate_affine(frac_coord, affine_matrix)
+    coord = np.array([i - math.floor(i) for i in coord])
+    return coord
+
+
+def check_duplicate_coords(coords=[], coord=[]):
+    """Check if a coordinate exists."""
+    positive = False
+    for i in coords:
+        tmp = check_match(i, coord)
+        if tmp:
+            positive = True
+    return positive
 
 
 """

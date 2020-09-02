@@ -3,7 +3,7 @@ Modules for analyzing infrared intensities.
 
 Please find more details in https://doi.org/10.1038/s41524-020-0337-2 .
 """
-
+from jarvis.core.spectrum import Spectrum
 import numpy as np
 
 
@@ -28,7 +28,11 @@ def normalize_vecs(phonon_eigenvectors, masses):
 
 
 def ir_intensity(
-    phonon_eigenvectors=[], phonon_eigenvalues=[], masses=[], born_charges=[]
+    phonon_eigenvectors=[],
+    phonon_eigenvalues=[],
+    masses=[],
+    born_charges=[],
+    smoothen=True,
 ):
     """Calculate IR intensity using DFPT."""
     eigendisplacements = normalize_vecs(phonon_eigenvectors, masses)
@@ -49,6 +53,8 @@ def ir_intensity(
             irIntensity += sumTemp1 ** 2
         freq.append(v * 33.35641)  # Thz to cm-1
         ir_ints.append(irIntensity)
+    if smoothen:
+        freq, ir_ints = Spectrum(x=freq, y=ir_ints).smoothen_spiky_spectrum()
     return freq, ir_ints
 
 

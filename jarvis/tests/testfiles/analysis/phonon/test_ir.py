@@ -25,4 +25,6 @@ def test_ir():
         masses=masses,
         born_charges=born_charges,
     )
-    assert x[0] == 713.8676686817399
+    print (max(y))
+    assert max(y) == 0.3511482090386446 
+test_ir()

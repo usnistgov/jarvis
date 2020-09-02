@@ -6,6 +6,7 @@ from jarvis.io.vasp.outputs import (
     Chgcar,
     Locpot,
     Outcar,
+    parse_raman_dat,
 )
 import numpy as np
 import os
@@ -256,6 +257,8 @@ def test_vrun():
     pdos1 = vrun.partial_dos_spdf
     pdos2 = vrun.projected_atoms_spins_kpoints_bands
     pdos3 = vrun.projected_spins_kpoints_bands
+    pdos4=vrun.get_atom_resolved_dos()
+    pdos5=vrun.get_spdf_dos()
     td = vrun.to_dict()
     fd = Vasprun.from_dict(td)
     vrun_dm = Vasprun(os.path.join(os.path.dirname(__file__),'JVASP-86924.xml'))
@@ -335,12 +338,14 @@ def test_ir():
         masses=masses,
         born_charges=born_charges,
     )
-    assert round(y[2], 2) == 1.38
+    assert round(y[2], 2) == 0
 
 
 def test_wavecar():
     gvec = wf_noso.gvectors()
     assert (gvec.shape) == (555, 3)
 
-
-test_out()
+def test_raman():
+   ram=os.path.join(os.path.dirname(__file__), "vasp_raman.dat")
+   parse_raman_dat(ram)
+# test_out()
