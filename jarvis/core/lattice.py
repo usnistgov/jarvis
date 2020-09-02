@@ -237,7 +237,7 @@ class Lattice(object):
 
     def reciprocal_lattice_crystallographic(self):
         """Return reciprocal Lattice without 2 * pi."""
-        return Lattice(self.reciprocal_lattice().matrix/(2 * np.pi))
+        return Lattice(self.reciprocal_lattice().matrix / (2 * np.pi))
 
     def get_points_in_sphere(self, frac_points, center, r):
         """

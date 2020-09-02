@@ -60,7 +60,7 @@ class VaspToApiXmlSchema(object):
             "exfoliation_energy": "",
         },
     ):
-        """Initilize class."""
+        """Initialize class."""
         self.folder = folder
         if "1L" in folder:
             meta_data["material_type"] = "SingleLayer"
@@ -811,6 +811,7 @@ class VaspToApiXmlSchema(object):
         main_folder = self.folder
         os.chdir(main_folder)
         info = {}
+        info['source_folder'] = self.folder
         for i, j in self.meta_data.items():
             info[i] = j
         id_file = self.meta_data["id_file"]

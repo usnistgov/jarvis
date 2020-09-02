@@ -94,12 +94,14 @@ class LammpsData(object):
         filename="lammps.data",
         element_order=[],
         potential_file="pot.mod",
+        verbose=True,
     ):
         """Read Lammps data file."""
         # n_atoms = len(self._species)
         if element_order == []:
             # Reading potential file for element order
-            print("element_order is empty, reading from", potential_file)
+            if verbose:
+                print("element_order is empty, reading from", potential_file)
             pot_file = open(potential_file, "r")
             lines = pot_file.read().splitlines()
             pot_file.close()

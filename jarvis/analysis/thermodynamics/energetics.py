@@ -74,13 +74,13 @@ def get_twod_defect_energy(vrun="", jid="", atom=""):
         # tmp=dir.split('_')
         # jid=tmp[0]
         # atom=tmp[2]
-        strt = vrun.all_structures[-1]
-        natoms = strt.num_atoms
-        fin_en = vrun.final_energy
-        chem_pot = unary_energy(atom)
-        bulk_en_pa = get_enp_jid(jid)
-        Ef = fin_en - (natoms + 1) * bulk_en_pa + chem_pot
-        return Ef
+    strt = vrun.all_structures[-1]
+    natoms = strt.num_atoms
+    fin_en = vrun.final_energy
+    chem_pot = unary_energy(atom)
+    bulk_en_pa = get_enp_jid(jid)
+    Ef = fin_en - (natoms + 1) * bulk_en_pa + chem_pot
+    return Ef
 
 
 # https://wiki.fysik.dtu.dk/ase/_modules/ase/phasediagram.html#PhaseDiagram

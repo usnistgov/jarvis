@@ -41,4 +41,4 @@ def total_dos(tot_dos="", plot=False):
             pdos.append(float(lines.split()[1]))
     if plot:
         plt.plot(freq, pdos)
-    return freq, freq
+    return freq, pdos

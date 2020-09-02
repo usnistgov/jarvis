@@ -1563,7 +1563,7 @@ Plotly.newPlot('raman', [data],layout_convg);
 
 <script> 
  var table = document.getElementById("elastic_tensor");
- elasticij=<xsl:value-of select="basic_info/main_elastic/main_elastic_info/cij"/> 
+ elasticij=<xsl:value-of select="basic_info/main_elastic/main_elastic_info/cij"/> ;
  elasticij=elasticij.split(';');
  var arr=[["j1","j2","j3","j4","j5","j6"],];
  var row = table.insertRow(-1);
@@ -1576,10 +1576,10 @@ Plotly.newPlot('raman', [data],layout_convg);
  
 
  };
-     
+   var  unit_system=<xsl:value-of select="basic_info/main_elastic/main_elastic_info/unit_system"/> 
  var data = [{
   type: 'table',
- header:{values: ["Cij (GPa)","i1","i2","i3","i4","i5","i6"],height: 30,font: {family: "Arial", size: 24, color: ["black"]}},
+ header:{values: [unit_system,"i1","i2","i3","i4","i5","i6"],height: 30,font: {family: "Arial", size: 24, color: ["black"]}},
 
   cells: {
     values: arr,

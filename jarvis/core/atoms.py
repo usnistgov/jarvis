@@ -1042,6 +1042,16 @@ def get_supercell_dims(atoms, enforce_c_size=10, extend=1):
     return [dim1, dim2, dim3]
 
 
+def pmg_to_atoms(pmg=""):
+    """Convert pymatgen structure to Atoms."""
+    return Atoms(
+        lattice_mat=pmg.lattice.matrix,
+        elements=[i.symbol for i in pmg.species],
+        coords=pmg.frac_coords,
+        cartesian=False,
+    )
+
+
 """
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]

@@ -4,12 +4,9 @@ import json
 import collections
 import os
 from jarvis.core.specie import Specie
-from jarvis.core.spectrum import Spectrum
+# from jarvis.core.spectrum import Spectrum
 import itertools
-from jarvis.analysis.structure.spacegroup import (
-    symmetrically_distinct_miller_indices,
-    Spacegroup3D,
-)
+# from jarvis.analysis.structure.spacegroup import Spacegroup3D,
 
 
 class XRD(object):
@@ -148,7 +145,7 @@ class XRD(object):
                 ]
                 two_thetas.append(two_theta)
 
-        max_intensity = max([v[0] for v in self.peaks.values()])
+        # max_intensity = max([v[0] for v in self.peaks.values()])
         x = []
         y = []
         d_hkls = []
@@ -173,13 +170,14 @@ class XRD(object):
             x[screen].tolist(),
             d_hkls[screen].tolist(),
             y[screen].tolist(),
-            hkl_families[screen],
+            # hkl_families[screen],
         )
 
     def get_unique_families(self, hkls):
         """
-        Returns unique families of Miller indices. Families must be permutations
-        of each other.
+        Return unique families of Miller indices.
+
+        Families must be permutations of each other.
         Args:
             hkls ([h, k, l]): List of Miller indices.
         Returns:
@@ -218,7 +216,7 @@ if __name__ == "__main__":
     coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
     elements = ["Si", "Si"]
     atoms = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    a, b, c = XRD().simulate(atoms=atoms)
+    a, b, c, d = XRD().simulate(atoms=atoms)
     # print("theta,d_hkls,intens", a, b, c)
     print("a=", a)
     print("b=", b)
