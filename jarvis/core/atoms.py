@@ -7,7 +7,6 @@ from collections import OrderedDict
 from jarvis.core.utils import get_counts
 import itertools
 from jarvis.core.utils import get_angle
-
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
 
@@ -171,6 +170,7 @@ class Atoms(object):
 
     @staticmethod
     def from_cif(filename="atoms.cif"):
+        from jarvis.analysis.structure.spacegroup import Spacegroup3D, check_duplicate_coords, get_new_coord_for_xyz_sym
         """Read .cif format file."""
         # Warning: May not work for system with partial occupancy
         f = open(filename, "r")
@@ -218,11 +218,6 @@ class Atoms(object):
                 count += 1
             else:
                 terminate = True
-        if len(symm_ops) > 1:
-            raise ValueError(
-                "Not implemented for systems with symmetry operations."
-            )
-        # TODO: Add symmetry operation based coord generations
         tmp_arr = [lat_a, lat_b, lat_c, lat_alpha, lat_beta, lat_gamma]
         if any(ele == "" for ele in tmp_arr):
             raise ValueError("Lattice information is incomplete.", tmp_arr)
@@ -337,6 +332,30 @@ class Atoms(object):
             raise ValueError(
                 "Cannot find atomic coordinate info from cart or frac."
             )
+        frac_coords=list(cif_atoms.frac_coords)
+        cif_elements=cif_atoms.elements
+        lat=cif_atoms.lattice.matrix
+        if len(symm_ops) > 1:
+            cart_coords=cif_atoms.cart_coords
+            for i in symm_ops:
+              for jj,j in enumerate(cart_coords):
+                 new_c_coord=get_new_coord_for_xyz_sym(xyz_string=i,cart_coord=j)
+                 new_frac_coord=cif_atoms.lattice.frac_coords([new_c_coord])[0]
+                 if not check_duplicate_coords(frac_coords,new_frac_coord):
+                   frac_coords.append(new_frac_coord)
+                   cif_elements.append(cif_elements[jj])
+                   #print ('new_frac_coord',new_frac_coord)
+            print ('frac_coords',len(frac_coords))
+            new_atoms=Atoms(lattice_mat=lat,coords=frac_coords,elements=cif_elements,cartesian=False)
+            print (new_atoms) 
+            from pymatgen.core.structure import Structure
+            from pymatgen.io.vasp.inputs import Poscar
+            s=Structure.from_file(filename)
+            print (Poscar(s))
+            raise ValueError(
+                "Not implemented for systems with symmetry operations."
+            )
+        # TODO: Add symmetry operation based coord generations
         return cif_atoms
 
     def write_poscar(self, filename="POSCAR"):
@@ -1222,7 +1241,6 @@ def pmg_to_atoms(pmg=""):
     )
 
 
-"""
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
@@ -1234,9 +1252,10 @@ if __name__ == "__main__":
     Si.write_cif()
     a=Atoms.from_cif("atoms.cif")
     print (a)
-    fn-"/cluster/users/knc6/justback/desc_library/cod/cif/1000052.cif"
+    fn="/cluster/users/knc6/justback/desc_library/cod/cif/1000052.cif"
     a=Atoms.from_cif(filename=fn)
     print (a)
+"""
     Si.write_poscar()
     print (Si.composition.reduced_formula)
     #print (Si.get_string())

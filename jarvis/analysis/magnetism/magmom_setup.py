@@ -3,7 +3,7 @@
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 import numpy as np
 from collections import defaultdict
-
+from jarvis.core.utils import check_match
 
 class MagneticOrdering(object):
     """Provide modules for enumerating magnetic ordering analysis."""
@@ -11,14 +11,6 @@ class MagneticOrdering(object):
     def __init__(self, atoms=None):
         """Initialize with Atoms."""
         self.atoms = atoms
-
-    def check_match(self, a, b, tol=1e-4):
-        """Check if a and b are the same, taking into account PBCs."""
-        if abs(a[0] - b[0]) < tol or abs(abs(a[0] - b[0]) - 1) < tol:
-            if abs(a[1] - b[1]) < tol or abs(abs(a[1] - b[1]) - 1) < tol:
-                if abs(a[2] - b[2]) < tol or abs(abs(a[2] - b[2]) - 1) < tol:
-                    return True
-        return False
 
     def apply_symmetry_operations(self, atoms, spg, tol=1e-4):
         """Figure out the effects of all the symmetry operations."""
@@ -35,7 +27,7 @@ class MagneticOrdering(object):
                 pos_new = np.dot(coords[at, :], rot.transpose()) + tran
                 pos_new = pos_new % 1
                 for at2 in range(nat):
-                    if self.check_match(pos_new, coords[at2, :]):
+                    if check_match(pos_new, coords[at2, :]):
                         found = True
                         order[at] = at2
             if not found:

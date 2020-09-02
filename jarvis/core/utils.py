@@ -133,3 +133,11 @@ def stringdict_to_xml(d={}, enforce_string=False):
 def array_to_string(arr=[]):
     """Convert 1D arry to string."""
     return ",".join(map(str, arr))
+
+def check_match(a, b, tol=1e-4):
+    """Check if a and b are the same, taking into account PBCs."""
+    if abs(a[0] - b[0]) < tol or abs(abs(a[0] - b[0]) - 1) < tol:
+        if abs(a[1] - b[1]) < tol or abs(abs(a[1] - b[1]) - 1) < tol:
+            if abs(a[2] - b[2]) < tol or abs(abs(a[2] - b[2]) - 1) < tol:
+                return True
+    return False

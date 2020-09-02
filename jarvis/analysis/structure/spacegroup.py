@@ -11,6 +11,9 @@ from fractions import gcd
 # from numpy import gcd
 # from math import gcd
 import os
+from jarvis.core.utils import check_match
+import re
+import math
 
 
 def unique_rows_2(a):
@@ -654,6 +657,61 @@ class Spacegroup3D(object):
         return new_struct
 
 
+
+def parse_xyz_string(xyz_string):
+    """
+    Convert xyz info to translation and rotation vectors.
+
+    Adapted from pymatgen.
+    Args:
+        xyz_string: string of the form 'x, y, z', '-x, -y, z',
+            '-2y+1/2, 3x+1/2, z-y+1/2', etc.
+    Returns:
+        translation and rotation vectors.
+    """
+    rot_matrix = np.zeros((3, 3))
+    trans = np.zeros(3)
+    toks = xyz_string.strip().replace(" ", "").lower().split(",")
+    re_rot = re.compile(r"([+-]?)([\d\.]*)/?([\d\.]*)([x-z])")
+    re_trans = re.compile(r"([+-]?)([\d\.]+)/?([\d\.]*)(?![x-z])")
+    for i, tok in enumerate(toks):
+        # build the rotation matrix
+        for m in re_rot.finditer(tok):
+            factor = -1 if m.group(1) == "-" else 1
+            if m.group(2) != "":
+                factor *= float(m.group(2)) / float(m.group(3)) \
+                    if m.group(3) != "" else float(m.group(2))
+            j = ord(m.group(4)) - 120
+            rot_matrix[i, j] = factor
+        # build the translation vector
+        for m in re_trans.finditer(tok):
+            factor = -1 if m.group(1) == "-" else 1
+            num = float(m.group(2)) / float(m.group(3)) \
+                if m.group(3) != "" else float(m.group(2))
+            trans[i] = num * factor
+    affine_matrix = np.eye(4)
+    affine_matrix[0:3][:, 0:3] = rot_matrix
+    affine_matrix[0:3][:, 3] = trans
+    return affine_matrix
+
+def operate_affine(cart_coord=[],affine_matrix=[]):
+    affine_point = np.array([cart_coord[0], cart_coord[1], cart_coord[2], 1])
+    return np.dot(np.array(affine_matrix), affine_point)[0:3]
+
+def get_new_coord_for_xyz_sym(cart_coord=[],xyz_string=''):
+    affine_matrix=parse_xyz_string(xyz_string)
+    coord=operate_affine(cart_coord,affine_matrix)
+    coord = np.array([i - math.floor(i) for i in coord])
+    return coord
+
+def check_duplicate_coords(coords=[],coord=[]):
+    positive=False
+#    print ('coords',coords)
+    for i in coords:
+        tmp = check_match(i,coord)
+        if tmp:
+           positive=True
+    return positive
 """
 if __name__ == "__main__":
     x = get_wyckoff_position_operators(488)
