@@ -220,7 +220,7 @@ class Atoms(object):
                 terminate = True
         if len(symm_ops) > 1:
             raise ValueError(
-                "Not implemented yet for system with symmetry operation information."
+                "Not implemented for systems with symmetry operations."
             )
         # TODO: Add symmetry operation based coord generations
         tmp_arr = [lat_a, lat_b, lat_c, lat_alpha, lat_beta, lat_gamma]
@@ -1234,7 +1234,8 @@ if __name__ == "__main__":
     Si.write_cif()
     a=Atoms.from_cif("atoms.cif")
     print (a)
-    a=Atoms.from_cif(filename="/cluster/users/knc6/justback/desc_library/cod/cif/1000052.cif")
+    fn-"/cluster/users/knc6/justback/desc_library/cod/cif/1000052.cif"
+    a=Atoms.from_cif(filename=fn)
     print (a)
     Si.write_poscar()
     print (Si.composition.reduced_formula)
