@@ -173,7 +173,6 @@ class Atoms(object):
     def from_cif(filename="atoms.cif"):
         """Read .cif file."""
         from jarvis.analysis.structure.spacegroup import (
-            Spacegroup3D,
             check_duplicate_coords,
             get_new_coord_for_xyz_sym,
         )

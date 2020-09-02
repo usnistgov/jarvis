@@ -5,6 +5,7 @@ import numpy as np
 from collections import defaultdict
 from jarvis.core.utils import check_match
 
+
 class MagneticOrdering(object):
     """Provide modules for enumerating magnetic ordering analysis."""
 

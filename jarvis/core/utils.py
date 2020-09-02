@@ -134,6 +134,7 @@ def array_to_string(arr=[]):
     """Convert 1D arry to string."""
     return ",".join(map(str, arr))
 
+
 def check_match(a, b, tol=1e-4):
     """Check if a and b are the same, taking into account PBCs."""
     if abs(a[0] - b[0]) < tol or abs(abs(a[0] - b[0]) - 1) < tol:
