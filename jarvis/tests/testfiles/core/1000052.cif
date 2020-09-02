@@ -1,0 +1,94 @@
+#------------------------------------------------------------------------------
+#$Date: 2016-02-14 16:26:36 +0200 (Sun, 14 Feb 2016) $
+#$Revision: 176435 $
+#$URL: svn://www.crystallography.net/cod/cif/1/00/00/1000052.cif $
+#------------------------------------------------------------------------------
+#
+# This file is available in the Crystallography Open Database (COD),
+# http://www.crystallography.net/
+#
+# All data on this site have been placed in the public domain by the
+# contributors.
+#
+data_1000052
+loop_
+_publ_author_name
+'Dollase, W A'
+'Reeder, R J'
+_publ_section_title
+;
+Crystal structure refinement of Huntite Ca Mg~3~ (C O~3~)~4~ with X-ray 
+powder data
+;
+_journal_coden_ASTM              AMMIAY
+_journal_name_full               'American Mineralogist'
+_journal_page_first              163
+_journal_page_last               166
+_journal_volume                  71
+_journal_year                    1986
+_chemical_compound_source        'from Tea Tree Gully, Australia'
+_chemical_formula_structural     'Ca Mg3 (C O3)4'
+_chemical_formula_sum            'C4 Ca Mg3 O12'
+_chemical_name_mineral           Huntite
+_chemical_name_systematic        'Calcium trimagnesium carbonate'
+_space_group_IT_number           155
+_symmetry_cell_setting           trigonal
+_symmetry_space_group_name_Hall  'R 3 2"'
+_symmetry_space_group_name_H-M   'R 3 2 :H'
+_cell_angle_alpha                90
+_cell_angle_beta                 90
+_cell_angle_gamma                120
+_cell_formula_units_Z            3
+_cell_length_a                   9.5027(6)
+_cell_length_b                   9.5027(6)
+_cell_length_c                   7.8212(6)
+_cell_volume                     611.6
+_refine_ls_R_factor_all          0.053
+_cod_original_sg_symbol_H-M      'R 3 2 H'
+_cod_original_formula_sum        'Ca Mg3 O12'
+_cod_database_code               1000052
+loop_
+_symmetry_equiv_pos_as_xyz
+x,y,z
+-y,x-y,z
+y-x,-x,z
+y,x,-z
+x-y,-y,-z
+-x,y-x,-z
+1/3+x,2/3+y,2/3+z
+2/3+x,1/3+y,1/3+z
+1/3-y,2/3+x-y,2/3+z
+2/3-y,1/3+x-y,1/3+z
+1/3-x+y,2/3-x,2/3+z
+2/3-x+y,1/3-x,1/3+z
+1/3+y,2/3+x,2/3-z
+2/3+y,1/3+x,1/3-z
+1/3+x-y,2/3-y,2/3-z
+2/3+x-y,1/3-y,1/3-z
+1/3-x,2/3-x+y,2/3-z
+2/3-x,1/3-x+y,1/3-z
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_symmetry_multiplicity
+_atom_site_Wyckoff_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_attached_hydrogens
+_atom_site_calc_flag
+Ca1 Ca2+ 3 a 0. 0. 0. 1. 0 d
+Mg1 Mg2+ 9 d 0.5443(7) 0. 0. 1. 0 d
+C1 C4+ 3 b 0. 0. 0.5 1. 0 d
+C2 C4+ 9 e 0.4535(20) 0. 0.5 1. 0 d
+O1 O2- 9 e 0.8663(15) 0. 0.5 1. 0 d
+O2 O2- 9 e 0.5895(13) 0. 0.5 1. 0 d
+O3 O2- 18 f 0.4569(11) 0.1355(12) 0.5161(11) 1. 0 d
+loop_
+_atom_type_symbol
+_atom_type_oxidation_number
+Ca2+ 2.000
+Mg2+ 2.000
+C4+ 4.000
+O2- -2.000

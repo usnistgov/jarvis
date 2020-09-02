@@ -60,6 +60,7 @@ class TersoffHamannSTM(object):
         info["img_ext"] = img_ext
         info["data"] = data
         info["scell"] = self.scell
+        info["zcut"] = self.zcut
         fig.subplots_adjust(bottom=0, top=1, left=0.0, right=1)
         plt.savefig(filename, bbox_inches="tight", pad_inches=0.0, dpi=240)
         plt.close()
@@ -86,9 +87,7 @@ class TersoffHamannSTM(object):
             c = np.linspace(tmp.min(), tmp.max(), 100)[pc]
 
         # height of iso-current
-        img = np.argmin(
-            np.abs(self.chg[:, :, zcut_min:zcut_max] - c), axis=2
-        )
+        img = np.argmin(np.abs(self.chg[:, :, zcut_min:zcut_max] - c), axis=2)
         img_ext = np.tile(img, self.repeat[::-1]) + self.zcut - zext
         fig, ax = plt.subplots()
         exts = (0, self.a * self.repeat[0], 0, self.b * self.repeat[1])
@@ -108,6 +107,7 @@ class TersoffHamannSTM(object):
         info["img_ext"] = img_ext
         info["data"] = data
         info["scell"] = self.scell
+        info["zcut"] = self.zcut
         return info
 
     def get_plot(self, ax, Z, extent, transform):

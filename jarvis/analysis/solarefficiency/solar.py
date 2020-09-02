@@ -21,7 +21,12 @@ class SolarEfficiency(object):
         self.formalism = formalism
 
     def calculate_SQ(
-        self, bandgap_ev, temperature=300, fr=1, plot_current_voltage=False
+        self,
+        bandgap_ev,
+        temperature=300,
+        fr=1,
+        plot_current_voltage=False,
+        filename="sq.png",
     ):
         """
         Calcualte efficeincy using shockley queisser formalism.
@@ -67,10 +72,16 @@ class SolarEfficiency(object):
             2.0 * h * c ** 2 / (solar_spectra_wavelength_meters ** 5)
         ) * (
             1.0
-            / ((np.exp(
-                h * c / (solar_spectra_wavelength_meters * k * temperature)))
-               - 1.0
-               )
+            / (
+                (
+                    np.exp(
+                        h
+                        * c
+                        / (solar_spectra_wavelength_meters * k * temperature)
+                    )
+                )
+                - 1.0
+            )
         )
 
         # I've removed a pi in the equation above - Marnik Bercx
@@ -99,8 +110,13 @@ class SolarEfficiency(object):
 
         bandgap_blackbody = (
             (2.0 * h * c ** 2 / (bandgap_wavelength ** 5))
-            * (1.0 / ((np.exp(
-               h * c / (bandgap_wavelength * k * temperature))) - 1.0))
+            * (
+                1.0
+                / (
+                    (np.exp(h * c / (bandgap_wavelength * k * temperature)))
+                    - 1.0
+                )
+            )
             * (bandgap_wavelength / (h * c))
         )
 
@@ -113,20 +129,23 @@ class SolarEfficiency(object):
         )
 
         integration_solar_flux = np.concatenate(
-            (solar_spectra_photon_flux[:bandgap_index],
-             bandgap_irradiance), axis=0
+            (solar_spectra_photon_flux[:bandgap_index], bandgap_irradiance),
+            axis=0,
         )
 
         integration_blackbody = np.concatenate(
-            (blackbody_photon_flux[:bandgap_index],
-             np.array([bandgap_blackbody])),
+            (
+                blackbody_photon_flux[:bandgap_index],
+                np.array([bandgap_blackbody]),
+            ),
             axis=0,
         )
 
         #  Numerically integrating irradiance over wavelength array
         # Note: elementary charge, not math e!  ## units of A/m**2   W/(V*m**2)
-        J_0_r = e * np.pi * simps(integration_blackbody,
-                                  integration_wavelength)
+        J_0_r = (
+            e * np.pi * simps(integration_blackbody, integration_wavelength)
+        )
 
         J_0 = J_0_r / fr
 
@@ -166,7 +185,7 @@ class SolarEfficiency(object):
             V = np.linspace(0, 2, 200)
             plt.plot(V, J(V))
             plt.plot(V, power(V), linestyle="--")
-            plt.show()
+            plt.savefig(filename)
             print(max_power)
 
         return efficiency
@@ -182,6 +201,7 @@ class SolarEfficiency(object):
         absorbance_in_inverse_centimeters=False,
         cut_off_absorbance_below_direct_allowed_gap=True,
         plot_current_voltage=False,
+        filename="slme.png",
     ):
         """
         Calculate spectroscopic limited maximum efficiency.
@@ -257,8 +277,13 @@ class SolarEfficiency(object):
         ) * (
             1.0
             / (
-                (np.exp(
-                 h * c / (solar_spectra_wavelength_meters * k * temperature)))
+                (
+                    np.exp(
+                        h
+                        * c
+                        / (solar_spectra_wavelength_meters * k * temperature)
+                    )
+                )
                 - 1.0
             )
         )
@@ -283,8 +308,10 @@ class SolarEfficiency(object):
             material_wavelength_for_absorbance_data,
             material_absorbance_data,
             kind="cubic",
-            fill_value=(material_absorbance_data[0],
-                        material_absorbance_data[-1]),
+            fill_value=(
+                material_absorbance_data[0],
+                material_absorbance_data[-1],
+            ),
             bounds_error=False,
         )
 
@@ -325,7 +352,7 @@ class SolarEfficiency(object):
         # elementary charge, not math e!  ### units of A/m**2   W/(V*m**2)
         J_sc = e * simps(
             solar_spectra_photon_flux * absorbed_by_wavelength,
-            solar_spectra_wavelength
+            solar_spectra_wavelength,
         )
 
         #    J[i] = J_sc - J_0*(1 - exp( e*V[i]/(k*T) ) )
@@ -360,7 +387,7 @@ class SolarEfficiency(object):
             V = np.linspace(0, 2, 200)
             plt.plot(V, J(V))
             plt.plot(V, power(V), linestyle="--")
-            plt.savefig("pp.png")
+            plt.savefig(filename)
             plt.close()
             # print(power(V_Pmax))
 
