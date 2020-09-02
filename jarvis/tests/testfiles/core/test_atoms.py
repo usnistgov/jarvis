@@ -46,7 +46,12 @@ poscar_path = os.path.join(
     "POSCAR",
 )
 
-
+cif_example = os.path.join(
+    os.path.dirname(__file__),
+    "1000052.cif",
+)
+def test_from_cif():
+    a=Atoms.from_cif(cif_example)
 def test_basic_atoms():
 
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
