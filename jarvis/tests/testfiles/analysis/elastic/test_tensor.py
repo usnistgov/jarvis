@@ -1,5 +1,5 @@
 from jarvis.analysis.elastic.tensor import ElasticTensor
-import os
+import os, tarfile
 from jarvis.io.lammps.outputs import parse_folder
 from jarvis.io.vasp.outputs import Vasprun, Outcar
 
