@@ -90,6 +90,11 @@ def test_basic_atoms():
         coords=d["coords"],
         elements=d["elements"],
     ).density
+    Si_xyz=Si.get_xyz_string
+    Si.write_xyz(filename="atoms.xyz")
+    tmp=Atoms.from_xyz(filename="atoms.xyz")
+    cmd='rm atoms.xyz'
+    os.system(cmd)
     Si.center_around_origin()
     # print ('scell_nat', Si_2)
     assert (

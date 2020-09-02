@@ -6,6 +6,7 @@ from jarvis.io.vasp.outputs import (
     Chgcar,
     Locpot,
     Outcar,
+    parse_raman_dat,
 )
 import numpy as np
 import os
@@ -342,5 +343,7 @@ def test_wavecar():
     gvec = wf_noso.gvectors()
     assert (gvec.shape) == (555, 3)
 
-
-test_out()
+def test_raman():
+   ram=os.path.join(os.path.dirname(__file__), "vasp_raman.dat")
+   parse_raman_dat(ram)
+# test_out()

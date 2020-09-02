@@ -230,7 +230,7 @@ def parse_folder(path="bulk@mp-1487_fold/bulk@mp-1487",):
     return info
 
 
-def parse_material_calculation_folder(path="bulk@mp-1487_fold",):
+def parse_material_calculation_folder(path="bulk@mp-1487_fold", jid="x"):
     """
     Parse individual LAMMPS material run.
 
@@ -252,7 +252,8 @@ def parse_material_calculation_folder(path="bulk@mp-1487_fold",):
         try:
             json_file_name = i.split("/")[-1]
             json_file_path = i.split(".json")[0]
-
+            print("json_file_name", json_file_name)
+            print("json_file_path", json_file_path)
             fold_path = os.path.join(path, json_file_path)
             tmp_info = parse_folder(fold_path)
             info[json_file_name] = tmp_info
@@ -344,11 +345,13 @@ def parse_full_ff_folder(path="Mishin-Ni-Al-2009.eam.alloy_nist",):
     cwd = os.getcwd()
     os.chdir(path)
     print("path", path)
-    for i in glob.glob("*_fold"):
+    tmp_path = path + "/*_fold"
+    for i in glob.glob(tmp_path):
         print(i)
         tmp_fold = os.path.join(path, i)
-        parse_material_calculation_folder(tmp_fold)
+        info = parse_material_calculation_folder(tmp_fold)
     os.chdir(cwd)
+    return info
 
 
 def analyze_log(log="log.lammps"):
