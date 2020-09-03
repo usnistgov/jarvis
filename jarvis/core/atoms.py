@@ -178,7 +178,13 @@ class Atoms(object):
         )
 
         """Read .cif format file."""
-        # Warning: May not work for system with partial occupancy
+        # Warnings:
+        # May not work for:
+        # system with partial occupancy
+        # cif file with multiple blocks
+        # _atom_site_U_iso, instead of fractn_x, cartn_x
+        # with non-zero _atom_site_attached_hydrogens
+
         f = open(filename, "r")
         lines = f.read().splitlines()
         f.close()
@@ -188,6 +194,9 @@ class Atoms(object):
         lat_alpha = ""
         lat_beta = ""
         lat_gamma = ""
+        # TODO: check if chemical_formula_sum
+        # matches Atoms.compsotion.reduced_formula
+
         # chemical_formula_structural = ""
         # chemical_formula_sum = ""
         # chemical_name_mineral = ""
@@ -219,7 +228,7 @@ class Atoms(object):
         while not terminate:
             tmp = lines[sym_xyz_line + count + 1]
             if "x" in tmp and "y" in tmp and "z" in tmp:
-                print("tmp", tmp)
+                # print("tmp", tmp)
                 symm_ops.append(tmp)
                 count += 1
             else:
@@ -267,7 +276,7 @@ class Atoms(object):
         cartn_x_index = ""
         cartn_y_index = ""
         cartn_z_index = ""
-        # occupancy_index = ""
+        occupancy_index = ""
         for ii, i in enumerate(atom_features):
             if "_atom_site_label" in i:
                 label_index = ii
@@ -283,8 +292,8 @@ class Atoms(object):
                 cartn_y_index = ii
             if "cartn_z" in i:
                 cartn_z_index = ii
-            # if "occupancy" in i:
-            #    occupancy_index = ii
+            if "occupancy" in i:
+                occupancy_index = ii
         if fract_x_index == "" and cartn_x_index == "":
             raise ValueError("Cannot find atomic coordinate info.")
         elements = []
@@ -304,6 +313,18 @@ class Atoms(object):
                 ]
                 if len(tmp_lbl) > 1:
                     raise ValueError("Check if labesl are correct.", tmp_lbl)
+                if (
+                    occupancy_index != ""
+                    and not float(
+                        tmp[occupancy_index].split("(")[0]
+                    ).is_integer()
+                ):
+                    raise ValueError(
+                        "Fractional occupancy is not supported.",
+                        float(tmp[occupancy_index].split("(")[0]),
+                        elem,
+                    )
+
                 elements.append(elem)
                 coords.append(coord)
             cif_atoms = Atoms(
@@ -326,6 +347,17 @@ class Atoms(object):
                 ]
                 if len(tmp_lbl) > 1:
                     raise ValueError("Check if labesl are correct.", tmp_lbl)
+                if (
+                    occupancy_index != ""
+                    and not float(
+                        tmp[occupancy_index].split("(")[0]
+                    ).is_integer()
+                ):
+                    raise ValueError(
+                        "Fractional occupancy is not supported.",
+                        float(tmp[occupancy_index].split("(")[0]),
+                        elem,
+                    )
                 elements.append(elem)
                 coords.append(coord)
             cif_atoms = Atoms(
@@ -1252,12 +1284,14 @@ if __name__ == "__main__":
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     Si.write_xyz("atoms.xyz")
     from jarvis.io.vasp.inputs import Poscar
-    Si=Atoms.from_poscar('/users/knc6/POSCAR')
+
+    Si = Atoms.from_poscar("/users/knc6/POSCAR")
     Si.write_cif()
-    a=Atoms.from_cif("atoms.cif")
-    print (a)
-    fn="/cluster/users/knc6/justback/desc_library/cod/cif/1000052.cif"
-    a=Atoms.from_cif(filename=fn)
+    a = Atoms.from_cif("atoms.cif")
+    print(a)
+    fn = "/cluster/users/knc6/justback/desc_library/cod/cif/1000052.cif"
+    # fn="/cluster/users/knc6/justback/desc_library/cod/cif/1000443.cif"
+    a = Atoms.from_cif(filename=fn)
     print (a)
     Si.write_poscar()
     print (Si.composition.reduced_formula)
