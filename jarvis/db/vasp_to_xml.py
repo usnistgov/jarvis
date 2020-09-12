@@ -175,7 +175,7 @@ class VaspToApiXmlSchema(object):
         """Get ENCUT, cut-off convergence data."""
         folder = self.folder
         os.chdir(folder)
-        info = ""
+        info = {}
 
         try:
             encut_files = []
@@ -1151,6 +1151,7 @@ class VaspToApiXmlSchema(object):
         )
         # print("line", line)
         for i, j in d.items():
+          if i!='raw_et_tensor':
             line += "<" + str(i) + ">" + str(round(j, 2)) + "</" + str(i) + ">"
         totdos = outcar.replace("OUTCAR", "total_dos.dat")
         line += '<unit_system>"' + unit_system + '"</unit_system>'
@@ -1238,6 +1239,8 @@ class VaspToApiXmlSchema(object):
         os.chdir(folder)
         info = {}
         data = ""
+
+
         for i in glob.glob("MAIN-ELAST*.json"):
             try:
                 folder = i.split(".json")[0]
@@ -1303,6 +1306,38 @@ class VaspToApiXmlSchema(object):
                 pass
         os.chdir(folder)
         info["raman_dat"] = line
+        return info
+
+
+    def effective_mass_data(
+        self,
+    ):
+        """Get effective-mass data."""
+        folder = self.folder
+        info = {}
+        line = ""
+        os.chdir(folder)
+
+
+
+
+        try:
+         trap=os.path.join(folder,'trap_info.json')
+         data=loadjson(trap)
+         avg=data['avg_mass']
+         ndat=avg['n']['300'][0]['data']
+         pdat=avg['p']['300'][0]['data']
+         line+='<electron_mass_300K>"'+str(round(ndat[0][0],2))+','+str(round(ndat[1][1],2))+','+str(round(ndat[2][2],2))+'"</electron_mass_300K>'
+         line+='<hole_mass_300K>"'+str(round(pdat[0][0],2))+','+str(round(pdat[1][1],2))+','+str(round(pdat[2][2],2))+'"</hole_mass_300K>'
+         line+='<max_electron_mass_300K>'+str(round(max(ndat[0][0],ndat[1][1],ndat[2][2]),2))+'</max_electron_mass_300K>'
+         line+='<max_hole_mass_300K>'+str(round(max(pdat[0][0],pdat[1][1],pdat[2][2]),2))+'</max_hole_mass_300K>'
+
+
+        except Exception:
+          print ('Cannot get trap info.')
+          pass
+        os.chdir(folder)
+        info["effective_mass"] = line
         return info
 
     def boltztrap_data(
@@ -1511,16 +1546,16 @@ class VaspToApiXmlSchema(object):
         info["efg_raw_tensor"] = efg_dat
         info["max_efg"] = max_efg
         info["max_efg_eta"] = ""
-        self.efg_raw_tensor_info = info
+        #self.efg_raw_tensor_info = info
         os.chdir(main_folder)
         return info
 
     def write_xml(self, filename="temp.xml"):
-        """Get overall XML file."""
-        with open(filename, "w") as f:
+          """Get overall XML file."""
+          with open(filename, "w") as f:
             line = '<?xml version="1.0" encoding="UTF-8"?>\n'
             line += '<?xml-stylesheet type="text/xsl" '
-            line += 'href="temp-1002.xsl"?>\n<basic_info>'
+            line += 'href="jarvisdft.xsl"?>\n<basic_info>'
             f.write(str(line))
             line = (
                 "<convergence_info>"
@@ -1558,6 +1593,12 @@ class VaspToApiXmlSchema(object):
                 + "</main_hse06_band>"
             )
             f.write(str(line))
+
+            line = stringdict_to_xml(self.effective_mass_data()) + "\n"
+            f.write(str(line))
+            
+
+
             line = (
                 "<main_pbe0_band>"
                 + stringdict_to_xml(
@@ -1599,7 +1640,7 @@ class VaspToApiXmlSchema(object):
             line = stringdict_to_xml(self.main_soc_spillage()) + "\n"
             f.write(str(line))
             line = (
-                stringdict_to_xml(self.efg_tensor(), enforce_string=True)
+                stringdict_to_xml(self.efg_tensor(),enforce_string=True) 
                 + "\n"
             )
             f.write(str(line))
@@ -1614,13 +1655,13 @@ class VaspToApiXmlSchema(object):
             f.write(str(line))
             f.write("</basic_info>\n")
             """
-                line = "<stm_image>" + image_to_string() + "</stm_image>"+ "\n"
-                f.write(str(line))
-                line ='</basic_info>'
-                f.write(str(line))
-                """
+            line = "<stm_image>" + image_to_string() + "</stm_image>"+ "\n"
+            f.write(str(line))
+            line ='</basic_info>'
+            f.write(str(line))
+            """
 
-
+"""
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
     filename = "JVASP-1002.xml"
@@ -1634,3 +1675,4 @@ if __name__ == "__main__":
 
     # directories = ["/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"]
     # filenames = ["JVASP-1002.xml"]
+"""

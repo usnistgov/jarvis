@@ -166,16 +166,16 @@ def basic_data(data={}, source="JARVIS-FF-LAMMPS"):
     return info
 
 
-def write_xml(data={}):
+def write_xml(data={},filename='temp.xml'):
     """Write XML file."""
     basic = basic_data(data)
-    name = data["jid"] + ".xml"
-    f = open(name, "w")
+    #name = data["jid"] + ".xml"
+    f = open(filename, "w")
     basic_xml = stringdict_to_xml(basic)
     line = ""
     line = '<?xml version="1.0" encoding="UTF-8"?>\n'
     line += '<?xml-stylesheet type="text/xsl" '
-    line += 'href="lmp.xsl"?>\n'
+    line += 'href="jarvisff.xsl"?>\n'
 
     line += "<basic_info>"
 
