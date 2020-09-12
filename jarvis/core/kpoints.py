@@ -120,11 +120,12 @@ class Kpoints3D(object):
     def to_dict(self):
         """Provide dictionary representation."""
         d = OrderedDict()
-        d["kpoints"] = self._kpoints
-        d["labels"] = self._labels
+        d["kpoints"] = list(np.array(self._kpoints).tolist())
+        d["labels"] = list(self._labels)
         d["kpoint_mode"] = self._kpoint_mode
         d["header"] = self._header
-        d["kpoints_weights"] = self._kp_weights
+        d["kpoints_weights"] = list(self._kp_weights)
+        print ('kppppp',d)
         return d
 
     @classmethod
