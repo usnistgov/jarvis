@@ -1,7 +1,7 @@
 """Module to run phonopy. Assumes phonopy in PATH."""
 from jarvis.io.vasp.outputs import Vasprun
 import os
-from jarvis.io.ponopy.inputs import PhonopyInputs
+from jarvis.io.phonopy.inputs import PhonopyInputs
 
 
 def run_phonopy(path="MAIN-ELAST"):
