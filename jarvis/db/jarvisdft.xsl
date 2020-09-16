@@ -5,20 +5,20 @@
 <html> 
 <head>
 <style>
-.centered {
+.jcentered {
   margin: auto;
-  width: 95%;
+  width: 100%;
  border: 1px solid black;
   padding: 1px;
 }
-.right {
+.jright {
   position: absolute;
   right: 0px;
   width: 300px;
   border: 3px solid #73AD21;
   padding: 10px;
 }
-.left {
+.jleft {
   position: absolute;
   left: 0px;
   width: 300px;
@@ -45,7 +45,7 @@
 
   
 <!-- Basic table start -->
-  <table class="centered table  btn-table" >
+  <table class="jcentered table  btn-table" >
 
  
     <tr>
@@ -150,7 +150,7 @@
   <div >
 
   <div 
-  class="centered"
+  class="jcentered"
   id="geometry"
   style="height: 400px; width: 400px; position: relative;"
   data-backgroundcolor="0xffffff"
@@ -195,7 +195,7 @@
 
   </div>
  <!-- Structure viewer end -->
- <br></br>
+
 
  
  
@@ -208,7 +208,7 @@
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Atomic structure analysis");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -217,7 +217,7 @@
     
     var divElement = document.createElement("div");
     divElement.id = "structure";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     };
@@ -242,6 +242,9 @@ grid: {rows: 2, columns: 2,pattern: 'independent'},
   xaxis4: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'Dih. angles upto first neighbor',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
+  width:1400,
+  autosize: false,
+ 
   
 };
 
@@ -327,7 +330,7 @@ Plotly.newPlot('structure', data, layout_convg,{displaylogo: false});
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("X-ray diffraction");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -336,7 +339,7 @@ Plotly.newPlot('structure', data, layout_convg,{displaylogo: false});
     
     var divElement = document.createElement("div");
     divElement.id = "xrd";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     };
@@ -357,6 +360,9 @@ grid: {rows: 1, columns: 2,pattern: 'independent'},
   xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'd_hkl',font:{size: plot_font,color:"black"}}},
  
   showlegend: false,
+  autosize: false,
+  width:1400,
+  width:1400,
   
 };
 
@@ -420,7 +426,7 @@ Plotly.newPlot('xrd', data, layout_convg,{displaylogo: false});
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Electronic density of states");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -429,7 +435,7 @@ Plotly.newPlot('xrd', data, layout_convg,{displaylogo: false});
     
     var divElement = document.createElement("div");
     divElement.id = "dos";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     };
@@ -459,6 +465,9 @@ var layout_convg = {
   //title:str1.join(cnvg_kp.toString()).join(str2).join(cnvg_enc.toString()),
  
   showlegend: false,
+  autosize: false,
+  
+  width:1400,
   
 };
 
@@ -626,7 +635,7 @@ Plotly.newPlot('dos', data, layout_convg);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Electronic bandstructure");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -634,7 +643,7 @@ Plotly.newPlot('dos', data, layout_convg);
     
         var divElement = document.createElement("div");
     divElement.id = "bands";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     
@@ -654,7 +663,7 @@ var plot_font = 14;
 var layout_convg = {
 
   xaxis1: { tickmode: "array",tickvals:kp_labels_points,ticktext:kp_labels ,
-  domain: [0.2, 0.7],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
+  domain: [0.1, 0.95],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
 
     yaxis1: {
      range: [-4, 4],
@@ -663,6 +672,8 @@ var layout_convg = {
    },
 
   showlegend: false,
+  width:1500,
+  autosize: false,
   
 };
 
@@ -700,6 +711,7 @@ var layout_convg = {
     y: y[i].split(',').map(Number),
     marker:{color:'blue'},
     showlegend: false,
+    width:1400,
     
    
   
@@ -732,7 +744,7 @@ var layout_convg = {
     y: y[i].split(',').map(Number),
   
     showlegend: false,
-
+    width:1400,
     type: 'scatter',
       marker:{color:'red'},
   };};
@@ -747,7 +759,8 @@ var kp_labels=<xsl:value-of select="basic_info/main_band/main_bands_info/kp_labe
 kp_labels=kp_labels.split(',');
 
   var layout_convg = {
-
+   width:1400,
+autosize: false,
 xaxis1: {domain: [0.2, 0.7],tickvals:kp_labels_points,ticktext:kp_labels},
   visible:'legendonly',
     yaxis1: {
@@ -777,7 +790,7 @@ Plotly.newPlot('bands', data,layout_convg);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Spin-orbit coupling spillage");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -786,7 +799,7 @@ Plotly.newPlot('bands', data,layout_convg);
     
     var divElement = document.createElement("div");
     divElement.id = "spillage";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     };
@@ -800,7 +813,7 @@ Plotly.newPlot('bands', data,layout_convg);
 var plot_font = 14;
 
 var layout_convg = {
-
+autosize: false,
   xaxis1: { tickmode: "array",tickvals:kp_labels_points,ticktext:kp_labels ,
   domain: [0.2, 0.7],tickfont: {size: plot_font,color:'black'},title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
 
@@ -810,6 +823,7 @@ var layout_convg = {
    },
 
   showlegend: false,
+  width:1400,
   
 };
 
@@ -846,6 +860,7 @@ var layout_convg = {
     y: y[i].split(',').map(Number),
     marker:{color:'blue'},
     showlegend: false,
+    width:1400,
     
        xaxis: "x1",
     yaxis: "y1",
@@ -880,6 +895,7 @@ var layout_convg = {
     y: y[i].split(',').map(Number),
   
     showlegend: false,
+    width:1400,
     xaxis: "x1",
     yaxis: "y1",
     type: 'scatter',
@@ -925,6 +941,7 @@ var layout_convg = {
     y: y[i].split(',').map(Number),
     marker:{color:'blue'},
     showlegend: false,
+    width:1400,
     
        xaxis: "x2",
     yaxis: "y2",
@@ -959,6 +976,7 @@ var layout_convg = {
     y: y[i].split(',').map(Number),
   
     showlegend: false,
+    width:1400,
     xaxis: "x2",
     yaxis: "y2",
     type: 'scatter',
@@ -1018,6 +1036,7 @@ kp_labels=kp_labels.split(',');
     y: y,
   
     showlegend: false,
+    width:1400,
     xaxis: "x3",
     yaxis: "y3",
     type: 'scatter',
@@ -1029,7 +1048,8 @@ kp_labels=kp_labels.split(',');
   
 
   var layout_convg = {
-
+autosize: false,
+ width:1400,
 xaxis1: {domain: [0.0, 0.3],tickvals:kp_labels_points,ticktext:kp_labels},
   visible:'legendonly',
     yaxis1: {
@@ -1110,7 +1130,7 @@ Plotly.newPlot('spillage', data,layout_convg);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Optoelectric properties (semi-local)");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -1118,7 +1138,7 @@ Plotly.newPlot('spillage', data,layout_convg);
     
         var divElement = document.createElement("div");
     divElement.id = "ggaoptics";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     };
@@ -1137,6 +1157,8 @@ grid: {rows: 1, columns: 2},
   xaxis2: {tickfont: {size: plot_font,color:'black'},range: [0, 15],domain: [0.55, .99],title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
+  width:1400,
+  autosize: false,
   
 };
 
@@ -1188,7 +1210,7 @@ Plotly.newPlot('ggaoptics', data, layout_convg);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Optoelectric properties (TBmBJ)");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -1197,7 +1219,7 @@ Plotly.newPlot('ggaoptics', data, layout_convg);
     
             var divElement = document.createElement("div");
     divElement.id = "mbjoptics";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     };
@@ -1219,6 +1241,8 @@ grid: {rows: 1, columns: 2},
   xaxis2: {tickfont: {size: plot_font,color:'black'},range: [0, 15],domain: [0.55, .99],title:{text: 'Energy (eV)',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
+  width:1400,
+  autosize: false,
   
 };
 
@@ -1273,7 +1297,7 @@ Plotly.newPlot('mbjoptics', data, layout_convg);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("DFPT dielectric tensor");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -1281,7 +1305,7 @@ Plotly.newPlot('mbjoptics', data, layout_convg);
     
          var divElement = document.createElement("table");
     divElement.id = "dfpt_dielectric_tensor";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);   
     
     };
@@ -1345,7 +1369,7 @@ Plotly.newPlot('dfpt_dielectric_tensor',data);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("DFPT piezoelectric tensor");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -1356,13 +1380,13 @@ Plotly.newPlot('dfpt_dielectric_tensor',data);
     
              var divElement = document.createElement("table");
     divElement.id = "dfpt_piezoelectric_tensor";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement); 
     
     
 </script>
 
-<!--<table class="centered" style="border-spacing: 15px" id="dfpt_piezoelectric_tensor">  </table>
+<!--<table class="jcentered" style="border-spacing: 15px" id="dfpt_piezoelectric_tensor">  </table>
 -->
 
 
@@ -1423,7 +1447,7 @@ Plotly.newPlot('dfpt_piezoelectric_tensor',data);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("DFPT Infrared intensity");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -1431,7 +1455,7 @@ Plotly.newPlot('dfpt_piezoelectric_tensor',data);
     
         var divElement = document.createElement("div");
     divElement.id = "irplot";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     };
@@ -1464,6 +1488,8 @@ grid: {rows: 1, columns: 2},
   xaxis1: {domain: [0.3, 0.75],tickfont: {size: plot_font,color:'black'},title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
+  width:1400,
+  autosize: false,
   
 };
 
@@ -1482,7 +1508,7 @@ Plotly.newPlot('irplot', [data],layout_convg);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("DFPT Raman intensity");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -1490,7 +1516,7 @@ Plotly.newPlot('irplot', [data],layout_convg);
     
         var divElement = document.createElement("div");
     divElement.id = "raman";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     };
@@ -1520,6 +1546,8 @@ grid: {rows: 1, columns: 2},
   xaxis1: {domain: [0.3, 0.75],tickfont: {size: plot_font,color:'black'},title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
+  width:1400,
+  autosize: false,
   
 };
 
@@ -1542,7 +1570,7 @@ Plotly.newPlot('raman', [data],layout_convg);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Finite-difference Elastic constant-tensor");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -1551,12 +1579,12 @@ Plotly.newPlot('raman', [data],layout_convg);
     
      var divElement = document.createElement("table");
     divElement.id = "elastic_tensor";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement); 
     
     };
 </script> 
-<!--<table class="centered" style="border-spacing: 15px" id="elastic_tensor">  </table>
+<!--<table class="jcentered" style="border-spacing: 15px" id="elastic_tensor">  </table>
 -->
 
 
@@ -1614,7 +1642,7 @@ Plotly.newPlot('elastic_tensor',data);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("FD Phonon DOS at gamma-point only");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -1622,7 +1650,7 @@ Plotly.newPlot('elastic_tensor',data);
     
     var divElement = document.createElement("div");
     divElement.id = "fddos";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     };
@@ -1637,12 +1665,14 @@ function fddos_plotly(data){
 var plot_font = 14;
 var layout_convg = {
 grid: {rows: 1, columns: 2},
-  xaxis1: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
+  xaxis1: {domain: [0.1, 0.7],tickfont: {size: plot_font,color:'black'},title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
   yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Density of states',font:{size: plot_font,color:"black"}}},
   yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
-  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'K-Point',font:{size: plot_font,color:"black"}}},
+  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.7, .99],title:{text: 'K-Point',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
+  width:1400,
+  autosize: false,
   
 };
 
@@ -1664,36 +1694,38 @@ Plotly.newPlot('fddos', data, layout_convg);
     type: 'scatter',
     
   };
+  data.push(data1);
 
-   var x= <xsl:value-of select="basic_info/main_elastic/main_elastic_info/phonon_bandstructure_distances"/>;
-  x=x.split(',').map(Number);
+   <!-- var x= <xsl:value-of select="basic_info/main_elastic/main_elastic_info/phonon_bandstructure_distances"/>; -->
+  <!-- x=x.split(',').map(Number); -->
   
-  var y2= <xsl:value-of select="basic_info/main_elastic/main_elastic_info/phonon_bandstructure_frequencies"/>;
-  y2=y2.split(';');
+  <!-- var y2= <xsl:value-of select="basic_info/main_elastic/main_elastic_info/phonon_bandstructure_frequencies"/>; -->
+  <!-- y2=y2.split(';'); -->
 
   
   
-var data_tmp = [];
-data.push(data1);
+<!-- var data_tmp = []; -->
+
 
 
     
  
-  for (var i=0;i&lt;y2.length;i++) {
+  <!-- for (var i=0;i&lt;y2.length;i++) { -->
     
-    var data2 = {
-    x: x,
-    y: y2[i].split(',').map(Number),
-    marker:{color:'blue'},
-    showlegend: false,
-    mode:'lines',
-    xaxis: "x2",
-    yaxis: "y2",
+    <!-- var data2 = { -->
+    <!-- x: x, -->
+    <!-- y: y2[i].split(',').map(Number), -->
+    <!-- marker:{color:'blue'}, -->
+    <!-- showlegend: false, -->
+    <!-- width:1400, -->
+    <!-- mode:'lines', -->
+    <!-- xaxis: "x2", -->
+    <!-- yaxis: "y2", -->
   
-    type: 'scatter',
-  };
-    data.push(data2);
-  };
+    <!-- type: 'scatter', -->
+  <!-- }; -->
+    <!-- data.push(data2); -->
+  <!-- }; -->
   
     
 
@@ -1717,7 +1749,7 @@ data.push(data1);
 
 <!--FD phonons starts 
  <h3 style="text-align:center">FD Phonon modes at gamma-point only</h3> 
-<table class="centered" id="fdphon"></table>
+<table class="jcentered" id="fdphon"></table>
 
 <script> 
 
@@ -1776,7 +1808,7 @@ FD phonons ends-->
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Electric Field Gradient tensor");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -1784,7 +1816,7 @@ FD phonons ends-->
     
              var divElement = document.createElement("table");
     divElement.id = "efg_tensor";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);   
     
     };
@@ -1856,7 +1888,7 @@ Plotly.newPlot('efg_tensor',data);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Thermoelectric data");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -1864,7 +1896,7 @@ Plotly.newPlot('efg_tensor',data);
     
              var divElement = document.createElement("table");
     divElement.id = "boltz";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);   
     
     };
@@ -1952,7 +1984,7 @@ Plotly.newPlot('boltz',data);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("K-point and cut-off convergence");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -1961,7 +1993,7 @@ Plotly.newPlot('boltz',data);
     
     var divElement = document.createElement("div");
     divElement.id = "convergence";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     };
@@ -1982,7 +2014,8 @@ grid: {rows: 1, columns: 2},
   xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'ENCUT (eV)',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
-  
+  width:1400,
+  autosize: false,
 };
 
 Plotly.newPlot('convergence', data, layout_convg,{displaylogo: false});
@@ -2039,5 +2072,6 @@ Plotly.newPlot('convergence', data, layout_convg,{displaylogo: false});
 </html>
 </xsl:template>
 </xsl:stylesheet>
+
 
 
