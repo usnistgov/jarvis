@@ -270,19 +270,21 @@ class VaspToApiXmlSchema(object):
                         + "'</total_edos_down>"
                     )
 
-            line += "<spdf_dos>'"
+            line += "<spdf_dos>"
             for i, j in spdf_dos.items():
                 line += (
                     "<"
                     + str(i)
-                    + ">'"
+                    + ">"
+                    # + ">'"
                     + ",".join(map(str, j))
-                    + "'</"
+                    + "</"
+                    # + "'</"
                     + str(i)
                     + ">"
                 )
 
-            line += "'</spdf_dos>"
+            line += "</spdf_dos>"
             line += "<elemental_dos>"
             spin_up_info = atom_dos["spin_up_info"]
             spin_down_info = atom_dos["spin_down_info"]
@@ -291,10 +293,12 @@ class VaspToApiXmlSchema(object):
                 line += str(i) + str("_") + ",".join(map(str, j)) + ";"
             line += '"</spin_up_info>'
 
-            line += '<spin_down_info>"'
+            line += "<spin_down_info>"
+            # line += '<spin_down_info>"'
             for i, j in spin_down_info.items():
                 line += str(i) + str("_") + ",".join(map(str, j)) + ";"
-            line += '"</spin_down_info>'
+            line += "</spin_down_info>"
+            # line += '"</spin_down_info>'
             line += "</elemental_dos>"
 
             fermi_velocities = ""
@@ -1206,33 +1210,33 @@ class VaspToApiXmlSchema(object):
                 + "'</phonon_dos_intensity>"
             )
 
-            frequencies, distances, labels, label_points = bandstructure_plot(
-                band_yaml
-            )
-
-            tmp = ""
-            for i in range(np.array(frequencies).shape[1]):
-                tmp += ",".join(map(str, np.array(frequencies)[:, i])) + ";"
-            line += (
-                "<phonon_bandstructure_distances>'"
-                + ",".join(map(str, distances))
-                + "'</phonon_bandstructure_distances>"
-            )
-            line += (
-                "<phonon_bandstructure_frequencies>'"
-                + tmp
-                + "'</phonon_bandstructure_frequencies>"
-            )
-            line += (
-                "<phonon_bandstructure_labels>'"
-                + ",".join(map(str, labels))
-                + "'</phonon_bandstructure_labels>"
-            )
-            line += (
-                "<phonon_bandstructure_label_points>'"
-                + ",".join(map(str, label_points))
-                + "'</phonon_bandstructure_label_points>"
-            )
+            # Comment until 4 MB text size error
+            # frequencies, distances, labels, label_points = bandstructure_plot(
+            #    band_yaml
+            # )
+            # tmp = ""
+            # for i in range(np.array(frequencies).shape[1]):
+            #    tmp += ",".join(map(str, np.array(frequencies)[:, i])) + ";"
+            # line += (
+            #    "<phonon_bandstructure_distances>'"
+            #    + ",".join(map(str, distances))
+            #    + "'</phonon_bandstructure_distances>"
+            # )
+            # line += (
+            #    "<phonon_bandstructure_frequencies>'"
+            #    + tmp
+            #    + "'</phonon_bandstructure_frequencies>"
+            # )
+            # line += (
+            #    "<phonon_bandstructure_labels>'"
+            #    + ",".join(map(str, labels))
+            #    + "'</phonon_bandstructure_labels>"
+            # )
+            # line += (
+            #    "<phonon_bandstructure_label_points>'"
+            #    + ",".join(map(str, label_points))
+            #    + "'</phonon_bandstructure_label_points>"
+            # )
         return line
 
     def main_elastic(self):
@@ -1678,7 +1682,7 @@ class VaspToApiXmlSchema(object):
             """
 
 
-# """
+"""
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
     filename = "JVASP-1002.xml"
@@ -1692,4 +1696,4 @@ if __name__ == "__main__":
 
     # directories = ["/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"]
     # filenames = ["JVASP-1002.xml"]
-# """
+"""

@@ -4,6 +4,17 @@ import pprint
 import os
 import glob
 from lxml import etree
+from jarvis.db.jsonutils import dumpjson
+import string
+import sys
+
+
+def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
+    """Check if XML is valid."""
+    xml_file = etree.parse(xml)
+    xml_validator = etree.XMLSchema(file=xsd)
+    is_valid = xml_validator.validate(xml_file)
+    return is_valid
 
 
 class Api(object):
@@ -81,13 +92,13 @@ class Api(object):
             turl, data=data, verify=False, auth=(self.username, self.password)
         )
         out = response.json()
-        upload_id = out["id"]
         # pprint.pprint(out)
-        print("upload_id", upload_id)
         response_code = response.status_code
         # print ('code:',response_code, requests.codes.ok)
         if response_code == requests.codes.created:
             print("status: uploaded.")
+            upload_id = out["id"]
+            print("upload_id", upload_id)
         else:
             response.raise_for_status()
             pprint.pprint(out)
@@ -138,11 +149,17 @@ class Api(object):
         """Get all XML data. Used for deleting."""
         return self.send_query(query=".xml")
 
-    def delet_chunks(self, array=[]):
+    def delete_chunks(self, array=[]):
         """Delete a list of records."""
+        # print ('array',array[0]['id'])
         for i in array:
-            id = i["id"]
-            self.delete_file_by_hash_id(id)
+            try:
+                id = i["id"]
+                self.delete_file_by_hash_id(id)
+            except Exception:
+                print("Failed deleting", i)
+                print()
+                pass
 
     def get_data_by_template_id(
         self, id="5f6162b4ece4b00034e4fe19", query=".xml", max_record=5
@@ -188,11 +205,10 @@ class Api(object):
 
         return mem
 
-    def delete_all_records(self):
+    def delete_all_records(self, query=".xml"):
         """Delete all XML files."""
         print("Deleteing all XMLs.")
-        print("Hope you know what you are doing.")
-        print("At least store the function return to JSON for backup.")
+        print("Hope you backed up the data.")
         xml_upload_url = "/rest/data/query/keyword/"
         turl = self.base_url + xml_upload_url
         print("turl", turl)
@@ -202,7 +218,7 @@ class Api(object):
         )
         out = response.json()
         data = out["results"]
-        self.delete_chunks(out)
+        self.delete_chunks(data)
         params = {"page": 2}
         while out["next"] is not None:
             response = requests.post(
@@ -212,9 +228,11 @@ class Api(object):
                 auth=(self.username, self.password),
             )
             out = response.json()
-            data.extend(out["results"])
+            # data.extend(out["results"])
+            data = out["results"]
             params["page"] += 1
-            self.delete_chunks(out)
+            print("params", params)
+            self.delete_chunks(data)
 
         return data
 
@@ -245,6 +263,55 @@ class Api(object):
             params["page"] += 1
         return out
 
+    def upload_blob(self, filepath=""):
+        turl = self.base_url + "/rest/blob/"
+
+        oldid = os.path.basename(filepath)
+        if all(c in string.hexdigits for c in oldid):
+            newfile = oldid[25:]
+        else:
+            newfile = oldid
+
+        files = {"blob": open(filepath, "rb")}
+
+        data = {"filename": newfile}
+
+        response = requests.post(
+            turl, files=files, data=data, auth=(self.username, self.password)
+        )
+        if response.status_code == 201:
+            print("Uploaded blob.")
+            return response.json()["id"]
+        else:
+            response.raise_for_status()
+            raise Exception("- error: a problem occurred when uploading blob")
+
+    def get_all_blobs(self):
+        turl = self.base_url + "/rest/blob/"
+        response = requests.get(
+            turl, verify=False, auth=(self.username, self.password)
+        )
+        # print ('response.json()',response.json())
+        print("All blob doownload response.status_code", response.status_code)
+        return response.json()
+
+    def delete_blob(self, bid="5f622cd9ece4b00027e50fe2"):
+        turl = self.base_url + "/rest/blob/" + bid + "/"
+        response = requests.delete(
+            turl, verify=False, auth=(self.username, self.password)
+        )
+        if response.status_code == 204:
+            print("Status: " + bid + " has been deleted.")
+        else:
+            response.raise_for_status()
+            raise Exception("Error: a problem occurred when deleting blob")
+
+    def delete_all_blobs(self):
+        data = self.get_all_blobs()
+        for i in data:
+            print("Deleting", i["id"])
+            self.delete_blob(i["id"])
+
     def upload_jarvisff_xmls(
         self,
         files="/rk2/knc6/DB/XMLs/LAMMPS/*.xml",
@@ -274,6 +341,36 @@ class Api(object):
             dumpjson(filename=json_name, data=mem)
         return mem
 
+    def upload_jarvisdft_xmls(
+        self,
+        files="/rk2/knc6/DB/XMLs/VASPDASK/*.xml",
+        template_id="5f5e74a4ece4b0002de4f903",
+        json_name="jarvisdft_xmls.json",
+    ):
+        mem = []
+        for i in glob.glob(files):
+            jid = i.split("/")[-1].split(".xml")[0]
+            print(jid)
+            try:
+                upload_id = self.upload_xml_file(
+                    filename=i, template_id=template_id
+                )
+                print(jid)
+                info = {}
+                info["jid"] = jid
+                info["api_id"] = upload_id
+                mem.append(info)
+            except Exception:
+                info = {}
+                info["jid"] = jid
+                info["api_id"] = "Failed"
+
+                print("Failed for", i)
+                pass
+        if json_name is not None:
+            dumpjson(filename=json_name, data=mem)
+        return mem
+
 
 # TODO:
 # blob operations
@@ -285,22 +382,27 @@ class Api(object):
 # upload_dataa()
 
 
-
-def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
-    """Check if XML is valid."""
-    xml_file = etree.parse(xml)
-    xml_validator = etree.XMLSchema(file=xsd)
-    is_valid = xml_validator.validate(xml_file)
-    return is_valid
-
-
 """
 if __name__ == "__main__":
     a = Api()
     a = Api(base_url="https://jarvis.nist.gov")
-    a.upload_jarvisff_xmls()
-    # a.upload_xml_file(filename='out1.xml',template_id='5f6162b4ece4b00034e4fe19')
+    # a.upload_jarvisff_xmls()
 
+    # a.upload_xml_file(filename='JLMP-1241.xml',template_id="5f6268a6ece4b0002de4fb10") 
+    # upload_id 5f6268e8ece4b00035e5277d
+    # a.upload_xml_file(filename='JVASP-1002.xml',template_id="5f626925ece4b00035e5277f") 
+    # upload_id 5f62698bece4b00035e5278c
+
+    # a.delete_all_records()
+    # x = a.upload_blob(
+    #    filepath="/rk2/knc6/DB/RAW_FILES/JARVIS-DFT-DFPT/JVASP-10088.zip",
+    # )
+    # a.delete_blob()
+    # a.get_all_blobs()
+
+    # a.upload_jarvisdft_xmls()
+    # a.delete_all_blobs()
+    # print(x)  # 5f61ba30ece4b00030e500c6
     # a.delete_file_by_hash_id('5f616c20ece4b00035e5135d')
     # upload_jarvisff_xmls()
     # out=a.send_query(query='JLMP-1254.xml')
