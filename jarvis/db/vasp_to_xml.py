@@ -33,8 +33,8 @@ from jarvis.io.wannier.outputs import WannierHam
 cfid_x, cfid_y, cfid_jids = get_ml_data()
 # debug using xmllint --valid --noout JVASP-1002.xml
 # xmllint --format JVASP-1002.xml>out.xml
-
-
+# https://www.luxonsoftware.com/converter/xmltoxsd
+# https://extendsclass.com/xml-schema-validator.html
 def get_cfid_descriptors(jid="JVASP-1002", atoms="", make_cfid=True):
     """Get CFID pre-computed descriptors for a JID."""
     for i, j in zip(cfid_x, cfid_jids):
@@ -811,7 +811,7 @@ class VaspToApiXmlSchema(object):
         main_folder = self.folder
         os.chdir(main_folder)
         info = {}
-        info['source_folder'] = self.folder
+        info["source_folder"] = self.folder
         for i, j in self.meta_data.items():
             info[i] = j
         id_file = self.meta_data["id_file"]
@@ -865,7 +865,7 @@ class VaspToApiXmlSchema(object):
                 info["spacegroup_number"] = spg_numb
                 info["point_group_symbol"] = spg.point_group_symbol
                 # spg_symb = spg.space_group_symbol
-                info["spg.space_group_symbol"] = spg.space_group_symbol
+                info["spg_space_group_symbol"] = spg.space_group_symbol
                 crys_system = spg.crystal_system
                 info["crys_system"] = crys_system
                 conv_params = conv_atoms.lattice.parameters
@@ -1151,8 +1151,10 @@ class VaspToApiXmlSchema(object):
         )
         # print("line", line)
         for i, j in d.items():
-          if i!='raw_et_tensor':
-            line += "<" + str(i) + ">" + str(round(j, 2)) + "</" + str(i) + ">"
+            if i != "raw_et_tensor":
+                line += (
+                    "<" + str(i) + ">" + str(round(j, 2)) + "</" + str(i) + ">"
+                )
         totdos = outcar.replace("OUTCAR", "total_dos.dat")
         line += '<unit_system>"' + unit_system + '"</unit_system>'
         cwd = str(os.getcwd())
@@ -1240,7 +1242,6 @@ class VaspToApiXmlSchema(object):
         info = {}
         data = ""
 
-
         for i in glob.glob("MAIN-ELAST*.json"):
             try:
                 folder = i.split(".json")[0]
@@ -1308,34 +1309,51 @@ class VaspToApiXmlSchema(object):
         info["raman_dat"] = line
         return info
 
-
-    def effective_mass_data(
-        self,
-    ):
+    def effective_mass_data(self,):
         """Get effective-mass data."""
         folder = self.folder
         info = {}
         line = ""
         os.chdir(folder)
 
-
-
-
         try:
-         trap=os.path.join(folder,'trap_info.json')
-         data=loadjson(trap)
-         avg=data['avg_mass']
-         ndat=avg['n']['300'][0]['data']
-         pdat=avg['p']['300'][0]['data']
-         line+='<electron_mass_300K>"'+str(round(ndat[0][0],2))+','+str(round(ndat[1][1],2))+','+str(round(ndat[2][2],2))+'"</electron_mass_300K>'
-         line+='<hole_mass_300K>"'+str(round(pdat[0][0],2))+','+str(round(pdat[1][1],2))+','+str(round(pdat[2][2],2))+'"</hole_mass_300K>'
-         line+='<max_electron_mass_300K>'+str(round(max(ndat[0][0],ndat[1][1],ndat[2][2]),2))+'</max_electron_mass_300K>'
-         line+='<max_hole_mass_300K>'+str(round(max(pdat[0][0],pdat[1][1],pdat[2][2]),2))+'</max_hole_mass_300K>'
-
+            trap = os.path.join(folder, "trap_info.json")
+            data = loadjson(trap)
+            avg = data["avg_mass"]
+            ndat = avg["n"]["300"][0]["data"]
+            pdat = avg["p"]["300"][0]["data"]
+            line += (
+                '<electron_mass_300K>"'
+                + str(round(ndat[0][0], 2))
+                + ","
+                + str(round(ndat[1][1], 2))
+                + ","
+                + str(round(ndat[2][2], 2))
+                + '"</electron_mass_300K>'
+            )
+            line += (
+                '<hole_mass_300K>"'
+                + str(round(pdat[0][0], 2))
+                + ","
+                + str(round(pdat[1][1], 2))
+                + ","
+                + str(round(pdat[2][2], 2))
+                + '"</hole_mass_300K>'
+            )
+            line += (
+                "<max_electron_mass_300K>"
+                + str(round(max(ndat[0][0], ndat[1][1], ndat[2][2]), 2))
+                + "</max_electron_mass_300K>"
+            )
+            line += (
+                "<max_hole_mass_300K>"
+                + str(round(max(pdat[0][0], pdat[1][1], pdat[2][2]), 2))
+                + "</max_hole_mass_300K>"
+            )
 
         except Exception:
-          print ('Cannot get trap info.')
-          pass
+            print("Cannot get trap info.")
+            pass
         os.chdir(folder)
         info["effective_mass"] = line
         return info
@@ -1546,13 +1564,13 @@ class VaspToApiXmlSchema(object):
         info["efg_raw_tensor"] = efg_dat
         info["max_efg"] = max_efg
         info["max_efg_eta"] = ""
-        #self.efg_raw_tensor_info = info
+        # self.efg_raw_tensor_info = info
         os.chdir(main_folder)
         return info
 
     def write_xml(self, filename="temp.xml"):
-          """Get overall XML file."""
-          with open(filename, "w") as f:
+        """Get overall XML file."""
+        with open(filename, "w") as f:
             line = '<?xml version="1.0" encoding="UTF-8"?>\n'
             line += '<?xml-stylesheet type="text/xsl" '
             line += 'href="jarvisdft.xsl"?>\n<basic_info>'
@@ -1596,8 +1614,6 @@ class VaspToApiXmlSchema(object):
 
             line = stringdict_to_xml(self.effective_mass_data()) + "\n"
             f.write(str(line))
-            
-
 
             line = (
                 "<main_pbe0_band>"
@@ -1640,16 +1656,16 @@ class VaspToApiXmlSchema(object):
             line = stringdict_to_xml(self.main_soc_spillage()) + "\n"
             f.write(str(line))
             line = (
-                stringdict_to_xml(self.efg_tensor(),enforce_string=True) 
+                stringdict_to_xml(self.efg_tensor(), enforce_string=True)
                 + "\n"
             )
             f.write(str(line))
 
-            line += (
+            line = (
                 "<main_stm_neg>" + str(self.main_stm_neg()) + "</main_stm_neg>"
             )
             f.write(str(line))
-            line += (
+            line = (
                 "<main_stm_pos>" + str(self.main_stm_pos()) + "</main_stm_pos>"
             )
             f.write(str(line))
@@ -1661,7 +1677,8 @@ class VaspToApiXmlSchema(object):
             f.write(str(line))
             """
 
-"""
+
+# """
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
     filename = "JVASP-1002.xml"
@@ -1675,4 +1692,4 @@ if __name__ == "__main__":
 
     # directories = ["/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"]
     # filenames = ["JVASP-1002.xml"]
-"""
+# """
