@@ -3,18 +3,10 @@ import requests
 import pprint
 import os
 import glob
-from lxml import etree
+# from lxml import etree
 from jarvis.db.jsonutils import dumpjson
 import string
-import sys
-
-
-def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
-    """Check if XML is valid."""
-    xml_file = etree.parse(xml)
-    xml_validator = etree.XMLSchema(file=xsd)
-    is_valid = xml_validator.validate(xml_file)
-    return is_valid
+# import sys
 
 
 class Api(object):
@@ -103,7 +95,7 @@ class Api(object):
             response.raise_for_status()
             pprint.pprint(out)
             raise Exception(
-                "- error: a problem occurred when uploading the schema (Error ",
+                "A problem occurred when uploading the schema (Error ",
                 response_code,
                 ")",
             )
@@ -167,11 +159,10 @@ class Api(object):
         """
         Get data by template IDs.
 
-        For template IDs see: 
+        For template IDs see:
         https://jarvis.nist.gov/rest/template-version-manager/global/
         and is_disabled=False
         """
-
         xml_upload_url = "/rest/data/query/keyword/"
         turl = self.base_url + xml_upload_url
         print("turl", turl)
@@ -194,7 +185,7 @@ class Api(object):
                     auth=(self.username, self.password),
                 )
                 out = response.json()
-                data.extend(out["results"])
+                # mem.extend(out["results"])
                 params["page"] += 1
                 for i in out["results"]:
                     if i["template"] == id:
@@ -220,6 +211,7 @@ class Api(object):
         data = out["results"]
         self.delete_chunks(data)
         params = {"page": 2}
+
         while out["next"] is not None:
             response = requests.post(
                 turl,
@@ -232,8 +224,11 @@ class Api(object):
             data = out["results"]
             params["page"] += 1
             print("params", params)
-            self.delete_chunks(data)
-
+            try:
+                self.delete_chunks(data)
+            except Exception:
+                print("Failed for", data)
+                pass
         return data
 
     def send_query(self, query="JVASP-1002.xml"):
@@ -264,6 +259,7 @@ class Api(object):
         return out
 
     def upload_blob(self, filepath=""):
+        """Upload binary blob files."""
         turl = self.base_url + "/rest/blob/"
 
         oldid = os.path.basename(filepath)
@@ -287,6 +283,7 @@ class Api(object):
             raise Exception("- error: a problem occurred when uploading blob")
 
     def get_all_blobs(self):
+        """Download binary blob files."""
         turl = self.base_url + "/rest/blob/"
         response = requests.get(
             turl, verify=False, auth=(self.username, self.password)
@@ -296,6 +293,7 @@ class Api(object):
         return response.json()
 
     def delete_blob(self, bid="5f622cd9ece4b00027e50fe2"):
+        """Delete a binary blob file."""
         turl = self.base_url + "/rest/blob/" + bid + "/"
         response = requests.delete(
             turl, verify=False, auth=(self.username, self.password)
@@ -307,6 +305,7 @@ class Api(object):
             raise Exception("Error: a problem occurred when deleting blob")
 
     def delete_all_blobs(self):
+        """Delete binary blob files."""
         data = self.get_all_blobs()
         for i in data:
             print("Deleting", i["id"])
@@ -318,6 +317,7 @@ class Api(object):
         template_id="5f6162b4ece4b00034e4fe19",
         json_name="jarvisff_xmls.json",
     ):
+        """Upload JARVIS-FF XML files."""
         mem = []
         for i in glob.glob(files):
             jid = i.split("/")[-1].split(".xml")[0]
@@ -344,9 +344,10 @@ class Api(object):
     def upload_jarvisdft_xmls(
         self,
         files="/rk2/knc6/DB/XMLs/VASPDASK/*.xml",
-        template_id="5f5e74a4ece4b0002de4f903",
+        template_id="5f626925ece4b00035e5277f",
         json_name="jarvisdft_xmls.json",
     ):
+        """Upload JARVIS-DFT XML files."""
         mem = []
         for i in glob.glob(files):
             jid = i.split("/")[-1].split(".xml")[0]
@@ -387,11 +388,15 @@ if __name__ == "__main__":
     a = Api()
     a = Api(base_url="https://jarvis.nist.gov")
     # a.upload_jarvisff_xmls()
+    # a.upload_jarvisff_xmls()
+    a.upload_jarvisdft_xmls()
 
-    # a.upload_xml_file(filename='JLMP-1241.xml',template_id="5f6268a6ece4b0002de4fb10") 
-    # upload_id 5f6268e8ece4b00035e5277d
-    # a.upload_xml_file(filename='JVASP-1002.xml',template_id="5f626925ece4b00035e5277f") 
-    # upload_id 5f62698bece4b00035e5278c
+
+
+    # tid="5f626925ece4b00035e5277f"
+    #a.upload_xml_file(filename='JVASP-1067.xml',template_id=tid)
+    #a.upload_xml_file(filename='JVASP-664.xml',template_id=tid)
+    #a.upload_xml_file(filename='JVASP-1002.xml',template_id=tid)
 
     # a.delete_all_records()
     # x = a.upload_blob(
