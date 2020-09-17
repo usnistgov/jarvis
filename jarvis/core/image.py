@@ -1,13 +1,17 @@
+"""Module for processing image files."""
 import matplotlib.image as mpimg
 from scipy import fftpack, ndimage
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.ndimage import rotate
+# from scipy.ndimage import rotate
 import scipy
 
 
 class Image(object):
+    """Module for processing image files."""
+
     def __init__(self, values=[], pbc_params=[]):
+        """Initialize the module."""
         # pbc_params for 2D image: a,b and gamma
         # 3D : a,b,c, alpha, beta, gamma
 
@@ -15,7 +19,7 @@ class Image(object):
         self.pbc_params = pbc_params
 
     def zoom_interp_2d(self, FFT_image, zoom_factor=40, interpol_factor=1):
-
+        """Zoom and interpolate an image."""
         zoom_size = (FFT_image.shape[0] / zoom_factor) / 2
         window_size_x = FFT_image.shape[0]
         window_size_y = FFT_image.shape[1]
@@ -48,7 +52,7 @@ class Image(object):
         use_crop=True,
         pad_bright_spot=True,
     ):
-
+        """Make 2D FT."""
         if use_crop:
 
             g1 = fftpack.fft2(
@@ -68,33 +72,24 @@ class Image(object):
             y = int(g3.shape[1] / 2)
             g3[x, y] = 0.15
 
-        print("g3 dhape", x, y)
+        print("g3 shape", x, y)
         # Zoom in to see the FFT more clearly.
 
         return Image(values=g3)
         # ft_arr=
         # return ft_arr
 
-    def get_ft_parameters(self):
-
-        # return f_params
-        pass
-
-    def replicate(self, scell=[1, 1]):
-        pass
-
-    def affine_tranform(self, grid=[]):
-        pass
-
     @staticmethod
     def from_file(path):
+        """Load image frim file."""
         im = mpimg.imread(path)
         return Image(values=im)
         pass
 
     def rgb_to_gray(self):
+        """Make RGB to Grey scale image."""
         img = np.array(self.values)
-        grayImage = np.zeros(img.shape)
+        # grayImage = np.zeros(img.shape)
         R = np.array(img[:, :, 0])
         G = np.array(img[:, :, 1])
         B = np.array(img[:, :, 2])
@@ -111,7 +106,7 @@ class Image(object):
         return Image(values=img)
 
     def crop_square(self, size=None):
-
+        """Crop an image."""
         if size is None:
             size = min(self.values.shape[0], self.values.shape[1])
         img_cropped = self.values.copy()[:size, :size, :]
@@ -119,6 +114,8 @@ class Image(object):
         return Image(values=img_cropped)
 
     def save(self, filename):
+        """Save an image."""
+        # if size is None:
         from matplotlib import pyplot as plt
 
         plt.imshow(self.values, interpolation="nearest")
@@ -126,13 +123,14 @@ class Image(object):
         plt.close()
 
     def black_and_white(self, threshold=127):
+        """Make black and white image."""
         bw = np.asarray(self.values).copy()
         bw[bw < threshold] = 0
         bw[bw >= threshold] = 255
         return Image(values=bw)
 
     def gaussian_filter(self, sigma=10):
-
+        """Apply Gaussian filter to an image."""
         sigmax = sigma
         sigmay = sigma
 
@@ -145,17 +143,19 @@ class Image(object):
         return Image(values=new_values)
 
     def rotate(self, angle=45):
+        """Rotate an image."""
         rot = scipy.ndimage.rotate(self.values, angle)
         return Image(values=rot)
 
 
-p = "C:\\Users\kamal\\Downloads\\JARVIS-2D-STM\\JARVIS-2D-STM-JPG\\JVASP-667_neg.jpg"
-im = Image.from_file(p)
+if __name__ == "__main__":
+    p = "JVASP-667_neg.jpg"
+    im = Image.from_file(p)
 
-plt.imshow(
-    im.fourier_transform2D(use_crop=True, zoom_factor=50)
-    .rotate(angle=0)
-    .black_and_white(threshold=0.05)
-    .values,
-    cmap="Greys",
-)
+    plt.imshow(
+        im.fourier_transform2D(use_crop=True, zoom_factor=50)
+        .rotate(angle=0)
+        .black_and_white(threshold=0.05)
+        .values,
+        cmap="Greys",
+    )
