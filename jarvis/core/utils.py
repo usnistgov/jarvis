@@ -5,6 +5,7 @@ from collections import defaultdict
 import random
 import numpy as np
 import math
+from lxml import etree
 
 
 def get_counts(array=["W", "W", "Mo", "Mo", "S", "S"]):
@@ -142,3 +143,11 @@ def check_match(a, b, tol=1e-8):
             if abs(a[2] - b[2]) < tol or abs(abs(a[2] - b[2]) - 1) < tol:
                 return True
     return False
+
+
+def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
+    """Check if XML is valid."""
+    xml_file = etree.parse(xml)
+    xml_validator = etree.XMLSchema(file=xsd)
+    is_valid = xml_validator.validate(xml_file)
+    return is_valid
