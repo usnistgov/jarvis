@@ -17,7 +17,7 @@ from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
 from jarvis.analysis.thermodynamics.energetics import form_enp
 from jarvis.tasks.boltztrap.run import run_boltztrap
 from jarvis.tasks.phonopy.run import run_phonopy
-from jarvis.io.phonopy.outputs import bandstructure_plot
+# from jarvis.io.phonopy.outputs import bandstructure_plot
 from jarvis.ai.pkgs.utils import get_ml_data
 from jarvis.analysis.diffraction.xrd import XRD
 import numpy as np
@@ -31,10 +31,8 @@ from jarvis.io.wannier.outputs import WannierHam
 
 
 cfid_x, cfid_y, cfid_jids = get_ml_data()
-# debug using xmllint --valid --noout JVASP-1002.xml
-# xmllint --format JVASP-1002.xml>out.xml
-# https://www.luxonsoftware.com/converter/xmltoxsd
-# https://extendsclass.com/xml-schema-validator.html
+
+
 def get_cfid_descriptors(jid="JVASP-1002", atoms="", make_cfid=True):
     """Get CFID pre-computed descriptors for a JID."""
     for i, j in zip(cfid_x, cfid_jids):
@@ -277,7 +275,9 @@ class VaspToApiXmlSchema(object):
                     + str(i)
                     + ">"
                     # + ">'"
+                    + "'"
                     + ",".join(map(str, j))
+                    + "'"
                     + "</"
                     # + "'</"
                     + str(i)
@@ -293,11 +293,11 @@ class VaspToApiXmlSchema(object):
                 line += str(i) + str("_") + ",".join(map(str, j)) + ";"
             line += '"</spin_up_info>'
 
-            line += "<spin_down_info>"
+            line += '<spin_down_info>"'
             # line += '<spin_down_info>"'
             for i, j in spin_down_info.items():
                 line += str(i) + str("_") + ",".join(map(str, j)) + ";"
-            line += "</spin_down_info>"
+            line += '"</spin_down_info>'
             # line += '"</spin_down_info>'
             line += "</elemental_dos>"
 
@@ -747,11 +747,30 @@ class VaspToApiXmlSchema(object):
         self,
         soc_wf="MAIN-SOCSCFBAND-bulk@JVASP-1067_mp-541837/WAVECAR",
         nonsoc_wf="MAIN-MAGSCFBAND-bulk@JVASP-1067_mp-541837/WAVECAR",
+        spl_json_existing="/rk2/knc6/DB/SPILLAGE/all_spillage.json",
+        jid="",
     ):
         """Get spillage data."""
         line = ""
+
         try:
-            sp = Spillage(wf_noso=nonsoc_wf, wf_so=soc_wf).overlap_so_spinpol()
+            sp = {}
+            print("soc_wf", soc_wf)
+            tmp_jid = jid
+            print("tmp_jid", tmp_jid)
+            if tmp_jid != "":
+                spl_dat = loadjson(spl_json_existing)
+                for i in spl_dat:
+                    if i["jid"] == tmp_jid:
+                        sp = i
+                        sp["kpoints"] = list(
+                            [[0, 0, 0] for i in range(len(sp["spillage_k"]))]
+                        )
+            if sp == {}:
+                # As spillage calculation may take a long time
+                sp = Spillage(
+                    wf_noso=nonsoc_wf, wf_so=soc_wf
+                ).overlap_so_spinpol()
             soc_bands = self.electronic_band_struct(
                 vasprun=soc_wf.replace("WAVECAR", "vasprun.xml"),
                 kpoints_file_path=(soc_wf.replace("WAVECAR", "KPOINTS")),
@@ -779,14 +798,13 @@ class VaspToApiXmlSchema(object):
             pass
         return line
 
-    def main_soc_spillage(self):
+    def main_soc_spillage(self, jid=""):
         """Get spillage data from folder."""
         folder = self.folder
         os.chdir(folder)
         info = {}
         data = ""
         for i in glob.glob("MAIN-SOCSCFBAND*.json"):
-
             try:
                 folder = i.split(".json")[0]
                 soc_wf = os.getcwd() + "/" + folder + "/WAVECAR"
@@ -796,7 +814,9 @@ class VaspToApiXmlSchema(object):
                     + folder.replace("SOC", "MAG")
                     + "/WAVECAR"
                 )
-                data = self.spillage(soc_wf=soc_wf, nonsoc_wf=nonsoc_wf)
+                data = self.spillage(
+                    soc_wf=soc_wf, nonsoc_wf=nonsoc_wf, jid=jid
+                )
             except Exception:
                 print("Cannot get spillage info", folder)
                 pass
@@ -1168,7 +1188,7 @@ class VaspToApiXmlSchema(object):
         if os.path.isfile(totdos):
 
             mesh_yaml = outcar.replace("OUTCAR", "mesh.yaml")
-            band_yaml = outcar.replace("OUTCAR", "band.yaml")
+            # band_yaml = outcar.replace("OUTCAR", "band.yaml")
             with open(mesh_yaml, "r") as f:
                 doc = yaml.load(f)
             nmodes = doc["phonon"][0]["band"]
@@ -1211,7 +1231,7 @@ class VaspToApiXmlSchema(object):
             )
 
             # Comment until 4 MB text size error
-            # frequencies, distances, labels, label_points = bandstructure_plot(
+            # frequencies, distances, labels,label_points = bandstructure_plot(
             #    band_yaml
             # )
             # tmp = ""
@@ -1484,6 +1504,8 @@ class VaspToApiXmlSchema(object):
             + "_"
             + ",".join(map(str, fig[:, :, 0].flatten()))
         )
+        # Comment when 4 MBlimit is over
+        line = ""
         return line
 
     def main_stm_neg(self):
@@ -1498,7 +1520,8 @@ class VaspToApiXmlSchema(object):
                 filename = os.getcwd() + "/" + folder + "/testh.jpg"
                 t1 = TH_STM.constant_height(filename=filename)
                 zcut = t1["zcut"]
-                line += "<zcut>" + str(zcut) + "</zcut>"
+                print(zcut)
+                # line += "<zcut>" + str(zcut) + "</zcut>"
                 line += self.image_to_string(img_path=filename)
                 cmd = "rm -rf " + filename
                 if os.path.isfile(filename):
@@ -1520,7 +1543,8 @@ class VaspToApiXmlSchema(object):
                 filename = os.getcwd() + "/" + folder + "/testh.jpg"
                 t1 = TH_STM.constant_height(filename=filename)
                 zcut = t1["zcut"]
-                line += "<zcut>" + str(zcut) + "</zcut>"
+                print(zcut)
+                # line += "<zcut>" + str(zcut) + "</zcut>"
                 line += self.image_to_string(img_path=filename)
                 cmd = "rm -rf " + filename
                 if os.path.isfile(filename):
@@ -1593,10 +1617,11 @@ class VaspToApiXmlSchema(object):
             f.write(str(line))
             line = stringdict_to_xml(self.raman_data()) + "\n"
             f.write(str(line))
-
+            b_info = self.basic_info()
+            jid = b_info["id"]
             line = (
                 "<main_relax_info>"
-                + stringdict_to_xml(self.basic_info())
+                + stringdict_to_xml(b_info)
                 + "</main_relax_info>"
                 + "\n"
             )
@@ -1657,7 +1682,7 @@ class VaspToApiXmlSchema(object):
             f.write(str(line))
             line = stringdict_to_xml(self.main_lepsilon()) + "\n"
             f.write(str(line))
-            line = stringdict_to_xml(self.main_soc_spillage()) + "\n"
+            line = stringdict_to_xml(self.main_soc_spillage(jid=jid)) + "\n"
             f.write(str(line))
             line = (
                 stringdict_to_xml(self.efg_tensor(), enforce_string=True)
@@ -1690,9 +1715,11 @@ if __name__ == "__main__":
 
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
     filename = "JVASP-1067.xml"
+    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
     folder = "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO"
     filename = "JVASP-664.xml"
+    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
     # directories = ["/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"]
     # filenames = ["JVASP-1002.xml"]
