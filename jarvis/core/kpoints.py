@@ -125,7 +125,6 @@ class Kpoints3D(object):
         d["kpoint_mode"] = self._kpoint_mode
         d["header"] = self._header
         d["kpoints_weights"] = list(self._kp_weights)
-        print ('kppppp',d)
         return d
 
     @classmethod

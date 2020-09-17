@@ -525,4 +525,3 @@ def find_ldau_magmom(
     info["AMIX_MAG"] = amixmag
     info["BMIX_MAG"] = bmixmag
     return info
-
