@@ -53,3 +53,12 @@ pycodestyle --ignore E203,W503 *.py
 
 ###Delete a branch
 git push origin --delete develop
+
+
+
+###XML related
+# debug using xmllint --valid --noout JVASP-1002.xml
+# xmllint --format JVASP-1002.xml>out.xml
+# https://www.luxonsoftware.com/converter/xmltoxsd
+# https://extendsclass.com/xml-schema-validator.html
+

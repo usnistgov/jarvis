@@ -6,6 +6,8 @@ import random
 import numpy as np
 import math
 
+# from lxml import etree
+
 
 def get_counts(array=["W", "W", "Mo", "Mo", "S", "S"]):
     """
@@ -135,10 +137,18 @@ def array_to_string(arr=[]):
     return ",".join(map(str, arr))
 
 
-def check_match(a, b, tol=1e-4):
+def check_match(a, b, tol=1e-8):
     """Check if a and b are the same, taking into account PBCs."""
     if abs(a[0] - b[0]) < tol or abs(abs(a[0] - b[0]) - 1) < tol:
         if abs(a[1] - b[1]) < tol or abs(abs(a[1] - b[1]) - 1) < tol:
             if abs(a[2] - b[2]) < tol or abs(abs(a[2] - b[2]) - 1) < tol:
                 return True
     return False
+
+
+# def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
+#    """Check if XML is valid."""
+#    xml_file = etree.parse(xml)
+#    xml_validator = etree.XMLSchema(file=xsd)
+#    is_valid = xml_validator.validate(xml_file)
+#    return is_valid

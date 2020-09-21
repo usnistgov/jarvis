@@ -141,7 +141,8 @@ def basic_data(data={}, source="JARVIS-FF-LAMMPS"):
     except Exception:
         print("Cannot obtain phonon band data.")
 
-    info["phonon_band_line"] = phonon_band_line
+    # Comment until 4 MB text size error
+    # info["phonon_band_line"] = phonon_band_line
     phonon_dos_line = ""
     try:
         freq = data["dos_freq"]
@@ -166,16 +167,16 @@ def basic_data(data={}, source="JARVIS-FF-LAMMPS"):
     return info
 
 
-def write_xml(data={}):
+def write_xml(data={}, filename="temp.xml"):
     """Write XML file."""
     basic = basic_data(data)
-    name = data["jid"] + ".xml"
-    f = open(name, "w")
+    # name = data["jid"] + ".xml"
+    f = open(filename, "w")
     basic_xml = stringdict_to_xml(basic)
     line = ""
     line = '<?xml version="1.0" encoding="UTF-8"?>\n'
     line += '<?xml-stylesheet type="text/xsl" '
-    line += 'href="lmp.xsl"?>\n'
+    line += 'href="jarvisff.xsl"?>\n'
 
     line += "<basic_info>"
 
@@ -188,7 +189,7 @@ def write_xml(data={}):
 """
 if __name__ == "__main__":
     from jarvis.io.lammps.outputs import parse_material_calculation_folder
-    fold = '/rk2/knc6/JARVIS-FF/ALLOY8/
+    fold = '/rk2/knc6/JARVIS-FF/ALLOY8/\
     Mishin-Ni-Al-2009.eam.alloy_nist/bulk@mp-23_fold'
     x = parse_material_calculation_folder(fold)
     write_xml(x)

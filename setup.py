@@ -11,7 +11,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2020.9.2",
+    version="2020.9.20",
     long_description=long_d,
     install_requires=[
         "numpy",
@@ -40,9 +40,16 @@ setup(
         "jarvis.io.wannier": ["default_semicore.json"],
     },
     extras_require={
-        "ai": ["torch","keras","tensorflow","scikit-learn", "flask","pandas"],
+        "ai": [
+            "torch",
+            "keras",
+            "tensorflow",
+            "scikit-learn",
+            "flask",
+            "pandas",
+        ],
         "babel": ["openbabel", "pybel"],
-        "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"], 
+        "doc": ["sphinx>=1.3.1", "sphinx-rtd-theme>=0.1.8"],
     },
     author="Kamal Choudhary",
     author_email="kamal.choudhary@nist.gov",

@@ -267,7 +267,12 @@ class Oszicar(object):
     @property
     def magnetic_moment(self):
         """Get magnetic moment."""
-        return self.ionic_steps[-1][-1]
+        # return self.ionic_steps[-1][-1]
+        match = -1
+        for i, ii in enumerate(self.ionic_steps[-1]):
+            if ii == "mag=":
+                match = i + 1
+        return np.array([float(j) for j in self.ionic_steps[-1][match:]])
 
     @property
     def ionic_steps(self):
@@ -348,7 +353,8 @@ class Outcar(object):
                     in i
                 ):
                     cnvg = True
-            # print fil,cnvg
+                if "VASP will stop now." in i:
+                    cnvg = True
         except Exception:
             pass
         return cnvg
@@ -1830,3 +1836,10 @@ def parse_raman_dat(
     info["beta2"] = beta2
     info["indices"] = indices
     return info
+
+
+"""
+kp='/users/knc6/Software/Devs/jarvis/jarvis/examples/vasp/SiOptb88/MAIN-RELAX-bulk@mp_149/KPOINT'
+kpt=Kpoints(filename=kp)
+print (kpt)
+"""
