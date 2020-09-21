@@ -3,9 +3,11 @@ import requests
 import pprint
 import os
 import glob
+
 # from lxml import etree
 from jarvis.db.jsonutils import dumpjson
 import string
+
 # import sys
 
 
@@ -385,24 +387,31 @@ class Api(object):
 
 """
 if __name__ == "__main__":
+
+
+    #a = Api()
+    #a = Api(base_url="http://test-jarvis.nist.gov")
+    #tid="5f624bc547d1ac011a224672"
+    #a.upload_xml_file(filename='JVASP-664.xml',template_id=tid)
+
+
     a = Api()
     a = Api(base_url="https://jarvis.nist.gov")
     # a.upload_jarvisff_xmls()
     # a.upload_jarvisff_xmls()
-    a.upload_jarvisdft_xmls()
-
-
-
+    # a.upload_jarvisdft_xmls()
     # tid="5f626925ece4b00035e5277f"
     #a.upload_xml_file(filename='JVASP-1067.xml',template_id=tid)
     #a.upload_xml_file(filename='JVASP-664.xml',template_id=tid)
     #a.upload_xml_file(filename='JVASP-1002.xml',template_id=tid)
 
     # a.delete_all_records()
-    # x = a.upload_blob(
-    #    filepath="/rk2/knc6/DB/RAW_FILES/JARVIS-DFT-DFPT/JVASP-10088.zip",
-    # )
-    # a.delete_blob()
+    #filepath="/rk2/knc6/DB/RAW_FILES/JARVIS-DFT-DFPT/JVASP-10088.zip",
+    #filepath="/rk2/knc6/JARVIS-DFT/Elements-bulkk/
+    mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
+    #x = a.upload_blob(filepath)
+    print ('id',x)
+    a.delete_blob(x)
     # a.get_all_blobs()
 
     # a.upload_jarvisdft_xmls()
