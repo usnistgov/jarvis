@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="basic_info">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="id" type="xs:string" minOccurs="0" />
+        <xs:element name="source_folder" type="xs:string" minOccurs="0" />
+        <xs:element name="formula" type="xs:string" minOccurs="0" />
+        <xs:element name="elements" type="xs:string" minOccurs="0" />
+        <xs:element name="number_uniq_species" type="xs:string" minOccurs="0" />
+        <xs:element name="data_source" type="xs:string" minOccurs="0" />
+        <xs:element name="pair_style" type="xs:string" minOccurs="0" />
+        <xs:element name="pair_coeff" type="xs:string" minOccurs="0" />
+        <xs:element name="energy_per_atom" type="xs:string" minOccurs="0" />
+        <xs:element name="pressure" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_spacegroup_number" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_spacegroup_symbol" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_pointgroup_symbol" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_crystal_system" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_a" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_b" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_c" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_alpha" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_beta" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_gamma" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_density" type="xs:string" minOccurs="0" />
+        <xs:element name="xyz" type="xs:string" minOccurs="0" />
+        <xs:element name="final_str" type="xs:string" minOccurs="0" />
+        <xs:element name="initial_str" type="xs:string" minOccurs="0" />
+        <xs:element name="final_a" type="xs:string" minOccurs="0" />
+        <xs:element name="final_b" type="xs:string" minOccurs="0" />
+        <xs:element name="final_c" type="xs:string" minOccurs="0" />
+        <xs:element name="final_alpha" type="xs:string" minOccurs="0" />
+        <xs:element name="final_beta" type="xs:string" minOccurs="0" />
+        <xs:element name="final_gamma" type="xs:string" minOccurs="0" />
+        <xs:element name="final_density" type="xs:string" minOccurs="0" />
+        <xs:element name="final_spacegroup_number" type="xs:string" minOccurs="0" />
+        <xs:element name="final_spacegroup_symbol" type="xs:string" minOccurs="0" />
+        <xs:element name="final_pointgroup_symbol" type="xs:string" minOccurs="0" />
+        <xs:element name="final_crystal_system" type="xs:string" minOccurs="0" />
+        <xs:element name="elastic_tensor" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="cij" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="vacancy_info" type="xs:string" minOccurs="0" />
+        <xs:element name="surface_info" type="xs:string" minOccurs="0" />
+        <!-- <xs:element name="phonon_band_line" minOccurs="0" maxOccurs="unbounded"> -->
+          <!-- <xs:complexType> -->
+            <!-- <xs:sequence> -->
+              <!-- <xs:element name="phonon_bandstructure_distances" type="xs:string" minOccurs="0" /> -->
+              <!-- <xs:element name="phonon_bandstructure_frequencies" type="xs:string" minOccurs="0" /> -->
+              <!-- <xs:element name="phonon_bandstructure_labels" type="xs:string" minOccurs="0" /> -->
+              <!-- <xs:element name="phonon_bandstructure_label_points" type="xs:string" minOccurs="0" /> -->
+            <!-- </xs:sequence> -->
+          <!-- </xs:complexType> -->
+        <!-- </xs:element> -->
+        <xs:element name="phonon_dos_line" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="phonon_dos_frequencies" type="xs:string" minOccurs="0" />
+              <xs:element name="phonon_dos_intensity" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

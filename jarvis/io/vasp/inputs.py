@@ -439,8 +439,8 @@ class Kpoints(object):
         """Read Kpoints as grid."""
         grid = [int(i) for i in lines[3].split()]
         kpts = generate_kgrid(grid)
-        kpoints = Kpoints3D(kpoints=np.array(kpts))
-        return kpoints
+        kpts_cls = Kpoints3D(kpoints=np.array(kpts))
+        return kpts_cls
 
     def get_ibz_kp(lines=""):
         """Read the Kpoints in the line-mode."""
@@ -466,10 +466,10 @@ class Kpoints(object):
         for i, j in zip(kp_labels, kp_labels_points):
             labels[j] = i
         all_kp = np.array(all_kp, dtype="float")
-        kpoints = Kpoints3D(
+        kpts_cls = Kpoints3D(
             kpoints=all_kp, labels=labels, kpoint_mode="linemode"
         )
-        return kpoints
+        return kpts_cls
 
 
 def find_ldau_magmom(
