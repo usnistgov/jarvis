@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="lmp.xsl"?>
+<?xml-stylesheet type="text/xsl" href="jarvisff.xsl"?>
 <basic_info>
   <id>JLMP-1245</id>
   <source_folder>/rk2/knc6/JARVIS-FF/ALLOY8/Mishin-Ni-Al-2009.eam.alloy_nist/bulk@mp-1487_fold</source_folder>

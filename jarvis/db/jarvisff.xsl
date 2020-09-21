@@ -5,20 +5,20 @@
 <html> 
 <head>
 <style>
-.centered {
+.jcentered {
   margin: auto;
   width: 95%;
  border: 1px solid black;
   padding: 1px;
 }
-.right {
+.jright {
   position: absolute;
   right: 0px;
   width: 300px;
   border: 3px solid #73AD21;
   padding: 10px;
 }
-.left {
+.jleft {
   position: absolute;
   left: 0px;
   width: 300px;
@@ -34,8 +34,6 @@
 
 
 <!-- Bootstrap CSS START-->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
-
 
 </head>
 
@@ -45,7 +43,7 @@
 
   
 <!-- Basic table start -->
-  <table class="centered table  btn-table" >
+  <table class="jcentered table  btn-table" >
 
  
     <tr>
@@ -110,7 +108,7 @@
   <div >
 
   <div 
-  class="centered"
+  class="jcentered"
   id="geometry"
   style="height: 400px; width: 400px; position: relative;"
   data-backgroundcolor="0xffffff"
@@ -155,7 +153,7 @@
 
   </div>
  <!-- Structure viewer end -->
- <br></br>
+
 
  
  
@@ -192,7 +190,7 @@
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Finite-difference Elastic constant-tensor");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -201,12 +199,12 @@
     
      var divElement = document.createElement("table");
     divElement.id = "elastic_tensor";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement); 
     
     };
 </script> 
-<!--<table class="centered" style="border-spacing: 15px" id="elastic_tensor">  </table>
+<!--<table class="jcentered" style="border-spacing: 15px" id="elastic_tensor">  </table>
 -->
 
 
@@ -264,7 +262,7 @@ Plotly.newPlot('elastic_tensor',data);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("FD Phonon DOS and Band structure");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -272,7 +270,7 @@ Plotly.newPlot('elastic_tensor',data);
     
     var divElement = document.createElement("div");
     divElement.id = "fddos";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement);
     
     };
@@ -287,12 +285,14 @@ function fddos_plotly(data){
 var plot_font = 14;
 var layout_convg = {
 grid: {rows: 1, columns: 2},
-  xaxis1: {domain: [0.1, 0.45],tickfont: {size: plot_font,color:'black'},title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
+  xaxis1: {domain: [0.1, 0.7],tickfont: {size: plot_font,color:'black'},title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
   yaxis1:{tickfont: {size: plot_font,color:'black'},title:{text: 'Density of states',font:{size: plot_font,color:"black"}}},
   yaxis2: {tickfont: {size: plot_font,color:'black'},anchor: 'x2',title:{text: 'Frequency (cm-1)',font:{size: plot_font,color:"black"}}},
-  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.55, .99],title:{text: 'K-Point',font:{size: plot_font,color:"black"}}},
+  xaxis2: {tickfont: {size: plot_font,color:'black'},domain: [0.7, .99],title:{text: 'K-Point',font:{size: plot_font,color:"black"}}},
   
   showlegend: false,
+  autosize: false,
+     width:1400,
   
 };
 
@@ -315,35 +315,37 @@ Plotly.newPlot('fddos', data, layout_convg);
     
   };
 
-   var x= <xsl:value-of select="basic_info/phonon_band_line/phonon_bandstructure_distances"/>;
-  x=x.split(',');
+  data.push(data1);
   
-  var y2= <xsl:value-of select="basic_info/phonon_band_line/phonon_bandstructure_frequencies"/>;
-  y2=y2.split(';');
+   <!-- var x= <xsl:value-of select="basic_info/phonon_band_line/phonon_bandstructure_distances"/>; -->
+  <!-- x=x.split(','); -->
+  
+  <!-- var y2= <xsl:value-of select="basic_info/phonon_band_line/phonon_bandstructure_frequencies"/>; -->
+  <!-- y2=y2.split(';'); -->
 
   
   
-var data_tmp = [];
-data.push(data1);
+<!-- var data_tmp = []; -->
+
 
 
     
  
-  for (var i=0;i&lt;y2.length;i++) {
+  <!-- for (var i=0;i&lt;y2.length;i++) { -->
     
-    var data2 = {
-    x: x,
-    y: y2[i].split(',').map(Number),
-    marker:{color:'blue'},
-    showlegend: false,
-    mode:'lines',
-    xaxis: "x2",
-    yaxis: "y2",
+    <!-- var data2 = { -->
+    <!-- x: x, -->
+    <!-- y: y2[i].split(',').map(Number), -->
+    <!-- marker:{color:'blue'}, -->
+    <!-- showlegend: false, -->
+    <!-- mode:'lines', -->
+    <!-- xaxis: "x2", -->
+    <!-- yaxis: "y2", -->
   
-    type: 'scatter',
-  };
-    data.push(data2);
-  };
+    <!-- type: 'scatter', -->
+  <!-- }; -->
+    <!-- data.push(data2); -->
+  <!-- }; -->
   
     
 
@@ -373,7 +375,7 @@ data.push(data1);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Vacancy formation energy");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -382,7 +384,7 @@ data.push(data1);
     
      var divElement = document.createElement("table");
     divElement.id = "vacancy";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement); 
     
     };
@@ -450,7 +452,7 @@ Plotly.newPlot('vacancy',data);
   if (x!==''){
    console.log('header test pass');
    var header = document.createElement("h3");
-   header.className="centered";
+   header.className="jcentered";
    var text = document.createTextNode("Surface energy");
     header.appendChild(text);
     header.style.textAlign='center';
@@ -459,7 +461,7 @@ Plotly.newPlot('vacancy',data);
     
      var divElement = document.createElement("table");
     divElement.id = "surface";
-    divElement.setAttribute('class', 'centered');
+    divElement.setAttribute('class', 'jcentered');
     document.body.appendChild(divElement); 
     
     };
@@ -521,5 +523,6 @@ Plotly.newPlot('surface',data);
 </html>
 </xsl:template>
 </xsl:stylesheet>
+
 
 
