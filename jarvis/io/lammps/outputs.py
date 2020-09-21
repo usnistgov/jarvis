@@ -272,10 +272,10 @@ def parse_material_calculation_folder(path="bulk@mp-1487_fold", jid="x"):
     # system_pressure,elastic_tensor,final_str,initial_str
     print("Found", len(info.keys()), "folders")
     try:
-      chem_pot = get_chem_pot(info)
-      info["chem_pot"] = chem_pot
-    except  Exception:
-        print ('Seems like didnt run vacancy calcs.')
+        chem_pot = get_chem_pot(info)
+        info["chem_pot"] = chem_pot
+    except Exception:
+        print("Seems like didnt run vacancy calcs.")
         pass
     # print (chem_pot)
     vacancy_info = []
