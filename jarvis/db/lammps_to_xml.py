@@ -189,8 +189,10 @@ def write_xml(data={}, filename="temp.xml"):
 """
 if __name__ == "__main__":
     from jarvis.io.lammps.outputs import parse_material_calculation_folder
-    fold = '/rk2/knc6/JARVIS-FF/ALLOY8/\
-    Mishin-Ni-Al-2009.eam.alloy_nist/bulk@mp-23_fold'
+
+    # fold = '/rk2/knc6/JARVIS-FF/ALLOY8/\
+    # Mishin-Ni-Al-2009.eam.alloy_nist/bulk@mp-23_fold'
+    fold = "/rk2/knc6/JARVIS-FF/COMB/ffield.TiON.comb3_nist/bulk@mp-25433_fold"
     x = parse_material_calculation_folder(fold)
     write_xml(x)
 """
