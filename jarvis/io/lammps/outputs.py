@@ -271,8 +271,12 @@ def parse_material_calculation_folder(path="bulk@mp-1487_fold", jid="x"):
     # Each element has energy_per_atom,
     # system_pressure,elastic_tensor,final_str,initial_str
     print("Found", len(info.keys()), "folders")
-    chem_pot = get_chem_pot(info)
-    info["chem_pot"] = chem_pot
+    try:
+      chem_pot = get_chem_pot(info)
+      info["chem_pot"] = chem_pot
+    except  Exception:
+        print ('Seems like didnt run vacancy calcs.')
+        pass
     # print (chem_pot)
     vacancy_info = []
     surface_info = []
