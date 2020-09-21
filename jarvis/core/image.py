@@ -3,6 +3,7 @@ import matplotlib.image as mpimg
 from scipy import fftpack, ndimage
 import numpy as np
 from matplotlib import pyplot as plt
+
 # from scipy.ndimage import rotate
 import scipy
 
@@ -116,7 +117,7 @@ class Image(object):
     def save(self, filename):
         """Save an image."""
         # if size is None:
-        from matplotlib import pyplot as plt
+        # from matplotlib import pyplot as plt
 
         plt.imshow(self.values, interpolation="nearest")
         plt.savefig(filename)
@@ -148,6 +149,7 @@ class Image(object):
         return Image(values=rot)
 
 
+"""
 if __name__ == "__main__":
     p = "JVASP-667_neg.jpg"
     im = Image.from_file(p)
@@ -159,3 +161,4 @@ if __name__ == "__main__":
         .values,
         cmap="Greys",
     )
+"""
