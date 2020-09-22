@@ -14,7 +14,6 @@ import shutil
 import os
 import subprocess
 import json
-import sys
 from collections import OrderedDict
 
 

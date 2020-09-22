@@ -34,6 +34,7 @@ def write_jobfact_optb88vdw(pyname="job.py", job_json=""):
     f.write("v.all_optb88vdw_calcs()\n")
     f.close()
 
+
 class JobFactory(object):
     """Provide sets of VASP calculations."""
 
@@ -48,7 +49,6 @@ class JobFactory(object):
         attempts=5,
         stderr_file="std_err.txt",
         output_file="vasp.out",
-       
     ):
         """
         Provide generic class for running variations of VASP calculations.
@@ -70,16 +70,16 @@ class JobFactory(object):
         self.use_incar_dict = use_incar_dict
         self.pot_type = pot_type
         self.vasp_cmd = vasp_cmd
-        self.mat=poscar
+        self.mat = poscar
         self.copy_files = copy_files
         self.attempts = attempts
         self.stderr_file = stderr_file
         self.output_file = output_file
-       
+
     def all_optb88vdw_calcs(self):
         """Use for OptB88vdW based HT."""
         incs = GenericIncars().optb88vdw()
-        return self.workflow( generic_incar=incs)
+        return self.workflow(generic_incar=incs)
 
     def workflow(self, generic_incar=""):
         """
@@ -99,7 +99,7 @@ class JobFactory(object):
             attempts=self.attempts,
             stderr_file=self.stderr_file,
             output_file=self.output_file,
-            poscar=self.mat
+            poscar=self.mat,
         )
         encut = job.converg_encut(mat=self.mat)
         length = job.converg_kpoint(mat=self.mat)
@@ -882,34 +882,36 @@ class JobFactory(object):
                     convg_kp2 = True
 
         return length1
-    @classmethod 
-    def from_dict(self,d={}):
-            """Load from dictionary."""
-            job = JobFactory(
-             use_incar_dict=d['use_incar_dict'],
-             pot_type=d['pot_type'],
-             vasp_cmd=d['vasp_cmd'],
-             copy_files=d['copy_files'],
-             attempts=d['attempts'],
-             stderr_file=d['stderr_file'],
-             output_file=d['output_file'],
-             poscar=Poscar.from_dict(d['poscar'])
-            )
-            return job
-            
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Load from dictionary."""
+        job = JobFactory(
+            use_incar_dict=d["use_incar_dict"],
+            pot_type=d["pot_type"],
+            vasp_cmd=d["vasp_cmd"],
+            copy_files=d["copy_files"],
+            attempts=d["attempts"],
+            stderr_file=d["stderr_file"],
+            output_file=d["output_file"],
+            poscar=Poscar.from_dict(d["poscar"]),
+        )
+        return job
+
     def to_dict(self):
-            """Convert to dictionary."""
-            d = OrderedDict()
-            d['name']=self.name
-            d['use_incar_dict']=self.use_incar_dict
-            d['vasp_cmd']=self.vasp_cmd
-            d['pot_type']=self.pot_type
-            d['copy_files']=self.copy_files
-            d['attempts']=self.attempts
-            d['stderr_file']=self.stderr_file
-            d['output_file']=self.output_file
-            d['poscar']=self.mat.to_dict()
-            return d
+        """Convert to dictionary."""
+        d = OrderedDict()
+        d["name"] = self.name
+        d["use_incar_dict"] = self.use_incar_dict
+        d["vasp_cmd"] = self.vasp_cmd
+        d["pot_type"] = self.pot_type
+        d["copy_files"] = self.copy_files
+        d["attempts"] = self.attempts
+        d["stderr_file"] = self.stderr_file
+        d["output_file"] = self.output_file
+        d["poscar"] = self.mat.to_dict()
+        return d
+
 
 class VaspJob(object):
     """Construct a VASP calculation job."""
