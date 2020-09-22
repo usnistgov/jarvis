@@ -109,7 +109,7 @@ class JobFactory(object):
                 lammps_cmd=lammps_cmd,
             ).runjob()
 
-        sys.exit()
+        # sys.exit()
 
         v = Vacancy(atoms=final_str).generate_defects(enforce_c_size=5)
         print("vacs=", v)
