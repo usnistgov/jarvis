@@ -3,12 +3,9 @@ import requests
 import pprint
 import os
 import glob
-
-# from lxml import etree
 from jarvis.db.jsonutils import dumpjson
 import string
-
-# import sys
+from collections import OrderedDict
 
 
 class Api(object):
@@ -86,9 +83,9 @@ class Api(object):
             turl, data=data, verify=False, auth=(self.username, self.password)
         )
         out = response.json()
-        # pprint.pprint(out)
+        pprint.pprint(out)
         response_code = response.status_code
-        # print ('code:',response_code, requests.codes.ok)
+        print("code:", response_code, requests.codes.ok)
         if response_code == requests.codes.created:
             print("status: uploaded.")
             upload_id = out["id"]
@@ -294,17 +291,32 @@ class Api(object):
         print("All blob doownload response.status_code", response.status_code)
         return response.json()
 
-    def delete_blob(self, bid="5f622cd9ece4b00027e50fe2"):
-        """Delete a binary blob file."""
+    def download_blob(self, save_file=True, bid="5f6a4bb7ece4b0002de4fb60"):
+        """Download a binary blob file."""
         turl = self.base_url + "/rest/blob/" + bid + "/"
+        # turl = self.base_url + "/rest/blob/download/" + bid + "/"
+        response = requests.get(
+            turl, verify=False, auth=(self.username, self.password)
+        )
+        resp = OrderedDict(response.json())
+        data = requests.get(
+            resp["handle"], verify=False, auth=(self.username, self.password)
+        ).content
+        filename = resp["filename"]
+        if save_file:
+            open(filename, "wb").write(data)
+        print(len(data), len(filename))
+        return filename, data
+
+    def delete_blob(self, bid=""):
+        """Delete a blob by id."""
+        turl = self.base_url + "/rest/blob/" + str(bid) + "/"
         response = requests.delete(
             turl, verify=False, auth=(self.username, self.password)
         )
-        if response.status_code == 204:
-            print("Status: " + bid + " has been deleted.")
-        else:
-            response.raise_for_status()
-            raise Exception("Error: a problem occurred when deleting blob")
+        response_code = response.status_code
+        print("delete response_code", response_code)
+        return response_code
 
     def delete_all_blobs(self):
         """Delete binary blob files."""
@@ -376,23 +388,19 @@ class Api(object):
 
 
 # TODO:
-# blob operations
-# Adding certifiates
 # workspace operations
-# Add a url in views:JARVIS-DFT,FF etc.
 # federated vs oai_pmh
-# Make download function work
-# upload_dataa()
 
 
 """
 if __name__ == "__main__":
 
 
-    #a = Api()
-    #a = Api(base_url="http://test-jarvis.nist.gov")
-    #tid="5f624bc547d1ac011a224672"
-    #a.upload_xml_file(filename='JVASP-664.xml',template_id=tid)
+    a = Api()
+    a = Api(base_url="http://test-jarvis.nist.gov")
+    tid="5f624bc547d1ac011a224672"
+    tid='5f6909278c6d9e011c8cc8c9'
+    a.upload_xml_file(filename='JVASP-1004.xml',template_id=tid)
 
 
     a = Api()
@@ -408,7 +416,7 @@ if __name__ == "__main__":
     # a.delete_all_records()
     #filepath="/rk2/knc6/DB/RAW_FILES/JARVIS-DFT-DFPT/JVASP-10088.zip",
     #filepath="/rk2/knc6/JARVIS-DFT/Elements-bulkk/
-    mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
+    #mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
     #x = a.upload_blob(filepath)
     print ('id',x)
     a.delete_blob(x)
