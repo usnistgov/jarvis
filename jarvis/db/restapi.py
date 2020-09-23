@@ -5,6 +5,7 @@ import os
 import glob
 from jarvis.db.jsonutils import dumpjson
 import string
+from collections import OrderedDict
 
 
 class Api(object):
@@ -290,16 +291,32 @@ class Api(object):
         print("All blob doownload response.status_code", response.status_code)
         return response.json()
 
-    def download_blob(self, filename="CHGTMP", bid="5f6a4bb7ece4b0002de4fb60"):
+    def download_blob(self, save_file=True, bid="5f6a4bb7ece4b0002de4fb60"):
         """Download a binary blob file."""
-        turl = self.base_url + "/rest/blob/download/" + bid + "/"
+        turl = self.base_url + "/rest/blob/" + bid + "/"
+        # turl = self.base_url + "/rest/blob/download/" + bid + "/"
         response = requests.get(
             turl, verify=False, auth=(self.username, self.password)
         )
-        # print ('response',response)
-        f = open("tmp", "w")
-        f.write(response.content.decode("utf-8"))
-        f.close()
+        resp = OrderedDict(response.json())
+        data = requests.get(
+            resp["handle"], verify=False, auth=(self.username, self.password)
+        ).content
+        filename = resp["filename"]
+        if save_file:
+            open(filename, "wb").write(data)
+        print(len(data), len(filename))
+        return filename, data
+
+    def delete_blob(self, bid=""):
+        """Delete a blob by id."""
+        turl = self.base_url + "/rest/blob/" + str(bid) + "/"
+        response = requests.delete(
+            turl, verify=False, auth=(self.username, self.password)
+        )
+        response_code = response.status_code
+        print("delete response_code", response_code)
+        return response_code
 
     def delete_all_blobs(self):
         """Delete binary blob files."""
