@@ -13,10 +13,43 @@ from collections import OrderedDict
 from jarvis.core.kpoints import Kpoints3D
 
 
+def write_vaspjob(pyname="job.py", job_json=""):
+    """Write template job.py with VaspJob.to_dict() job.json."""
+    f = open(pyname, "w")
+    f.write("from jarvis.tasks.vasp.vasp import VaspJob\n")
+    f.write("from jarvis.db.jsonutils import loadjson\n")
+    f.write('d=loadjson("' + str(job_json) + '")\n')
+    f.write("v=VaspJob.from_dict(d)\n")
+    f.write("v.runjob()\n")
+    f.close()
+
+
+def write_jobfact_optb88vdw(pyname="job.py", job_json=""):
+    """Write template job.py with JobFactory.to_dict() job.json."""
+    f = open(pyname, "w")
+    f.write("from jarvis.tasks.vasp.vasp import JobFactory\n")
+    f.write("from jarvis.db.jsonutils import loadjson\n")
+    f.write('d=loadjson("' + str(job_json) + '")\n')
+    f.write("v=JobFactory.from_dict(d)\n")
+    f.write("v.all_optb88vdw_calcs()\n")
+    f.close()
+
+
 class JobFactory(object):
     """Provide sets of VASP calculations."""
 
-    def __init__(self, name="", use_incar_dict={}, pot_type=None):
+    def __init__(
+        self,
+        name="Jobs",
+        poscar=None,
+        use_incar_dict={},
+        vasp_cmd="",
+        pot_type=None,
+        copy_files=[],
+        attempts=5,
+        stderr_file="std_err.txt",
+        output_file="vasp.out",
+    ):
         """
         Provide generic class for running variations of VASP calculations.
 
@@ -29,14 +62,28 @@ class JobFactory(object):
                              that would be repreated
 
             pot_type : pseudopotential type
+
+            vasp_cmd: vasp executable
         """
+        # TODO: Make JobFactory a superclass of VaspJob class
         self.name = name
         self.use_incar_dict = use_incar_dict
         self.pot_type = pot_type
+        self.vasp_cmd = vasp_cmd
+        self.mat = poscar
+        self.copy_files = copy_files
+        self.attempts = attempts
+        self.stderr_file = stderr_file
+        self.output_file = output_file
 
-    def all_optb88vdw_props(self, mat=None):
+    def all_optb88vdw_calcs(self):
+        """Use for OptB88vdW based HT."""
+        incs = GenericIncars().optb88vdw()
+        return self.workflow(generic_incar=incs)
+
+    def workflow(self, generic_incar=""):
         """
-        Use for OptB88vdW functional based high-throughput calculations.
+        Use for functional based high-throughput calculations.
 
         This will converge k-points, cut-offs,
         and then carry several property calculations.
@@ -44,12 +91,20 @@ class JobFactory(object):
         Args:
             mat : Poscar object
         """
-        optb88 = GenericIncars().optb88vdw()
-        job = JobFactory(use_incar_dict=optb88.incar, pot_type=optb88.pot_type)
-        encut = job.converg_encut(mat=mat)
-        length = job.converg_kpoint(mat=mat)
+        job = JobFactory(
+            use_incar_dict=generic_incar.incar,
+            pot_type=generic_incar.pot_type,
+            vasp_cmd=self.vasp_cmd,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
+            stderr_file=self.stderr_file,
+            output_file=self.output_file,
+            poscar=self.mat,
+        )
+        encut = job.converg_encut(mat=self.mat)
+        length = job.converg_kpoint(mat=self.mat)
         energy, contcar_path = job.optimize_geometry(
-            mat=mat, encut=encut, length=length
+            mat=self.mat, encut=encut, length=length
         )
         optimized_mat = Poscar.from_file(contcar_path)
         vrun = Vasprun(contcar_path.replace("CONTCAR", "vasprun.xml"))
@@ -127,6 +182,11 @@ class JobFactory(object):
             incar=incar,
             pot_type=self.pot_type,
             kpoints=kpoints,
+            vasp_cmd=self.vasp_cmd,
+            output_file=self.output_file,
+            stderr_file=self.stderr_file,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
             jobname=str("MAIN-ELASTIC-") + str(p.comment.split()[0]),
         ).runjob()
 
@@ -171,6 +231,11 @@ class JobFactory(object):
         en, contcar = VaspJob(
             poscar=mat,
             incar=incar,
+            vasp_cmd=self.vasp_cmd,
+            output_file=self.output_file,
+            stderr_file=self.stderr_file,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
             pot_type=self.pot_type,
             kpoints=kpoints,
             jobname=str("MAIN-MBJ-") + str(mat.comment.split()[0]),
@@ -213,6 +278,11 @@ class JobFactory(object):
 
         en, contcar = VaspJob(
             poscar=mat,
+            vasp_cmd=self.vasp_cmd,
+            output_file=self.output_file,
+            stderr_file=self.stderr_file,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
             incar=incar,
             pot_type=self.pot_type,
             kpoints=kpoints,
@@ -266,6 +336,11 @@ class JobFactory(object):
         en, contcar = VaspJob(
             poscar=mat,
             incar=incar,
+            vasp_cmd=self.vasp_cmd,
+            output_file=self.output_file,
+            stderr_file=self.stderr_file,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
             pot_type=self.pot_type,
             kpoints=kpoints,
             jobname=str("MAIN-BAND-") + str(mat.comment.split()[0]),
@@ -305,6 +380,11 @@ class JobFactory(object):
         en, contcar = VaspJob(
             poscar=mat,
             incar=incar,
+            vasp_cmd=self.vasp_cmd,
+            output_file=self.output_file,
+            stderr_file=self.stderr_file,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
             pot_type=self.pot_type,
             kpoints=kpoints,
             jobname=str("MAIN-RELAX-") + str(mat.comment),
@@ -358,6 +438,11 @@ class JobFactory(object):
                 poscar=mat,
                 incar=incar,
                 pot_type=pot_type,
+                vasp_cmd=self.vasp_cmd,
+                output_file=self.output_file,
+                stderr_file=self.stderr_file,
+                copy_files=self.copy_files,
+                attempts=self.attempts,
                 kpoints=kpoints,
                 jobname=str("ENCUT")
                 + str(mat.comment)
@@ -383,6 +468,11 @@ class JobFactory(object):
                 )
                 en2, contc = VaspJob(
                     poscar=mat,
+                    vasp_cmd=self.vasp_cmd,
+                    output_file=self.output_file,
+                    stderr_file=self.stderr_file,
+                    copy_files=self.copy_files,
+                    attempts=self.attempts,
                     incar=incar,
                     pot_type=pot_type,
                     kpoints=kpoints,
@@ -400,6 +490,11 @@ class JobFactory(object):
             incar.update({"ENCUT": encut2})
             # incar_dict["ENCUT"]= encut2
             en3, contc = VaspJob(
+                vasp_cmd=self.vasp_cmd,
+                output_file=self.output_file,
+                stderr_file=self.stderr_file,
+                copy_files=self.copy_files,
+                attempts=self.attempts,
                 poscar=mat,
                 incar=incar,
                 pot_type=pot_type,
@@ -416,6 +511,11 @@ class JobFactory(object):
             # incar_dict["ENCUT"]= encut3
             en4, contc = VaspJob(
                 poscar=mat,
+                vasp_cmd=self.vasp_cmd,
+                output_file=self.output_file,
+                stderr_file=self.stderr_file,
+                copy_files=self.copy_files,
+                attempts=self.attempts,
                 incar=incar,
                 pot_type=pot_type,
                 kpoints=kpoints,
@@ -433,6 +533,11 @@ class JobFactory(object):
                 incar=incar,
                 pot_type=pot_type,
                 kpoints=kpoints,
+                vasp_cmd=self.vasp_cmd,
+                output_file=self.output_file,
+                stderr_file=self.stderr_file,
+                copy_files=self.copy_files,
+                attempts=self.attempts,
                 jobname=str("ENCUT")
                 + str(mat.comment)
                 + str("-")
@@ -445,6 +550,11 @@ class JobFactory(object):
             # incar_dict["ENCUT"]= encut5
             en6, contc = VaspJob(
                 poscar=mat,
+                vasp_cmd=self.vasp_cmd,
+                output_file=self.output_file,
+                stderr_file=self.stderr_file,
+                copy_files=self.copy_files,
+                attempts=self.attempts,
                 pot_type=pot_type,
                 incar=incar,
                 kpoints=kpoints,
@@ -460,6 +570,11 @@ class JobFactory(object):
             # incar_dict["ENCUT"]= encut6
             en7, contc = VaspJob(
                 poscar=mat,
+                vasp_cmd=self.vasp_cmd,
+                output_file=self.output_file,
+                stderr_file=self.stderr_file,
+                copy_files=self.copy_files,
+                attempts=self.attempts,
                 pot_type=pot_type,
                 incar=incar,
                 kpoints=kpoints,
@@ -523,6 +638,11 @@ class JobFactory(object):
                     poscar=mat,
                     incar=incar,
                     pot_type=pot_type,
+                    vasp_cmd=self.vasp_cmd,
+                    output_file=self.output_file,
+                    stderr_file=self.stderr_file,
+                    copy_files=self.copy_files,
+                    attempts=self.attempts,
                     kpoints=kpoints,
                     jobname=str("KPOINTS")
                     + str(mat.comment)
@@ -553,6 +673,11 @@ class JobFactory(object):
                             incar=incar,
                             pot_type=pot_type,
                             kpoints=kpoints,
+                            vasp_cmd=self.vasp_cmd,
+                            output_file=self.output_file,
+                            stderr_file=self.stderr_file,
+                            copy_files=self.copy_files,
+                            attempts=self.attempts,
                             jobname=str("KPOINTS")
                             + str(mat.comment)
                             + str("-")
@@ -571,6 +696,11 @@ class JobFactory(object):
                             mat=mat,
                             incar=incar,
                             kpoints=kpoints,
+                            vasp_cmd=self.vasp_cmd,
+                            output_file=self.output_file,
+                            stderr_file=self.stderr_file,
+                            copy_files=self.copy_files,
+                            attempts=self.attempts,
                             jobname=str("KPOINTS")
                             + str(mat.comment)
                             + str("-")
@@ -592,6 +722,11 @@ class JobFactory(object):
                     pot_type=pot_type,
                     incar=incar,
                     kpoints=kpoints,
+                    vasp_cmd=self.vasp_cmd,
+                    output_file=self.output_file,
+                    stderr_file=self.stderr_file,
+                    copy_files=self.copy_files,
+                    attempts=self.attempts,
                     jobname=str("KPOINTS")
                     + str(mat.comment)
                     + str("-")
@@ -610,6 +745,11 @@ class JobFactory(object):
                     pot_type=pot_type,
                     incar=incar,
                     kpoints=kpoints,
+                    vasp_cmd=self.vasp_cmd,
+                    output_file=self.output_file,
+                    stderr_file=self.stderr_file,
+                    copy_files=self.copy_files,
+                    attempts=self.attempts,
                     jobname=str("KPOINTS")
                     + str(mat.comment)
                     + str("-")
@@ -628,6 +768,11 @@ class JobFactory(object):
                     incar=incar,
                     pot_type=pot_type,
                     kpoints=kpoints,
+                    vasp_cmd=self.vasp_cmd,
+                    output_file=self.output_file,
+                    stderr_file=self.stderr_file,
+                    copy_files=self.copy_files,
+                    attempts=self.attempts,
                     jobname=str("KPOINTS")
                     + str(mat.comment)
                     + str("-")
@@ -643,6 +788,11 @@ class JobFactory(object):
                 kp_list.append(mesh)
                 en6, contc = VaspJob(
                     poscar=mat,
+                    vasp_cmd=self.vasp_cmd,
+                    output_file=self.output_file,
+                    stderr_file=self.stderr_file,
+                    copy_files=self.copy_files,
+                    attempts=self.attempts,
                     incar=incar,
                     pot_type=pot_type,
                     kpoints=kpoints,
@@ -660,6 +810,11 @@ class JobFactory(object):
                 kp_list.append(mesh)
                 en7, contc = VaspJob(
                     poscar=mat,
+                    vasp_cmd=self.vasp_cmd,
+                    output_file=self.output_file,
+                    stderr_file=self.stderr_file,
+                    copy_files=self.copy_files,
+                    attempts=self.attempts,
                     incar=incar,
                     pot_type=pot_type,
                     kpoints=kpoints,
@@ -727,6 +882,35 @@ class JobFactory(object):
                     convg_kp2 = True
 
         return length1
+
+    @classmethod
+    def from_dict(self, d={}):
+        """Load from dictionary."""
+        job = JobFactory(
+            use_incar_dict=d["use_incar_dict"],
+            pot_type=d["pot_type"],
+            vasp_cmd=d["vasp_cmd"],
+            copy_files=d["copy_files"],
+            attempts=d["attempts"],
+            stderr_file=d["stderr_file"],
+            output_file=d["output_file"],
+            poscar=Poscar.from_dict(d["poscar"]),
+        )
+        return job
+
+    def to_dict(self):
+        """Convert to dictionary."""
+        d = OrderedDict()
+        d["name"] = self.name
+        d["use_incar_dict"] = self.use_incar_dict
+        d["vasp_cmd"] = self.vasp_cmd
+        d["pot_type"] = self.pot_type
+        d["copy_files"] = self.copy_files
+        d["attempts"] = self.attempts
+        d["stderr_file"] = self.stderr_file
+        d["output_file"] = self.output_file
+        d["poscar"] = self.mat.to_dict()
+        return d
 
 
 class VaspJob(object):
