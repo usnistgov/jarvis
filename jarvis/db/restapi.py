@@ -411,9 +411,20 @@ class Api(object):
 # federated vs oai_pmh
 
 
-# """
+"""
 if __name__ == "__main__":
 
+<<<<<<< HEAD
+=======
+
+    a = Api()
+    a = Api(base_url="http://test-jarvis.nist.gov")
+    tid="5f624bc547d1ac011a224672"
+    tid='5f6909278c6d9e011c8cc8c9'
+    a.upload_xml_file(filename='JVASP-1004.xml',template_id=tid)
+
+
+>>>>>>> master
     a = Api()
     a = Api(base_url="https://jarvis.nist.gov")
     x = a.get_global_workspace_id()
@@ -427,11 +438,19 @@ if __name__ == "__main__":
     # a.upload_xml_file(filename='JVASP-1002.xml',template_id=tid)
 
     # a.delete_all_records()
+<<<<<<< HEAD
     # filepath="/rk2/knc6/DB/RAW_FILES/JARVIS-DFT-DFPT/JVASP-10088.zip",
     # filepath="/rk2/knc6/JARVIS-DFT/Elements-bulkk/
     # mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
     # x = a.upload_blob(filepath)
     print("id", x)
+=======
+    #filepath="/rk2/knc6/DB/RAW_FILES/JARVIS-DFT-DFPT/JVASP-10088.zip",
+    #filepath="/rk2/knc6/JARVIS-DFT/Elements-bulkk/
+    #mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
+    #x = a.upload_blob(filepath)
+    print ('id',x)
+>>>>>>> master
     a.delete_blob(x)
     # a.get_all_blobs()
 
@@ -477,4 +496,4 @@ if __name__ == "__main__":
     data = {"query": "testxy"}
     result = a.send_keyword_query(data=data)
     print("result", result)
-# """
+"""
