@@ -1,0 +1,100 @@
+ running on   16 total cores
+ distrk:  each k-point on   16 cores,    1 groups
+ distr:  one band on    1 cores,   16 groups
+ using from now: INCAR     
+ vasp.5.4.1 24Jun15 (build Feb  9 2019 14:16:27) complex                         
+ POSCAR found type information on POSCAR  Si
+ POSCAR found :  1 types and       2 ions
+ scaLAPACK will be used
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|           W    W    AA    RRRRR   N    N  II  N    N   GGGG   !!!           |
+|           W    W   A  A   R    R  NN   N  II  NN   N  G    G  !!!           |
+|           W    W  A    A  R    R  N N  N  II  N N  N  G       !!!           |
+|           W WW W  AAAAAA  RRRRR   N  N N  II  N  N N  G  GGG   !            |
+|           WW  WW  A    A  R   R   N   NN  II  N   NN  G    G                |
+|           W    W  A    A  R    R  N    N  II  N    N   GGGG   !!!           |
+|                                                                             |
+|      For optimal performance we recommend to set                            |
+|        NCORE= 4 - approx SQRT( number of cores)                             |
+|      NCORE specifies how many cores store one orbital (NPAR=cpu/NCORE).     |
+|      This setting can  greatly improve the performance of VASP for DFT.     |
+|      The default, NPAR=number of cores might be grossly inefficient         |
+|      on modern multi-core architectures or massively parallel machines.     |
+|      Do your own testing !!!!                                               |
+|      Unfortunately you need to use the default for GW and RPA calculations. |
+|      (for HF NCORE is supported but not extensively tested yet)             |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|  ADVICE TO THIS USER RUNNING 'VASP/VAMP'   (HEAR YOUR MASTER'S VOICE ...):  |
+|                                                                             |
+|      You have switched on vdW-DFT.                                          |
+|      This routine was written and supplied by Jiri Klimes.                  |
+|      We recommed that you carefully read and cite the following             |
+|      publication                                                            |
+|      J. Klimes, D.R. Bowler, A. Michelides                                  |
+|        J. Phys.: Cond Matt. 22 022201 (2010)                                |
+|      J. Klimes, D.R. Bowler, A. Michelides                                  |
+|        Phys. Rev. B. 83, 195131 (2011)                                      |
+|      and references therein.                                                |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|  ADVICE TO THIS USER RUNNING 'VASP/VAMP'   (HEAR YOUR MASTER'S VOICE ...):  |
+|                                                                             |
+|      You enforced a specific xc-type in the INCAR file,                     |
+|      a different type was found on the POTCAR file                          |
+|          I HOPE YOU KNOW, WHAT YOU ARE  DOING                               |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+ LDA part: xc-table for Pade appr. of Perdew
+ POSCAR, INCAR and KPOINTS ok, starting setup
+ WARNING: small aliasing (wrap around) errors must be expected
+ FFT: planning ...
+ WAVECAR not read
+ entering main loop
+       N       E                     dE             d eps       ncg     rms          rms(c)
+Total vdW correction in eV:      1.0901334
+DAV:   1     0.292401674271E+01    0.29240E+01   -0.34463E+03  8208   0.391E+02
+DAV:   2    -0.832842618820E+01   -0.11252E+02   -0.11124E+02 11984   0.395E+01
+DAV:   3    -0.840898187679E+01   -0.80556E-01   -0.80556E-01  9184   0.427E+00
+DAV:   4    -0.840921420407E+01   -0.23233E-03   -0.23233E-03 15344   0.255E-01
+DAV:   5    -0.840921421745E+01   -0.13383E-07   -0.13690E-07  8992   0.158E-03    0.367E+00
+Total vdW correction in eV:      1.1375752
+DAV:   6    -0.835975915150E+01    0.49455E-01   -0.84731E-02 12400   0.858E-01    0.224E+00
+Total vdW correction in eV:      1.2281377
+DAV:   7    -0.835393644300E+01    0.58227E-02   -0.19360E-01 12640   0.128E+00    0.185E-01
+Total vdW correction in eV:      1.2235737
+DAV:   8    -0.833753180136E+01    0.16405E-01   -0.49557E-03  9632   0.243E-01    0.955E-02
+Total vdW correction in eV:      1.2294139
+DAV:   9    -0.833864268531E+01   -0.11109E-02   -0.55046E-04 12976   0.819E-02    0.525E-02
+Total vdW correction in eV:      1.2291068
+DAV:  10    -0.833866973187E+01   -0.27047E-04   -0.22819E-05 10400   0.214E-02    0.108E-02
+Total vdW correction in eV:      1.2291072
+DAV:  11    -0.833848580250E+01    0.18393E-03   -0.30156E-07 13760   0.259E-03    0.194E-03
+Total vdW correction in eV:      1.2291483
+DAV:  12    -0.833847491247E+01    0.10890E-04   -0.68170E-08 10320   0.137E-03    0.455E-04
+Total vdW correction in eV:      1.2291467
+DAV:  13    -0.833847263747E+01    0.22750E-05   -0.51709E-09  9456   0.328E-04    0.728E-05
+Total vdW correction in eV:      1.2291479
+DAV:  14    -0.833847286105E+01   -0.22358E-06   -0.18334E-10  5616   0.683E-05    0.566E-06
+Total vdW correction in eV:      1.2291478
+DAV:  15    -0.833847261636E+01    0.24469E-06   -0.76052E-12  5152   0.137E-05    0.262E-06
+Total vdW correction in eV:      1.2291478
+DAV:  16    -0.833847260603E+01    0.10326E-07   -0.92269E-13  4832   0.592E-06
+Total vdW correction in eV:      1.2291477
+Total vdW correction in eV:      1.2291477
+   1 F= -.83384726E+01 E0= -.83384619E+01  d E =-.833847E+01
+ curvature:   0.00 expect dE= 0.000E+00 dE for cont linesearch  0.000E+00
+ trial: gam= 0.00000 g(F)=  0.201E-48 g(S)=  0.000E+00 ort = 0.000E+00 (trialstep = 0.100E+01)
+ search vector abs. value=  0.100E-09
+ reached required accuracy - stopping structural energy minimisation

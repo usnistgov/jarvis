@@ -1,0 +1,960 @@
+ running on   16 total cores
+ distrk:  each k-point on   16 cores,    1 groups
+ distr:  one band on    1 cores,   16 groups
+ using from now: INCAR     
+ vasp.5.4.1 24Jun15 (build Feb  9 2019 14:16:27) complex                         
+ POSCAR found type information on POSCAR  Si
+ POSCAR found :  1 types and       8 ions
+ scaLAPACK will be used
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|           W    W    AA    RRRRR   N    N  II  N    N   GGGG   !!!           |
+|           W    W   A  A   R    R  NN   N  II  NN   N  G    G  !!!           |
+|           W    W  A    A  R    R  N N  N  II  N N  N  G       !!!           |
+|           W WW W  AAAAAA  RRRRR   N  N N  II  N  N N  G  GGG   !            |
+|           WW  WW  A    A  R   R   N   NN  II  N   NN  G    G                |
+|           W    W  A    A  R    R  N    N  II  N    N   GGGG   !!!           |
+|                                                                             |
+|      For optimal performance we recommend to set                            |
+|        NCORE= 4 - approx SQRT( number of cores)                             |
+|      NCORE specifies how many cores store one orbital (NPAR=cpu/NCORE).     |
+|      This setting can  greatly improve the performance of VASP for DFT.     |
+|      The default, NPAR=number of cores might be grossly inefficient         |
+|      on modern multi-core architectures or massively parallel machines.     |
+|      Do your own testing !!!!                                               |
+|      Unfortunately you need to use the default for GW and RPA calculations. |
+|      (for HF NCORE is supported but not extensively tested yet)             |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|  ADVICE TO THIS USER RUNNING 'VASP/VAMP'   (HEAR YOUR MASTER'S VOICE ...):  |
+|                                                                             |
+|      You have switched on vdW-DFT.                                          |
+|      This routine was written and supplied by Jiri Klimes.                  |
+|      We recommed that you carefully read and cite the following             |
+|      publication                                                            |
+|      J. Klimes, D.R. Bowler, A. Michelides                                  |
+|        J. Phys.: Cond Matt. 22 022201 (2010)                                |
+|      J. Klimes, D.R. Bowler, A. Michelides                                  |
+|        Phys. Rev. B. 83, 195131 (2011)                                      |
+|      and references therein.                                                |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|  ADVICE TO THIS USER RUNNING 'VASP/VAMP'   (HEAR YOUR MASTER'S VOICE ...):  |
+|                                                                             |
+|      You enforced a specific xc-type in the INCAR file,                     |
+|      a different type was found on the POTCAR file                          |
+|          I HOPE YOU KNOW, WHAT YOU ARE  DOING                               |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+ LDA part: xc-table for Pade appr. of Perdew
+ POSCAR, INCAR and KPOINTS ok, starting setup
+ FFT: planning ...
+ WAVECAR not read
+ entering main loop
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.3605297529058511     
+DAV:   1     0.707485795524E+02    0.70749E+02   -0.11821E+04  7680   0.324E+02
+DAV:   2    -0.281256959644E+02   -0.98874E+02   -0.92038E+02  9360   0.712E+01
+DAV:   3    -0.315784061215E+02   -0.34527E+01   -0.33941E+01  9552   0.104E+01
+DAV:   4    -0.315971771875E+02   -0.18771E-01   -0.18766E-01  9072   0.825E-01
+DAV:   5    -0.315972669211E+02   -0.89734E-04   -0.89732E-04  9328   0.619E-02    0.103E+01
+ Total vdW correction in eV:    4.5488912873123830     
+DAV:   6    -0.333394467017E+02   -0.17422E+01   -0.19125E-01  9088   0.892E-01    0.474E+00
+ Total vdW correction in eV:    4.7431200151614252     
+DAV:   7    -0.333637035505E+02   -0.24257E-01   -0.16999E-01  8912   0.790E-01    0.248E+00
+ Total vdW correction in eV:    4.8677272442914230     
+DAV:   8    -0.333841343014E+02   -0.20431E-01   -0.63486E-02  9264   0.441E-01    0.125E+00
+ Total vdW correction in eV:    4.9050438581273923     
+DAV:   9    -0.333814601780E+02    0.26741E-02   -0.49284E-03  8976   0.135E-01    0.262E-01
+ Total vdW correction in eV:    4.9100411822217618     
+DAV:  10    -0.333700291002E+02    0.11431E-01   -0.13803E-03  9040   0.680E-02    0.150E-01
+ Total vdW correction in eV:    4.9132862025922570     
+DAV:  11    -0.333576135947E+02    0.12416E-01   -0.40251E-04  8880   0.379E-02    0.713E-02
+ Total vdW correction in eV:    4.9146942261907558     
+DAV:  12    -0.333538771503E+02    0.37364E-02   -0.45119E-05  9024   0.134E-02    0.327E-02
+ Total vdW correction in eV:    4.9155331256706098     
+DAV:  13    -0.333538881135E+02   -0.10963E-04   -0.72920E-06  9216   0.474E-03    0.145E-02
+ Total vdW correction in eV:    4.9163433240870225     
+DAV:  14    -0.333541778032E+02   -0.28969E-03   -0.20803E-06  8896   0.262E-03    0.264E-03
+ Total vdW correction in eV:    4.9163997487783977     
+DAV:  15    -0.333541749495E+02    0.28537E-05   -0.17306E-07  8896   0.796E-04    0.115E-03
+ Total vdW correction in eV:    4.9164279158381827     
+DAV:  16    -0.333541552892E+02    0.19660E-04   -0.12164E-08  7680   0.203E-04    0.583E-04
+ Total vdW correction in eV:    4.9164753939849941     
+DAV:  17    -0.333541573690E+02   -0.20798E-05   -0.18261E-08  7888   0.256E-04    0.224E-04
+ Total vdW correction in eV:    4.9164807278496738     
+DAV:  18    -0.333541619828E+02   -0.46138E-05   -0.12743E-09  5408   0.766E-05    0.439E-05
+ Total vdW correction in eV:    4.9164814094560398     
+DAV:  19    -0.333541626548E+02   -0.67205E-06   -0.58489E-11  5360   0.170E-05    0.413E-05
+ Total vdW correction in eV:    4.9164819073872827     
+DAV:  20    -0.333541630709E+02   -0.41609E-06   -0.16829E-11  5184   0.847E-06    0.194E-05
+ Total vdW correction in eV:    4.9164819060347975     
+DAV:  21    -0.333541630214E+02    0.49505E-07   -0.14899E-12  5072   0.281E-06
+ Total vdW correction in eV:    4.9164818828111105     
+ Total vdW correction in eV:    4.9164818935679850     
+   1 F= -.33354163E+02 E0= -.33354069E+02  d E =-.188751E-03  mag=    -0.0000
+ Found     1 degrees of freedom:
+ Adding 6 more for cell shape distortion
+ Finite differences POTIM= 0.01500 DOF=   7
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.9166117799760762     
+DAV:   1    -0.333402177463E+02    0.13945E-01   -0.10761E-01 17856   0.613E-01    0.327E-01
+ Total vdW correction in eV:    4.9339105470049684     
+DAV:   2    -0.333337316659E+02    0.64861E-02   -0.10794E-02 17776   0.151E-01    0.260E-01
+ Total vdW correction in eV:    4.9540654944829834     
+DAV:   3    -0.333242655067E+02    0.94662E-02   -0.81043E-04 18624   0.546E-02    0.462E-02
+ Total vdW correction in eV:    4.9566430502267300     
+DAV:   4    -0.333217578426E+02    0.25077E-02   -0.13594E-04 18640   0.177E-02    0.497E-02
+ Total vdW correction in eV:    4.9568628678604103     
+DAV:   5    -0.333193425813E+02    0.24153E-02   -0.54773E-06 17520   0.452E-03    0.412E-03
+ Total vdW correction in eV:    4.9569770411104646     
+DAV:   6    -0.333193051373E+02    0.37444E-04   -0.30637E-07 19008   0.890E-04    0.344E-03
+ Total vdW correction in eV:    4.9569865675089488     
+DAV:   7    -0.333193495830E+02   -0.44446E-04   -0.64529E-09 11088   0.136E-04    0.251E-03
+ Total vdW correction in eV:    4.9570099435468578     
+DAV:   8    -0.333195199200E+02   -0.17034E-03   -0.25884E-08 15808   0.308E-04    0.285E-04
+ Total vdW correction in eV:    4.9570084040112601     
+DAV:   9    -0.333195219803E+02   -0.20603E-05   -0.10216E-09 10528   0.527E-05    0.281E-04
+ Total vdW correction in eV:    4.9570081279478213     
+DAV:  10    -0.333195164376E+02    0.55427E-05   -0.90298E-11 10624   0.183E-05    0.811E-05
+ Total vdW correction in eV:    4.9570083235185640     
+DAV:  11    -0.333195139516E+02    0.24860E-05   -0.28732E-11 10400   0.117E-05    0.310E-05
+ Total vdW correction in eV:    4.9570084567893247     
+DAV:  12    -0.333195143287E+02   -0.37719E-06   -0.11964E-12 10144   0.257E-06    0.152E-05
+ Total vdW correction in eV:    4.9570084517372024     
+DAV:  13    -0.333195142402E+02    0.88586E-07    0.69906E-12 10016   0.851E-07
+ Total vdW correction in eV:    4.9570084745342573     
+ Total vdW correction in eV:    4.9570084448783280     
+   2 F= -.33319514E+02 E0= -.33319408E+02  d E =-.212167E-03  mag=    -0.0000
+ Finite differences progress:
+  Degree of freedom:   1/  7
+  Displacement:        1/  2
+  Total:               1/ 14
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.9574789415062526     
+DAV:   1    -0.333339382350E+02   -0.14424E-01   -0.37848E-01 17984   0.113E+00    0.672E-01
+ Total vdW correction in eV:    4.9211507910514349     
+DAV:   2    -0.333340720731E+02   -0.13384E-03   -0.31204E-02 17840   0.262E-01    0.519E-01
+ Total vdW correction in eV:    4.8762717850372415     
+DAV:   3    -0.333462064405E+02   -0.12134E-01   -0.36584E-03 18432   0.119E-01    0.112E-01
+ Total vdW correction in eV:    4.8746717110943916     
+DAV:   4    -0.333498220635E+02   -0.36156E-02   -0.57465E-04 18096   0.363E-02    0.108E-01
+ Total vdW correction in eV:    4.8746142607107110     
+DAV:   5    -0.333541530613E+02   -0.43310E-02   -0.17641E-05 17504   0.853E-03    0.109E-02
+ Total vdW correction in eV:    4.8744063122192793     
+DAV:   6    -0.333548340343E+02   -0.68097E-03   -0.18408E-06 18736   0.233E-03    0.827E-03
+ Total vdW correction in eV:    4.8743826161021033     
+DAV:   7    -0.333546553598E+02    0.17867E-03   -0.46911E-08 16688   0.408E-04    0.445E-03
+ Total vdW correction in eV:    4.8743595143441247     
+DAV:   8    -0.333543913953E+02    0.26396E-03   -0.64730E-08 17536   0.493E-04    0.994E-04
+ Total vdW correction in eV:    4.8743639446059763     
+DAV:   9    -0.333543924747E+02   -0.10794E-05   -0.17946E-09 10240   0.678E-05    0.723E-04
+ Total vdW correction in eV:    4.8743652376104230     
+DAV:  10    -0.333543992295E+02   -0.67548E-05   -0.47451E-10 10368   0.429E-05    0.179E-04
+ Total vdW correction in eV:    4.8743648848022900     
+DAV:  11    -0.333544021815E+02   -0.29521E-05   -0.11290E-10 10080   0.214E-05    0.506E-05
+ Total vdW correction in eV:    4.8743647697319359     
+DAV:  12    -0.333544025984E+02   -0.41685E-06   -0.41062E-12 10048   0.548E-06    0.414E-05
+ Total vdW correction in eV:    4.8743648015572250     
+DAV:  13    -0.333544032893E+02   -0.69096E-06    0.63926E-13  9760   0.195E-06    0.181E-05
+ Total vdW correction in eV:    4.8743648176821814     
+DAV:  14    -0.333544042950E+02   -0.10057E-05   -0.94364E-12  9584   0.195E-06    0.569E-06
+ Total vdW correction in eV:    4.8743648078036061     
+DAV:  15    -0.333544042720E+02    0.23002E-07    0.41717E-12  9376   0.399E-07
+ Total vdW correction in eV:    4.8743648083419053     
+ Total vdW correction in eV:    4.8743648057718154     
+   3 F= -.33354404E+02 E0= -.33354233E+02  d E =-.343084E-03  mag=     0.0000
+ Finite differences progress:
+  Degree of freedom:   1/  7
+  Displacement:        2/  2
+  Total:               2/ 14
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.8745134461920649     
+DAV:   1    -0.333726282039E+02   -0.18224E-01   -0.33343E-01 17936   0.102E+00    0.632E-01
+ Total vdW correction in eV:    4.9098259907903774     
+DAV:   2    -0.333525924311E+02    0.20036E-01   -0.23464E-02 17744   0.231E-01    0.485E-01
+ Total vdW correction in eV:    4.9559019131750812     
+DAV:   3    -0.333271703651E+02    0.25422E-01   -0.35190E-03 18304   0.116E-01    0.109E-01
+ Total vdW correction in eV:    4.9562195309359112     
+DAV:   4    -0.333242849444E+02    0.28854E-02   -0.56710E-04 17824   0.362E-02    0.969E-02
+ Total vdW correction in eV:    4.9567128546891475     
+DAV:   5    -0.333201180339E+02    0.41669E-02   -0.86753E-06 17536   0.619E-03    0.158E-02
+ Total vdW correction in eV:    4.9569518892648770     
+DAV:   6    -0.333191252514E+02    0.99278E-03   -0.11016E-06 18128   0.186E-03    0.752E-03
+ Total vdW correction in eV:    4.9569695553048660     
+DAV:   7    -0.333192327768E+02   -0.10753E-03   -0.27494E-08 15616   0.310E-04    0.523E-03
+ Total vdW correction in eV:    4.9570075576893853     
+DAV:   8    -0.333195224813E+02   -0.28970E-03   -0.53523E-08 16000   0.432E-04    0.773E-04
+ Total vdW correction in eV:    4.9570047105567099     
+DAV:   9    -0.333195140382E+02    0.84431E-05   -0.25297E-09 10288   0.848E-05    0.437E-04
+ Total vdW correction in eV:    4.9570070479482933     
+DAV:  10    -0.333195143808E+02   -0.34259E-06   -0.19709E-10 10048   0.284E-05    0.179E-04
+ Total vdW correction in eV:    4.9570086885491520     
+DAV:  11    -0.333195152114E+02   -0.83061E-06   -0.67350E-11  9632   0.192E-05    0.427E-05
+ Total vdW correction in eV:    4.9570085318738046     
+DAV:  12    -0.333195150740E+02    0.13742E-06   -0.25288E-12  9408   0.437E-06    0.303E-05
+ Total vdW correction in eV:    4.9570084923482067     
+DAV:  13    -0.333195144610E+02    0.61296E-06   -0.60858E-12  9248   0.135E-06    0.133E-05
+ Total vdW correction in eV:    4.9570084549648854     
+DAV:  14    -0.333195140438E+02    0.41724E-06    0.58458E-13  9200   0.893E-07    0.718E-07
+ Total vdW correction in eV:    4.9570084481757544     
+DAV:  15    -0.333195140613E+02   -0.17527E-07    0.12228E-12  9040   0.255E-07
+ Total vdW correction in eV:    4.9570084425923877     
+ Total vdW correction in eV:    4.9570084442133640     
+   4 F= -.33319514E+02 E0= -.33319408E+02  d E =-.212167E-03  mag=    -0.0000
+ Finite differences progress:
+  Degree of freedom:   2/  7
+  Displacement:        1/  2
+  Total:               3/ 14
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.9574789408434068     
+DAV:   1    -0.333336349966E+02   -0.14121E-01   -0.39018E-01 17760   0.115E+00    0.670E-01
+ Total vdW correction in eV:    4.9210993665975202     
+DAV:   2    -0.333341083922E+02   -0.47340E-03   -0.34276E-02 18064   0.272E-01    0.521E-01
+ Total vdW correction in eV:    4.8768575250244455     
+DAV:   3    -0.333459628935E+02   -0.11855E-01   -0.36111E-03 18368   0.118E-01    0.108E-01
+ Total vdW correction in eV:    4.8747254749874411     
+DAV:   4    -0.333498212421E+02   -0.38583E-02   -0.56929E-04 18272   0.361E-02    0.107E-01
+ Total vdW correction in eV:    4.8746221799580667     
+DAV:   5    -0.333542608552E+02   -0.44396E-02   -0.18341E-05 17616   0.866E-03    0.906E-03
+ Total vdW correction in eV:    4.8744082769646724     
+DAV:   6    -0.333548328046E+02   -0.57195E-03   -0.16774E-06 18960   0.220E-03    0.795E-03
+ Total vdW correction in eV:    4.8743650716571523     
+DAV:   7    -0.333545107043E+02    0.32210E-03   -0.10823E-07 17568   0.621E-04    0.137E-03
+ Total vdW correction in eV:    4.8743609100105010     
+DAV:   8    -0.333543903466E+02    0.12036E-03   -0.11382E-08 11904   0.194E-04    0.918E-04
+ Total vdW correction in eV:    4.8743645190323841     
+DAV:   9    -0.333543913406E+02   -0.99402E-06   -0.76077E-10 10272   0.467E-05    0.682E-04
+ Total vdW correction in eV:    4.8743647518729523     
+DAV:  10    -0.333544025643E+02   -0.11224E-04   -0.65257E-10 10208   0.495E-05    0.471E-05
+ Total vdW correction in eV:    4.8743647517058468     
+DAV:  11    -0.333544023804E+02    0.18390E-06   -0.62167E-11  9904   0.133E-05    0.474E-05
+ Total vdW correction in eV:    4.8743647484692332     
+DAV:  12    -0.333544025400E+02   -0.15963E-06   -0.39822E-12  9760   0.402E-06    0.439E-05
+ Total vdW correction in eV:    4.8743647341500349     
+DAV:  13    -0.333544037856E+02   -0.12456E-05    0.41383E-12  9552   0.230E-06    0.100E-05
+ Total vdW correction in eV:    4.8743647774202659     
+DAV:  14    -0.333544044610E+02   -0.67540E-06   -0.58810E-13  9408   0.162E-06    0.149E-05
+ Total vdW correction in eV:    4.8743647816594393     
+DAV:  15    -0.333544044060E+02    0.54997E-07   -0.17208E-12  8976   0.314E-07
+ Total vdW correction in eV:    4.8743648185449091     
+ Total vdW correction in eV:    4.8743647936535321     
+   5 F= -.33354404E+02 E0= -.33354233E+02  d E =-.343084E-03  mag=    -0.0000
+ Finite differences progress:
+  Degree of freedom:   2/  7
+  Displacement:        2/  2
+  Total:               4/ 14
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.8745134340418588     
+DAV:   1    -0.333725533879E+02   -0.18149E-01   -0.32499E-01 17840   0.992E-01    0.634E-01
+ Total vdW correction in eV:    4.9099485052188907     
+DAV:   2    -0.333524505194E+02    0.20103E-01   -0.22664E-02 17664   0.226E-01    0.482E-01
+ Total vdW correction in eV:    4.9562214420821871     
+DAV:   3    -0.333270501857E+02    0.25400E-01   -0.35855E-03 18448   0.117E-01    0.110E-01
+ Total vdW correction in eV:    4.9562382821972264     
+DAV:   4    -0.333243030936E+02    0.27471E-02   -0.57117E-04 17760   0.362E-02    0.965E-02
+ Total vdW correction in eV:    4.9566801917418690     
+DAV:   5    -0.333202382658E+02    0.40648E-02   -0.83560E-06 17936   0.611E-03    0.172E-02
+ Total vdW correction in eV:    4.9569554497347035     
+DAV:   6    -0.333191246271E+02    0.11136E-02   -0.11633E-06 17792   0.195E-03    0.775E-03
+ Total vdW correction in eV:    4.9569816989602806     
+DAV:   7    -0.333193066853E+02   -0.18206E-03   -0.40407E-08 16864   0.382E-04    0.380E-03
+ Total vdW correction in eV:    4.9570069413843303     
+DAV:   8    -0.333195185571E+02   -0.21187E-03   -0.31615E-08 14320   0.335E-04    0.725E-04
+ Total vdW correction in eV:    4.9570048838458991     
+DAV:   9    -0.333195131555E+02    0.54016E-05   -0.15381E-09 10288   0.678E-05    0.412E-04
+ Total vdW correction in eV:    4.9570083937547720     
+DAV:  10    -0.333195149730E+02   -0.18175E-05   -0.23512E-10 10064   0.315E-05    0.344E-05
+ Total vdW correction in eV:    4.9570085798047465     
+DAV:  11    -0.333195154265E+02   -0.45348E-06   -0.32082E-11  9760   0.120E-05    0.320E-05
+ Total vdW correction in eV:    4.9570085236402344     
+DAV:  12    -0.333195151457E+02    0.28085E-06    0.23735E-12  9408   0.267E-06    0.269E-05
+ Total vdW correction in eV:    4.9570084573110851     
+DAV:  13    -0.333195143360E+02    0.80967E-06   -0.33318E-12  9344   0.127E-06    0.726E-06
+ Total vdW correction in eV:    4.9570084463557880     
+DAV:  14    -0.333195140575E+02    0.27849E-06    0.43337E-12  9200   0.785E-07    0.596E-07
+ Total vdW correction in eV:    4.9570084448680447     
+DAV:  15    -0.333195140682E+02   -0.10646E-07   -0.69373E-13  9056   0.237E-07
+ Total vdW correction in eV:    4.9570084437991015     
+ Total vdW correction in eV:    4.9570084434207828     
+   6 F= -.33319514E+02 E0= -.33319408E+02  d E =-.212167E-03  mag=     0.0000
+ Finite differences progress:
+  Degree of freedom:   3/  7
+  Displacement:        1/  2
+  Total:               5/ 14
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.9574789400413106     
+DAV:   1    -0.333340643060E+02   -0.14550E-01   -0.37482E-01 17680   0.111E+00    0.674E-01
+ Total vdW correction in eV:    4.9210669110748784     
+DAV:   2    -0.333340380698E+02    0.26236E-04   -0.30440E-02 17952   0.258E-01    0.516E-01
+ Total vdW correction in eV:    4.8758605003187760     
+DAV:   3    -0.333463861266E+02   -0.12348E-01   -0.37425E-03 18416   0.120E-01    0.114E-01
+ Total vdW correction in eV:    4.8746576023473756     
+DAV:   4    -0.333498232369E+02   -0.34371E-02   -0.57339E-04 18096   0.363E-02    0.108E-01
+ Total vdW correction in eV:    4.8746322220285112     
+DAV:   5    -0.333541126995E+02   -0.42895E-02   -0.17592E-05 17488   0.855E-03    0.111E-02
+ Total vdW correction in eV:    4.8744052897419454     
+DAV:   6    -0.333548328585E+02   -0.72016E-03   -0.19152E-06 18672   0.239E-03    0.856E-03
+ Total vdW correction in eV:    4.8743814238381988     
+DAV:   7    -0.333546526395E+02    0.18022E-03   -0.51202E-08 17088   0.421E-04    0.452E-03
+ Total vdW correction in eV:    4.8743594100089052     
+DAV:   8    -0.333543928625E+02    0.25978E-03   -0.64933E-08 17424   0.491E-04    0.104E-03
+ Total vdW correction in eV:    4.8743640670069333     
+DAV:   9    -0.333543938301E+02   -0.96756E-06   -0.17497E-09 10240   0.670E-05    0.740E-04
+ Total vdW correction in eV:    4.8743651751186885     
+DAV:  10    -0.333543993878E+02   -0.55577E-05   -0.48154E-10 10144   0.430E-05    0.184E-04
+ Total vdW correction in eV:    4.8743648615740032     
+DAV:  11    -0.333544020506E+02   -0.26628E-05   -0.11868E-10  9872   0.212E-05    0.532E-05
+ Total vdW correction in eV:    4.8743647753684165     
+DAV:  12    -0.333544024117E+02   -0.36117E-06   -0.90812E-12  9712   0.550E-06    0.449E-05
+ Total vdW correction in eV:    4.8743648896739948     
+DAV:  13    -0.333544037551E+02   -0.13433E-05   -0.11461E-12  9504   0.236E-06    0.440E-06
+ Total vdW correction in eV:    4.8743648328158420     
+DAV:  14    -0.333544042837E+02   -0.52864E-06    0.44009E-12  9440   0.145E-06    0.616E-06
+ Total vdW correction in eV:    4.8743648231831855     
+DAV:  15    -0.333544042774E+02    0.63005E-08   -0.15428E-12  9200   0.328E-07
+ Total vdW correction in eV:    4.8743648089844189     
+ Total vdW correction in eV:    4.8743648100184203     
+   7 F= -.33354404E+02 E0= -.33354233E+02  d E =-.343084E-03  mag=     0.0000
+ Finite differences progress:
+  Degree of freedom:   3/  7
+  Displacement:        2/  2
+  Total:               6/ 14
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.8743011197578046     
+DAV:   1    -0.333759738463E+02   -0.21570E-01   -0.19022E-01 44832   0.942E-01    0.563E-01
+ Total vdW correction in eV:    4.8921564387244807     
+DAV:   2    -0.333607782340E+02    0.15196E-01   -0.30111E-02 45168   0.288E-01    0.341E-01
+ Total vdW correction in eV:    4.9118061972575244     
+DAV:   3    -0.333485050887E+02    0.12273E-01   -0.82412E-04 47296   0.126E-01    0.689E-02
+ Total vdW correction in eV:    4.9149031406261372     
+DAV:   4    -0.333457008988E+02    0.28042E-02   -0.11170E-03 45488   0.546E-02    0.440E-02
+ Total vdW correction in eV:    4.9158051433125340     
+DAV:   5    -0.333439209249E+02    0.17800E-02   -0.14781E-05 46560   0.835E-03    0.179E-02
+ Total vdW correction in eV:    4.9163547285941576     
+DAV:   6    -0.333429831404E+02    0.93778E-03   -0.65816E-06 44688   0.445E-03    0.536E-03
+ Total vdW correction in eV:    4.9162919786739838     
+DAV:   7    -0.333430224253E+02   -0.39285E-04   -0.38719E-07 45440   0.101E-03    0.203E-03
+ Total vdW correction in eV:    4.9162888427036986     
+DAV:   8    -0.333430294705E+02   -0.70452E-05   -0.60839E-08 44400   0.478E-04    0.975E-04
+ Total vdW correction in eV:    4.9163009136975848     
+DAV:   9    -0.333430328142E+02   -0.33437E-05   -0.25045E-09 26688   0.894E-05    0.454E-04
+ Total vdW correction in eV:    4.9163079100501204     
+DAV:  10    -0.333430458477E+02   -0.13034E-04   -0.85960E-10 26656   0.637E-05    0.539E-05
+ Total vdW correction in eV:    4.9163094284487086     
+DAV:  11    -0.333430481760E+02   -0.23283E-05   -0.21360E-10 25904   0.319E-05    0.437E-05
+ Total vdW correction in eV:    4.9163093133758107     
+DAV:  12    -0.333430473778E+02    0.79817E-06   -0.20428E-11 25488   0.867E-06    0.175E-05
+ Total vdW correction in eV:    4.9163092606487808     
+DAV:  13    -0.333430468827E+02    0.49510E-06   -0.31652E-12 25008   0.314E-06    0.344E-06
+ Total vdW correction in eV:    4.9163092927867966     
+DAV:  14    -0.333430469296E+02   -0.46871E-07    0.16217E-12 23840   0.120E-06
+ Total vdW correction in eV:    4.9163093091111456     
+ Total vdW correction in eV:    4.9163093052319251     
+   8 F= -.33343047E+02 E0= -.33342948E+02  d E =-.198556E-03  mag=     0.0000
+ Finite differences progress:
+  Degree of freedom:   4/  7
+  Displacement:        1/  2
+  Total:               7/ 14
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.9170102813945187     
+DAV:   1    -0.333929830460E+02   -0.49936E-01   -0.16069E-01 45424   0.100E+00    0.897E-01
+ Total vdW correction in eV:    4.9163218965101390     
+DAV:   2    -0.333563636566E+02    0.36619E-01   -0.34760E-02 44416   0.364E-01    0.447E-01
+ Total vdW correction in eV:    4.9162280495642090     
+DAV:   3    -0.333430443703E+02    0.13319E-01   -0.14802E-03 47904   0.230E-01    0.746E-02
+ Total vdW correction in eV:    4.9162452301211461     
+DAV:   4    -0.333431633436E+02   -0.11897E-03   -0.27206E-03 44368   0.815E-02    0.479E-02
+ Total vdW correction in eV:    4.9162858552737445     
+DAV:   5    -0.333430445190E+02    0.11882E-03   -0.47165E-05 45792   0.151E-02    0.628E-03
+ Total vdW correction in eV:    4.9162961645043133     
+DAV:   6    -0.333430503299E+02   -0.58108E-05   -0.12985E-05 45664   0.579E-03    0.596E-03
+ Total vdW correction in eV:    4.9163113566336429     
+DAV:   7    -0.333430473925E+02    0.29374E-05   -0.17020E-06 43632   0.239E-03    0.124E-03
+ Total vdW correction in eV:    4.9163102412398931     
+DAV:   8    -0.333430468008E+02    0.59164E-06   -0.45544E-08 42720   0.377E-04    0.238E-04
+ Total vdW correction in eV:    4.9163096905513335     
+DAV:   9    -0.333430467690E+02    0.31857E-07   -0.40837E-09 27152   0.114E-04
+ Total vdW correction in eV:    4.9163091659422209     
+ Total vdW correction in eV:    4.9163092077580215     
+   9 F= -.33343047E+02 E0= -.33342947E+02  d E =-.198557E-03  mag=    -0.0000
+ Finite differences progress:
+  Degree of freedom:   4/  7
+  Displacement:        2/  2
+  Total:               8/ 14
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.9166597390316351     
+DAV:   1    -0.333672715784E+02   -0.24225E-01   -0.15169E-01 45504   0.889E-01    0.557E-01
+ Total vdW correction in eV:    4.9163929531396962     
+DAV:   2    -0.333526725814E+02    0.14599E-01   -0.28550E-02 44080   0.285E-01    0.305E-01
+ Total vdW correction in eV:    4.9162787491250626     
+DAV:   3    -0.333436563370E+02    0.90162E-02   -0.70061E-04 47392   0.161E-01    0.710E-02
+ Total vdW correction in eV:    4.9162868366842787     
+DAV:   4    -0.333432308194E+02    0.42552E-03   -0.13948E-03 46080   0.643E-02    0.390E-02
+ Total vdW correction in eV:    4.9162937672556950     
+DAV:   5    -0.333430297490E+02    0.20107E-03   -0.57313E-05 46464   0.290E-02    0.591E-03
+ Total vdW correction in eV:    4.9163007930931872     
+DAV:   6    -0.333430463784E+02   -0.16629E-04   -0.73115E-05 44672   0.132E-02    0.412E-03
+ Total vdW correction in eV:    4.9163097374515843     
+DAV:   7    -0.333430497405E+02   -0.33621E-05   -0.60621E-07 45728   0.182E-03    0.483E-04
+ Total vdW correction in eV:    4.9163096613205006     
+DAV:   8    -0.333430487288E+02    0.10117E-05   -0.15274E-07 42240   0.623E-04    0.472E-04
+ Total vdW correction in eV:    4.9163094723252900     
+DAV:   9    -0.333430481167E+02    0.61216E-06   -0.72269E-10 27616   0.522E-05    0.306E-04
+ Total vdW correction in eV:    4.9163090982548372     
+DAV:  10    -0.333430465093E+02    0.16073E-05   -0.44284E-10 26352   0.447E-05    0.559E-05
+ Total vdW correction in eV:    4.9163092230850980     
+DAV:  11    -0.333430467824E+02   -0.27308E-06   -0.25326E-11 25952   0.970E-06    0.106E-05
+ Total vdW correction in eV:    4.9163092705224187     
+DAV:  12    -0.333430468564E+02   -0.73961E-07   -0.51933E-12 25104   0.320E-06
+ Total vdW correction in eV:    4.9163093219004068     
+ Total vdW correction in eV:    4.9163093146439127     
+  10 F= -.33343047E+02 E0= -.33342948E+02  d E =-.198556E-03  mag=     0.0000
+ Finite differences progress:
+  Degree of freedom:   5/  7
+  Displacement:        1/  2
+  Total:               9/ 14
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.9170102912051448     
+DAV:   1    -0.333925895956E+02   -0.49543E-01   -0.18380E-01 45312   0.108E+00    0.901E-01
+ Total vdW correction in eV:    4.9163265962516300     
+DAV:   2    -0.333563758237E+02    0.36214E-01   -0.38140E-02 44864   0.380E-01    0.447E-01
+ Total vdW correction in eV:    4.9162257207581739     
+DAV:   3    -0.333430309616E+02    0.13345E-01   -0.15324E-03 48352   0.230E-01    0.750E-02
+ Total vdW correction in eV:    4.9162450372933399     
+DAV:   4    -0.333431764272E+02   -0.14547E-03   -0.29105E-03 44160   0.857E-02    0.495E-02
+ Total vdW correction in eV:    4.9162851131299483     
+DAV:   5    -0.333430451731E+02    0.13125E-03   -0.48152E-05 45760   0.154E-02    0.625E-03
+ Total vdW correction in eV:    4.9162957917321650     
+DAV:   6    -0.333430504520E+02   -0.52789E-05   -0.13269E-05 46032   0.582E-03    0.588E-03
+ Total vdW correction in eV:    4.9163112624110408     
+DAV:   7    -0.333430477947E+02    0.26573E-05   -0.17436E-06 43840   0.241E-03    0.120E-03
+ Total vdW correction in eV:    4.9163102597578145     
+DAV:   8    -0.333430469631E+02    0.83163E-06   -0.43241E-08 43232   0.368E-04    0.264E-04
+ Total vdW correction in eV:    4.9163096388664371     
+DAV:   9    -0.333430468263E+02    0.13682E-06   -0.40498E-09 27760   0.114E-04    0.128E-04
+ Total vdW correction in eV:    4.9163092092365162     
+DAV:  10    -0.333430467778E+02    0.48515E-07   -0.44629E-10 26512   0.484E-05
+ Total vdW correction in eV:    4.9163093772564954     
+ Total vdW correction in eV:    4.9163092668273913     
+  11 F= -.33343047E+02 E0= -.33342947E+02  d E =-.198556E-03  mag=    -0.0000
+ Finite differences progress:
+  Degree of freedom:   5/  7
+  Displacement:        2/  2
+  Total:              10/ 14
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.9166597965650460     
+DAV:   1    -0.333631304998E+02   -0.20084E-01   -0.16471E-01 45440   0.937E-01    0.555E-01
+ Total vdW correction in eV:    4.9164245379796023     
+DAV:   2    -0.333502521585E+02    0.12878E-01   -0.30420E-02 44592   0.295E-01    0.305E-01
+ Total vdW correction in eV:    4.9162610701835145     
+DAV:   3    -0.333429268541E+02    0.73253E-02   -0.73285E-04 47664   0.161E-01    0.705E-02
+ Total vdW correction in eV:    4.9162503471051826     
+DAV:   4    -0.333428702730E+02    0.56581E-04   -0.13747E-03 45552   0.642E-02    0.391E-02
+ Total vdW correction in eV:    4.9162665228427924     
+DAV:   5    -0.333430139452E+02   -0.14367E-03   -0.56754E-05 46544   0.288E-02    0.585E-03
+ Total vdW correction in eV:    4.9162811922148437     
+DAV:   6    -0.333430347236E+02   -0.20778E-04   -0.71690E-05 44448   0.130E-02    0.398E-03
+ Total vdW correction in eV:    4.9163051101067587     
+DAV:   7    -0.333430492255E+02   -0.14502E-04   -0.62681E-07 45824   0.180E-03    0.722E-04
+ Total vdW correction in eV:    4.9163070729152425     
+DAV:   8    -0.333430495145E+02   -0.28906E-06   -0.14632E-07 41968   0.610E-04    0.574E-04
+ Total vdW correction in eV:    4.9163074099070361     
+DAV:   9    -0.333430487830E+02    0.73152E-06   -0.12755E-09 27632   0.650E-05    0.322E-04
+ Total vdW correction in eV:    4.9163091215537484     
+DAV:  10    -0.333430466853E+02    0.20976E-05   -0.49461E-10 26416   0.474E-05    0.505E-05
+ Total vdW correction in eV:    4.9163091252408790     
+DAV:  11    -0.333430468606E+02   -0.17521E-06   -0.29857E-11 26080   0.110E-05    0.177E-05
+ Total vdW correction in eV:    4.9163091522283411     
+DAV:  12    -0.333430468936E+02   -0.33093E-07   -0.15384E-12 25584   0.324E-06
+ Total vdW correction in eV:    4.9163093118606014     
+ Total vdW correction in eV:    4.9163092870301313     
+  12 F= -.33343047E+02 E0= -.33342948E+02  d E =-.198556E-03  mag=    -0.0000
+ Finite differences progress:
+  Degree of freedom:   6/  7
+  Displacement:        1/  2
+  Total:              11/ 14
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+
+
+ VERY BAD NEWS! internal error in subroutine IBZKPT:
+ Reciprocal lattice and k-lattice belong to different class of lattices. Often results are still useful...      96
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.9170102633100061     
+DAV:   1    -0.333925260095E+02   -0.49479E-01   -0.18273E-01 45376   0.108E+00    0.901E-01
+ Total vdW correction in eV:    4.9163480510808757     
+DAV:   2    -0.333563836107E+02    0.36142E-01   -0.38628E-02 44656   0.380E-01    0.447E-01
+ Total vdW correction in eV:    4.9162331739289282     
+DAV:   3    -0.333430253001E+02    0.13358E-01   -0.15015E-03 47728   0.230E-01    0.750E-02
+ Total vdW correction in eV:    4.9162483873691709     
+DAV:   4    -0.333431660725E+02   -0.14077E-03   -0.29140E-03 44896   0.859E-02    0.494E-02
+ Total vdW correction in eV:    4.9162848877864294     
+DAV:   5    -0.333430434172E+02    0.12266E-03   -0.48413E-05 45664   0.154E-02    0.627E-03
+ Total vdW correction in eV:    4.9162957413492903     
+DAV:   6    -0.333430493361E+02   -0.59189E-05   -0.13257E-05 46128   0.582E-03    0.593E-03
+ Total vdW correction in eV:    4.9163112997288740     
+DAV:   7    -0.333430479793E+02    0.13568E-05   -0.17317E-06 43840   0.240E-03    0.121E-03
+ Total vdW correction in eV:    4.9163103566727031     
+DAV:   8    -0.333430470357E+02    0.94352E-06   -0.42362E-08 42944   0.368E-04    0.304E-04
+ Total vdW correction in eV:    4.9163099708010751     
+DAV:   9    -0.333430469462E+02    0.89521E-07   -0.41617E-09 27328   0.112E-04
+ Total vdW correction in eV:    4.9163090322723138     
+ Total vdW correction in eV:    4.9163091948429347     
+  13 F= -.33343047E+02 E0= -.33342948E+02  d E =-.198557E-03  mag=    -0.0000
+ Finite differences progress:
+  Degree of freedom:   6/  7
+  Displacement:        2/  2
+  Total:              12/ 14
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.9166379924005739     
+DAV:   1    -0.333611005264E+02   -0.18053E-01   -0.87956E-02 28592   0.684E-01    0.324E-01
+ Total vdW correction in eV:    4.9165020542372968     
+DAV:   2    -0.333566207383E+02    0.44798E-02   -0.16877E-02 29184   0.214E-01    0.209E-01
+ Total vdW correction in eV:    4.9163901406343040     
+DAV:   3    -0.333525028124E+02    0.41179E-02   -0.45885E-04 29952   0.140E-01    0.228E-02
+ Total vdW correction in eV:    4.9164014975253885     
+DAV:   4    -0.333527006652E+02   -0.19785E-03   -0.94818E-04 30048   0.516E-02    0.136E-02
+ Total vdW correction in eV:    4.9164196859073099     
+DAV:   5    -0.333527240900E+02   -0.23425E-04   -0.34773E-05 29600   0.101E-02    0.501E-03
+ Total vdW correction in eV:    4.9164364190312124     
+DAV:   6    -0.333527276808E+02   -0.35908E-05   -0.12564E-06 29680   0.195E-03    0.204E-03
+ Total vdW correction in eV:    4.9164485028084055     
+DAV:   7    -0.333527296178E+02   -0.19370E-05   -0.99625E-08 29040   0.601E-04    0.709E-04
+ Total vdW correction in eV:    4.9164519673460276     
+DAV:   8    -0.333527298558E+02   -0.23805E-06   -0.11785E-08 18080   0.178E-04    0.331E-04
+ Total vdW correction in eV:    4.9164536557141272     
+DAV:   9    -0.333527298173E+02    0.38551E-07   -0.91071E-10 17920   0.602E-05
+ Total vdW correction in eV:    4.9164558129356966     
+ Total vdW correction in eV:    4.9164550061716970     
+  14 F= -.33352730E+02 E0= -.33352634E+02  d E =-.191738E-03  mag=     0.0000
+ Finite differences progress:
+  Degree of freedom:   7/  7
+  Displacement:        1/  2
+  Total:              13/ 14
+ bond charge predicted
+       N       E                     dE             d eps       ncg     rms          rms(c)
+ Total vdW correction in eV:    4.9165015359471838     
+DAV:   1    -0.333523152321E+02    0.41462E-03   -0.45053E-02 24576   0.412E-01    0.137E-01
+ Total vdW correction in eV:    4.9164621267855697     
+DAV:   2    -0.333526881081E+02   -0.37288E-03   -0.47136E-03 30640   0.113E-01    0.753E-02
+ Total vdW correction in eV:    4.9164583578738874     
+DAV:   3    -0.333527203001E+02   -0.32192E-04   -0.85286E-05 29328   0.203E-02    0.332E-02
+ Total vdW correction in eV:    4.9164590036318989     
+DAV:   4    -0.333527329917E+02   -0.12692E-04   -0.28581E-05 30496   0.863E-03    0.120E-02
+ Total vdW correction in eV:    4.9164575629982838     
+DAV:   5    -0.333527301587E+02    0.28330E-05   -0.15420E-06 29008   0.263E-03    0.215E-03
+ Total vdW correction in eV:    4.9164562698346792     
+DAV:   6    -0.333527295827E+02    0.57598E-06   -0.25203E-07 29792   0.846E-04    0.947E-04
+ Total vdW correction in eV:    4.9164557249243579     
+DAV:   7    -0.333527293360E+02    0.24674E-06   -0.12687E-08 18464   0.205E-04    0.406E-04
+ Total vdW correction in eV:    4.9164555149157430     
+DAV:   8    -0.333527292799E+02    0.56057E-07   -0.24714E-09 18080   0.103E-04
+ Total vdW correction in eV:    4.9164556500928622     
+ Total vdW correction in eV:    4.9164555831745123     
+  15 F= -.33352729E+02 E0= -.33352633E+02  d E =-.191739E-03  mag=    -0.0000
+ Finite differences progress:
+  Degree of freedom:   7/  7
+  Displacement:        2/  2
+  Total:              14/ 14
