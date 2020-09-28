@@ -89,6 +89,7 @@ Example function
 >>> dft_3d = data(dataset='dft_3d')
 >>> print (len(dft_3d))
 36099
+<<<<<<< HEAD
 >>> from jarvis.io.vasp.inputs import Poscar
 >>> for i in dft_3d:
 ...     atoms = Atoms.from_dict(i['atoms'])
@@ -119,6 +120,11 @@ External links
            
       https://pypi.org/project/jarvis-tools
  
+      https://jarvis-materials-design.github.io/dbdocs/
+         
+      https://pypi.org/project/jarvis-tools
+      
+      https://jarvis-tools.readthedocs.io/en/latest/
       
       https://www.slideshare.net/KAMALCHOUDHARY4
 
