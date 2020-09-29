@@ -68,6 +68,37 @@ def read_scf(scf_file="FeSe.scf"):
     return info
 
 
+def band_eigvals(energy_file="FeSe.energy", plot=False, band_file="band.png"):
+    """Get bandstructure eigenvalues."""
+    f = open(energy_file, "r")
+    lines = f.read().splitlines()
+    f.close()
+    eigs = []
+    eig_bands = []
+    start = True
+    for i in lines:
+        sp = i.split()
+        if len(sp) == 2 and start:
+            tmp = float(sp[1])
+            eig_bands.append(tmp)
+        if len(sp) == 7:
+            start = True
+            if eig_bands != []:
+                eigs.append(eig_bands)
+            eig_bands = []
+    eigs = np.array(eigs)
+    if plot:
+        import matplotlib.pyplot as plt
+
+        for i in eigs.T:
+            plt.plot(i)
+        plt.savefig(band_file)
+        plt.close()
+    return eigs
+
+
+"""
 read_band_energy()
 x = read_scf()
 print(x)
+"""

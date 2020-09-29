@@ -134,34 +134,36 @@ class DataFileSchema(object):
         )
         return atoms
 
-    def band_eigvals(
-        energy_file="FeSe.energy", plot=False, band_file="band.png"
-    ):
-        """Get bandstructure eigenvalues."""
-        f = open(energy_file, "r")
-        lines = f.read().splitlines()
-        f.close()
-        eigs = []
-        eig_bands = []
-        start = True
-        for i in lines:
-            sp = i.split()
-            if len(sp) == 2 and start:
-                tmp = float(sp[1])
-                eig_bands.append(tmp)
-            if len(sp) == 7:
-                start = True
-                if eig_bands != []:
-                    eigs.append(eig_bands)
-                eig_bands = []
-        eigs = np.array(eigs)
+    def bandstruct_eigvals(self, plot=False, filename="band.png"):
+        """Get eigenvalues to plot bandstructure."""
+        # nbnd = int(
+        #    self.data["qes:espresso"]["output"]["band_structure"]["nbnd"]
+        # )
+        nkpts = int(
+            self.data["qes:espresso"]["output"]["band_structure"][
+                "starting_k_points"
+            ]["nk"]
+        )
+        eigvals = []
+        for i in range(nkpts):
+            eig = [
+                float(j)
+                for j in self.data["qes:espresso"]["output"]["band_structure"][
+                    "ks_energies"
+                ][i]["eigenvalues"]["#text"]
+                .split("\n")[0]
+                .split()
+            ]
+            eigvals.append(eig)
+        eigvals = np.array(eigvals)
         if plot:
             import matplotlib.pyplot as plt
-            for i in eigs.T:
+
+            for i in eigvals.T:
                 plt.plot(i)
-            plt.savefig(band_file)
+            plt.savefig(filename)
             plt.close()
-        return eigs
+        return eigvals
 
 
 """
