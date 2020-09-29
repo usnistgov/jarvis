@@ -4,7 +4,7 @@ from jarvis.analysis.structure.spacegroup import (
     Spacegroup3D,
     symmetrically_distinct_miller_indices,
 )
-from jarvis.core.atoms import Atoms, get_supercell_dims
+from jarvis.core.atoms import Atoms, get_supercell_dims, ase_to_atoms
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.lammps.inputs import LammpsInput, LammpsData
 from jarvis.tasks.lammps.templates.templates import GenericInputs
@@ -17,6 +17,7 @@ import subprocess
 import json
 from collections import OrderedDict
 import numpy as np
+
 
 class JobFactory(object):
     """Class for generic LAMMPS calculations."""
@@ -71,12 +72,8 @@ class JobFactory(object):
         if enforce_conventional_structure:
             atoms = Spacegroup3D(atoms).conventional_standard_structure
 
-        a = atoms.lattice.lat_lengths()[0]
-        b = atoms.lattice.lat_lengths()[1]
-        c = atoms.lattice.lat_lengths()[2]
- 
         if enforce_c_size is not None:
-            dim = get_supercell_dims(atoms,enforce_c_size=enforce_c_size)
+            dim = get_supercell_dims(atoms, enforce_c_size=enforce_c_size)
             atoms = atoms.make_supercell([dim[0], dim[1], dim[2]])
 
         self.pair_style = "eam/alloy"
@@ -128,7 +125,8 @@ class JobFactory(object):
                 lammps_cmd=lammps_cmd,
             ).runjob()
 
-        self.phonons(atoms=atoms,lammps_cmd=lammps_cmd,parameters=parameters)
+        self.phonons(atoms=atoms, lammps_cmd=lammps_cmd, parameters=parameters)
+
     # def optimize_and_elastic(self):
     #     pass
 
@@ -140,24 +138,33 @@ class JobFactory(object):
 
     # def phonon(self):
     #     pass
-    def phonons(self,atoms=None, lammps_cmd='',enforce_c_size=15.0,parameters={}):
-        "Make Phonon calculation setup."""
+    def phonons(
+        self, atoms=None, lammps_cmd="", enforce_c_size=15.0, parameters={}
+    ):
+        """Make Phonon calculation setup."""
         from phonopy import Phonopy
-        from phonopy.file_IO import parse_FORCE_CONSTANTS, write_FORCE_CONSTANTS
-        from phonopy.structure.atoms import Atoms as PhonopyAtoms
+        from phonopy.file_IO import (
+            #    parse_FORCE_CONSTANTS,
+            write_FORCE_CONSTANTS,
+        )
+
         bulk = atoms.phonopy_converter()
 
-        dim = get_supercell_dims(atoms,enforce_c_size=enforce_c_size)
+        dim = get_supercell_dims(atoms, enforce_c_size=enforce_c_size)
         atoms = atoms.make_supercell([dim[0], dim[1], dim[2]])
 
         Poscar(atoms).write_file("POSCAR")
-        
-        atoms=atoms.make_supercell_matrix([dim[0], dim[1], dim[2]])
+
+        atoms = atoms.make_supercell_matrix([dim[0], dim[1], dim[2]])
         Poscar(atoms).write_file("POSCAR-Super.vasp")
 
-        phonon = Phonopy(bulk, [[dim[0], 0, 0], [0, dim[1], 0], [0, 0, dim[2]]])  
+        phonon = Phonopy(
+            bulk, [[dim[0], 0, 0], [0, dim[1], 0], [0, 0, dim[2]]]
+        )
         print("[Phonopy] Atomic displacements1:", bulk)
-        print("[Phonopy] Atomic displacements2:", phonon, dim[0], dim[1], dim[2])
+        print(
+            "[Phonopy] Atomic displacements2:", phonon, dim[0], dim[1], dim[2]
+        )
         phonon.generate_displacements(distance=0.03)
         disps = phonon.get_displacements()
         print("[Phonopy] Atomic displacements3:", disps)
@@ -169,39 +176,38 @@ class JobFactory(object):
         set_of_forces = []
         disp = 0
         from ase import Atoms as AseAtoms
+
         for scell in supercells:
-            cell = AseAtoms(
+            ase_atoms = AseAtoms(
                 symbols=scell.get_chemical_symbols(),
                 scaled_positions=scell.get_scaled_positions(),
                 cell=scell.get_cell(),
                 pbc=True,
             )
+            j_atoms = ase_to_atoms(ase_atoms)
             disp = disp + 1
-            
+
             parameters["control_file"] = "run0.mod"
-            a, b, forces = LammpsJob(atoms=atoms,lammps_cmd=lammps_cmd,parameters=parameters,jobname='disp-'+str(disp) ).runjob()
+            a, b, forces = LammpsJob(
+                atoms=j_atoms,
+                lammps_cmd=lammps_cmd,
+                parameters=parameters,
+                jobname="disp-" + str(disp),
+            ).runjob()
             print("forces=", forces)
             drift_force = forces.sum(axis=0)
             print("drift forces=", drift_force)
-            #print("[Phonopy] Drift force:", "%11.5f" * 3 % tuple(drift_force))
             # Simple translational invariance
             for force in forces:
                 force -= drift_force / forces.shape[0]
             set_of_forces.append(forces)
         phonon.produce_force_constants(forces=set_of_forces)
 
-        write_FORCE_CONSTANTS(phonon.get_force_constants(), filename="FORCE_CONSTANTS")
+        write_FORCE_CONSTANTS(
+            phonon.get_force_constants(), filename="FORCE_CONSTANTS"
+        )
         print()
         print("[Phonopy] Phonon frequencies at Gamma:")
-
-
-
-
-
-
-
-
-
 
 
 class LammpsJob(object):

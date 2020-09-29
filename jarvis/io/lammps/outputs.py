@@ -485,10 +485,8 @@ def analyze_log(log="log.lammps"):
     )
 
 
-
 def read_dump(data=None):
-    """ Read LAMMPS dump file"""
-
+    """Read LAMMPS dump file."""
     f = open(data, "r")
     lines = f.read().splitlines()
     for i, line in enumerate(lines):
@@ -508,6 +506,7 @@ def read_dump(data=None):
     f.close()
     prop = np.asarray(coords)
     return prop
+
 
 # p=read_data()
 # print (p)

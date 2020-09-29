@@ -3,6 +3,7 @@
 from jarvis.core.atoms import Atoms
 from collections import OrderedDict
 import xmltodict
+import numpy as np
 
 
 class QEout(object):
@@ -72,19 +73,20 @@ class DataFileSchema(object):
 
     def xml_to_dict(self):
         """Read XML file."""
-
         with open(self.filename) as fd:
             data = xmltodict.parse(fd.read())
             self.data = data
 
     @property
     def final_energy(self):
+        """Get final energy."""
         return float(
             self.data["qes:espresso"]["step"][-1]["total_energy"]["etot"]
         )
 
     @property
     def forces(self):
+        """Get final forces."""
         return [
             [float(j) for j in i.split()]
             for i in self.data["qes:espresso"]["step"][-1]["forces"][
@@ -94,6 +96,7 @@ class DataFileSchema(object):
 
     @property
     def final_structure(self):
+        """Get final atoms."""
         elements = []
         pos = []
         lat = []
@@ -152,9 +155,9 @@ class DataFileSchema(object):
                     eigs.append(eig_bands)
                 eig_bands = []
         eigs = np.array(eigs)
-        print(eigs)
         if plot:
-            for i in eigvals.T:
+            import matplotlib.pyplot as plt
+            for i in eigs.T:
                 plt.plot(i)
             plt.savefig(band_file)
             plt.close()
