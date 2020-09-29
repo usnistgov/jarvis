@@ -26,3 +26,4 @@ def test_outputs():
     print(dxml.bandstruct_eigvals(plot=True))
     cmd = "rm band.png"
     os.system(cmd)
+    

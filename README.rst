@@ -53,7 +53,7 @@ For more details, checkout our latest article:  `JARVIS: An Integrated Infrastru
 Some important features
 =======================================================================
 
-- **Software workflow tasks**:  VASP, Quantum Espresso, BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM.
+- **Software workflow tasks**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM.
 
 - **HPC clusters**: PBS and SLURM.
 
@@ -89,7 +89,6 @@ Example function
 >>> dft_3d = data(dataset='dft_3d')
 >>> print (len(dft_3d))
 36099
-<<<<<<< HEAD
 >>> from jarvis.io.vasp.inputs import Poscar
 >>> for i in dft_3d:
 ...     atoms = Atoms.from_dict(i['atoms'])
@@ -114,13 +113,11 @@ Please see `Publications related to JARVIS-Tools <https://github.com/usnistgov/j
 
 External links
 -----------------------------------------
+      https://jarvis-materials-design.github.io/dbdocs/
 
       https://figshare.com/authors/Kamal_Choudhary/4445539
 
-           
       https://pypi.org/project/jarvis-tools
- 
-      https://jarvis-materials-design.github.io/dbdocs/
          
       https://pypi.org/project/jarvis-tools
       

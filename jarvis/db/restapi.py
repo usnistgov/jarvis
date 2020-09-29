@@ -414,62 +414,48 @@ class Api(object):
 """
 if __name__ == "__main__":
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> a0d8114641fc3a76cbea2710a6d15f18c9264730
-
     a = Api()
     a = Api(base_url="http://test-jarvis.nist.gov")
     tid="5f624bc547d1ac011a224672"
     tid='5f6909278c6d9e011c8cc8c9'
     a.upload_xml_file(filename='JVASP-1004.xml',template_id=tid)
 
-
-<<<<<<< HEAD
->>>>>>> master
     a = Api()
     a = Api(base_url="https://jarvis.nist.gov")
     x = a.get_global_workspace_id()
     print("x=", x)
-=======
+
     a = Api()
     a = Api(base_url="https://jarvis.nist.gov")
->>>>>>> a0d8114641fc3a76cbea2710a6d15f18c9264730
+
     # a.upload_jarvisff_xmls()
     # a.upload_jarvisff_xmls()
     # a.upload_jarvisdft_xmls()
     # tid="5f626925ece4b00035e5277f"
-<<<<<<< HEAD
+
     # a.upload_xml_file(filename='JVASP-1067.xml',template_id=tid)
     # a.upload_xml_file(filename='JVASP-664.xml',template_id=tid)
     # a.upload_xml_file(filename='JVASP-1002.xml',template_id=tid)
 
     # a.delete_all_records()
-<<<<<<< HEAD
+
     # filepath="/rk2/knc6/DB/RAW_FILES/JARVIS-DFT-DFPT/JVASP-10088.zip",
     # filepath="/rk2/knc6/JARVIS-DFT/Elements-bulkk/
     # mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
     # x = a.upload_blob(filepath)
     print("id", x)
-=======
-=======
+
     #a.upload_xml_file(filename='JVASP-1067.xml',template_id=tid)
     #a.upload_xml_file(filename='JVASP-664.xml',template_id=tid)
     #a.upload_xml_file(filename='JVASP-1002.xml',template_id=tid)
 
     # a.delete_all_records()
->>>>>>> a0d8114641fc3a76cbea2710a6d15f18c9264730
+
     #filepath="/rk2/knc6/DB/RAW_FILES/JARVIS-DFT-DFPT/JVASP-10088.zip",
     #filepath="/rk2/knc6/JARVIS-DFT/Elements-bulkk/
     #mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
     #x = a.upload_blob(filepath)
     print ('id',x)
-<<<<<<< HEAD
->>>>>>> master
-=======
->>>>>>> a0d8114641fc3a76cbea2710a6d15f18c9264730
     a.delete_blob(x)
     # a.get_all_blobs()
 

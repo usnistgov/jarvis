@@ -22,3 +22,4 @@ def test_inputs():
     sp = qe.atomic_species_string()
     sp = qe.atomic_cell_params()
     assert qe.input_params["system_params"]["nat"] == 2
+    

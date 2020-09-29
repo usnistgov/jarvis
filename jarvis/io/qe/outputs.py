@@ -1,9 +1,11 @@
 """Module for analyzing QE outputs."""
 
+
 from jarvis.core.atoms import Atoms
 from collections import OrderedDict
 import xmltodict
 import numpy as np
+
 
 
 class QEout(object):
@@ -59,6 +61,7 @@ class QEout(object):
                     [float(j) for j in self.lines[ii + 2].split()]
                 )
         return band_energies
+
 
 
 class DataFileSchema(object):
@@ -164,6 +167,7 @@ class DataFileSchema(object):
             plt.savefig(filename)
             plt.close()
         return eigvals
+
 
 
 """
