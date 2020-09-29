@@ -437,4 +437,3 @@ class LammpsJob(object):
             f_json.write(json.dumps(data_cal))
             f_json.close()
             return en, final_str, forces
-          
