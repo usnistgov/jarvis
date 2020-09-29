@@ -6,6 +6,7 @@ import glob
 from jarvis.db.jsonutils import dumpjson
 import string
 from collections import OrderedDict
+import json
 
 
 class Api(object):
@@ -63,7 +64,24 @@ class Api(object):
             raise Exception("Problem occurred while getting the file.")
             raise Exception("Check username,password, ... details")
 
-    def upload_xml_file(self, filename="", template_id=""):
+    def get_global_workspace_id(self):
+        """Get workspace ID."""
+        turl = self.base_url + "/rest/workspace/"
+        response = requests.get(
+            turl, verify=False, auth=(self.username, self.password)
+        )
+        workspace_list = json.loads(response.text)
+        for workspace in workspace_list:
+            if workspace["title"] == "Global Public Workspace":
+                global_workspace_id = workspace["id"]
+        return global_workspace_id
+
+    def upload_xml_file(
+        self,
+        filename="",
+        workspace_id="5df7b6defb7e53000c4652aa",
+        template_id="",
+    ):
         """Upload file using path of the file and schema/template id."""
         print("status: uploading data file...")
         xml_file = open(filename, "rb")
@@ -77,6 +95,7 @@ class Api(object):
         data = {
             "title": base,
             "template": template_id,
+            "workspace": workspace_id,
             "xml_content": xml_content,
         }
         response = requests.post(
@@ -395,6 +414,11 @@ class Api(object):
 """
 if __name__ == "__main__":
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> a0d8114641fc3a76cbea2710a6d15f18c9264730
 
     a = Api()
     a = Api(base_url="http://test-jarvis.nist.gov")
@@ -403,22 +427,49 @@ if __name__ == "__main__":
     a.upload_xml_file(filename='JVASP-1004.xml',template_id=tid)
 
 
+<<<<<<< HEAD
+>>>>>>> master
     a = Api()
     a = Api(base_url="https://jarvis.nist.gov")
+    x = a.get_global_workspace_id()
+    print("x=", x)
+=======
+    a = Api()
+    a = Api(base_url="https://jarvis.nist.gov")
+>>>>>>> a0d8114641fc3a76cbea2710a6d15f18c9264730
     # a.upload_jarvisff_xmls()
     # a.upload_jarvisff_xmls()
     # a.upload_jarvisdft_xmls()
     # tid="5f626925ece4b00035e5277f"
+<<<<<<< HEAD
+    # a.upload_xml_file(filename='JVASP-1067.xml',template_id=tid)
+    # a.upload_xml_file(filename='JVASP-664.xml',template_id=tid)
+    # a.upload_xml_file(filename='JVASP-1002.xml',template_id=tid)
+
+    # a.delete_all_records()
+<<<<<<< HEAD
+    # filepath="/rk2/knc6/DB/RAW_FILES/JARVIS-DFT-DFPT/JVASP-10088.zip",
+    # filepath="/rk2/knc6/JARVIS-DFT/Elements-bulkk/
+    # mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
+    # x = a.upload_blob(filepath)
+    print("id", x)
+=======
+=======
     #a.upload_xml_file(filename='JVASP-1067.xml',template_id=tid)
     #a.upload_xml_file(filename='JVASP-664.xml',template_id=tid)
     #a.upload_xml_file(filename='JVASP-1002.xml',template_id=tid)
 
     # a.delete_all_records()
+>>>>>>> a0d8114641fc3a76cbea2710a6d15f18c9264730
     #filepath="/rk2/knc6/DB/RAW_FILES/JARVIS-DFT-DFPT/JVASP-10088.zip",
     #filepath="/rk2/knc6/JARVIS-DFT/Elements-bulkk/
     #mp-149_bulk_PBEBO/MAIN-RELAX-bulk@mp-149/CHGCAR"
     #x = a.upload_blob(filepath)
     print ('id',x)
+<<<<<<< HEAD
+>>>>>>> master
+=======
+>>>>>>> a0d8114641fc3a76cbea2710a6d15f18c9264730
     a.delete_blob(x)
     # a.get_all_blobs()
 

@@ -89,7 +89,23 @@ Example function
 >>> dft_3d = data(dataset='dft_3d')
 >>> print (len(dft_3d))
 36099
-
+<<<<<<< HEAD
+>>> from jarvis.io.vasp.inputs import Poscar
+>>> for i in dft_3d:
+...     atoms = Atoms.from_dict(i['atoms'])
+...     poscar = Poscar(atoms)
+...     jid = i['jid']
+...     filename = 'POSCAR-'+jid+'.vasp'
+...     poscar.write_file(filename)
+>>> dft_2d = data(dataset='dft_2d')
+>>> print (len(dft_2d))
+1070
+>>> for i in dft_2d:
+...     atoms = Atoms.from_dict(i['atoms'])
+...     poscar = Poscar(atoms)
+...     jid = i['jid']
+...     filename = 'POSCAR-'+jid+'.vasp'
+...     poscar.write_file(filename)
 
 References
 -----------------
@@ -101,6 +117,9 @@ External links
 
       https://figshare.com/authors/Kamal_Choudhary/4445539
 
+           
+      https://pypi.org/project/jarvis-tools
+ 
       https://jarvis-materials-design.github.io/dbdocs/
          
       https://pypi.org/project/jarvis-tools

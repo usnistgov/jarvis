@@ -1,6 +1,8 @@
 """Module for analyzing QE outputs."""
 
+from jarvis.core.atoms import Atoms
 from collections import OrderedDict
+import xmltodict
 
 
 class QEout(object):
@@ -56,6 +58,107 @@ class QEout(object):
                     [float(j) for j in self.lines[ii + 2].split()]
                 )
         return band_energies
+
+
+class DataFileSchema(object):
+    """Module to parse data-file-schema.xml file."""
+
+    def __init__(self, filename="", data={}):
+        """Initialize class."""
+        self.filename = filename
+        self.data = data
+        if self.data == {}:
+            self.xml_to_dict()
+
+    def xml_to_dict(self):
+        """Read XML file."""
+
+        with open(self.filename) as fd:
+            data = xmltodict.parse(fd.read())
+            self.data = data
+
+    @property
+    def final_energy(self):
+        return float(
+            self.data["qes:espresso"]["step"][-1]["total_energy"]["etot"]
+        )
+
+    @property
+    def forces(self):
+        return [
+            [float(j) for j in i.split()]
+            for i in self.data["qes:espresso"]["step"][-1]["forces"][
+                "#text"
+            ].split("\n")
+        ]
+
+    @property
+    def final_structure(self):
+        elements = []
+        pos = []
+        lat = []
+        lat.append(
+            [
+                float(i)
+                for i in self.data["qes:espresso"]["step"][-1][
+                    "atomic_structure"
+                ]["cell"]["a1"].split()
+            ]
+        )
+        lat.append(
+            [
+                float(i)
+                for i in self.data["qes:espresso"]["step"][-1][
+                    "atomic_structure"
+                ]["cell"]["a2"].split()
+            ]
+        )
+        lat.append(
+            [
+                float(i)
+                for i in self.data["qes:espresso"]["step"][-1][
+                    "atomic_structure"
+                ]["cell"]["a3"].split()
+            ]
+        )
+        for i in self.data["qes:espresso"]["step"][-1]["atomic_structure"][
+            "atomic_positions"
+        ]["atom"]:
+            elements.append(i["@name"])
+            pos.append([float(j) for j in i["#text"].split()])
+        atoms = Atoms(
+            elements=elements, coords=pos, lattice_mat=lat, cartesian=True
+        )
+        return atoms
+
+    def band_eigvals(
+        energy_file="FeSe.energy", plot=False, band_file="band.png"
+    ):
+        """Get bandstructure eigenvalues."""
+        f = open(energy_file, "r")
+        lines = f.read().splitlines()
+        f.close()
+        eigs = []
+        eig_bands = []
+        start = True
+        for i in lines:
+            sp = i.split()
+            if len(sp) == 2 and start:
+                tmp = float(sp[1])
+                eig_bands.append(tmp)
+            if len(sp) == 7:
+                start = True
+                if eig_bands != []:
+                    eigs.append(eig_bands)
+                eig_bands = []
+        eigs = np.array(eigs)
+        print(eigs)
+        if plot:
+            for i in eigvals.T:
+                plt.plot(i)
+            plt.savefig(band_file)
+            plt.close()
+        return eigs
 
 
 """
