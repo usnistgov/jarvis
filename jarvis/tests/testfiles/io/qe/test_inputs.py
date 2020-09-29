@@ -3,6 +3,7 @@ from jarvis.core.kpoints import Kpoints3D
 import tempfile
 from jarvis.io.qe.inputs import QEinfile
 
+
 def test_inputs():
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
@@ -20,5 +21,5 @@ def test_inputs():
     qe.write_file(filename)
     sp = qe.atomic_species_string()
     sp = qe.atomic_cell_params()
-    assert qe.input_params['system_params']['nat']==2
-
+    assert qe.input_params["system_params"]["nat"] == 2
+    
