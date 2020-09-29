@@ -485,6 +485,30 @@ def analyze_log(log="log.lammps"):
     )
 
 
+
+def read_dump(data=None):
+    """ Read LAMMPS dump file"""
+
+    f = open(data, "r")
+    lines = f.read().splitlines()
+    for i, line in enumerate(lines):
+        if "NUMBER OF ATOMS" in line:
+            natoms = int(lines[i + 1].split()[0])
+    x = np.zeros((natoms))
+    y = np.zeros((natoms))
+    z = np.zeros((natoms))
+    coords = list()  # np.zeros((natoms))
+    for i, line in enumerate(lines):
+        if "ITEM: ATOMS" in line:
+            for j in range(0, natoms):
+                x[j] = (lines[i + j + 1]).split()[1]
+                y[j] = (lines[i + j + 1]).split()[2]
+                z[j] = (lines[i + j + 1]).split()[3]
+                coords.append([x[j], y[j], z[j]])
+    f.close()
+    prop = np.asarray(coords)
+    return prop
+
 # p=read_data()
 # print (p)
 # parse_potential_mod()
