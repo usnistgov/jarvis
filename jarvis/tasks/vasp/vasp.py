@@ -152,17 +152,17 @@ class JobFactory(object):
 
             length :  K-points in length unit
         """
-        incar = self.use_incar_dict
+        incar_dict = self.use_incar_dict.to_dict().copy()
         cvn = Spacegroup3D(mat.atoms).conventional_standard_structure
         comment = mat.comment
         p = Poscar(cvn, comment=comment)
 
         if npar is not None:
-            incar.update({"NPAR": npar})
+            incar_dict.update({"NPAR": npar})
 
         if nbands is not None:
             nbands = int(nbands * 3)
-            incar.update({"NBANDS": nbands})
+            incar_dict.update({"NBANDS": nbands})
         data = {
             "ENCUT": 1.3 * float(encut),
             "NEDOS": 5000,
@@ -172,7 +172,8 @@ class JobFactory(object):
             "IBRION": 6,
             "LCHARG": ".FALSE.",
         }
-        incar.update(data)
+        incar_dict.update(data)
+        incar = Incar.from_dict(incar_dict)
         kpoints = Kpoints().automatic_length_mesh(
             lattice_mat=p.atoms.lattice_mat, length=length
         )  # Auto_Kpoints(mat=mat, length=length)
@@ -205,11 +206,12 @@ class JobFactory(object):
 
             length :  K-points in length unit
         """
-        incar = self.use_incar_dict
+        # incar = self.use_incar_dict
 
+        incar_dict = self.use_incar_dict.to_dict().copy()
         if nbands is not None:
             nbands = int(nbands * 3)
-            incar.update({"NBANDS": nbands})
+            incar_dict.update({"NBANDS": nbands})
         data = {
             "ENCUT": encut,
             "NEDOS": 5000,
@@ -223,7 +225,8 @@ class JobFactory(object):
             "IBRION": 1,
             "LCHARG": ".FALSE.",
         }
-        incar.update(data)
+        incar_dict.update(data)
+        incar = Incar.from_dict(incar_dict)
         kpoints = Kpoints().automatic_length_mesh(
             lattice_mat=mat.atoms.lattice_mat, length=length
         )  # Auto_Kpoints(mat=mat, length=length)
@@ -256,11 +259,12 @@ class JobFactory(object):
 
             length :  K-points in length unit
         """
-        incar = self.use_incar_dict
+        # incar = self.use_incar_dict
 
+        incar_dict = self.use_incar_dict.to_dict().copy()
         if nbands is not None:
             nbands = int(nbands * 3)
-            incar.update({"NBANDS": nbands})
+            incar_dict.update({"NBANDS": nbands})
         data = {
             "ENCUT": encut,
             "NEDOS": 5000,
@@ -271,7 +275,8 @@ class JobFactory(object):
             "IBRION": 1,
             "LCHARG": ".FALSE.",
         }
-        incar.update(data)
+        incar_dict.update(data)
+        incar = Incar.from_dict(incar_dict)
         kpoints = Kpoints().automatic_length_mesh(
             lattice_mat=mat.atoms.lattice_mat, length=length
         )  # Auto_Kpoints(mat=mat, length=length)
@@ -314,13 +319,14 @@ class JobFactory(object):
 
             copy_prev_chgcar :  path of CHGCAR file for Non-SCF step
         """
-        incar = self.use_incar_dict
+        # incar = self.use_incar_dict
+        incar_dict = self.use_incar_dict.to_dict().copy()
         if copy_prev_chgcar is not None:
             shutil.copy2(copy_prev_chgcar, ".")
 
         if nbands is not None:
             nbands = int(nbands * 1.3)
-            incar.update({"NBANDS": nbands})
+            incar_dict.update({"NBANDS": nbands})
         data = {
             "ENCUT": encut,
             "NEDOS": 5000,
@@ -330,7 +336,8 @@ class JobFactory(object):
             "IBRION": 1,
             "LCHARG": ".FALSE.",
         }
-        incar.update(data)
+        incar_dict.update(data)
+        incar = Incar.from_dict(incar_dict)
         kpoints = Kpoints().kpath(mat.atoms, line_density=line_density)
 
         en, contcar = VaspJob(
@@ -359,7 +366,7 @@ class JobFactory(object):
 
             length :  K-points in length unit
         """
-        incar = self.use_incar_dict
+        incar_dict = self.use_incar_dict.to_dict().copy()
         data = {
             "ENCUT": encut,
             "EDIFFG": -1e-3,
@@ -373,7 +380,9 @@ class JobFactory(object):
             "ISPIN": 2,
             "LCHARG": ".TRUE.",
         }
-        incar.update(data)
+
+        incar_dict.update(data)
+        incar = Incar.from_dict(incar_dict)
         kpoints = Kpoints().automatic_length_mesh(
             lattice_mat=mat.atoms.lattice_mat, length=length
         )  # Auto_Kpoints(mat=mat, length=length)
@@ -411,6 +420,7 @@ class JobFactory(object):
         convg_encut1 = False
         convg_encut2 = False
 
+        incar_dict = self.use_incar_dict.to_dict().copy()
         while not convg_encut2 and not convg_encut1:
             # while convg_encut1 !=True and  convg_encut2 !=True:
             # tol = 0.001  # change 0.001
@@ -418,11 +428,11 @@ class JobFactory(object):
             encut_list.append(encut)
             length = starting_length
             encut1 = encut + 50
-            incar_dict = self.use_incar_dict
+            # incar_dict = self.use_incar_dict
             # print ('incar_dict',incar_dict)
             incar_dict.update({"ENCUT": encut})
             # print (use_incar_dict)
-            incar = incar_dict
+            incar = Incar.from_dict(incar_dict)
             kpoints = Kpoints().automatic_length_mesh(
                 lattice_mat=mat.atoms.lattice_mat, length=length
             )  # Auto_Kpoints(mat=mat, length=length)
@@ -454,10 +464,8 @@ class JobFactory(object):
                 encut1 = encut + 50
                 encut_list.append(encut)
                 print("Incrementing encut", encut)
-                # incar_dict = self.use_incar_dict
                 incar_dict.update({"ENCUT": encut1})
-                # incar_dict["ENCUT"]= encut1
-                # incar = Incar.from_dict(incar_dict)
+                incar = Incar.from_dict(incar_dict)
                 print(
                     "running smart_converge for",
                     str(mat.comment)
@@ -487,8 +495,8 @@ class JobFactory(object):
             print("Some extra points to check for ENCUT")
 
             encut2 = encut1 + 50
-            incar.update({"ENCUT": encut2})
-            # incar_dict["ENCUT"]= encut2
+            incar_dict["ENCUT"] = encut2
+            incar = Incar.from_dict(incar_dict)
             en3, contc = VaspJob(
                 vasp_cmd=self.vasp_cmd,
                 output_file=self.output_file,
@@ -506,9 +514,8 @@ class JobFactory(object):
             ).runjob()
 
             encut3 = encut2 + 50
-            # incar["ENCUT"] = encut3
-            incar.update({"ENCUT": encut3})
-            # incar_dict["ENCUT"]= encut3
+            incar_dict["ENCUT"] = encut3
+            incar = Incar.from_dict(incar_dict)
             en4, contc = VaspJob(
                 poscar=mat,
                 vasp_cmd=self.vasp_cmd,
@@ -526,8 +533,8 @@ class JobFactory(object):
             ).runjob()
 
             encut4 = encut3 + 50
-            incar.update({"ENCUT": encut4})
-            # incar_dict["ENCUT"]= encut4
+            incar_dict["ENCUT"] = encut4
+            incar = Incar.from_dict(incar_dict)
             en5, contc = VaspJob(
                 poscar=mat,
                 incar=incar,
@@ -545,9 +552,8 @@ class JobFactory(object):
             ).runjob()
 
             encut5 = encut4 + 50
-            # incar["ENCUT"] = encut5
-            incar.update({"ENCUT": encut5})
-            # incar_dict["ENCUT"]= encut5
+            incar_dict["ENCUT"] = encut5
+            incar = Incar.from_dict(incar_dict)
             en6, contc = VaspJob(
                 poscar=mat,
                 vasp_cmd=self.vasp_cmd,
@@ -565,9 +571,8 @@ class JobFactory(object):
             ).runjob()
 
             encut6 = encut5 + 50
-            # incar["ENCUT"] = encut6
-            incar.update({"ENCUT": encut6})
-            # incar_dict["ENCUT"]= encut6
+            incar_dict["ENCUT"] = encut6
+            incar = Incar.from_dict(incar_dict)
             en7, contc = VaspJob(
                 poscar=mat,
                 vasp_cmd=self.vasp_cmd,
@@ -623,8 +628,9 @@ class JobFactory(object):
         kp_list = []
         while not convg_kp2 and not convg_kp1:
             # while convg_kp1 !=True and  convg_kp2 !=True:
-            incar = self.use_incar_dict
-            incar.update({"ENCUT": encut})
+            incar_dict = self.use_incar_dict.to_dict().copy()
+            incar_dict.update({"ENCUT": encut})
+            incar = Incar.from_dict(incar_dict)
             # incar_dict["ENCUT"]= encut
             length1 = length1 + 5
             print("Incrementing length", length1)

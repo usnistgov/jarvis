@@ -1,0 +1,851 @@
+LAMMPS (19 Oct 2016)
+Reading data file ...
+  triclinic box = (0 0 0) to (8.16331 8.16331 8.16331) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+       0            0   -8891.5972            0   -8891.5972   -8891.5972   -8891.5972 1.3299891e-07 -1.3303713e-07 1.3300333e-07            0   -110.17137   -110.17137    543.99996      8.16331      8.16331      8.16331       31 
+       1            0   -6158.5535 0.00039100647   -6158.5535   -6158.5535   -6158.5535 1.3311386e-07 -1.3309888e-07 1.3310916e-07            0   -110.17922   -110.17922    542.36959    8.1551467    8.1551467    8.1551467       31 
+       2            0   -3388.4024 0.00078010559   -3388.4024   -3388.4024   -3388.4024 1.3319298e-07 -1.331554e-07 1.3310628e-07            0   -110.18436   -110.18436    540.74248    8.1469834    8.1469834    8.1469834       31 
+       3            0   -585.15469 0.0011630058   -585.15469   -585.15469   -585.15469 1.3241402e-07 -1.3240884e-07 1.3243829e-07            0   -110.18691   -110.18691    539.11863    8.1388201    8.1388201    8.1388201       31 
+       4            0    2208.6283 0.0015640259    2208.6283    2208.6283    2208.6283 1.2565912e-07 -1.2556718e-07 1.256019e-07            0   -110.18928   -110.18928    537.49804    8.1306568    8.1306568    8.1306568       31 
+       5            0   -849.46186 0.0019509792   -849.46186   -849.46186   -849.46186 9.8642549e-08 -9.8692853e-08 9.8612424e-08            0   -110.20195   -110.20195    539.11863    8.1388201    8.1388201    8.1388201       31 
+       6            0    1892.4989 0.0023391247    1892.4989    1892.4989    1892.4989 8.6370219e-08 -8.6386082e-08 8.6381008e-08            0   -110.20718   -110.20718    537.49804    8.1306568    8.1306568    8.1306568       31 
+       7            0   -1402.7802 0.0027310848   -1402.7802   -1402.7802   -1402.7802 4.0828068e-08 -4.0807463e-08 4.0857748e-08            0    -110.2306    -110.2306    539.11863    8.1388201    8.1388201    8.1388201       31 
+       8            0    1295.2327 0.0031220913    1295.2327    1295.2327    1295.2327 3.0821249e-08 -3.0808179e-08 3.0764175e-08            0   -110.23707   -110.23707    537.49804    8.1306568    8.1306568    8.1306568       31 
+       9            0    1261.2093 0.0035140514    1261.2093    1261.2093    1261.2093 1.5346936e-08 -1.533171e-08 1.5311809e-08            0   -110.25419   -110.25419    537.25419     8.129427     8.129427     8.129427       31 
+      10            0   -157.99006 0.0042669773   -157.99006   -157.99006   -157.99006 1.5062246e-08 -1.5003213e-08 1.5034054e-08            0   -110.25455   -110.25455    538.06227    8.1335008    8.1335008    8.1335008       31 
+      11            0   -33.032951 0.0046141148   -33.032951   -33.032951   -33.032951 5.6116476e-09 -5.6390757e-09 5.6362294e-09            0   -110.26242   -110.26242    537.76327    8.1319939    8.1319939    8.1319939       31 
+      12            0    268.61391 0.0053050518    268.61391    268.61391    268.61391 5.6058629e-09 -5.580985e-09 5.5926294e-09            0   -110.26244   -110.26244    537.58808    8.1311107    8.1311107    8.1311107       31 
+      13            0   -21.192759 0.0059890747   -21.192759   -21.192759   -21.192759 3.5625619e-09 -3.5402506e-09 3.5733581e-09            0   -110.26282   -110.26282    537.70529    8.1317017    8.1317017    8.1317017       31 
+      14            0   -1.1451769 0.0066699982   -1.1451769   -1.1451766   -1.1451771 3.5254101e-09 -3.5127475e-09 3.554181e-09            0   -110.26282   -110.26282    537.69362    8.1316428    8.1316428    8.1316428       31 
+      15            0    15.614238 0.0073530674    15.614238    15.614237    15.614238 3.4037222e-09 -3.3657095e-09 3.3690971e-09            0   -110.26282   -110.26282    537.68394     8.131594     8.131594     8.131594       31 
+      16            0  -0.35793212 0.0080420971  -0.35793236  -0.35793703  -0.35792696 2.0116766e-09 -2.0253906e-09 2.0275813e-09            0   -110.26282   -110.26282    537.69275    8.1316384    8.1316384    8.1316384       31 
+      17            0 -0.013212232 0.0087201595 -0.013212437 -0.013216342 -0.013207917 2.0175392e-09 -2.023512e-09 2.0190661e-09            0   -110.26282   -110.26282    537.69255    8.1316374    8.1316374    8.1316374       31 
+      18            0   0.24736287 0.0094130039   0.24736329   0.24737122   0.24735411 1.9965692e-09 -1.9724256e-09 2.0177878e-09            0   -110.26282   -110.26282    537.69241    8.1316367    8.1316367    8.1316367       31 
+      19            0 -0.00011703615  0.010090113 -0.00011075004 9.3140757e-06 -0.0002496725 1.2724431e-09 -1.2802041e-09 1.2175693e-09            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      20            0  0.014020078  0.010767937  0.013888179  0.011368927  0.016803128 9.6209507e-10 -1.0142878e-09 9.4717324e-10            0   -110.26282   -110.26282    537.69257    8.1316375    8.1316376    8.1316375       31 
+      21            0 -0.00035821356  0.011445999 -0.0004785965 -0.0027778984 0.0021818542  9.08732e-10 -9.5987606e-10 9.5320886e-10            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316375       31 
+      22            0 1.0981626e-05  0.012134075 2.4689242e-05 0.00028650359 -0.00027824795 8.9708399e-10 -9.6585596e-10 8.8701269e-10            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      23            0 -0.00086604579  0.012812138 -0.00086596646 -0.00086445734 -0.00086771357 6.8363044e-10 -7.0350196e-10 6.7340578e-10            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      24            0 2.3621245e-05  0.013505936 2.3521678e-05 2.1613643e-05 2.5728415e-05 7.084868e-10 -7.6396849e-10 6.806135e-10            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      25            0 -1.5524112e-05  0.014182091 -1.3045471e-05 3.4531603e-05 -6.8058469e-05 4.0244861e-10 -4.1626885e-10 3.8779572e-10            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      26            0 7.8886159e-05  0.014858007 7.9021615e-05 8.1621431e-05 7.6015431e-05 4.2324641e-10 -4.0314101e-10 4.1561098e-10            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      27            0 -1.2692932e-05   0.01553297 -1.452104e-05 -4.961161e-05 2.6053854e-05 4.0340314e-10 -4.1227753e-10 3.9469633e-10            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      28            0 1.5459653e-06  0.016214132 1.561021e-06 1.8585904e-06 1.2182844e-06 2.3524725e-10 -2.4422085e-10 1.9782084e-10            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      29            0 -0.0001221468  0.016891003 -0.00012215701 -0.0001224536 -0.0001218298 1.5445748e-10 -2.3342993e-10 1.2649913e-10            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      30            0 6.1643887e-08  0.017565966 1.2713995e-08 -1.1687421e-06 1.3409597e-06 1.1200728e-10 -1.0578191e-10 1.0314576e-10            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      31            0 -1.4421182e-06  0.018242121 -1.0386331e-06 8.7047502e-06 -1.1992472e-05 9.7773203e-11 -1.2536575e-10 2.5115094e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      32            0 1.654146e-05  0.018918991 1.6664365e-05 1.9629601e-05 1.3330413e-05 8.3240824e-11 -1.1811443e-10 7.4607809e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      33            0 -6.723994e-08  0.019606113 -7.0415911e-08 -1.4749431e-07  1.61904e-08 7.2017011e-11 -9.0975038e-11 4.6838465e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      34            0 5.3841064e-07  0.020298004 5.3919636e-07 5.756942e-07 5.0034136e-07 3.3758577e-11 -5.6155378e-11 -2.3088127e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      35            0 -8.1369407e-07  0.020974159 -8.13275e-07 -7.9065312e-07 -8.371541e-07 3.5702422e-11 -5.2725248e-11 3.4671782e-12            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      36            0 1.1203019e-08  0.021649122 -5.4013432e-09 -8.1669227e-07 8.5570267e-07 9.6842082e-12 -4.4758278e-11 -4.9486271e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      37            0 -2.6488003e-08  0.022325039 -2.5151547e-08 3.7856757e-08 -9.2169218e-08 4.1034062e-12 -8.3027742e-11 -1.1009399e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      38            0 1.1851414e-06  0.023000956 1.1860962e-06 1.2447141e-06 1.1246139e-06 1.613378e-11 -5.8361045e-11 -3.9265875e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      39            0 7.1434734e-10  0.024019957 -7.0451587e-10 -3.6885264e-09 6.5360843e-09 -1.5421147e-11 -4.0586638e-11 -5.8577049e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+Loop time of 0.024029 on 1 procs for 39 steps with 31 atoms
+
+99.9% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.171368686     -110.262818763     -110.262818763
+  Force two-norm initial, final = 5.2834 1.49711e-11
+  Force max component initial, final = 3.01904 3.63642e-12
+  Final line search alpha, max atom move = 1 3.63642e-12
+  Iterations, force evaluations = 39 68
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.021253   | 0.021253   | 0.021253   |   0.0 | 88.45
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00058579 | 0.00058579 | 0.00058579 |   0.0 |  2.44
+Output  | 0.00042582 | 0.00042582 | 0.00042582 |   0.0 |  1.77
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.001765   |            |       |  7.34
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4803 ave 4803 max 4803 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4803
+Ave neighs/atom = 154.935
+Neighbor list builds = 0
+Dangerous builds = 0
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      39            0 6.4315918e-10            0 -7.3667581e-10 -3.7418253e-09 6.4079786e-09 2.3130824e-11 -1.8417535e-12 -4.8830478e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      40            0 -7.179191e-09 0.00097608566 -8.5831261e-09 -1.1512633e-08 -1.441814e-09 -1.256977e-11 1.4692798e-11 -3.0833017e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+Loop time of 0.000985861 on 1 procs for 1 steps with 31 atoms
+
+405.7% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 1.47534e-11 5.73084e-12
+  Force max component initial, final = 3.63782e-12 1.85189e-12
+  Final line search alpha, max atom move = 1 1.85189e-12
+  Iterations, force evaluations = 1 2
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.00093794 | 0.00093794 | 0.00093794 |   0.0 | 95.14
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 2.6941e-05 | 2.6941e-05 | 2.6941e-05 |   0.0 |  2.73
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 2.098e-05  |            |       |  2.13
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+System init for write_restart ...
+System init for write_data ...
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0   0.93471931            0    1.2271063    0.7885258   0.78852581 -1.2555095e-11 -5.5162904e-12 4.5306546e-11            0   -110.26282   -110.26282    537.69204    8.1316294    8.1316376    8.1316376       31 
+      41            0   0.93071782  0.001021862     1.216602   0.78777571   0.78777572 -2.5174415e-11 -3.52095e-11 6.0732784e-11            0   -110.26282   -110.26282    537.69204    8.1316294    8.1316376    8.1316376       31 
+      42            0   0.93030938 0.0020339489    1.2132868   0.78882064   0.78882065 -1.3388428e-11 -1.0090827e-11   4.4767e-11            0   -110.26282   -110.26282    537.69204    8.1316294    8.1316376    8.1316376       31 
+      43            0   0.93140661 0.0030269623    1.2120663   0.79107674   0.79107675 -1.2626572e-11 3.0562174e-12 6.0438996e-12            0   -110.26282   -110.26282    537.69204    8.1316294    8.1316376    8.1316376       31 
+      44            0   0.93120411 0.0040078163    1.2120219    0.7907952   0.79079521 -2.8678798e-11 -6.3630502e-12 -2.4438975e-12            0   -110.26282   -110.26282    537.69204    8.1316294    8.1316376    8.1316376       31 
+      45            0    0.9312071 0.0050039291    1.2120216   0.79079985   0.79079986 -1.9231779e-11 9.2884406e-12 4.3913367e-11            0   -110.26282   -110.26282    537.69204    8.1316294    8.1316376    8.1316376       31 
+      46            0   0.93120709 0.0064377785    1.2120216   0.79079984   0.79079985 -5.0771728e-12 -6.7933883e-14 -1.9759626e-12            0   -110.26282   -110.26282    537.69204    8.1316294    8.1316376    8.1316376       31 
+Loop time of 0.00644994 on 1 procs for 6 steps with 31 atoms
+
+124.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 3.53519e-06 1.63115e-12
+  Force max component initial, final = 1.09147e-06 2.88893e-13
+  Final line search alpha, max atom move = 1 2.88893e-13
+  Iterations, force evaluations = 6 12
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0061333  | 0.0061333  | 0.0061333  |   0.0 | 95.09
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00016713 | 0.00016713 | 0.00016713 |   0.0 |  2.59
+Output  | 7.987e-05  | 7.987e-05  | 7.987e-05  |   0.0 |  1.24
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 6.962e-05  |            |       |  1.08
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14748 8.14747 8.14747) with tilt (0 0 0)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0  -0.93471426            0   -1.2270998  -0.78852152  -0.78852151 2.2939098e-11 -2.8018434e-11 2.1206622e-11            0   -110.26282   -110.26282    537.69312    8.1316457    8.1316376    8.1316376       31 
+      41            0  -0.93071312 0.00091195107   -1.2165961  -0.78777165  -0.78777164 2.937279e-11 -3.1776535e-11 -4.8909171e-11            0   -110.26282   -110.26282    537.69312    8.1316457    8.1316376    8.1316376       31 
+      42            0  -0.93030475 0.0018150806   -1.2132811  -0.78881656  -0.78881655 7.9085092e-12 2.0734788e-11 2.5788708e-11            0   -110.26282   -110.26282    537.69312    8.1316457    8.1316376    8.1316376       31 
+      43            0  -0.93140196 0.0027198792   -1.2120607   -0.7910726  -0.79107259 7.6908877e-13 -1.5558117e-11 5.4009196e-11            0   -110.26282   -110.26282    537.69312    8.1316457    8.1316376    8.1316376       31 
+      44            0  -0.93119948  0.003647089   -1.2120163  -0.79079107  -0.79079106 9.2979291e-12 1.4960791e-11 2.3109546e-11            0   -110.26282   -110.26282    537.69312    8.1316457    8.1316376    8.1316376       31 
+      45            0  -0.93120247 0.0045828819    -1.212016  -0.79079572  -0.79079571 1.1448076e-11 -1.4973591e-11 6.5049337e-11            0   -110.26282   -110.26282    537.69312    8.1316457    8.1316376    8.1316376       31 
+      46            0  -0.93120246 0.0059170723    -1.212016  -0.79079571   -0.7907957 4.1970906e-12 -3.4766356e-11 2.6301267e-11            0   -110.26282   -110.26282    537.69312    8.1316457    8.1316376    8.1316376       31 
+Loop time of 0.00592995 on 1 procs for 6 steps with 31 atoms
+
+67.5% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 3.53513e-06 1.62166e-12
+  Force max component initial, final = 1.09146e-06 2.9573e-13
+  Final line search alpha, max atom move = 1 2.9573e-13
+  Iterations, force evaluations = 6 12
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0056283  | 0.0056283  | 0.0056283  |   0.0 | 94.91
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.0001545  | 0.0001545  | 0.0001545  |   0.0 |  2.61
+Output  | 7.2956e-05 | 7.2956e-05 | 7.2956e-05 |   0.0 |  1.23
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 7.415e-05  |            |       |  1.25
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0   0.93471931            0    0.7885258    1.2271063   0.78852581 -1.7256939e-11 2.5221785e-11 -3.0543919e-12            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316294    8.1316376       31 
+      41            0   0.93071782 0.00080180168   0.78777571     1.216602   0.78777572 1.5565096e-11 -1.0211742e-11 3.4852013e-11            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316294    8.1316376       31 
+      42            0   0.93030938 0.0016019344   0.78882064    1.2132868   0.78882065 -1.7933177e-11 -2.5232263e-11 2.1790084e-11            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316294    8.1316376       31 
+      43            0   0.93140661 0.0023908615   0.79107675    1.2120663   0.79107675 -2.6021759e-12 -8.2130445e-12 1.7443023e-11            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316294    8.1316376       31 
+      44            0   0.93120411 0.0031719208    0.7907952    1.2120219   0.79079521 -1.2740945e-12 1.0984917e-11 -3.4299163e-11            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316294    8.1316376       31 
+      45            0    0.9312071 0.0039498806   0.79079985    1.2120216   0.79079986 -1.9871435e-11 -1.1664136e-11 1.4244135e-11            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316294    8.1316376       31 
+      46            0   0.93120709 0.0051059723   0.79079985    1.2120216   0.79079985 1.0989816e-12 -4.1506717e-11 -4.3923123e-11            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316294    8.1316376       31 
+Loop time of 0.00511599 on 1 procs for 6 steps with 31 atoms
+
+78.2% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 3.53519e-06 1.63475e-12
+  Force max component initial, final = 1.09147e-06 2.9031e-13
+  Final line search alpha, max atom move = 1 2.9031e-13
+  Iterations, force evaluations = 6 12
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0048566  | 0.0048566  | 0.0048566  |   0.0 | 94.93
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00013971 | 0.00013971 | 0.00013971 |   0.0 |  2.73
+Output  | 6.3181e-05 | 6.3181e-05 | 6.3181e-05 |   0.0 |  1.23
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 5.651e-05  |            |       |  1.10
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14748 8.14747) with tilt (0 0 0)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0  -0.93471426            0  -0.78852152   -1.2270998  -0.78852151 3.3372148e-11 -2.7890114e-11 -2.2880885e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316457    8.1316376       31 
+      41            0  -0.93071312 0.00076508522  -0.78777165   -1.2165961  -0.78777164 9.6132997e-12 -2.22669e-11 -6.050965e-12            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316457    8.1316376       31 
+      42            0  -0.93030475 0.0015220642  -0.78881656   -1.2132811  -0.78881655 2.8723537e-11 -2.266322e-11 -3.626138e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316457    8.1316376       31 
+      43            0  -0.93140196 0.0022799969   -0.7910726   -1.2120607  -0.79107259 -1.7873072e-11 -4.5756992e-13 -1.5143136e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316457    8.1316376       31 
+      44            0  -0.93119948 0.0030360222  -0.79079107   -1.2120163  -0.79079106 2.8462591e-11 -1.0439805e-11 -1.8730621e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316457    8.1316376       31 
+      45            0  -0.93120247 0.0037529469  -0.79079572    -1.212016  -0.79079571 4.0097796e-11 6.1707766e-12 3.2906922e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316457    8.1316376       31 
+      46            0  -0.93120246 0.0048151016  -0.79079571    -1.212016   -0.7907957 1.4132481e-11 -2.6949136e-12 1.8215697e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316457    8.1316376       31 
+Loop time of 0.00482512 on 1 procs for 6 steps with 31 atoms
+
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 3.53513e-06 1.63047e-12
+  Force max component initial, final = 1.09146e-06 2.96066e-13
+  Final line search alpha, max atom move = 1 2.96066e-13
+  Iterations, force evaluations = 6 12
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0045719  | 0.0045719  | 0.0045719  |   0.0 | 94.75
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00013089 | 0.00013089 | 0.00013089 |   0.0 |  2.71
+Output  | 6.8426e-05 | 6.8426e-05 | 6.8426e-05 |   0.0 |  1.42
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 5.388e-05  |            |       |  1.12
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0   0.93471931            0    0.7885258    0.7885258    1.2271063 1.2102701e-11 -4.9260166e-11 -2.2355092e-11            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316376    8.1316294       31 
+      41            0   0.93071782 0.00072693825   0.78777571   0.78777571     1.216602 -1.8237335e-12 -4.6224875e-12 -3.6243105e-11            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316376    8.1316294       31 
+      42            0   0.93030938 0.0014410019   0.78882064   0.78882064    1.2132868 1.5784556e-11 3.6585706e-11 1.7980939e-12            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316376    8.1316294       31 
+      43            0   0.93140661 0.0021419525   0.79107675   0.79107674    1.2120663 -5.3387508e-14 -5.9822669e-11 -2.5751046e-11            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316376    8.1316294       31 
+      44            0   0.93120411   0.00283885    0.7907952    0.7907952    1.2120219 -3.3359338e-12 -3.8891359e-11 -1.4536288e-11            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316376    8.1316294       31 
+      45            0    0.9312071 0.0035669804   0.79079985   0.79079985    1.2120216 -2.4672975e-11 -3.3054367e-11 -7.0309802e-12            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316376    8.1316294       31 
+      46            0   0.93120709 0.0046498775   0.79079985   0.79079984    1.2120216 -8.2238531e-12 -3.380051e-11 3.6214361e-12            0   -110.26282   -110.26282    537.69204    8.1316376    8.1316376    8.1316294       31 
+Loop time of 0.00465894 on 1 procs for 6 steps with 31 atoms
+
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 3.53519e-06 1.6502e-12
+  Force max component initial, final = 1.09147e-06 2.92229e-13
+  Final line search alpha, max atom move = 1 2.92229e-13
+  Iterations, force evaluations = 6 12
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.004427   | 0.004427   | 0.004427   |   0.0 | 95.02
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00012231 | 0.00012231 | 0.00012231 |   0.0 |  2.63
+Output  | 5.722e-05  | 5.722e-05  | 5.722e-05  |   0.0 |  1.23
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 5.245e-05  |            |       |  1.13
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14748) with tilt (0 0 0)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0  -0.93471426            0  -0.78852152  -0.78852152   -1.2270997 3.3922492e-11 -5.0187217e-11 -4.0451857e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316376    8.1316457       31 
+      41            0  -0.93071312 0.00069212914  -0.78777165  -0.78777165   -1.2165961 3.9119899e-11 -6.1717131e-11 -4.7351008e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316376    8.1316457       31 
+      42            0  -0.93030475 0.0013771057  -0.78881656  -0.78881656   -1.2132811 1.7257293e-13 -6.0207005e-11 -4.3638559e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316376    8.1316457       31 
+      43            0  -0.93140196 0.0020530224   -0.7910726   -0.7910726   -1.2120607 2.7829272e-11 -1.2983433e-11 -4.9922357e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316376    8.1316457       31 
+      44            0  -0.93119948 0.0027289391  -0.79079107  -0.79079107   -1.2120163 8.749631e-12 -2.682078e-11 -2.2700264e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316376    8.1316457       31 
+      45            0  -0.93120247 0.0034101009  -0.79079572  -0.79079572    -1.212016 -6.461597e-12 4.1162107e-12 -2.1970861e-11            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316376    8.1316457       31 
+      46            0  -0.93120246 0.0044100285  -0.79079571  -0.79079571    -1.212016 -5.4535574e-12 -3.9043741e-12 -2.4484845e-12            0   -110.26282   -110.26282    537.69312    8.1316376    8.1316376    8.1316457       31 
+Loop time of 0.00441813 on 1 procs for 6 steps with 31 atoms
+
+181.1% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 3.53513e-06 1.64002e-12
+  Force max component initial, final = 1.09146e-06 2.97617e-13
+  Final line search alpha, max atom move = 1 2.97617e-13
+  Iterations, force evaluations = 6 12
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0042009  | 0.0042009  | 0.0042009  |   0.0 | 95.08
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.00011349 | 0.00011349 | 0.00011349 |   0.0 |  2.57
+Output  | 5.1975e-05 | 5.1975e-05 | 5.1975e-05 |   0.0 |  1.18
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 5.174e-05  |            |       |  1.17
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 -8.13164e-06)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0 6.8787245e-07            0 1.9061157e-07 6.8389438e-07 1.1891114e-06 2.6801417e-11 -8.5640257e-11   0.35726677            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      41            0 6.5487434e-07 0.00068187714 1.844255e-07 6.4093476e-07 1.1392628e-06 -3.9817051e-12 -2.1668789e-11   0.35182324            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      42            0 6.1909807e-07 0.0013549328 1.5720448e-07 6.0090496e-07 1.0991848e-06 4.4490082e-14 -1.1885114e-11   0.35063532            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      43            0 6.2303695e-07 0.0020279884 1.797589e-07 5.9514344e-07 1.0942085e-06 2.4485677e-11 -7.3354067e-13   0.35040935            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      44            0 6.2071734e-07 0.0030219555 1.7261393e-07 5.9501199e-07 1.0945261e-06 3.4658405e-12 -2.6598429e-11   0.35037757            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+Loop time of 0.00303102 on 1 procs for 4 steps with 31 atoms
+
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 2.84163e-06 2.82147e-12
+  Force max component initial, final = 7.82246e-07 9.21604e-13
+  Final line search alpha, max atom move = 1 9.21604e-13
+  Iterations, force evaluations = 4 8
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0028808  | 0.0028808  | 0.0028808  |   0.0 | 95.04
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 8.0824e-05 | 8.0824e-05 | 8.0824e-05 |   0.0 |  2.67
+Output  | 3.2187e-05 | 3.2187e-05 | 3.2187e-05 |   0.0 |  1.06
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 3.719e-05  |            |       |  1.23
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 8.13164e-06)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0 6.8788358e-07            0 1.9060711e-07 6.8390748e-07 1.1891361e-06 -1.6973223e-11 -4.6265681e-11  -0.35726677            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      41            0 6.5487118e-07 0.00067710876 1.8438613e-07 6.4098218e-07 1.1392452e-06 -3.3224281e-14 -2.0840822e-11  -0.35182324            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      42            0 6.1917486e-07 0.0013439655 1.5727314e-07 6.0102825e-07 1.0992232e-06 1.4413959e-11 1.7654826e-11  -0.35063532            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      43            0 6.2298637e-07 0.0020189285 1.7971228e-07 5.9511831e-07 1.0941285e-06 2.5977603e-11 -3.3950597e-12  -0.35040935            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      44            0 6.2077581e-07 0.0030019283 1.7267441e-07 5.9511343e-07 1.0945396e-06 -4.0763629e-13 1.3396664e-11  -0.35037757            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+Loop time of 0.00301099 on 1 procs for 4 steps with 31 atoms
+
+132.8% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 2.84163e-06 2.82791e-12
+  Force max component initial, final = 7.82246e-07 9.2143e-13
+  Final line search alpha, max atom move = 1 9.2143e-13
+  Iterations, force evaluations = 4 8
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.002852   | 0.002852   | 0.002852   |   0.0 | 94.72
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 8.0824e-05 | 8.0824e-05 | 8.0824e-05 |   0.0 |  2.68
+Output  | 4.1008e-05 | 4.1008e-05 | 4.1008e-05 |   0.0 |  1.36
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 3.719e-05  |            |       |  1.24
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 -8.13164e-06 0)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0 6.878469e-07            0 6.8675206e-07 1.8767619e-07 1.1891124e-06 2.205241e-12   0.35726677 5.0353389e-12            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      41            0 6.5488234e-07 0.00069189072 6.4385801e-07 1.8150158e-07 1.1392874e-06 -2.2202179e-12   0.35182324 1.6598358e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      42            0 6.1908387e-07 0.0013999939 6.0376346e-07 1.5431631e-07 1.0991719e-06 9.4906889e-13   0.35063532 -1.1561967e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      43            0 6.2306204e-07 0.0020968914 5.9804735e-07 1.769364e-07 1.0942024e-06 1.2105652e-11   0.35040935 3.4086015e-12            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      44            0 6.2070005e-07  0.003084898 5.9787247e-07 1.6972835e-07 1.0944993e-06 -8.1021261e-12   0.35037757 2.9679626e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+Loop time of 0.00309396 on 1 procs for 4 steps with 31 atoms
+
+129.3% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 2.84163e-06 2.82148e-12
+  Force max component initial, final = 7.82246e-07 9.22441e-13
+  Final line search alpha, max atom move = 1 9.22441e-13
+  Iterations, force evaluations = 4 8
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0029197  | 0.0029197  | 0.0029197  |   0.0 | 94.37
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 9.4175e-05 | 9.4175e-05 | 9.4175e-05 |   0.0 |  3.04
+Output  | 4.6015e-05 | 4.6015e-05 | 4.6015e-05 |   0.0 |  1.49
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 3.409e-05  |            |       |  1.10
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 8.13164e-06 0)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0 6.8789178e-07            0 6.8681418e-07 1.8770034e-07 1.1891608e-06 1.1842104e-11  -0.35726677 -1.0425563e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      41            0 6.5493338e-07 0.00068688393 6.439214e-07 1.8159188e-07 1.1392869e-06 1.4994446e-11  -0.35182324 -1.5177458e-12            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      42            0 6.1910528e-07 0.0013678074 6.0380569e-07 1.5433259e-07 1.0991776e-06 2.6286272e-11  -0.35063532 -5.8321157e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      43            0 6.230463e-07 0.0020349026 5.9799967e-07 1.7691923e-07  1.09422e-06 2.515041e-11  -0.35040935 -1.9508935e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      44            0 6.2075208e-07 0.0030198097 5.9795392e-07 1.6977661e-07 1.0945257e-06 1.5005475e-11  -0.35037757 -5.0008671e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+Loop time of 0.00302792 on 1 procs for 4 steps with 31 atoms
+
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 2.84163e-06 2.82952e-12
+  Force max component initial, final = 7.82246e-07 9.24388e-13
+  Final line search alpha, max atom move = 1 9.24388e-13
+  Iterations, force evaluations = 4 8
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.002877   | 0.002877   | 0.002877   |   0.0 | 95.02
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 8.1301e-05 | 8.1301e-05 | 8.1301e-05 |   0.0 |  2.69
+Output  | 3.314e-05  | 3.314e-05  | 3.314e-05  |   0.0 |  1.09
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 3.648e-05  |            |       |  1.20
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (-8.13164e-06 0 0)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0 6.8787275e-07            0 6.8679645e-07 1.1791044e-06 1.9771744e-07   0.35726677 3.1381447e-11 1.2969616e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      41            0 6.5496857e-07 0.0006840229 6.4393828e-07 1.129326e-06 1.9164141e-07   0.35182324 5.0729309e-12 1.7347018e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      42            0 6.1907044e-07 0.0014030933 6.0375992e-07 1.0891797e-06 1.6427169e-07   0.35063532 -1.5110295e-12 -5.0238054e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      43            0 6.2302408e-07 0.0021219254 5.980048e-07 1.0843285e-06 1.8673893e-07   0.35040935 -3.2968253e-11 -1.3216596e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      44            0 6.2077744e-07 0.0031170845 5.979565e-07 1.0846778e-06 1.7969802e-07   0.35037757 1.684914e-11 -2.6335544e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+Loop time of 0.00312591 on 1 procs for 4 steps with 31 atoms
+
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 2.84163e-06 2.81758e-12
+  Force max component initial, final = 7.82246e-07 9.17963e-13
+  Final line search alpha, max atom move = 1 9.17963e-13
+  Iterations, force evaluations = 4 8
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0029581  | 0.0029581  | 0.0029581  |   0.0 | 94.63
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 9.5606e-05 | 9.5606e-05 | 9.5606e-05 |   0.0 |  3.06
+Output  | 3.624e-05  | 3.624e-05  | 3.624e-05  |   0.0 |  1.16
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 3.6e-05    |            |       |  1.15
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Reading restart file ...
+  restart file = 19 Oct 2016, LAMMPS = 19 Oct 2016
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (0 0 0)
+  1 by 1 by 1 MPI processor grid
+  31 atoms
+Reading potential file /users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy with DATE: 2007-10-12
+Changing box ...
+  triclinic box = (0.0158362 0.0158362 0.0158362) to (8.14747 8.14747 8.14747) with tilt (8.13164e-06 0 0)
+Neighbor list info ...
+  1 neighbor list requests
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 11.1025
+  ghost atom cutoff = 11.1025
+Setting up cg style minimization ...
+  Unit style    : metal
+Memory usage per processor = 3.87358 Mbytes
+Step Temp Press CPU Pxx Pyy Pzz Pxy Pxz Pyz KinEng PotEng TotEng Volume Lx Ly Lz Atoms 
+      40            0 6.8790009e-07            0 6.8682195e-07 1.1791619e-06 1.9771642e-07  -0.35726677 1.6617251e-11 1.753307e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      41            0 6.5486184e-07 0.0006840229 6.4381478e-07 1.1292458e-06 1.9152493e-07  -0.35182324 1.8054604e-11 5.5502678e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      42            0 6.1908784e-07 0.0013611317 6.0380121e-07 1.0892143e-06 1.6424802e-07  -0.35063532 6.1414139e-13 1.2984987e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      43            0 6.2304006e-07 0.0020320415 5.9803604e-07 1.0843117e-06 1.8677241e-07  -0.35040935 -1.1160075e-11 -5.1805508e-11            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+      44            0 6.207806e-07 0.0030300617 5.9800379e-07 1.0846896e-06 1.7964845e-07  -0.35037757 -5.3340421e-12 6.1284284e-12            0   -110.26282   -110.26282    537.69258    8.1316376    8.1316376    8.1316376       31 
+Loop time of 0.00303912 on 1 procs for 4 steps with 31 atoms
+
+0.0% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = force tolerance
+  Energy initial, next-to-last, final = 
+        -110.262818763     -110.262818763     -110.262818763
+  Force two-norm initial, final = 2.84163e-06 2.82728e-12
+  Force max component initial, final = 7.82246e-07 9.22284e-13
+  Final line search alpha, max atom move = 1 9.22284e-13
+  Iterations, force evaluations = 4 8
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.0028844  | 0.0028844  | 0.0028844  |   0.0 | 94.91
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 8.4877e-05 | 8.4877e-05 | 8.4877e-05 |   0.0 |  2.79
+Output  | 3.3855e-05 | 3.3855e-05 | 3.3855e-05 |   0.0 |  1.11
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 3.6e-05    |            |       |  1.18
+
+Nlocal:    31 ave 31 max 31 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    1608 ave 1608 max 1608 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    4899 ave 4899 max 4899 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 4899
+Ave neighs/atom = 158.032
+Neighbor list builds = 0
+Dangerous builds = 0
+Elastic Constant C11all = 121.201877382418 GPa
+Elastic Constant C22all = 121.201877383985 GPa
+Elastic Constant C33all = 121.201877379176 GPa
+Elastic Constant C12all = 79.0797777365256 GPa
+Elastic Constant C13all = 79.0797777358306 GPa
+Elastic Constant C23all = 79.0797777337336 GPa
+Elastic Constant C44all = 35.0377566274138 GPa
+Elastic Constant C55all = 35.0377566272255 GPa
+Elastic Constant C66all = 35.0377566258901 GPa
+Elastic Constant C14all = -2.21879171799348e-09 GPa
+Elastic Constant C15all = -1.16869326025134e-09 GPa
+Elastic Constant C16all = -1.41423457767385e-09 GPa
+Elastic Constant C24all = -4.0895119547221e-09 GPa
+Elastic Constant C25all = -2.17688779310762e-09 GPa
+Elastic Constant C26all = -6.19438548868977e-10 GPa
+Elastic Constant C34all = -1.85730626522848e-10 GPa
+Elastic Constant C35all = -1.40728850125023e-09 GPa
+Elastic Constant C36all = 1.17008792209795e-09 GPa
+Elastic Constant C45all = 9.9233011542126e-10 GPa
+Elastic Constant C46all = -7.14762382088138e-10 GPa
+Elastic Constant C56all = -2.31104739248351e-11 GPa
+Total wall time: 0:00:00

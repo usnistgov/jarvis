@@ -735,6 +735,37 @@ class Atoms(object):
                 coords_are_cartesian=False,
             )
         except Exception:
+            print("Requires pymatgen for this functionality.")
+            pass
+
+    def phonopy_converter(self, pbc=True):
+        """Get phonopy representation of the atoms object."""
+        try:
+            from phonopy.structure.atoms import Atoms as PhonopyAtoms
+
+            return PhonopyAtoms(
+                symbols=self.elements,
+                positions=self.cart_coords,
+                pbc=pbc,
+                cell=self.lattice_mat,
+            )
+        except Exception:
+            print("Requires phonopy for this functionality.")
+            pass
+
+    def ase_converter(self, pbc=True):
+        """Get ASE representation of the atoms object."""
+        try:
+            from ase import Atoms as AseAtoms
+
+            return AseAtoms(
+                symbols=self.elements,
+                positions=self.cart_coords,
+                pbc=pbc,
+                cell=self.lattice_mat,
+            )
+        except Exception:
+            print("Requires ASE for this functionality.")
             pass
 
     def spacegroup(self, symprec=1e-3):
@@ -1273,6 +1304,16 @@ def pmg_to_atoms(pmg=""):
         elements=[i.symbol for i in pmg.species],
         coords=pmg.frac_coords,
         cartesian=False,
+    )
+
+
+def ase_to_atoms(ase_atoms=""):
+    """Convert ase structure to Atoms."""
+    return Atoms(
+        lattice_mat=ase_atoms.get_cell(),
+        elements=ase_atoms.get_chemical_symbols(),
+        coords=ase_atoms.get_positions(),
+        pbc=True,
     )
 
 
