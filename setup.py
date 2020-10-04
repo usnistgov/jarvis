@@ -11,7 +11,9 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2020.9.29",
+
+    version="2020.10.3",
+
     long_description=long_d,
     install_requires=[
         "numpy",
@@ -37,6 +39,7 @@ setup(
             "run0.mod",
         ],
         "jarvis.io.vasp": ["default_potcars.json"],
+        "jarvis.analysis.solarefficiency": ["am1.5G.dat"],
         "jarvis.io.wannier": ["default_semicore.json"],
     },
     extras_require={
