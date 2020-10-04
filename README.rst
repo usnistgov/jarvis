@@ -111,21 +111,10 @@ References
 
 Please see `Publications related to JARVIS-Tools <https://github.com/usnistgov/jarvis/blob/master/Publications.rst>`__
 
-External links
+Documentation
 -----------------------------------------
       https://jarvis-materials-design.github.io/dbdocs/
 
-      https://figshare.com/authors/Kamal_Choudhary/4445539
-
-      https://pypi.org/project/jarvis-tools
-         
-      https://pypi.org/project/jarvis-tools
-      
-      https://jarvis-tools.readthedocs.io/en/latest/
-      
-      https://www.slideshare.net/KAMALCHOUDHARY4
-
-   
 
 
 Correspondence
