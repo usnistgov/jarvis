@@ -1,29 +1,22 @@
-# form_enp,op_gap,mbj_gap,kp_leng,encut,fin_enp,magmom,epsx,epsy,epsz,mepsx,mepsy,mepsz,exfoliation_en,type,mpid,jid
+"""
+Code to predict properties and their uncertainty.
 
-# from jarvis.sklearn.get_desc import get_comp_descp
-from monty.serialization import loadfn, MontyEncoder, MontyDecoder, dumpfn
+ML model used: lgbm
+"""
+
+from monty.serialization import loadfn, MontyDecoder
 import numpy as np
-from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
-import lightgbm as lgb
+import matplotlib as plt
 
 # import matplotlib.pyplot as plt
 # plt.switch_backend('agg')
-import pandas as pd
-from sklearn.datasets import load_boston
 from sklearn.model_selection import (
     train_test_split,
     learning_curve,
-    cross_val_score,
-    cross_val_predict,
-    GridSearchCV,
     RandomizedSearchCV,
 )
 import scipy as sp
-import time, os, json, pprint
 from sklearn.feature_selection import (
-    SelectKBest,
-    f_classif,
-    SelectFromModel,
     VarianceThreshold,
 )
 from sklearn.pipeline import Pipeline
@@ -31,23 +24,17 @@ from sklearn.preprocessing import StandardScaler
 import pickle
 
 # import joblib
-import numpy as np
 from sklearn.cluster import KMeans
-import pandas as pd
 
 # Modeling
-from sklearn.base import BaseEstimator
-from sklearn.ensemble import GradientBoostingRegressor
-
-# File finding
-import glob
-
+from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
+import lightgbm as lgb
 
 # ---------------------------------------------------------------------
 
 
 def get_number_formula_unit(s=""):
-
+    """Determine the number of unit cells."""
     orig_formula = s.composition.as_dict()
     prim_formula = s.get_primitive_structure().composition.as_dict()
     num_unit = float(orig_formula.values()[0]) / float(
@@ -57,15 +44,17 @@ def get_number_formula_unit(s=""):
 
 
 def isfloat(value):
+    """Determine if a value is a float."""
     try:
         float(value)
         return True
-    except:
+    except ValueError:
         return False
         pass
 
 
 def jdata(prop=""):
+    """Read of database for chosen physical quantity."""
     # d3=loadfn('/rk2/ftavazza/ML/NEW/Quantile/New_quantities/jml_3d-4-26-2020.json',cls=MontyDecoder)
     d3 = loadfn(
         "/users/ftavazza/ML/ruth_New/jml_3d-4-26-2020.json", cls=MontyDecoder
@@ -113,10 +102,11 @@ def jdata(prop=""):
             y = float(y)
             if y >= limits[prop][0] and y <= limits[prop][1]:
                 x = i["desc"]  # get_comp_descp(i['final_str'])
-                # if len(x)==1557 and any(np.isnan(x) for x in x.flatten())==False:  # and np.isfinite(y):
+                # if len(x)==1557 and
+                # any(np.isnan(x) for x in x.flatten())==False:
                 if (
                     len(x) == 1557
-                ):  # and any(np.isnan(x) for x in x.flatten())==False:  # and np.isfinite(y):
+                ):  # and any(np.isnan(x) for x in x.flatten())==False:
                     if "eps" in prop:
                         y = np.sqrt(float(y))
                     if "mag" in prop:
@@ -133,47 +123,9 @@ def jdata(prop=""):
     return X, Y, jid
 
 
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.ensemble import (
-    RandomForestRegressor,
-    GradientBoostingRegressor,
-    AdaBoostRegressor,
-)
-from sklearn import datasets, svm
-from sklearn.kernel_approximation import Nystroem
-from sklearn.svm import SVR, LinearSVR, SVC, LinearSVC
-from sklearn.linear_model import Lasso, LinearRegression, LogisticRegression
-from sklearn.linear_model import LassoCV, LassoLarsCV, LogisticRegressionCV
-from sklearn.linear_model import RidgeCV
-from sklearn.kernel_ridge import KernelRidge
-from sklearn.neural_network import MLPRegressor
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.multiclass import OneVsRestClassifier
-from sklearn.datasets import load_boston
-from sklearn.metrics import roc_curve, auc
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import label_binarize
-from sklearn.preprocessing import StandardScaler
-from sklearn.feature_selection import VarianceThreshold
-from sklearn.pipeline import Pipeline
-from sklearn.neural_network import MLPClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.gaussian_process import GaussianProcessClassifier
-from sklearn.ensemble import (
-    RandomForestClassifier,
-    AdaBoostClassifier,
-    GradientBoostingClassifier,
-)
-from sklearn.svm import SVC
-
-
-# http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection
-
-
 def cluster_cv(X=[], y=[], ids=[], technique=KMeans()):
+    """Cluster cv."""
     labels = technique.fit_predict(X)
-    clust_labels = np.unique(labels)
     last_clust = np.unique(labels)[-1]
     test_x = []
     test_y = []
@@ -216,11 +168,7 @@ def plot_learning_curve(
     train_sizes=np.linspace(0.01, 1.0, 50),
     fname="fig.png",
 ):
-    """
-    Taken from scikit-learn, added ways to store results in JSON format
-
-    """
-
+    """Plot of learning curves."""
     plt.figure()
     # fname='fig.png'
     plt.title(title)
@@ -344,17 +292,15 @@ def plot_learning_curve(
 
 # def regr_scores(pred,test):
 def regr_scores(test, pred):
-
     """
-    Generic regresion scores
+    Compute generic regresion scores.
 
     Args:
         pred: predicted values
         test: held data for testing
     Returns:
-         info: with metrics
+         info: with metrics.
     """
-
     rmse = np.sqrt(mean_squared_error(test, pred))
     r2 = r2_score(test, pred)
     mae = mean_absolute_error(test, pred)
@@ -380,9 +326,8 @@ def get_lgbm(
     alpha,
     random_state,
 ):
-    # def get_lgbm(train_x, val_x, train_y,val_y,cv,n_jobs,scoring,n_iter):
     """
-    Train a lightgbm model
+    Train a lightgbm model.
 
     Args:
         train_x: samples used for trainiing
@@ -393,10 +338,11 @@ def get_lgbm(
         n_jobs: for making the job parallel
         scoring: scoring function to use such as MAE
     Returns:
-           Best estimator
+           Best estimator.
     """
-
-    # Get converged boosting iterations with high learning rate, MAE as the convergence crietria
+    # def get_lgbm(train_x, val_x, train_y,val_y,cv,n_jobs,scoring,n_iter):
+    # Get converged boosting iterations with high learning rate,
+    # MAE as the convergence crietria
     lgbm = lgb.LGBMRegressor(
         n_estimators=500,
         learning_rate=0.1,
@@ -424,26 +370,27 @@ def get_lgbm(
     # Generally thousands of randomized search for optimal parameters
     # learning rate and num_leaves are very important
     param_dist = {
-        #'boosting_type': [ 'dart'],
-        #'boosting_type': ['gbdt', 'dart', 'rf'],
-        #'num_leaves': sp.stats.randint(2, 1001),
-        #'subsample_for_bin': sp.stats.randint(10, 1001),
-        #'min_split_gain': sp.stats.uniform(0, 5.0),
-        #'min_child_weight': sp.stats.uniform(1e-6, 1e-2),
-        #'reg_alpha': sp.stats.uniform(0, 1e-2),
-        #'reg_lambda': sp.stats.uniform(0, 1e-2),
-        #'tree_learner': ['data', 'feature', 'serial', 'voting' ],
-        #'application': ['regression_l1', 'regression_l2', 'regression'],
-        #'bagging_freq': sp.stats.randint(1, 11),
-        #'bagging_fraction': sp.stats.uniform(.1, 0.9),
-        #'feature_fraction': sp.stats.uniform(.1, 0.9),
-        #'learning_rate': sp.stats.uniform(1e-3, 0.9),
-        #'est__num_leaves': [2,8,16],
-        #'est__min_data_in_leaf': [1,2,4],
-        #'est__learning_rate': [0.005,0.01,0.1],
-        #'est__max_depth': [1,3,5], #sp.stats.randint(1, 501),
-        #'est__n_estimators': [num_iteration,2*num_iteration,5*num_iteration],#sp.stats.randint(100, 20001),
-        #'gpu_use_dp': [True, False],
+        # 'boosting_type': [ 'dart'],
+        # 'boosting_type': ['gbdt', 'dart', 'rf'],
+        # 'num_leaves': sp.stats.randint(2, 1001),
+        # 'subsample_for_bin': sp.stats.randint(10, 1001),
+        # 'min_split_gain': sp.stats.uniform(0, 5.0),
+        # 'min_child_weight': sp.stats.uniform(1e-6, 1e-2),
+        # 'reg_alpha': sp.stats.uniform(0, 1e-2),
+        # 'reg_lambda': sp.stats.uniform(0, 1e-2),
+        # 'tree_learner': ['data', 'feature', 'serial', 'voting' ],
+        # 'application': ['regression_l1', 'regression_l2', 'regression'],
+        # 'bagging_freq': sp.stats.randint(1, 11),
+        # 'bagging_fraction': sp.stats.uniform(.1, 0.9),
+        # 'feature_fraction': sp.stats.uniform(.1, 0.9),
+        # 'learning_rate': sp.stats.uniform(1e-3, 0.9),
+        # 'est__num_leaves': [2,8,16],
+        # 'est__min_data_in_leaf': [1,2,4],
+        # 'est__learning_rate': [0.005,0.01,0.1],
+        # 'est__max_depth': [1,3,5], #sp.stats.randint(1, 501),
+        # 'est__n_estimators': [num_iteration,2*num_iteration,5*num_iteration],
+        # sp.stats.randint(100, 20001),
+        # 'gpu_use_dp': [True, False],
         "est__min_data_in_leaf": sp.stats.randint(5, 20),
         "est__n_estimators": sp.stats.randint(500, 2000),
         "est__num_leaves": sp.stats.randint(100, 500),
@@ -475,7 +422,7 @@ def get_lgbm(
         scoring=scoring,
         n_iter=n_iter,
         n_jobs=n_jobs,
-        verbose=3,
+        verbose=-1,
         random_state=random_state,
         refit=True,
     )
@@ -497,6 +444,8 @@ def run(
     do_cv=False,
 ):
     """
+    Train-test split etc.
+
     Generic run function to train-test split,
     find optimum number of boosting operations,
     the hyperparameter optimization,
@@ -514,21 +463,14 @@ def run(
 
     """
     name = str(version) + str("_") + str(prop)
-    # Make a directory for storing results
-    dir_name = str(os.getcwd()) + str("/") + str(name)
-    # if not os.path.exists(dir_name): os.makedirs(dir_name)
-    # os.chdir(dir_name)
-
-    info = {}
-    tmp_time = time.time()
 
     # STEP-1: Data for a particular model
     # ***********************************
-    # Toy example with boston data
-    # boston=load_boston()
-    # x, y = boston['data'], boston['target']
 
     x, y, jid = jdata(prop)
+    x = x[0:100]
+    y = y[0:100]
+    jid = jid[0:100]
 
     # STEP-2: Splitting the data
     # ***************************
@@ -541,134 +483,28 @@ def run(
 
     # STEP-3: Use a specific ML model
     # ********************************
-    data_mae = []
-    data_rmse = []
-    data_r2 = []
-    data_test = {}
-    data_pred = {}
-    model_list = [
-        "KernelRidge",
-        "MLPRegressor",
-        "GaussianProcessRegressor",
-        "RandomForestRegressor",
-        "GradientBoostingRegressor",
-        "AdaBoostRegressor",
-        "LinearRegression",
-        "DecisionTreeRegressor",
-        "Lasso",
-        "LinearSVR",
-        "LogisticRegression",
-    ]
-    model_list = [
-        "KernelRidge",
-        "MLPRegressor",
-        "GaussianProcessRegressor",
-        "RandomForestRegressor",
-        "GradientBoostingRegressor",
-        "AdaBoostRegressor",
-        "LinearRegression",
-        "DecisionTreeRegressor",
-        "Lasso",
-    ]
-
-    from sklearn import linear_model
-    from sklearn import datasets, svm
-    from sklearn.svm import SVR, LinearSVR, SVC, LinearSVC
-    from sklearn.kernel_approximation import Nystroem
-    from sklearn.tree import DecisionTreeRegressor
-    from sklearn.kernel_ridge import KernelRidge
-    from sklearn import linear_model
-    from sklearn.neural_network import MLPRegressor
-    from sklearn.datasets import make_friedman2
-    from sklearn.gaussian_process import GaussianProcessRegressor
-    from sklearn.gaussian_process.kernels import DotProduct, WhiteKernel
-    from sklearn.ensemble import RandomForestRegressor
-    from sklearn.datasets import make_regression
-    from sklearn import ensemble
-    from sklearn.utils import shuffle
-    from sklearn.metrics import mean_squared_error
-    from sklearn.linear_model import LinearRegression
-    from sklearn.ensemble import AdaBoostRegressor
-    from sklearn.datasets import make_regression
-    from sklearn.preprocessing import StandardScaler
-
-    """
- simple_regr_models = [
-    GaussianProcessRegressor(),
-    RandomForestRegressor(),
-    GradientBoostingRegressor(),
-    AdaBoostRegressor(),
-    SVR(),
-    Lasso(),
-    LinearRegression(),
-    KernelRidge(),
-    MLPRegressor(),
-    DecisionTreeRegressor(),
-    KernelRidge(alpha=0.5,kernel='rbf', gamma=0.1),
-    MLPRegressor(activation='logistic',max_iter=1000),
-    GaussianProcessRegressor(random_state=0, alpha=1e-6),
-    RandomForestRegressor(max_depth=2, random_state=0,n_estimators=100),
-    GradientBoostingRegressor(n_estimators=500, max_depth=4, min_samples_split=2,learning_rate=0.01),
-    AdaBoostRegressor(random_state=0, n_estimators=100),
-    linear_model.Lasso(alpha=7,max_iter=200000,tol=0.001),
- ]
- """
-
-    # Parameters for GradientBoostingRegressor
-    # ========================================
-    #        "n_estimators": [100],
-    #        "loss": ["ls", "lad", "huber", "quantile"],
-    #        "learning_rate": [1e-3, 1e-2, 1e-1, 0.5, 1.0],
-    #        "max_depth": range(1, 11),
-    #        "min_samples_split": range(2, 21),
-    #        "min_samples_leaf": range(1, 21),
-    #        "subsample": np.arange(0.05, 1.01, 0.05),
-    #        "max_features": np.arange(0.05, 1.01, 0.05),
-    #        "alpha": [0.75, 0.8, 0.85, 0.9, 0.95, 0.99],
-
-    # clf = GradientBoostingRegressor(loss='quantile', alpha=alpha,
-    #                                n_estimators=250, max_depth=3,
-    #                               learning_rate=.1, min_samples_leaf=9,
-    #                               min_samples_split=9)
-
-    # param_grid = dict(n_estimators=n_estimators,loss=loss,learning_rate=learning_rate,max_depth=max_depth,min_samples_split=min_samples_split,min_samples_leaf=min_samples_leaf,max_features=max_features,alpha=alpha)
 
     # Set lower and upper quantile
-    # 0.5StanDev
-    LOWER_ALPHA = 0.33
-    MID_ALPHA = 0.50
-    UPPER_ALPHA = 0.64
     # StanDev
     LOWER_ALPHA = 0.16
-    MID_ALPHA = 0.50
+    # MID_ALPHA = 0.50
     UPPER_ALPHA = 0.84
 
-    """
- pipe = Pipeline(
-     [
-       ("stdscal", StandardScaler()),
-       ("vart", VarianceThreshold(1e-4)),
-       ("est", lower_model),
-     ]
- )
- lower_model = pipe
- """
-
     # SEARCH PARAMETERS
+    # ================
     scoring = "neg_mean_absolute_error"
     cv = 2
-    n_jobs = 24
+    n_jobs = -1
     # n_iter = how many parameter combination to try in the search
-    n_iter = 100
+    n_iter = 10
     random_state = 508842607
 
+    # LOWER Model
+    # ===========
     scaler = StandardScaler().fit(X_train)
     scaler.transform(X_train)
     scaler.transform(X_test)
 
-    # LOWER Model
-
-    # lower_model.fit(X_train, y_train)
     objective = "quantile"
     alpha = LOWER_ALPHA
     print("Prima di lgbm for LOWER model")
@@ -689,21 +525,9 @@ def run(
     name = str(prop) + str("_lower")
     filename = str("pickle2-") + str(name) + str(".pk")
     pickle.dump(lower_model, open(filename, "wb"))
-    # filename=str('joblib2-')+str(name)+str('.pkl')
-    # joblib.dump(lower_model, filename)
 
     # MID Model
-
-    """
- pipe = Pipeline(
-     [
-       ("stdscal", StandardScaler()),
-       ("vart", VarianceThreshold(1e-4)),
-       ("est", mid_model),
-     ]
- )
- mid_model = pipe
- """
+    # =========
     scaler = StandardScaler().fit(X_train)
     scaler.transform(X_train)
     scaler.transform(X_test)
@@ -729,27 +553,9 @@ def run(
     name = str(prop) + str("_mid")
     filename = str("pickle2-") + str(name) + str(".pk")
     pickle.dump(mid_model, open(filename, "wb"))
-    # filename=str('joblib2-')+str(name)+str('.pkl')
-    # joblib.dump(mid_model, filename)
-
-    # importances = mid_model.feature_importances_
-    # indices = np.argsort(importances)[::-1]
-    ## Print the feature ranking
-    # print("Feature ranking:")
-    # for f in range(X_train.shape[1]):
-    # print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
 
     # UPPER Model
-    """
- pipe = Pipeline(
-     [
-       ("stdscal", StandardScaler()),
-       ("vart", VarianceThreshold(1e-4)),
-       ("est", upper_model),
-     ]
- )
- upper_model = pipe
- """
+    # ===========
     scaler = StandardScaler().fit(X_train)
     scaler.transform(X_train)
     scaler.transform(X_test)
@@ -775,9 +581,8 @@ def run(
     name = str(prop) + str("_upper")
     filename = str("pickle2-") + str(name) + str(".pk")
     pickle.dump(upper_model, open(filename, "wb"))
-    # filename=str('joblib2-')+str(name)+str('.pkl')
-    # joblib.dump(upper_model, filename)
 
+    # PREDICTIONS and UQ
     lower = lower_model.predict(X_test)
     mid = mid_model.predict(X_test)
     upper = upper_model.predict(X_test)
@@ -798,14 +603,18 @@ def run(
 
     fout1 = open("Intervals.dat", "w")
     fout2 = open("Intervals1.dat", "w")
-    line = "#    Jid      Observed       pred_Lower       pred_Mid        pred_Upper\n"
+    line0 = "#    Jid      Observed       pred_Lower"
+    line1 = "       pred_Mid        pred_Upper\n"
+    line = line0 + line1
     fout1.write(line)
-    line = "#    Jid      Observed       pred_Lower    AbsErr(Lower)     pred_Mid    AbsErr(Mid)     pred_Upper     AbsErr(Upper)    AbsErrInterval    Pred_inBounds\n"
+    line0 = "#    Jid      Observed       pred_Lower    AbsErr(Lower)"
+    line1 = "     pred_Mid    AbsErr(Mid)     pred_Upper"
+    line2 = "     AbsErr(Upper)    AbsErrInterval    Pred_inBounds\n"
+    line = line0 + line1 + line2
     fout2.write(line)
     sum = 0.0
     for ii in range(len(actual)):
         true = float(actual[ii])
-        pred = float(mid[ii])
         llow = float(lower[ii])
         uupper = float(upper[ii])
         if (true >= llow) and (true <= uupper):
@@ -866,5 +675,4 @@ def run(
     )
 
 
-# epsx
-run(prop="formation_energy_peratom")
+run(prop="exfoliation_energy")
