@@ -489,3 +489,62 @@ def get_lgbm(
     print("Best Estimator: ", model.best_estimator_)
     # return model.best_estimator_
     return model
+
+
+# Main-function
+def test_run(
+    version="version_1",
+    scoring="neg_mean_absolute_error",
+    cv=5,
+    n_jobs=1,
+    prop="op_gap",
+    do_cv=False,
+):
+    """
+    Train-test split etc.
+
+    Generic run function to train-test split,
+    find optimum number of boosting operations,
+    the hyperparameter optimization,
+    learning curves, n-fold cross-validations,
+    saving parameters and results
+
+
+    Args:
+        version: user defined name
+        scoring: evaluation metric
+        cv: # of cross-validation
+        n_jobs: for running in parallel
+        prop: property to train
+        do_cv: whether to perform cross validation
+
+    """
+    # STEP-1: Getting Data
+    # ********************
+    property = "exfoliation_energy"
+
+    x, y, jid = jdata(property)
+
+    x = x[0:100]
+    y = y[0:100]
+    jid = jid[0:100]
+
+    # STEP-2: Quantile regression to make predictions and determine
+    #         prediction intervals for predicted data
+    # **************************************************************
+
+    # Search parameters
+    scoring = "neg_mean_absolute_error"
+    cv = 2
+    n_jobs = -1
+    # n_iter = how many parameter combination to try in the search
+    n_iter = 10
+    random_state = 508842607
+
+    info = {}
+    quantile_regr_predint(
+        x, y, jid, cv, n_jobs, n_iter, random_state, scoring, property, info
+    )
+
+
+# run(prop="exfoliation_energy")
