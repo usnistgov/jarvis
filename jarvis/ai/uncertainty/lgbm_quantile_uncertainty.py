@@ -6,13 +6,11 @@ ML model used: lgbm
 
 from monty.serialization import loadfn, MontyDecoder
 import numpy as np
-import matplotlib as plt
 
-# import matplotlib.pyplot as plt
-# plt.switch_backend('agg')
+# import matplotlib as plt
+
 from sklearn.model_selection import (
     train_test_split,
-    learning_curve,
     RandomizedSearchCV,
 )
 import scipy as sp
@@ -23,14 +21,240 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 import pickle
 
-# import joblib
-from sklearn.cluster import KMeans
-
 # Modeling
 from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 import lightgbm as lgb
 
 # ---------------------------------------------------------------------
+
+
+def quantile_regr_predint(
+    x, y, jid, cv, n_jobs, n_iter, random_state, scoring, prop, info
+):
+    """
+    Perform Quantile regression and determine prediction intervals.
+
+    LOWER_ALPHA = 0.16
+    Mid model uses ls as loss function, not quantile, to
+        optimize for the mean, not the median
+    UPPER_ALPHA = 0.84
+    This choice of LOWER_ALPHA, UPPER_ALPHA gives a prediction
+    interval ideally equal to 0.68, i.e. 1 standard deviation.
+    However, the number of in-bound prediction must be computed
+    for the specific fitted models, and that gives the true meaning
+    of the uncertainties computed here.
+    """
+    # STEP-2: Splitting the data
+    # ***************************
+    # 90-10% split for train test
+
+    X_train, X_test, y_train, y_test, jid_train, jid_test = train_test_split(
+        x, y, jid, random_state=1, test_size=0.1
+    )
+    # print ('lenx len y',len(x[0]),len(y))
+
+    # STEP-3: Use a specific ML model
+    # ********************************
+
+    # Set lower and upper quantile
+    # StanDev
+    LOWER_ALPHA = 0.16
+    # MID_ALPHA = 0.50
+    UPPER_ALPHA = 0.84
+
+    # LOWER Model
+    # ===========
+    scaler = StandardScaler().fit(X_train)
+    scaler.transform(X_train)
+    scaler.transform(X_test)
+
+    objective = "quantile"
+    alpha = LOWER_ALPHA
+    print("Prima di lgbm for LOWER model")
+    lower_model = get_lgbm(
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+        cv,
+        n_jobs,
+        scoring,
+        n_iter,
+        objective,
+        alpha,
+        random_state,
+    )
+    print("Dopo lgbm for LOWER model")
+    name = str(prop) + str("_lower")
+    filename = str("pickle2-") + str(name) + str(".pk")
+    pickle.dump(lower_model, open(filename, "wb"))
+
+    # MID Model
+    # =========
+    scaler = StandardScaler().fit(X_train)
+    scaler.transform(X_train)
+    scaler.transform(X_test)
+
+    # mid_model.fit(X_train, y_train)
+    objective = "regression"
+    alpha = 0.9
+    print("Prima di lgbm for MID model")
+    mid_model = get_lgbm(
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+        cv,
+        n_jobs,
+        scoring,
+        n_iter,
+        objective,
+        alpha,
+        random_state,
+    )
+    print("Dopo lgbm for MID model")
+    name = str(prop) + str("_mid")
+    filename = str("pickle2-") + str(name) + str(".pk")
+    pickle.dump(mid_model, open(filename, "wb"))
+
+    # UPPER Model
+    # ===========
+    scaler = StandardScaler().fit(X_train)
+    scaler.transform(X_train)
+    scaler.transform(X_test)
+
+    # upper_model.fit(X_train, y_train)
+    objective = "quantile"
+    alpha = UPPER_ALPHA
+    print("Prima di lgbm for UPPER model")
+    upper_model = get_lgbm(
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+        cv,
+        n_jobs,
+        scoring,
+        n_iter,
+        objective,
+        alpha,
+        random_state,
+    )
+    print("Dopo lgbm for UPPER model")
+    name = str(prop) + str("_upper")
+    filename = str("pickle2-") + str(name) + str(".pk")
+    pickle.dump(upper_model, open(filename, "wb"))
+
+    # PREDICTIONS and UQ
+    lower = lower_model.predict(X_test)
+    mid = mid_model.predict(X_test)
+    upper = upper_model.predict(X_test)
+    actual = y_test
+
+    print("Model       mae     rmse")
+    reg_sc = regr_scores(y_test, lower)
+    info["MAE_Lower"] = reg_sc["mae"]
+    print("Lower:", round(reg_sc["mae"], 3), round(reg_sc["rmse"], 3))
+    reg_sc = regr_scores(y_test, mid)
+    info["MAE_Mid"] = reg_sc["mae"]
+    print("Mid:", round(reg_sc["mae"], 3), round(reg_sc["rmse"], 3))
+    reg_sc = regr_scores(y_test, upper)
+    info["MAE_Upper"] = reg_sc["mae"]
+    print("Upper:", round(reg_sc["mae"], 3), round(reg_sc["rmse"], 3))
+
+    """
+ Calculate the absolute error associated with prediction intervals
+ """
+    # in_bounds = actual.between(left=lower, right=upper)
+
+    fout1 = open("Intervals.dat", "w")
+    fout2 = open("Intervals1.dat", "w")
+    line0 = "#    Jid      Observed       pred_Lower"
+    line1 = "       pred_Mid        pred_Upper\n"
+    line = line0 + line1
+    fout1.write(line)
+    line0 = "#    Jid      Observed       pred_Lower    AbsErr(Lower)"
+    line1 = "     pred_Mid    AbsErr(Mid)     pred_Upper"
+    line2 = "     AbsErr(Upper)    AbsErrInterval    Pred_inBounds\n"
+    line = line0 + line1 + line2
+    fout2.write(line)
+    sum = 0.0
+    count = 0
+    MAE_err = 0.0
+    for ii in range(len(actual)):
+        true = float(actual[ii])
+        llow = float(lower[ii])
+        mmid = float(mid[ii])
+        uupper = float(upper[ii])
+        err = abs((uupper - llow) * 0.5)
+        diff = true - mmid
+        real_err = abs(diff)
+        err_err = abs(real_err - err)
+        MAE_err = MAE_err + err_err
+        if abs(diff) < err:
+            count = count + 1
+            in_bounds = "True"
+        else:
+            in_bounds = "False"
+        absolute_error_lower = abs(lower[ii] - actual[ii])
+        absolute_error_mid = abs(mid[ii] - actual[ii])
+        absolute_error_upper = abs(upper[ii] - actual[ii])
+        absolute_error_interval = (
+            absolute_error_lower + absolute_error_upper
+        ) / 2.0
+
+        line = (
+            str(ii)
+            + " "
+            + jid[ii]
+            + " "
+            + str(actual[ii])
+            + " "
+            + str(lower[ii])
+            + " "
+            + str(mid[ii])
+            + " "
+            + str(upper[ii])
+            + "\n"
+        )
+        sum = sum + float(absolute_error_interval)
+        line2 = (
+            str(ii)
+            + " "
+            + jid[ii]
+            + " "
+            + str(actual[ii])
+            + " "
+            + str(lower[ii])
+            + " "
+            + str(absolute_error_lower)
+            + " "
+            + str(mid[ii])
+            + " "
+            + str(absolute_error_mid)
+            + " "
+            + str(upper[ii])
+            + " "
+            + str(absolute_error_upper)
+            + " "
+            + str(absolute_error_interval)
+            + " "
+            + str(in_bounds)
+            + "\n"
+        )
+        fout1.write(line)
+        fout2.write(line2)
+    print("")
+    print("Number of test materials= " + str(len(actual)))
+    print(
+        "Percentage of in-bound results= "
+        + str((float(count) / (len(actual))) * 100)
+        + "%"
+    )
+    print(" ")
+    MAE_error = float(MAE_err) / (len(actual))
+    print("MAE predicted error (err=0.5*(High-Low))= " + str(MAE_error))
+    info["MAE_Error"] = MAE_error
 
 
 def get_number_formula_unit(s=""):
@@ -121,173 +345,6 @@ def jdata(prop=""):
     X = np.array(X).astype(np.float64)
     Y = np.array(Y).astype(np.float64)
     return X, Y, jid
-
-
-def cluster_cv(X=[], y=[], ids=[], technique=KMeans()):
-    """Cluster cv."""
-    labels = technique.fit_predict(X)
-    last_clust = np.unique(labels)[-1]
-    test_x = []
-    test_y = []
-    test_z = []
-    train_x = []
-    train_y = []
-    train_z = []
-
-    for i, j, k, l in zip(labels, X, y, ids):
-        if i == last_clust:
-            test_x.append(j)
-            test_y.append(k)
-            test_z.append(l)
-        else:
-            train_x.append(j)
-            train_y.append(k)
-            train_z.append(l)
-
-    return (
-        np.array(train_x),
-        np.array(train_y),
-        np.array(train_z),
-        np.array(test_x),
-        np.array(test_y),
-        np.array(test_z),
-        labels,
-    )
-
-
-def plot_learning_curve(
-    estimator=None,
-    scoring="neg_mean_absolute_error",
-    title="",
-    X=None,
-    y=None,
-    ylim=None,
-    cv=5,
-    # n_jobs=-1, train_sizes=np.linspace(.1, 1.0, 10),fname='fig.png'):
-    n_jobs=-1,
-    train_sizes=np.linspace(0.01, 1.0, 50),
-    fname="fig.png",
-):
-    """Plot of learning curves."""
-    plt.figure()
-    # fname='fig.png'
-    plt.title(title)
-    mem = {}
-    if ylim is not None:
-        plt.ylim(*ylim)
-    plt.xlabel("Training examples")
-    plt.ylabel("Score")
-    train_sizes, train_scores, test_scores = learning_curve(
-        estimator,
-        X,
-        y,
-        cv=cv,
-        n_jobs=n_jobs,
-        train_sizes=train_sizes,
-        scoring=scoring,
-    )
-    train_scores_mean = np.mean(train_scores, axis=1)
-    train_scores_std = np.std(train_scores, axis=1)
-    test_scores_mean = np.mean(test_scores, axis=1)
-    test_scores_std = np.std(test_scores, axis=1)
-    plt.grid()
-    mem["train_sizes"] = train_sizes
-    mem["train_scores_mean"] = train_scores_mean
-    mem["test_scores_mean"] = test_scores_mean
-    mem["train_scores_std"] = train_scores_std
-    mem["test_scores_std"] = test_scores_std
-
-    plt.fill_between(
-        train_sizes,
-        train_scores_mean - train_scores_std,
-        train_scores_mean + train_scores_std,
-        alpha=0.1,
-        color="r",
-    )
-    plt.fill_between(
-        train_sizes,
-        test_scores_mean - test_scores_std,
-        test_scores_mean + test_scores_std,
-        alpha=0.1,
-        color="g",
-    )
-    plt.plot(
-        train_sizes, train_scores_mean, "o-", color="r", label="Training score"
-    )
-    plt.plot(
-        train_sizes,
-        test_scores_mean,
-        "o-",
-        color="g",
-        label="Cross-validation score",
-    )
-
-    plt.legend(loc="best")
-    fname = str(fname) + str("_learn_1.png")
-    plt.show()
-    plt.savefig(fname)
-    plt.close()
-
-    data = str(fname) + str("learn_data")
-    f = open(data, "w")
-    line = (
-        str("train_sizes ")
-        + str("train_scores_mean ")
-        + str("train_scores_std ")
-        + str("test_scores_mean ")
-        + str("test_scores_std ")
-        + "\n"
-    )
-    f.write(line)
-    for i, j, k, l, m in zip(
-        train_sizes,
-        train_scores_mean,
-        train_scores_std,
-        test_scores_mean,
-        test_scores_std,
-    ):
-        line = (
-            str(i)
-            + str(" ")
-            + str(j)
-            + str(" ")
-            + str(k)
-            + str(" ")
-            + str(l)
-            + str(" ")
-            + str(m)
-            + str("\n")
-        )
-        f.write(line)
-    f.close()
-
-    plt.figure()
-    plt.title(title)
-    if ylim is not None:
-        plt.ylim(*ylim)
-    plt.xlabel("Training examples")
-    plt.ylabel("Score")
-    plt.grid()
-    plt.fill_between(
-        train_sizes,
-        test_scores_mean - test_scores_std,
-        test_scores_mean + test_scores_std,
-        alpha=0.1,
-        color="g",
-    )
-    plt.plot(
-        train_sizes,
-        test_scores_mean,
-        "o-",
-        color="g",
-        label="Cross-validation score",
-    )
-    plt.legend(loc="best")
-    fname = str(fname) + str("_learn_2.png")
-    plt.show()
-    plt.savefig(fname)
-    plt.close()
-    return mem
 
 
 # def regr_scores(pred,test):
@@ -432,247 +489,3 @@ def get_lgbm(
     print("Best Estimator: ", model.best_estimator_)
     # return model.best_estimator_
     return model
-
-
-# Main-function
-def run(
-    version="version_1",
-    scoring="neg_mean_absolute_error",
-    cv=5,
-    n_jobs=1,
-    prop="op_gap",
-    do_cv=False,
-):
-    """
-    Train-test split etc.
-
-    Generic run function to train-test split,
-    find optimum number of boosting operations,
-    the hyperparameter optimization,
-    learning curves, n-fold cross-validations,
-    saving parameters and results
-
-
-    Args:
-        version: user defined name
-        scoring: evaluation metric
-        cv: # of cross-validation
-        n_jobs: for running in parallel
-        prop: property to train
-        do_cv: whether to perform cross validation
-
-    """
-    name = str(version) + str("_") + str(prop)
-
-    # STEP-1: Data for a particular model
-    # ***********************************
-
-    x, y, jid = jdata(prop)
-    x = x[0:100]
-    y = y[0:100]
-    jid = jid[0:100]
-
-    # STEP-2: Splitting the data
-    # ***************************
-    # 90-10% split for train test
-
-    X_train, X_test, y_train, y_test, jid_train, jid_test = train_test_split(
-        x, y, jid, random_state=1, test_size=0.1
-    )
-    # print ('lenx len y',len(x[0]),len(y))
-
-    # STEP-3: Use a specific ML model
-    # ********************************
-
-    # Set lower and upper quantile
-    # StanDev
-    LOWER_ALPHA = 0.16
-    # MID_ALPHA = 0.50
-    UPPER_ALPHA = 0.84
-
-    # SEARCH PARAMETERS
-    # ================
-    scoring = "neg_mean_absolute_error"
-    cv = 2
-    n_jobs = -1
-    # n_iter = how many parameter combination to try in the search
-    n_iter = 10
-    random_state = 508842607
-
-    # LOWER Model
-    # ===========
-    scaler = StandardScaler().fit(X_train)
-    scaler.transform(X_train)
-    scaler.transform(X_test)
-
-    objective = "quantile"
-    alpha = LOWER_ALPHA
-    print("Prima di lgbm for LOWER model")
-    lower_model = get_lgbm(
-        X_train,
-        X_test,
-        y_train,
-        y_test,
-        cv,
-        n_jobs,
-        scoring,
-        n_iter,
-        objective,
-        alpha,
-        random_state,
-    )
-    print("Dopo lgbm for LOWER model")
-    name = str(prop) + str("_lower")
-    filename = str("pickle2-") + str(name) + str(".pk")
-    pickle.dump(lower_model, open(filename, "wb"))
-
-    # MID Model
-    # =========
-    scaler = StandardScaler().fit(X_train)
-    scaler.transform(X_train)
-    scaler.transform(X_test)
-
-    # mid_model.fit(X_train, y_train)
-    objective = "regression"
-    alpha = 0.9
-    print("Prima di lgbm for MID model")
-    mid_model = get_lgbm(
-        X_train,
-        X_test,
-        y_train,
-        y_test,
-        cv,
-        n_jobs,
-        scoring,
-        n_iter,
-        objective,
-        alpha,
-        random_state,
-    )
-    print("Dopo lgbm for MID model")
-    name = str(prop) + str("_mid")
-    filename = str("pickle2-") + str(name) + str(".pk")
-    pickle.dump(mid_model, open(filename, "wb"))
-
-    # UPPER Model
-    # ===========
-    scaler = StandardScaler().fit(X_train)
-    scaler.transform(X_train)
-    scaler.transform(X_test)
-
-    # upper_model.fit(X_train, y_train)
-    objective = "quantile"
-    alpha = UPPER_ALPHA
-    print("Prima di lgbm for UPPER model")
-    upper_model = get_lgbm(
-        X_train,
-        X_test,
-        y_train,
-        y_test,
-        cv,
-        n_jobs,
-        scoring,
-        n_iter,
-        objective,
-        alpha,
-        random_state,
-    )
-    print("Dopo lgbm for UPPER model")
-    name = str(prop) + str("_upper")
-    filename = str("pickle2-") + str(name) + str(".pk")
-    pickle.dump(upper_model, open(filename, "wb"))
-
-    # PREDICTIONS and UQ
-    lower = lower_model.predict(X_test)
-    mid = mid_model.predict(X_test)
-    upper = upper_model.predict(X_test)
-    actual = y_test
-
-    print("Model       mae     rmse")
-    reg_sc = regr_scores(y_test, lower)
-    print("Lower:", round(reg_sc["mae"], 3), round(reg_sc["rmse"], 3))
-    reg_sc = regr_scores(y_test, mid)
-    print("Mid:", round(reg_sc["mae"], 3), round(reg_sc["rmse"], 3))
-    reg_sc = regr_scores(y_test, upper)
-    print("Upper:", round(reg_sc["mae"], 3), round(reg_sc["rmse"], 3))
-
-    """
- Calculate the absolute error associated with prediction intervals
- """
-    # in_bounds = actual.between(left=lower, right=upper)
-
-    fout1 = open("Intervals.dat", "w")
-    fout2 = open("Intervals1.dat", "w")
-    line0 = "#    Jid      Observed       pred_Lower"
-    line1 = "       pred_Mid        pred_Upper\n"
-    line = line0 + line1
-    fout1.write(line)
-    line0 = "#    Jid      Observed       pred_Lower    AbsErr(Lower)"
-    line1 = "     pred_Mid    AbsErr(Mid)     pred_Upper"
-    line2 = "     AbsErr(Upper)    AbsErrInterval    Pred_inBounds\n"
-    line = line0 + line1 + line2
-    fout2.write(line)
-    sum = 0.0
-    for ii in range(len(actual)):
-        true = float(actual[ii])
-        llow = float(lower[ii])
-        uupper = float(upper[ii])
-        if (true >= llow) and (true <= uupper):
-            in_bounds = "True"
-        else:
-            in_bounds = "False"
-        absolute_error_lower = abs(lower[ii] - actual[ii])
-        absolute_error_mid = abs(mid[ii] - actual[ii])
-        absolute_error_upper = abs(upper[ii] - actual[ii])
-        absolute_error_interval = (
-            absolute_error_lower + absolute_error_upper
-        ) / 2.0
-
-        line = (
-            str(ii)
-            + " "
-            + jid[ii]
-            + " "
-            + str(actual[ii])
-            + " "
-            + str(lower[ii])
-            + " "
-            + str(mid[ii])
-            + " "
-            + str(upper[ii])
-            + "\n"
-        )
-        sum = sum + float(absolute_error_interval)
-        line2 = (
-            str(ii)
-            + " "
-            + jid[ii]
-            + " "
-            + str(actual[ii])
-            + " "
-            + str(lower[ii])
-            + " "
-            + str(absolute_error_lower)
-            + " "
-            + str(mid[ii])
-            + " "
-            + str(absolute_error_mid)
-            + " "
-            + str(upper[ii])
-            + " "
-            + str(absolute_error_upper)
-            + " "
-            + str(absolute_error_interval)
-            + " "
-            + str(in_bounds)
-            + "\n"
-        )
-        fout1.write(line)
-        fout2.write(line2)
-    print("")
-    print(
-        "Normalized sum of absolute_error_interval= ", sum / float(len(actual))
-    )
-
-
-run(prop="exfoliation_energy")
