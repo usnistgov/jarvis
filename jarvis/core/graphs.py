@@ -170,7 +170,7 @@ class Graph(object):
         graph.add_nodes_from(self.nodes)
         graph.add_edges_from(self.edges)
         for i, j in zip(self.edges, self.edge_attributes):
-            graph.add_edge(i[0], i[1], j)
+            graph.add_edge(i[0], i[1], weight=j)
         return graph
 
     @property
