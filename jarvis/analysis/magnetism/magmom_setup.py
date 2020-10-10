@@ -28,7 +28,7 @@ class MagneticOrdering(object):
                 pos_new = np.dot(coords[at, :], rot.transpose()) + tran
                 pos_new = pos_new % 1
                 for at2 in range(nat):
-                    if check_match(pos_new, coords[at2, :]):
+                    if check_match(pos_new, coords[at2, :], tol=tol):
                         found = True
                         order[at] = at2
             if not found:
@@ -53,9 +53,10 @@ class MagneticOrdering(object):
             magnetic_ions = set(atoms.elements)
 
         ss = atoms.make_supercell(dim=supercell_dim)
-        spg = Spacegroup3D(atoms)
+        # spg = Spacegroup3D(atoms)
+        spg = Spacegroup3D(atoms)  # kfg
 
-        # apply symmetry with various tolerances until we find one that works
+        # Apply symmetry with various tolerances until we find one that works
         worked = False
         for tol in [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]:
             permutations, worked = self.apply_symmetry_operations(
@@ -176,7 +177,7 @@ class MagneticOrdering(object):
         mag_ions = list(set(all_mag_elements).intersection(set(els)))
         return mag_ions
 
-    def get_minimum_configs(self, min_configs=10, enforce_primitive=True):
+    def get_minimum_configs(self, min_configs=3, enforce_primitive=True):
         """Get minimum number of spin structures for Tc calculations."""
         atoms = self.atoms
         if enforce_primitive:
@@ -186,14 +187,32 @@ class MagneticOrdering(object):
         dim = np.array([1, 1, 1])
         mag_ions = self.get_mag_ions()
         symm_list, ss = self.get_unique_magnetic_structures(
-            atoms, supercell_dim=dim, magnetic_ions=mag_ions
+            atoms, supercell_dim=dim, magnetic_ions=mag_ions, noferri=True
         )
+        # kfg
+        if len(symm_list) < min_configs:
+            symm_list, ss = self.get_unique_magnetic_structures(
+                atoms, supercell_dim=dim, magnetic_ions=mag_ions, noferri=True
+            )
+
         count = 0
         while len(symm_list) < min_configs:
             dim[index_to_expand[count]] += 1
             symm_list, ss = self.get_unique_magnetic_structures(
-                atoms, supercell_dim=dim, magnetic_ions=self.get_mag_ions()
+                atoms,
+                supercell_dim=dim,
+                magnetic_ions=self.get_mag_ions(),
+                noferri=True,
             )
+            # kfg
+            if len(symm_list) < min_configs:
+                symm_list, ss = self.get_unique_magnetic_structures(
+                    atoms,
+                    supercell_dim=dim,
+                    magnetic_ions=self.get_mag_ions(),
+                    noferri=False,
+                )
+
             count = count + 1
             if count > 2:
                 count = 0

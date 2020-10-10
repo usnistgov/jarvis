@@ -1,6 +1,9 @@
 """Modules for LightGBM regression."""
 
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import (
+    train_test_split,
+    RandomizedSearchCV,
+)
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.pipeline import Pipeline
@@ -11,6 +14,7 @@ import numpy as np
 import pickle
 import joblib
 import matplotlib.pyplot as plt
+import scipy as sp
 
 
 def regression(
@@ -101,6 +105,137 @@ def regression(
         # TODO: implemet something like sklearn-json
         # json.dump(model.get_params(), open(js, "w"))
     return info
+
+
+default_param_dist = {
+    # 'boosting_type': [ 'dart'],
+    # 'boosting_type': ['gbdt', 'dart', 'rf'],
+    # 'num_leaves': sp.stats.randint(2, 1001),
+    # 'subsample_for_bin': sp.stats.randint(10, 1001),
+    # 'min_split_gain': sp.stats.uniform(0, 5.0),
+    # 'min_child_weight': sp.stats.uniform(1e-6, 1e-2),
+    # 'reg_alpha': sp.stats.uniform(0, 1e-2),
+    # 'reg_lambda': sp.stats.uniform(0, 1e-2),
+    # 'tree_learner': ['data', 'feature', 'serial', 'voting' ],
+    # 'application': ['regression_l1', 'regression_l2', 'regression'],
+    # 'bagging_freq': sp.stats.randint(1, 11),
+    # 'bagging_fraction': sp.stats.uniform(.1, 0.9),
+    # 'feature_fraction': sp.stats.uniform(.1, 0.9),
+    # 'learning_rate': sp.stats.uniform(1e-3, 0.9),
+    # 'est__num_leaves': [2,8,16],
+    # 'est__min_data_in_leaf': [1,2,4],
+    # 'est__learning_rate': [0.005,0.01,0.1],
+    # 'est__max_depth': [1,3,5], #sp.stats.randint(1, 501),
+    # 'est__n_estimators': [num_iteration,2*num_iteration,5*num_iteration],
+    # sp.stats.randint(100, 20001),
+    # 'gpu_use_dp': [True, False],
+    "est__min_data_in_leaf": sp.stats.randint(5, 20),
+    "est__n_estimators": sp.stats.randint(500, 2000),
+    "est__num_leaves": sp.stats.randint(100, 500),
+    "est__max_depth": sp.stats.randint(8, 20),
+    "est__learning_rate": sp.stats.uniform(5e-3, 0.5),
+}
+
+
+def get_lgbm(
+    train_x,
+    val_x,
+    train_y,
+    val_y,
+    cv,
+    n_jobs,
+    scoring,
+    n_iter,
+    objective,
+    alpha,
+    random_state,
+    param_dist=default_param_dist,
+):
+    """
+    Train a lightgbm model.
+
+    Args:
+
+        train_x: samples used for trainiing
+
+        val_x: validation set
+
+        train_y: train targets
+
+        val_y: validation targets
+
+        cv: # of cross-validations
+
+        n_jobs: for making the job parallel
+
+        scoring: scoring function to use such as MAE
+
+    Returns:
+           Best estimator.
+    """
+    # Get converged boosting iterations with high learning rate,
+    # MAE as the convergence crietria
+    lgbm = lgb.LGBMRegressor(
+        n_estimators=500,
+        learning_rate=0.1,
+        max_depth=5,
+        num_leaves=100,
+        objective=objective,
+        # min_data_in_leaf=2,
+        n_jobs=-1,
+        alpha=alpha,
+        random_state=random_state,
+        verbose=-1,
+    )
+
+    lgbm.fit(
+        train_x,
+        train_y,
+        eval_set=[(val_x, val_y)],
+        eval_metric="mae",
+        # eval_metric='l1',
+        early_stopping_rounds=10,
+    )
+    num_iteration = lgbm.best_iteration_
+    print("num_iteration", num_iteration)
+    print("in randomsearch cv")
+    # Generally thousands of randomized search for optimal parameters
+    # learning rate and num_leaves are very important
+    lgbm = lgb.LGBMRegressor(
+        objective=objective,
+        # device='gpu',
+        # n_estimators=num_iteration,
+        n_jobs=n_jobs,
+        alpha=alpha,
+        verbose=-1,
+    )
+    pipe = Pipeline(
+        [
+            ("stdscal", StandardScaler()),
+            ("vart", VarianceThreshold(1e-4)),
+            ("est", lgbm),
+        ]
+    )
+
+    # n_iter=10
+    # Increase n_iter for production runs.
+    rscv = RandomizedSearchCV(
+        estimator=pipe,
+        param_distributions=param_dist,
+        cv=cv,
+        scoring=scoring,
+        n_iter=n_iter,
+        n_jobs=n_jobs,
+        verbose=-1,
+        random_state=random_state,
+        refit=True,
+    )
+    model = rscv.fit(train_x, train_y)
+    print("Best Score: ", model.best_score_)
+    print("Best Params: ", model.best_params_)
+    print("Best Estimator: ", model.best_estimator_)
+    # return model.best_estimator_
+    return model
 
 
 def parameters_dict():
