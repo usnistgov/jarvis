@@ -102,7 +102,7 @@ class Api(object):
             turl, data=data, verify=False, auth=(self.username, self.password)
         )
         out = response.json()
-        pprint.pprint(out)
+        # pprint.pprint(out)
         response_code = response.status_code
         print("code:", response_code, requests.codes.ok)
         if response_code == requests.codes.created:
