@@ -1,5 +1,6 @@
 from jarvis.ai.uncertainty import lgbm_quantile_uncertainty as uq
 from jarvis.ai.pkgs.utils import get_ml_data
+import os
 
 # STEP-1: Getting Data
 # ********************
@@ -23,9 +24,8 @@ n_jobs = -1
 n_iter = 10
 random_state = 508842607
 
-info = {}
-uq.quantile_regr_predint(
-    x, y, jid, cv, n_jobs, n_iter, random_state, scoring, property, info
+info = uq.quantile_regr_predint(
+    x, y, jid, cv, n_jobs, n_iter, random_state, scoring, property
 )
 
 # TEST
@@ -33,3 +33,5 @@ assert info["MAE_Lower"] < 200.0
 assert info["MAE_Mid"] < 200.0
 assert info["MAE_Upper"] < 200.0
 assert info["MAE_Error"] < 200.0
+cmd ='rm *.pk *.dat'
+os.system(cmd)
