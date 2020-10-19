@@ -172,7 +172,22 @@ class MagneticOrdering(object):
 
     def get_mag_ions(self):
         """List all magnetic atoms in the Atoms object."""
-        all_mag_elements = ["Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu"]
+        all_mag_elements = [
+            "Ti",
+            "V",
+            "Cr",
+            "Mn",
+            "Fe",
+            "Co",
+            "Ni",
+            "Cu",
+            "Ru",
+            "Ir",
+            "Rh",
+            "Os",
+            "Rb",
+            "Sc",
+        ]
         els = self.atoms.elements
         mag_ions = list(set(all_mag_elements).intersection(set(els)))
         return mag_ions

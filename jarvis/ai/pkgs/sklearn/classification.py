@@ -167,18 +167,19 @@ def classification(
                 + "_"
                 + str(".jb")
             )
-            pickle.dump(i, open(pk, "wb"))
-            joblib.dump(i, jb)
+            pickle.dump(m, open(pk, "wb"))
+            joblib.dump(m, jb)
     return info
 
 
 """
 if __name__ == "__main__":
+    from jarvis.ai.pkgs.utils import get_ml_data
     X, Y, jid  = get_ml_data(dataset = 'cfid_3d',
                              ml_property='exfoliation_energy')
     X_class, Y_class = binary_class_dat(X=X, Y=Y, tol=100)
-    info = classification(X=X,Y=Y,tol=100)
-    print (info)
-    print ()
-    print (info['GradientBoostingClassifier']['roc_auc'][0])
+    info = classification(X=X,Y=Y,tol=100, save_model=True)
+    #print (info)
+    #print ()
+    #print (info['GradientBoostingClassifier']['roc_auc'][0])
 """
