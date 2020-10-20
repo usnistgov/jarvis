@@ -17,7 +17,8 @@ from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
 from jarvis.analysis.thermodynamics.energetics import form_enp
 from jarvis.tasks.boltztrap.run import run_boltztrap
 from jarvis.tasks.phonopy.run import run_phonopy
-# from jarvis.io.phonopy.outputs import bandstructure_plot
+
+from jarvis.io.phonopy.outputs import bandstructure_plot
 from jarvis.ai.pkgs.utils import get_ml_data
 from jarvis.analysis.diffraction.xrd import XRD
 import numpy as np
@@ -1188,7 +1189,7 @@ class VaspToApiXmlSchema(object):
         if os.path.isfile(totdos):
 
             mesh_yaml = outcar.replace("OUTCAR", "mesh.yaml")
-            # band_yaml = outcar.replace("OUTCAR", "band.yaml")
+            band_yaml = outcar.replace("OUTCAR", "band.yaml")
             with open(mesh_yaml, "r") as f:
                 doc = yaml.load(f)
             nmodes = doc["phonon"][0]["band"]
@@ -1231,32 +1232,32 @@ class VaspToApiXmlSchema(object):
             )
 
             # Comment until 4 MB text size error
-            # frequencies, distances, labels,label_points = bandstructure_plot(
-            #    band_yaml
-            # )
-            # tmp = ""
-            # for i in range(np.array(frequencies).shape[1]):
-            #    tmp += ",".join(map(str, np.array(frequencies)[:, i])) + ";"
-            # line += (
-            #    "<phonon_bandstructure_distances>'"
-            #    + ",".join(map(str, distances))
-            #    + "'</phonon_bandstructure_distances>"
-            # )
-            # line += (
-            #    "<phonon_bandstructure_frequencies>'"
-            #    + tmp
-            #    + "'</phonon_bandstructure_frequencies>"
-            # )
-            # line += (
-            #    "<phonon_bandstructure_labels>'"
-            #    + ",".join(map(str, labels))
-            #    + "'</phonon_bandstructure_labels>"
-            # )
-            # line += (
-            #    "<phonon_bandstructure_label_points>'"
-            #    + ",".join(map(str, label_points))
-            #    + "'</phonon_bandstructure_label_points>"
-            # )
+            frequencies, distances, labels, label_points = bandstructure_plot(
+                band_yaml
+            )
+            tmp = ""
+            for i in range(np.array(frequencies).shape[1]):
+                tmp += ",".join(map(str, np.array(frequencies)[:, i])) + ";"
+            line += (
+                "<phonon_bandstructure_distances>'"
+                + ",".join(map(str, distances))
+                + "'</phonon_bandstructure_distances>"
+            )
+            line += (
+                "<phonon_bandstructure_frequencies>'"
+                + tmp
+                + "'</phonon_bandstructure_frequencies>"
+            )
+            line += (
+                "<phonon_bandstructure_labels>'"
+                + ",".join(map(str, labels))
+                + "'</phonon_bandstructure_labels>"
+            )
+            line += (
+                "<phonon_bandstructure_label_points>'"
+                + ",".join(map(str, label_points))
+                + "'</phonon_bandstructure_label_points>"
+            )
         return line
 
     def main_elastic(self):
@@ -1267,6 +1268,7 @@ class VaspToApiXmlSchema(object):
         data = ""
 
         for i in glob.glob("MAIN-ELAST*.json"):
+
             try:
                 folder = i.split(".json")[0]
                 out = os.getcwd() + "/" + folder + "/OUTCAR"
@@ -1707,12 +1709,12 @@ class VaspToApiXmlSchema(object):
             """
 
 
-"""
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
     filename = "JVASP-1002.xml"
     VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
+"""
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
     filename = "JVASP-1067.xml"
     VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
