@@ -1231,32 +1231,32 @@ class VaspToApiXmlSchema(object):
             )
 
             # Comment until 4 MB text size error
-            # frequencies, distances, labels,label_points = bandstructure_plot(
-            #    band_yaml
-            # )
-            # tmp = ""
-            # for i in range(np.array(frequencies).shape[1]):
-            #    tmp += ",".join(map(str, np.array(frequencies)[:, i])) + ";"
-            # line += (
-            #    "<phonon_bandstructure_distances>'"
-            #    + ",".join(map(str, distances))
-            #    + "'</phonon_bandstructure_distances>"
-            # )
-            # line += (
-            #    "<phonon_bandstructure_frequencies>'"
-            #    + tmp
-            #    + "'</phonon_bandstructure_frequencies>"
-            # )
-            # line += (
-            #    "<phonon_bandstructure_labels>'"
-            #    + ",".join(map(str, labels))
-            #    + "'</phonon_bandstructure_labels>"
-            # )
-            # line += (
-            #    "<phonon_bandstructure_label_points>'"
-            #    + ",".join(map(str, label_points))
-            #    + "'</phonon_bandstructure_label_points>"
-            # )
+            frequencies, distances, labels,label_points = bandstructure_plot(
+               band_yaml
+            )
+            tmp = ""
+            for i in range(np.array(frequencies).shape[1]):
+               tmp += ",".join(map(str, np.array(frequencies)[:, i])) + ";"
+            line += (
+               "<phonon_bandstructure_distances>'"
+               + ",".join(map(str, distances))
+               + "'</phonon_bandstructure_distances>"
+            )
+            line += (
+               "<phonon_bandstructure_frequencies>'"
+               + tmp
+               + "'</phonon_bandstructure_frequencies>"
+            )
+            line += (
+               "<phonon_bandstructure_labels>'"
+               + ",".join(map(str, labels))
+               + "'</phonon_bandstructure_labels>"
+            )
+            line += (
+               "<phonon_bandstructure_label_points>'"
+               + ",".join(map(str, label_points))
+               + "'</phonon_bandstructure_label_points>"
+            )
         return line
 
     def main_elastic(self):
