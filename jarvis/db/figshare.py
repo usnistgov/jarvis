@@ -20,11 +20,22 @@ def datasets(dataset=""):
         url = "https://ndownloader.figshare.com/files/22471022"
         js_tag = "jdft_3d-4-26-2020.json"
         print("Obtaining 3D dataset ...")
-
     elif dataset == "cfid_3d":
         url = "https://ndownloader.figshare.com/files/22470818"
         js_tag = "jml_3d-4-26-2020.json"
-        print("Obtaining 3D CFID dataset ...")
+        print("Obtaining JARVIS-3D CFID dataset 37k...")
+    elif dataset == "mp_3d":
+        url = "https://ndownloader.figshare.com/files/24979850"
+        js_tag = "CFID_mp_desc_data_84k.json"
+        print("Obtaining Materials Project-3D CFID dataset 84k...")
+    elif dataset == "oqmd_3d":
+        url = "https://ndownloader.figshare.com/files/24981170"
+        js_tag = "CFID_OQMD_460k.json"
+        print("Obtaining OQMD-3D CFID dataset 460k...")
+    elif dataset == "qm9":
+        url = "https://ndownloader.figshare.com/files/25159592"
+        js_tag = "qm9_data_cfid.json"
+        print("Obtaining QM9-molecule CFID dataset 134k...")
     else:
         ValueError("Dataset doesnt exist", dataset)
     return url, js_tag
