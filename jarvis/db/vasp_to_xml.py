@@ -20,7 +20,8 @@ from jarvis.tasks.phonopy.run import run_phonopy
 
 from jarvis.io.phonopy.outputs import bandstructure_plot
 from jarvis.ai.pkgs.utils import get_ml_data
-from jarvis.analysis.diffraction.xrd import XRD
+from jarvis.analysis.diffraction.
+import XRD
 import numpy as np
 from jarvis.analysis.elastic.tensor import ElasticTensor
 from jarvis.io.boltztrap.outputs import BoltzTrapOutput
@@ -1711,13 +1712,11 @@ class VaspToApiXmlSchema(object):
             """
 
 
+"""
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
     filename = "JVASP-1067.xml"
     VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
-
-
-"""
 
     folder = "/rk2/knc6/JARVIS-DFT/2DSF-bulk/mp-764365_PBEBO"
     filename = "JVASP-30266.xml"
