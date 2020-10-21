@@ -36,7 +36,7 @@ jobs:
             chmod +x "./cc-test-reporter"
       - run:
           name: install dependencies
-          no_output_timeout: 30m
+          no_output_timeout: 60m
           command: |
             python3 -m venv venv
             . venv/bin/activate
