@@ -11,9 +11,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-
-    version="2020.10.19",
-
+    version="2020.10.20",
     long_description=long_d,
     install_requires=[
         "numpy",
@@ -41,6 +39,7 @@ setup(
         "jarvis.io.vasp": ["default_potcars.json"],
         "jarvis.analysis.solarefficiency": ["am1.5G.dat"],
         "jarvis.io.wannier": ["default_semicore.json"],
+        "jarvis.analysis.diffraction": ["atomic_scattering_params.json"],
     },
     extras_require={
         "ai": [

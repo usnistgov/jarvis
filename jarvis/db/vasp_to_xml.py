@@ -180,7 +180,7 @@ class VaspToApiXmlSchema(object):
             encut_files = []
             encut_values = []
             encut_based_energies = []
-            for i in glob.glob("*.json"):
+            for i in glob.glob("ENCUT*.json"):
                 if "ENCUT" in i:
                     encut_values.append(
                         int(str(i.split("-")[-1]).split(".json")[0])
@@ -195,7 +195,7 @@ class VaspToApiXmlSchema(object):
             kplength_files = []
             kp_values = []
             kp_based_energies = []
-            for i in glob.glob("*.json"):
+            for i in glob.glob("KPOINT*.json"):
                 if "KPOINT" in i:
                     kp_values.append(
                         int(str(i.split("-")[-1]).split(".json")[0])
@@ -330,7 +330,9 @@ class VaspToApiXmlSchema(object):
             )
             line += '<d_hkls>"' + array_to_string(d_hkls) + '"</d_hkls>'
             line += (
-                '<intensities>"' + array_to_string(d_hkls) + '"</intensities>'
+                '<intensities>"'
+                + array_to_string(intensities)
+                + '"</intensities>'
             )
         except Exception:
             print("Cannot gt XRD pattern.")
@@ -1710,13 +1712,19 @@ class VaspToApiXmlSchema(object):
 
 
 if __name__ == "__main__":
-    folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
-    filename = "JVASP-1002.xml"
-    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
-
-"""
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
     filename = "JVASP-1067.xml"
+    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+
+"""
+
+    folder = "/rk2/knc6/JARVIS-DFT/2DSF-bulk/mp-764365_PBEBO"
+    filename = "JVASP-30266.xml"
+    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+    folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
+    filename = "JVASP-1002.xml"
     VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
     folder = "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO"
