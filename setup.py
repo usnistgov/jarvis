@@ -40,6 +40,7 @@ setup(
         "jarvis.analysis.solarefficiency": ["am1.5G.dat"],
         "jarvis.io.wannier": ["default_semicore.json"],
         "jarvis.analysis.diffraction": ["atomic_scattering_params.json"],
+        "jarvis": ["LICENSE.rst"],
     },
     extras_require={
         "ai": [
