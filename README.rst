@@ -68,11 +68,6 @@ Installation
 Please see `Installation instructions <https://github.com/usnistgov/jarvis/blob/master/Installation.rst>`__
 
 
-Example Jupyter notebooks
------------------------------
-
-Please find several `Google Colab Notebooks <https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks>`__
-
 
 Example function
 -----------------
@@ -106,6 +101,15 @@ Example function
 ...     filename = 'POSCAR-'+jid+'.vasp'
 ...     poscar.write_file(filename)
 
+Find more examples at
+
+      1) https://jarvis-materials-design.github.io/dbdocs/tutorials
+      
+      2) https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
+      
+      3) https://github.com/usnistgov/jarvis/tree/master/jarvis/tests/testfiles
+      
+      
 References
 -----------------
 
