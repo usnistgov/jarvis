@@ -20,6 +20,7 @@ in
        pytest
        bokeh
        networkx
+       xmltodict
      ];
      src=builtins.filterSource (path: type: type != "directory" || baseNameOf path != ".git") ./.;
      preShellHook = ''
