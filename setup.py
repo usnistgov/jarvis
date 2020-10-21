@@ -11,20 +11,17 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-
-    version="2020.10.19",
-
+    version="2020.10.20",
     long_description=long_d,
     install_requires=[
-        "numpy",
-        "scipy",
-        "matplotlib",
-        "spglib",
-        "joblib",
-        "requests",
-        "toolz",
-        "xmltodict",
-        "pytest",
+        "numpy>=1.19.1",
+        "scipy>=1.4.1",
+        "matplotlib>=3.0.0",
+        "spglib>=1.14.1",
+        "joblib>=0.14.1",
+        "requests>=2.23.0",
+        "toolz>=0.9.0",
+        "xmltodict>=0.11.0",
     ],
     package_data={
         "jarvis.core": ["Elements.json", "element_charge.json"],
@@ -41,6 +38,8 @@ setup(
         "jarvis.io.vasp": ["default_potcars.json"],
         "jarvis.analysis.solarefficiency": ["am1.5G.dat"],
         "jarvis.io.wannier": ["default_semicore.json"],
+        "jarvis.analysis.diffraction": ["atomic_scattering_params.json"],
+        "jarvis": ["LICENSE.rst"],
     },
     extras_require={
         "ai": [

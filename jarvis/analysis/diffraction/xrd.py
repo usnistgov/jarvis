@@ -4,8 +4,10 @@ import json
 import collections
 import os
 from jarvis.core.specie import Specie
+
 # from jarvis.core.spectrum import Spectrum
 import itertools
+
 # from jarvis.analysis.structure.spacegroup import Spacegroup3D,
 
 
@@ -207,6 +209,7 @@ class XRD(object):
         return pretty_unique
 
 
+"""
 if __name__ == "__main__":
     # h=create_index()
     # print (h,len(h))
@@ -221,3 +224,4 @@ if __name__ == "__main__":
     print("a=", a)
     print("b=", b)
     print("c=", c)
+"""
