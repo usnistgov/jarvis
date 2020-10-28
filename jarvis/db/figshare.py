@@ -36,6 +36,10 @@ def datasets(dataset=""):
         url = "https://ndownloader.figshare.com/files/25159592"
         js_tag = "qm9_data_cfid.json"
         print("Obtaining QM9-molecule CFID dataset 134k...")
+    elif dataset == "raw_files":
+        url = "https://ndownloader.figshare.com/files/25295732"
+        js_tag = "figshare_data-10-28-2020.json"
+        print("Obtaining raw io files...")
     else:
         ValueError("Dataset doesnt exist", dataset)
     return url, js_tag

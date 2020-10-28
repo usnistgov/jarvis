@@ -1036,7 +1036,8 @@ class Atoms(object):
                 + cart_frac
             )
         rest = ""
-
+        if coords_ordered.ndim == 1:
+            coords_ordered = np.array([coords])
         for ii, i in enumerate(coords_ordered):
             if self.show_props:
                 rest = (

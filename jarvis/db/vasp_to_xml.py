@@ -2,6 +2,7 @@
 import os
 import glob
 from jarvis.core.atoms import Atoms
+from jarvis.core.atoms import VacuumPadding
 import yaml
 from jarvis.core.atoms import get_supercell_dims
 from jarvis.analysis.thermodynamics.energetics import get_twod_defect_energy
@@ -17,7 +18,6 @@ from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
 from jarvis.analysis.thermodynamics.energetics import form_enp
 from jarvis.tasks.boltztrap.run import run_boltztrap
 from jarvis.tasks.phonopy.run import run_phonopy
-
 from jarvis.io.phonopy.outputs import bandstructure_plot
 from jarvis.ai.pkgs.utils import get_ml_data
 from jarvis.analysis.diffraction.xrd import XRD
@@ -29,20 +29,86 @@ from jarvis.core.utils import array_to_string
 from jarvis.core.utils import stringdict_to_xml
 from jarvis.ai.descriptors.cfid import CFID
 from jarvis.io.wannier.outputs import WannierHam
-
+from jarvis.db.figshare import data
 
 cfid_x, cfid_y, cfid_jids = get_ml_data()
 
+figshare_dict = data("raw_files")
 
-def get_cfid_descriptors(jid="JVASP-1002", atoms="", make_cfid=True):
+
+def get_cfid_descriptors(
+    jid="JVASP-1002", atoms="", make_cfid=True, material_type="bulk"
+):
     """Get CFID pre-computed descriptors for a JID."""
     for i, j in zip(cfid_x, cfid_jids):
         if j == jid:
             return i
     if make_cfid:
         print("Calculating CFID descriptors.")
+        if material_type == "Mol":
+            atoms = VacuumPadding(atoms, vacuum=20.0).get_effective_molecule()
+        if "Layer" in material_type:
+            atoms = VacuumPadding(atoms, vacuum=20.0).get_effective_2d_slab()
         cfid = CFID(atoms)
         return cfid.get_comp_descp().tolist()
+
+
+def get_figshare_files(jid="JVASP-1067"):
+    """Get Figshare download links."""
+    mem = []
+    line = ""
+    for i, j in figshare_dict.items():
+        for k in j:
+            if isinstance(k, dict):
+                jjid = k["name"].split("_")[0].split(".zip")[0]
+                if jjid == jid:
+                    info = {}
+                    info["category"] = i
+                    info["url"] = k["download_url"]
+                    info["name"] = k["name"]
+                    line += ",".join([i, k["name"], k["download_url"]]) + ";"
+                    info["line"] = line
+                    mem.append(info)
+    return line
+
+
+icsd_mp_dat = loadjson("/rk2/knc6/JARVIS-DFT/icsd_mp_dat.json")
+
+# Number of ICSDs
+# x=[]
+# for i in icsd_mp_dat:
+#    mpid=i['mpid']
+#    tmp=icsd_mp(mpid)
+#    if tmp!='':
+#       print (mpid,tmp)
+#       y=tmp.split(',')
+#       for j in y:
+#         x.append(j)
+# print (len(x))
+
+
+def icsd_mp(ref=""):
+    """Get ICSD IDs given MPIDs."""
+    ids = ""
+    for i in icsd_mp_dat:
+        if i["mpid"] == ref:
+            if len(i["icsds"]) != 0:
+                if isinstance(i["icsds"], list):
+                    ids = ",".join(map(str, i["icsds"]))
+                else:
+                    ids = str(i["icsds"]) + ","
+    return ids
+
+
+def get_see_also(folder=""):
+    line = ""
+    tag = folder.split("/")[-1].split("_")[0]
+    if "mp-" in tag or "mvc-" in tag:
+        mpid = tag
+        line += "MP: https://www.materialsproject.org/materials/" + mpid + ";"
+        icsd = icsd_mp(mpid)
+        line += "ICSD: " + icsd + ";"
+    return line
 
 
 class VaspToApiXmlSchema(object):
@@ -53,20 +119,26 @@ class VaspToApiXmlSchema(object):
         folder="",
         meta_data={
             "id_file": "JARVIS-ID",
+            "tmp_id_file": "'JARVIS-ID'",
             "ehull": "",
             "data_source": "JARVIS-DFT-VASP",
+            "tmp_data_source": "'JARVIS-DFT-VASP'",
             "material_type": "bulk",
+            "tmp_material_type": "'bulk'",
             "exfoliation_energy": "",
         },
     ):
         """Initialize class."""
         self.folder = folder
+        meta_data["material_type"] = "Unknown"
         if "1L" in folder:
             meta_data["material_type"] = "SingleLayer"
         if "2L" in folder:
             meta_data["material_type"] = "BiLayer"
         if "3L" in folder:
             meta_data["material_type"] = "TriLayer"
+        if "Mol-" in folder:
+            meta_data["material_type"] = "Molecule"
         self.meta_data = meta_data
 
     def ebandstruct(self, vrun="", kp=""):
@@ -314,8 +386,8 @@ class VaspToApiXmlSchema(object):
                 + '"</fermi_velocities>'
             )
 
-        except Exception:
-            print("Cannot get DOS data", vrun)
+        except Exception as exp:
+            print("Cannot get DOS data", vrun, exp)
         return line
 
     def get_xrd(self, atoms):
@@ -838,28 +910,50 @@ class VaspToApiXmlSchema(object):
         main_folder = self.folder
         os.chdir(main_folder)
         info = {}
-        info["source_folder"] = self.folder
+        info["source_folder"] = str(self.folder)
+        try:
+            info["see_also"] = ""
+            see_also_dat = get_see_also(str(self.folder))
+            info["see_also"] = '"' + see_also_dat + '"'
+        except Exception as exp:
+            print("Cannot get seel also data", exp)
+            pass
+        info["tmp_source_folder"] = "'" + str(self.folder) + "'"
         for i, j in self.meta_data.items():
             info[i] = j
         id_file = self.meta_data["id_file"]
         for i in glob.glob("MAIN-RELAX*.json"):
             folder = i.split(".json")[0]
             main_vrun = os.getcwd() + "/" + folder + "/vasprun.xml"
+            main_contcar = os.getcwd() + "/" + folder + "/CONTCAR"
             # vrun = Vasprun(main_vrun)
             # atoms = vrun.all_structures[-1]
+
             try:
                 vrun = Vasprun(main_vrun)
-                atoms = vrun.all_structures[-1]
+                atoms = Atoms.from_poscar(main_contcar)
+                # atoms = vrun.all_structures[-1]
                 info["XRD"] = self.get_xrd(atoms)
-                f = open(os.path.join(folder, "..", id_file), "r")
+                tmp_path = os.path.join(folder, "..", id_file)
+                f = open(tmp_path, "r")
                 lines = f.read().splitlines()
                 f.close()
                 id = lines[0]
                 info["id"] = id
+                try:
+                    info["download_files"] = ""
+                    files_line = get_figshare_files(id)
+                    info["download_files"] = files_line
+                except Exception as exp:
+                    print("Cannot get figshare files.")
+                    pass
+                info["tmp_id"] = '"' + str(id) + '"'
                 formula = atoms.composition.reduced_formula
                 info["formula"] = formula
+                info["tmp_formula"] = '"' + formula + '"'
                 elements = ",".join(atoms.uniq_species)
                 info["elements"] = elements
+                info["tmp_elements"] = '"' + elements + '"'
                 info["number_uniq_species"] = len(atoms.uniq_species)
                 method = ""
                 try:
@@ -877,6 +971,7 @@ class VaspToApiXmlSchema(object):
                 if method == "PBEMK":
                     method = "OptB86bvdW"
                 info["method"] = method
+                info["tmp_method"] = '"' + method + '"'
                 final_energy = vrun.final_energy
                 num_atoms = atoms.num_atoms
                 fen = ""
@@ -957,6 +1052,20 @@ class VaspToApiXmlSchema(object):
                 info["contcar"] = (
                     '"' + str(atoms.get_string()).replace("\n", "\\n") + '"'
                 )
+                info["cif"] = ""
+                try:
+                    cif_filename = os.path.join(os.getcwd(), "atoms.cif")
+                    atoms.write_cif(filename="atoms.cif")
+                    cif_f = open(cif_filename, "r")
+                    cif_lines = cif_f.read()  # .splitlines()
+                    cif_f.close()
+                    os.remove(cif_filename)
+                    info["cif"] = (
+                        '"' + str(cif_lines).replace("\n", "\\n") + '"'
+                    )
+                except Exception as exp:
+                    print("CIF exception", exp)
+                    pass
 
                 # info["xyz"] = '"' + str(xyz).replace("\n", "\\n") + '"'
                 rdf_bins = np.arange(0.1, 10.2, 0.1)
@@ -971,7 +1080,11 @@ class VaspToApiXmlSchema(object):
                 # Use pre-computed CFID dataset with chemo-structural features
                 if use_cfid_data:
                     try:
-                        cfid_descs = get_cfid_descriptors(jid=id, atoms=atoms)
+                        cfid_descs = get_cfid_descriptors(
+                            jid=id,
+                            atoms=atoms,
+                            material_type=self.meta_data["material_type"],
+                        )
                         if cfid_descs is not None:
                             include_neighbor_info = False
                             rdf_hist = cfid_descs[820:920]
@@ -981,8 +1094,8 @@ class VaspToApiXmlSchema(object):
                             info["cfid_descs"] = (
                                 "'" + ",".join(map(str, cfid_descs)) + "'"
                             )
-                    except Exception:
-                        print("Cannot obtain cfid dataset", id)
+                    except Exception as exp:
+                        print("Cannot obtain cfid dataset", id, exp)
                         pass
                 if include_neighbor_info:
                     nbr = NeighborsAnalysis(atoms)
@@ -1042,14 +1155,14 @@ class VaspToApiXmlSchema(object):
             + "'</epsilon>"
         )
         line += (
-            "<epsilon_rpa>"
+            "<epsilon_rpa>'"
             + ",".join(map(str, data["epsilon"]["epsilon_rpa"].flatten()))
-            + "</epsilon_rpa>"
+            + "'</epsilon_rpa>"
         )
         line += (
-            "<epsilon_ion>"
+            "<epsilon_ion>'"
             + ",".join(map(str, data["epsilon"]["epsilon_ion"].flatten()))
-            + "</epsilon_ion>"
+            + "'</epsilon_ion>"
         )
         max_eps = np.max(np.abs(np.array(data["epsilon"]["epsilon"])))
         line += "<max_eps>" + str(max_eps) + "</max_eps>"
@@ -1060,7 +1173,7 @@ class VaspToApiXmlSchema(object):
         # spg = str(spgg._dataset["number"])
         natoms = atoms.num_atoms
         combs = []
-        line += "<born_effective_charge>"
+        line += "<born_effective_charge>'"
         for k in range(natoms):
             comb = str(atoms.elements[k]) + "," + str(wycs[k])
             if comb not in combs:
@@ -1074,7 +1187,7 @@ class VaspToApiXmlSchema(object):
                 )
                 line += p
                 combs.append(comb)
-        line += "</born_effective_charge>"
+        line += "'</born_effective_charge>"
         # print (line)
         # vrun_eigs = data["phonon_eigenvalues"]
         pza = out.piezoelectric_tensor[1]
@@ -1713,6 +1826,13 @@ class VaspToApiXmlSchema(object):
 
 """
 if __name__ == "__main__":
+    folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO"
+    filename = "JVASP-816.xml"
+    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+    import sys
+
+    sys.exit()
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
     filename = "JVASP-1067.xml"
     VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
