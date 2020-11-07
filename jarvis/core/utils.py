@@ -5,8 +5,14 @@ from collections import defaultdict
 import random
 import numpy as np
 import math
+import xmltodict
 
 # from lxml import etree
+def xml_to_dict(fname):
+    """Parse XML file."""
+    with open(fname, "r") as f:
+        data = xmltodict.parse(f.read())
+    return data
 
 
 def get_counts(array=["W", "W", "Mo", "Mo", "S", "S"]):
