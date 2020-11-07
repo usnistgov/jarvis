@@ -1,5 +1,6 @@
 """Module to make XML for JARVIS-REST-API schema."""
 import os
+import traceback
 import glob
 from jarvis.core.atoms import Atoms
 from jarvis.core.atoms import VacuumPadding
@@ -130,7 +131,7 @@ class VaspToApiXmlSchema(object):
     ):
         """Initialize class."""
         self.folder = folder
-        meta_data["material_type"] = "Unknown"
+        meta_data["material_type"] = "bulk"
         if "1L" in folder:
             meta_data["material_type"] = "SingleLayer"
         if "2L" in folder:
@@ -943,7 +944,7 @@ class VaspToApiXmlSchema(object):
                 try:
                     info["download_files"] = ""
                     files_line = get_figshare_files(id)
-                    info["download_files"] = files_line
+                    info["download_files"] = '"' + files_line + '"'
                 except Exception as exp:
                     print("Cannot get figshare files.")
                     pass
@@ -976,7 +977,11 @@ class VaspToApiXmlSchema(object):
                 num_atoms = atoms.num_atoms
                 fen = ""
                 if method == "OptB88vdW":
-                    fen = form_enp(atoms=atoms, total_energy=final_energy)
+                    try:
+                        fen = form_enp(atoms=atoms, total_energy=final_energy)
+                    except Exception as exp:
+                        print("Cannot get formation energy.", exp)
+                        pass
                 info["formation_energy"] = fen
                 rel_en = final_energy / num_atoms
                 info["relaxed_energy"] = round(rel_en, 3)
@@ -1132,7 +1137,8 @@ class VaspToApiXmlSchema(object):
                 if include_dos_info:
                     main_relax_dos = self.electronic_dos_info(vrun)
                     info["main_relax_dos"] = main_relax_dos
-            except Exception:
+            except Exception as expt:
+                print("Exception in basic info", expt, traceback.format_exc())
                 pass
         os.chdir(main_folder)
         self.basic_info_dict = info
@@ -1824,6 +1830,9 @@ class VaspToApiXmlSchema(object):
             """
 
 
+folder = "/rk2/knc6/JARVIS-DFT/Bulk-easyicsd1/mp-613206_PBEBO"
+filename = "temp.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 """
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO"
