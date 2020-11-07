@@ -9,6 +9,7 @@ from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from numpy import cos, sin
 from math import tan, pi
 from math import ceil
+import math
 
 
 def generate_kgrid(grid=[5, 5, 5]):
@@ -73,6 +74,18 @@ class Kpoints3D(object):
     def kpts(self):
         """Return k-points arrays."""
         return self._kpoints
+
+    def kpoints_per_atom(self, atoms=None, kppa=1000):
+        """Return Kpoints object for kpoints per atom for a cell."""
+        if math.fabs((math.floor(kppa ** (1 / 3) + 0.5)) ** 3 - kppa) < 1:
+            kppa += kppa * 0.01
+        latt = atoms.lattice_mat
+        lengths = atoms.lattice.lat_lengths()
+        ngrid = kppa / atoms.num_atoms
+        mult = (ngrid * lengths[0] * lengths[1] * lengths[2]) ** (1 / 3)
+        num_div = [int(math.floor(max(mult / l, 1))) for l in lengths]
+        kpts = Kpoints3D(kpoints=[num_div])
+        return kpts
 
     @property
     def labels(self):
