@@ -327,6 +327,22 @@ class Outcar(object):
                 return n_ions
 
     @property
+    def nbands(self):
+        """Get number of bands."""
+        for i in self.data:
+            if "NBANDS=" in i:
+                nbands = int(i.split()[-1])
+                return nbands
+
+    @property
+    def nelect(self):
+        """Get number of electrons."""
+        for i in self.data:
+            if "NELECT" in i:
+                nelect = int(float(i.split()[2]))
+                return nelect
+
+    @property
     def phonon_eigenvalues(self):
         """Get phonon eigenvalues."""
         # Thz values

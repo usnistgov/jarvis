@@ -102,6 +102,7 @@ def icsd_mp(ref=""):
 
 
 def get_see_also(folder=""):
+    """Generate see also link."""
     line = ""
     tag = folder.split("/")[-1].split("_")[0]
     if "mp-" in tag or "mvc-" in tag:
@@ -946,7 +947,7 @@ class VaspToApiXmlSchema(object):
                     files_line = get_figshare_files(id)
                     info["download_files"] = '"' + files_line + '"'
                 except Exception as exp:
-                    print("Cannot get figshare files.")
+                    print("Cannot get figshare files.", exp)
                     pass
                 info["tmp_id"] = '"' + str(id) + '"'
                 formula = atoms.composition.reduced_formula

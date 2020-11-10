@@ -153,8 +153,8 @@ class Wannier90win(object):
 
         tol = self.frozen_tol
         if self.efermi is not None:
-            dmax = self.efermi - tol
-            dmin = self.efermi + tol
+            dmax = self.efermi + tol
+            dmin = self.efermi - tol
             line = str("dis_froz_max =") + str(dmax) + str("\n")
             f.write(line)
             line = str("dis_froz_min =") + str(dmin) + str("\n")
@@ -194,7 +194,7 @@ class Wannier90win(object):
         shutil.copy2(prev_win, bak)
 
         # line=str('write_hr=.true. \n')
-        line = str(hr_tag) + str(".true. \n")
+        line = str(hr_tag) + str("=.true. \n")
 
         f = open(hr, "w")
         f.write(line)
