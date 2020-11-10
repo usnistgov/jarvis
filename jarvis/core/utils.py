@@ -7,7 +7,7 @@ import numpy as np
 import math
 import xmltodict
 
-# from lxml import etree
+
 def xml_to_dict(fname):
     """Parse XML file."""
     with open(fname, "r") as f:

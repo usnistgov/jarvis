@@ -79,11 +79,11 @@ class Kpoints3D(object):
         """Return Kpoints object for kpoints per atom for a cell."""
         if math.fabs((math.floor(kppa ** (1 / 3) + 0.5)) ** 3 - kppa) < 1:
             kppa += kppa * 0.01
-        latt = atoms.lattice_mat
+        # latt = atoms.lattice_mat
         lengths = atoms.lattice.lat_lengths()
         ngrid = kppa / atoms.num_atoms
         mult = (ngrid * lengths[0] * lengths[1] * lengths[2]) ** (1 / 3)
-        num_div = [int(math.floor(max(mult / l, 1))) for l in lengths]
+        num_div = [int(math.floor(max(mult / lg, 1))) for lg in lengths]
         kpts = Kpoints3D(kpoints=[num_div])
         return kpts
 

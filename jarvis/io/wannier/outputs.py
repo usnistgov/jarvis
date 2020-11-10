@@ -654,6 +654,7 @@ class WannierHam(object):
         nk2=50,
         sig=0.3,
     ):
+        """Generate 2D projected Fermi-surface."""
         K = np.zeros((nk1, nk2, 3), dtype=float)
         for c1 in range(nk1):
             for c2 in range(nk2):
