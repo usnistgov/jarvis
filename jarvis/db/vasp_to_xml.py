@@ -1831,7 +1831,6 @@ class VaspToApiXmlSchema(object):
             """
 
 
-
 """
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
