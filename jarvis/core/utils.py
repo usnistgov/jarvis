@@ -143,6 +143,14 @@ def array_to_string(arr=[]):
     return ",".join(map(str, arr))
 
 
+def chunks(lst, n):
+    """Split successive n-sized chunks from list."""
+    x = []
+    for i in range(0, len(lst), n):
+        x.append(lst[i : i + n])
+    return x
+
+
 def check_match(a, b, tol=1e-8):
     """Check if a and b are the same, taking into account PBCs."""
     if abs(a[0] - b[0]) < tol or abs(abs(a[0] - b[0]) - 1) < tol:
