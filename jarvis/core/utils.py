@@ -5,8 +5,14 @@ from collections import defaultdict
 import random
 import numpy as np
 import math
+import xmltodict
 
-# from lxml import etree
+
+def xml_to_dict(fname):
+    """Parse XML file."""
+    with open(fname, "r") as f:
+        data = xmltodict.parse(f.read())
+    return data
 
 
 def get_counts(array=["W", "W", "Mo", "Mo", "S", "S"]):
@@ -135,6 +141,14 @@ def stringdict_to_xml(d={}, enforce_string=False):
 def array_to_string(arr=[]):
     """Convert 1D arry to string."""
     return ",".join(map(str, arr))
+
+
+def chunks(lst, n):
+    """Split successive n-sized chunks from list."""
+    x = []
+    for i in range(0, len(lst), n):
+        x.append(lst[i : i + n])
+    return x
 
 
 def check_match(a, b, tol=1e-8):

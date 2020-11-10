@@ -1,9 +1,22 @@
 """Module to generate XML file for LAMMPS calculation."""
 import numpy as np
 from jarvis.core.atoms import get_supercell_dims
-
+from jarvis.db.jsonutils import loadjson
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.core.utils import stringdict_to_xml
+
+mp_jv = loadjson("/rk2/knc6/DB/MP/mp_jv_id.json")
+
+
+def get_jvid(mp=""):
+    """Get JARVIS-ID for MPID."""
+    jvid = ""
+    try:
+        jvid = "'" + ",".join(mp_jv[mp]) + "'"
+    except Exception as exp:
+        print("No JID", exp)
+        pass
+    return jvid
 
 
 def basic_data(data={}, source="JARVIS-FF-LAMMPS"):
@@ -11,12 +24,20 @@ def basic_data(data={}, source="JARVIS-FF-LAMMPS"):
     info = {}
     info["id"] = data["jid"]
     info["source_folder"] = data["source_folder"]
+    info["tmp_source_folder"] = "'" + data["source_folder"] + "'"
+    info["tmp_id"] = "'" + data["jid"] + "'"
+    ref = data["source_folder"].split("/")[-1].split("@")[1].split("_")[0]
+    info["ref"] = "'" + ref + "'"
+    info["jvid"] = get_jvid(ref)
     final_atoms = data["bulk_data"]["final_str"]
     initial_atoms = data["bulk_data"]["initial_str"]
     info["formula"] = final_atoms.composition.reduced_formula
+    info["tmp_formula"] = "'" + final_atoms.composition.reduced_formula + "'"
     info["elements"] = ",".join(final_atoms.uniq_species)
+    info["tmp_elements"] = "'" + ",".join(final_atoms.uniq_species) + "'"
     info["number_uniq_species"] = len(final_atoms.uniq_species)
     info["data_source"] = source
+    info["tmp_data_source"] = "'" + source + "'"
     info["pair_style"] = data["bulk_data"]["pair_style"]
     info["pair_coeff"] = data["bulk_data"]["pair_coeff"]
     # info["pair_coeff"] = (
@@ -74,7 +95,7 @@ def basic_data(data={}, source="JARVIS-FF-LAMMPS"):
     info["final_crystal_system"] = final_spg.crystal_system
 
     et = ""
-    print(data["bulk_data"]["elastic_tensor"]["raw_et_tensor"])
+    # print(data["bulk_data"]["elastic_tensor"]["raw_et_tensor"])
     try:
         if data["bulk_data"]["elastic_tensor"] != "":
             cij = np.round(
@@ -88,8 +109,8 @@ def basic_data(data={}, source="JARVIS-FF-LAMMPS"):
                 + '"</cij>'
             )
 
-    except Exception:
-        print("Cannot obtain elastic tensor data.", info["source_folder"])
+    except Exception as exp:
+        print("Cannot obtain elastic tensor data.", info["source_folder"], exp)
         pass
 
     info["elastic_tensor"] = et
@@ -138,11 +159,11 @@ def basic_data(data={}, source="JARVIS-FF-LAMMPS"):
             + ",".join(map(str, label_points))
             + "'</phonon_bandstructure_label_points>"
         )
-    except Exception:
-        print("Cannot obtain phonon band data.")
+    except Exception as exp:
+        print("Cannot obtain phonon band data.", exp)
 
     # Comment until 4 MB text size error
-    # info["phonon_band_line"] = phonon_band_line
+    info["phonon_band_line"] = phonon_band_line
     phonon_dos_line = ""
     try:
         freq = data["dos_freq"]
@@ -190,9 +211,9 @@ def write_xml(data={}, filename="temp.xml"):
 if __name__ == "__main__":
     from jarvis.io.lammps.outputs import parse_material_calculation_folder
 
-    # fold = '/rk2/knc6/JARVIS-FF/ALLOY8/\
-    # Mishin-Ni-Al-2009.eam.alloy_nist/bulk@mp-23_fold'
-    fold = "/rk2/knc6/JARVIS-FF/COMB/ffield.TiON.comb3_nist/bulk@mp-25433_fold"
+    fold = '/rk2/knc6/JARVIS-FF/ALLOY8/
+    Mishin-Ni-Al-2009.eam.alloy_nist/bulk@mp-23_fold'
     x = parse_material_calculation_folder(fold)
     write_xml(x)
+    print('src',x["source_folder"].split('/')[-1].split('@')[1].split('_')[0])
 """

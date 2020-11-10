@@ -644,6 +644,38 @@ class WannierHam(object):
         print("TIME SUPERCELL", t1 - t0, t2 - t1, t3 - t2)
         return hbig
 
+    def fermi_surf_2d(
+        self,
+        fermi=7.8163,
+        origin=np.array([-1.0, -1.0, 0]),
+        k1=np.array([4.0, 0.0, 0.0]),
+        k2=np.array([0.0, 4.0, 0.0]),
+        nk1=50,
+        nk2=50,
+        sig=0.3,
+    ):
+        """Generate 2D projected Fermi-surface."""
+        K = np.zeros((nk1, nk2, 3), dtype=float)
+        for c1 in range(nk1):
+            for c2 in range(nk2):
+                K[c1, c2, :] = (
+                    origin
+                    + k1 * float(c1) / float(nk1)
+                    + k2 * float(c2) / float(nk2)
+                )
+
+        image = np.zeros((nk1, nk2))
+
+        for c1 in range(nk1):
+            for c2 in range(nk2):
+                k = K[c1, c2, :]
+                val, vect, p = self.solve_ham(k=k)
+                image[c1, c2] = np.sum(
+                    np.exp(-((val - fermi) ** 2) / sig ** 2)
+                )
+
+        return image
+
 
 class Wannier90wout(object):
     """Construct wannier90.out related object."""
