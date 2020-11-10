@@ -1,5 +1,9 @@
 """Class for analyzing  WT.out file."""
 
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
+
 
 class WTOut(object):
     """Construct WT.out related object."""
@@ -64,6 +68,65 @@ class WTOut(object):
         return chrn
 
 
+def parse_chern_dat(
+    chern_dat="wanniercenter3D_Chern.dat", filename="mychern.png"
+):
+    """Plot wanniercenter3D_Chern.dat file."""
+    x = np.loadtxt(chern_dat)
+    if filename is not None:
+        the_grid = GridSpec(3, 2)
+        plt.rcParams.update({"font.size": 18})
+        plt.figure(figsize=(12, 12))
+
+        plt.subplot(the_grid[0, 0])
+        plt.title("(a) k$_1$=0.0")
+        plt.xlabel("k$_2$")
+        plt.plot(x[:, 0], x[:, 1], ".")
+        plt.subplot(the_grid[0, 1])
+        plt.title("(b) k$_1$=0.5")
+        plt.xlabel("k$_2$")
+        plt.plot(x[:, 0], x[:, 2], ".")
+
+        plt.subplot(the_grid[1, 0])
+        plt.xlabel("k$_1$")
+        plt.title("(c) k$_2$=0.0")
+        plt.plot(x[:, 0], x[:, 3], ".")
+        plt.subplot(the_grid[1, 1])
+        plt.xlabel("k$_1$")
+        plt.title("(d) k$_2$=0.5")
+        plt.plot(x[:, 0], x[:, 4], ".")
+
+        plt.subplot(the_grid[2, 0])
+        plt.title("(e) k$_3$=0.0")
+        plt.xlabel("k$_2$")
+        plt.plot(x[:, 0], x[:, 5], ".")
+        plt.subplot(the_grid[2, 1])
+        plt.title("(f) k$_3$=0.5")
+        plt.xlabel("k$_2$")
+        plt.plot(x[:, 0], x[:, 6], ".")
+        plt.tight_layout()
+        plt.savefig(filename)
+        plt.close()
+    return x
+
+
+def parse_nodes_dat(fname="Nodes.dat"):
+    """Parse Nodedat file."""
+    f = open(fname, "r")
+    lines = f.read().splitlines()
+    f.close()
+    nodes = []
+    for i in lines:
+        if "#" not in i:
+            nodes.append(i.split())
+    nodes = np.array(nodes, dtype="float")
+    return nodes
+
+
+# fname='/rk2/knc6/JARVIS-DFT/Bulk9-at30/mp-22260_PBEBO/MAIN-WANN-SOC-JVASP-59757_mp-22260/Nodes.dat'
+# fname='/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-WANN-SOC-JVASP-1002_mp-149/Nodes.dat'
+# x=parse_nodes_dat(fname)
+# print (x)
 """
 if __name__ == "__main__":
     wt = "WT.out"
