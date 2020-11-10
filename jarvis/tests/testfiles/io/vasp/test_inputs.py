@@ -123,7 +123,7 @@ def test_inputs():
     )
     potc = IndividualPotcarData.from_file(pot)
     print(potc)
-    os.environ["JARVIS_VASP_PSP_DIR"] = os.path.join(os.path.dirname(__file__))
+    os.environ["VASP_PSP_DIR"] = os.path.join(os.path.dirname(__file__))
     new_file, filename = tempfile.mkstemp()
     pot = Potcar(elements=["Xe"])
     td = pot.to_dict()
