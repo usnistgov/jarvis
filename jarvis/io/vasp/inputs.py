@@ -316,7 +316,7 @@ class Potcar(object):
 
             pot_type: Type of pseudopotential.
             Look for VASP provided PSPs.
-            JARVIS_VASP_PSP_DIR should be in the path.
+            VASP_PSP_DIR should be in the path.
 
             pot_json_path: Path to dictionary of chemical elements along with
             their orbitals taken into conisideration, e.g. V_pv.
@@ -393,7 +393,7 @@ class Potcar(object):
     def list_potcar_files(self):
         """List POTCAR files."""
         pot_files = []
-        vasp_dir = str(os.environ["JARVIS_VASP_PSP_DIR"])
+        vasp_dir = str(os.environ["VASP_PSP_DIR"])
         vasp_psp_dir = str(os.path.join(vasp_dir, self._pot_type))
         potcar_strings = self._potcar_strings
         for j in potcar_strings:

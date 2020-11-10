@@ -9,6 +9,7 @@ mp_jv = loadjson("/rk2/knc6/DB/MP/mp_jv_id.json")
 
 
 def get_jvid(mp=""):
+    """Get JARVIS-ID for MPID."""
     jvid = ""
     try:
         jvid = "'" + ",".join(mp_jv[mp]) + "'"
@@ -210,7 +211,8 @@ def write_xml(data={}, filename="temp.xml"):
 if __name__ == "__main__":
     from jarvis.io.lammps.outputs import parse_material_calculation_folder
 
-    fold = '/rk2/knc6/JARVIS-FF/ALLOY8/Mishin-Ni-Al-2009.eam.alloy_nist/bulk@mp-23_fold'
+    fold = '/rk2/knc6/JARVIS-FF/ALLOY8/
+    Mishin-Ni-Al-2009.eam.alloy_nist/bulk@mp-23_fold'
     x = parse_material_calculation_folder(fold)
     write_xml(x)
     print('src',x["source_folder"].split('/')[-1].split('@')[1].split('_')[0])
