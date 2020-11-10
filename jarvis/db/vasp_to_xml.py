@@ -1831,18 +1831,9 @@ class VaspToApiXmlSchema(object):
             """
 
 
-folder = "/rk2/knc6/JARVIS-DFT/Bulk-easyicsd1/mp-613206_PBEBO"
-filename = "temp.xml"
-VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
 """
 if __name__ == "__main__":
-    folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-134_bulk_PBEBO"
-    filename = "JVASP-816.xml"
-    VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
-
-    import sys
-
-    sys.exit()
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
     filename = "JVASP-1067.xml"
     VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
