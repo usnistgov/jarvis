@@ -107,7 +107,6 @@ band_kp = os.path.join(
 )
 
 
-
 loc = Locpot(
     filename=os.path.join(
         os.path.dirname(__file__),
@@ -219,6 +218,7 @@ def test_chgcar():
     td = chg.to_dict()
     fd = Chgcar.from_dict(td)
 
+
 def test_locpot():
     # print (chg.is_spin_polarized(), chg.is_spin_orbit(), np.array(chg.chg).shape)
     assert (
@@ -227,17 +227,16 @@ def test_locpot():
         np.array(chg.chg).shape,
     ) == (False, False, (4, 56, 56, 56),)
     vac = loc.vac_potential()[0]
-    assert round(vac,2) == round(7.62302803577618, 2)
-   
+    assert round(vac, 2) == round(7.62302803577618, 2)
 
     td = loc.to_dict()
     fd = Locpot.from_dict(td)
 
-    vac = loc.vac_potential(direction='Y')[0]
-    assert round(vac,2) == round(7.62302803577618, 2)
+    vac = loc.vac_potential(direction="Y")[0]
+    assert round(vac, 2) == round(7.62302803577618, 2)
 
-    vac = loc.vac_potential(direction='Z')[0]
-    assert round(vac,2) == round(7.62302803577618, 2)
+    vac = loc.vac_potential(direction="Z")[0]
+    assert round(vac, 2) == round(7.62302803577618, 2)
 
 
 def test_vrun():
@@ -257,13 +256,16 @@ def test_vrun():
     pdos1 = vrun.partial_dos_spdf
     pdos2 = vrun.projected_atoms_spins_kpoints_bands
     pdos3 = vrun.projected_spins_kpoints_bands
-    pdos4=vrun.get_atom_resolved_dos()
-    pdos5=vrun.get_spdf_dos()
+    pdos4 = vrun.get_atom_resolved_dos()
+    pdos5 = vrun.get_spdf_dos()
     td = vrun.to_dict()
     fd = Vasprun.from_dict(td)
-    vrun_dm = Vasprun(os.path.join(os.path.dirname(__file__),'JVASP-86924.xml'))
+    vrun_dm = Vasprun(
+        os.path.join(os.path.dirname(__file__), "JVASP-86924.xml")
+    )
     fv = vrun_dm.fermi_velocities
-    assert round(fv[0][0],2)==round(491630.23058338434,2)
+    assert round(fv[0][0], 2) == round(491630.23058338434, 2)
+
 
 def test_osz():
     assert (float(osz.magnetic_moment)) == (0.0)
@@ -311,6 +313,13 @@ def test_dfpt():
     assert vrun.all_structures[0].volume == 42.60334334259966
 
 
+def single_element_vrun():
+    vrun = Vasprun(
+        os.path.join(os.path.dirname(__file__), "vasprun.xml.JVASP-816")
+    )
+    p = vrun.partial_dos_spdf()
+
+
 def test_waveder():
     assert (
         np.iscomplex(wder.get_orbital_derivative_between_states(0, 0, 0, 0, 0))
@@ -345,7 +354,10 @@ def test_wavecar():
     gvec = wf_noso.gvectors()
     assert (gvec.shape) == (555, 3)
 
+
 def test_raman():
-   ram=os.path.join(os.path.dirname(__file__), "vasp_raman.dat")
-   parse_raman_dat(ram)
+    ram = os.path.join(os.path.dirname(__file__), "vasp_raman.dat")
+    parse_raman_dat(ram)
+
+
 # test_out()

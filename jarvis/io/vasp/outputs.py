@@ -327,6 +327,22 @@ class Outcar(object):
                 return n_ions
 
     @property
+    def nbands(self):
+        """Get number of bands."""
+        for i in self.data:
+            if "NBANDS=" in i:
+                nbands = int(i.split()[-1])
+                return nbands
+
+    @property
+    def nelect(self):
+        """Get number of electrons."""
+        for i in self.data:
+            if "NELECT" in i:
+                nelect = int(float(i.split()[2]))
+                return nelect
+
+    @property
     def phonon_eigenvalues(self):
         """Get phonon eigenvalues."""
         # Thz values
@@ -1278,30 +1294,37 @@ class Vasprun(object):
     @property
     def elements(self):
         """Get atom elements."""
-        elements = [
-            (
-                self._data["modeling"]["atominfo"]["array"][0]["set"]["rc"][i][
-                    "c"
-                ][0]
-            )
-            for i in range(
-                len(
-                    self._data["modeling"]["atominfo"]["array"][0]["set"]["rc"]
-                )
-            )
+        element_dat = self._data["modeling"]["atominfo"]["array"][0]["set"][
+            "rc"
         ]
+        if isinstance(element_dat, list):
+            elements = [
+                (element_dat[i]["c"][0]) for i in range(len(element_dat))
+            ]
+        elif isinstance(element_dat, dict):
+            elements = [element_dat["c"][0]]
+        else:
+            raise ValueError("Unknown element type")
         if len(elements) != self.num_atoms:
             ValueError("Number of atoms is  not equal to number of elements")
         elements = [str(i) for i in elements]
+        # print ('elements',elements)
         return elements
 
     def vrun_structure_to_atoms(self, s={}):
         """Convert structure to Atoms object."""
         tmp = s["crystal"]["varray"][0]["v"]
         lattice_mat = np.array([[float(j) for j in i.split()] for i in tmp])
-        frac_coords = np.array(
-            [[float(j) for j in i.split()] for i in s["varray"]["v"]]
-        )
+        coord_info = s["varray"]["v"]
+        # print ('coord_info',coord_info,type(coord_info))
+        if isinstance(coord_info, list):
+            frac_coords = np.array(
+                [[float(j) for j in i.split()] for i in coord_info],
+                dtype="float",
+            )
+        elif isinstance(coord_info, str):
+            frac_coords = np.array(coord_info.split(), dtype="float")
+            # print ('frac_coords',frac_coords)
         elements = self.elements
         atoms = Atoms(
             lattice_mat=lattice_mat,
@@ -1584,7 +1607,28 @@ class Vasprun(object):
         natoms = self.num_atoms
         nspin = self.nspins
         pdos_keys = self.ionic_steps[-1]["dos"]["partial"]["array"]["field"]
-        for atom in range(natoms):
+        steps_dat = self.ionic_steps[-1]["dos"]["partial"]["array"]["set"][
+            "set"
+        ]
+        if isinstance(steps_dat, list):
+            for atom in range(natoms):
+                for spin in range(nspin):
+                    for k, key in enumerate(pdos_keys):
+                        vals = np.array(
+                            [
+                                ii.split()
+                                for ii in (
+                                    self.ionic_steps[-1]["dos"]["partial"][
+                                        "array"
+                                    ]["set"]["set"][atom]["set"][spin]["r"]
+                                )
+                            ],
+                            dtype="float",
+                        )
+
+                        info[spin][atom][key] = vals[:, k]
+        elif isinstance(steps_dat, dict):
+            atom = 0
             for spin in range(nspin):
                 for k, key in enumerate(pdos_keys):
                     vals = np.array(
@@ -1593,13 +1637,16 @@ class Vasprun(object):
                             for ii in (
                                 self.ionic_steps[-1]["dos"]["partial"][
                                     "array"
-                                ]["set"]["set"][atom]["set"][spin]["r"]
+                                ]["set"]["set"]["set"][spin]["r"]
                             )
                         ],
                         dtype="float",
                     )
 
                     info[spin][atom][key] = vals[:, k]
+        else:
+            raise ValueError("Bug in PDOS parser.")
+
         return info
 
     @property
@@ -1675,14 +1722,18 @@ class Vasprun(object):
             spin_up_f = np.zeros(len(energy))
         for i in range(num_atoms):
             for j in s:
-                spin_up_s += pdos[0][i][j]
+                if isinstance(pdos[0][i][j], np.ndarray):
+                    spin_up_s += pdos[0][i][j]
             for j in p:
-                spin_up_p += pdos[0][i][j]
+                if isinstance(pdos[0][i][j], np.ndarray):
+                    spin_up_p += pdos[0][i][j]
             for j in d:
-                spin_up_d += pdos[0][i][j]
+                if isinstance(pdos[0][i][j], np.ndarray):
+                    spin_up_d += pdos[0][i][j]
             if has_f_elements:
                 for j in f:
-                    spin_up_f += pdos[0][i][j]
+                    if isinstance(pdos[0][i][j], np.ndarray):
+                        spin_up_f += pdos[0][i][j]
         info["spin_up_s"] = spin_up_s
         info["spin_up_p"] = spin_up_p
         info["spin_up_d"] = spin_up_d
@@ -1698,14 +1749,18 @@ class Vasprun(object):
                 spin_down_f = np.zeros(len(energy))
             for i in range(num_atoms):
                 for j in s:
-                    spin_down_s += pdos[1][i][j]
+                    if isinstance(pdos[0][i][j], np.ndarray):
+                        spin_down_s += pdos[1][i][j]
                 for j in p:
-                    spin_down_p += pdos[1][i][j]
+                    if isinstance(pdos[0][i][j], np.ndarray):
+                        spin_down_p += pdos[1][i][j]
                 for j in d:
-                    spin_down_d += pdos[1][i][j]
+                    if isinstance(pdos[0][i][j], np.ndarray):
+                        spin_down_d += pdos[1][i][j]
                 if has_f_elements:
                     for j in f:
-                        spin_down_f += pdos[1][i][j]
+                        if isinstance(pdos[0][i][j], np.ndarray):
+                            spin_down_f += pdos[1][i][j]
 
             info["spin_down_s"] = -1 * spin_down_s
             info["spin_down_p"] = -1 * spin_down_p

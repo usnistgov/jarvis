@@ -8,9 +8,14 @@ from jarvis.analysis.structure.spacegroup import Spacegroup3D
 import subprocess
 import json
 import os
+import glob
+from jarvis.io.wanniertools.inputs import WTin
+from jarvis.io.wannier.inputs import Wannier90win
 import shutil
+from jarvis.io.vasp.inputs import find_ldau_magmom
 from collections import OrderedDict
 from jarvis.core.kpoints import Kpoints3D
+from jarvis.analysis.magnetism.magmom_setup import MagneticOrdering
 
 
 def write_vaspjob(pyname="job.py", job_json=""):
@@ -21,6 +26,19 @@ def write_vaspjob(pyname="job.py", job_json=""):
     f.write('d=loadjson("' + str(job_json) + '")\n')
     f.write("v=VaspJob.from_dict(d)\n")
     f.write("v.runjob()\n")
+    f.close()
+
+
+def write_jobfact(
+    pyname="job.py", job_json="", input_arg="v.soc_spillage()\n"
+):
+    """Write template job.py with JobFactory.to_dict() job.json."""
+    f = open(pyname, "w")
+    f.write("from jarvis.tasks.vasp.vasp import JobFactory\n")
+    f.write("from jarvis.db.jsonutils import loadjson\n")
+    f.write('d=loadjson("' + str(job_json) + '")\n')
+    f.write("v=JobFactory.from_dict(d)\n")
+    f.write(input_arg)
     f.close()
 
 
@@ -44,11 +62,35 @@ class JobFactory(object):
         poscar=None,
         use_incar_dict={},
         vasp_cmd="",
-        pot_type=None,
+        pot_type="POT_GGA_PAW_PBE",
         copy_files=[],
         attempts=5,
         stderr_file="std_err.txt",
         output_file="vasp.out",
+        optional_params={
+            "kppa": 1000,
+            "encut": 500,
+            "kpleng": 20,
+            "line_density": 20,
+            "wann_cmd":
+            "~/Software/Wannier/wannier90-1.2Dobby/wannier90.x wannier90",
+            "wt_cmd": "/users/knc6/Software/wannier_tools/bin/wt.x",
+        },
+        steps=[
+            "ENCUT",
+            "KPLEN",
+            "RELAX",
+            "BANDSTRUCT",
+            "LOPTICS",
+            "MBJOPTICS",
+            "ELASTIC",
+            "SPILLAGE",
+            "EFG",
+            "MAGORDER",
+            "DFPT",
+            "RAMANINTS",
+            "SHG",
+        ],
     ):
         """
         Provide generic class for running variations of VASP calculations.
@@ -75,10 +117,101 @@ class JobFactory(object):
         self.attempts = attempts
         self.stderr_file = stderr_file
         self.output_file = output_file
+        self.optional_params = optional_params
+        self.steps = steps
+
+    def step_flow(self):
+        """Asiimilate number of steps as legos for a workflow."""
+        for i in self.steps:
+            if i == "ENCUT":
+                encut = self.converg_encut(mat=self.mat)
+                self.optional_params["encut"] = encut
+            if i == "KPLEN":
+                length = self.converg_kpoint(mat=self.mat)
+                self.optional_params["kpleng"] = length
+            if i == "RELAX":
+                energy, contcar_path = self.optimize_geometry(
+                    mat=self.mat, encut=encut, length=length
+                )
+                vrun = Vasprun(contcar_path.replace("CONTCAR", "vasprun.xml"))
+                chg_path = contcar_path.replace("CONTCAR", "CHGCAR")
+                nbands = int(vrun.all_input_parameters["NBANDS"])
+                self.optional_params["chg_path"] = chg_path
+                self.optional_params["nbands"] = nbands
+                self.mat = Poscar.from_file(contcar_path)
+
+            if i == "BANDSTRUCT":
+                enB, contcB = self.band_structure(
+                    mat=self.mat,
+                    encut=self.optional_params["encut"],
+                    line_density=self.optional_params["line_density"],
+                    nbands=2 * nbands,
+                    copy_prev_chgcar=chg_path,
+                )
+            if i == "OPTICS":
+                enL, contcL = self.loptics(
+                    mat=self.mat,
+                    encut=self.optional_params["encut"],
+                    nbands=2 * self.optional_params["nbands"],
+                    length=self.optional_params["kpleng"],
+                )
+            if i == "MBJOPTICS":
+                enM, contcM = self.mbj_loptics(
+                    mat=self.mat,
+                    encut=self.optional_params["encut"],
+                    nbands=2 * nbands,
+                    length=length,
+                )
+            if i == "ELASTIC":
+                enE, contcE = self.elastic(
+                    mat=self.mat,
+                    encut=self.optional_params["encut"],
+                    nbands=2 * self.optional_params["nbands"],
+                    length=self.optional_params["kpleng"],
+                )
+            if i == "SPILLAGE":
+                self.soc_spillage(
+                    mat=self.mat,
+                    encut=self.optional_params["encut"],
+                    nbands=None,
+                    kppa=self.optional_params["kppa"],
+                )
+            if i == "EFG":
+                enE, contcE = self.efg(
+                    mat=self.mat,
+                    encut=self.optional_params["encut"],
+                    length=self.optional_params["kpleng"],
+                )
+            if i == "DFPT":
+                enE, contcE = self.dfpt(
+                    mat=self.mat,
+                    encut=self.optional_params["encut"],
+                    length=self.optional_params["kpleng"],
+                )
+            if i == "MAGORDER":
+                enE, contcE = self.magorder(
+                    encut=self.optional_params["encut"],
+                    length=self.optional_params["kpleng"],
+                )
 
     def all_optb88vdw_calcs(self):
         """Use for OptB88vdW based HT."""
         incs = GenericIncars().optb88vdw()
+        return self.workflow(generic_incar=incs)
+
+    def all_pbe_calcs(self):
+        """Use for PBE based HT."""
+        incs = GenericIncars().pbe()
+        return self.workflow(generic_incar=incs)
+
+    def all_scan_calcs(self):
+        """Use for SCAN based HT."""
+        incs = GenericIncars().scan()
+        return self.workflow(generic_incar=incs)
+
+    def all_lda_calcs(self):
+        """Use for LDA based HT."""
+        incs = GenericIncars().lda()
         return self.workflow(generic_incar=incs)
 
     def workflow(self, generic_incar=""):
@@ -87,45 +220,78 @@ class JobFactory(object):
 
         This will converge k-points, cut-offs,
         and then carry several property calculations.
-
         Args:
             mat : Poscar object
         """
-        job = JobFactory(
-            use_incar_dict=generic_incar.incar,
-            pot_type=generic_incar.pot_type,
-            vasp_cmd=self.vasp_cmd,
-            copy_files=self.copy_files,
-            attempts=self.attempts,
-            stderr_file=self.stderr_file,
-            output_file=self.output_file,
-            poscar=self.mat,
+        self.steps = (
+            [
+                "ENCUT",
+                "KPLEN",
+                "RELAX",
+                "BANDSTRUCT",
+                "LOPTICS",
+                "MBJOPTICS",
+                "ELASTIC",
+                "SPILLAGE",
+                "EFG",
+                "MAGORDER",
+                "DFPT",
+            ],
         )
-        encut = job.converg_encut(mat=self.mat)
-        length = job.converg_kpoint(mat=self.mat)
-        energy, contcar_path = job.optimize_geometry(
-            mat=self.mat, encut=encut, length=length
+
+        self.step_flow()
+
+    def magorder(self, ldau=False, min_configs=3, length=20):
+        """Determine structures for FM, AFM, FiM magnetic ordering."""
+        incar_dict = self.use_incar_dict.copy()
+        data = {
+            "ENCUT": 1.3 * float(self.optional_params["encut"]),
+            "NEDOS": 5000,
+            "ISIF": 3,
+            "ISPIN": 2,
+            "IBRION": 6,
+            "LCHARG": ".FALSE.",
+        }
+        incar_dict.update(data)
+        inc = Incar.from_dict(incar_dict)
+        symm_list, ss = MagneticOrdering(atoms=self.atoms).get_minimum_configs(
+            min_configs=3
         )
-        optimized_mat = Poscar.from_file(contcar_path)
-        vrun = Vasprun(contcar_path.replace("CONTCAR", "vasprun.xml"))
-        chg_path = contcar_path.replace("CONTCAR", "CHGCAR")
-        nbands = int(vrun.all_input_parameters["NBANDS"])
-        enB, contcB = job.band_structure(
-            mat=optimized_mat,
-            encut=encut,
-            line_density=20,
-            nbands=2 * nbands,
-            copy_prev_chgcar=chg_path,
-        )
-        enL, contcL = job.loptics(
-            mat=optimized_mat, encut=encut, nbands=2 * nbands, length=length
-        )
-        enM, contcM = job.mbj_loptics(
-            mat=optimized_mat, encut=encut, nbands=2 * nbands, length=length
-        )
-        enE, contcE = job.elastic(
-            mat=optimized_mat, encut=encut, nbands=2 * nbands, length=length
-        )
+        for i in range(len(symm_list)):
+            if ldau:
+                info_ldau = find_ldau_magmom(atoms=ss)
+                inc_tmp = inc.update(info_ldau)
+                inc1 = inc_tmp.update(
+                    {"MAGMOM": " ".join(map(str, symm_list[i]))}
+                )
+            else:
+                inc_tmp = inc
+                inc1 = inc_tmp.update(
+                    {"MAGMOM": " ".join(map(str, symm_list[i]))}
+                )
+            pos = Poscar(ss)
+            name = "Mag-" + "_" + str(i)
+            # pot = Potcar(elements=ss.elements)
+            kp = Kpoints3D().automatic_length_mesh(
+                lattice_mat=ss.lattice_mat, length=20
+            )
+            # cwd = str(os.getcwd())
+            sub_dir = name
+            if not os.path.exists(sub_dir):
+                os.makedirs(sub_dir)
+            os.chdir(sub_dir)
+            VaspJob(
+                poscar=pos,
+                incar=inc1,
+                kpoints=kp,
+                pot_type=self.pot_type,
+                vasp_cmd=self.vasp_cmd,
+                output_file=self.output_file,
+                stderr_file=self.stderr_file,
+                copy_files=self.copy_files,
+                attempts=self.attempts,
+                jobname=name,
+            ).runjob()
 
     def elastic(
         self,
@@ -152,7 +318,7 @@ class JobFactory(object):
 
             length :  K-points in length unit
         """
-        incar_dict = self.use_incar_dict.to_dict().copy()
+        incar_dict = self.use_incar_dict.copy()
         cvn = Spacegroup3D(mat.atoms).conventional_standard_structure
         comment = mat.comment
         p = Poscar(cvn, comment=comment)
@@ -164,7 +330,7 @@ class JobFactory(object):
             nbands = int(nbands * 3)
             incar_dict.update({"NBANDS": nbands})
         data = {
-            "ENCUT": 1.3 * float(encut),
+            "ENCUT": 1.3 * float(self.optional_params["encut"]),
             "NEDOS": 5000,
             "ISIF": 3,
             "POTIM": potim,
@@ -193,6 +359,106 @@ class JobFactory(object):
 
         return en, contcar
 
+    def efg(self, mat=None, encut=None, nbands=None, length=20):
+        """
+        Use for electric field gradient calculation.
+
+        Args:
+            mat :  Poscar object
+
+            encut :  Plane-wave cut-off, 1.3 times will be used
+
+            nbands : number of bands, increased to threee times
+
+            length :  K-points in length unit
+        """
+        # incar = self.use_incar_dict
+
+        incar_dict = self.use_incar_dict.copy()
+        if nbands is not None:
+            nbands = int(nbands * 3)
+            incar_dict.update({"NBANDS": nbands})
+        data = {
+            "ENCUT": encut,
+            "NEDOS": 5000,
+            "NELM": 500,
+            "LORBIT": 11,
+            "ISPIN": 2,
+            "LEFG": ".TRUE.",
+            "SIGMA": 0.1,
+            "IBRION": 1,
+            "LCHARG": ".FALSE.",
+        }
+        incar_dict.update(data)
+        incar = Incar.from_dict(incar_dict)
+        kpoints = Kpoints().automatic_length_mesh(
+            lattice_mat=mat.atoms.lattice_mat, length=length
+        )  # Auto_Kpoints(mat=mat, length=length)
+
+        en, contcar = VaspJob(
+            poscar=mat,
+            incar=incar,
+            vasp_cmd=self.vasp_cmd,
+            output_file=self.output_file,
+            stderr_file=self.stderr_file,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
+            pot_type=self.pot_type,
+            kpoints=kpoints,
+            jobname=str("MAIN-LEFG-") + str(mat.comment.split()[0]),
+        ).runjob()
+        return en, contcar
+
+    def dfpt(self, mat=None, encut=None, nbands=None, length=20):
+        """
+        Use for density functional perturbation theory calculation.
+
+        Args:
+            mat :  Poscar object
+
+            encut :  Plane-wave cut-off, 1.3 times will be used
+
+            nbands : number of bands, increased to threee times
+
+            length :  K-points in length unit
+        """
+        # incar = self.use_incar_dict
+
+        incar_dict = self.use_incar_dict.to_dict().copy()
+        if nbands is not None:
+            nbands = int(nbands * 3)
+            incar_dict.update({"NBANDS": nbands})
+        data = {
+            "ENCUT": encut,
+            "NEDOS": 5000,
+            "NELM": 500,
+            "LORBIT": 11,
+            "ISPIN": 2,
+            "LEPSION": ".TRUE.",
+            "SIGMA": 0.1,
+            "IBRION": 1,
+            "LCHARG": ".FALSE.",
+        }
+        incar_dict.update(data)
+        incar = Incar.from_dict(incar_dict)
+        kpoints = Kpoints().automatic_length_mesh(
+            lattice_mat=mat.atoms.lattice_mat, length=length
+        )  # Auto_Kpoints(mat=mat, length=length)
+
+        en, contcar = VaspJob(
+            poscar=mat,
+            incar=incar,
+            vasp_cmd=self.vasp_cmd,
+            output_file=self.output_file,
+            stderr_file=self.stderr_file,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
+            pot_type=self.pot_type,
+            kpoints=kpoints,
+            jobname=str("MAIN-LEPSLON-") + str(mat.comment.split()[0]),
+        ).runjob()
+        return en, contcar
+
     def mbj_loptics(self, mat=None, encut=None, nbands=None, length=20):
         """
         Use for TBmBJ meta-GGA calculation.
@@ -208,7 +474,7 @@ class JobFactory(object):
         """
         # incar = self.use_incar_dict
 
-        incar_dict = self.use_incar_dict.to_dict().copy()
+        incar_dict = self.use_incar_dict.copy()
         if nbands is not None:
             nbands = int(nbands * 3)
             incar_dict.update({"NBANDS": nbands})
@@ -246,6 +512,239 @@ class JobFactory(object):
 
         return en, contcar
 
+    def soc_spillage(
+        self, mat=None, encut=None, nbands=None, kppa=1000, leng=None
+    ):
+        """
+        Use for SOC spillage calculation.
+
+        Args:
+            mat :  Poscar object
+
+            encut :  Plane-wave cut-off, 1.3 times will be used
+
+            nbands : number of bands, increased to threee times
+
+            kppa :  K-points in kpoints per atom unit
+        """
+        incar_dict = self.use_incar_dict.copy()
+        if nbands is not None:
+            nbands = int(nbands * 3)
+            incar_dict.update({"NBANDS": nbands})
+
+        data = {
+            "ENCUT": encut,
+            "NEDOS": 5000,
+            "NELM": 600,
+            "LORBIT": 11,
+            "ISPIN": 2,
+            "IBRION": 2,
+            "EDIFF": "1E-6",
+            "SIGMA": 0.01,
+            "LCHARG": ".TRUE.",
+            "LWAVE": ".TRUE.",
+        }
+        incar_dict.update(data)
+        incar = Incar.from_dict(incar_dict)
+        kpoints = Kpoints().kpoints_per_atom(atoms=mat.atoms, kppa=kppa)
+
+        en, contcar = VaspJob(
+            poscar=mat,
+            incar=incar,
+            vasp_cmd=self.vasp_cmd,
+            output_file=self.output_file,
+            stderr_file=self.stderr_file,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
+            pot_type=self.pot_type,
+            kpoints=kpoints,
+            jobname=str("MAIN-MAGSCF-") + str(mat.comment.split()[0]),
+        ).runjob()
+
+        data = {
+            "ENCUT": encut,
+            "EDIFF": "1E-6",
+            "NEDOS": 5000,
+            "NELM": 600,
+            "LORBIT": 11,
+            "ISPIN": 2,
+            "IBRION": 2,
+            "SIGMA": 0.01,
+            "LCHARG": ".TRUE.",
+            "LWAVE": ".TRUE.",
+        }
+        incar_dict = self.use_incar_dict.copy()
+        incar_dict.update(data)
+        incar = Incar.from_dict(incar_dict)
+        kpoints = Kpoints().kpath(
+            mat.atoms, line_density=self.optional_params["line_density"]
+        )
+        en, contcar = VaspJob(
+            poscar=mat,
+            incar=incar,
+            vasp_cmd=self.vasp_cmd,
+            output_file=self.output_file,
+            stderr_file=self.stderr_file,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
+            pot_type=self.pot_type,
+            kpoints=kpoints,
+            jobname=str("MAIN-MAGSCFBAND-") + str(mat.comment.split()[0]),
+        ).runjob()
+
+        incar_dict = self.use_incar_dict.copy()
+        if nbands is not None:
+            nbands = int(nbands * 3)
+            incar_dict.update({"NBANDS": nbands})
+
+        data = {
+            "ENCUT": encut,
+            "NEDOS": 5000,
+            "EDIFF": "1E-6",
+            "NELM": 600,
+            "LORBIT": 11,
+            "LSORBIT": ".TRUE.",
+            "IBRION": 2,
+            "SIGMA": 0.01,
+            "LCHARG": ".TRUE.",
+            "LWAVE": ".TRUE.",
+        }
+        incar_dict.update(data)
+        incar = Incar.from_dict(incar_dict)
+        kpoints = Kpoints().kpoints_per_atom(atoms=mat.atoms, kppa=kppa)
+
+        en, contcar = VaspJob(
+            poscar=mat,
+            incar=incar,
+            vasp_cmd=self.vasp_cmd,
+            output_file=self.output_file,
+            stderr_file=self.stderr_file,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
+            pot_type=self.pot_type,
+            kpoints=kpoints,
+            jobname=str("MAIN-SOCSCF-") + str(mat.comment.split()[0]),
+        ).runjob()
+
+        data = {
+            "ENCUT": encut,
+            "NEDOS": 5000,
+            "EDIFF": "1E-6",
+            "NELM": 600,
+            "LORBIT": 11,
+            "IBRION": 2,
+            "SIGMA": 0.01,
+            "LSORBIT": ".TRUE.",
+            "LCHARG": ".TRUE.",
+            "LWAVE": ".TRUE.",
+        }
+        incar_dict = self.use_incar_dict.copy()
+        incar_dict.update(data)
+        incar = Incar.from_dict(incar_dict)
+        kpoints = Kpoints().kpath(
+            mat.atoms, line_density=self.optional_params["line_density"]
+        )
+        en, contcar = VaspJob(
+            poscar=mat,
+            incar=incar,
+            vasp_cmd=self.vasp_cmd,
+            output_file=self.output_file,
+            stderr_file=self.stderr_file,
+            copy_files=self.copy_files,
+            attempts=self.attempts,
+            pot_type=self.pot_type,
+            kpoints=kpoints,
+            jobname=str("MAIN-SOCSCFBAND-") + str(mat.comment.split()[0]),
+        ).runjob()
+
+        dir = str(os.getcwd()) + str("/MAIN-*")
+
+        for i in glob.glob(dir):
+            if (
+                os.path.isdir(i)
+                and "BAND" not in i
+                and "WANN" not in i
+                and "SOC" in i
+            ):
+                tmp = i.split("MAIN-")
+                wann_name = str(tmp[0]) + str("MAIN-WANN-") + str(tmp[1])
+                if not os.path.isdir(wann_name):
+                    os.makedirs(wann_name)
+                cmd = str("rsync ") + str(i) + str("/* ") + str(wann_name)
+                os.system(cmd)
+                os.chdir(wann_name)
+                v = ""
+                run = str(i) + str("/vasprun.xml")
+                out = Outcar(str(i) + str("/OUTCAR"))
+                v = Vasprun(run)
+                efermi = v.efermi
+                nbands = out.nbands  # int(v.all_input_parameters["NBANDS"])
+                strt = v.all_structures[-1]
+                nwan, exclude = Wannier90win(
+                    struct=strt, efermi=efermi, soc=True
+                ).write_win()
+                cmd = "cp win.input wannier90.win"
+                os.system(cmd)
+                if nwan > nbands:
+                    new_nbands = nwan + exclude
+                    if nbands < new_nbands:
+                        nbands = new_nbands
+
+                os.system(cmd)
+                data = dict(
+                    PREC="Accurate",
+                    ALGO="None",
+                    NBANDS=nbands,
+                    LSORBIT=".TRUE.",
+                    ISMEAR=0,
+                    NSW=0,
+                    NELM=1,
+                    SIGMA=0.01,
+                    LWANNIER90=".TRUE.",
+                    LWRITE_MMN_AMN=".TRUE.",
+                    NEDOS=5000,
+                    LORBIT=11,
+                    LWAVE=".FALSE.",
+                    LCHARG=".FALSE.",
+                    ENCUT=encut,
+                )
+
+                incar_dict = self.use_incar_dict.copy()
+                incar_dict.update(data)
+                incar = Incar.from_dict(incar_dict)
+                incar.write_file("INCAR")
+                print("directory", os.getcwd())
+                vasp_cmd = self.vasp_cmd
+                if "vasp_std" in self.vasp_cmd:
+                    vasp_cmd = self.vasp_cmd.replace("std", "ncl")
+                cmd = "mpirun " + vasp_cmd
+                os.system(cmd)
+                tmp = nbands - exclude
+                Wannier90win(struct=strt, efermi=efermi).write_hr_win(
+                    nbands=tmp
+                )
+                cmd = "cp hr_wannier.win wannier90.win"
+                os.system(cmd)
+                cmd = self.optional_params["wann_cmd"]
+                # "~/Software/Wannier/wannier90-1.2Dobby/wannier90.x wannier90"
+                os.system(cmd)
+                WTin(
+                    atoms=strt,
+                    wannierout="wannier90.wout",
+                    efermi=efermi,
+                    exclude=exclude,
+                    nwan=nwan,
+                ).write_wt_in()
+                cmd = self.optional_params["wt_cmd"]
+                # "/users/knc6/Software/wannier_tools/bin/wt.x"
+                os.system(cmd)
+                # Make sure wanniertools is the last step in the workflow
+        import sys
+
+        sys.exit()
+
+        return en, contcar
+
     def loptics(self, mat=None, encut=None, nbands=None, length=20):
         """
         Use in linear-optics calculations.
@@ -261,7 +760,7 @@ class JobFactory(object):
         """
         # incar = self.use_incar_dict
 
-        incar_dict = self.use_incar_dict.to_dict().copy()
+        incar_dict = self.use_incar_dict.copy()
         if nbands is not None:
             nbands = int(nbands * 3)
             incar_dict.update({"NBANDS": nbands})
@@ -320,9 +819,11 @@ class JobFactory(object):
             copy_prev_chgcar :  path of CHGCAR file for Non-SCF step
         """
         # incar = self.use_incar_dict
-        incar_dict = self.use_incar_dict.to_dict().copy()
+        incar_dict = self.use_incar_dict.copy()
+        copy_files = self.copy_files
         if copy_prev_chgcar is not None:
-            shutil.copy2(copy_prev_chgcar, ".")
+            #    shutil.copy2(copy_prev_chgcar, ".")
+            copy_files.append(copy_prev_chgcar)
 
         if nbands is not None:
             nbands = int(nbands * 1.3)
@@ -338,15 +839,14 @@ class JobFactory(object):
         }
         incar_dict.update(data)
         incar = Incar.from_dict(incar_dict)
-        kpoints = Kpoints().kpath(mat.atoms, line_density=line_density)
-
+        kpoints = Kpoints().kpath(self.mat.atoms, line_density=line_density)
         en, contcar = VaspJob(
             poscar=mat,
             incar=incar,
             vasp_cmd=self.vasp_cmd,
             output_file=self.output_file,
             stderr_file=self.stderr_file,
-            copy_files=self.copy_files,
+            copy_files=copy_files,
             attempts=self.attempts,
             pot_type=self.pot_type,
             kpoints=kpoints,
@@ -366,7 +866,7 @@ class JobFactory(object):
 
             length :  K-points in length unit
         """
-        incar_dict = self.use_incar_dict.to_dict().copy()
+        incar_dict = self.use_incar_dict.copy()
         data = {
             "ENCUT": encut,
             "EDIFFG": -1e-3,
@@ -420,7 +920,7 @@ class JobFactory(object):
         convg_encut1 = False
         convg_encut2 = False
 
-        incar_dict = self.use_incar_dict.to_dict().copy()
+        incar_dict = self.use_incar_dict.copy()
         while not convg_encut2 and not convg_encut1:
             # while convg_encut1 !=True and  convg_encut2 !=True:
             # tol = 0.001  # change 0.001
@@ -628,7 +1128,7 @@ class JobFactory(object):
         kp_list = []
         while not convg_kp2 and not convg_kp1:
             # while convg_kp1 !=True and  convg_kp2 !=True:
-            incar_dict = self.use_incar_dict.to_dict().copy()
+            incar_dict = self.use_incar_dict.copy()
             incar_dict.update({"ENCUT": encut})
             incar = Incar.from_dict(incar_dict)
             # incar_dict["ENCUT"]= encut
@@ -901,6 +1401,8 @@ class JobFactory(object):
             stderr_file=d["stderr_file"],
             output_file=d["output_file"],
             poscar=Poscar.from_dict(d["poscar"]),
+            optional_params=d["optional_params"],
+            steps=d["steps"],
         )
         return job
 
@@ -916,6 +1418,8 @@ class JobFactory(object):
         d["stderr_file"] = self.stderr_file
         d["output_file"] = self.output_file
         d["poscar"] = self.mat.to_dict()
+        d["steps"] = self.steps
+        d["optional_params"] = self.optional_params
         return d
 
 
@@ -1133,10 +1637,9 @@ class VaspJob(object):
                 wait = True
                 print("Reached maximum attempts", attempt)
                 break
-            # print("Setting up POTCAR")
             # if self.potcar is None:
-            #  new_symb = list(set(self.poscar.atoms.elements))
-            #  self.potcar = Potcar(elements=new_symb, pot_type=self.pot_type)
+            # new_symb = list(set(self.mat.atoms.elements))
+            # self.potcar = Potcar(elements=new_symb, pot_type=self.pot_type)
             if not os.path.exists(run_dir):
                 print("Starting new job")
                 os.makedirs(run_dir)
@@ -1269,6 +1772,26 @@ class GenericIncars(object):
         )
         inc = Incar(data)
         return GenericIncars(name="pbe", incar=inc, pot_type="POT_GGA_PAW_PBE")
+
+    def scan(self):
+        """Select GGA-PBE functional."""
+        data = dict(
+            PREC="Accurate",
+            ISMEAR=0,
+            IBRION=2,
+            METAGGA="SCAN",
+            LASPH=".TRUE.",
+            EDIFF="1E-7",
+            NSW=1,
+            NELM=400,
+            ISIF=2,
+            LCHARG=".FALSE.",
+            LWAVE=".FALSE.",
+        )
+        inc = Incar(data)
+        return GenericIncars(
+            name="scan", incar=inc, pot_type="POT_GGA_PAW_PBE"
+        )
 
     def lda(self):
         """Select LDA functional."""
