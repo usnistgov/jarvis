@@ -11,6 +11,7 @@ import os
 import glob
 from jarvis.io.wanniertools.inputs import WTin
 from jarvis.io.wannier.inputs import Wannier90win
+from jarvis.io.wannier.outputs import Wannier90eig
 import shutil
 from jarvis.io.vasp.inputs import find_ldau_magmom
 from collections import OrderedDict
@@ -69,12 +70,13 @@ class JobFactory(object):
         output_file="vasp.out",
         optional_params={
             "kppa": 1000,
+            "extension": "SCAN",
             "encut": 500,
             "kpleng": 20,
             "line_density": 20,
-            "wann_cmd":
-            "~/Software/Wannier/wannier90-1.2Dobby/wannier90.x wannier90",
-            "wt_cmd": "/users/knc6/Software/wannier_tools/bin/wt.x",
+            "wann_cmd": "~/bin/wannier90.x wannier90",
+            "wt_cmd": "~/bin/wt.x",
+            "run_wannier": True,
         },
         steps=[
             "ENCUT",
@@ -539,6 +541,8 @@ class JobFactory(object):
             "LORBIT": 11,
             "ISPIN": 2,
             "IBRION": 2,
+            "NPAR": 4,
+            "NSW": 0,
             "EDIFF": "1E-6",
             "SIGMA": 0.01,
             "LCHARG": ".TRUE.",
@@ -558,7 +562,9 @@ class JobFactory(object):
             attempts=self.attempts,
             pot_type=self.pot_type,
             kpoints=kpoints,
-            jobname=str("MAIN-MAGSCF-") + str(mat.comment.split()[0]),
+            jobname=str("MAIN-MAGSCF-")
+            + str(self.optional_params["extension"])
+            + str(mat.comment.split()[0]),
         ).runjob()
 
         data = {
@@ -567,8 +573,11 @@ class JobFactory(object):
             "NEDOS": 5000,
             "NELM": 600,
             "LORBIT": 11,
+            "ICHARG": 11,
+            "NSW": 0,
             "ISPIN": 2,
             "IBRION": 2,
+            "NPAR": 4,
             "SIGMA": 0.01,
             "LCHARG": ".TRUE.",
             "LWAVE": ".TRUE.",
@@ -579,17 +588,22 @@ class JobFactory(object):
         kpoints = Kpoints().kpath(
             mat.atoms, line_density=self.optional_params["line_density"]
         )
+        tmp = self.copy_files
+        chg = contcar.replace("CONTCAR", "CHGCAR")
+        tmp.append(chg)
         en, contcar = VaspJob(
             poscar=mat,
             incar=incar,
             vasp_cmd=self.vasp_cmd,
             output_file=self.output_file,
             stderr_file=self.stderr_file,
-            copy_files=self.copy_files,
+            copy_files=tmp,
             attempts=self.attempts,
             pot_type=self.pot_type,
             kpoints=kpoints,
-            jobname=str("MAIN-MAGSCFBAND-") + str(mat.comment.split()[0]),
+            jobname=str("MAIN-MAGSCFBAND-")
+            + str(self.optional_params["extension"])
+            + str(mat.comment.split()[0]),
         ).runjob()
 
         incar_dict = self.use_incar_dict.copy()
@@ -603,6 +617,8 @@ class JobFactory(object):
             "EDIFF": "1E-6",
             "NELM": 600,
             "LORBIT": 11,
+            "NSW": 0,
+            "NPAR": 4,
             "LSORBIT": ".TRUE.",
             "IBRION": 2,
             "SIGMA": 0.01,
@@ -619,7 +635,7 @@ class JobFactory(object):
             vasp_cmd=self.vasp_cmd,
             output_file=self.output_file,
             stderr_file=self.stderr_file,
-            copy_files=self.copy_files,
+            copy_files=tmp,
             attempts=self.attempts,
             pot_type=self.pot_type,
             kpoints=kpoints,
@@ -632,8 +648,11 @@ class JobFactory(object):
             "EDIFF": "1E-6",
             "NELM": 600,
             "LORBIT": 11,
+            "ICHARG": 11,
             "IBRION": 2,
+            "NSW": 0,
             "SIGMA": 0.01,
+            "NPAR": 4,
             "LSORBIT": ".TRUE.",
             "LCHARG": ".TRUE.",
             "LWAVE": ".TRUE.",
@@ -644,104 +663,115 @@ class JobFactory(object):
         kpoints = Kpoints().kpath(
             mat.atoms, line_density=self.optional_params["line_density"]
         )
+        tmp = self.copy_files
+        chg = contcar.replace("CONTCAR", "CHGCAR")
+        tmp.append(chg)
         en, contcar = VaspJob(
             poscar=mat,
             incar=incar,
             vasp_cmd=self.vasp_cmd,
             output_file=self.output_file,
             stderr_file=self.stderr_file,
-            copy_files=self.copy_files,
+            copy_files=tmp,
             attempts=self.attempts,
             pot_type=self.pot_type,
             kpoints=kpoints,
-            jobname=str("MAIN-SOCSCFBAND-") + str(mat.comment.split()[0]),
+            jobname=str("MAIN-SOCSCFBAND-")
+            + str(self.optional_params["extension"])
+            + str(mat.comment.split()[0]),
         ).runjob()
 
         dir = str(os.getcwd()) + str("/MAIN-*")
+        if self.optional_params["run_wannier"]:
+            for i in glob.glob(dir):
+                if (
+                    os.path.isdir(i)
+                    and "BAND" not in i
+                    and "WANN" not in i
+                    and "SOC" in i
+                ):
+                    tmp = i.split("MAIN-")
+                    wann_name = (
+                        str(tmp[0])
+                        + str("MAIN-WANN-")
+                        + str(self.optional_params["extension"])
+                        + str(tmp[1])
+                    )
+                    if not os.path.isdir(wann_name):
+                        os.makedirs(wann_name)
+                    cmd = str("rsync ") + str(i) + str("/* ") + str(wann_name)
+                    os.system(cmd)
+                    os.chdir(wann_name)
+                    v = ""
+                    run = str(i) + str("/vasprun.xml")
+                    out = Outcar(str(i) + str("/OUTCAR"))
+                    v = Vasprun(run)
+                    efermi = v.efermi
+                    nbands = (
+                        out.nbands
+                    )  # int(v.all_input_parameters["NBANDS"])
+                    strt = v.all_structures[-1]
+                    nwan, exclude = Wannier90win(
+                        struct=strt, efermi=efermi, soc=True
+                    ).write_win()
+                    cmd = "cp win.input wannier90.win"
+                    os.system(cmd)
+                    if nwan > nbands:
+                        new_nbands = nwan + exclude
+                        if nbands < new_nbands:
+                            nbands = new_nbands
 
-        for i in glob.glob(dir):
-            if (
-                os.path.isdir(i)
-                and "BAND" not in i
-                and "WANN" not in i
-                and "SOC" in i
-            ):
-                tmp = i.split("MAIN-")
-                wann_name = str(tmp[0]) + str("MAIN-WANN-") + str(tmp[1])
-                if not os.path.isdir(wann_name):
-                    os.makedirs(wann_name)
-                cmd = str("rsync ") + str(i) + str("/* ") + str(wann_name)
-                os.system(cmd)
-                os.chdir(wann_name)
-                v = ""
-                run = str(i) + str("/vasprun.xml")
-                out = Outcar(str(i) + str("/OUTCAR"))
-                v = Vasprun(run)
-                efermi = v.efermi
-                nbands = out.nbands  # int(v.all_input_parameters["NBANDS"])
-                strt = v.all_structures[-1]
-                nwan, exclude = Wannier90win(
-                    struct=strt, efermi=efermi, soc=True
-                ).write_win()
-                cmd = "cp win.input wannier90.win"
-                os.system(cmd)
-                if nwan > nbands:
-                    new_nbands = nwan + exclude
-                    if nbands < new_nbands:
-                        nbands = new_nbands
+                    os.system(cmd)
+                    data = dict(
+                        PREC="Accurate",
+                        ALGO="None",
+                        NBANDS=nbands,
+                        LSORBIT=".TRUE.",
+                        ISMEAR=0,
+                        NSW=0,
+                        NELM=1,
+                        SIGMA=0.01,
+                        LWANNIER90=".TRUE.",
+                        LWRITE_MMN_AMN=".TRUE.",
+                        NEDOS=5000,
+                        LORBIT=11,
+                        LWAVE=".FALSE.",
+                        LCHARG=".FALSE.",
+                        ENCUT=encut,
+                    )
 
-                os.system(cmd)
-                data = dict(
-                    PREC="Accurate",
-                    ALGO="None",
-                    NBANDS=nbands,
-                    LSORBIT=".TRUE.",
-                    ISMEAR=0,
-                    NSW=0,
-                    NELM=1,
-                    SIGMA=0.01,
-                    LWANNIER90=".TRUE.",
-                    LWRITE_MMN_AMN=".TRUE.",
-                    NEDOS=5000,
-                    LORBIT=11,
-                    LWAVE=".FALSE.",
-                    LCHARG=".FALSE.",
-                    ENCUT=encut,
-                )
-
-                incar_dict = self.use_incar_dict.copy()
-                incar_dict.update(data)
-                incar = Incar.from_dict(incar_dict)
-                incar.write_file("INCAR")
-                print("directory", os.getcwd())
-                vasp_cmd = self.vasp_cmd
-                if "vasp_std" in self.vasp_cmd:
-                    vasp_cmd = self.vasp_cmd.replace("std", "ncl")
-                cmd = "mpirun " + vasp_cmd
-                os.system(cmd)
-                tmp = nbands - exclude
-                Wannier90win(struct=strt, efermi=efermi).write_hr_win(
-                    nbands=tmp
-                )
-                cmd = "cp hr_wannier.win wannier90.win"
-                os.system(cmd)
-                cmd = self.optional_params["wann_cmd"]
-                # "~/Software/Wannier/wannier90-1.2Dobby/wannier90.x wannier90"
-                os.system(cmd)
-                WTin(
-                    atoms=strt,
-                    wannierout="wannier90.wout",
-                    efermi=efermi,
-                    exclude=exclude,
-                    nwan=nwan,
-                ).write_wt_in()
-                cmd = self.optional_params["wt_cmd"]
-                # "/users/knc6/Software/wannier_tools/bin/wt.x"
-                os.system(cmd)
-                # Make sure wanniertools is the last step in the workflow
-        import sys
-
-        sys.exit()
+                    incar_dict = self.use_incar_dict.copy()
+                    incar_dict.update(data)
+                    incar = Incar.from_dict(incar_dict)
+                    incar.write_file("INCAR")
+                    print("directory", os.getcwd())
+                    vasp_cmd = self.vasp_cmd
+                    if "vasp_std" in self.vasp_cmd:
+                        vasp_cmd = self.vasp_cmd.replace("std", "ncl")
+                    cmd = vasp_cmd
+                    os.system(cmd)
+                    neigs = Wannier90eig("wannier90.eig").neigs()
+                    tmp = neigs
+                    Wannier90win(struct=strt, efermi=efermi).write_hr_win(
+                        nbands=tmp
+                    )
+                    cmd = "cp hr_wannier.win wannier90.win"
+                    os.system(cmd)
+                    cmd = self.optional_params["wann_cmd"]
+                    os.system(cmd)
+                    nelect = Outcar("OUTCAR").nelect
+                    WTin(
+                        atoms=strt,
+                        wannierout="wannier90.wout",
+                        efermi=efermi,
+                        nelect=nelect,
+                        exclude=exclude,
+                        nwan=nwan,
+                    ).write_wt_in()
+                    cmd = self.optional_params["wt_cmd"]
+                    # "/users/knc6/Software/wannier_tools/bin/wt.x"
+                    os.system(cmd)
+                    # Make sure wanniertools is the last step in the workflow
 
         return en, contcar
 
@@ -821,8 +851,8 @@ class JobFactory(object):
         # incar = self.use_incar_dict
         incar_dict = self.use_incar_dict.copy()
         copy_files = self.copy_files
+        # tmp = self.copy_files
         if copy_prev_chgcar is not None:
-            #    shutil.copy2(copy_prev_chgcar, ".")
             copy_files.append(copy_prev_chgcar)
 
         if nbands is not None:
