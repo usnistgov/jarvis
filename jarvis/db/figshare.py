@@ -38,11 +38,11 @@ def datasets(dataset=""):
         print("Obtaining QM9-molecule CFID dataset 134k...")
     elif dataset == "aflow1":
         url = "https://ndownloader.figshare.com/files/25453256"
-        js_tag = "CFID-AFLOW-1.json"
+        js_tag = "CFID_AFLOW1.json"
         print("Obtaining AFLOW-1 CFID dataset 400k...")
     elif dataset == "aflow2":
         url = "https://ndownloader.figshare.com/files/25453265"
-        js_tag = "CFID-AFLOW-2.json"
+        js_tag = "CFID_AFLOW2.json"
         print("Obtaining AFLOW-2 CFID dataset 400k...")
     elif dataset == "raw_files":
         url = "https://ndownloader.figshare.com/files/25295732"
