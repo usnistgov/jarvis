@@ -106,8 +106,9 @@ class Spillage(object):
         noso_homo = -10000000.0
         noso_lumo = 100000000.0
         for i in range(noso_bands.shape[1]):
-            homo_k = max(noso_bands[0, i, n_up - 1],
-                         noso_bands[1, i, n_dn - 1])
+            homo_k = max(
+                noso_bands[0, i, n_up - 1], noso_bands[1, i, n_dn - 1]
+            )
             lumo_k = min(noso_bands[0, i, n_up], noso_bands[1, i, n_dn])
             noso_direct = min(noso_direct, lumo_k - homo_k)
 
@@ -140,14 +141,17 @@ class Spillage(object):
                     gamma_k.append(nelec_tot)
                     kpoints.append(kso)
                     Mmn = 0.0
-                    vnoso = noso.readBandCoeff(ispin=1, ikpt=nk1,
-                                               iband=1, norm=False)
+                    vnoso = noso.readBandCoeff(
+                        ispin=1, ikpt=nk1, iband=1, norm=False
+                    )
                     n_noso1 = vnoso.shape[0]
-                    vnoso = noso.readBandCoeff(ispin=2, ikpt=nk1,
-                                               iband=1, norm=False)
+                    vnoso = noso.readBandCoeff(
+                        ispin=2, ikpt=nk1, iband=1, norm=False
+                    )
                     # n_noso2 = vnoso.shape[0]
-                    vso = so.readBandCoeff(ispin=1, ikpt=nk2,
-                                           iband=1, norm=False)
+                    vso = so.readBandCoeff(
+                        ispin=1, ikpt=nk2, iband=1, norm=False
+                    )
                     n_so = vso.shape[0]
                     vs = min(n_noso1 * 2, n_so)
                     Vnoso = np.zeros((vs, nelec_tot), dtype=complex)
@@ -155,21 +159,26 @@ class Spillage(object):
 
                     # prepare matricies
                     for n1 in range(1, nelec_up + 1):
-                        Vnoso[0:vs // 2, n1 - 1] = noso.readBandCoeff(
+                        Vnoso[0 : vs // 2, n1 - 1] = noso.readBandCoeff(
                             ispin=1, ikpt=nk1, iband=n1, norm=False
-                        )[0:vs // 2]
+                        )[0 : vs // 2]
                     for n1 in range(1, nelec_dn + 1):
-                        Vnoso[vs // 2:vs,
-                              n1 - 1 + nelec_up] = noso.readBandCoeff(
-                                  ispin=2, ikpt=nk1, iband=n1, norm=False
-                        )[0:vs // 2]
+                        Vnoso[
+                            vs // 2 : vs, n1 - 1 + nelec_up
+                        ] = noso.readBandCoeff(
+                            ispin=2, ikpt=nk1, iband=n1, norm=False
+                        )[
+                            0 : vs // 2
+                        ]
 
                     for n1 in range(1, nelec_tot + 1):
-                        t = so.readBandCoeff(ispin=1, ikpt=nk2,
-                                             iband=n1, norm=False)
-                        Vso[0:vs // 2, n1 - 1] = t[0:vs // 2]
-                        Vso[vs // 2:vs, n1 - 1] = t[n_so // 2:
-                                                    n_so // 2 + vs // 2]
+                        t = so.readBandCoeff(
+                            ispin=1, ikpt=nk2, iband=n1, norm=False
+                        )
+                        Vso[0 : vs // 2, n1 - 1] = t[0 : vs // 2]
+                        Vso[vs // 2 : vs, n1 - 1] = t[
+                            n_so // 2 : n_so // 2 + vs // 2
+                        ]
                     # make orthonormal basis?
                     Qnoso, num_noso = self.orth(Vnoso)
 
@@ -191,16 +200,16 @@ class Spillage(object):
                     gamma_k[-1] -= Mmn  # eq 4 in prb 90 125133
                     x.append(kso)
                     y.append(np.real(gamma_k[-1]))
-                    if gamma_k[-1] > 0.5:
-                        print(
-                            "nk1 nk2 kpoint gamma_k ",
-                            nk1,
-                            nk2,
-                            kso,
-                            knoso,
-                            np.real(gamma_k[-1]),
-                            "!!!!!!!!!!",
-                        )
+                    # if gamma_k[-1] > 0.5:
+                    #    print(
+                    #        "nk1 nk2 kpoint gamma_k ",
+                    #        nk1,
+                    #        nk2,
+                    #        kso,
+                    #        knoso,
+                    #        np.real(gamma_k[-1]),
+                    #        "!!!!!!!!!!",
+                    #    )
 
         gmax = max(np.real(gamma_k))
         nkmax = np.argmax(np.real(gamma_k))
@@ -227,13 +236,13 @@ class Spillage(object):
         info = {}
         print("gamma max", np.real(gmax), " at k =  ", kmax)
         info["spillage"] = np.real(gmax)
-        info["spillage_k"] = np.real(gamma_k)
-        info["kpoints"] = kpoints
-        info["kmax"] = kmax
+        info["spillage_k"] = np.real(gamma_k).tolist()
+        info["kpoints"] = [kk.tolist() for kk in kpoints]
+        info["kmax"] = kmax.tolist()
         info["noso_direct"] = noso_direct
         info["so_direct"] = so_direct
-        info["x_axis"] = x
-        info["y_axis"] = y
+        info["x_axis"] = [xx.tolist() for xx in x]
+        info["y_axis"] = [yy.tolist() for yy in y]
         info["so_lumo"] = so_lumo
         info["so_homo"] = so_homo
         info["noso_lumo"] = noso_lumo

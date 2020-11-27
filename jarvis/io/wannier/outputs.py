@@ -702,3 +702,26 @@ class Wannier90wout(object):
                     ]
                     wan_cnts.append(tmp)
         return wan_cnts
+
+
+class Wannier90eig(object):
+    """Construct wannier90.eig related object."""
+
+    def __init__(self, weig_path="wannier90.eig"):
+        """Initialize with file path."""
+        self.weig = weig_path
+
+    def give_wannier_eigs(self):
+        """Get wannier eigs."""
+        eigs = np.loadtxt(self.weig)
+        return eigs
+
+    def neigs(self):
+        """Get wannier eigs."""
+        ne = int(self.give_wannier_eigs()[-1][0])
+        return ne
+
+    def nk(self):
+        """Get wannier eigs."""
+        nk = int(len(self.give_wannier_eigs()) / self.neigs())
+        return nk
