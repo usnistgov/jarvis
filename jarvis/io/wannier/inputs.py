@@ -154,10 +154,11 @@ class Wannier90win(object):
         tol = self.frozen_tol
         if self.efermi is not None:
             dmax = self.efermi + tol
-            dmin = self.efermi - tol
+            # dmin = self.efermi - tol
             line = str("dis_froz_max =") + str(dmax) + str("\n")
             f.write(line)
-            line = str("dis_froz_min =") + str(dmin) + str("\n")
+            line = str("dis_froz_min =") + str(-1000) + str("\n")
+            # line = str("dis_froz_min =") + str(dmin) + str("\n")
             f.write(line)
 
         line = str("dis_num_iter =") + str(self.dis_num_iter) + str("\n")
