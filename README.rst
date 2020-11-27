@@ -51,11 +51,19 @@ For more details, checkout our latest article:  `JARVIS: An Integrated Infrastru
 
 
 .. raw:: html
-         <embed>
-         <p align="center">
-        <iframe width="620" align="center" height="415" src="https://www.youtube.com/embed/P0ZcHXOC6W0?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe>
-        </p>
-         </embed>
+
+   <iframe width="560" height="315" src="https://www.youtube.com/embed/P0ZcHXOC6W0?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe>
+
+   
+   
+.. raw:: html
+
+   <hr />
+   <iframe width="620" align="center" height="415" src="https://www.youtube.com/embed/P0ZcHXOC6W0?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe>
+
+.. raw:: html
+   <p> align="center"><iframe width="620" align="center" height="415" src="https://www.youtube.com/embed/P0ZcHXOC6W0?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe></p>
+        
 
 
 Some important features
