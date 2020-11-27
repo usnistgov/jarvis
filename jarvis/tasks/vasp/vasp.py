@@ -1838,3 +1838,4 @@ class GenericIncars(object):
         )
         inc = Incar(data)
         return GenericIncars(name="lda", incar=inc, pot_type="POT_LDA_PAW")
+      
