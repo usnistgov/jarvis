@@ -5,9 +5,9 @@ Main page: https://figshare.com/authors/Kamal_Choudhary/4445539
 """
 
 import zipfile
-import tempfile
+# import tempfile
 import os
-import io
+# import io
 import requests
 from jarvis.db.jsonutils import loadjson
 
@@ -59,26 +59,27 @@ def data(dataset="dft_2d"):
     """Provide main function to download datasets."""
     url, js_tag = datasets(dataset)
 
-    r = requests.get(url)
-    z = zipfile.ZipFile(io.BytesIO(r.content))
-    wdat = z.read(js_tag).decode("utf-8")
-    fd, path = tempfile.mkstemp()
-    with os.fdopen(fd, "w") as tmp:
-        tmp.write(wdat)
-    data = loadjson(path)
-    # path = str(os.path.join(os.path.dirname(__file__), js_tag))
-    # if not os.path.isfile(path):
-    #    zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
-    #    r = requests.get(url)
-    #    f = open(zfile, "wb")
-    #    f.write(r.content)
-    #    f.close()
-    #
-    #    with zipfile.ZipFile(zfile, "r") as zipObj:
-    #        # zipObj.extract(path)
-    #        zipObj.extractall(os.path.join(os.path.dirname(__file__)))
-    #    os.remove(zfile)
+    # r = requests.get(url)
+    # z = zipfile.ZipFile(io.BytesIO(r.content))
+    # wdat = z.read(js_tag).decode("utf-8")
+    # fd, path = tempfile.mkstemp()
+    # with os.fdopen(fd, "w") as tmp:
+    #    tmp.write(wdat)
     # data = loadjson(path)
+
+    path = str(os.path.join(os.path.dirname(__file__), js_tag))
+    if not os.path.isfile(path):
+        zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
+        r = requests.get(url)
+        f = open(zfile, "wb")
+        f.write(r.content)
+        f.close()
+
+        with zipfile.ZipFile(zfile, "r") as zipObj:
+            # zipObj.extract(path)
+            zipObj.extractall(os.path.join(os.path.dirname(__file__)))
+        os.remove(zfile)
+    data = loadjson(path)
     return data
 
 
