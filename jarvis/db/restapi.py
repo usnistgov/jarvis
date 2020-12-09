@@ -226,6 +226,9 @@ class Api(object):
             turl, data=input, auth=(self.username, self.password)
         )
         out = response.json()
+        f = open("tmpout", "w")
+        f.write(json.dumps(out))
+        f.close()
         data = out["results"]
         self.delete_chunks(data)
         params = {"page": 2}
