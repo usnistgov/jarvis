@@ -68,8 +68,8 @@ def test_outputs_bi2se3():
     # print(pp, orb)
     w.get_bandstructure_plot(atoms=atoms, filename=filename)
     # print (x,pp)
-    w.find_nodes()
-    w.fermi_surf_2d()
+    w.find_nodes(nk1=1,nk2=1,nk3=1)
+    w.fermi_surf_2d(nk1=1,nk2=1)
     w.chern_number_simple()
     # print (round(dos[75],3))
     assert (
