@@ -832,6 +832,7 @@ class VaspToApiXmlSchema(object):
 
         try:
             sp = {}
+            """
             print("soc_wf", soc_wf)
             tmp_jid = jid
             print("tmp_jid", tmp_jid)
@@ -843,11 +844,14 @@ class VaspToApiXmlSchema(object):
                         sp["kpoints"] = list(
                             [[0, 0, 0] for i in range(len(sp["spillage_k"]))]
                         )
+            """
             if sp == {}:
                 # As spillage calculation may take a long time
+                print("XYZ1")
                 sp = Spillage(
                     wf_noso=nonsoc_wf, wf_so=soc_wf
                 ).overlap_so_spinpol()
+                print("XYZ2")
             soc_bands = self.electronic_band_struct(
                 vasprun=soc_wf.replace("WAVECAR", "vasprun.xml"),
                 kpoints_file_path=(soc_wf.replace("WAVECAR", "KPOINTS")),
@@ -1831,7 +1835,46 @@ class VaspToApiXmlSchema(object):
             """
 
 
+# folder='/rk2/knc6/JARVIS-DFT/Bulk4-at30/mp-755581_PBEBO'
+# filename = "JVASP-50203.xml"
+# VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
 """
+
+folder='/rk2/knc6/JARVIS-DFT/Bulk2-at30/mp-774944_PBEBO'
+filename = "JVASP-43095.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+
+
+folder='/rk2/knc6/JARVIS-DFT/Bulk-at30/mp-982243_PBEBO'
+filename = "JVASP-37701.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+folder='/rk2/knc6/JARVIS-DFT/Bulk-at30/mp-974970_PBEBO'
+filename = "JVASP-38239.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+
+
+folder='/rk2/knc6/JARVIS-DFT/Solar-SemiRaritan/mp-7240_PBEBO'
+filename = "JVASP-8122.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+
+
+folder='/rk2/knc6/JARVIS-DFT/Bulk-less5mp1/mp-1066718_PBEBO'
+filename = "JVASP-78840.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+folder='/rk2/knc6/JARVIS-DFT/Solar-SemiRaritan/mp-7240_PBEBO'
+filename = "JVASP-8122.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+folder = "/rk2/knc6/JARVIS-DFT/Bulk9-at30/mp-22260_PBEBO"
+filename = "JVASP-59757.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
     filename = "JVASP-1067.xml"
