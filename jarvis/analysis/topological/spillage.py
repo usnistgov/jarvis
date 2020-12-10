@@ -68,16 +68,17 @@ class Spillage(object):
                     and self.isclose(kso[1], knoso[1])
                     and self.isclose(kso[2], knoso[2])
                 ):  # do kpoints match?
-                    for c, e in enumerate(noso._occs[0, nk1 - 1, :]):
-                        if e < 0.5:
-                            cup = c
-                            break
-                    for c, e in enumerate(noso._occs[1, nk1 - 1, :]):
-                        if e < 0.5:
-                            cdn = c
-                            break
+                    if nk1 == nk2:
+                        for c, e in enumerate(noso._occs[0, nk1 - 1, :]):
+                            if e < 0.5:
+                                cup = c
+                                break
+                        for c, e in enumerate(noso._occs[1, nk1 - 1, :]):
+                            if e < 0.5:
+                                cdn = c
+                                break
 
-                    nelec_list.append([cup, cdn, cup + cdn])
+                        nelec_list.append([cup, cdn, cup + cdn])
 
         n_arr = np.array(nelec_list)
 
@@ -134,82 +135,83 @@ class Spillage(object):
                 ):  # do kpoints match?
 
                     # changes section 2
-                    nelec_up = n_arr[nk1 - 1, 0]
-                    nelec_dn = n_arr[nk1 - 1, 1]
-                    nelec_tot = n_arr[nk1 - 1, 2]
+                    if nk1 == nk2:
+                        nelec_up = n_arr[nk1 - 1, 0]
+                        nelec_dn = n_arr[nk1 - 1, 1]
+                        nelec_tot = n_arr[nk1 - 1, 2]
 
-                    gamma_k.append(nelec_tot)
-                    kpoints.append(kso)
-                    Mmn = 0.0
-                    vnoso = noso.readBandCoeff(
-                        ispin=1, ikpt=nk1, iband=1, norm=False
-                    )
-                    n_noso1 = vnoso.shape[0]
-                    vnoso = noso.readBandCoeff(
-                        ispin=2, ikpt=nk1, iband=1, norm=False
-                    )
-                    # n_noso2 = vnoso.shape[0]
-                    vso = so.readBandCoeff(
-                        ispin=1, ikpt=nk2, iband=1, norm=False
-                    )
-                    n_so = vso.shape[0]
-                    vs = min(n_noso1 * 2, n_so)
-                    Vnoso = np.zeros((vs, nelec_tot), dtype=complex)
-                    Vso = np.zeros((vs, nelec_tot), dtype=complex)
-
-                    # prepare matricies
-                    for n1 in range(1, nelec_up + 1):
-                        Vnoso[0 : vs // 2, n1 - 1] = noso.readBandCoeff(
-                            ispin=1, ikpt=nk1, iband=n1, norm=False
-                        )[0 : vs // 2]
-                    for n1 in range(1, nelec_dn + 1):
-                        Vnoso[
-                            vs // 2 : vs, n1 - 1 + nelec_up
-                        ] = noso.readBandCoeff(
-                            ispin=2, ikpt=nk1, iband=n1, norm=False
-                        )[
-                            0 : vs // 2
-                        ]
-
-                    for n1 in range(1, nelec_tot + 1):
-                        t = so.readBandCoeff(
-                            ispin=1, ikpt=nk2, iband=n1, norm=False
+                        gamma_k.append(nelec_tot)
+                        kpoints.append(kso)
+                        Mmn = 0.0
+                        vnoso = noso.readBandCoeff(
+                            ispin=1, ikpt=nk1, iband=1, norm=False
                         )
-                        Vso[0 : vs // 2, n1 - 1] = t[0 : vs // 2]
-                        Vso[vs // 2 : vs, n1 - 1] = t[
-                            n_so // 2 : n_so // 2 + vs // 2
-                        ]
-                    # make orthonormal basis?
-                    Qnoso, num_noso = self.orth(Vnoso)
+                        n_noso1 = vnoso.shape[0]
+                        vnoso = noso.readBandCoeff(
+                            ispin=2, ikpt=nk1, iband=1, norm=False
+                        )
+                        # n_noso2 = vnoso.shape[0]
+                        vso = so.readBandCoeff(
+                            ispin=1, ikpt=nk2, iband=1, norm=False
+                        )
+                        n_so = vso.shape[0]
+                        vs = min(n_noso1 * 2, n_so)
+                        Vnoso = np.zeros((vs, nelec_tot), dtype=complex)
+                        Vso = np.zeros((vs, nelec_tot), dtype=complex)
 
-                    Qso, num_so = self.orth(Vso)
+                        # prepare matricies
+                        for n1 in range(1, nelec_up + 1):
+                            Vnoso[0 : vs // 2, n1 - 1] = noso.readBandCoeff(
+                                ispin=1, ikpt=nk1, iband=n1, norm=False
+                            )[0 : vs // 2]
+                        for n1 in range(1, nelec_dn + 1):
+                            Vnoso[
+                                vs // 2 : vs, n1 - 1 + nelec_up
+                            ] = noso.readBandCoeff(
+                                ispin=2, ikpt=nk1, iband=n1, norm=False
+                            )[
+                                0 : vs // 2
+                            ]
 
-                    # evalute main expression
+                        for n1 in range(1, nelec_tot + 1):
+                            t = so.readBandCoeff(
+                                ispin=1, ikpt=nk2, iband=n1, norm=False
+                            )
+                            Vso[0 : vs // 2, n1 - 1] = t[0 : vs // 2]
+                            Vso[vs // 2 : vs, n1 - 1] = t[
+                                n_so // 2 : n_so // 2 + vs // 2
+                            ]
+                        # make orthonormal basis?
+                        Qnoso, num_noso = self.orth(Vnoso)
 
-                    a = []
-                    for n1 in range(0, nelec_tot):  # noso occupied bands
-                        v1 = Qnoso[:, n1]
-                        aa = 0.0
-                        for n2 in range(0, nelec_tot):  # so occupied bands
-                            v2 = Qso[:, n2]
+                        Qso, num_so = self.orth(Vso)
 
-                            t = np.dot(np.conj(v1), v2)
-                            Mmn += t * t.conj()
-                            aa += (t * t.conj()).real
-                        a.append(aa)
-                    gamma_k[-1] -= Mmn  # eq 4 in prb 90 125133
-                    x.append(kso)
-                    y.append(np.real(gamma_k[-1]))
-                    # if gamma_k[-1] > 0.5:
-                    #    print(
-                    #        "nk1 nk2 kpoint gamma_k ",
-                    #        nk1,
-                    #        nk2,
-                    #        kso,
-                    #        knoso,
-                    #        np.real(gamma_k[-1]),
-                    #        "!!!!!!!!!!",
-                    #    )
+                        # evalute main expression
+
+                        a = []
+                        for n1 in range(0, nelec_tot):  # noso occupied bands
+                            v1 = Qnoso[:, n1]
+                            aa = 0.0
+                            for n2 in range(0, nelec_tot):  # so occupied bands
+                                v2 = Qso[:, n2]
+
+                                t = np.dot(np.conj(v1), v2)
+                                Mmn += t * t.conj()
+                                aa += (t * t.conj()).real
+                            a.append(aa)
+                        gamma_k[-1] -= Mmn  # eq 4 in prb 90 125133
+                        x.append(kso)
+                        y.append(np.real(gamma_k[-1]))
+                        if gamma_k[-1] > 0.5:
+                            print(
+                                "nk1 nk2 kpoint gamma_k ",
+                                nk1,
+                                nk2,
+                                kso,
+                                knoso,
+                                np.real(gamma_k[-1]),
+                                "!!!!!!!!!!",
+                            )
 
         gmax = max(np.real(gamma_k))
         nkmax = np.argmax(np.real(gamma_k))
