@@ -859,7 +859,7 @@ class WannierHam(object):
         return energies, dos, pdos
 
     def generate_supercell(
-        self, supercell=[2, 2, 2], index=[0, 0, 1], sparse=False
+        self, supercell=[2, 2, 2], index=[0, 0, 0], sparse=False
     ):
         """Generate supercell."""
         t0 = time.time()
