@@ -10,7 +10,7 @@ def test_spillage():
     info = spl.overlap_so_spinpol()
     spillage = round(info["spillage"], 2)
     # print (spillage)
-    assert (spillage) == (1.36)
+    assert (spillage) == (0.48)
 
 
 # test_spillage()
