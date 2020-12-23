@@ -164,7 +164,8 @@ class MagneticOrdering(object):
             if i in mag_atoms:
                 elements_dict[i] += 1
         n_mag_elements = sum(elements_dict.values())
-        Tc = 2 * deltaE / (3 * kB) / n_mag_elements
+        Tc = deltaE / (3 * kB) / n_mag_elements
+        # Tc = 2 * deltaE / (3 * kB) / n_mag_elements
         info["Tc"] = Tc
         info["deltaE"] = deltaE
         info["n_mag_elements"] = n_mag_elements

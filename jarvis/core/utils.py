@@ -160,6 +160,15 @@ def check_match(a, b, tol=1e-8):
     return False
 
 
+def update_dict(main={}, extra={}):
+    """Return update dictionary."""
+    # Helper function for dict.update method
+    tmp = main.copy()
+    for i, j in extra.items():
+        tmp[i] = j
+    return tmp
+
+
 # def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
 #    """Check if XML is valid."""
 #    xml_file = etree.parse(xml)
