@@ -334,6 +334,46 @@ class Outcar(object):
                 nbands = int(i.split()[-1])
                 return nbands
 
+    def magnetization(self, dir="x", elements=[]):
+        """Get magnetization in x,y,z."""
+        new_magt = "na"
+        for i, ii in enumerate(self.data):
+            if "magnetization (" + dir + ")" in ii:
+                magt = []
+                for j in range(self.nions):
+                    magt.append((self.data[i + 4 + j]).split())
+                if not elements:
+                    elements = [str(i + 1) for i in range(len(magt))]
+                new_magt = []
+                for ii, jj in zip(elements, magt):
+                    jj[0] = ii
+                    if len(jj) == 5:
+                        tmp = jj[4]
+                        jj[4] = "0.0"
+                        jj.append(tmp)
+                    new_magt.append(jj)
+        return new_magt
+
+    def total_charge(self, elements=[]):
+        """Get total charge."""
+        new_chg = "na"
+        for i, ii in enumerate(self.data):
+            if " total charge " in ii:
+                chg = []
+                for j in range(self.nions):
+                    chg.append((self.data[i + 4 + j]).split())
+                if not elements:
+                    elements = [str(i + 1) for i in range(len(chg))]
+                new_chg = []
+                for ii, jj in zip(elements, chg):
+                    jj[0] = ii
+                    if len(jj) == 5:
+                        tmp = jj[4]
+                        jj[4] = "0.0"
+                        jj.append(tmp)
+                    new_chg.append(jj)
+        return new_chg
+
     @property
     def nelect(self):
         """Get number of electrons."""
