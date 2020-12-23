@@ -173,7 +173,8 @@ class Spillage(object):
                         Vnoso = np.zeros((vs, nelec_tot), dtype=complex)
                         Vso = np.zeros((vs, nelec_tot), dtype=complex)
 
-                        # prepare matricies, putting the wavefunction coeffients
+                        # prepare matricies,
+                        # putting the wavefunction coeffients
                         # align so that they have same structure as SOC case
                         # which has both spin and down together
 
@@ -214,13 +215,16 @@ class Spillage(object):
                         a = []
                         for n1 in range(0, nelec_tot):  # noso occupied bands
                             v1 = Qnoso[:, n1]  # number of plane waves, bands
-                            aa = 0.0  # represents the non band-inverted electrons
+                            aa = 0.0
+                            # represents the non band-inverted electrons
                             for n2 in range(0, nelec_tot):  # so occupied bands
                                 v2 = Qso[:, n2]
-                                # Inner product of a nonsoc and soc wavefunction
+                                # Inner product of a nonsoc
+                                # and soc wavefunction
                                 # index n1 and n2
 
-                                # The inner product of bands with and without SOC
+                                # The inner product
+                                # of bands with and without SOC
                                 # will be 1 for trivial bands
 
                                 # Delta function of n1 and n2 if SOC is weak

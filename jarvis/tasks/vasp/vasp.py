@@ -120,10 +120,13 @@ class JobFactory(object):
         self.name = name
         self.use_incar_dict = use_incar_dict
         # if ldau:
-        #  if 'LSORBIT' in use_incar_dict and use_incar_dict['LSORBIT']=='.TRUE.':
-        #     info_ldau = find_ldau_magmom(U=Uval,atoms=poscar.atoms,lsorbit=True)
+        #  if 'LSORBIT' in use_incar_dict
+        # and use_incar_dict['LSORBIT']=='.TRUE.':
+        #     info_ldau =
+        # find_ldau_magmom(U=Uval,atoms=poscar.atoms,lsorbit=True)
         #  else:
-        #     info_ldau = find_ldau_magmom(U=Uval,atoms=poscar.atoms,lsorbit=False)
+        #     info_ldau
+        # = find_ldau_magmom(U=Uval,atoms=poscar.atoms,lsorbit=False)
         #  tmp = update_dict(use_incar_dict,info_ldau)
         #  use_incar_dict = tmp
 
