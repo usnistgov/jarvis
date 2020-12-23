@@ -39,10 +39,10 @@ class TersoffHamannSTM(object):
         self.repeat = [rep_x, rep_y]
         self.scell = self.atoms.make_supercell_matrix([rep_x, rep_y, 1])
 
-    def constant_height(self, filename="testh.png"):
+    def constant_height(self, tol=2, filename="testh.png"):
         """Get iso-height image."""
         if not self.zcut:
-            self.zcut = int((self.zmaxp + 2) / self.c * self.nz)
+            self.zcut = int((self.zmaxp + tol) / self.c * self.nz)
         img_ext = np.tile(self.chg[:, :, self.zcut], self.repeat)
         exts = (0, self.a * self.repeat[0], 0, self.b * self.repeat[1])
         plt.close()

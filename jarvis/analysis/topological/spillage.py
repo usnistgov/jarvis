@@ -41,6 +41,8 @@ class Spillage(object):
 
     def orth(self, A):
         """Orthogonalize a vector."""
+        # As we do not store overlap matrix, we orthogonalize the
+        # Wavefunctions.
         u, s, vh = np.linalg.svd(A, full_matrices=False)
         M, N = A.shape
         eps = np.finfo(float).eps
@@ -57,7 +59,14 @@ class Spillage(object):
         noso_k, noso_bands = noso.readWFBand()
         so_k, so_bands = so.readWFBand()
 
-        # changes section 1
+        # Calculate the number of occupied bands in non-soc calculation
+        # at each k-point
+
+        # Start from deep energy levels and then finds
+        # first unoccupied bands with occupation less than 50%
+        # noso._kvecs[nk1 - 1, :]: number of kpoints are rows,
+        # number of columns three, kpoint units
+
         nelec_list = []
         for nk1 in range(1, noso._nkpts + 1):  # no spin orbit kpoints loop
             knoso = noso._kvecs[nk1 - 1, :]
@@ -79,6 +88,7 @@ class Spillage(object):
                                 break
 
                         nelec_list.append([cup, cdn, cup + cdn])
+                        # total number of occupied bands at k point nk1
 
         n_arr = np.array(nelec_list)
 
@@ -146,20 +156,27 @@ class Spillage(object):
                         vnoso = noso.readBandCoeff(
                             ispin=1, ikpt=nk1, iband=1, norm=False
                         )
+                        # Getting size of matrices
                         n_noso1 = vnoso.shape[0]
+                        # number of plane waves in noso
                         vnoso = noso.readBandCoeff(
                             ispin=2, ikpt=nk1, iband=1, norm=False
                         )
+                        # spin, kpt, bands, number of plane wave
                         # n_noso2 = vnoso.shape[0]
                         vso = so.readBandCoeff(
                             ispin=1, ikpt=nk2, iband=1, norm=False
                         )
-                        n_so = vso.shape[0]
+                        n_so = vso.shape[0]  # number of plane waves in so
                         vs = min(n_noso1 * 2, n_so)
+                        # Vnono,and so holds wavefunctions
                         Vnoso = np.zeros((vs, nelec_tot), dtype=complex)
                         Vso = np.zeros((vs, nelec_tot), dtype=complex)
 
-                        # prepare matricies
+                        # prepare matricies, putting the wavefunction coeffients
+                        # align so that they have same structure as SOC case
+                        # which has both spin and down together
+
                         for n1 in range(1, nelec_up + 1):
                             Vnoso[0 : vs // 2, n1 - 1] = noso.readBandCoeff(
                                 ispin=1, ikpt=nk1, iband=n1, norm=False
@@ -182,6 +199,12 @@ class Spillage(object):
                                 n_so // 2 : n_so // 2 + vs // 2
                             ]
                         # make orthonormal basis?
+                        # Occupied bands, both up and down
+                        # Generally to get wavefunctions, we have
+                        # <psi><S><psi*>
+                        # But as we do't have S from DFT saved
+                        # we orthogalize the wavefunctions hoping
+                        # they span the same space
                         Qnoso, num_noso = self.orth(Vnoso)
 
                         Qso, num_so = self.orth(Vso)
@@ -190,10 +213,17 @@ class Spillage(object):
 
                         a = []
                         for n1 in range(0, nelec_tot):  # noso occupied bands
-                            v1 = Qnoso[:, n1]
-                            aa = 0.0
+                            v1 = Qnoso[:, n1]  # number of plane waves, bands
+                            aa = 0.0  # represents the non band-inverted electrons
                             for n2 in range(0, nelec_tot):  # so occupied bands
                                 v2 = Qso[:, n2]
+                                # Inner product of a nonsoc and soc wavefunction
+                                # index n1 and n2
+
+                                # The inner product of bands with and without SOC
+                                # will be 1 for trivial bands
+
+                                # Delta function of n1 and n2 if SOC is weak
 
                                 t = np.dot(np.conj(v1), v2)
                                 Mmn += t * t.conj()
@@ -252,6 +282,11 @@ class Spillage(object):
         return info
 
 
+# wf_so='/rk2/knc6/JARVIS-DFT/Bulk9-at30/mp-22260_PBEBO/MAIN-SOCSCFBAND-JVASP-59757_mp-22260/WAVECAR'
+# wf_noso='/rk2/knc6/JARVIS-DFT/Bulk9-at30/mp-22260_PBEBO/MAIN-MAGSCFBAND-JVASP-59757_mp-22260/WAVECAR'
+
+# spl = Spillage(wf_noso=wf_noso, wf_so=wf_so)
+# info = spl.overlap_so_spinpol()
 """
 if __name__ == "__main__":
     # JVASP-1044
