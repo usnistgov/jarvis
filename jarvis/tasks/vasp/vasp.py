@@ -5,6 +5,8 @@ from jarvis.io.vasp.inputs import Poscar, Incar, Potcar
 from jarvis.db.jsonutils import loadjson
 from jarvis.core.kpoints import Kpoints3D as Kpoints
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
+# from jarvis.core.utils import update_dict
 import subprocess
 import json
 import os
@@ -13,7 +15,7 @@ from jarvis.io.wanniertools.inputs import WTin
 from jarvis.io.wannier.inputs import Wannier90win
 from jarvis.io.wannier.outputs import Wannier90eig
 import shutil
-from jarvis.io.vasp.inputs import find_ldau_magmom
+from jarvis.io.vasp.inputs import find_ldau_magmom, add_ldau_incar
 from collections import OrderedDict
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.analysis.magnetism.magmom_setup import MagneticOrdering
@@ -54,6 +56,9 @@ def write_jobfact_optb88vdw(pyname="job.py", job_json=""):
     f.close()
 
 
+# def add_ldau_incar(use_incar_dict={}, Uval=2):
+
+
 class JobFactory(object):
     """Provide sets of VASP calculations."""
 
@@ -77,6 +82,8 @@ class JobFactory(object):
             "wann_cmd": "~/bin/wannier90.x wannier90",
             "wt_cmd": "~/bin/wt.x",
             "run_wannier": True,
+            "ldau": False,
+            "Uval": 2.0,
         },
         steps=[
             "ENCUT",
@@ -112,6 +119,17 @@ class JobFactory(object):
         # TODO: Make JobFactory a superclass of VaspJob class
         self.name = name
         self.use_incar_dict = use_incar_dict
+        # if ldau:
+        #  if 'LSORBIT' in use_incar_dict
+        # and use_incar_dict['LSORBIT']=='.TRUE.':
+        #     info_ldau =
+        # find_ldau_magmom(U=Uval,atoms=poscar.atoms,lsorbit=True)
+        #  else:
+        #     info_ldau
+        # = find_ldau_magmom(U=Uval,atoms=poscar.atoms,lsorbit=False)
+        #  tmp = update_dict(use_incar_dict,info_ldau)
+        #  use_incar_dict = tmp
+
         self.pot_type = pot_type
         self.vasp_cmd = vasp_cmd
         self.mat = poscar
@@ -174,6 +192,8 @@ class JobFactory(object):
             if i == "SPILLAGE":
                 self.soc_spillage(
                     mat=self.mat,
+                    # ldau=self.optional_params["ldau"],
+                    # Uval=self.optional_params["Uval"],
                     encut=self.optional_params["encut"],
                     nbands=None,
                     kppa=self.optional_params["kppa"],
@@ -243,9 +263,10 @@ class JobFactory(object):
 
         self.step_flow()
 
-    def magorder(self, ldau=False, min_configs=3, length=20):
+    def magorder(self, min_configs=3, length=20):
         """Determine structures for FM, AFM, FiM magnetic ordering."""
         incar_dict = self.use_incar_dict.copy()
+        ldau = self.optional_params["ldau"]
         data = {
             "ENCUT": 1.3 * float(self.optional_params["encut"]),
             "NEDOS": 5000,
@@ -261,6 +282,14 @@ class JobFactory(object):
         )
         for i in range(len(symm_list)):
             if ldau:
+
+                tmp = add_ldau_incar(
+                    use_incar_dict=incar_dict,
+                    atoms=ss,
+                    Uval=self.optional_params["Uval"],
+                )
+                incar_dict = tmp
+
                 info_ldau = find_ldau_magmom(atoms=ss)
                 inc_tmp = inc.update(info_ldau)
                 inc1 = inc_tmp.update(
@@ -533,7 +562,7 @@ class JobFactory(object):
         if nbands is not None:
             nbands = int(nbands * 3)
             incar_dict.update({"NBANDS": nbands})
-
+        ldau = self.optional_params["ldau"]
         data = {
             "ENCUT": encut,
             "NEDOS": 5000,
@@ -549,6 +578,14 @@ class JobFactory(object):
             "LWAVE": ".TRUE.",
         }
         incar_dict.update(data)
+        if ldau:
+            tmp = add_ldau_incar(
+                use_incar_dict=incar_dict,
+                atoms=mat.atoms,
+                Uval=self.optional_params["Uval"],
+            )
+            incar_dict = tmp
+
         incar = Incar.from_dict(incar_dict)
         kpoints = Kpoints().kpoints_per_atom(atoms=mat.atoms, kppa=kppa)
 
@@ -584,6 +621,13 @@ class JobFactory(object):
         }
         incar_dict = self.use_incar_dict.copy()
         incar_dict.update(data)
+        if ldau:
+            tmp = add_ldau_incar(
+                use_incar_dict=incar_dict,
+                atoms=mat.atoms,
+                Uval=self.optional_params["Uval"],
+            )
+            incar_dict = tmp
         incar = Incar.from_dict(incar_dict)
         kpoints = Kpoints().kpath(
             mat.atoms, line_density=self.optional_params["line_density"]
@@ -626,8 +670,17 @@ class JobFactory(object):
             "LWAVE": ".TRUE.",
         }
         incar_dict.update(data)
+        if ldau:
+            tmp1 = add_ldau_incar(
+                use_incar_dict=incar_dict,
+                lsorbit=True,
+                Uval=self.optional_params["Uval"],
+                atoms=mat.atoms,
+            )
+            incar_dict = tmp1
         incar = Incar.from_dict(incar_dict)
         kpoints = Kpoints().kpoints_per_atom(atoms=mat.atoms, kppa=kppa)
+        # TODO: Find nwan, exclude, sum them up and add 10% extra
 
         en, contcar = VaspJob(
             poscar=mat,
@@ -659,6 +712,14 @@ class JobFactory(object):
         }
         incar_dict = self.use_incar_dict.copy()
         incar_dict.update(data)
+        if ldau:
+            tmp1 = add_ldau_incar(
+                use_incar_dict=incar_dict,
+                lsorbit=True,
+                Uval=self.optional_params["Uval"],
+                atoms=mat.atoms,
+            )
+            incar_dict = tmp1
         incar = Incar.from_dict(incar_dict)
         kpoints = Kpoints().kpath(
             mat.atoms, line_density=self.optional_params["line_density"]
@@ -716,8 +777,10 @@ class JobFactory(object):
                     ).write_win()
                     cmd = "cp win.input wannier90.win"
                     os.system(cmd)
-                    if nwan > nbands:
-                        new_nbands = nwan + exclude
+                    # Add 10 % extra bands
+                    tmp_bands = int(1.1 * (nwan + exclude))
+                    if tmp_bands > nbands:
+                        new_nbands = tmp_bands
                         if nbands < new_nbands:
                             nbands = new_nbands
 
@@ -742,6 +805,13 @@ class JobFactory(object):
 
                     incar_dict = self.use_incar_dict.copy()
                     incar_dict.update(data)
+                    if ldau:
+                        tmp1 = add_ldau_incar(
+                            use_incar_dict=incar_dict,
+                            Uval=self.optional_params["Uval"],
+                            atoms=strt,
+                        )
+                        incar_dict = tmp1
                     incar = Incar.from_dict(incar_dict)
                     incar.write_file("INCAR")
                     print("directory", os.getcwd())

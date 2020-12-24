@@ -123,10 +123,6 @@ def parse_nodes_dat(fname="Nodes.dat"):
     return nodes
 
 
-# fname='/rk2/knc6/JARVIS-DFT/Bulk9-at30/mp-22260_PBEBO/MAIN-WANN-SOC-JVASP-59757_mp-22260/Nodes.dat'
-# fname='/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO/MAIN-WANN-SOC-JVASP-1002_mp-149/Nodes.dat'
-# x=parse_nodes_dat(fname)
-# print (x)
 """
 if __name__ == "__main__":
     wt = "WT.out"

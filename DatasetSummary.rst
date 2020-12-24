@@ -8,7 +8,7 @@
   ``JARVIS-ML``       Machine learning prediction tools trained on the JARVIS-DFT data. Some of the ML-prediction models are for  Heat of formation, GGA/METAGGA bandgaps, Refractive indices, Bulk and shear modulus, Magnetic moment, Thermoelectric, Piezoelectric and Dielectric properties properties, Exfoliation energies, Solar-cell efficiency, and STM image classification. The website for JARVIS-ML: https://www.ctcms.nist.gov/jarvisml
   ``JARVIS-Het.``     Heterostructure design tools for 2D materials in the JARVIS-DFT database. Some of the properties available are: work function, Band-alignment, and Heterostructure classification. JARVIS-Heterostructure website: https://www.ctcms.nist.gov/jarvish
   ``JARVIS-PV``       Solar-cell/Photovoltaic cell design tools. Dataset is made available and the website will be available soon.
-  ``JARVIS-STM``      Scanning-tunneling microscopy images for 2D materials. Dataset is made available and the website will be available soon.
+  ``JARVIS-STM``      Scanning-tunneling microscopy images for 2D materials. https://jarvis.nist.gov/jarvisstm/.
   ``JARVIS-WTB``      Wannier Tight Binding Hamiltonian parameter dataset. Website: https://www.ctcms.nist.gov/jarviswtb 
   ``JARVIS-EFG``      Electric field gradient dataset. Dataset will be made available and the website will be available soon.
   ``Downloads``       Download raw metadat at: https://www.ctcms.nist.gov/~knc6/downloads.html

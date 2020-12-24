@@ -243,7 +243,7 @@ def test_vrun():
     # print ('gapp',round(vrun.get_indir_gap,2))
     assert (round(vrun.get_indir_gap[0], 2)) == (0.73)
     assert (round(vrun.get_dir_gap, 2)) == (2.62)
-    vrun.get_bandstructure(kpoints_file_path=band_kp)
+    vrun.get_bandstructure(kpoints_file_path=band_kp,plot=True)
     assert (round(opt_vrun.get_dir_gap, 2)) == (2.62)
     assert (vrun.total_dos[0][0]) == -8.1917
     # TODO Serious issue: assert (opt_vrun.total_dos[0][0]) == -8.1917
@@ -256,8 +256,8 @@ def test_vrun():
     pdos1 = vrun.partial_dos_spdf
     pdos2 = vrun.projected_atoms_spins_kpoints_bands
     pdos3 = vrun.projected_spins_kpoints_bands
-    pdos4 = vrun.get_atom_resolved_dos()
-    pdos5 = vrun.get_spdf_dos()
+    pdos4 = vrun.get_atom_resolved_dos(plot=True)
+    pdos5 = vrun.get_spdf_dos(plot=True)
     td = vrun.to_dict()
     fd = Vasprun.from_dict(td)
     vrun_dm = Vasprun(

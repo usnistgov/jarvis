@@ -16,4 +16,4 @@ def test_magnetism_setup():
     mag_atoms = mag.get_mag_ions()
     assert mag_atoms == ["Mn"]
     tc = mag.tc_mean_field()
-    assert round(tc["Tc"], 2) == round(7736.345414497057, 2)
+    assert round(tc["Tc"], 2) == round(3868.17, 2)

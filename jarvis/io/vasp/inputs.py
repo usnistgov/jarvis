@@ -8,6 +8,7 @@ from collections import OrderedDict
 from jarvis.core.kpoints import generate_kgrid, Kpoints3D
 from jarvis.core.utils import get_counts
 from jarvis.core.specie import Specie
+from jarvis.core.utils import update_dict
 
 
 class Poscar(object):
@@ -70,11 +71,11 @@ class Poscar(object):
             + str(self.atoms.lattice_mat[2][2])
             + "\n"
         )
-        # order = np.argsort(self.atoms.elements)
+        order = np.argsort(self.atoms.elements)
         coords = self.atoms.frac_coords
-        coords_ordered = np.array(coords)  # [order]
-        elements_ordered = np.array(self.atoms.elements)  # [order]
-        props_ordered = np.array(self.atoms.props)  # [order]
+        coords_ordered = np.array(coords)[order]
+        elements_ordered = np.array(self.atoms.elements)[order]
+        props_ordered = np.array(self.atoms.props)[order]
         # check_selective_dynamics = False
         counts = get_counts(elements_ordered)
         if "T" in "".join(map(str, self.atoms.props[0])):
@@ -474,6 +475,7 @@ class Kpoints(object):
 
 def find_ldau_magmom(
     atoms="",
+    default_magmom=True,
     U=3.0,
     mag=5.0,
     amix=0.2,
@@ -519,9 +521,22 @@ def find_ldau_magmom(
     info["LDAUU"] = " ".join(str(m) for m in LDAUU)
     info["LDAUPRINT"] = 2
     info["LMAMIX"] = lmix
-    info["MAGMOM"] = magmom
+    if not default_magmom:
+        info["MAGMOM"] = magmom
     info["AMIX"] = amix
     info["BMIX"] = bmix
     info["AMIX_MAG"] = amixmag
     info["BMIX_MAG"] = bmixmag
     return info
+
+
+def add_ldau_incar(
+    use_incar_dict={}, atoms=None, Uval=2, lsorbit=False, default_magmom=True
+):
+    """Add LDAU in incase, especially made for spillage calcs."""
+    info_ldau = find_ldau_magmom(
+        U=Uval, atoms=atoms, lsorbit=lsorbit, default_magmom=default_magmom
+    )
+    tmp = update_dict(use_incar_dict, info_ldau)
+    use_incar_dict = tmp
+    return use_incar_dict

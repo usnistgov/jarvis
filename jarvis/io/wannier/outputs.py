@@ -7,12 +7,15 @@ Such as wannier90.wout and wannier90_hr.dat
 import os
 import json
 import matplotlib.pyplot as plt
+import cmath
 import numpy as np
 import math
 import time
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.io.vasp.outputs import Vasprun
 import scipy
+import scipy.optimize as opt
+import copy as copy
 
 
 def get_projectors_for_formula(
@@ -205,6 +208,334 @@ class WannierHam(object):
         info["H"] = self.H
         info["HR"] = self.HR
         return info
+
+    def find_nodes(
+        self,
+        num_occ=8,
+        origin=[-0.5, -0.5, -0.5],
+        k1=[1, 0, 0],
+        k2=[0, 1, 0],
+        k3=[0, 0, 1],
+        nk1=10,
+        nk2=10,
+        nk3=10,
+        sig=[0.01, 0.02, 0.05, 0.1, 0.2, 0.3],
+        thresh=-10,
+        node_tol=0.001,
+        use_min=True,
+    ):
+        """Find nodes, Dirac, Wyel points."""
+        K = np.zeros((nk1 * 4, nk2 * 4, nk3 * 4, 3), dtype=float)
+        k1 = np.array(k1, dtype=float)
+        k2 = np.array(k2, dtype=float)
+        k3 = np.array(k3, dtype=float)
+
+        for c1 in range(4 * nk1):
+            for c2 in range(4 * nk2):
+                for c3 in range(4 * nk3):
+                    K[c1, c2, c3, :] = (
+                        origin
+                        + k1 * float(c1) / float(nk1 * 4)
+                        + k2 * float(c2) / float(nk2 * 4)
+                        + k3 * float(c3) / float(nk3 * 4)
+                    )
+
+                    #        VALS = np.zeros((nk1,nk2, ham.nwan))
+
+        IMAGE = np.zeros((nk1 * 4, nk2 * 4, nk3 * 4, len(sig)))
+        DIRECTGAP = np.zeros((nk1 * 4, nk2 * 4, nk3 * 4))
+        DIRECTGAP[:, :, :] = 100.0
+
+        VAL = np.ones((nk1 * 4, nk2 * 4, nk3 * 4)) * 100.0
+
+        #        sig_0 = 0.2
+
+        # initial pass
+
+        for c1 in range(0, 4 * nk1, 4):
+            print("c1 ", c1)
+            for c2 in range(0, 4 * nk2, 4):
+                for c3 in range(0, 4 * nk3, 4):
+                    k = K[c1, c2, c3, :]
+                    val, vect, p = self.solve_ham(k, proj=None)
+
+                    d = val[num_occ] - val[num_occ - 1]
+                    DIRECTGAP[c1, c2, c3] = d
+
+                    # IMAGE[c1,c2,c3,-1] = np.exp( -(d)**2 / sig[-1]**2)
+
+        if thresh == -10:
+            thresh = max(np.min(DIRECTGAP) * 1.5, 0.03)
+            print("set thresh ", thresh)
+
+            # second pass
+
+            #        maxval = np.max(IMAGE[:,:,:,-1])
+            #        thresh = maxval * 0.1
+            #        print("thresh ", maxval, thresh)
+
+        def fun_to_min(k):
+            val, vect, p = self.solve_ham(k, proj=None)
+            return val[num_occ] - val[num_occ - 1]
+
+        num_thresh = 0
+
+        min_gap = 1000000000.0
+        min_cond = 1000000000.0
+        max_val = -1000000000.0
+
+        dk1 = float(1) / float(nk1 * 4) / 2.0
+        dk2 = float(1) / float(nk2 * 4) / 2.0
+        dk3 = float(1) / float(nk3 * 4) / 2.0
+
+        weyl_points = []
+        dirac_points = []
+        higher_order_points = []
+
+        for c1 in range(0, 4 * nk1, 4):
+            print("c1 ", c1)
+            for c2 in range(0, 4 * nk2, 4):
+                for c3 in range(0, 4 * nk3, 4):
+                    for c1a in range(4):
+                        for c2a in range(4):
+                            for c3a in range(4):
+
+                                if c1a > 0:
+                                    c1p = (c1 + 4) % (4 * nk1)
+                                else:
+                                    c1p = c1
+                                if c2a > 0:
+                                    c2p = (c2 + 4) % (4 * nk2)
+                                else:
+                                    c2p = c2
+                                if c3a > 0:
+                                    c3p = (c3 + 4) % (4 * nk3)
+                                else:
+                                    c3p = c3
+
+                                if (
+                                    DIRECTGAP[c1, c2, c3] < thresh
+                                    or DIRECTGAP[c1, c2, c3p] < thresh
+                                    or DIRECTGAP[c1, c2p, c3] < thresh
+                                    or DIRECTGAP[c1, c2p, c3p] < thresh
+                                    or DIRECTGAP[c1p, c2, c3] < thresh
+                                    or DIRECTGAP[c1p, c2, c3p] < thresh
+                                    or DIRECTGAP[c1p, c2p, c3] < thresh
+                                    or DIRECTGAP[c1p, c2p, c3p] < thresh
+                                ):
+                                    num_thresh += 1
+                                    k = K[c1 + c1a, c2 + c2a, c3 + c3a, :]
+
+                                    if use_min:
+                                        B = opt.Bounds(
+                                            k - [dk1, dk2, dk3],
+                                            k + [dk1, dk2, dk3],
+                                            keep_feasible=True,
+                                        )
+                                        val, vect, p = self.solve_ham(
+                                            k, proj=None
+                                        )
+                                        if (
+                                            val[num_occ] - val[num_occ - 1]
+                                            < 0.15
+                                        ):
+                                            res = opt.minimize(
+                                                fun_to_min,
+                                                k,
+                                                method="Powell",
+                                                bounds=B,
+                                                tol=0.5e-3,
+                                                options={"maxfev": 5},
+                                            )
+                                            if res.fun < 0.005:
+                                                res = opt.minimize(
+                                                    fun_to_min,
+                                                    res.x,
+                                                    method="Powell",
+                                                    bounds=B,
+                                                    tol=1e-5,
+                                                    options={"maxfev": 30},
+                                                )
+                                            val, vect, p = self.solve_ham(
+                                                res.x, proj=None
+                                            )
+
+                                            k = res.x
+                                    else:
+                                        val, vect, p = self.solve_ham(
+                                            k, proj=None
+                                        )
+
+                                    d = val[num_occ] - val[num_occ - 1]
+                                    if d < node_tol:
+                                        # degen = 0
+                                        gap_mean = (
+                                            val[num_occ] + val[num_occ - 1]
+                                        ) / 2.0
+                                        count = np.sum(
+                                            np.abs(val - gap_mean)
+                                            < node_tol * 2
+                                        )
+                                        if count == 2:
+                                            weyl_points.append(copy.copy(k))
+                                            print("weyl point ", k, d, count)
+                                        elif count == 4 or count == 4:
+                                            dirac_points.append(copy.copy(k))
+                                            print("dirac point ", k, d, count)
+                                        else:
+                                            higher_order_points.append(
+                                                copy.copy(k)
+                                            )
+                                            print(
+                                                "nontrivial point ",
+                                                k,
+                                                d,
+                                                count,
+                                            )
+
+                                    DIRECTGAP[c1 + c1a, c2 + c2a, c3 + c3a] = d
+                                    VAL[c1 + c1a, c2 + c2a, c3 + c3a] = 0.5 * (
+                                        val[num_occ] + val[num_occ - 1]
+                                    )
+                                    min_gap = min(d, min_gap)
+                                    min_cond = min(min_cond, val[num_occ])
+                                    max_val = max(max_val, val[num_occ - 1])
+
+        for (cs, s) in enumerate(sig):
+            IMAGE[:, :, :, cs] = np.exp(-((DIRECTGAP) ** 2) / s ** 2)
+
+        print(
+            "num thresh ", num_thresh, " out of ", nk1 * nk2 * nk3 * 4 * 4 * 4
+        )
+        print(
+            "min direct gap ", min_gap, " indirect gap  ", min_cond - max_val
+        )
+
+        print("weyl ", weyl_points)
+        print("dirac ", dirac_points)
+        print("higher order ", higher_order_points)
+
+        return (
+            IMAGE,
+            DIRECTGAP,
+            VAL,
+            [min_gap, min_cond - max_val],
+            weyl_points,
+            dirac_points,
+            higher_order_points,
+        )
+
+    def chern_number_simple(
+        self,
+        nocc=8,
+        k1=[0, 0, 0],
+        k2=[0, 0, 0],
+        nk1=20,
+        nk2=20,
+        Kmat=None,
+        usemod=True,
+    ):
+        """Calculate Chern number."""
+        if Kmat is None:
+
+            K = np.zeros((nk1, nk2, 3), dtype=float)
+
+            k1 = np.array(k1, dtype=float)
+            k2 = np.array(k2, dtype=float)
+
+            #        print( 'K')
+
+            for c1 in range(nk1):
+                for c2 in range(nk2):
+                    K[c1, c2, :] = k1 * float(c1) / float(nk1) + k2 * float(
+                        c2
+                    ) / float(nk2)
+
+        else:
+            K = Kmat
+
+        if usemod:
+
+            lim1 = nk1
+            lim2 = nk2
+
+        else:
+
+            lim1 = nk1 + 1
+            lim2 = nk2 + 1
+
+        VECT = np.zeros((lim1, lim2, self.nwan, self.nwan), dtype=complex)
+        gap_min = 100000000000.0
+        val_max = -10000000000000.0
+        cond_min = 10000000000.0
+
+        # cond_min_p1 = 10000000000.0
+
+        # gap_min2 = 100000000000.0
+
+        # nwan = self.nwan
+
+        for c1 in range(lim1):
+            for c2 in range(lim2):
+                k = K[c1, c2, :]
+                val, vect, p = self.solve_ham(k, proj=None)
+                VECT[c1, c2, :, :] = vect
+                if (val[nocc] - val[nocc - 1]) < gap_min:
+                    gap_min = val[nocc] - val[nocc - 1]
+
+                if val[nocc - 1] > val_max:
+                    val_max = val[nocc - 1]
+
+                if val[nocc] < cond_min:
+                    cond_min = val[nocc]
+
+        print(
+            "minimum_direct_gap", gap_min, "indirect_gap", cond_min - val_max
+        )
+        direct_gap = gap_min
+        indirect_gap = cond_min - val_max
+
+        Chern = 0.0
+        for c1 in range(nk1):
+            for c2 in range(nk2):
+
+                if usemod:
+                    c1p = (c1 + 1) % nk1
+                    c2p = (c2 + 1) % nk2
+                else:
+                    c1p = c1 + 1
+                    c2p = c2 + 1
+
+                klist = [[c1, c2], [c1p, c2], [c1p, c2p], [c1, c2p], [c1, c2]]
+
+                phi = 0.0
+                for i in range(4):
+                    M = np.dot(
+                        VECT[klist[i][0], klist[i][1], :, 0:nocc].T.conj(),
+                        VECT[klist[i + 1][0], klist[i + 1][1], :, 0:nocc],
+                    )
+                    phi = phi - (cmath.log(np.linalg.det(M))).imag
+
+                if phi > np.pi:
+                    phi = phi - 2 * np.pi
+                elif phi < -np.pi:
+                    phi = phi + 2 * np.pi
+
+                if abs(phi) > 0.75:
+                    print(
+                        "WARNING in chern calculation, phi",
+                        c1,
+                        c2,
+                        phi,
+                        " try more k-points",
+                    )
+
+                Chern += phi / (2.0 * np.pi)
+
+        if usemod:
+            return Chern, direct_gap, indirect_gap
+        else:
+            return Chern, direct_gap, val_max, cond_min
 
     @classmethod
     def from_dict(self, info):
@@ -528,7 +859,7 @@ class WannierHam(object):
         return energies, dos, pdos
 
     def generate_supercell(
-        self, supercell=[2, 2, 2], index=[0, 0, 1], sparse=False
+        self, supercell=[2, 2, 2], index=[0, 0, 0], sparse=False
     ):
         """Generate supercell."""
         t0 = time.time()
