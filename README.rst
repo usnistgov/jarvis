@@ -71,7 +71,7 @@ Capabilities
 Installation
 ---------------
 
-pip install -U jarvis-tools
+>>> pip install -U jarvis-tools
 
 For detailed instructions, please see `Installation instructions <https://github.com/usnistgov/jarvis/blob/master/Installation.rst>`__
 
