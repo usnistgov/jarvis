@@ -48,14 +48,22 @@ For more details, checkout our latest article:  `The joint automated repository 
    :target: https://jarvis.nist.gov/
 
 
-Some important features
+Capabilities
 =======================================================================
 
-- **Software workflow tasks**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM.
+- **Software workflow tasks for preprcessing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM.
+
+- **Several examples**: Notebooks and test scripts to explain the package.
+
+- **Several analysis tools**: Atomic structure, Electronic structure, Spacegroup, Diffraction, 2D materials and other vdW bonded systems, Mechanical, Optoelectronic, Topological, Solar-cell, Thermoelectric, Piezoelectric, Dielectric, STM, Phonon, Dark matter, Wannier tight binding models, Point defects, Heterostructures, Magnetic ordering, Images, Spectrumm etc.
+
+- **Database upload and download**: Download JARVIS databases such as JARVIS-DFT, FF, ML, WannierTB, Solar, STM and also external databases such as material project, OQMD, AFLOW etc.
+
+- **Access raw input/output files**: Download input files for JARVIS-databases.
+
+- **Train machine learning models**: Use different descriptors, graphs and datasets.
 
 - **HPC clusters**: PBS and SLURM.
-
-- **Examples**: Notebooks and test scripts to explain the package.
 
 - **Available datasets**: `Summary of several datasets <https://github.com/usnistgov/jarvis/blob/master/DatasetSummary.rst>`__ .
 
@@ -63,8 +71,9 @@ Some important features
 Installation
 ---------------
 
-Please see `Installation instructions <https://github.com/usnistgov/jarvis/blob/master/Installation.rst>`__
+pip install -U jarvis-tools
 
+For detailed instructions, please see `Installation instructions <https://github.com/usnistgov/jarvis/blob/master/Installation.rst>`__
 
 
 Example function
