@@ -40,9 +40,9 @@ JARVIS-Tools: an open-source software package for data-driven atomistic material
 
 
 NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) is an integrated framework for computational science using density functional theory,
-classical force-field/molecular dynamics and machine-learning. The jarvis-tools package consists of scripts used in generating and analyzing the dataset. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/).
+classical force-field/molecular dynamics and machine-learning. The jarvis-tools package consists of scripts used in generating and analyzing the dataset. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/). 
 
-For more details, checkout our latest article:  `The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design <https://www.nature.com/articles/s41524-020-00440-1>`__
+For more details, checkout our latest article:  `The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design <https://www.nature.com/articles/s41524-020-00440-1>`__ and `YouTube videos <https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel=JARVIS-repository>`__ 
 
 .. image:: https://www.ctcms.nist.gov/~knc6/images/logo/jarvis-mission.png
    :target: https://jarvis.nist.gov/
@@ -55,15 +55,15 @@ Capabilities
 
 - **Several examples**: Notebooks and test scripts to explain the package.
 
-- **Several analysis tools**: Atomic structure, Electronic structure, Spacegroup, Diffraction, 2D materials and other vdW bonded systems, Mechanical, Optoelectronic, Topological, Solar-cell, Thermoelectric, Piezoelectric, Dielectric, STM, Phonon, Dark matter, Wannier tight binding models, Point defects, Heterostructures, Magnetic ordering, Images, Spectrumm etc.
+- **Several analysis tools**: Atomic structure, Electronic structure, Spacegroup, Diffraction, 2D materials and other vdW bonded systems, Mechanical, Optoelectronic, Topological, Solar-cell, Thermoelectric, Piezoelectric, Dielectric, STM, Phonon, Dark matter, Wannier tight binding models, Point defects, Heterostructures, Magnetic ordering, Images, Spectrum etc.
 
-- **Database upload and download**: Download JARVIS databases such as JARVIS-DFT, FF, ML, WannierTB, Solar, STM and also external databases such as material project, OQMD, AFLOW etc.
+- **Database upload and download**: Download JARVIS databases such as JARVIS-DFT, FF, ML, WannierTB, Solar, STM and also external databases such as Materials project, OQMD, AFLOW etc.
 
-- **Access raw input/output files**: Download input files for JARVIS-databases.
+- **Access raw input/output files**: Download input/ouput files for JARVIS-databases to enhance reproducibility.
 
-- **Train machine learning models**: Use different descriptors, graphs and datasets.
+- **Train machine learning models**: Use different descriptors, graphs and datasets for training machine learning models.
 
-- **HPC clusters**: PBS and SLURM.
+- **HPC clusters**: Torque/PBS and SLURM.
 
 - **Available datasets**: `Summary of several datasets <https://github.com/usnistgov/jarvis/blob/master/DatasetSummary.rst>`__ .
 
