@@ -1,6 +1,7 @@
 from jarvis.io.wannier.outputs import (
     WannierHam,
     Wannier90wout,
+    Wannier90eig,
     get_projectors_for_formula,
     get_orbitals,
 )
@@ -25,6 +26,7 @@ atoms = Poscar.from_file(
 ).atoms
 wann_soc_win_hr = os.path.join(os.path.dirname(__file__), "wannier90_hr.dat")
 wann_wout = os.path.join(os.path.dirname(__file__), "wannier90.wout")
+wann_eig = os.path.join(os.path.dirname(__file__), "wannier90.eig")
 soc_scfband_vrun = os.path.join(
     os.path.dirname(__file__), "vasprun.xml"
 )  # for JVASP-1067
@@ -52,6 +54,7 @@ def test_outputs_bi2se3():
     info = w.to_dict()
     dd = WannierHam.from_dict(info)
 
+
     pp = get_projectors_for_formula()[0][0]
     # print("getorbs", pp)
     kpoints = generate_kgrid([5, 5, 5])
@@ -65,7 +68,9 @@ def test_outputs_bi2se3():
     # print(pp, orb)
     w.get_bandstructure_plot(atoms=atoms, filename=filename)
     # print (x,pp)
-
+    w.find_nodes(nk1=1,nk2=1,nk3=1)
+    w.fermi_surf_2d(nk1=1,nk2=1)
+    w.chern_number_simple()
     # print (round(dos[75],3))
     assert (
         round(maxdiff, 2),
@@ -82,6 +87,11 @@ def test_wann_cent():
     # print (centers, len(centers))
     assert (len(centers)) == (40)
 
+def wann_eig():
+    eigs = Wannier90eig(wann_eig)
+    eigs.give_wannier_eigs()
+    eigs.neigs()
+    eigs.nk()
 
 # test_outputs_cri3()
 # test_wann_cent()

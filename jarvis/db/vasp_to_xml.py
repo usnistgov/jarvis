@@ -2,6 +2,7 @@
 import os
 import traceback
 import glob
+import time
 from jarvis.core.atoms import Atoms
 from jarvis.core.atoms import VacuumPadding
 import yaml
@@ -35,6 +36,8 @@ from jarvis.db.figshare import data
 cfid_x, cfid_y, cfid_jids = get_ml_data()
 
 figshare_dict = data("raw_files")
+
+wait_time = 20
 
 
 def get_cfid_descriptors(
@@ -481,127 +484,134 @@ class VaspToApiXmlSchema(object):
         info["main_pbe0_bands_info"] = data
         return info
 
-    def get_wannier_lines(self, data={}, energy_tol=4):
+    def get_wannier_lines(self, data={}, energy_tol=4, write_full_data=False):
         """Get data for wannier- quality check."""
         # Dense mesh
         line = ""
         mesh_vrun_x = []
         mesh_vrun_y = []
         line += (
-            "<maxdiff_mesh>"
-            + str(data["info_mesh"]["maxdiff"])
-            + "</maxdiff_mesh>"
+            "<maxdiff_mesh>'"
+            + str(round(data["infomesh"]["maxdiff"], 4))
+            + "'</maxdiff_mesh>"
         )
         line += (
-            "<maxdiff_bz>" + str(data["info_bz"]["maxdiff"]) + "</maxdiff_bz>"
+            "<maxdiff_bz>'"
+            + str(round(data["infobz"]["maxdiff"], 4))
+            + "'</maxdiff_bz>"
         )
-        for i, ii in enumerate(np.array(data["info_mesh"]["eigs_vrun"]).T):
-            y = ",".join(map(str, ii))
-            x = ",".join(map(str, range(0, len(ii))))
-            mesh_vrun_y.append(y)
-            mesh_vrun_x.append(x)
-        line += (
-            '<mesh_vrun_x>"'
-            + ";".join(map(str, mesh_vrun_x))
-            + '"</mesh_vrun_x>'
-        )
-        line += (
-            '<mesh_vrun_y>"'
-            + ";".join(map(str, mesh_vrun_y))
-            + '"</mesh_vrun_y>'
-        )
+        if write_full_data:
+            for i, ii in enumerate(np.array(data["infomesh"]["eigs_vrun"]).T):
+                y = ",".join(map(str, ii))
+                x = ",".join(map(str, range(0, len(ii))))
+                mesh_vrun_y.append(y)
+                mesh_vrun_x.append(x)
+            line += (
+                '<mesh_vrun_x>"'
+                + ";".join(map(str, mesh_vrun_x))
+                + '"</mesh_vrun_x>'
+            )
+            line += (
+                '<mesh_vrun_y>"'
+                + ";".join(map(str, mesh_vrun_y))
+                + '"</mesh_vrun_y>'
+            )
 
-        min_arr = []
-        erange = [-energy_tol, energy_tol]
-        dd = {}
-        kpp = data["info_mesh"]["eigs_vrun"]
-        vasp = np.array(data["info_mesh"]["eigs_vrun"])
-        wann = np.array(data["info_mesh"]["eigs_wan"])
-        for k in range(len(kpp)):
-            for n in wann[k]:
-                diff_arr = []
-                if n > erange[0] and n < erange[1]:
-                    for v in vasp[k]:
-                        diff = abs(n - v)
-                        diff_arr.append(diff)
-                if diff_arr != []:
-                    tmp = np.min(diff_arr)
-                    dd.setdefault(n, tmp)
-                    min_arr.append(tmp)
+            min_arr = []
+            erange = [-energy_tol, energy_tol]
+            dd = {}
+            kpp = data["infomesh"]["eigs_vrun"]
+            vasp = np.array(data["infomesh"]["eigs_vrun"])
+            wann = np.array(data["infomesh"]["eigs_wan"])
+            for k in range(len(kpp)):
+                for n in wann[k]:
+                    diff_arr = []
+                    if n > erange[0] and n < erange[1]:
+                        for v in vasp[k]:
+                            diff = abs(n - v)
+                            diff_arr.append(diff)
+                    if diff_arr != []:
+                        tmp = np.min(diff_arr)
+                        dd.setdefault(n, tmp)
+                        min_arr.append(tmp)
 
-        line += (
-            '<mesh_difference_values>"'
-            + str(",".join(map(str, dd.values())))
-            + '"</mesh_difference_values>'
-        )
-        line += (
-            '<mesh_difference_keys>"'
-            + str(",".join(map(str, dd.keys())))
-            + '"</mesh_difference_keys>'
-        )
+            line += (
+                '<mesh_difference_values>"'
+                + str(",".join(map(str, dd.values())))
+                + '"</mesh_difference_values>'
+            )
+            line += (
+                '<mesh_difference_keys>"'
+                + str(",".join(map(str, dd.keys())))
+                + '"</mesh_difference_keys>'
+            )
 
-        mesh_wann_x = []
-        mesh_wann_y = []
-        for i, ii in enumerate(np.array(data["info_mesh"]["eigs_wan"]).T):
-            y = ",".join(map(str, ii))
-            x = ",".join(map(str, range(0, len(ii))))
-            mesh_wann_y.append(y)
-            mesh_wann_x.append(x)
-        line += (
-            '<mesh_wann_x>"'
-            + ";".join(map(str, mesh_wann_x))
-            + '"</mesh_wann_x>'
-        )
-        line += (
-            '<mesh_wann_y>"'
-            + ";".join(map(str, mesh_wann_y))
-            + '"</mesh_wann_y>'
-        )
+            mesh_wann_x = []
+            mesh_wann_y = []
+            for i, ii in enumerate(np.array(data["infomesh"]["eigs_wan"]).T):
+                y = ",".join(map(str, ii))
+                x = ",".join(map(str, range(0, len(ii))))
+                mesh_wann_y.append(y)
+                mesh_wann_x.append(x)
+            line += (
+                '<mesh_wann_x>"'
+                + ";".join(map(str, mesh_wann_x))
+                + '"</mesh_wann_x>'
+            )
+            line += (
+                '<mesh_wann_y>"'
+                + ";".join(map(str, mesh_wann_y))
+                + '"</mesh_wann_y>'
+            )
 
-        # High symmetry BZ k-points
+            # High symmetry BZ k-points
 
-        bz_vrun_x = []
-        bz_vrun_y = []
-        for i, ii in enumerate(np.array(data["info_bz"]["eigs_vrun"]).T):
-            y = ",".join(map(str, ii))
-            x = ",".join(map(str, range(0, len(ii))))
-            bz_vrun_y.append(y)
-            bz_vrun_x.append(x)
-        line += (
-            '<bz_vrun_x>"' + ";".join(map(str, bz_vrun_x)) + '"</bz_vrun_x>'
-        )
-        line += (
-            '<bz_vrun_y>"' + ";".join(map(str, bz_vrun_y)) + '"</bz_vrun_y>'
-        )
+            bz_vrun_x = []
+            bz_vrun_y = []
+            for i, ii in enumerate(np.array(data["infobz"]["eigs_vrun"]).T):
+                y = ",".join(map(str, ii))
+                x = ",".join(map(str, range(0, len(ii))))
+                bz_vrun_y.append(y)
+                bz_vrun_x.append(x)
+            line += (
+                '<bz_vrun_x>"'
+                + ";".join(map(str, bz_vrun_x))
+                + '"</bz_vrun_x>'
+            )
+            line += (
+                '<bz_vrun_y>"'
+                + ";".join(map(str, bz_vrun_y))
+                + '"</bz_vrun_y>'
+            )
 
-        min_arr = []
-        erange = [-energy_tol, energy_tol]
-        dd = {}
-        kpp = data["info_bz"]["eigs_vrun"]
-        vasp = np.array(data["info_bz"]["eigs_vrun"])
-        wann = np.array(data["info_bz"]["eigs_wan"])
-        for k in range(len(kpp)):
-            for n in wann[k]:
-                diff_arr = []
-                if n > erange[0] and n < erange[1]:
-                    for v in vasp[k]:
-                        diff = abs(n - v)
-                        diff_arr.append(diff)
-                if diff_arr != []:
-                    tmp = np.min(diff_arr)
-                    dd.setdefault(n, tmp)
-                    min_arr.append(tmp)
+            min_arr = []
+            erange = [-energy_tol, energy_tol]
+            dd = {}
+            kpp = data["infobz"]["eigs_vrun"]
+            vasp = np.array(data["infobz"]["eigs_vrun"])
+            wann = np.array(data["infobz"]["eigs_wan"])
+            for k in range(len(kpp)):
+                for n in wann[k]:
+                    diff_arr = []
+                    if n > erange[0] and n < erange[1]:
+                        for v in vasp[k]:
+                            diff = abs(n - v)
+                            diff_arr.append(diff)
+                    if diff_arr != []:
+                        tmp = np.min(diff_arr)
+                        dd.setdefault(n, tmp)
+                        min_arr.append(tmp)
 
-        line += (
-            '<bz_difference_values>"'
-            + str(",".join(map(str, dd.values())))
-            + '"</bz_difference_values>'
-        )
-        line += (
-            '<bz_difference_keys>"'
-            + str(",".join(map(str, dd.keys())))
-            + '"</bz_difference_keys>'
-        )
+            line += (
+                '<bz_difference_values>"'
+                + str(",".join(map(str, dd.values())))
+                + '"</bz_difference_values>'
+            )
+            line += (
+                '<bz_difference_keys>"'
+                + str(",".join(map(str, dd.keys())))
+                + '"</bz_difference_keys>'
+            )
         return line
 
     def wannier_comparison_plot(self, energy_tol=4):
@@ -610,28 +620,41 @@ class VaspToApiXmlSchema(object):
         os.chdir(folder)
         line = ""
         info = {}
-
+        # Change to WANN
         for i in glob.glob("MAIN-WANN*"):
             try:
                 folder = i
                 wann_dat = os.getcwd() + "/" + folder + "/wannier90_hr.dat"
                 if os.path.exists(wann_dat):
-                    wann_json = wann_dat = (
-                        os.getcwd() + "/" + folder + "/wannier_comparison.json"
-                    )
+                    wann_json = os.getcwd() + "/" + "/wannier_comparison.json"
+                    print("Checking wann", wann_json)
                     if os.path.exists(wann_json):
-                        print("Getting data from preexisiting wannier json.")
                         data = loadjson(wann_json)
                         line += self.get_wannier_lines(data=data, energy_tol=4)
+                        print(
+                            "Getting data from preexisiting wannier json.",
+                            line,
+                        )
                     else:
                         print("Running jarvis-wannier solver.")
                         wann_ham = WannierHam(filename=wann_dat)
-                        bands_vrun = wann_dat.replace(
-                            "wannier90_hr.dat", "vasprun.xml"
-                        ).replace("WANN", "SOCSCFBAND")
-                        mesh_vrun = wann_dat.replace(
-                            "wannier90_hr.dat", "vasprun.xml"
-                        ).replace("WANN", "SOC")
+
+                        for j in glob.glob("MAIN-*.json"):
+                            if "SOCSCFBAND" in j:
+                                bands_vrun = (
+                                    os.getcwd()
+                                    + "/"
+                                    + j.split(".json")[0]
+                                    + "/vasprun.xml"
+                                )
+                            if "SOC" in j and "BAND" not in j:
+                                mesh_vrun = (
+                                    os.getcwd()
+                                    + "/"
+                                    + j.split(".json")[0]
+                                    + "/vasprun.xml"
+                                )
+
                         bz = wann_ham.compare_dft_wann(
                             vasprun_path=bands_vrun, plot=False
                         )
@@ -639,13 +662,14 @@ class VaspToApiXmlSchema(object):
                             vasprun_path=mesh_vrun, plot=False
                         )
                         data = {}
-                        data["info_bz"] = bz
-                        data["info_mesh"] = mesh
+                        data["infobz"] = bz
+                        data["infomesh"] = mesh
                         line += self.get_wannier_lines(data=data, energy_tol=4)
 
-            except Exception:
-                print("Cannot get wannier data.", folder)
+            except Exception as exp:
+                print("Cannot get wannier data.", folder, exp)
                 pass
+        print("tmpw1", line)
         info["wannier_band_comparison"] = line
         return info
 
@@ -832,6 +856,7 @@ class VaspToApiXmlSchema(object):
 
         try:
             sp = {}
+            """
             print("soc_wf", soc_wf)
             tmp_jid = jid
             print("tmp_jid", tmp_jid)
@@ -843,11 +868,14 @@ class VaspToApiXmlSchema(object):
                         sp["kpoints"] = list(
                             [[0, 0, 0] for i in range(len(sp["spillage_k"]))]
                         )
+            """
             if sp == {}:
                 # As spillage calculation may take a long time
+                # print("XYZ1")
                 sp = Spillage(
                     wf_noso=nonsoc_wf, wf_so=soc_wf
                 ).overlap_so_spinpol()
+                # print("XYZ2")
             soc_bands = self.electronic_band_struct(
                 vasprun=soc_wf.replace("WAVECAR", "vasprun.xml"),
                 kpoints_file_path=(soc_wf.replace("WAVECAR", "KPOINTS")),
@@ -928,6 +956,7 @@ class VaspToApiXmlSchema(object):
             folder = i.split(".json")[0]
             main_vrun = os.getcwd() + "/" + folder + "/vasprun.xml"
             main_contcar = os.getcwd() + "/" + folder + "/CONTCAR"
+            main_outcar = os.getcwd() + "/" + folder + "/OUTCAR"
             # vrun = Vasprun(main_vrun)
             # atoms = vrun.all_structures[-1]
 
@@ -1029,7 +1058,23 @@ class VaspToApiXmlSchema(object):
                 density = round(atoms.density, 3)
                 volume = round(atoms.volume, 3)
                 info["density"] = density
+                info["magnetization"] = ""
+                info["total_charge"] = ""
+                try:
+                    tmp_out = Outcar(main_outcar)
+                    elms = atoms.elements
+                    magt = tmp_out.magnetization(elements=elms)
+                    totc = tmp_out.total_charge(elements=elms)
 
+                    info["magnetization"] = (
+                        '"' + ";".join([",".join(ii) for ii in magt]) + '"'
+                    )
+                    info["total_charge"] = (
+                        '"' + ";".join([",".join(ii) for ii in totc]) + '"'
+                    )
+                except Exception as exp:
+                    print("magnetization, chg", exp)
+                    pass
                 info["volume"] = volume
                 packing_fr = ""
                 try:
@@ -1722,108 +1767,134 @@ class VaspToApiXmlSchema(object):
 
     def write_xml(self, filename="temp.xml"):
         """Get overall XML file."""
+        # f=open(filename,"w")
+        line = '<?xml version="1.0" encoding="UTF-8"?>\n'
+        line += '<?xml-stylesheet type="text/xsl" '
+        line += 'href="jarvisdft.xsl"?>\n<basic_info>'
+        # f.write(str(line))
+        line += (
+            "<convergence_info>"
+            + stringdict_to_xml(self.encut_kp())
+            + "</convergence_info>"
+            + "\n"
+        )
+        # f.write(str(line))
+        tmpw = self.wannier_comparison_plot()
+        # print ('tmpw=',tmpw,stringdict_to_xml(tmpw))
+        line += stringdict_to_xml(tmpw) + "\n"
+        # f.write(str(line))
+        print(line)
+        line += stringdict_to_xml(self.vacancy_formation_optb88vdw()) + "\n"
+        # f.write(str(line))
+        line += stringdict_to_xml(self.raman_data()) + "\n"
+        # f.write(str(line))
+        b_info = self.basic_info()
+        jid = b_info["id"]
+        line += (
+            "<main_relax_info>"
+            + stringdict_to_xml(b_info)
+            + "</main_relax_info>"
+            + "\n"
+        )
+        # f.write(str(line))
+        line += (
+            "<main_band>"
+            + stringdict_to_xml(self.main_band(), enforce_string=False)
+            + "</main_band>"
+        )
+        # f.write(str(line))
+        line += (
+            "<main_hse06_band>"
+            + stringdict_to_xml(self.main_hse06_band(), enforce_string=False)
+            + "</main_hse06_band>"
+        )
+        # f.write(str(line))
+
+        line += stringdict_to_xml(self.effective_mass_data()) + "\n"
+        # f.write(str(line))
+
+        line += (
+            "<main_pbe0_band>"
+            + stringdict_to_xml(self.main_pbe0_band(), enforce_string=False)
+            + "</main_pbe0_band>"
+        )
+        # f.write(str(line))
+        line += (
+            "<main_optics_semilocal>"
+            + stringdict_to_xml(self.main_optics_semilocal())
+            + "</main_optics_semilocal>"
+            + "\n"
+        )
+        # f.write(str(line))
+        line += (
+            "<main_optics_mbj>"
+            + stringdict_to_xml(self.main_optics_mbj())
+            + "</main_optics_mbj>"
+            + "\n"
+        )
+        # f.write(str(line))
+        line += (
+            "<main_elastic>"
+            + stringdict_to_xml(self.main_elastic())
+            + "</main_elastic>"
+            + "\n"
+        )
+        # f.write(str(line))
+        line += (
+            "<main_boltz>"
+            + stringdict_to_xml(self.main_boltz_data())
+            + "</main_boltz>"
+            + "\n"
+        )
+        # f.write(str(line))
+        line += stringdict_to_xml(self.main_lepsilon()) + "\n"
+        # f.write(str(line))
+        line += stringdict_to_xml(self.main_soc_spillage(jid=jid)) + "\n"
+        # f.write(str(line))
+        line += (
+            stringdict_to_xml(self.efg_tensor(), enforce_string=True) + "\n"
+        )
+        # f.write(str(line))
+        stm_neg = ""
+        stm_pos = ""
+        stm_pos_file = (
+            "/u/WWW/knc6/static/JARVIS-DFT-STM/Images/JARVIS-2D-STM-JPG/"
+            + str(jid)
+            + "_pos.jpg"
+        )
+        stm_neg_file = (
+            "/u/WWW/knc6/static/JARVIS-DFT-STM/Images/JARVIS-2D-STM-JPG/"
+            + str(jid)
+            + "_neg.jpg"
+        )
+        url = (
+            "https://www.ctcms.nist.gov/"
+            + "~knc6/static/JARVIS-DFT-STM/Images/JARVIS-2D-STM-JPG/"
+        )
+        if os.path.exists(stm_pos_file):
+            stm_pos = url + str(jid) + "_pos.jpg"
+        line += "<main_stm_pos>'" + str(stm_pos) + "'</main_stm_pos>"
+        # f.write(str(line))
+        if os.path.exists(stm_neg_file):
+            stm_neg = url + str(jid) + "_neg.jpg"
+        line += "<main_stm_neg>'" + str(stm_neg) + "'</main_stm_neg>"
+        # f.write(str(line))
+        line += "</basic_info>\n"
+        # print (line)
         with open(filename, "w") as f:
-            line = '<?xml version="1.0" encoding="UTF-8"?>\n'
-            line += '<?xml-stylesheet type="text/xsl" '
-            line += 'href="jarvisdft.xsl"?>\n<basic_info>'
-            f.write(str(line))
-            line = (
-                "<convergence_info>"
-                + stringdict_to_xml(self.encut_kp())
-                + "</convergence_info>"
-                + "\n"
-            )
-            f.write(str(line))
-            line = stringdict_to_xml(self.wannier_comparison_plot()) + "\n"
-            f.write(str(line))
-
-            line = stringdict_to_xml(self.vacancy_formation_optb88vdw()) + "\n"
-            f.write(str(line))
-            line = stringdict_to_xml(self.raman_data()) + "\n"
-            f.write(str(line))
-            b_info = self.basic_info()
-            jid = b_info["id"]
-            line = (
-                "<main_relax_info>"
-                + stringdict_to_xml(b_info)
-                + "</main_relax_info>"
-                + "\n"
-            )
-            f.write(str(line))
-            line = (
-                "<main_band>"
-                + stringdict_to_xml(self.main_band(), enforce_string=False)
-                + "</main_band>"
-            )
-            f.write(str(line))
-            line = (
-                "<main_hse06_band>"
-                + stringdict_to_xml(
-                    self.main_hse06_band(), enforce_string=False
-                )
-                + "</main_hse06_band>"
-            )
-            f.write(str(line))
-
-            line = stringdict_to_xml(self.effective_mass_data()) + "\n"
-            f.write(str(line))
-
-            line = (
-                "<main_pbe0_band>"
-                + stringdict_to_xml(
-                    self.main_pbe0_band(), enforce_string=False
-                )
-                + "</main_pbe0_band>"
-            )
-            f.write(str(line))
-            line = (
-                "<main_optics_semilocal>"
-                + stringdict_to_xml(self.main_optics_semilocal())
-                + "</main_optics_semilocal>"
-                + "\n"
-            )
-            f.write(str(line))
-            line = (
-                "<main_optics_mbj>"
-                + stringdict_to_xml(self.main_optics_mbj())
-                + "</main_optics_mbj>"
-                + "\n"
-            )
-            f.write(str(line))
-            line = (
-                "<main_elastic>"
-                + stringdict_to_xml(self.main_elastic())
-                + "</main_elastic>"
-                + "\n"
-            )
-            f.write(str(line))
-            line = (
-                "<main_boltz>"
-                + stringdict_to_xml(self.main_boltz_data())
-                + "</main_boltz>"
-                + "\n"
-            )
-            f.write(str(line))
-            line = stringdict_to_xml(self.main_lepsilon()) + "\n"
-            f.write(str(line))
-            line = stringdict_to_xml(self.main_soc_spillage(jid=jid)) + "\n"
-            f.write(str(line))
-            line = (
-                stringdict_to_xml(self.efg_tensor(), enforce_string=True)
-                + "\n"
-            )
-            f.write(str(line))
-
-            line = (
-                "<main_stm_neg>" + str(self.main_stm_neg()) + "</main_stm_neg>"
-            )
-            f.write(str(line))
-            line = (
-                "<main_stm_pos>" + str(self.main_stm_pos()) + "</main_stm_pos>"
-            )
-            f.write(str(line))
-            f.write("</basic_info>\n")
-            """
+            f.write(line)
+        # f.write("</basic_info>\n")
+        # f.close()
+        time.sleep(wait_time)
+        # line = (
+        #    "<main_stm_neg>" + str(self.main_stm_neg()) + "</main_stm_neg>"
+        # )
+        # f.write(str(line))
+        # line = (
+        #    "<main_stm_pos>" + str(self.main_stm_pos()) + "</main_stm_pos>"
+        # )
+        # f.write(str(line))
+        """
             line = "<stm_image>" + image_to_string() + "</stm_image>"+ "\n"
             f.write(str(line))
             line ='</basic_info>'
@@ -1832,6 +1903,20 @@ class VaspToApiXmlSchema(object):
 
 
 """
+folder = "/rk2/knc6/JARVIS-DFT/Met-Rar/mp-10891_PBEBO"
+filename = "/cluster/users/knc6/justback/MTI/JVASP-16366.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+folder = "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO"
+filename = "JVASP-664.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+
+folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
+filename = "JVASP-1002.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
+
+
 if __name__ == "__main__":
     folder = "/rk2/knc6/JARVIS-DFT/TE-bulk/mp-541837_bulk_PBEBO"
     filename = "JVASP-1067.xml"

@@ -5,7 +5,9 @@ Main page: https://figshare.com/authors/Kamal_Choudhary/4445539
 """
 
 import zipfile
+# import tempfile
 import os
+# import io
 import requests
 from jarvis.db.jsonutils import loadjson
 
@@ -56,6 +58,15 @@ def datasets(dataset=""):
 def data(dataset="dft_2d"):
     """Provide main function to download datasets."""
     url, js_tag = datasets(dataset)
+
+    # r = requests.get(url)
+    # z = zipfile.ZipFile(io.BytesIO(r.content))
+    # wdat = z.read(js_tag).decode("utf-8")
+    # fd, path = tempfile.mkstemp()
+    # with os.fdopen(fd, "w") as tmp:
+    #    tmp.write(wdat)
+    # data = loadjson(path)
+
     path = str(os.path.join(os.path.dirname(__file__), js_tag))
     if not os.path.isfile(path):
         zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))

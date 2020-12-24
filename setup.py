@@ -12,12 +12,12 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 setup(
     name="jarvis-tools",
 
-    version="2020.11.27",
+    version="2020.12.24",
 
     long_description=long_d,
     install_requires=[
-        "numpy>=1.19.1",
-        "scipy>=1.4.1",
+        "numpy==1.18.5",
+        "scipy==1.4.1",
         "matplotlib>=3.0.0",
         "spglib>=1.14.1",
         "joblib>=0.14.1",
