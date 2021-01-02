@@ -136,4 +136,3 @@ Funding support
 --------------------
 
 NIST-MGI (https://www.nist.gov/mgi).
-
