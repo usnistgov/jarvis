@@ -12,6 +12,7 @@ in
        joblib
        flask
        numpy
+       phonopy
        scipy
        matplotlib
        spglib
