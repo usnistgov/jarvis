@@ -191,6 +191,7 @@ def check_duplicate_coords(coords=[], coord=[]):
 def parse_xyz_string(xyz_string):
     """
     Convert xyz info to translation and rotation vectors.
+
     Adapted from pymatgen.
     Args:
         xyz_string: string of the form 'x, y, z', '-x, -y, z',

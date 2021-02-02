@@ -12,9 +12,6 @@ from fractions import gcd
 # from numpy import gcd
 # from math import gcd
 import os
-from jarvis.core.utils import check_match
-import re
-import math
 
 
 def unique_rows_2(a):

@@ -66,6 +66,7 @@ def get_eigvals(mat=[]):
 #                 U += tq.gates.X(control=n, target=n+1)
 #     return U
 
+"""
 if __name__ == "__main__":
     from jarvis.db.figshare import (
         get_wann_phonon,
@@ -80,3 +81,4 @@ if __name__ == "__main__":
     H = HermitianSolver(hk)
     ens = get_eigvals(hk)
     print(ens)
+"""
