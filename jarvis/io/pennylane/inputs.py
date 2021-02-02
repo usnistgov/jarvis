@@ -39,7 +39,7 @@ def run_vqe(mat=[], max_iterations=100, conv_tol=1e-04, step_size=0.01):
         conv = np.abs(energy - prev_energy)
         if n % 20 == 0:
             print(
-                "Iteration = {:},  Energy = {:.8f} Ha,  Convergence parameter = {"
+                "Iteration={:}, Energy={:.8f} Ha,Convergence parameter = {"
                 ":.8f} Ha".format(n, energy, conv)
             )
         if conv <= conv_tol:
