@@ -15,6 +15,8 @@ from qiskit.aqua import QuantumInstance
 from qiskit.aqua.algorithms import VQE
 from jarvis.core.kpoints import Kpoints3D as Kpoints
 
+from jarvis.db.figshare import get_hk_tb
+
 plt.switch_backend("agg")
 
 
@@ -301,6 +303,7 @@ def get_dos(
     return energies, dos, pdos
 
 
+"""
 if __name__ == "__main__":
     from jarvis.db.figshare import (
         get_wann_phonon,
@@ -310,11 +313,25 @@ if __name__ == "__main__":
     from jarvis.core.atoms import Atoms
     from jarvis.db.jsonutils import dumpjson
 
-    # w, ef,atoms = get_wann_electron("JVASP-816")
-    # info=get_bandstruct(w=w, line_density=5, atoms=atoms, ef=ef,filename='Alelect.png',ylabel='Energy (eV)')
-    # dumpjson(data=info,filename='Alelect.json')
+    w, ef, atoms = get_wann_electron("JVASP-816")
+    info = get_bandstruct(
+        w=w,
+        line_density=5,
+        atoms=atoms,
+        ef=ef,
+        filename="Alelect.png",
+        ylabel="Energy (eV)",
+    )
+    dumpjson(data=info, filename="Alelect.json")
     w, atoms = get_wann_phonon("JVASP-54", factor=34.3)
-    # info=get_bandstruct(w=w, line_density=11, atoms=atoms, tol=.1,filename='Alphon.png',ylabel='Freq.(cm$^{-1}$)')
+    info = get_bandstruct(
+        w=w,
+        line_density=11,
+        atoms=atoms,
+        tol=0.1,
+        filename="Alphon.png",
+        ylabel="Freq.(cm$^{-1}$)",
+    )
     # dumpjson(data=info,filename='Alphon.json')
     hk = get_hk_tb(w=w, k=[0.0, 0.0, 0.0])
     H = HermitianSolver(hk)
@@ -330,3 +347,4 @@ if __name__ == "__main__":
     # get_bandstruct(w=w, atoms=atoms, tol=0.1)
     # get_dos(w=w)
     # H.run_qpe()
+"""

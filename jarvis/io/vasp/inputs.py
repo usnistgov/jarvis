@@ -71,7 +71,7 @@ class Poscar(object):
             + str(self.atoms.lattice_mat[2][2])
             + "\n"
         )
-        order = np.argsort(self.atoms.elements)
+        # order = np.argsort(self.atoms.elements)
         coords = self.atoms.frac_coords
         # DO NOT USE ORDER
         coords_ordered = np.array(coords)  # [order]
