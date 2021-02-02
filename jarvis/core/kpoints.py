@@ -308,7 +308,9 @@ class Kpoints3D(object):
                     - self._prim_rec.cart_coords(end)
                 )
                 nb = int(ceil(distance * line_density))
-                print("nb", nb, distance, line_density)
+                if nb == 0:
+                    continue
+                # print("nb", nb, distance, line_density)
                 sym_point_labels.extend([b[i - 1]] + [""] * (nb - 1) + [b[i]])
                 list_k_points.extend(
                     [

@@ -7,6 +7,11 @@ from collections import OrderedDict
 from jarvis.core.utils import get_counts
 import itertools
 from jarvis.core.utils import get_angle
+from jarvis.core.utils import (
+    check_duplicate_coords,
+    get_new_coord_for_xyz_sym,
+    parse_xyz_string,
+)
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
@@ -172,10 +177,6 @@ class Atoms(object):
     @staticmethod
     def from_cif(filename="atoms.cif"):
         """Read .cif file."""
-        from jarvis.analysis.structure.spacegroup import (
-            check_duplicate_coords,
-            get_new_coord_for_xyz_sym,
-        )
 
         """Read .cif format file."""
         # Warnings:
@@ -222,10 +223,19 @@ class Atoms(object):
             #    chemical_name_mineral = i.split()[1]
             if "_symmetry_equiv_pos_as_xyz" in i:
                 sym_xyz_line = ii
+            if "_symmetry_equiv_pos_as_xyz_" in i:
+                sym_xyz_line = ii
+            if "_symmetry_equiv_pos_as_xyz_" in i:
+                sym_xyz_line = ii
+            if "_space_group_symop_operation_xyz_" in i:
+                sym_xyz_line = ii
+            if "_space_group_symop_operation_xyz" in i:
+                sym_xyz_line = ii
         symm_ops = []
         terminate = False
         count = 0
         while not terminate:
+            print("sym_xyz_line", sym_xyz_line)
             tmp = lines[sym_xyz_line + count + 1]
             if "x" in tmp and "y" in tmp and "z" in tmp:
                 # print("tmp", tmp)
@@ -1367,4 +1377,11 @@ if __name__ == "__main__":
     #print (pmg)
     # print (Si.get_center_of_mass())
     # print (Si.get_string())
+    a=Atoms.from_cif('ll.cif')
+    print(a)
+    from pymatgen.core.structure import Structure
+    s=Structure.from_file('ll.cif')
+    from pymatgen.io.vasp.inputs import Poscar
+    p=Poscar(s)
+    print (p)
 """
