@@ -12,7 +12,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 setup(
     name="jarvis-tools",
 
-    version="2020.12.31",
+    version="2021.2.1",
 
     long_description=long_d,
     install_requires=[
