@@ -18,6 +18,7 @@ from jarvis.io.wannier.outputs import WannierHam
 from jarvis.io.phonopy.outputs import get_phonon_tb
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
+
 def datasets(dataset=""):
     """Get collection of dataset names and URLs."""
     if dataset == "dft_2d":
@@ -108,36 +109,40 @@ def get_ff_eneleast():
     data_ff1 = loadjson(jff1)
     return data_ff1
 
-# Raw I/O files on figshare repository 
-fls=data('raw_files')
+
+# Raw I/O files on figshare repository
+fls = data("raw_files")
+
+
 def get_wann_electron(jid="JVASP-816"):
     """Download electron WTBH if available."""
-    w=''
-    ef=''
+    w = ""
+    ef = ""
     for i in fls["WANN"]:
         if i["name"].split(".zip")[0] == jid:
-            r = requests.get(i['download_url'])
+            r = requests.get(i["download_url"])
             z = zipfile.ZipFile(io.BytesIO(r.content))
             wdat = z.read("wannier90_hr.dat").decode("utf-8")
-            js_file=jid+'.json'
-            js=(z.read(js_file).decode("utf-8"))
+            js_file = jid + ".json"
+            js = z.read(js_file).decode("utf-8")
             fd, path = tempfile.mkstemp()
             with os.fdopen(fd, "w") as tmp:
-              tmp.write(wdat)
-            w=WannierHam(path)
+                tmp.write(wdat)
+            w = WannierHam(path)
             fd, path = tempfile.mkstemp()
             with os.fdopen(fd, "w") as tmp:
-              tmp.write(js)
-            d=loadjson(path)
-            ef=d['info_mesh']['efermi']
+                tmp.write(js)
+            d = loadjson(path)
+            ef = d["info_mesh"]["efermi"]
             fd, path = tempfile.mkstemp()
             pos = z.read("POSCAR").decode("utf-8")
             with os.fdopen(fd, "w") as tmp:
-              tmp.write(pos)
-            atoms=Poscar.from_file(path).atoms
-    return w,ef,atoms
+                tmp.write(pos)
+            atoms = Poscar.from_file(path).atoms
+    return w, ef, atoms
 
-def get_wann_phonon(jid="JVASP-1002"):
+
+def get_wann_phonon(jid="JVASP-1002", factor=15.633302):
     """Download phonon WTBH if available."""
     for i in fls["FD-ELAST"]:
         if isinstance(i, dict):
@@ -155,12 +160,13 @@ def get_wann_phonon(jid="JVASP-1002"):
                 # atoms = Atoms.from_poscar(pos)
                 # print(atoms)
                 fd, path = tempfile.mkstemp()
-                get_phonon_tb(fc=fc, atoms=atoms, out_file=path)
+                get_phonon_tb(fc=fc, atoms=atoms, out_file=path, factor=factor)
                 cvn = Spacegroup3D(atoms).conventional_standard_structure
                 w = WannierHam(path)
-                return w,atoms
+                return w, atoms
 
-def get_hk_tb(k=np.array([0,0,0]),w=[]):
+
+def get_hk_tb(k=np.array([0, 0, 0]), w=[]):
     """Get Wannier TB Hamiltonian."""
     nr = w.R.shape[0]
     hk = np.zeros((w.nwan, w.nwan), dtype=complex)
@@ -172,6 +178,8 @@ def get_hk_tb(k=np.array([0,0,0]),w=[]):
     hk = np.reshape(temp, (w.nwan, w.nwan))
     hk = (hk + hk.T.conj()) / 2.0
     return hk
+
+
 """
 if __name__ == "__main__":
 

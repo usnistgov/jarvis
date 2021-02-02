@@ -680,36 +680,9 @@ def parse_xyz_string(xyz_string):
     Returns:
         translation and rotation vectors.
     """
-    rot_matrix = np.zeros((3, 3))
-    trans = np.zeros(3)
-    toks = xyz_string.strip().replace(" ", "").lower().split(",")
-    re_rot = re.compile(r"([+-]?)([\d\.]*)/?([\d\.]*)([x-z])")
-    re_trans = re.compile(r"([+-]?)([\d\.]+)/?([\d\.]*)(?![x-z])")
-    for i, tok in enumerate(toks):
-        # build the rotation matrix
-        for m in re_rot.finditer(tok):
-            factor = -1 if m.group(1) == "-" else 1
-            if m.group(2) != "":
-                factor *= (
-                    float(m.group(2)) / float(m.group(3))
-                    if m.group(3) != ""
-                    else float(m.group(2))
-                )
-            j = ord(m.group(4)) - 120
-            rot_matrix[i, j] = factor
-        # build the translation vector
-        for m in re_trans.finditer(tok):
-            factor = -1 if m.group(1) == "-" else 1
-            num = (
-                float(m.group(2)) / float(m.group(3))
-                if m.group(3) != ""
-                else float(m.group(2))
-            )
-            trans[i] = num * factor
-    affine_matrix = np.eye(4)
-    affine_matrix[0:3][:, 0:3] = rot_matrix
-    affine_matrix[0:3][:, 3] = trans
-    return affine_matrix
+    from jarvis.core.utils import parse_xyz_string
+
+    return parse_xyz_string(xyz_string)
 
 
 def operate_affine(cart_coord=[], affine_matrix=[]):
@@ -720,20 +693,18 @@ def operate_affine(cart_coord=[], affine_matrix=[]):
 
 def get_new_coord_for_xyz_sym(frac_coord=[], xyz_string=""):
     """Obtain new coord from xyz string."""
-    affine_matrix = parse_xyz_string(xyz_string)
-    coord = operate_affine(frac_coord, affine_matrix)
-    coord = np.array([i - math.floor(i) for i in coord])
-    return coord
+    from jarvis.core.utils import get_new_coord_for_xyz_sym
+
+    return get_new_coord_for_xyz_sym(
+        frac_coord=frac_coord, xyz_string=xyz_string
+    )
 
 
 def check_duplicate_coords(coords=[], coord=[]):
     """Check if a coordinate exists."""
-    positive = False
-    for i in coords:
-        tmp = check_match(i, coord)
-        if tmp:
-            positive = True
-    return positive
+    from jarvis.core.utils import check_duplicate_coords
+
+    return check_duplicate_coords(coords=coords, coord=coord)
 
 
 """

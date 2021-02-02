@@ -157,22 +157,27 @@ def get_bandstruct(
     eigvals_q = []
     eigvals_np = []
     for ii, i in enumerate(kpts):
-        print("kp=", ii, i)
-        hk = get_hk_tb(w=w, k=i)
-        HS = HermitianSolver(hk)
-        vqe_vals, _ = HS.run_vqd()
-        np_vals, _ = HS.run_numpy()
-        print("np_vals", np_vals)
-        print("vqe_vals", vqe_vals)
-        eigvals_q.append(vqe_vals)
-        eigvals_np.append(np_vals)
-        # break
-    eigvals_q = np.array(eigvals_q)
-    eigvals_np = np.array(eigvals_np)
+        # if ii<1:
+        try:
+            print("kp=", ii, i)
+            hk = get_hk_tb(w=w, k=i)
+            HS = HermitianSolver(hk)
+            vqe_vals, _ = HS.run_vqd()
+            np_vals, _ = HS.run_numpy()
+            print("np_vals", np_vals)
+            print("vqe_vals", vqe_vals)
+            eigvals_q.append(vqe_vals)
+            eigvals_np.append(np_vals)
+            # break
+        except Exception as exp:
+            print(exp)
+            pass
+    eigvals_q = 3.14 * np.array(eigvals_q)
+    eigvals_np = 3.14 * np.array(eigvals_np)
 
     for ii, i in enumerate(eigvals_q.T - ef):
         if ii == 0:
-            plt.plot(i, c="b", label="VQE")
+            plt.plot(i, c="b", label="VQD")
         else:
             plt.plot(i, c="b")
 
@@ -195,12 +200,13 @@ def get_bandstruct(
                 new_kp.append(i)
                 new_labels.append("$" + str(j) + "$")
         count += 1
-    info["eigvals_q"] = eigvals_q
-    info["eigvals_np"] = eigvals_np
-    info["kpts"] = kpts
-    info["new_kp"] = new_kp
-    info["new_labels"] = new_labels
+    info["eigvals_q"] = list(eigvals_q.tolist())
+    info["eigvals_np"] = list(eigvals_np.tolist())
+    info["kpts"] = list(kpts)
+    info["new_kp"] = list(np.array(new_kp).tolist())
+    info["new_labels"] = list(new_labels)
     info["ef"] = ef
+    print(info)
     if tol is not None:
         plt.ylim([tol, np.max(eigvals_q)])
     plt.rcParams.update({"font.size": font})
@@ -301,12 +307,19 @@ if __name__ == "__main__":
         get_hk_tb,
         get_wann_electron,
     )
+    from jarvis.core.atoms import Atoms
+    from jarvis.db.jsonutils import dumpjson
 
-    w, atoms, o = get_wann_electron("JVASP-816")
-    # w, atoms = get_wann_phonon("JVASP-816")
-    hk = get_hk_tb(w=w, k=[0.0, 0.0, 0])
+    # w, ef,atoms = get_wann_electron("JVASP-816")
+    # info=get_bandstruct(w=w, line_density=5, atoms=atoms, ef=ef,filename='Alelect.png',ylabel='Energy (eV)')
+    # dumpjson(data=info,filename='Alelect.json')
+    w, atoms = get_wann_phonon("JVASP-54", factor=34.3)
+    # info=get_bandstruct(w=w, line_density=11, atoms=atoms, tol=.1,filename='Alphon.png',ylabel='Freq.(cm$^{-1}$)')
+    # dumpjson(data=info,filename='Alphon.json')
+    hk = get_hk_tb(w=w, k=[0.0, 0.0, 0.0])
     H = HermitianSolver(hk)
-    # H.run_vqe()
+    en, vqe_result, vqe = H.run_vqe(mode="max_val")
+    print("en=", en)
     # eigs,vecs=H.run_vqd()
     # print(eigs)
     # print(vecs)
@@ -316,4 +329,4 @@ if __name__ == "__main__":
     # print(vecs)
     # get_bandstruct(w=w, atoms=atoms, tol=0.1)
     # get_dos(w=w)
-    H.run_qpe()
+    # H.run_qpe()
