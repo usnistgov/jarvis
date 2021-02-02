@@ -27,7 +27,7 @@ jobs:
         python -m pip install --upgrade pip   
         python setup.py develop
 
-        pip install numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane==0.13.0   qiskit-aqua==0.8.1 codecov torch==1.5.1 keras tensorflow==2.3.0  pytest pytest-cov bokeh
+        pip install numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane==0.13.0   qiskit==0.16.3 codecov torch==1.5.1 keras tensorflow==2.3.0  pytest pytest-cov bokeh
 
         coverage run -m pytest
         coverage report -m
