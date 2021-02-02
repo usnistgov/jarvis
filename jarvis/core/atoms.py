@@ -10,7 +10,6 @@ from jarvis.core.utils import get_angle
 from jarvis.core.utils import (
     check_duplicate_coords,
     get_new_coord_for_xyz_sym,
-    parse_xyz_string,
 )
 
 amu_gm = 1.66054e-24
@@ -176,8 +175,6 @@ class Atoms(object):
 
     @staticmethod
     def from_cif(filename="atoms.cif"):
-        """Read .cif file."""
-
         """Read .cif format file."""
         # Warnings:
         # May not work for:

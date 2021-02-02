@@ -53,6 +53,7 @@ def run_vqe(mat=[], max_iterations=100, conv_tol=1e-04, step_size=0.01):
     return energy, vect
 
 
+"""
 if __name__ == "__main__":
     from jarvis.db.figshare import (
         get_wann_phonon,
@@ -64,3 +65,4 @@ if __name__ == "__main__":
     # w, atoms = get_wann_phonon("JVASP-816")
     hk = get_hk_tb(w=w, k=[0.0, 0.0, 0])
     run_vqe(mat=hk)
+"""

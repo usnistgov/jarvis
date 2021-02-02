@@ -11,12 +11,11 @@ import numpy as np
 import io
 import requests
 from jarvis.db.jsonutils import loadjson
-from jarvis.io.wannier.outputs import WannierHam
 from jarvis.io.vasp.outputs import Vasprun
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.wannier.outputs import WannierHam
 from jarvis.io.phonopy.outputs import get_phonon_tb
-from jarvis.analysis.structure.spacegroup import Spacegroup3D
+# from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
 
 def datasets(dataset=""):
@@ -161,7 +160,7 @@ def get_wann_phonon(jid="JVASP-1002", factor=15.633302):
                 # print(atoms)
                 fd, path = tempfile.mkstemp()
                 get_phonon_tb(fc=fc, atoms=atoms, out_file=path, factor=factor)
-                cvn = Spacegroup3D(atoms).conventional_standard_structure
+                # cvn = Spacegroup3D(atoms).conventional_standard_structure
                 w = WannierHam(path)
                 return w, atoms
 
