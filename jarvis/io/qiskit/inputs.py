@@ -279,9 +279,9 @@ def get_dos(
 
     v = q_vals
 
-    #     condmin = np.min(v[v > 0.0])
-    #     valmax = np.max(v[v < 0.0])
-    #     print("DOS BAND GAP ", condmin - valmax, "    ", valmax, " ", condmin)
+    #   condmin = np.min(v[v > 0.0])
+    #   valmax = np.max(v[v < 0.0])
+    #   print("DOS BAND GAP ", condmin - valmax, "    ", valmax, " ", condmin)
 
     c = -0.5 / sig ** 2
     for i in range(np.size(energies)):
