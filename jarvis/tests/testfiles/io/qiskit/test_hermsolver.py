@@ -1,5 +1,6 @@
 #
-from qiskit.circuit.library import EfficientSU2
+#from qiskit.circuit.library import EfficientSU2
+from qiskit import circuit
 from jarvis.db.figshare import (
     get_wann_phonon,
     get_hk_tb,
