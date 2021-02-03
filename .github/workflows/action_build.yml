@@ -26,7 +26,7 @@ jobs:
         shell: bash -l {0}
         run: |
             python setup.py develop
-            pip install qiskit==0.16.1 numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane==0.13.0   codecov torch keras tensorflow==2.3.0  pytest pytest-cov bokeh
+            pip install qiskit==0.16.1 numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane   codecov torch keras tensorflow==2.3.0  pytest pytest-cov bokeh
             pip install git+https://github.com/aspuru-guzik-group/tequila.git
             conda install pytest
             conda list
