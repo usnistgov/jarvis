@@ -9,7 +9,7 @@ from qiskit import aqua
 # )
 from jarvis.core.kpoints import generate_kgrid
 from qiskit import Aer
-from qiskit import circuit
+# from qiskit import circuit
 
 # from qiskit.circuit.library import EfficientSU2
 # from qiskit.circuit import library # import EfficientSU2
@@ -68,8 +68,8 @@ class HermitianSolver(object):
             Hamil_mat
         )
         if var_form is None:
-            var_form = circuit.library.EfficientSU2(N, reps=reps)
-            # var_form = EfficientSU2(N, reps=reps)
+            from qiskit.circuit.library import EfficientSU2  
+            var_form = EfficientSU2(N, reps=reps)
         if optimizer is None:
             vqe = aqua.algorithms.VQE(Hamil_qop, var_form)
             # vqe = VQE(Hamil_qop, var_form)
