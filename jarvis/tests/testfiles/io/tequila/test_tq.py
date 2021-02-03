@@ -1,5 +1,5 @@
 #
-from jarvis.io.pennylane.inputs import get_eigvals
+from jarvis.io.tequila.inputs import get_eigvals
 from jarvis.io.qiskit.inputs import HermitianSolver
 from jarvis.db.figshare import (
     get_wann_phonon,
