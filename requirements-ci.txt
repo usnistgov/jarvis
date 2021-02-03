@@ -7,7 +7,7 @@ lightgbm==2.1.0
 flask 
 joblib 
 qiskit-aqua
-qiskit==0.16.2 
+qiskit
 networkx 
 scikit-learn 
 pandas 
