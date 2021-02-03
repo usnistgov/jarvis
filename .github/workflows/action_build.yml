@@ -25,7 +25,7 @@ jobs:
       - name: Run pytest
         shell: bash -l {0}
         run: |
-            conda install pip
+            python setup.py develop
             pip install qiskit numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane==0.13.0   codecov torch keras tensorflow==2.3.0  pytest pytest-cov bokeh
             conda install pytest
             conda list
