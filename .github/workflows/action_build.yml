@@ -25,17 +25,13 @@ jobs:
         pip install qiskit
     - name: Test with pytest
       run: |
-        python -m pip install --upgrade pip   
+        pip install --upgrade pip  
         #pip install qiskit
         python setup.py install
 
         pip install numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane==0.13.0   qiskit==0.16.2 codecov torch==1.5.1 keras tensorflow==2.3.0  pytest pytest-cov bokeh
         #pip install -r requirements-ci.txt
-        set -e
-        git clone https://github.com/Qiskit/qiskit-tutorials
-        pip install -c constraints.txt -U jupyter sphinx nbsphinx sphinx_rtd_theme 'matplotlib<3.3.0' qiskit-terra[visualization] cvxpy 'pyscf<1.7.4'
-        pip install -c constraints.txt -U .
-        sudo apt-get install -y pandoc graphviz
+        pip install --upgrade qiskit
         
         #git clone https://github.com/Qiskit/qiskit.git
         #cd qiskit
