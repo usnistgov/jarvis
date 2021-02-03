@@ -30,6 +30,8 @@ jobs:
             pip install git+https://github.com/aspuru-guzik-group/tequila.git
             conda install pytest
             conda list
+            pwd
+            pytest jarvis/tests/testfiles/io/qiskit/test_hermsolver.py
             #pytest
             coverage run -m pytest
             coverage report -m
