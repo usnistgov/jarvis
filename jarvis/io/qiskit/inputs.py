@@ -1,20 +1,21 @@
 """Module to solve Hermitian Matrix."""
 
 import numpy as np
-from qiskit.aqua.operators import (
-    MatrixOperator,
-    op_converter,
-)
+from qiskit import aqua
+
+# from qiskit.aqua.operators import (
+#     MatrixOperator,
+#     op_converter,
+# )
 from jarvis.core.kpoints import generate_kgrid
 from qiskit import Aer
 from qiskit.circuit.library import EfficientSU2
 import matplotlib.pyplot as plt
-from qiskit.aqua.algorithms import QPE
 
-from qiskit.aqua import QuantumInstance
-from qiskit.aqua.algorithms import VQE
+# from qiskit.aqua.algorithms import QPE
+# from qiskit.aqua import QuantumInstance
+# from qiskit.aqua.algorithms import VQE
 from jarvis.core.kpoints import Kpoints3D as Kpoints
-
 from jarvis.db.figshare import get_hk_tb
 
 plt.switch_backend("agg")
@@ -55,16 +56,22 @@ class HermitianSolver(object):
         # hk[:self.mat.shape[0], :self.mat.shape[1]] = self.mat
         N = self.n_qubits()
         if mode == "max_val":
-            Hamil_mat = MatrixOperator(-1 * self.mat)
+            Hamil_mat = aqua.operators.MatrixOperator(-1 * self.mat)
+            # Hamil_mat = MatrixOperator(-1 * self.mat)
         else:
-            Hamil_mat = MatrixOperator(self.mat)
-        Hamil_qop = op_converter.to_weighted_pauli_operator(Hamil_mat)
+            Hamil_mat = aqua.operators.MatrixOperator(self.mat)
+            # Hamil_mat = MatrixOperator(self.mat)
+        Hamil_qop = aqua.operators.op_converter.to_weighted_pauli_operator(
+            Hamil_mat
+        )
         if var_form is None:
             var_form = EfficientSU2(N, reps=reps)
         if optimizer is None:
-            vqe = VQE(Hamil_qop, var_form)
+            vqe = aqua.algorithms.VQE(Hamil_qop, var_form)
+            # vqe = VQE(Hamil_qop, var_form)
         else:
-            vqe = VQE(Hamil_qop, var_form, optimizer)
+            vqe = aqua.algorithms.VQE(Hamil_qop, var_form, optimizer)
+            # vqe = VQE(Hamil_qop, var_form, optimizer)
         vqe_result = vqe.run(backend)
         en = np.real(vqe_result["eigenvalue"])
         # params=vqe.optimal_params
@@ -86,12 +93,16 @@ class HermitianSolver(object):
 
     def run_qpe(self, n_ancillae=8):
         """Run quantum phase estimations."""
-        quantum_instance = QuantumInstance(
+        quantum_instance = aqua.QuantumInstance(
             backend=Aer.get_backend("statevector_simulator"), shots=1
         )
-        Hamil_mat = MatrixOperator(self.mat)
-        Hamil_qop = op_converter.to_weighted_pauli_operator(Hamil_mat)
-        qpe = QPE(Hamil_qop, num_ancillae=n_ancillae)
+        Hamil_mat = aqua.operators.MatrixOperator(self.mat)
+        # Hamil_mat = MatrixOperator(self.mat)
+        Hamil_qop = aqua.operators.op_converter.to_weighted_pauli_operator(
+            Hamil_mat
+        )
+        # Hamil_qop = op_converter.to_weighted_pauli_operator(Hamil_mat)
+        qpe = aqua.algorithms.QPE(Hamil_qop, num_ancillae=n_ancillae)
         qpe_result = qpe.run(quantum_instance)
         # qc = qpe.construct_circuit(measurement=True)
         print("qpe_result", qpe_result)
