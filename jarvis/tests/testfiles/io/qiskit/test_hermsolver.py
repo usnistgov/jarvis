@@ -1,4 +1,5 @@
 #
+from qiskit.circuit.library import EfficientSU2
 from jarvis.db.figshare import (
     get_wann_phonon,
     get_hk_tb,
