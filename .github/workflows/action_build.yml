@@ -1,43 +1,43 @@
 name: JARVIS-Tools github action
 
 on: [push, pull_request]
-
 jobs:
-  build:
-    name: build jarvis-tools
-    strategy:
-      max-parallel: 6
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.6, 3.7, 3.8]
+  miniconda:
+    name: Miniconda ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    
+    strategy:
+        matrix:
+            os: ["ubuntu-latest", "windows-latest"]
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip   
-        python setup.py develop
-    - name: Test with pytest
-      run: |
-        pip install --upgrade pip  
-        python setup.py develop
+      - uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
+       
+        with:
+          activate-environment: test
+        
+          python-version: 3.8
+          auto-activate-base: false
+      - shell: bash -l {0}
+        run: |
+          conda info
+          conda list
+      - name: Lint
+        shell: bash -l {0}
+        run: |
+            conda install pip
+            pip install qiskit numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane==0.13.0   codecov torch==1.5.1 keras tensorflow==2.3.0  pytest pytest-cov bokeh
+      - name: Run pytest
+        shell: bash -l {0}
+        run: |
+            conda install pytest
+            pytest
+            coverage run -m pytest
+            coverage report -m
+            codecov
+            codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
+            # git clone https://github.com/QEF/q-e.git
+            # cd q-e
+            # ./configure
+            # make pw
 
-        pip install qiskit qiskit-aqua numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane==0.13.0   codecov torch==1.5.1 keras tensorflow==2.3.0  pytest pytest-cov bokeh
-        #pip install -r requirements-ci.txt
-        
-        
-        #cd ..
-        coverage run -m pytest
-        coverage report -m
-        codecov
-        codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
-        # git clone https://github.com/QEF/q-e.git
-        # cd q-e
-        # ./configure
-        # make pw
-            
+
