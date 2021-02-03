@@ -12,6 +12,7 @@ from jarvis.db.jsonutils import dumpjson
 from jarvis.io.qiskit.inputs import HermitianSolver,get_bandstruct,get_dos
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
+from qiskit.circuit import QuantumCircuit, ParameterVector
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 from qiskit import aqua
 import numpy as np
@@ -27,32 +28,39 @@ target_distr = np.random.rand(2)
 # We now convert the random vector into a valid probability vector
 target_distr /= sum(target_distr)
 
-def get_var_form(params):
-    qr = QuantumRegister(3, name="q")
-    cr = ClassicalRegister(1, name='c')
-    qc = QuantumCircuit(qr, cr)
-    qc.u2(params[0], params[1], qr[0])#, qr[0])
-    qc.measure(qr, cr[0])
-    return qc
-def get_probability_distribution(counts):
-    output_distr = [v / NUM_SHOTS for v in counts.values()]
-    if len(output_distr) == 1:
-        output_distr.append(1 - output_distr[0])
-    return output_distr
+import math
 
-def objective_function(params):
-    # Obtain a quantum circuit instance from the paramters
-    qc = get_var_form(params)
-    # Execute the quantum circuit to obtain the probability distribution associated with the current parameters
-    result = execute(qc, backend, shots=NUM_SHOTS).result()
-    # Obtain the counts for each measured state, and convert those counts into a probability vector
-    output_distr = get_probability_distribution(result.get_counts(qc))
-    # Calculate the cost as the distance between the output distribution and the target distribution
-    cost = sum([np.abs(output_distr[i] - target_distr[i]) for i in range(2)])
-    return cost
+def nCr(n,r):
+    f = math.factorial
+    return int(f(n) / f(r) / f(n-r))
 
-ret = optimizer.optimize(num_vars=3, objective_function=objective_function, initial_point=params)
-qc = get_var_form(ret[0])
+def variational_circuit(num_qubits = 2,reps = 1):
+    # import required qiskit libraries if additional libraries are required
+    # build the variational circuit
+    #var_circuit = EfficientSU2(num_qubits=3, su2_gates= ['rx', 'ry'], entanglement='circular', reps=3)
+    #var_circuit = EfficientSU2(num_qubits=4, su2_gates= ['rx', 'ry'], entanglement='circular', reps=3)
+    
+    # return the variational circuit which is either a VaritionalForm or QuantumCircuit object
+    from qiskit.circuit import QuantumCircuit, ParameterVector
+    x = ParameterVector('x', length=num_qubits)  # creating a list of Parameters
+    custom_circ = QuantumCircuit(num_qubits)
+
+    # defining our parametric form
+    for _ in range(reps):
+        for i in range(num_qubits):
+            custom_circ.rx(x[i], i)
+        for i in range(num_qubits):
+            for j in range(i + 1, num_qubits):
+                custom_circ.cx(i, j)
+                custom_circ.u1(x[i] * x[j], j)
+                custom_circ.cx(i, j)
+            
+            
+    
+                
+            
+
+qc=variational_circuit()
 
 def test_inp():
     w, ef, atoms = get_wann_electron("JVASP-816")
@@ -68,10 +76,8 @@ def test_inp():
     w, atoms = get_wann_phonon("JVASP-816", factor=34.3)
     hk = get_hk_tb(w=w, k=[0.0, 0.0, 0.0])
     print ('shape=',hk.shape)
-    var_form = qc
-    #var_form.measure([0, 1], [0, 1])
     H = HermitianSolver(hk)
-    en, vqe_result, vqe = H.run_vqe(mode="max_val", var_form=var_form,optimizer=optimizer)
+    en, vqe_result, vqe = H.run_vqe(mode="max_val", var_form=qc)#,optimizer=optimizer)
     print("en=", en)
     #info = get_bandstruct(
     #    w=w,
@@ -92,4 +98,4 @@ def test_inp():
     # get_bandstruct(w=w, atoms=atoms, tol=0.1)
     #get_dos(w=w)
     #H.run_qpe()
-
+test_inp()
