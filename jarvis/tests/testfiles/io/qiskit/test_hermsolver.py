@@ -7,22 +7,24 @@ from jarvis.db.figshare import (
 from jarvis.core.atoms import Atoms
 from jarvis.db.jsonutils import dumpjson
 from jarvis.io.qiskit.inputs import HermitianSolver,get_bandstruct,get_dos
+import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 
 def test_inp():
     w, ef, atoms = get_wann_electron("JVASP-816")
-    info = get_bandstruct(
-        w=w,
-        line_density=5,
-        atoms=atoms,
-        ef=ef,
-        filename="Alelect.png",
-        ylabel="Energy (eV)",
-    )
+#     info = get_bandstruct(
+#         w=w,
+#         line_density=1,
+#         atoms=atoms,
+#         ef=ef,
+#         filename="Alelect.png",
+#         ylabel="Energy (eV)",
+#     )
     #dumpjson(data=info, filename="Alelect.json")
     w, atoms = get_wann_phonon("JVASP-816", factor=34.3)
     info = get_bandstruct(
         w=w,
-        line_density=11,
+        line_density=1,
         atoms=atoms,
         tol=0.1,
         filename="Alphon.png",
@@ -33,7 +35,7 @@ def test_inp():
     H = HermitianSolver(hk)
     en, vqe_result, vqe = H.run_vqe(mode="max_val")
     print("en=", en)
-    eigs,vecs=H.run_vqd()
+    #eigs,vecs=H.run_vqd()
     # print(eigs)
     # print(vecs)
 
