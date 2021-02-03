@@ -2,7 +2,6 @@
 
 import numpy as np
 from qiskit import aqua
-
 # from qiskit.aqua.operators import (
 #     MatrixOperator,
 #     op_converter,
