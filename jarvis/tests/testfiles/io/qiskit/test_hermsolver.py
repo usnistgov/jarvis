@@ -16,17 +16,7 @@ from qiskit.circuit import QuantumCircuit, ParameterVector
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
 from qiskit import aqua
 import numpy as np
-params = np.random.rand(3)
-optimizer = aqua.components.optimizers.COBYLA(maxiter=500, tol=0.0001)
-params = np.random.rand(3)
 from qiskit import Aer, execute
-backend = Aer.get_backend("qasm_simulator")
-NUM_SHOTS = 10000
-# Obtain the output distribution using the final parameters
-
-target_distr = np.random.rand(2)
-# We now convert the random vector into a valid probability vector
-target_distr /= sum(target_distr)
 
 import math
 
@@ -79,14 +69,14 @@ def test_inp():
     H = HermitianSolver(hk)
     en, vqe_result, vqe = H.run_vqe(mode="max_val", var_form=qc)#,optimizer=optimizer)
     print("en=", en)
-    #info = get_bandstruct(
-    #    w=w,
-    #    line_density=1,
-    #    atoms=atoms,
-    #    tol=0.1,
-    #    filename="Alphon.png",
-    #    ylabel="Freq.(cm$^{-1}$)",
-    #)
+    info = get_bandstruct(
+        w=w,
+        line_density=1,
+        atoms=atoms,
+        tol=0.1,
+        filename="Alphon.png",
+        ylabel="Freq.(cm$^{-1}$)",
+    )
     ## dumpjson(data=info,filename='Alphon.json')
     #eigs,vecs=H.run_vqd()
     # print(eigs)
@@ -96,6 +86,5 @@ def test_inp():
     print(eigs)
     # print(vecs)
     # get_bandstruct(w=w, atoms=atoms, tol=0.1)
-    #get_dos(w=w)
-    #H.run_qpe()
-test_inp()
+    get_dos(w=w)
+    H.run_qpe()
