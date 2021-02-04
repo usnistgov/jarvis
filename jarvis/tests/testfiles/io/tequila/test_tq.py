@@ -13,6 +13,6 @@ def test_inp():
     hk = get_hk_tb(w=w, k=[0.0, 0.0, 0])
     print("hk", hk)
     H = HermitianSolver(hk)
-    #ens = get_eigvals(hk)
-    #print(ens)
+    ens = get_eigvals(hk)
+    print(ens)
 

@@ -3,21 +3,11 @@
 import numpy as np
 from qiskit import aqua
 
-# from qiskit.aqua.operators import (
-#     MatrixOperator,
-#     op_converter,
-# )
 from jarvis.core.kpoints import generate_kgrid
 from qiskit import Aer
-# from qiskit import circuit
 
 # from qiskit.circuit.library import EfficientSU2
-# from qiskit.circuit import library # import EfficientSU2
 import matplotlib.pyplot as plt
-
-# from qiskit.aqua.algorithms import QPE
-# from qiskit.aqua import QuantumInstance
-# from qiskit.aqua.algorithms import VQE
 from jarvis.core.kpoints import Kpoints3D as Kpoints
 from jarvis.db.figshare import get_hk_tb
 
@@ -68,7 +58,8 @@ class HermitianSolver(object):
             Hamil_mat
         )
         if var_form is None:
-            from qiskit.circuit.library import EfficientSU2  
+            from qiskit.circuit.library import EfficientSU2
+
             var_form = EfficientSU2(N, reps=reps)
         if optimizer is None:
             vqe = aqua.algorithms.VQE(Hamil_qop, var_form)
