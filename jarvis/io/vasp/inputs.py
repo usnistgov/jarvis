@@ -71,11 +71,12 @@ class Poscar(object):
             + str(self.atoms.lattice_mat[2][2])
             + "\n"
         )
-        order = np.argsort(self.atoms.elements)
+        # order = np.argsort(self.atoms.elements)
         coords = self.atoms.frac_coords
-        coords_ordered = np.array(coords)[order]
-        elements_ordered = np.array(self.atoms.elements)[order]
-        props_ordered = np.array(self.atoms.props)[order]
+        # DO NOT USE ORDER
+        coords_ordered = np.array(coords)  # [order]
+        elements_ordered = np.array(self.atoms.elements)  # [order]
+        props_ordered = np.array(self.atoms.props)  # [order]
         # check_selective_dynamics = False
         counts = get_counts(elements_ordered)
         if "T" in "".join(map(str, self.atoms.props[0])):
