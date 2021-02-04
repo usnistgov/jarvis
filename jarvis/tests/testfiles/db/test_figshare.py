@@ -1,5 +1,5 @@
-from jarvis.db.figshare import data, get_ff_eneleast
-
+from jarvis.db.figshare import data, get_ff_eneleast, get_wann_electron, get_wann_phonon, get_hk_tb
+from jarvis.db.webpages import Webpage
 
 def test_figshare_download():
 
@@ -17,6 +17,13 @@ def test_figshare_download():
         35984,
         3291,
     )
-
-
+    w, ef, atoms = get_wann_electron()
+    hk = get_hk_tb(w=w)
+    w, atoms = get_wann_phonon()
+    w = Webpage(jid="JVASP-1002")
+    info_mbj = w.get_dft_mbj_dielectric_function()    
+    info_opt = w.get_dft_semilocal_dielectric_function()    
+    info_pdos = w.get_dft_phonon_dos()
+    info_edos = w.get_dft_electron_dos()
+    k = w.list_keys()
 # test_figshare_download()
