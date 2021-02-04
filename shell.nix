@@ -14,8 +14,6 @@ in
        numpy
        phonopy
        scipy
-       qiskit
-       pennylane
        matplotlib
        spglib
        requests
