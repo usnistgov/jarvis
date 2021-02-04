@@ -58,7 +58,7 @@ class Spectrum(object):
 
     def get_interpolated_values(self, new_dist=np.arange(0, 15, 0.05)):
         """Get interpolated grid on a fixed grid."""
-        interp = np.interp(new_dist, self.frequencies, self.intensities)
+        interp = np.interp(new_dist, self.x, self.y)
         return interp
 
 
