@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
+plt.switch_backend("agg")
+
 
 class WTOut(object):
     """Construct WT.out related object."""

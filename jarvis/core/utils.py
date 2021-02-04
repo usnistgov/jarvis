@@ -6,6 +6,7 @@ import random
 import numpy as np
 import math
 import xmltodict
+import re
 
 
 def xml_to_dict(fname):
@@ -167,6 +168,73 @@ def update_dict(main={}, extra={}):
     for i, j in extra.items():
         tmp[i] = j
     return tmp
+
+
+def get_new_coord_for_xyz_sym(frac_coord=[], xyz_string=""):
+    """Obtain new coord from xyz string."""
+    affine_matrix = parse_xyz_string(xyz_string)
+    coord = operate_affine(frac_coord, affine_matrix)
+    coord = np.array([i - math.floor(i) for i in coord])
+    return coord
+
+
+def check_duplicate_coords(coords=[], coord=[]):
+    """Check if a coordinate exists."""
+    positive = False
+    for i in coords:
+        tmp = check_match(i, coord)
+        if tmp:
+            positive = True
+    return positive
+
+
+def parse_xyz_string(xyz_string):
+    """
+    Convert xyz info to translation and rotation vectors.
+
+    Adapted from pymatgen.
+    Args:
+        xyz_string: string of the form 'x, y, z', '-x, -y, z',
+            '-2y+1/2, 3x+1/2, z-y+1/2', etc.
+    Returns:
+        translation and rotation vectors.
+    """
+    rot_matrix = np.zeros((3, 3))
+    trans = np.zeros(3)
+    toks = xyz_string.strip().replace(" ", "").lower().split(",")
+    re_rot = re.compile(r"([+-]?)([\d\.]*)/?([\d\.]*)([x-z])")
+    re_trans = re.compile(r"([+-]?)([\d\.]+)/?([\d\.]*)(?![x-z])")
+    for i, tok in enumerate(toks):
+        # build the rotation matrix
+        for m in re_rot.finditer(tok):
+            factor = -1 if m.group(1) == "-" else 1
+            if m.group(2) != "":
+                factor *= (
+                    float(m.group(2)) / float(m.group(3))
+                    if m.group(3) != ""
+                    else float(m.group(2))
+                )
+            j = ord(m.group(4)) - 120
+            rot_matrix[i, j] = factor
+        # build the translation vector
+        for m in re_trans.finditer(tok):
+            factor = -1 if m.group(1) == "-" else 1
+            num = (
+                float(m.group(2)) / float(m.group(3))
+                if m.group(3) != ""
+                else float(m.group(2))
+            )
+            trans[i] = num * factor
+    affine_matrix = np.eye(4)
+    affine_matrix[0:3][:, 0:3] = rot_matrix
+    affine_matrix[0:3][:, 3] = trans
+    return affine_matrix
+
+
+def operate_affine(cart_coord=[], affine_matrix=[]):
+    """Operate affine method."""
+    affine_point = np.array([cart_coord[0], cart_coord[1], cart_coord[2], 1])
+    return np.dot(np.array(affine_matrix), affine_point)[0:3]
 
 
 # def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
