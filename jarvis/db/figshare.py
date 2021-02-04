@@ -5,11 +5,17 @@ Main page: https://figshare.com/authors/Kamal_Choudhary/4445539
 """
 
 import zipfile
-# import tempfile
+import tempfile
 import os
-# import io
+import numpy as np
+import io
 import requests
 from jarvis.db.jsonutils import loadjson
+from jarvis.io.vasp.outputs import Vasprun
+from jarvis.io.vasp.inputs import Poscar
+from jarvis.io.wannier.outputs import WannierHam
+from jarvis.io.phonopy.outputs import get_phonon_tb
+# from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
 
 def datasets(dataset=""):
@@ -101,6 +107,76 @@ def get_ff_eneleast():
         f.close()
     data_ff1 = loadjson(jff1)
     return data_ff1
+
+
+# Raw I/O files on figshare repository
+fls = data("raw_files")
+
+
+def get_wann_electron(jid="JVASP-816"):
+    """Download electron WTBH if available."""
+    w = ""
+    ef = ""
+    for i in fls["WANN"]:
+        if i["name"].split(".zip")[0] == jid:
+            r = requests.get(i["download_url"])
+            z = zipfile.ZipFile(io.BytesIO(r.content))
+            wdat = z.read("wannier90_hr.dat").decode("utf-8")
+            js_file = jid + ".json"
+            js = z.read(js_file).decode("utf-8")
+            fd, path = tempfile.mkstemp()
+            with os.fdopen(fd, "w") as tmp:
+                tmp.write(wdat)
+            w = WannierHam(path)
+            fd, path = tempfile.mkstemp()
+            with os.fdopen(fd, "w") as tmp:
+                tmp.write(js)
+            d = loadjson(path)
+            ef = d["info_mesh"]["efermi"]
+            fd, path = tempfile.mkstemp()
+            pos = z.read("POSCAR").decode("utf-8")
+            with os.fdopen(fd, "w") as tmp:
+                tmp.write(pos)
+            atoms = Poscar.from_file(path).atoms
+    return w, ef, atoms
+
+
+def get_wann_phonon(jid="JVASP-1002", factor=15.633302):
+    """Download phonon WTBH if available."""
+    for i in fls["FD-ELAST"]:
+        if isinstance(i, dict):
+            if i["name"].split(".zip")[0] == jid:
+                r = requests.get(i["download_url"])
+                z = zipfile.ZipFile(io.BytesIO(r.content))
+                vrun_path = z.read("vasprun.xml").decode("utf-8")
+                fd, path = tempfile.mkstemp()
+                with os.fdopen(fd, "w") as tmp:
+                    tmp.write(vrun_path)
+                vrun = Vasprun(path)
+                fc = vrun.phonon_data()["force_constants"]
+                atoms = vrun.all_structures[0]
+                # print(atoms)
+                # atoms = Atoms.from_poscar(pos)
+                # print(atoms)
+                fd, path = tempfile.mkstemp()
+                get_phonon_tb(fc=fc, atoms=atoms, out_file=path, factor=factor)
+                # cvn = Spacegroup3D(atoms).conventional_standard_structure
+                w = WannierHam(path)
+                return w, atoms
+
+
+def get_hk_tb(k=np.array([0, 0, 0]), w=[]):
+    """Get Wannier TB Hamiltonian."""
+    nr = w.R.shape[0]
+    hk = np.zeros((w.nwan, w.nwan), dtype=complex)
+    kmat = np.tile(k, (nr, 1))
+    exp_ikr = np.exp(1.0j * 2 * np.pi * np.sum(kmat * w.R, 1))
+    temp = np.zeros(w.nwan ** 2, dtype=complex)
+    for i in range(nr):
+        temp += exp_ikr[i] * w.HR[i, :]
+    hk = np.reshape(temp, (w.nwan, w.nwan))
+    hk = (hk + hk.T.conj()) / 2.0
+    return hk
 
 
 """

@@ -97,6 +97,25 @@ def band_eigvals(energy_file="FeSe.energy", plot=False, band_file="band.png"):
     return eigs
 
 
+def read_spaghetti_ene(
+    filename="ICSD-76748.spaghetti_ene",
+):
+    """Obtain data for plotting bandstructure."""
+    f = open(filename, "r")
+    lines = f.read().splitlines()
+    f.close()
+    k = []
+    energy = []
+    for i, ii in enumerate(lines):
+        if "bandindex" not in ii:
+            tmp = [float(j) for j in ii.split()]
+            energy.append(tmp[-1])
+            k.append(tmp[-2])
+    k = np.array(k)
+    energy = np.array(energy)
+    return k, energy
+
+
 """
 read_band_energy()
 x = read_scf()

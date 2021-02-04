@@ -141,4 +141,3 @@ Code of conduct
 --------------------
 
 Please see `Code of conduct <https://github.com/usnistgov/jarvis/blob/master/CODE_OF_CONDUCT.md>`__
-
