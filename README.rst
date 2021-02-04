@@ -107,6 +107,34 @@ Example function
 ...     jid = i['jid']
 ...     filename = 'POSCAR-'+jid+'.vasp'
 ...     poscar.write_file(filename)
+>>> # Example to parse DOS data from JARVIS-DFT webpages
+>>> from jarvis.db.webpages import Webpage
+>>> from jarvis.core.spectrum import Spectrum
+>>> new_dist=np.arange(-5, 10, 0.05)
+>>> all_atoms = []
+>>> all_dos_up = []
+>>> all_jids = []
+>>> for ii,i in enumerate(dft_3d):
+    all_jids.append(i['jid'])
+...   try:
+...     w = Webpage(jid=i['jid'])
+...     edos_data = w.get_dft_electron_dos()
+...     ens = np.array(edos_data['edos_energies'].strip("'").split(','),dtype='float')
+...     tot_dos_up = np.array(edos_data['total_edos_up'].strip("'").split(','),dtype='float')
+...     s = Spectrum(x=ens,y=tot_dos_up)
+...     interp = s.get_interpolated_values(new_dist=new_dist)
+...     atoms=Atoms.from_dict(i['atoms'])
+...     all_dos_up.append(interp)
+...     all_atoms.append(atoms)
+...     all_jids.append(i['jid'])
+...     filename=i['jid']+'.cif'
+...     atoms.write_cif(filename)
+...     break
+...   except Exception as exp :
+...     print (exp,i['jid'])
+...     pass
+
+
 
 Find more examples at
 
