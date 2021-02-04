@@ -15,6 +15,7 @@ in
        phonopy
        scipy
        qiskit
+       pennylane
        matplotlib
        spglib
        requests
