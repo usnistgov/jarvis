@@ -50,8 +50,18 @@ cif_example = os.path.join(
     os.path.dirname(__file__),
     "1000052.cif",
 )
+cif_example2 = os.path.join(
+    os.path.dirname(__file__),
+    "Bacomp.cif",
+)
+cif_example3 = os.path.join(
+    os.path.dirname(__file__),
+    "mock.cif",
+)
 def test_from_cif():
     a=Atoms.from_cif(cif_example)
+    a=Atoms.from_cif(cif_example2)
+    a=Atoms.from_cif(cif_example3)
 def test_basic_atoms():
 
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
@@ -86,6 +96,7 @@ def test_basic_atoms():
     assert round(prim.raw_distance_matrix[0][1], 2) == round(
         4.42386329832851, 2
     )
+    asee=Si.ase_converter()
     print(prim.raw_angle_matrix)
     d = Si.to_dict()
     new_at = Atoms.from_dict(d)
@@ -149,6 +160,7 @@ def test_basic_atoms():
     )
     cc = Si.center()
     cc = Si.center(axis=[0, 0, 1])
+    cc = Si.center(about=[.5,.5,.5])
 
     m1 = Atoms.from_dict(get_jid_data("JVASP-6640")["atoms"])
     assert m1.check_polar == True
