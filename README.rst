@@ -110,12 +110,13 @@ Example function
 >>> # Example to parse DOS data from JARVIS-DFT webpages
 >>> from jarvis.db.webpages import Webpage
 >>> from jarvis.core.spectrum import Spectrum
+>>> import numpy as np
 >>> new_dist=np.arange(-5, 10, 0.05)
 >>> all_atoms = []
 >>> all_dos_up = []
 >>> all_jids = []
 >>> for ii,i in enumerate(dft_3d):
-    all_jids.append(i['jid'])
+      all_jids.append(i['jid'])
 ...   try:
 ...     w = Webpage(jid=i['jid'])
 ...     edos_data = w.get_dft_electron_dos()
