@@ -6,7 +6,9 @@ Subpackages
 
 .. toctree::
 
+    jarvis.tasks.boltztrap
     jarvis.tasks.lammps
+    jarvis.tasks.phonopy
     jarvis.tasks.vasp
 
 Submodules

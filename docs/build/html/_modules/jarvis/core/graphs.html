@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.core.graphs &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.core.graphs &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -92,6 +92,10 @@
         <span class="n">node_atomwise_rdf</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">features</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span><span class="p">,</span>
         <span class="n">enforce_c_size</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+        <span class="n">max_n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">max_cut</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">make_colormap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get Networkx graph. Requires Networkx installation.</span>
@@ -162,7 +166,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="p">(</span><span class="s2">&quot;Please check the input options.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">node_atomwise_rdf</span> <span class="ow">or</span> <span class="n">node_atomwise_angle_dist</span><span class="p">:</span>
-            <span class="n">nbr</span> <span class="o">=</span> <span class="n">NeighborsAnalysis</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+            <span class="n">nbr</span> <span class="o">=</span> <span class="n">NeighborsAnalysis</span><span class="p">(</span>
+                <span class="n">atoms</span><span class="p">,</span> <span class="n">max_n</span><span class="o">=</span><span class="n">max_n</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">max_cut</span><span class="o">=</span><span class="n">max_cut</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">node_atomwise_rdf</span><span class="p">:</span>
             <span class="n">node_attributes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">node_attributes</span><span class="p">,</span> <span class="n">nbr</span><span class="o">.</span><span class="n">atomwise_radial_dist</span><span class="p">()),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
@@ -180,10 +186,15 @@
                 <span class="n">uv</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ii</span><span class="p">,</span> <span class="n">jj</span><span class="p">))</span>
                 <span class="n">edge_features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adj</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="n">jj</span><span class="p">])</span>
         <span class="n">edge_attributes</span> <span class="o">=</span> <span class="n">edge_features</span>
-        <span class="n">color_dict</span> <span class="o">=</span> <span class="n">random_colors</span><span class="p">(</span><span class="n">number_of_colors</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">))</span>
-        <span class="n">color_map</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="c1"># for ii, i in enumerate(atoms.elements):</span>
-        <span class="c1">#    color_map.append(color_dict[Specie(i).Z])</span>
+        <span class="k">if</span> <span class="n">make_colormap</span><span class="p">:</span>
+            <span class="n">sps</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">uniq_species</span>
+            <span class="n">color_dict</span> <span class="o">=</span> <span class="n">random_colors</span><span class="p">(</span><span class="n">number_of_colors</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">sps</span><span class="p">))</span>
+            <span class="n">new_colors</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">color_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">new_colors</span><span class="p">[</span><span class="n">sps</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">j</span>
+            <span class="n">color_map</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">):</span>
+                <span class="n">color_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">Graph</span><span class="p">(</span>
             <span class="n">nodes</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span>
             <span class="n">edges</span><span class="o">=</span><span class="n">uv</span><span class="p">,</span>
@@ -200,7 +211,7 @@
         <span class="n">graph</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_attributes</span><span class="p">):</span>
-            <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">j</span><span class="p">)</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="n">j</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">graph</span></div>
 
     <span class="nd">@property</span>
@@ -328,12 +339,12 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>

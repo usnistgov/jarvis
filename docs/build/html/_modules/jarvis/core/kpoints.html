@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.core.kpoints &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.core.kpoints &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -50,6 +50,7 @@
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">tan</span><span class="p">,</span> <span class="n">pi</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span>
+<span class="kn">import</span> <span class="nn">math</span>
 
 
 <div class="viewcode-block" id="generate_kgrid"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.kpoints.generate_kgrid">[docs]</a><span class="k">def</span> <span class="nf">generate_kgrid</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">]):</span>
@@ -115,6 +116,18 @@
         <span class="sd">&quot;&quot;&quot;Return k-points arrays.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kpoints</span>
 
+<div class="viewcode-block" id="Kpoints3D.kpoints_per_atom"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.kpoints.Kpoints3D.kpoints_per_atom">[docs]</a>    <span class="k">def</span> <span class="nf">kpoints_per_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kppa</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return Kpoints object for kpoints per atom for a cell.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">((</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">kppa</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">))</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">kppa</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">kppa</span> <span class="o">+=</span> <span class="n">kppa</span> <span class="o">*</span> <span class="mf">0.01</span>
+        <span class="c1"># latt = atoms.lattice_mat</span>
+        <span class="n">lengths</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">lat_lengths</span><span class="p">()</span>
+        <span class="n">ngrid</span> <span class="o">=</span> <span class="n">kppa</span> <span class="o">/</span> <span class="n">atoms</span><span class="o">.</span><span class="n">num_atoms</span>
+        <span class="n">mult</span> <span class="o">=</span> <span class="p">(</span><span class="n">ngrid</span> <span class="o">*</span> <span class="n">lengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">lengths</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">lengths</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">num_div</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">mult</span> <span class="o">/</span> <span class="n">lg</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span> <span class="k">for</span> <span class="n">lg</span> <span class="ow">in</span> <span class="n">lengths</span><span class="p">]</span>
+        <span class="n">kpts</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">(</span><span class="n">kpoints</span><span class="o">=</span><span class="p">[</span><span class="n">num_div</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">kpts</span></div>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return k-points labels, used for high BZ points.&quot;&quot;&quot;</span>
@@ -161,11 +174,11 @@
 <div class="viewcode-block" id="Kpoints3D.to_dict"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.kpoints.Kpoints3D.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provide dictionary representation.&quot;&quot;&quot;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;kpoints&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kpoints</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;kpoints&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">)</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;kpoint_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kpoint_mode</span>
         <span class="n">d</span><span class="p">[</span><span class="s2">&quot;header&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_header</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;kpoints_weights&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kp_weights</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;kpoints_weights&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kp_weights</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">d</span></div>
 
 <div class="viewcode-block" id="Kpoints3D.from_dict"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.kpoints.Kpoints3D.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
@@ -336,7 +349,9 @@
                     <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prim_rec</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
                 <span class="p">)</span>
                 <span class="n">nb</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">distance</span> <span class="o">*</span> <span class="n">line_density</span><span class="p">))</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nb&quot;</span><span class="p">,</span> <span class="n">nb</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">line_density</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">nb</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="c1"># print(&quot;nb&quot;, nb, distance, line_density)</span>
                 <span class="n">sym_point_labels</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">b</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">nb</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
                 <span class="n">list_k_points</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
                     <span class="p">[</span>
@@ -1072,12 +1087,12 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>

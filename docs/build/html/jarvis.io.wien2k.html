@@ -1,0 +1,152 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.io.wien2k package &#8212; jarvis-tools v2021.2.3 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="jarvis-io-wien2k-package">
+<h1>jarvis.io.wien2k package<a class="headerlink" href="#jarvis-io-wien2k-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jarvis.io.wien2k.inputs">
+<span id="jarvis-io-wien2k-inputs-module"></span><h2>jarvis.io.wien2k.inputs module<a class="headerlink" href="#module-jarvis.io.wien2k.inputs" title="Permalink to this headline">¶</a></h2>
+<p>Module to prepare input files for WIEN2k.</p>
+<dl class="function">
+<dt id="jarvis.io.wien2k.inputs.get_wien_kpoints">
+<code class="descclassname">jarvis.io.wien2k.inputs.</code><code class="descname">get_wien_kpoints</code><span class="sig-paren">(</span><em>atoms=None</em>, <em>write_file=False</em>, <em>line_density=1</em>, <em>filename='MyKpoints'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wien2k/inputs.html#get_wien_kpoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wien2k.inputs.get_wien_kpoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get WIEN2k style kpoints for bandstructure calculation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.io.wien2k.inputs.prepare_wien_input">
+<code class="descclassname">jarvis.io.wien2k.inputs.</code><code class="descname">prepare_wien_input</code><span class="sig-paren">(</span><em>atoms=None</em>, <em>filename='case.cif'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wien2k/inputs.html#prepare_wien_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wien2k.inputs.prepare_wien_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare basic WIEN2k input files.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.io.wien2k.outputs">
+<span id="jarvis-io-wien2k-outputs-module"></span><h2>jarvis.io.wien2k.outputs module<a class="headerlink" href="#module-jarvis.io.wien2k.outputs" title="Permalink to this headline">¶</a></h2>
+<p>Module to parse WIEN2k outputs.</p>
+<dl class="function">
+<dt id="jarvis.io.wien2k.outputs.band_eigvals">
+<code class="descclassname">jarvis.io.wien2k.outputs.</code><code class="descname">band_eigvals</code><span class="sig-paren">(</span><em>energy_file='FeSe.energy'</em>, <em>plot=False</em>, <em>band_file='band.png'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wien2k/outputs.html#band_eigvals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wien2k.outputs.band_eigvals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get bandstructure eigenvalues.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.io.wien2k.outputs.read_band_energy">
+<code class="descclassname">jarvis.io.wien2k.outputs.</code><code class="descname">read_band_energy</code><span class="sig-paren">(</span><em>energy_file='FeSe.energy'</em>, <em>plot=True</em>, <em>band_plot='band.png'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wien2k/outputs.html#read_band_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wien2k.outputs.read_band_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read case.energy file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.io.wien2k.outputs.read_scf">
+<code class="descclassname">jarvis.io.wien2k.outputs.</code><code class="descname">read_scf</code><span class="sig-paren">(</span><em>scf_file='FeSe.scf'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wien2k/outputs.html#read_scf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wien2k.outputs.read_scf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read case.scf file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.io.wien2k.outputs.read_spaghetti_ene">
+<code class="descclassname">jarvis.io.wien2k.outputs.</code><code class="descname">read_spaghetti_ene</code><span class="sig-paren">(</span><em>filename='ICSD-76748.spaghetti_ene'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wien2k/outputs.html#read_spaghetti_ene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wien2k.outputs.read_spaghetti_ene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain data for plotting bandstructure.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.io.wien2k">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.io.wien2k" title="Permalink to this headline">¶</a></h2>
+<p>Module for processing WIEN2k input output files.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">jarvis.io.wien2k package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-jarvis.io.wien2k.inputs">jarvis.io.wien2k.inputs module</a></li>
+<li><a class="reference internal" href="#module-jarvis.io.wien2k.outputs">jarvis.io.wien2k.outputs module</a></li>
+<li><a class="reference internal" href="#module-jarvis.io.wien2k">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/jarvis.io.wien2k.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

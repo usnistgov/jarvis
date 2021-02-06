@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.analysis.magnetism.magmom_setup &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.analysis.magnetism.magmom_setup &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -44,6 +44,7 @@
 <span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="n">Spacegroup3D</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.utils</span> <span class="kn">import</span> <span class="n">check_match</span>
 
 
 <div class="viewcode-block" id="MagneticOrdering"><a class="viewcode-back" href="../../../../jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering">[docs]</a><span class="k">class</span> <span class="nc">MagneticOrdering</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -52,14 +53,6 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize with Atoms.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
-
-<div class="viewcode-block" id="MagneticOrdering.check_match"><a class="viewcode-back" href="../../../../jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering.check_match">[docs]</a>    <span class="k">def</span> <span class="nf">check_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check if a and b are the same, taking into account PBCs.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">tol</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">tol</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">tol</span> <span class="ow">or</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">b</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="MagneticOrdering.apply_symmetry_operations"><a class="viewcode-back" href="../../../../jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering.apply_symmetry_operations">[docs]</a>    <span class="k">def</span> <span class="nf">apply_symmetry_operations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">spg</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Figure out the effects of all the symmetry operations.&quot;&quot;&quot;</span>
@@ -76,7 +69,7 @@
                 <span class="n">pos_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">at</span><span class="p">,</span> <span class="p">:],</span> <span class="n">rot</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span> <span class="o">+</span> <span class="n">tran</span>
                 <span class="n">pos_new</span> <span class="o">=</span> <span class="n">pos_new</span> <span class="o">%</span> <span class="mi">1</span>
                 <span class="k">for</span> <span class="n">at2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nat</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_match</span><span class="p">(</span><span class="n">pos_new</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="n">at2</span><span class="p">,</span> <span class="p">:]):</span>
+                    <span class="k">if</span> <span class="n">check_match</span><span class="p">(</span><span class="n">pos_new</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="n">at2</span><span class="p">,</span> <span class="p">:],</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">):</span>
                         <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
                         <span class="n">order</span><span class="p">[</span><span class="n">at</span><span class="p">]</span> <span class="o">=</span> <span class="n">at2</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
@@ -101,9 +94,10 @@
             <span class="n">magnetic_ions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
 
         <span class="n">ss</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">supercell_dim</span><span class="p">)</span>
-        <span class="n">spg</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="c1"># spg = Spacegroup3D(atoms)</span>
+        <span class="n">spg</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>  <span class="c1"># kfg</span>
 
-        <span class="c1"># apply symmetry with various tolerances until we find one that works</span>
+        <span class="c1"># Apply symmetry with various tolerances until we find one that works</span>
         <span class="n">worked</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">tol</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">]:</span>
             <span class="n">permutations</span><span class="p">,</span> <span class="n">worked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_symmetry_operations</span><span class="p">(</span>
@@ -211,7 +205,8 @@
             <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mag_atoms</span><span class="p">:</span>
                 <span class="n">elements_dict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">n_mag_elements</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">elements_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="n">Tc</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">deltaE</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">kB</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_mag_elements</span>
+        <span class="n">Tc</span> <span class="o">=</span> <span class="n">deltaE</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">kB</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_mag_elements</span>
+        <span class="c1"># Tc = 2 * deltaE / (3 * kB) / n_mag_elements</span>
         <span class="n">info</span><span class="p">[</span><span class="s2">&quot;Tc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Tc</span>
         <span class="n">info</span><span class="p">[</span><span class="s2">&quot;deltaE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deltaE</span>
         <span class="n">info</span><span class="p">[</span><span class="s2">&quot;n_mag_elements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_mag_elements</span>
@@ -219,12 +214,27 @@
 
 <div class="viewcode-block" id="MagneticOrdering.get_mag_ions"><a class="viewcode-back" href="../../../../jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering.get_mag_ions">[docs]</a>    <span class="k">def</span> <span class="nf">get_mag_ions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;List all magnetic atoms in the Atoms object.&quot;&quot;&quot;</span>
-        <span class="n">all_mag_elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Ti&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;Cr&quot;</span><span class="p">,</span> <span class="s2">&quot;Mn&quot;</span><span class="p">,</span> <span class="s2">&quot;Fe&quot;</span><span class="p">,</span> <span class="s2">&quot;Co&quot;</span><span class="p">,</span> <span class="s2">&quot;Ni&quot;</span><span class="p">,</span> <span class="s2">&quot;Cu&quot;</span><span class="p">]</span>
+        <span class="n">all_mag_elements</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;Ti&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;V&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Cr&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Mn&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Fe&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Co&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Ni&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Cu&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Ru&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Ir&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Rh&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Os&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Rb&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Sc&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
         <span class="n">els</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span>
         <span class="n">mag_ions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">all_mag_elements</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">els</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">mag_ions</span></div>
 
-<div class="viewcode-block" id="MagneticOrdering.get_minimum_configs"><a class="viewcode-back" href="../../../../jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering.get_minimum_configs">[docs]</a>    <span class="k">def</span> <span class="nf">get_minimum_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_configs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">enforce_primitive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="MagneticOrdering.get_minimum_configs"><a class="viewcode-back" href="../../../../jarvis.analysis.magnetism.html#jarvis.analysis.magnetism.magmom_setup.MagneticOrdering.get_minimum_configs">[docs]</a>    <span class="k">def</span> <span class="nf">get_minimum_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_configs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">enforce_primitive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get minimum number of spin structures for Tc calculations.&quot;&quot;&quot;</span>
         <span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span>
         <span class="k">if</span> <span class="n">enforce_primitive</span><span class="p">:</span>
@@ -234,14 +244,32 @@
         <span class="n">dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
         <span class="n">mag_ions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mag_ions</span><span class="p">()</span>
         <span class="n">symm_list</span><span class="p">,</span> <span class="n">ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unique_magnetic_structures</span><span class="p">(</span>
-            <span class="n">atoms</span><span class="p">,</span> <span class="n">supercell_dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">magnetic_ions</span><span class="o">=</span><span class="n">mag_ions</span>
+            <span class="n">atoms</span><span class="p">,</span> <span class="n">supercell_dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">magnetic_ions</span><span class="o">=</span><span class="n">mag_ions</span><span class="p">,</span> <span class="n">noferri</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
+        <span class="c1"># kfg</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">symm_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_configs</span><span class="p">:</span>
+            <span class="n">symm_list</span><span class="p">,</span> <span class="n">ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unique_magnetic_structures</span><span class="p">(</span>
+                <span class="n">atoms</span><span class="p">,</span> <span class="n">supercell_dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">magnetic_ions</span><span class="o">=</span><span class="n">mag_ions</span><span class="p">,</span> <span class="n">noferri</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
         <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">symm_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_configs</span><span class="p">:</span>
             <span class="n">dim</span><span class="p">[</span><span class="n">index_to_expand</span><span class="p">[</span><span class="n">count</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">symm_list</span><span class="p">,</span> <span class="n">ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unique_magnetic_structures</span><span class="p">(</span>
-                <span class="n">atoms</span><span class="p">,</span> <span class="n">supercell_dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">magnetic_ions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_mag_ions</span><span class="p">()</span>
+                <span class="n">atoms</span><span class="p">,</span>
+                <span class="n">supercell_dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span>
+                <span class="n">magnetic_ions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_mag_ions</span><span class="p">(),</span>
+                <span class="n">noferri</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="c1"># kfg</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">symm_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_configs</span><span class="p">:</span>
+                <span class="n">symm_list</span><span class="p">,</span> <span class="n">ss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unique_magnetic_structures</span><span class="p">(</span>
+                    <span class="n">atoms</span><span class="p">,</span>
+                    <span class="n">supercell_dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span>
+                    <span class="n">magnetic_ions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_mag_ions</span><span class="p">(),</span>
+                    <span class="n">noferri</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="p">)</span>
+
             <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
@@ -279,12 +307,12 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
