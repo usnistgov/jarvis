@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.core.atoms &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.core.atoms &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -46,6 +46,12 @@
 <span class="kn">from</span> <span class="nn">jarvis.core.lattice</span> <span class="kn">import</span> <span class="n">Lattice</span><span class="p">,</span> <span class="n">lattice_coords_transformer</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.utils</span> <span class="kn">import</span> <span class="n">get_counts</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.utils</span> <span class="kn">import</span> <span class="n">get_angle</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_duplicate_coords</span><span class="p">,</span>
+    <span class="n">get_new_coord_for_xyz_sym</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">amu_gm</span> <span class="o">=</span> <span class="mf">1.66054e-24</span>
 <span class="n">ang_cm</span> <span class="o">=</span> <span class="mf">1e-8</span>
@@ -208,12 +214,257 @@
             <span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="Atoms.from_cif"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.atoms.Atoms.from_cif">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_cif</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;atoms.cif&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read .cif format file.&quot;&quot;&quot;</span>
+        <span class="c1"># Warnings:</span>
+        <span class="c1"># May not work for:</span>
+        <span class="c1"># system with partial occupancy</span>
+        <span class="c1"># cif file with multiple blocks</span>
+        <span class="c1"># _atom_site_U_iso, instead of fractn_x, cartn_x</span>
+        <span class="c1"># with non-zero _atom_site_attached_hydrogens</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">lat_a</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">lat_b</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">lat_c</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">lat_alpha</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">lat_beta</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">lat_gamma</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="c1"># TODO: check if chemical_formula_sum</span>
+        <span class="c1"># matches Atoms.compsotion.reduced_formula</span>
+
+        <span class="c1"># chemical_formula_structural = &quot;&quot;</span>
+        <span class="c1"># chemical_formula_sum = &quot;&quot;</span>
+        <span class="c1"># chemical_name_mineral = &quot;&quot;</span>
+        <span class="n">sym_xyz_line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;_cell_length_a&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">lat_a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s2">&quot;_cell_length_b&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">lat_b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s2">&quot;_cell_length_c&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">lat_c</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s2">&quot;_cell_angle_alpha&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">lat_alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s2">&quot;_cell_angle_beta&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">lat_beta</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s2">&quot;_cell_angle_gamma&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">lat_gamma</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="c1"># if &quot;_chemical_formula_structural&quot; in i:</span>
+            <span class="c1">#    chemical_formula_structural = i.split()[1]</span>
+            <span class="c1"># if &quot;_chemical_formula_sum&quot; in i:</span>
+            <span class="c1">#    chemical_formula_sum = i.split()[1]</span>
+            <span class="c1"># if &quot;_chemical_name_mineral&quot; in i:</span>
+            <span class="c1">#    chemical_name_mineral = i.split()[1]</span>
+            <span class="k">if</span> <span class="s2">&quot;_symmetry_equiv_pos_as_xyz&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">sym_xyz_line</span> <span class="o">=</span> <span class="n">ii</span>
+            <span class="k">if</span> <span class="s2">&quot;_symmetry_equiv_pos_as_xyz_&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">sym_xyz_line</span> <span class="o">=</span> <span class="n">ii</span>
+            <span class="k">if</span> <span class="s2">&quot;_symmetry_equiv_pos_as_xyz_&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">sym_xyz_line</span> <span class="o">=</span> <span class="n">ii</span>
+            <span class="k">if</span> <span class="s2">&quot;_space_group_symop_operation_xyz_&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">sym_xyz_line</span> <span class="o">=</span> <span class="n">ii</span>
+            <span class="k">if</span> <span class="s2">&quot;_space_group_symop_operation_xyz&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">sym_xyz_line</span> <span class="o">=</span> <span class="n">ii</span>
+        <span class="n">symm_ops</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">terminate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">terminate</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sym_xyz_line&quot;</span><span class="p">,</span> <span class="n">sym_xyz_line</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">sym_xyz_line</span> <span class="o">+</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;x&quot;</span> <span class="ow">in</span> <span class="n">tmp</span> <span class="ow">and</span> <span class="s2">&quot;y&quot;</span> <span class="ow">in</span> <span class="n">tmp</span> <span class="ow">and</span> <span class="s2">&quot;z&quot;</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">:</span>
+                <span class="c1"># print(&quot;tmp&quot;, tmp)</span>
+                <span class="n">symm_ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">terminate</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">tmp_arr</span> <span class="o">=</span> <span class="p">[</span><span class="n">lat_a</span><span class="p">,</span> <span class="n">lat_b</span><span class="p">,</span> <span class="n">lat_c</span><span class="p">,</span> <span class="n">lat_alpha</span><span class="p">,</span> <span class="n">lat_beta</span><span class="p">,</span> <span class="n">lat_gamma</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">ele</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">tmp_arr</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Lattice information is incomplete.&quot;</span><span class="p">,</span> <span class="n">tmp_arr</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">Lattice</span><span class="o">.</span><span class="n">from_parameters</span><span class="p">(</span>
+            <span class="n">lat_a</span><span class="p">,</span> <span class="n">lat_b</span><span class="p">,</span> <span class="n">lat_c</span><span class="p">,</span> <span class="n">lat_alpha</span><span class="p">,</span> <span class="n">lat_beta</span><span class="p">,</span> <span class="n">lat_gamma</span>
+        <span class="p">)</span>
+        <span class="n">terminate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">atom_features</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">beginning_atom_info_line</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;loop_&quot;</span> <span class="ow">in</span> <span class="n">i</span> <span class="ow">and</span> <span class="s2">&quot;_atom_site&quot;</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="n">ii</span> <span class="o">+</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
+                <span class="n">beginning_atom_info_line</span> <span class="o">=</span> <span class="n">ii</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">terminate</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;_atom&quot;</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="n">beginning_atom_info_line</span> <span class="o">+</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
+                <span class="n">atom_features</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">lines</span><span class="p">[</span><span class="n">beginning_atom_info_line</span> <span class="o">+</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="s2">&quot;_atom&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="n">beginning_atom_info_line</span> <span class="o">+</span> <span class="n">count</span><span class="p">]:</span>
+                <span class="n">terminate</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">terminate</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">atom_liines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">terminate</span><span class="p">:</span>
+            <span class="n">number</span> <span class="o">=</span> <span class="n">beginning_atom_info_line</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_features</span><span class="p">)</span> <span class="o">+</span> <span class="n">count</span>
+            <span class="k">if</span> <span class="n">number</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+                <span class="n">terminate</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">number</span><span class="p">]</span>
+            <span class="c1"># print (&#39;tis line&#39;,line)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom_features</span><span class="p">):</span>
+                <span class="n">atom_liines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">terminate</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">label_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">fract_x_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">fract_y_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">fract_z_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">cartn_x_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">cartn_y_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">cartn_z_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">occupancy_index</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_features</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;_atom_site_label&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">label_index</span> <span class="o">=</span> <span class="n">ii</span>
+            <span class="k">if</span> <span class="s2">&quot;fract_x&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">fract_x_index</span> <span class="o">=</span> <span class="n">ii</span>
+            <span class="k">if</span> <span class="s2">&quot;fract_y&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">fract_y_index</span> <span class="o">=</span> <span class="n">ii</span>
+            <span class="k">if</span> <span class="s2">&quot;fract_z&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">fract_z_index</span> <span class="o">=</span> <span class="n">ii</span>
+            <span class="k">if</span> <span class="s2">&quot;cartn_x&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">cartn_x_index</span> <span class="o">=</span> <span class="n">ii</span>
+            <span class="k">if</span> <span class="s2">&quot;cartn_y&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">cartn_y_index</span> <span class="o">=</span> <span class="n">ii</span>
+            <span class="k">if</span> <span class="s2">&quot;cartn_z&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">cartn_z_index</span> <span class="o">=</span> <span class="n">ii</span>
+            <span class="k">if</span> <span class="s2">&quot;occupancy&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">occupancy_index</span> <span class="o">=</span> <span class="n">ii</span>
+        <span class="k">if</span> <span class="n">fract_x_index</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">cartn_x_index</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot find atomic coordinate info.&quot;</span><span class="p">)</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cif_atoms</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">fract_x_index</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_liines</span><span class="p">):</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">tmp_lbl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="n">Composition</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">label_index</span><span class="p">])</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="n">elem</span> <span class="o">=</span> <span class="n">tmp_lbl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">coord</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">fract_x_index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">fract_y_index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">fract_z_index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp_lbl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Check if labesl are correct.&quot;</span><span class="p">,</span> <span class="n">tmp_lbl</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">occupancy_index</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span>
+                    <span class="ow">and</span> <span class="ow">not</span> <span class="nb">float</span><span class="p">(</span>
+                        <span class="n">tmp</span><span class="p">[</span><span class="n">occupancy_index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">is_integer</span><span class="p">()</span>
+                <span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Fractional occupancy is not supported.&quot;</span><span class="p">,</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">occupancy_index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="n">elem</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+                <span class="n">coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>
+            <span class="n">cif_atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span>
+                <span class="n">lattice_mat</span><span class="o">=</span><span class="n">lat</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span>
+                <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span>
+                <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+                <span class="n">cartesian</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">cartn_x_index</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_liines</span><span class="p">):</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">tmp_lbl</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                    <span class="n">Composition</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">label_index</span><span class="p">])</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="p">)</span>
+                <span class="n">elem</span> <span class="o">=</span> <span class="n">tmp_lbl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">coord</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">cartn_x_index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">cartn_y_index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">cartn_z_index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp_lbl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Check if labesl are correct.&quot;</span><span class="p">,</span> <span class="n">tmp_lbl</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">occupancy_index</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span>
+                    <span class="ow">and</span> <span class="ow">not</span> <span class="nb">float</span><span class="p">(</span>
+                        <span class="n">tmp</span><span class="p">[</span><span class="n">occupancy_index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">is_integer</span><span class="p">()</span>
+                <span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Fractional occupancy is not supported.&quot;</span><span class="p">,</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="n">occupancy_index</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="n">elem</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+                <span class="n">coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>
+            <span class="n">cif_atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span>
+                <span class="n">lattice_mat</span><span class="o">=</span><span class="n">lat</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span>
+                <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span>
+                <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+                <span class="n">cartesian</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot find atomic coordinate info from cart or frac.&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># frac_coords=list(cif_atoms.frac_coords)</span>
+        <span class="n">cif_elements</span> <span class="o">=</span> <span class="n">cif_atoms</span><span class="o">.</span><span class="n">elements</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">cif_atoms</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">matrix</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">symm_ops</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">frac_coords</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cif_atoms</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">symm_ops</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">jj</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frac_coords</span><span class="p">):</span>
+                    <span class="n">new_c_coord</span> <span class="o">=</span> <span class="n">get_new_coord_for_xyz_sym</span><span class="p">(</span>
+                        <span class="n">xyz_string</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">frac_coord</span><span class="o">=</span><span class="n">j</span>
+                    <span class="p">)</span>
+                    <span class="n">new_frac_coord</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_c_coord</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_duplicate_coords</span><span class="p">(</span><span class="n">frac_coords</span><span class="p">,</span> <span class="n">new_frac_coord</span><span class="p">):</span>
+                        <span class="n">frac_coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_frac_coord</span><span class="p">)</span>
+                        <span class="n">cif_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cif_elements</span><span class="p">[</span><span class="n">jj</span><span class="p">])</span>
+            <span class="n">new_atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span>
+                <span class="n">lattice_mat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span>
+                <span class="n">coords</span><span class="o">=</span><span class="n">frac_coords</span><span class="p">,</span>
+                <span class="n">elements</span><span class="o">=</span><span class="n">cif_elements</span><span class="p">,</span>
+                <span class="n">cartesian</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">cif_atoms</span> <span class="o">=</span> <span class="n">new_atoms</span>
+        <span class="k">return</span> <span class="n">cif_atoms</span></div>
+
 <div class="viewcode-block" id="Atoms.write_poscar"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.atoms.Atoms.write_poscar">[docs]</a>    <span class="k">def</span> <span class="nf">write_poscar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;POSCAR&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Write POSCAR format file from Atoms object.&quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Poscar</span>
 
         <span class="n">pos</span> <span class="o">=</span> <span class="n">Poscar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">pos</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_xyz_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get xyz string for atoms.&quot;&quot;&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">line</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">line</span>
 
 <div class="viewcode-block" id="Atoms.write_xyz"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.atoms.Atoms.write_xyz">[docs]</a>    <span class="k">def</span> <span class="nf">write_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;atoms.xyz&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Write XYZ format file.&quot;&quot;&quot;</span>
@@ -223,7 +474,6 @@
         <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%7.5f</span><span class="s2"> </span><span class="si">%7.5f</span><span class="s2"> </span><span class="si">%7.5f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">j</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
@@ -355,6 +605,22 @@
         <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">)</span>
         <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">coords</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">coords</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span> <span class="o">**</span> <span class="mi">2</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">raw_angle_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cut_off</span><span class="o">=</span><span class="mf">5.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Provide distance matrix.&quot;&quot;&quot;</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">)</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">coords</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">cut_off</span>
+                <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">((</span><span class="n">c</span> <span class="o">-</span> <span class="n">b</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">cut_off</span>
+            <span class="p">):</span>
+                <span class="n">angle</span> <span class="o">=</span> <span class="n">get_angle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+                <span class="n">angles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">angles</span>
 
 <div class="viewcode-block" id="Atoms.center"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.atoms.Atoms.center">[docs]</a>    <span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">vacuum</span><span class="o">=</span><span class="mf">18.0</span><span class="p">,</span> <span class="n">about</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -517,6 +783,37 @@
                 <span class="n">coords_are_cartesian</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Requires pymatgen for this functionality.&quot;</span><span class="p">)</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Atoms.phonopy_converter"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.atoms.Atoms.phonopy_converter">[docs]</a>    <span class="k">def</span> <span class="nf">phonopy_converter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get phonopy representation of the atoms object.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">phonopy.structure.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span> <span class="k">as</span> <span class="n">PhonopyAtoms</span>
+
+            <span class="k">return</span> <span class="n">PhonopyAtoms</span><span class="p">(</span>
+                <span class="n">symbols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">,</span>
+                <span class="n">positions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">,</span>
+                <span class="n">pbc</span><span class="o">=</span><span class="n">pbc</span><span class="p">,</span>
+                <span class="n">cell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Requires phonopy for this functionality.&quot;</span><span class="p">)</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Atoms.ase_converter"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.atoms.Atoms.ase_converter">[docs]</a>    <span class="k">def</span> <span class="nf">ase_converter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get ASE representation of the atoms object.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">Atoms</span> <span class="k">as</span> <span class="n">AseAtoms</span>
+
+            <span class="k">return</span> <span class="n">AseAtoms</span><span class="p">(</span>
+                <span class="n">symbols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">,</span>
+                <span class="n">positions</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cart_coords</span><span class="p">,</span>
+                <span class="n">pbc</span><span class="o">=</span><span class="n">pbc</span><span class="p">,</span>
+                <span class="n">cell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Requires ASE for this functionality.&quot;</span><span class="p">)</span>
             <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="Atoms.spacegroup"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.atoms.Atoms.spacegroup">[docs]</a>    <span class="k">def</span> <span class="nf">spacegroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">):</span>
@@ -787,7 +1084,8 @@
                 <span class="o">+</span> <span class="n">cart_frac</span>
             <span class="p">)</span>
         <span class="n">rest</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
+        <span class="k">if</span> <span class="n">coords_ordered</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">coords_ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">coords</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coords_ordered</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_props</span><span class="p">:</span>
                 <span class="n">rest</span> <span class="o">=</span> <span class="p">(</span>
@@ -1048,6 +1346,26 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">,</span> <span class="n">dim3</span><span class="p">]</span></div>
 
 
+<div class="viewcode-block" id="pmg_to_atoms"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.atoms.pmg_to_atoms">[docs]</a><span class="k">def</span> <span class="nf">pmg_to_atoms</span><span class="p">(</span><span class="n">pmg</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert pymatgen structure to Atoms.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Atoms</span><span class="p">(</span>
+        <span class="n">lattice_mat</span><span class="o">=</span><span class="n">pmg</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">matrix</span><span class="p">,</span>
+        <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">symbol</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pmg</span><span class="o">.</span><span class="n">species</span><span class="p">],</span>
+        <span class="n">coords</span><span class="o">=</span><span class="n">pmg</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">,</span>
+        <span class="n">cartesian</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ase_to_atoms"><a class="viewcode-back" href="../../../jarvis.core.html#jarvis.core.atoms.ase_to_atoms">[docs]</a><span class="k">def</span> <span class="nf">ase_to_atoms</span><span class="p">(</span><span class="n">ase_atoms</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert ase structure to Atoms.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Atoms</span><span class="p">(</span>
+        <span class="n">lattice_mat</span><span class="o">=</span><span class="n">ase_atoms</span><span class="o">.</span><span class="n">get_cell</span><span class="p">(),</span>
+        <span class="n">elements</span><span class="o">=</span><span class="n">ase_atoms</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">(),</span>
+        <span class="n">coords</span><span class="o">=</span><span class="n">ase_atoms</span><span class="o">.</span><span class="n">get_positions</span><span class="p">(),</span>
+        <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">if __name__ == &quot;__main__&quot;:</span>
 <span class="sd">    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]</span>
@@ -1056,8 +1374,15 @@
 <span class="sd">    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)</span>
 <span class="sd">    Si.write_xyz(&quot;atoms.xyz&quot;)</span>
 <span class="sd">    from jarvis.io.vasp.inputs import Poscar</span>
-<span class="sd">    Si=Atoms.from_poscar(&#39;/users/knc6/POSCAR&#39;)</span>
+
+<span class="sd">    Si = Atoms.from_poscar(&quot;/users/knc6/POSCAR&quot;)</span>
 <span class="sd">    Si.write_cif()</span>
+<span class="sd">    a = Atoms.from_cif(&quot;atoms.cif&quot;)</span>
+<span class="sd">    print(a)</span>
+<span class="sd">    fn = &quot;/cluster/users/knc6/justback/desc_library/cod/cif/1000052.cif&quot;</span>
+<span class="sd">    # fn=&quot;/cluster/users/knc6/justback/desc_library/cod/cif/1000443.cif&quot;</span>
+<span class="sd">    a = Atoms.from_cif(filename=fn)</span>
+<span class="sd">    print (a)</span>
 <span class="sd">    Si.write_poscar()</span>
 <span class="sd">    print (Si.composition.reduced_formula)</span>
 <span class="sd">    #print (Si.get_string())</span>
@@ -1090,6 +1415,13 @@
 <span class="sd">    #print (pmg)</span>
 <span class="sd">    # print (Si.get_center_of_mass())</span>
 <span class="sd">    # print (Si.get_string())</span>
+<span class="sd">    a=Atoms.from_cif(&#39;ll.cif&#39;)</span>
+<span class="sd">    print(a)</span>
+<span class="sd">    from pymatgen.core.structure import Structure</span>
+<span class="sd">    s=Structure.from_file(&#39;ll.cif&#39;)</span>
+<span class="sd">    from pymatgen.io.vasp.inputs import Poscar</span>
+<span class="sd">    p=Poscar(s)</span>
+<span class="sd">    print (p)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 
@@ -1123,12 +1455,12 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>

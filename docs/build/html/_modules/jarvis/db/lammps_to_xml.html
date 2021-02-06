@@ -1,0 +1,302 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.db.lammps_to_xml &#8212; jarvis-tools v2021.2.3 documentation</title>
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jarvis.db.lammps_to_xml</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module to generate XML file for LAMMPS calculation.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">get_supercell_dims</span>
+<span class="kn">from</span> <span class="nn">jarvis.db.jsonutils</span> <span class="kn">import</span> <span class="n">loadjson</span>
+<span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="n">Spacegroup3D</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.utils</span> <span class="kn">import</span> <span class="n">stringdict_to_xml</span>
+
+<span class="n">mp_jv</span> <span class="o">=</span> <span class="n">loadjson</span><span class="p">(</span><span class="s2">&quot;/rk2/knc6/DB/MP/mp_jv_id.json&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_jvid"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.lammps_to_xml.get_jvid">[docs]</a><span class="k">def</span> <span class="nf">get_jvid</span><span class="p">(</span><span class="n">mp</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get JARVIS-ID for MPID.&quot;&quot;&quot;</span>
+    <span class="n">jvid</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">jvid</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mp_jv</span><span class="p">[</span><span class="n">mp</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No JID&quot;</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">jvid</span></div>
+
+
+<div class="viewcode-block" id="basic_data"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.lammps_to_xml.basic_data">[docs]</a><span class="k">def</span> <span class="nf">basic_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{},</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;JARVIS-FF-LAMMPS&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get basic data for table.&quot;&quot;&quot;</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;jid&quot;</span><span class="p">]</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;source_folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;source_folder&quot;</span><span class="p">]</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;tmp_source_folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;source_folder&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;tmp_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;jid&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;source_folder&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;@&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;ref&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">ref</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;jvid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_jvid</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+    <span class="n">final_atoms</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;bulk_data&quot;</span><span class="p">][</span><span class="s2">&quot;final_str&quot;</span><span class="p">]</span>
+    <span class="n">initial_atoms</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;bulk_data&quot;</span><span class="p">][</span><span class="s2">&quot;initial_str&quot;</span><span class="p">]</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;formula&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_atoms</span><span class="o">.</span><span class="n">composition</span><span class="o">.</span><span class="n">reduced_formula</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;tmp_formula&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">final_atoms</span><span class="o">.</span><span class="n">composition</span><span class="o">.</span><span class="n">reduced_formula</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;elements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">final_atoms</span><span class="o">.</span><span class="n">uniq_species</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;tmp_elements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">final_atoms</span><span class="o">.</span><span class="n">uniq_species</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;number_uniq_species&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">final_atoms</span><span class="o">.</span><span class="n">uniq_species</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;data_source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;tmp_data_source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">source</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;pair_style&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;bulk_data&quot;</span><span class="p">][</span><span class="s2">&quot;pair_style&quot;</span><span class="p">]</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;pair_coeff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;bulk_data&quot;</span><span class="p">][</span><span class="s2">&quot;pair_coeff&quot;</span><span class="p">]</span>
+    <span class="c1"># info[&quot;pair_coeff&quot;] = (</span>
+    <span class="c1">#    &#39;&lt;a href=&quot;http://www.ctcms.nist.gov/~knc6/DOWNLOADS/&#39;</span>
+    <span class="c1">#    + data[&quot;bulk_data&quot;][&quot;pair_coeff&quot;]</span>
+    <span class="c1">#    + &#39;.zip&quot;&gt;&#39;</span>
+    <span class="c1">#    + data[&quot;bulk_data&quot;][&quot;pair_coeff&quot;]</span>
+    <span class="c1">#    + &quot;&lt;/a&gt;&quot;</span>
+    <span class="c1"># )</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy_per_atom&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;bulk_data&quot;</span><span class="p">][</span><span class="s2">&quot;energy_per_atom&quot;</span><span class="p">]),</span> <span class="mi">3</span>
+    <span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;pressure&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;bulk_data&quot;</span><span class="p">][</span><span class="s2">&quot;system_pressure&quot;</span><span class="p">]),</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">initial_spg</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">initial_atoms</span><span class="p">)</span>
+    <span class="n">final_spg</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">final_atoms</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_spacegroup_number&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_spg</span><span class="o">.</span><span class="n">space_group_number</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_spacegroup_symbol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_spg</span><span class="o">.</span><span class="n">space_group_symbol</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_pointgroup_symbol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_spg</span><span class="o">.</span><span class="n">point_group_symbol</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_crystal_system&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_spg</span><span class="o">.</span><span class="n">crystal_system</span>
+    <span class="n">initial_lat_params</span> <span class="o">=</span> <span class="n">initial_atoms</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_a&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">initial_lat_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_b&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">initial_lat_params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">initial_lat_params</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">initial_lat_params</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_beta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">initial_lat_params</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_gamma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">initial_lat_params</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_density&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">initial_atoms</span><span class="o">.</span><span class="n">density</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="n">get_supercell_dims</span><span class="p">(</span><span class="n">final_atoms</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;xyz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;&quot;&#39;</span>
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">final_atoms</span><span class="o">.</span><span class="n">make_supercell_matrix</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span><span class="o">.</span><span class="n">get_xyz_string</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span>
+        <span class="p">)</span>
+        <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+    <span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">final_atoms</span><span class="o">.</span><span class="n">get_string</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+    <span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;initial_str&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">initial_atoms</span><span class="o">.</span><span class="n">get_string</span><span class="p">())</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+    <span class="p">)</span>
+    <span class="n">final_lat_params</span> <span class="o">=</span> <span class="n">final_atoms</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_a&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">final_lat_params</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_b&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">final_lat_params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_c&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">final_lat_params</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">final_lat_params</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_beta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">final_lat_params</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_gamma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">final_lat_params</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_density&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">final_atoms</span><span class="o">.</span><span class="n">density</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_spacegroup_number&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_spg</span><span class="o">.</span><span class="n">space_group_number</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_spacegroup_symbol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_spg</span><span class="o">.</span><span class="n">space_group_symbol</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_pointgroup_symbol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_spg</span><span class="o">.</span><span class="n">point_group_symbol</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;final_crystal_system&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">final_spg</span><span class="o">.</span><span class="n">crystal_system</span>
+
+    <span class="n">et</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="c1"># print(data[&quot;bulk_data&quot;][&quot;elastic_tensor&quot;][&quot;raw_et_tensor&quot;])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;bulk_data&quot;</span><span class="p">][</span><span class="s2">&quot;elastic_tensor&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">cij</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;bulk_data&quot;</span><span class="p">][</span><span class="s2">&quot;elastic_tensor&quot;</span><span class="p">][</span><span class="s2">&quot;raw_et_tensor&quot;</span><span class="p">]),</span> <span class="mi">2</span>
+            <span class="p">)</span>
+            <span class="n">et</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s1">&#39;&lt;cij&gt;&quot;&#39;</span>
+                <span class="o">+</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">cij</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">)]</span>
+                <span class="p">)</span>
+                <span class="o">+</span> <span class="s1">&#39;&quot;&lt;/cij&gt;&#39;</span>
+            <span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot obtain elastic tensor data.&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;source_folder&quot;</span><span class="p">],</span> <span class="n">exp</span><span class="p">)</span>
+        <span class="k">pass</span>
+
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;elastic_tensor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">et</span>
+    <span class="n">vacancy_line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;vacancy_info&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;vacancy_info&quot;</span><span class="p">]:</span>
+            <span class="n">vacancy_line</span> <span class="o">+=</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;vacancy_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">vacancy_line</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+
+    <span class="n">surf_line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;surface_info&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;surface_info&quot;</span><span class="p">]:</span>
+            <span class="n">surf_line</span> <span class="o">+=</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;surface_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">surf_line</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+
+    <span class="n">phonon_band_line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Band</span>
+        <span class="n">frequencies</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;band_frequencies&quot;</span><span class="p">]</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;band_distances&quot;</span><span class="p">]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;band_labels&quot;</span><span class="p">]</span>
+        <span class="n">label_points</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;band_label_points&quot;</span><span class="p">]</span>
+
+        <span class="n">tmp</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frequencies</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">tmp</span> <span class="o">+=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">frequencies</span><span class="p">)[:,</span> <span class="n">i</span><span class="p">]))</span> <span class="o">+</span> <span class="s2">&quot;;&quot;</span>
+
+        <span class="n">phonon_band_line</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="s2">&quot;&lt;phonon_bandstructure_distances&gt;&#39;&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">distances</span><span class="p">))</span>
+            <span class="o">+</span> <span class="s2">&quot;&#39;&lt;/phonon_bandstructure_distances&gt;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">phonon_band_line</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="s2">&quot;&lt;phonon_bandstructure_frequencies&gt;&#39;&quot;</span>
+            <span class="o">+</span> <span class="n">tmp</span>
+            <span class="o">+</span> <span class="s2">&quot;&#39;&lt;/phonon_bandstructure_frequencies&gt;&quot;</span>
+        <span class="p">)</span>
+        <span class="n">phonon_band_line</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="s2">&quot;&lt;phonon_bandstructure_labels&gt;&#39;&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">labels</span><span class="p">))</span>
+            <span class="o">+</span> <span class="s2">&quot;&#39;&lt;/phonon_bandstructure_labels&gt;&quot;</span>
+        <span class="p">)</span>
+        <span class="n">phonon_band_line</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="s2">&quot;&lt;phonon_bandstructure_label_points&gt;&#39;&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">label_points</span><span class="p">))</span>
+            <span class="o">+</span> <span class="s2">&quot;&#39;&lt;/phonon_bandstructure_label_points&gt;&quot;</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot obtain phonon band data.&quot;</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span>
+
+    <span class="c1"># Comment until 4 MB text size error</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;phonon_band_line&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phonon_band_line</span>
+    <span class="n">phonon_dos_line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;dos_freq&quot;</span><span class="p">]</span>
+        <span class="n">pdos</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;dos_intensity&quot;</span><span class="p">]</span>
+        <span class="n">phonon_dos_line</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="s2">&quot;&lt;phonon_dos_frequencies&gt;&#39;&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">freq</span><span class="p">))</span>
+            <span class="o">+</span> <span class="s2">&quot;&#39;&lt;/phonon_dos_frequencies&gt;&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">phonon_dos_line</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="s2">&quot;&lt;phonon_dos_intensity&gt;&#39;&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">pdos</span><span class="p">))</span>
+            <span class="o">+</span> <span class="s2">&quot;&#39;&lt;/phonon_dos_intensity&gt;&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot obtain phonon dod data.&quot;</span><span class="p">)</span>
+        <span class="k">pass</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;phonon_dos_line&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phonon_dos_line</span>
+
+    <span class="k">return</span> <span class="n">info</span></div>
+
+
+<div class="viewcode-block" id="write_xml"><a class="viewcode-back" href="../../../jarvis.db.html#jarvis.db.lammps_to_xml.write_xml">[docs]</a><span class="k">def</span> <span class="nf">write_xml</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{},</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;temp.xml&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write XML file.&quot;&quot;&quot;</span>
+    <span class="n">basic</span> <span class="o">=</span> <span class="n">basic_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="c1"># name = data[&quot;jid&quot;] + &quot;.xml&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">basic_xml</span> <span class="o">=</span> <span class="n">stringdict_to_xml</span><span class="p">(</span><span class="n">basic</span><span class="p">)</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="s1">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">line</span> <span class="o">+=</span> <span class="s1">&#39;&lt;?xml-stylesheet type=&quot;text/xsl&quot; &#39;</span>
+    <span class="n">line</span> <span class="o">+=</span> <span class="s1">&#39;href=&quot;jarvisff.xsl&quot;?&gt;</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+    <span class="n">line</span> <span class="o">+=</span> <span class="s2">&quot;&lt;basic_info&gt;&quot;</span>
+
+    <span class="n">line</span> <span class="o">+=</span> <span class="n">basic_xml</span>
+    <span class="n">line</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/basic_info&gt;&quot;</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">    from jarvis.io.lammps.outputs import parse_material_calculation_folder</span>
+
+<span class="sd">    fold = &#39;/rk2/knc6/JARVIS-FF/ALLOY8/</span>
+<span class="sd">    Mishin-Ni-Al-2009.eam.alloy_nist/bulk@mp-23_fold&#39;</span>
+<span class="sd">    x = parse_material_calculation_folder(fold)</span>
+<span class="sd">    write_xml(x)</span>
+<span class="sd">    print(&#39;src&#39;,x[&quot;source_folder&quot;].split(&#39;/&#39;)[-1].split(&#39;@&#39;)[1].split(&#39;_&#39;)[0])</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
