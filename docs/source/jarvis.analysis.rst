@@ -8,8 +8,11 @@ Subpackages
 
     jarvis.analysis.darkmatter
     jarvis.analysis.defects
+    jarvis.analysis.diffraction
+    jarvis.analysis.elastic
     jarvis.analysis.interface
     jarvis.analysis.magnetism
+    jarvis.analysis.periodic
     jarvis.analysis.phonon
     jarvis.analysis.solarefficiency
     jarvis.analysis.stm

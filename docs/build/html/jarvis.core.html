@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.core package &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.core package &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -54,6 +54,12 @@
 <dt id="jarvis.core.atoms.Atoms.apply_strain">
 <code class="descname">apply_strain</code><span class="sig-paren">(</span><em>strain</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.apply_strain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.apply_strain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply a strain(e.g. 0.01, [0,0,.01]) to the lattice.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.atoms.Atoms.ase_converter">
+<code class="descname">ase_converter</code><span class="sig-paren">(</span><em>pbc=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.ase_converter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.ase_converter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get ASE representation of the atoms object.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -105,6 +111,12 @@ Applicable for sufcae with vaccums only.</p>
 <dt id="jarvis.core.atoms.Atoms.density">
 <code class="descname">density</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.density" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get density in g/cm3 of the atoms object.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="jarvis.core.atoms.Atoms.from_cif">
+<em class="property">static </em><code class="descname">from_cif</code><span class="sig-paren">(</span><em>filename='atoms.cif'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.from_cif"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.from_cif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read .cif format file.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -163,6 +175,12 @@ Applicable for sufcae with vaccums only.</p>
 </dl>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.core.atoms.Atoms.get_xyz_string">
+<code class="descname">get_xyz_string</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.get_xyz_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get xyz string for atoms.</p>
 </dd></dl>
 
 <dl class="method">
@@ -236,9 +254,21 @@ this method in the subclass.</dd>
 </dd></dl>
 
 <dl class="method">
+<dt id="jarvis.core.atoms.Atoms.phonopy_converter">
+<code class="descname">phonopy_converter</code><span class="sig-paren">(</span><em>pbc=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.phonopy_converter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.phonopy_converter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get phonopy representation of the atoms object.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="jarvis.core.atoms.Atoms.pymatgen_converter">
 <code class="descname">pymatgen_converter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#Atoms.pymatgen_converter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.Atoms.pymatgen_converter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get pymatgen representation of the atoms object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.core.atoms.Atoms.raw_angle_matrix">
+<code class="descname">raw_angle_matrix</code><a class="headerlink" href="#jarvis.core.atoms.Atoms.raw_angle_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide distance matrix.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -325,6 +355,12 @@ this method in the subclass.</dd>
 </dd></dl>
 
 <dl class="function">
+<dt id="jarvis.core.atoms.ase_to_atoms">
+<code class="descclassname">jarvis.core.atoms.</code><code class="descname">ase_to_atoms</code><span class="sig-paren">(</span><em>ase_atoms=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#ase_to_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.ase_to_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert ase structure to Atoms.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="jarvis.core.atoms.fix_pbc">
 <code class="descclassname">jarvis.core.atoms.</code><code class="descname">fix_pbc</code><span class="sig-paren">(</span><em>atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#fix_pbc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.fix_pbc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use for making Atoms with vacuum.</p>
@@ -334,6 +370,12 @@ this method in the subclass.</dd>
 <dt id="jarvis.core.atoms.get_supercell_dims">
 <code class="descclassname">jarvis.core.atoms.</code><code class="descname">get_supercell_dims</code><span class="sig-paren">(</span><em>atoms</em>, <em>enforce_c_size=10</em>, <em>extend=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#get_supercell_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.get_supercell_dims" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get supercell dimensions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.atoms.pmg_to_atoms">
+<code class="descclassname">jarvis.core.atoms.</code><code class="descname">pmg_to_atoms</code><span class="sig-paren">(</span><em>pmg=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/atoms.html#pmg_to_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.atoms.pmg_to_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert pymatgen structure to Atoms.</p>
 </dd></dl>
 
 </div>
@@ -412,7 +454,7 @@ this method in the subclass.</dd>
 
 <dl class="staticmethod">
 <dt id="jarvis.core.graphs.Graph.from_atoms">
-<em class="property">static </em><code class="descname">from_atoms</code><span class="sig-paren">(</span><em>atoms=None</em>, <em>lengthscale=0.5</em>, <em>variance=1.0</em>, <em>get_prim=False</em>, <em>zero_diag=False</em>, <em>node_atomwise_angle_dist=False</em>, <em>node_atomwise_rdf=False</em>, <em>features='basic'</em>, <em>enforce_c_size=10.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/graphs.html#Graph.from_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.graphs.Graph.from_atoms" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">from_atoms</code><span class="sig-paren">(</span><em>atoms=None</em>, <em>lengthscale=0.5</em>, <em>variance=1.0</em>, <em>get_prim=False</em>, <em>zero_diag=False</em>, <em>node_atomwise_angle_dist=False</em>, <em>node_atomwise_rdf=False</em>, <em>features='basic'</em>, <em>enforce_c_size=10.0</em>, <em>max_n=100</em>, <em>max_cut=5.0</em>, <em>verbose=False</em>, <em>make_colormap=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/graphs.html#Graph.from_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.graphs.Graph.from_atoms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get Networkx graph. Requires Networkx installation.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -460,6 +502,71 @@ See: jarvis/core/specie.py</dd>
 <dt id="jarvis.core.graphs.Graph.to_networkx">
 <code class="descname">to_networkx</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/graphs.html#Graph.to_networkx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.graphs.Graph.to_networkx" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get networkx representation.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.core.image">
+<span id="jarvis-core-image-module"></span><h2>jarvis.core.image module<a class="headerlink" href="#module-jarvis.core.image" title="Permalink to this headline">¶</a></h2>
+<p>Module for processing image files.</p>
+<dl class="class">
+<dt id="jarvis.core.image.Image">
+<em class="property">class </em><code class="descclassname">jarvis.core.image.</code><code class="descname">Image</code><span class="sig-paren">(</span><em>values=[]</em>, <em>pbc_params=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/image.html#Image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.image.Image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Module for processing image files.</p>
+<dl class="method">
+<dt id="jarvis.core.image.Image.black_and_white">
+<code class="descname">black_and_white</code><span class="sig-paren">(</span><em>threshold=127</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/image.html#Image.black_and_white"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.image.Image.black_and_white" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make black and white image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.image.Image.crop_square">
+<code class="descname">crop_square</code><span class="sig-paren">(</span><em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/image.html#Image.crop_square"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.image.Image.crop_square" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crop an image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.image.Image.fourier_transform2D">
+<code class="descname">fourier_transform2D</code><span class="sig-paren">(</span><em>zoom_factor=30</em>, <em>interpol_factor=1</em>, <em>use_crop=True</em>, <em>pad_bright_spot=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/image.html#Image.fourier_transform2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.image.Image.fourier_transform2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make 2D FT.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="jarvis.core.image.Image.from_file">
+<em class="property">static </em><code class="descname">from_file</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/image.html#Image.from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.image.Image.from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load image frim file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.image.Image.gaussian_filter">
+<code class="descname">gaussian_filter</code><span class="sig-paren">(</span><em>sigma=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/image.html#Image.gaussian_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.image.Image.gaussian_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply Gaussian filter to an image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.image.Image.rgb_to_gray">
+<code class="descname">rgb_to_gray</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/image.html#Image.rgb_to_gray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.image.Image.rgb_to_gray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make RGB to Grey scale image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.image.Image.rotate">
+<code class="descname">rotate</code><span class="sig-paren">(</span><em>angle=45</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/image.html#Image.rotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.image.Image.rotate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate an image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.image.Image.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/image.html#Image.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.image.Image.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save an image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.image.Image.zoom_interp_2d">
+<code class="descname">zoom_interp_2d</code><span class="sig-paren">(</span><em>FFT_image</em>, <em>zoom_factor=40</em>, <em>interpol_factor=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/image.html#Image.zoom_interp_2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.image.Image.zoom_interp_2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zoom and interpolate an image.</p>
 </dd></dl>
 
 </dd></dl>
@@ -658,6 +765,12 @@ See: jarvis/core/specie.py</dd>
 <dt id="jarvis.core.kpoints.Kpoints3D.kpath">
 <code class="descname">kpath</code><span class="sig-paren">(</span><em>atoms</em>, <em>line_density=20</em>, <em>weights=[]</em>, <em>unique_kp_only=False</em>, <em>coords_are_cartesian=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D.kpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.kpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get k-path for bandstructure calculations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.kpoints.Kpoints3D.kpoints_per_atom">
+<code class="descname">kpoints_per_atom</code><span class="sig-paren">(</span><em>atoms=None</em>, <em>kppa=1000</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/kpoints.html#Kpoints3D.kpoints_per_atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.kpoints.Kpoints3D.kpoints_per_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Kpoints object for kpoints per atom for a cell.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -884,6 +997,12 @@ Adapted from pymatgen.</p>
 <dt id="jarvis.core.lattice.Lattice.reciprocal_lattice">
 <code class="descname">reciprocal_lattice</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.reciprocal_lattice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.reciprocal_lattice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return reciprocal Lattice.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.lattice.Lattice.reciprocal_lattice_crystallographic">
+<code class="descname">reciprocal_lattice_crystallographic</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/lattice.html#Lattice.reciprocal_lattice_crystallographic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.lattice.Lattice.reciprocal_lattice_crystallographic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return reciprocal Lattice without 2 * pi.</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -1130,9 +1249,86 @@ keys = [</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-jarvis.core.spectrum">
+<span id="jarvis-core-spectrum-module"></span><h2>jarvis.core.spectrum module<a class="headerlink" href="#module-jarvis.core.spectrum" title="Permalink to this headline">¶</a></h2>
+<p>Module to process spectrum like data.</p>
+<dl class="class">
+<dt id="jarvis.core.spectrum.Spectrum">
+<em class="property">class </em><code class="descclassname">jarvis.core.spectrum.</code><code class="descname">Spectrum</code><span class="sig-paren">(</span><em>x=[]</em>, <em>y=[]</em>, <em>linewidth=5.0</em>, <em>resolution=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/spectrum.html#Spectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.spectrum.Spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Module for spectrum like data, e.g. IR, Raman, DOS, epsilon.</p>
+<dl class="method">
+<dt id="jarvis.core.spectrum.Spectrum.get_interpolated_values">
+<code class="descname">get_interpolated_values</code><span class="sig-paren">(</span><em>new_dist=array([ 0.</em>, <em>0.05</em>, <em>0.1</em>, <em>0.15</em>, <em>0.2</em>, <em>0.25</em>, <em>0.3</em>, <em>0.35</em>, <em>0.4</em>, <em>0.45</em>, <em>0.5</em>, <em>0.55</em>, <em>0.6</em>, <em>0.65</em>, <em>0.7</em>, <em>0.75</em>, <em>0.8</em>, <em>0.85</em>, <em>0.9</em>, <em>0.95</em>, <em>1.</em>, <em>1.05</em>, <em>1.1</em>, <em>1.15</em>, <em>1.2</em>, <em>1.25</em>, <em>1.3</em>, <em>1.35</em>, <em>1.4</em>, <em>1.45</em>, <em>1.5</em>, <em>1.55</em>, <em>1.6</em>, <em>1.65</em>, <em>1.7</em>, <em>1.75</em>, <em>1.8</em>, <em>1.85</em>, <em>1.9</em>, <em>1.95</em>, <em>2.</em>, <em>2.05</em>, <em>2.1</em>, <em>2.15</em>, <em>2.2</em>, <em>2.25</em>, <em>2.3</em>, <em>2.35</em>, <em>2.4</em>, <em>2.45</em>, <em>2.5</em>, <em>2.55</em>, <em>2.6</em>, <em>2.65</em>, <em>2.7</em>, <em>2.75</em>, <em>2.8</em>, <em>2.85</em>, <em>2.9</em>, <em>2.95</em>, <em>3.</em>, <em>3.05</em>, <em>3.1</em>, <em>3.15</em>, <em>3.2</em>, <em>3.25</em>, <em>3.3</em>, <em>3.35</em>, <em>3.4</em>, <em>3.45</em>, <em>3.5</em>, <em>3.55</em>, <em>3.6</em>, <em>3.65</em>, <em>3.7</em>, <em>3.75</em>, <em>3.8</em>, <em>3.85</em>, <em>3.9</em>, <em>3.95</em>, <em>4.</em>, <em>4.05</em>, <em>4.1</em>, <em>4.15</em>, <em>4.2</em>, <em>4.25</em>, <em>4.3</em>, <em>4.35</em>, <em>4.4</em>, <em>4.45</em>, <em>4.5</em>, <em>4.55</em>, <em>4.6</em>, <em>4.65</em>, <em>4.7</em>, <em>4.75</em>, <em>4.8</em>, <em>4.85</em>, <em>4.9</em>, <em>4.95</em>, <em>5.</em>, <em>5.05</em>, <em>5.1</em>, <em>5.15</em>, <em>5.2</em>, <em>5.25</em>, <em>5.3</em>, <em>5.35</em>, <em>5.4</em>, <em>5.45</em>, <em>5.5</em>, <em>5.55</em>, <em>5.6</em>, <em>5.65</em>, <em>5.7</em>, <em>5.75</em>, <em>5.8</em>, <em>5.85</em>, <em>5.9</em>, <em>5.95</em>, <em>6.</em>, <em>6.05</em>, <em>6.1</em>, <em>6.15</em>, <em>6.2</em>, <em>6.25</em>, <em>6.3</em>, <em>6.35</em>, <em>6.4</em>, <em>6.45</em>, <em>6.5</em>, <em>6.55</em>, <em>6.6</em>, <em>6.65</em>, <em>6.7</em>, <em>6.75</em>, <em>6.8</em>, <em>6.85</em>, <em>6.9</em>, <em>6.95</em>, <em>7.</em>, <em>7.05</em>, <em>7.1</em>, <em>7.15</em>, <em>7.2</em>, <em>7.25</em>, <em>7.3</em>, <em>7.35</em>, <em>7.4</em>, <em>7.45</em>, <em>7.5</em>, <em>7.55</em>, <em>7.6</em>, <em>7.65</em>, <em>7.7</em>, <em>7.75</em>, <em>7.8</em>, <em>7.85</em>, <em>7.9</em>, <em>7.95</em>, <em>8.</em>, <em>8.05</em>, <em>8.1</em>, <em>8.15</em>, <em>8.2</em>, <em>8.25</em>, <em>8.3</em>, <em>8.35</em>, <em>8.4</em>, <em>8.45</em>, <em>8.5</em>, <em>8.55</em>, <em>8.6</em>, <em>8.65</em>, <em>8.7</em>, <em>8.75</em>, <em>8.8</em>, <em>8.85</em>, <em>8.9</em>, <em>8.95</em>, <em>9.</em>, <em>9.05</em>, <em>9.1</em>, <em>9.15</em>, <em>9.2</em>, <em>9.25</em>, <em>9.3</em>, <em>9.35</em>, <em>9.4</em>, <em>9.45</em>, <em>9.5</em>, <em>9.55</em>, <em>9.6</em>, <em>9.65</em>, <em>9.7</em>, <em>9.75</em>, <em>9.8</em>, <em>9.85</em>, <em>9.9</em>, <em>9.95</em>, <em>10.</em>, <em>10.05</em>, <em>10.1</em>, <em>10.15</em>, <em>10.2</em>, <em>10.25</em>, <em>10.3</em>, <em>10.35</em>, <em>10.4</em>, <em>10.45</em>, <em>10.5</em>, <em>10.55</em>, <em>10.6</em>, <em>10.65</em>, <em>10.7</em>, <em>10.75</em>, <em>10.8</em>, <em>10.85</em>, <em>10.9</em>, <em>10.95</em>, <em>11.</em>, <em>11.05</em>, <em>11.1</em>, <em>11.15</em>, <em>11.2</em>, <em>11.25</em>, <em>11.3</em>, <em>11.35</em>, <em>11.4</em>, <em>11.45</em>, <em>11.5</em>, <em>11.55</em>, <em>11.6</em>, <em>11.65</em>, <em>11.7</em>, <em>11.75</em>, <em>11.8</em>, <em>11.85</em>, <em>11.9</em>, <em>11.95</em>, <em>12.</em>, <em>12.05</em>, <em>12.1</em>, <em>12.15</em>, <em>12.2</em>, <em>12.25</em>, <em>12.3</em>, <em>12.35</em>, <em>12.4</em>, <em>12.45</em>, <em>12.5</em>, <em>12.55</em>, <em>12.6</em>, <em>12.65</em>, <em>12.7</em>, <em>12.75</em>, <em>12.8</em>, <em>12.85</em>, <em>12.9</em>, <em>12.95</em>, <em>13.</em>, <em>13.05</em>, <em>13.1</em>, <em>13.15</em>, <em>13.2</em>, <em>13.25</em>, <em>13.3</em>, <em>13.35</em>, <em>13.4</em>, <em>13.45</em>, <em>13.5</em>, <em>13.55</em>, <em>13.6</em>, <em>13.65</em>, <em>13.7</em>, <em>13.75</em>, <em>13.8</em>, <em>13.85</em>, <em>13.9</em>, <em>13.95</em>, <em>14.</em>, <em>14.05</em>, <em>14.1</em>, <em>14.15</em>, <em>14.2</em>, <em>14.25</em>, <em>14.3</em>, <em>14.35</em>, <em>14.4</em>, <em>14.45</em>, <em>14.5</em>, <em>14.55</em>, <em>14.6</em>, <em>14.65</em>, <em>14.7</em>, <em>14.75</em>, <em>14.8</em>, <em>14.85</em>, <em>14.9</em>, <em>14.95])</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/spectrum.html#Spectrum.get_interpolated_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.spectrum.Spectrum.get_interpolated_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get interpolated grid on a fixed grid.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.spectrum.Spectrum.get_peak_indices">
+<code class="descname">get_peak_indices</code><span class="sig-paren">(</span><em>window=array([1</em>, <em>2</em>, <em>3</em>, <em>4</em>, <em>5</em>, <em>6</em>, <em>7</em>, <em>8</em>, <em>9])</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/spectrum.html#Spectrum.get_peak_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.spectrum.Spectrum.get_peak_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get peak indices for non-zero peaks.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.core.spectrum.Spectrum.max_x">
+<code class="descname">max_x</code><a class="headerlink" href="#jarvis.core.spectrum.Spectrum.max_x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get maximum mode frequency.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.core.spectrum.Spectrum.min_x">
+<code class="descname">min_x</code><a class="headerlink" href="#jarvis.core.spectrum.Spectrum.min_x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get minimum mode frequency.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.core.spectrum.Spectrum.num_modes">
+<code class="descname">num_modes</code><a class="headerlink" href="#jarvis.core.spectrum.Spectrum.num_modes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get number of modes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.spectrum.Spectrum.rescale">
+<code class="descname">rescale</code><span class="sig-paren">(</span><em>mode='max'</em>, <em>scaling_factor=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/spectrum.html#Spectrum.rescale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.spectrum.Spectrum.rescale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rescale the spectrum.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.core.spectrum.Spectrum.smoothen_spiky_spectrum">
+<code class="descname">smoothen_spiky_spectrum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/spectrum.html#Spectrum.smoothen_spiky_spectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.spectrum.Spectrum.smoothen_spiky_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Smoothen peak for delta function like peaks.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-jarvis.core.utils">
 <span id="jarvis-core-utils-module"></span><h2>jarvis.core.utils module<a class="headerlink" href="#module-jarvis.core.utils" title="Permalink to this headline">¶</a></h2>
 <p>Set of useful utility functions.</p>
+<dl class="function">
+<dt id="jarvis.core.utils.array_to_string">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">array_to_string</code><span class="sig-paren">(</span><em>arr=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#array_to_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.array_to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert 1D arry to string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.utils.check_duplicate_coords">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">check_duplicate_coords</code><span class="sig-paren">(</span><em>coords=[]</em>, <em>coord=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#check_duplicate_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.check_duplicate_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a coordinate exists.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.utils.check_match">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">check_match</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>tol=1e-08</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#check_match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.check_match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a and b are the same, taking into account PBCs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.utils.chunks">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">chunks</code><span class="sig-paren">(</span><em>lst</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#chunks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split successive n-sized chunks from list.</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="jarvis.core.utils.ext_gcd">
 <code class="descclassname">jarvis.core.utils.</code><code class="descname">ext_gcd</code><span class="sig-paren">(</span><em>a</em>, <em>b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#ext_gcd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.ext_gcd" title="Permalink to this definition">¶</a></dt>
@@ -1148,6 +1344,12 @@ b is divided by it, the result comes out positive).</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="jarvis.core.utils.get_angle">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">get_angle</code><span class="sig-paren">(</span><em>a=array([1</em>, <em>2</em>, <em>3])</em>, <em>b=array([4</em>, <em>5</em>, <em>6])</em>, <em>c=array([7</em>, <em>8</em>, <em>9])</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#get_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.get_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get angle between three vectors.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="jarvis.core.utils.get_counts">
 <code class="descclassname">jarvis.core.utils.</code><code class="descname">get_counts</code><span class="sig-paren">(</span><em>array=['W', 'W', 'Mo', 'Mo', 'S', 'S']</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#get_counts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.get_counts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get number of unique elements and their counts.</p>
@@ -1157,6 +1359,42 @@ b is divided by it, the result comes out positive).</p>
 <dd>array of elements</dd>
 <dt>Returns:</dt>
 <dd>ordereddict, e.g.OrderedDict([(‘W’, 2), (‘Mo’, 2), (‘S’, 2)])</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.utils.get_new_coord_for_xyz_sym">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">get_new_coord_for_xyz_sym</code><span class="sig-paren">(</span><em>frac_coord=[]</em>, <em>xyz_string=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#get_new_coord_for_xyz_sym"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.get_new_coord_for_xyz_sym" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain new coord from xyz string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.utils.lorentzian">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">lorentzian</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>x0</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#lorentzian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.lorentzian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Lorentzian of a function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.utils.operate_affine">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">operate_affine</code><span class="sig-paren">(</span><em>cart_coord=[]</em>, <em>affine_matrix=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#operate_affine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.operate_affine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Operate affine method.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.utils.parse_xyz_string">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">parse_xyz_string</code><span class="sig-paren">(</span><em>xyz_string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#parse_xyz_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.parse_xyz_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert xyz info to translation and rotation vectors.</p>
+<p>Adapted from pymatgen.
+Args:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>xyz_string: string of the form ‘x, y, z’, ‘-x, -y, z’,</dt>
+<dd>‘-2y+1/2, 3x+1/2, z-y+1/2’, etc.</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>translation and rotation vectors.</dd>
 </dl>
 </dd></dl>
 
@@ -1176,6 +1414,30 @@ b is divided by it, the result comes out positive).</p>
 <dt id="jarvis.core.utils.rec_dict">
 <code class="descclassname">jarvis.core.utils.</code><code class="descname">rec_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#rec_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.rec_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a recursion dictionary.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.utils.recast_array_on_uniq_array_elements">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">recast_array_on_uniq_array_elements</code><span class="sig-paren">(</span><em>uniq=['Si', 'Al', 'O'], arr=['Si', 'Si', 'Al', 'Al', 'Si', 'O', 'O', 'O', 'O']</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#recast_array_on_uniq_array_elements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.recast_array_on_uniq_array_elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recast array on uniq array elements.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.utils.stringdict_to_xml">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">stringdict_to_xml</code><span class="sig-paren">(</span><em>d={}</em>, <em>enforce_string=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#stringdict_to_xml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.stringdict_to_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert string dictionary to XML.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.utils.update_dict">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">update_dict</code><span class="sig-paren">(</span><em>main={}</em>, <em>extra={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#update_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.update_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return update dictionary.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.core.utils.xml_to_dict">
+<code class="descclassname">jarvis.core.utils.</code><code class="descname">xml_to_dict</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/core/utils.html#xml_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.core.utils.xml_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse XML file.</p>
 </dd></dl>
 
 </div>
@@ -1198,10 +1460,12 @@ b is divided by it, the result comes out positive).</p>
 <li><a class="reference internal" href="#module-jarvis.core.atoms">jarvis.core.atoms module</a></li>
 <li><a class="reference internal" href="#module-jarvis.core.composition">jarvis.core.composition module</a></li>
 <li><a class="reference internal" href="#module-jarvis.core.graphs">jarvis.core.graphs module</a></li>
+<li><a class="reference internal" href="#module-jarvis.core.image">jarvis.core.image module</a></li>
 <li><a class="reference internal" href="#module-jarvis.core.kpoints">jarvis.core.kpoints module</a></li>
 <li><a class="reference internal" href="#module-jarvis.core.lattice">jarvis.core.lattice module</a></li>
 <li><a class="reference internal" href="#module-jarvis.core.pdb_atoms">jarvis.core.pdb_atoms module</a></li>
 <li><a class="reference internal" href="#module-jarvis.core.specie">jarvis.core.specie module</a></li>
+<li><a class="reference internal" href="#module-jarvis.core.spectrum">jarvis.core.spectrum module</a></li>
 <li><a class="reference internal" href="#module-jarvis.core.utils">jarvis.core.utils module</a></li>
 <li><a class="reference internal" href="#module-jarvis.core">Module contents</a></li>
 </ul>
@@ -1240,11 +1504,11 @@ b is divided by it, the result comes out positive).</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>

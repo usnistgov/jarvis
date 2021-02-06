@@ -1,0 +1,285 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.analysis.periodic.ptable &#8212; jarvis-tools v2021.2.3 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jarvis.analysis.periodic.ptable</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for showing periodic table chemical trends.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">bokeh.models</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ColumnDataSource</span><span class="p">,</span>
+    <span class="n">LinearColorMapper</span><span class="p">,</span>
+    <span class="n">LogColorMapper</span><span class="p">,</span>
+    <span class="n">ColorBar</span><span class="p">,</span>
+    <span class="n">BasicTicker</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">bokeh.plotting</span> <span class="kn">import</span> <span class="n">figure</span>
+<span class="kn">from</span> <span class="nn">bokeh.io</span> <span class="kn">import</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">save</span><span class="p">,</span> <span class="n">show</span>
+<span class="kn">from</span> <span class="nn">bokeh.sampledata.periodic_table</span> <span class="kn">import</span> <span class="n">elements</span>
+<span class="kn">from</span> <span class="nn">bokeh.transform</span> <span class="kn">import</span> <span class="n">dodge</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">Normalize</span><span class="p">,</span> <span class="n">LogNorm</span><span class="p">,</span> <span class="n">to_hex</span>
+<span class="kn">from</span> <span class="nn">matplotlib.cm</span> <span class="kn">import</span> <span class="n">plasma</span><span class="p">,</span> <span class="n">ScalarMappable</span>
+
+<span class="c1"># , inferno, magma, viridis, ScalarMappable</span>
+
+<span class="c1"># Reuires bokeh installation https://docs.bokeh.org/en/latest/</span>
+
+
+<div class="viewcode-block" id="plot_ptable_trend"><a class="viewcode-back" href="../../../../jarvis.analysis.periodic.html#jarvis.analysis.periodic.ptable.plot_ptable_trend">[docs]</a><span class="k">def</span> <span class="nf">plot_ptable_trend</span><span class="p">(</span>
+    <span class="n">data_elements</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Rb&quot;</span><span class="p">,</span> <span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="s2">&quot;Se&quot;</span><span class="p">],</span>
+    <span class="n">data_list</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span>
+    <span class="n">input_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">output_html</span><span class="o">=</span><span class="s2">&quot;ptable.html&quot;</span><span class="p">,</span>
+    <span class="n">bokeh_palette</span><span class="o">=</span><span class="s2">&quot;Plasma256&quot;</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="n">plasma</span><span class="p">,</span>
+    <span class="n">log_scale</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="mi">1050</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span>
+    <span class="n">cbar_height</span><span class="o">=</span><span class="mi">520</span><span class="p">,</span>
+    <span class="n">cbar_font</span><span class="o">=</span><span class="s2">&quot;14pt&quot;</span><span class="p">,</span>
+    <span class="n">save_plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate periodic table chemical trends.</span>
+
+<span class="sd">    Either provide a file or list of data_elements, &amp;data_list.</span>
+<span class="sd">    Note that Bokeh already provided a periodic table.</span>
+<span class="sd">    This module will take your data to color code them.</span>
+<span class="sd">    See an example: https://www.nature.com/articles/s41598-019-45028-y</span>
+<span class="sd">    Fig. 3</span>
+<span class="sd">    Forked from https://github.com/arosen93/ptable_trends</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output_file</span><span class="p">(</span><span class="n">output_html</span><span class="p">)</span>
+    <span class="c1"># Define number of and groups</span>
+    <span class="n">period_label</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">,</span> <span class="s2">&quot;5&quot;</span><span class="p">,</span> <span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="s2">&quot;7&quot;</span><span class="p">]</span>
+    <span class="n">group_range</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">19</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">input_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">data_elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">data_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_elements</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unequal number of atomic elements and data points&quot;</span><span class="p">)</span>
+
+    <span class="c1"># lanthanides = [x.lower() for x in elements[&quot;symbol&quot;][56:70].tolist()]</span>
+    <span class="c1"># actinides = [x.lower() for x in elements[&quot;symbol&quot;][88:102].tolist()]</span>
+    <span class="n">period_label</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;blank&quot;</span><span class="p">)</span>
+    <span class="n">period_label</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;La&quot;</span><span class="p">)</span>
+    <span class="n">period_label</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Ac&quot;</span><span class="p">)</span>
+
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">56</span><span class="p">,</span> <span class="mi">70</span><span class="p">):</span>
+        <span class="n">elements</span><span class="o">.</span><span class="n">period</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;La&quot;</span>
+        <span class="n">elements</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">88</span><span class="p">,</span> <span class="mi">102</span><span class="p">):</span>
+        <span class="n">elements</span><span class="o">.</span><span class="n">period</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Ac&quot;</span>
+        <span class="n">elements</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">count</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Define matplotlib and bokeh color map</span>
+    <span class="k">if</span> <span class="n">log_scale</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">color_mapper</span> <span class="o">=</span> <span class="n">LinearColorMapper</span><span class="p">(</span>
+            <span class="n">palette</span><span class="o">=</span><span class="n">bokeh_palette</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">log_scale</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Entry for element &quot;</span>
+                    <span class="o">+</span> <span class="n">data_elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="o">+</span> <span class="s2">&quot; is negative but&quot;</span>
+                    <span class="s2">&quot; log-scale is selected&quot;</span>
+                <span class="p">)</span>
+        <span class="n">color_mapper</span> <span class="o">=</span> <span class="n">LogColorMapper</span><span class="p">(</span>
+            <span class="n">palette</span><span class="o">=</span><span class="n">bokeh_palette</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">color_scale</span> <span class="o">=</span> <span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Define color for blank entries</span>
+    <span class="n">blank_color</span> <span class="o">=</span> <span class="s2">&quot;#c4c4c4&quot;</span>
+    <span class="n">color_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)):</span>
+        <span class="n">color_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">blank_color</span><span class="p">)</span>
+
+    <span class="c1"># Compare elements in dataset with elements in periodic table</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+        <span class="n">element_entry</span> <span class="o">=</span> <span class="n">elements</span><span class="o">.</span><span class="n">symbol</span><span class="p">[</span>
+            <span class="n">elements</span><span class="o">.</span><span class="n">symbol</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">data_elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">element_entry</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">element_index</span> <span class="o">=</span> <span class="n">element_entry</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: Invalid chemical symbol: &quot;</span> <span class="o">+</span> <span class="n">data_elements</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">color_list</span><span class="p">[</span><span class="n">element_index</span><span class="p">]</span> <span class="o">!=</span> <span class="n">blank_color</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WARNING: Multiple entries for element &quot;</span> <span class="o">+</span> <span class="n">data_elements</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">color_list</span><span class="p">[</span><span class="n">element_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_hex</span><span class="p">(</span><span class="n">color_scale</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Define figure properties for visualizing data</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">ColumnDataSource</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">group</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">[</span><span class="s2">&quot;group&quot;</span><span class="p">]],</span>
+            <span class="n">period</span><span class="o">=</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">[</span><span class="s2">&quot;period&quot;</span><span class="p">]],</span>
+            <span class="n">sym</span><span class="o">=</span><span class="n">elements</span><span class="p">[</span><span class="s2">&quot;symbol&quot;</span><span class="p">],</span>
+            <span class="n">atomic_number</span><span class="o">=</span><span class="n">elements</span><span class="p">[</span><span class="s2">&quot;atomic number&quot;</span><span class="p">],</span>
+            <span class="n">type_color</span><span class="o">=</span><span class="n">color_list</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="c1"># Plot the periodic table</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span>
+        <span class="n">x_range</span><span class="o">=</span><span class="n">group_range</span><span class="p">,</span> <span class="n">y_range</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">period_label</span><span class="p">)),</span> <span class="n">tools</span><span class="o">=</span><span class="s2">&quot;save&quot;</span>
+    <span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">plot_width</span> <span class="o">=</span> <span class="n">width</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">outline_line_color</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">toolbar_location</span> <span class="o">=</span> <span class="s2">&quot;above&quot;</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span>
+        <span class="s2">&quot;group&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;period&quot;</span><span class="p">,</span>
+        <span class="mf">0.9</span><span class="p">,</span>
+        <span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;type_color&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">text_props</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+        <span class="s2">&quot;angle&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text_align&quot;</span><span class="p">:</span> <span class="s2">&quot;left&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text_baseline&quot;</span><span class="p">:</span> <span class="s2">&quot;middle&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">dodge</span><span class="p">(</span><span class="s2">&quot;group&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">x_range</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">dodge</span><span class="p">(</span><span class="s2">&quot;period&quot;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">y_range</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="s2">&quot;period&quot;</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="s2">&quot;sym&quot;</span><span class="p">,</span>
+        <span class="n">text_font_style</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span>
+        <span class="n">text_font_size</span><span class="o">=</span><span class="s2">&quot;15pt&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">text_props</span>
+    <span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;atomic_number&quot;</span><span class="p">,</span> <span class="n">text_font_size</span><span class="o">=</span><span class="s2">&quot;9pt&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">text_props</span><span class="p">)</span>
+    <span class="n">color_bar</span> <span class="o">=</span> <span class="n">ColorBar</span><span class="p">(</span>
+        <span class="n">color_mapper</span><span class="o">=</span><span class="n">color_mapper</span><span class="p">,</span>
+        <span class="n">ticker</span><span class="o">=</span><span class="n">BasicTicker</span><span class="p">(</span><span class="n">desired_num_ticks</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+        <span class="n">border_line_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">label_standoff</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+        <span class="n">major_label_text_font_size</span><span class="o">=</span><span class="n">cbar_font</span><span class="p">,</span>
+        <span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">orientation</span><span class="o">=</span><span class="s2">&quot;vertical&quot;</span><span class="p">,</span>
+        <span class="n">scale_alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cbar_height</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">color_bar</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">cbar_height</span>
+
+    <span class="n">p</span><span class="o">.</span><span class="n">add_layout</span><span class="p">(</span><span class="n">color_bar</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">grid_line_color</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">save_plot</span><span class="p">:</span>
+        <span class="n">save</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">show</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">    x = plot_ptable_trend()</span>
+<span class="sd">    from bokeh.io import export_svgs</span>
+<span class="sd">    # For svg</span>
+<span class="sd">    x.output_backend = &quot;svg&quot;</span>
+<span class="sd">    export_svgs(x, filename=&quot;plot.svg&quot;)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

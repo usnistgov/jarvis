@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.ai.pkgs.lgbm package &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.ai.pkgs.lgbm package &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -55,6 +55,26 @@
 <div class="section" id="module-jarvis.ai.pkgs.lgbm.regression">
 <span id="jarvis-ai-pkgs-lgbm-regression-module"></span><h2>jarvis.ai.pkgs.lgbm.regression module<a class="headerlink" href="#module-jarvis.ai.pkgs.lgbm.regression" title="Permalink to this headline">¶</a></h2>
 <p>Modules for LightGBM regression.</p>
+<dl class="function">
+<dt id="jarvis.ai.pkgs.lgbm.regression.get_lgbm">
+<code class="descclassname">jarvis.ai.pkgs.lgbm.regression.</code><code class="descname">get_lgbm</code><span class="sig-paren">(</span><em>train_x</em>, <em>val_x</em>, <em>train_y</em>, <em>val_y</em>, <em>cv</em>, <em>n_jobs</em>, <em>scoring</em>, <em>n_iter</em>, <em>objective</em>, <em>alpha</em>, <em>random_state</em>, <em>param_dist={'est__learning_rate': &lt;scipy.stats._distn_infrastructure.rv_frozen object&gt;</em>, <em>'est__max_depth': &lt;scipy.stats._distn_infrastructure.rv_frozen object&gt;</em>, <em>'est__min_data_in_leaf': &lt;scipy.stats._distn_infrastructure.rv_frozen object&gt;</em>, <em>'est__n_estimators': &lt;scipy.stats._distn_infrastructure.rv_frozen object&gt;</em>, <em>'est__num_leaves': &lt;scipy.stats._distn_infrastructure.rv_frozen object&gt;}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/lgbm/regression.html#get_lgbm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.lgbm.regression.get_lgbm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a lightgbm model.</p>
+<p>Args:</p>
+<blockquote>
+<div><p>train_x: samples used for trainiing</p>
+<p>val_x: validation set</p>
+<p>train_y: train targets</p>
+<p>val_y: validation targets</p>
+<p>cv: # of cross-validations</p>
+<p>n_jobs: for making the job parallel</p>
+<p>scoring: scoring function to use such as MAE</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>Best estimator.</dd>
+</dl>
+</dd></dl>
+
 <dl class="function">
 <dt id="jarvis.ai.pkgs.lgbm.regression.parameters_dict">
 <code class="descclassname">jarvis.ai.pkgs.lgbm.regression.</code><code class="descname">parameters_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/ai/pkgs/lgbm/regression.html#parameters_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.ai.pkgs.lgbm.regression.parameters_dict" title="Permalink to this definition">¶</a></dt>
@@ -123,11 +143,11 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>

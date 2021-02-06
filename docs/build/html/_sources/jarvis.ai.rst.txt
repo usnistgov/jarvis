@@ -9,6 +9,7 @@ Subpackages
     jarvis.ai.descriptors
     jarvis.ai.gcn
     jarvis.ai.pkgs
+    jarvis.ai.uncertainty
 
 Module contents
 ---------------

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.io.vasp.outputs &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.io.vasp.outputs &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -52,6 +52,8 @@
 <span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Poscar</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.utils</span> <span class="kn">import</span> <span class="n">rec_dict</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.utils</span> <span class="kn">import</span> <span class="n">recast_array_on_uniq_array_elements</span>
+<span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">ss</span>
 
 <span class="n">RYTOEV</span> <span class="o">=</span> <span class="mf">13.605826</span>
 <span class="n">AUTOA</span> <span class="o">=</span> <span class="mf">0.529177249</span>
@@ -306,7 +308,12 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">magnetic_moment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get magnetic moment.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ionic_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># return self.ionic_steps[-1][-1]</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ionic_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="n">ii</span> <span class="o">==</span> <span class="s2">&quot;mag=&quot;</span><span class="p">:</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ionic_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">match</span><span class="p">:]])</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ionic_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -361,6 +368,62 @@
                 <span class="k">return</span> <span class="n">n_ions</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nbands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get number of bands.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;NBANDS=&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">nbands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">return</span> <span class="n">nbands</span>
+
+<div class="viewcode-block" id="Outcar.magnetization"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Outcar.magnetization">[docs]</a>    <span class="k">def</span> <span class="nf">magnetization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;Get magnetization in x,y,z.&quot;&quot;&quot;</span>
+        <span class="n">new_magt</span> <span class="o">=</span> <span class="s2">&quot;na&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;magnetization (&quot;</span> <span class="o">+</span> <span class="nb">dir</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span> <span class="ow">in</span> <span class="n">ii</span><span class="p">:</span>
+                <span class="n">magt</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nions</span><span class="p">):</span>
+                    <span class="n">magt</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">j</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">elements</span><span class="p">:</span>
+                    <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">magt</span><span class="p">))]</span>
+                <span class="n">new_magt</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">magt</span><span class="p">):</span>
+                    <span class="n">jj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">jj</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                        <span class="n">tmp</span> <span class="o">=</span> <span class="n">jj</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                        <span class="n">jj</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0.0&quot;</span>
+                        <span class="n">jj</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+                    <span class="n">new_magt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_magt</span></div>
+
+<div class="viewcode-block" id="Outcar.total_charge"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Outcar.total_charge">[docs]</a>    <span class="k">def</span> <span class="nf">total_charge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;Get total charge.&quot;&quot;&quot;</span>
+        <span class="n">new_chg</span> <span class="o">=</span> <span class="s2">&quot;na&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot; total charge &quot;</span> <span class="ow">in</span> <span class="n">ii</span><span class="p">:</span>
+                <span class="n">chg</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nions</span><span class="p">):</span>
+                    <span class="n">chg</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">j</span><span class="p">])</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">elements</span><span class="p">:</span>
+                    <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chg</span><span class="p">))]</span>
+                <span class="n">new_chg</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="n">chg</span><span class="p">):</span>
+                    <span class="n">jj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">jj</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                        <span class="n">tmp</span> <span class="o">=</span> <span class="n">jj</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                        <span class="n">jj</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0.0&quot;</span>
+                        <span class="n">jj</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+                    <span class="n">new_chg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_chg</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nelect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get number of electrons.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;NELECT&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">nelect</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">]))</span>
+                <span class="k">return</span> <span class="n">nelect</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">phonon_eigenvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get phonon eigenvalues.&quot;&quot;&quot;</span>
         <span class="c1"># Thz values</span>
@@ -387,7 +450,8 @@
                     <span class="ow">in</span> <span class="n">i</span>
                 <span class="p">):</span>
                     <span class="n">cnvg</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="c1"># print fil,cnvg</span>
+                <span class="k">if</span> <span class="s2">&quot;VASP will stop now.&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                    <span class="n">cnvg</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">return</span> <span class="n">cnvg</span>
@@ -1143,13 +1207,12 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">energies</span><span class="p">,</span> <span class="n">absorption</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">dfpt_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fc_mass</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get DFPT IBRION=8 related data.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Vasprun.phonon_data"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.phonon_data">[docs]</a>    <span class="k">def</span> <span class="nf">phonon_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fc_mass</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get phonon data.&quot;&quot;&quot;</span>
         <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">hessian</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;modeling&quot;</span><span class="p">][</span><span class="s2">&quot;calculation&quot;</span><span class="p">][</span><span class="s2">&quot;dynmat&quot;</span><span class="p">][</span><span class="s2">&quot;varray&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;v&quot;</span><span class="p">]:</span>
+        <span class="c1"># data = self._data</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ionic_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;dynmat&quot;</span><span class="p">][</span><span class="s2">&quot;varray&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;v&quot;</span><span class="p">]:</span>
             <span class="n">hessian</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
         <span class="n">hessian</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hessian</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span>
         <span class="n">struct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_structures</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -1161,10 +1224,37 @@
                     <span class="n">i</span> <span class="o">*</span> <span class="mi">3</span> <span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">j</span> <span class="o">*</span> <span class="mi">3</span> <span class="p">:</span> <span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span>
                 <span class="p">]</span>
         <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="n">Specie</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">atomic_mass</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">struct</span><span class="o">.</span><span class="n">elements</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Vasp masses&quot;</span><span class="p">,</span> <span class="n">masses</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">fc_mass</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
                     <span class="n">force_constants</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">masses</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">masses</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">phonon_eigenvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ionic_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;dynmat&quot;</span><span class="p">][</span><span class="s2">&quot;v&quot;</span><span class="p">][</span><span class="s2">&quot;#text&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">eigvecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ionic_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;dynmat&quot;</span><span class="p">][</span><span class="s2">&quot;varray&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;v&quot;</span><span class="p">])</span>
+            <span class="p">],</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">phonon_eigenvectors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ev</span> <span class="ow">in</span> <span class="n">eigvecs</span><span class="p">:</span>
+            <span class="n">phonon_eigenvectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">natoms</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;phonon_eigenvectors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phonon_eigenvectors</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;phonon_eigenvalues&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phonon_eigenvals</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;masses&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">masses</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;force_constants&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">force_constants</span>
+        <span class="k">return</span> <span class="n">info</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dfpt_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fc_mass</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get DFPT IBRION=8 LEPSILON lated data.&quot;&quot;&quot;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phonon_data</span><span class="p">(</span><span class="n">fc_mass</span><span class="o">=</span><span class="n">fc_mass</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+        <span class="n">natoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span>
         <span class="n">born_charges</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
             <span class="n">born_charges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -1176,23 +1266,6 @@
                 <span class="p">]</span>
             <span class="p">)</span>
         <span class="n">born_charges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">born_charges</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">)</span>
-        <span class="n">phonon_eigenvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;modeling&quot;</span><span class="p">][</span><span class="s2">&quot;calculation&quot;</span><span class="p">][</span><span class="s2">&quot;dynmat&quot;</span><span class="p">][</span><span class="s2">&quot;v&quot;</span><span class="p">][</span><span class="s2">&quot;#text&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">eigvecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span>
-                    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;modeling&quot;</span><span class="p">][</span><span class="s2">&quot;calculation&quot;</span><span class="p">][</span><span class="s2">&quot;dynmat&quot;</span><span class="p">][</span><span class="s2">&quot;varray&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;v&quot;</span><span class="p">]</span>
-                <span class="p">)</span>
-            <span class="p">],</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">phonon_eigenvectors</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">ev</span> <span class="ow">in</span> <span class="n">eigvecs</span><span class="p">:</span>
-            <span class="n">phonon_eigenvectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ev</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">natoms</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-        <span class="n">phonon_eigenvectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">phonon_eigenvectors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
         <span class="n">epsilon</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;modeling&quot;</span><span class="p">][</span><span class="s2">&quot;calculation&quot;</span><span class="p">][</span><span class="s2">&quot;varray&quot;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="s2">&quot;epsilon&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">[</span><span class="s2">&quot;@name&quot;</span><span class="p">]:</span>
@@ -1200,10 +1273,7 @@
                     <span class="p">[</span><span class="n">j</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">i</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span>
                 <span class="p">)</span>
         <span class="n">info</span><span class="p">[</span><span class="s2">&quot;born_charges&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">born_charges</span>
-        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;phonon_eigenvectors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phonon_eigenvectors</span>
         <span class="n">info</span><span class="p">[</span><span class="s2">&quot;epsilon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">epsilon</span>
-        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;phonon_eigenvalues&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">phonon_eigenvals</span>
-        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;masses&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">masses</span>
         <span class="k">return</span> <span class="n">info</span>
 
     <span class="nd">@property</span>
@@ -1306,30 +1376,37 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get atom elements.&quot;&quot;&quot;</span>
-        <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;modeling&quot;</span><span class="p">][</span><span class="s2">&quot;atominfo&quot;</span><span class="p">][</span><span class="s2">&quot;array&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span><span class="s2">&quot;rc&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span>
-                    <span class="s2">&quot;c&quot;</span>
-                <span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span>
-                <span class="nb">len</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;modeling&quot;</span><span class="p">][</span><span class="s2">&quot;atominfo&quot;</span><span class="p">][</span><span class="s2">&quot;array&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span><span class="s2">&quot;rc&quot;</span><span class="p">]</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
+        <span class="n">element_dat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;modeling&quot;</span><span class="p">][</span><span class="s2">&quot;atominfo&quot;</span><span class="p">][</span><span class="s2">&quot;array&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span>
+            <span class="s2">&quot;rc&quot;</span>
         <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element_dat</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">element_dat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;c&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">element_dat</span><span class="p">))</span>
+            <span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element_dat</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">element_dat</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown element type&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">:</span>
             <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of atoms is  not equal to number of elements&quot;</span><span class="p">)</span>
         <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">]</span>
+        <span class="c1"># print (&#39;elements&#39;,elements)</span>
         <span class="k">return</span> <span class="n">elements</span>
 
 <div class="viewcode-block" id="Vasprun.vrun_structure_to_atoms"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.vrun_structure_to_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">vrun_structure_to_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;Convert structure to Atoms object.&quot;&quot;&quot;</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;crystal&quot;</span><span class="p">][</span><span class="s2">&quot;varray&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;v&quot;</span><span class="p">]</span>
         <span class="n">lattice_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="nb">float</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tmp</span><span class="p">])</span>
-        <span class="n">frac_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[[</span><span class="nb">float</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;varray&quot;</span><span class="p">][</span><span class="s2">&quot;v&quot;</span><span class="p">]]</span>
-        <span class="p">)</span>
+        <span class="n">coord_info</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;varray&quot;</span><span class="p">][</span><span class="s2">&quot;v&quot;</span><span class="p">]</span>
+        <span class="c1"># print (&#39;coord_info&#39;,coord_info,type(coord_info))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coord_info</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">frac_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[[</span><span class="nb">float</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">coord_info</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coord_info</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">frac_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coord_info</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+            <span class="c1"># print (&#39;frac_coords&#39;,frac_coords)</span>
         <span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elements</span>
         <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span>
             <span class="n">lattice_mat</span><span class="o">=</span><span class="n">lattice_mat</span><span class="p">,</span>
@@ -1497,15 +1574,16 @@
         <span class="n">E_high</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
         <span class="n">spin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">zero_efermi</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">kpoints_file_path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+        <span class="n">kpoints_file_path</span><span class="o">=</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">,</span>
+        <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get electronic bandstructure plot.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
+            <span class="n">kp_labels</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">kp_labels_points</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">kpoints_file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="n">kp_labels</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">kp_labels_points</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">ii</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="n">tmp</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
@@ -1523,28 +1601,57 @@
             <span class="k">pass</span>
 
         <span class="n">tmp</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;efermi&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">efermi</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">zero_efermi</span><span class="p">:</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">efermi</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eigenvalues</span><span class="p">[</span><span class="n">spin</span><span class="p">][:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">tmp</span><span class="p">):</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
 
+        <span class="n">spin_up_bands_x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">spin_up_bands_y</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">spin_down_bands_x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">spin_down_bands_y</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eigenvalues</span><span class="p">[</span><span class="n">spin</span><span class="p">][:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">tmp</span><span class="p">):</span>
+            <span class="c1"># plt.plot(ii, color=&quot;r&quot;)</span>
+            <span class="n">spin_up_bands_x</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ii</span><span class="p">))])</span>
+            <span class="n">spin_up_bands_y</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ii</span><span class="p">])</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin_polarized</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eigenvalues</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">tmp</span><span class="p">):</span>
-                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">)</span>
+                <span class="c1"># plt.plot(ii, color=&quot;b&quot;)</span>
+                <span class="n">spin_down_bands_x</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ii</span><span class="p">))])</span>
+                <span class="n">spin_down_bands_y</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ii</span><span class="p">])</span>
 
-        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="n">E_low</span><span class="p">,</span> <span class="n">E_high</span><span class="p">])</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">kp_labels_points</span><span class="p">,</span> <span class="n">kp_labels</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">)])</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\mathrm{Wave\ Vector}$&quot;</span><span class="p">)</span>
-        <span class="n">ylabel</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;$\mathrm{E\ -\ E_f\ (eV)}$&quot;</span>
-            <span class="k">if</span> <span class="n">zero_efermi</span>
-            <span class="k">else</span> <span class="sa">r</span><span class="s2">&quot;$\mathrm{Energy\ (eV)}$&quot;</span>
-        <span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_bands_x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_up_bands_x</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_bands_y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_up_bands_y</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_bands_x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_down_bands_x</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_bands_y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_down_bands_y</span>
 
-        <span class="k">return</span> <span class="n">plt</span></div>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;kp_labels_points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kp_labels_points</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;kp_labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">kp_labels</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_bands_x&quot;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_bands_y&quot;</span><span class="p">]):</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin_polarized</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_bands_x&quot;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_bands_y&quot;</span><span class="p">]</span>
+                <span class="p">):</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="n">E_low</span><span class="p">,</span> <span class="n">E_high</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">kp_labels_points</span><span class="p">,</span> <span class="n">kp_labels</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">_kpoints</span><span class="p">)])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\mathrm{Wave\ Vector}$&quot;</span><span class="p">)</span>
+            <span class="n">ylabel</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">r</span><span class="s2">&quot;$\mathrm{E\ -\ E_f\ (eV)}$&quot;</span>
+                <span class="k">if</span> <span class="n">zero_efermi</span>
+                <span class="k">else</span> <span class="sa">r</span><span class="s2">&quot;$\mathrm{Energy\ (eV)}$&quot;</span>
+            <span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">info</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">total_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1582,7 +1689,28 @@
         <span class="n">natoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span>
         <span class="n">nspin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nspins</span>
         <span class="n">pdos_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ionic_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;dos&quot;</span><span class="p">][</span><span class="s2">&quot;partial&quot;</span><span class="p">][</span><span class="s2">&quot;array&quot;</span><span class="p">][</span><span class="s2">&quot;field&quot;</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
+        <span class="n">steps_dat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ionic_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;dos&quot;</span><span class="p">][</span><span class="s2">&quot;partial&quot;</span><span class="p">][</span><span class="s2">&quot;array&quot;</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span>
+            <span class="s2">&quot;set&quot;</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">steps_dat</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">spin</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspin</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pdos_keys</span><span class="p">):</span>
+                        <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                            <span class="p">[</span>
+                                <span class="n">ii</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                                <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">ionic_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;dos&quot;</span><span class="p">][</span><span class="s2">&quot;partial&quot;</span><span class="p">][</span>
+                                        <span class="s2">&quot;array&quot;</span>
+                                    <span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span><span class="n">atom</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span><span class="n">spin</span><span class="p">][</span><span class="s2">&quot;r&quot;</span><span class="p">]</span>
+                                <span class="p">)</span>
+                            <span class="p">],</span>
+                            <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                        <span class="n">info</span><span class="p">[</span><span class="n">spin</span><span class="p">][</span><span class="n">atom</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[:,</span> <span class="n">k</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">steps_dat</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">atom</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="n">spin</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nspin</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pdos_keys</span><span class="p">):</span>
                     <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
@@ -1591,13 +1719,16 @@
                             <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="p">(</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">ionic_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;dos&quot;</span><span class="p">][</span><span class="s2">&quot;partial&quot;</span><span class="p">][</span>
                                     <span class="s2">&quot;array&quot;</span>
-                                <span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span><span class="n">atom</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span><span class="n">spin</span><span class="p">][</span><span class="s2">&quot;r&quot;</span><span class="p">]</span>
+                                <span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span><span class="s2">&quot;set&quot;</span><span class="p">][</span><span class="n">spin</span><span class="p">][</span><span class="s2">&quot;r&quot;</span><span class="p">]</span>
                             <span class="p">)</span>
                         <span class="p">],</span>
                         <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span>
                     <span class="p">)</span>
 
                     <span class="n">info</span><span class="p">[</span><span class="n">spin</span><span class="p">][</span><span class="n">atom</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[:,</span> <span class="n">k</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bug in PDOS parser.&quot;</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">info</span>
 
     <span class="nd">@property</span>
@@ -1650,7 +1781,205 @@
                             <span class="n">info</span><span class="p">[</span><span class="n">atom</span><span class="p">][</span><span class="n">spin</span><span class="p">][</span><span class="n">kpoint</span><span class="p">][</span><span class="n">band</span><span class="p">][</span><span class="n">orbital</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
                                 <span class="n">val</span>
                             <span class="p">)</span>
+        <span class="k">return</span> <span class="n">info</span>
+
+<div class="viewcode-block" id="Vasprun.get_spdf_dos"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.get_spdf_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_spdf_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get spdf resolved partial density of states.&quot;&quot;&quot;</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;s&quot;</span><span class="p">]</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;px&quot;</span><span class="p">,</span> <span class="s2">&quot;py&quot;</span><span class="p">,</span> <span class="s2">&quot;pz&quot;</span><span class="p">]</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dxy&quot;</span><span class="p">,</span> <span class="s2">&quot;dyz&quot;</span><span class="p">,</span> <span class="s2">&quot;dxz&quot;</span><span class="p">,</span> <span class="s2">&quot;dz2&quot;</span><span class="p">,</span> <span class="s2">&quot;dx2&quot;</span><span class="p">]</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;f-3&quot;</span><span class="p">,</span> <span class="s2">&quot;f-2&quot;</span><span class="p">,</span> <span class="s2">&quot;f-1&quot;</span><span class="p">,</span> <span class="s2">&quot;f0&quot;</span><span class="p">,</span> <span class="s2">&quot;f1&quot;</span><span class="p">,</span> <span class="s2">&quot;f2&quot;</span><span class="p">,</span> <span class="s2">&quot;f3&quot;</span><span class="p">]</span>
+        <span class="c1"># spin = 0</span>
+        <span class="n">spin_pol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin_polarized</span>
+        <span class="n">num_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_structures</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">num_atoms</span>
+        <span class="n">pdos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">partial_dos_spdf</span>  <span class="c1"># spin,atom,spdf</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;energy&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">efermi</span>
+        <span class="n">spin_up_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+        <span class="n">spin_up_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+        <span class="n">spin_up_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+        <span class="n">has_f_elements</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="s2">&quot;f1&quot;</span> <span class="ow">in</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">has_f_elements</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">spin_up_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_atoms</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                    <span class="n">spin_up_s</span> <span class="o">+=</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                    <span class="n">spin_up_p</span> <span class="o">+=</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                    <span class="n">spin_up_d</span> <span class="o">+=</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">has_f_elements</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                        <span class="n">spin_up_f</span> <span class="o">+=</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_s&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_up_s</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_p&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_up_p</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_d&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_up_d</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">energy</span>
+        <span class="k">if</span> <span class="n">has_f_elements</span><span class="p">:</span>
+            <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_f&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_up_f</span>
+        <span class="k">if</span> <span class="n">spin_pol</span><span class="p">:</span>
+            <span class="c1"># spin = 1</span>
+            <span class="n">spin_down_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+            <span class="n">spin_down_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+            <span class="n">spin_down_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">has_f_elements</span><span class="p">:</span>
+                <span class="n">spin_down_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_atoms</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                        <span class="n">spin_down_s</span> <span class="o">+=</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                        <span class="n">spin_down_p</span> <span class="o">+=</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                        <span class="n">spin_down_d</span> <span class="o">+=</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">has_f_elements</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                            <span class="n">spin_down_f</span> <span class="o">+=</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+
+            <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_s&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">spin_down_s</span>
+            <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_p&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">spin_down_p</span>
+            <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_d&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">spin_down_d</span>
+            <span class="n">info</span><span class="p">[</span><span class="s2">&quot;has_f_elements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">has_f_elements</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">has_f_elements</span><span class="p">:</span>
+                <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_f&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">spin_down_f</span>
+            <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_s&quot;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;s&quot;</span>
+                <span class="p">)</span>
+
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_p&quot;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;p&quot;</span>
+                <span class="p">)</span>
+
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_d&quot;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;d&quot;</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">has_f_elements</span><span class="p">:</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span>
+                        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_f&quot;</span><span class="p">],</span>
+                        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+                        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;f&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="n">spin_pol</span><span class="p">:</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_s&quot;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_p&quot;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_d&quot;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">has_f_elements</span><span class="p">:</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_f&quot;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">info</span></div>
+
+<div class="viewcode-block" id="Vasprun.get_atom_resolved_dos"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.Vasprun.get_atom_resolved_dos">[docs]</a>    <span class="k">def</span> <span class="nf">get_atom_resolved_dos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get atom resolved density of states.&quot;&quot;&quot;</span>
+        <span class="c1"># spin_pol = self.is_spin_polarized</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_structures</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># num_atoms = atoms.num_atoms</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">elements</span>
+        <span class="n">unique_elements</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">uniq_species</span>
+        <span class="n">pdos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">partial_dos_spdf</span>  <span class="c1"># spin,atom,spdf</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;energy&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">efermi</span>
+        <span class="n">element_dict</span> <span class="o">=</span> <span class="n">recast_array_on_uniq_array_elements</span><span class="p">(</span>
+            <span class="n">unique_elements</span><span class="p">,</span> <span class="n">elements</span>
+        <span class="p">)</span>
+        <span class="n">valid_keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">energy</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;energ&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">valid_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="c1"># print (valid_keys)</span>
+        <span class="n">spin_up_info</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">element_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">spin_up_info</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">element_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">j</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">valid_keys</span><span class="p">:</span>
+                    <span class="n">spin_up_info</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">atom</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_up_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_up_info</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_spin_polarized</span><span class="p">:</span>
+            <span class="n">spin_down_info</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">element_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">spin_down_info</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">energy</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">element_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">j</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">valid_keys</span><span class="p">:</span>
+                        <span class="n">spin_down_info</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">pdos</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">atom</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">info</span><span class="p">[</span><span class="s2">&quot;spin_down_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spin_down_info</span>
+            <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="s2">&quot;spin&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">j</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                            <span class="k">if</span> <span class="s2">&quot;up&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">n</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="s2">&quot;down&quot;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">],</span> <span class="n">n</span><span class="p">)</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">info</span></div></div>
+
+
+<div class="viewcode-block" id="parse_raman_dat"><a class="viewcode-back" href="../../../../jarvis.io.vasp.html#jarvis.io.vasp.outputs.parse_raman_dat">[docs]</a><span class="k">def</span> <span class="nf">parse_raman_dat</span><span class="p">(</span>
+    <span class="n">vasp_raman_path</span><span class="o">=</span><span class="s2">&quot;RAMANDIR-bulk@JVASP-1002_mp-149/vasp_raman.dat&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse vasp_raman.dat .</span>
+
+<span class="sd">    generated by https://github.com/raman-sc/VASP</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">vasp_raman_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">freqs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">activity</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">beta2</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;#&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">freqs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">alpha</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+            <span class="n">beta2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+            <span class="n">activity</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+    <span class="n">freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">freqs</span><span class="p">)</span>
+    <span class="n">activity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">activity</span><span class="p">)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">activity</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">find_peaks_cwt</span><span class="p">(</span><span class="n">activity</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot use peak finding module&quot;</span><span class="p">,</span> <span class="n">vasp_raman_path</span><span class="p">)</span>
+        <span class="k">pass</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;freqs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">freqs</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;activity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">activity</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;beta2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta2</span>
+    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;indices&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">indices</span>
+    <span class="k">return</span> <span class="n">info</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">kp=&#39;/users/knc6/Software/Devs/jarvis/jarvis/examples/vasp/SiOptb88/MAIN-RELAX-bulk@mp_149/KPOINT&#39;</span>
+<span class="sd">kpt=Kpoints(filename=kp)</span>
+<span class="sd">print (kpt)</span>
+<span class="sd">&quot;&quot;&quot;</span>
 </pre></div>
 
           </div>
@@ -1683,12 +2012,12 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>

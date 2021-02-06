@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.io.qe package &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.io.qe package &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -120,6 +120,43 @@ see <a class="reference external" href="https://www.quantum-espresso.org/Doc/INP
 <div class="section" id="module-jarvis.io.qe.outputs">
 <span id="jarvis-io-qe-outputs-module"></span><h2>jarvis.io.qe.outputs module<a class="headerlink" href="#module-jarvis.io.qe.outputs" title="Permalink to this headline">¶</a></h2>
 <p>Module for analyzing QE outputs.</p>
+<dl class="class">
+<dt id="jarvis.io.qe.outputs.DataFileSchema">
+<em class="property">class </em><code class="descclassname">jarvis.io.qe.outputs.</code><code class="descname">DataFileSchema</code><span class="sig-paren">(</span><em>filename=''</em>, <em>data={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/qe/outputs.html#DataFileSchema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.qe.outputs.DataFileSchema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Module to parse data-file-schema.xml file.</p>
+<dl class="method">
+<dt id="jarvis.io.qe.outputs.DataFileSchema.bandstruct_eigvals">
+<code class="descname">bandstruct_eigvals</code><span class="sig-paren">(</span><em>plot=False</em>, <em>filename='band.png'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/qe/outputs.html#DataFileSchema.bandstruct_eigvals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.qe.outputs.DataFileSchema.bandstruct_eigvals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get eigenvalues to plot bandstructure.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.io.qe.outputs.DataFileSchema.final_energy">
+<code class="descname">final_energy</code><a class="headerlink" href="#jarvis.io.qe.outputs.DataFileSchema.final_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get final energy.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.io.qe.outputs.DataFileSchema.final_structure">
+<code class="descname">final_structure</code><a class="headerlink" href="#jarvis.io.qe.outputs.DataFileSchema.final_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get final atoms.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="jarvis.io.qe.outputs.DataFileSchema.forces">
+<code class="descname">forces</code><a class="headerlink" href="#jarvis.io.qe.outputs.DataFileSchema.forces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get final forces.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.qe.outputs.DataFileSchema.xml_to_dict">
+<code class="descname">xml_to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/qe/outputs.html#DataFileSchema.xml_to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.qe.outputs.DataFileSchema.xml_to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read XML file.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="jarvis.io.qe.outputs.QEout">
 <em class="property">class </em><code class="descclassname">jarvis.io.qe.outputs.</code><code class="descname">QEout</code><span class="sig-paren">(</span><em>lines=None</em>, <em>filename='qe.out'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/qe/outputs.html#QEout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.qe.outputs.QEout" title="Permalink to this definition">¶</a></dt>
@@ -213,11 +250,11 @@ see <a class="reference external" href="https://www.quantum-espresso.org/Doc/INP
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>

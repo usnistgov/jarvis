@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.io.wannier package &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.io.wannier package &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -82,6 +82,31 @@
 <p>Class for reading wannier outouts.</p>
 <p>Such as wannier90.wout and wannier90_hr.dat</p>
 <dl class="class">
+<dt id="jarvis.io.wannier.outputs.Wannier90eig">
+<em class="property">class </em><code class="descclassname">jarvis.io.wannier.outputs.</code><code class="descname">Wannier90eig</code><span class="sig-paren">(</span><em>weig_path='wannier90.eig'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#Wannier90eig"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.Wannier90eig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Construct wannier90.eig related object.</p>
+<dl class="method">
+<dt id="jarvis.io.wannier.outputs.Wannier90eig.give_wannier_eigs">
+<code class="descname">give_wannier_eigs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#Wannier90eig.give_wannier_eigs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.Wannier90eig.give_wannier_eigs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get wannier eigs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.wannier.outputs.Wannier90eig.neigs">
+<code class="descname">neigs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#Wannier90eig.neigs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.Wannier90eig.neigs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get wannier eigs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.wannier.outputs.Wannier90eig.nk">
+<code class="descname">nk</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#Wannier90eig.nk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.Wannier90eig.nk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get wannier eigs.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="jarvis.io.wannier.outputs.Wannier90wout">
 <em class="property">class </em><code class="descclassname">jarvis.io.wannier.outputs.</code><code class="descname">Wannier90wout</code><span class="sig-paren">(</span><em>wout_path='wannier90.wout'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#Wannier90wout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.Wannier90wout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -106,6 +131,12 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="jarvis.io.wannier.outputs.WannierHam.chern_number_simple">
+<code class="descname">chern_number_simple</code><span class="sig-paren">(</span><em>nocc=8, k1=[0, 0, 0], k2=[0, 0, 0], nk1=20, nk2=20, Kmat=None, usemod=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#WannierHam.chern_number_simple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.WannierHam.chern_number_simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Chern number.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="jarvis.io.wannier.outputs.WannierHam.compare_dft_wann">
 <code class="descname">compare_dft_wann</code><span class="sig-paren">(</span><em>vasprun_path=''</em>, <em>energy_tol=0.75</em>, <em>plot=True</em>, <em>kp_labels_points=[]</em>, <em>kp_labels=[]</em>, <em>filename='compare.png'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#WannierHam.compare_dft_wann"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.WannierHam.compare_dft_wann" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compare DFT and Wannier bands to check accuracy.</p>
@@ -117,6 +148,18 @@
 <dd><p>Get density of states.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="jarvis.io.wannier.outputs.WannierHam.fermi_surf_2d">
+<code class="descname">fermi_surf_2d</code><span class="sig-paren">(</span><em>fermi=7.8163</em>, <em>origin=array([-1.</em>, <em>-1.</em>, <em>0.])</em>, <em>k1=array([4.</em>, <em>0.</em>, <em>0.])</em>, <em>k2=array([0.</em>, <em>4.</em>, <em>0.])</em>, <em>nk1=50</em>, <em>nk2=50</em>, <em>sig=0.3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#WannierHam.fermi_surf_2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.WannierHam.fermi_surf_2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate 2D projected Fermi-surface.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.wannier.outputs.WannierHam.find_nodes">
+<code class="descname">find_nodes</code><span class="sig-paren">(</span><em>num_occ=8, origin=[-0.5, -0.5, -0.5], k1=[1, 0, 0], k2=[0, 1, 0], k3=[0, 0, 1], nk1=10, nk2=10, nk3=10, sig=[0.01, 0.02, 0.05, 0.1, 0.2, 0.3], thresh=-10, node_tol=0.001, use_min=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#WannierHam.find_nodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.WannierHam.find_nodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find nodes, Dirac, Wyel points.</p>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="jarvis.io.wannier.outputs.WannierHam.from_dict">
 <em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>info</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#WannierHam.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.WannierHam.from_dict" title="Permalink to this definition">¶</a></dt>
@@ -125,7 +168,7 @@
 
 <dl class="method">
 <dt id="jarvis.io.wannier.outputs.WannierHam.generate_supercell">
-<code class="descname">generate_supercell</code><span class="sig-paren">(</span><em>supercell=[2, 2, 2], index=[0, 0, 1], sparse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#WannierHam.generate_supercell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.WannierHam.generate_supercell" title="Permalink to this definition">¶</a></dt>
+<code class="descname">generate_supercell</code><span class="sig-paren">(</span><em>supercell=[2, 2, 2], index=[0, 0, 0], sparse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/wannier/outputs.html#WannierHam.generate_supercell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.wannier.outputs.WannierHam.generate_supercell" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate supercell.</p>
 </dd></dl>
 
@@ -229,11 +272,11 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
