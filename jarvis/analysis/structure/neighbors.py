@@ -249,6 +249,7 @@ class NeighborsAnalysis(object):
         nbor_info["bondx"] = bondx
         nbor_info["bondy"] = bondy
         nbor_info["bondz"] = bondz
+        nbor_info["different_bond"] = different_bond
         # print ('nat',nat)
 
         return nbor_info
@@ -621,6 +622,8 @@ if __name__ == "__main__":
     a = NeighborsAnalysis(Si, verbose=ver, max_cut=5).atomwise_radial_dist(
         c_size=5
     )
+    a = NeighborsAnalysis(Si)
+    print (a.nbor_list()['different_bond'][0])
 
     print(a[1], len(a), a[1].nonzero())
     a = NeighborsAnalysis(Si, verbose=ver, max_cut=5).atomwise_radial_dist(
