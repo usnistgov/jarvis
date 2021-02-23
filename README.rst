@@ -25,13 +25,7 @@
         :target: https://github.com/usnistgov/jarvis
 .. image:: https://img.shields.io/github/repo-size/usnistgov/jarvis   
         :target: https://github.com/usnistgov/jarvis
-.. image:: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2Fjarvisnist
-        :target: https://twitter.com/jarvisnist
-.. image:: https://img.shields.io/badge/Facebook-Follow-Blue.svg
-        :target: https://www.facebook.com/jarvisnist/
-.. image:: https://img.shields.io/badge/LinkedIn-Follow-Blue.svg
-        :target: https://www.linkedin.com/company/jarvisnist
-
+        
         
 ========================================================================================
 
@@ -177,145 +171,144 @@ Module structure
 
     jarvis/
     ├── ai
-    │   ├── descriptors
-    │   │   ├── cfid.py
-    │   │   ├── coulomb.py
-    │   ├── gcn
-    │   ├── pkgs
-    │   │   ├── lgbm
-    │   │   │   ├── classification.py
-    │   │   │   └── regression.py
-    │   │   ├── sklearn
-    │   │   │   ├── classification.py
-    │   │   │   ├── hyper_params.py
-    │   │   │   └── regression.py
-    │   │   └── utils.py
-    │   ├── uncertainty
-    │   │   └── lgbm_quantile_uncertainty.py
+    │   ├── descriptors
+    │   │   ├── cfid.py
+    │   │   ├── coulomb.py
+    │   ├── gcn
+    │   ├── pkgs
+    │   │   ├── lgbm
+    │   │   │   ├── classification.py
+    │   │   │   └── regression.py
+    │   │   ├── sklearn
+    │   │   │   ├── classification.py
+    │   │   │   ├── hyper_params.py
+    │   │   │   └── regression.py
+    │   │   └── utils.py
+    │   ├── uncertainty
+    │   │   └── lgbm_quantile_uncertainty.py
     ├── analysis
-    │   ├── darkmatter
-    │   │   └── metrics.py
-    │   ├── defects
-    │   │   ├── surface.py
-    │   │   └── vacancy.py
-    │   ├── diffraction
-    │   │   └── xrd.py
-    │   ├── elastic
-    │   │   └── tensor.py
-    │   ├── interface
-    │   │   └── zur.py
-    │   ├── magnetism
-    │   │   └── magmom_setup.py
-    │   ├── periodic
-    │   │   └── ptable.py
-    │   ├── phonon
-    │   │   ├── force_constants.py
-    │   │   └── ir.py
-    │   ├── solarefficiency
-    │   │   └── solar.py
-    │   ├── stm
-    │   │   └── tersoff_hamann.py
-    │   ├── structure
-    │   │   ├── neighbors.py
-    │   │   ├── spacegroup.py
-    │   ├── thermodynamics
-    │   │   ├── energetics.py
-    │   ├── topological
-    │   │   └── spillage.py
+    │   ├── darkmatter
+    │   │   └── metrics.py
+    │   ├── defects
+    │   │   ├── surface.py
+    │   │   └── vacancy.py
+    │   ├── diffraction
+    │   │   └── xrd.py
+    │   ├── elastic
+    │   │   └── tensor.py
+    │   ├── interface
+    │   │   └── zur.py
+    │   ├── magnetism
+    │   │   └── magmom_setup.py
+    │   ├── periodic
+    │   │   └── ptable.py
+    │   ├── phonon
+    │   │   ├── force_constants.py
+    │   │   └── ir.py
+    │   ├── solarefficiency
+    │   │   └── solar.py
+    │   ├── stm
+    │   │   └── tersoff_hamann.py
+    │   ├── structure
+    │   │   ├── neighbors.py
+    │   │   ├── spacegroup.py
+    │   ├── thermodynamics
+    │   │   ├── energetics.py
+    │   ├── topological
+    │   │   └── spillage.py
     ├── core
-    │   ├── atoms.py
-    │   ├── composition.py
-    │   ├── graphs.py
-    │   ├── image.py
-    │   ├── kpoints.py
-    │   ├── lattice.py
-    │   ├── pdb_atoms.py
-    │   ├── specie.py
-    │   ├── spectrum.py
-    │   └── utils.py
+    │   ├── atoms.py
+    │   ├── composition.py
+    │   ├── graphs.py
+    │   ├── image.py
+    │   ├── kpoints.py
+    │   ├── lattice.py
+    │   ├── pdb_atoms.py
+    │   ├── specie.py
+    │   ├── spectrum.py
+    │   └── utils.py
     ├── db
-    │   ├── figshare.py
-    │   ├── jsonutils.py
-    │   ├── lammps_to_xml.py
-    │   ├── restapi.py
-    │   ├── vasp_to_xml.py
-    │   └── webpages.py
+    │   ├── figshare.py
+    │   ├── jsonutils.py
+    │   ├── lammps_to_xml.py
+    │   ├── restapi.py
+    │   ├── vasp_to_xml.py
+    │   └── webpages.py
     ├── examples
-    │   ├── lammps
-    │   │   ├── jff_test.py
-    │   │   ├── Al03.eam.alloy_nist.tgz
-    │   ├── vasp
-    │   │   ├── dft_test.py
-    │   │   ├── SiOptb88.tgz
+    │   ├── lammps
+    │   │   ├── jff_test.py
+    │   │   ├── Al03.eam.alloy_nist.tgz
+    │   ├── vasp
+    │   │   ├── dft_test.py
+    │   │   ├── SiOptb88.tgz
     ├── io
-    │   ├── boltztrap
-    │   │   ├── inputs.py
-    │   │   └── outputs.py
-    │   ├── calphad
-    │   │   └── write_decorated_poscar.py
-    │   ├── lammps
-    │   │   ├── inputs.py
-    │   │   └── outputs.py
-    │   ├── phonopy
-    │   │   ├── fcmat2hr.py
-    │   │   ├── inputs.py
-    │   │   └── outputs.py
-    │   ├── qe
-    │   │   ├── inputs.py
-    │   │   └── outputs.py
-    │   ├── vasp
-    │   │   ├── inputs.py
-    │   │   └── outputs.py
-    │   ├── wannier
-    │   │   ├── inputs.py
-    │   │   └── outputs.py
-    │   ├── wanniertools
-    │   │   ├── inputs.py
-    │   │   └── outputs.py
-    │   ├── wien2k
-    │   │   ├── inputs.py
-    │   │   ├── outputs.py
+    │   ├── boltztrap
+    │   │   ├── inputs.py
+    │   │   └── outputs.py
+    │   ├── calphad
+    │   │   └── write_decorated_poscar.py
+    │   ├── lammps
+    │   │   ├── inputs.py
+    │   │   └── outputs.py
+    │   ├── phonopy
+    │   │   ├── fcmat2hr.py
+    │   │   ├── inputs.py
+    │   │   └── outputs.py
+    │   ├── qe
+    │   │   ├── inputs.py
+    │   │   └── outputs.py
+    │   ├── vasp
+    │   │   ├── inputs.py
+    │   │   └── outputs.py
+    │   ├── wannier
+    │   │   ├── inputs.py
+    │   │   └── outputs.py
+    │   ├── wanniertools
+    │   │   ├── inputs.py
+    │   │   └── outputs.py
+    │   ├── wien2k
+    │   │   ├── inputs.py
+    │   │   ├── outputs.py
     ├── tasks
-    │   ├── boltztrap
-    │   │   └── run.py
-    │   ├── lammps
-    │   │   ├── templates
-    │   │   └── lammps.py
-    │   ├── phonopy
-    │   │   └── run.py
-    │   ├── vasp
-    │   │   └── vasp.py
-    │   ├── queue_jobs.py
+    │   ├── boltztrap
+    │   │   └── run.py
+    │   ├── lammps
+    │   │   ├── templates
+    │   │   └── lammps.py
+    │   ├── phonopy
+    │   │   └── run.py
+    │   ├── vasp
+    │   │   └── vasp.py
+    │   ├── queue_jobs.py
     ├── tests
-    │   ├── testfiles
-    │   │   ├── ai
-    │   │   ├── analysis
-    │   │   │   ├── darkmatter
-    │   │   │   ├── defects
-    │   │   │   ├── elastic
-    │   │   │   ├── interface
-    │   │   │   ├── magnetism
-    │   │   │   ├── periodic
-    │   │   │   ├── phonon
-    │   │   │   ├── solar
-    │   │   │   ├── stm
-    │   │   │   ├── structure
-    │   │   │   ├── thermodynamics
-    │   │   │   ├── topological
-    │   │   ├── core
-    │   │   ├── db
-    │   │   ├── io
-    │   │   │   ├── boltztrap
-    │   │   │   ├── calphad
-    │   │   │   ├── lammps
-    │   │   │   ├── phonopy
-    │   │   │   ├── qe
-    │   │   │   ├── vasp
-    │   │   │   ├── wannier
-    │   │   │   ├── wanniertools
-    │   │   │   ├── wien2k
-    │   │   ├── tasks
-    │   │   │   ├── test_lammps.py
-    │   │   │   └── test_vasp.py
+    │   ├── testfiles
+    │   │   ├── ai
+    │   │   ├── analysis
+    │   │   │   ├── darkmatter
+    │   │   │   ├── defects
+    │   │   │   ├── elastic
+    │   │   │   ├── interface
+    │   │   │   ├── magnetism
+    │   │   │   ├── periodic
+    │   │   │   ├── phonon
+    │   │   │   ├── solar
+    │   │   │   ├── stm
+    │   │   │   ├── structure
+    │   │   │   ├── thermodynamics
+    │   │   │   ├── topological
+    │   │   ├── core
+    │   │   ├── db
+    │   │   ├── io
+    │   │   │   ├── boltztrap
+    │   │   │   ├── calphad
+    │   │   │   ├── lammps
+    │   │   │   ├── phonopy
+    │   │   │   ├── qe
+    │   │   │   ├── vasp
+    │   │   │   ├── wannier
+    │   │   │   ├── wanniertools
+    │   │   │   ├── wien2k
+    │   │   ├── tasks
+    │   │   │   ├── test_lammps.py
+    │   │   │   └── test_vasp.py
     └── README.rst
-
