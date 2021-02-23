@@ -272,13 +272,15 @@ class Kpoints3D(object):
             kgamma = prim.angles[2]
             if kalpha > 90 and kbeta > 90 and kgamma > 90:
                 kp = HighSymmetryKpoint3DFactory().tria()
-            if kalpha < 90 and kbeta < 90 and kgamma < 90:
+            elif kalpha < 90 and kbeta < 90 and kgamma < 90:
                 kp = HighSymmetryKpoint3DFactory().trib()
-            if kalpha > 90 and kbeta > 90 and kgamma == 90:
+            elif kalpha > 90 and kbeta > 90 and kgamma == 90:
                 kp = HighSymmetryKpoint3DFactory().tria()
-            if kalpha < 90 and kbeta < 90 and kgamma == 90:
+            elif kalpha < 90 and kbeta < 90 and kgamma == 90:
                 kp = HighSymmetryKpoint3DFactory().trib()
-
+            else:
+                # Need to check
+                kp = HighSymmetryKpoint3DFactory().tria()
         else:
             print("kpath space group is not implemeted ", spg_symb)
         # print("kp",spg_symb)
