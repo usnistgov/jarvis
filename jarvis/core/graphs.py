@@ -43,8 +43,6 @@ class Graph(object):
     @staticmethod
     def from_atoms(
         atoms=None,
-        lengthscale=0.5,
-        variance=1.0,
         get_prim=False,
         zero_diag=False,
         node_atomwise_angle_dist=False,
@@ -78,8 +76,12 @@ class Graph(object):
             atoms = atoms.get_primitive_atoms
         dim = get_supercell_dims(atoms=atoms, enforce_c_size=enforce_c_size)
         atoms = atoms.make_supercell(dim)
-        raw_data = np.array(atoms.raw_distance_matrix)
-        adj = variance * np.exp(-raw_data / lengthscale)
+
+        adj = np.array(atoms.raw_distance_matrix.copy())
+
+        # zero out edges with bond length greater than threshold
+        adj[adj >= max_cut] = 0
+
         if zero_diag:
             np.fill_diagonal(adj, 0.0)
         nodes = np.arange(atoms.num_atoms)
@@ -138,13 +140,19 @@ class Graph(object):
                 (node_attributes, nbr.atomwise_angle_dist()), axis=1
             )
             node_attributes = np.array(node_attributes, dtype="float")
+
+        # construct edge list
         uv = []
         edge_features = []
         for ii, i in enumerate(atoms.elements):
             for jj, j in enumerate(atoms.elements):
-                uv.append((ii, jj))
-                edge_features.append(adj[ii, jj])
+                bondlength = adj[ii, jj]
+                if bondlength > 0:
+                    uv.append((ii, jj))
+                    edge_features.append(bondlength)
+
         edge_attributes = edge_features
+
         if make_colormap:
             sps = atoms.uniq_species
             color_dict = random_colors(number_of_colors=len(sps))
@@ -213,9 +221,10 @@ class Graph(object):
     @property
     def adjacency_matrix(self):
         """Provide adjacency_matrix of graph."""
-        return np.array(self.edge_attributes).reshape(
-            self.num_nodes, self.num_nodes
-        )
+        A = np.zeros((self.num_nodes, self.num_nodes))
+        for edge, a in zip(self.edges, self.edge_attributes):
+            A[edge] = a
+        return A
 
 
 """
