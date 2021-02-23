@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.io.wannier.outputs &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.io.wannier.outputs &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -48,12 +48,15 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">cmath</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">Kpoints3D</span>
 <span class="kn">from</span> <span class="nn">jarvis.io.vasp.outputs</span> <span class="kn">import</span> <span class="n">Vasprun</span>
 <span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="k">as</span> <span class="nn">opt</span>
+<span class="kn">import</span> <span class="nn">copy</span> <span class="k">as</span> <span class="nn">copy</span>
 
 
 <div class="viewcode-block" id="get_projectors_for_formula"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.get_projectors_for_formula">[docs]</a><span class="k">def</span> <span class="nf">get_projectors_for_formula</span><span class="p">(</span>
@@ -246,6 +249,334 @@
         <span class="n">info</span><span class="p">[</span><span class="s2">&quot;H&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span>
         <span class="n">info</span><span class="p">[</span><span class="s2">&quot;HR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">HR</span>
         <span class="k">return</span> <span class="n">info</span></div>
+
+<div class="viewcode-block" id="WannierHam.find_nodes"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.find_nodes">[docs]</a>    <span class="k">def</span> <span class="nf">find_nodes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">num_occ</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">origin</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">],</span>
+        <span class="n">k1</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">k2</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">k3</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">nk1</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">nk2</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">nk3</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">sig</span><span class="o">=</span><span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span>
+        <span class="n">thresh</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">node_tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+        <span class="n">use_min</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find nodes, Dirac, Wyel points.&quot;&quot;&quot;</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nk1</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">nk2</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">nk3</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">k1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">k2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">k2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">k3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">k3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">nk1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">nk2</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">c3</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">nk3</span><span class="p">):</span>
+                    <span class="n">K</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">origin</span>
+                        <span class="o">+</span> <span class="n">k1</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">c1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk1</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="n">k2</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">c2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk2</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="n">k3</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">c3</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk3</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span>
+                    <span class="p">)</span>
+
+                    <span class="c1">#        VALS = np.zeros((nk1,nk2, ham.nwan))</span>
+
+        <span class="n">IMAGE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nk1</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">nk2</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">nk3</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sig</span><span class="p">)))</span>
+        <span class="n">DIRECTGAP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nk1</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">nk2</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">nk3</span> <span class="o">*</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">DIRECTGAP</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mf">100.0</span>
+
+        <span class="n">VAL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">nk1</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">nk2</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span> <span class="n">nk3</span> <span class="o">*</span> <span class="mi">4</span><span class="p">))</span> <span class="o">*</span> <span class="mf">100.0</span>
+
+        <span class="c1">#        sig_0 = 0.2</span>
+
+        <span class="c1"># initial pass</span>
+
+        <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">nk1</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;c1 &quot;</span><span class="p">,</span> <span class="n">c1</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">nk2</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">c3</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">nk3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                    <span class="n">k</span> <span class="o">=</span> <span class="n">K</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span><span class="p">,</span> <span class="p">:]</span>
+                    <span class="n">val</span><span class="p">,</span> <span class="n">vect</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_ham</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+                    <span class="n">d</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span><span class="p">]</span> <span class="o">-</span> <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="n">DIRECTGAP</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+
+                    <span class="c1"># IMAGE[c1,c2,c3,-1] = np.exp( -(d)**2 / sig[-1]**2)</span>
+
+        <span class="k">if</span> <span class="n">thresh</span> <span class="o">==</span> <span class="o">-</span><span class="mi">10</span><span class="p">:</span>
+            <span class="n">thresh</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">DIRECTGAP</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;set thresh &quot;</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span>
+
+            <span class="c1"># second pass</span>
+
+            <span class="c1">#        maxval = np.max(IMAGE[:,:,:,-1])</span>
+            <span class="c1">#        thresh = maxval * 0.1</span>
+            <span class="c1">#        print(&quot;thresh &quot;, maxval, thresh)</span>
+
+        <span class="k">def</span> <span class="nf">fun_to_min</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="n">val</span><span class="p">,</span> <span class="n">vect</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_ham</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span><span class="p">]</span> <span class="o">-</span> <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">num_thresh</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">min_gap</span> <span class="o">=</span> <span class="mf">1000000000.0</span>
+        <span class="n">min_cond</span> <span class="o">=</span> <span class="mf">1000000000.0</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1000000000.0</span>
+
+        <span class="n">dk1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk1</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">dk2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk2</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">dk3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk3</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+        <span class="n">weyl_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dirac_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">higher_order_points</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">nk1</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;c1 &quot;</span><span class="p">,</span> <span class="n">c1</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">nk2</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">c3</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">nk3</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">c1a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">c2a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                            <span class="k">for</span> <span class="n">c3a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+
+                                <span class="k">if</span> <span class="n">c1a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                                    <span class="n">c1p</span> <span class="o">=</span> <span class="p">(</span><span class="n">c1</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">nk1</span><span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">c1p</span> <span class="o">=</span> <span class="n">c1</span>
+                                <span class="k">if</span> <span class="n">c2a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                                    <span class="n">c2p</span> <span class="o">=</span> <span class="p">(</span><span class="n">c2</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">nk2</span><span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">c2p</span> <span class="o">=</span> <span class="n">c2</span>
+                                <span class="k">if</span> <span class="n">c3a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                                    <span class="n">c3p</span> <span class="o">=</span> <span class="p">(</span><span class="n">c3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">nk3</span><span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">c3p</span> <span class="o">=</span> <span class="n">c3</span>
+
+                                <span class="k">if</span> <span class="p">(</span>
+                                    <span class="n">DIRECTGAP</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">thresh</span>
+                                    <span class="ow">or</span> <span class="n">DIRECTGAP</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3p</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">thresh</span>
+                                    <span class="ow">or</span> <span class="n">DIRECTGAP</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2p</span><span class="p">,</span> <span class="n">c3</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">thresh</span>
+                                    <span class="ow">or</span> <span class="n">DIRECTGAP</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2p</span><span class="p">,</span> <span class="n">c3p</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">thresh</span>
+                                    <span class="ow">or</span> <span class="n">DIRECTGAP</span><span class="p">[</span><span class="n">c1p</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">thresh</span>
+                                    <span class="ow">or</span> <span class="n">DIRECTGAP</span><span class="p">[</span><span class="n">c1p</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3p</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">thresh</span>
+                                    <span class="ow">or</span> <span class="n">DIRECTGAP</span><span class="p">[</span><span class="n">c1p</span><span class="p">,</span> <span class="n">c2p</span><span class="p">,</span> <span class="n">c3</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">thresh</span>
+                                    <span class="ow">or</span> <span class="n">DIRECTGAP</span><span class="p">[</span><span class="n">c1p</span><span class="p">,</span> <span class="n">c2p</span><span class="p">,</span> <span class="n">c3p</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">thresh</span>
+                                <span class="p">):</span>
+                                    <span class="n">num_thresh</span> <span class="o">+=</span> <span class="mi">1</span>
+                                    <span class="n">k</span> <span class="o">=</span> <span class="n">K</span><span class="p">[</span><span class="n">c1</span> <span class="o">+</span> <span class="n">c1a</span><span class="p">,</span> <span class="n">c2</span> <span class="o">+</span> <span class="n">c2a</span><span class="p">,</span> <span class="n">c3</span> <span class="o">+</span> <span class="n">c3a</span><span class="p">,</span> <span class="p">:]</span>
+
+                                    <span class="k">if</span> <span class="n">use_min</span><span class="p">:</span>
+                                        <span class="n">B</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span>
+                                            <span class="n">k</span> <span class="o">-</span> <span class="p">[</span><span class="n">dk1</span><span class="p">,</span> <span class="n">dk2</span><span class="p">,</span> <span class="n">dk3</span><span class="p">],</span>
+                                            <span class="n">k</span> <span class="o">+</span> <span class="p">[</span><span class="n">dk1</span><span class="p">,</span> <span class="n">dk2</span><span class="p">,</span> <span class="n">dk3</span><span class="p">],</span>
+                                            <span class="n">keep_feasible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                        <span class="p">)</span>
+                                        <span class="n">val</span><span class="p">,</span> <span class="n">vect</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_ham</span><span class="p">(</span>
+                                            <span class="n">k</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="kc">None</span>
+                                        <span class="p">)</span>
+                                        <span class="k">if</span> <span class="p">(</span>
+                                            <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span><span class="p">]</span> <span class="o">-</span> <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                                            <span class="o">&lt;</span> <span class="mf">0.15</span>
+                                        <span class="p">):</span>
+                                            <span class="n">res</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span>
+                                                <span class="n">fun_to_min</span><span class="p">,</span>
+                                                <span class="n">k</span><span class="p">,</span>
+                                                <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Powell&quot;</span><span class="p">,</span>
+                                                <span class="n">bounds</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+                                                <span class="n">tol</span><span class="o">=</span><span class="mf">0.5e-3</span><span class="p">,</span>
+                                                <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxfev&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+                                            <span class="p">)</span>
+                                            <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="mf">0.005</span><span class="p">:</span>
+                                                <span class="n">res</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span>
+                                                    <span class="n">fun_to_min</span><span class="p">,</span>
+                                                    <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                                                    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Powell&quot;</span><span class="p">,</span>
+                                                    <span class="n">bounds</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+                                                    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span>
+                                                    <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;maxfev&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">},</span>
+                                                <span class="p">)</span>
+                                            <span class="n">val</span><span class="p">,</span> <span class="n">vect</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_ham</span><span class="p">(</span>
+                                                <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="kc">None</span>
+                                            <span class="p">)</span>
+
+                                            <span class="n">k</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span>
+                                    <span class="k">else</span><span class="p">:</span>
+                                        <span class="n">val</span><span class="p">,</span> <span class="n">vect</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_ham</span><span class="p">(</span>
+                                            <span class="n">k</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="kc">None</span>
+                                        <span class="p">)</span>
+
+                                    <span class="n">d</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span><span class="p">]</span> <span class="o">-</span> <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                                    <span class="k">if</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">node_tol</span><span class="p">:</span>
+                                        <span class="c1"># degen = 0</span>
+                                        <span class="n">gap_mean</span> <span class="o">=</span> <span class="p">(</span>
+                                            <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span><span class="p">]</span> <span class="o">+</span> <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                                        <span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+                                        <span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                                            <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">val</span> <span class="o">-</span> <span class="n">gap_mean</span><span class="p">)</span>
+                                            <span class="o">&lt;</span> <span class="n">node_tol</span> <span class="o">*</span> <span class="mi">2</span>
+                                        <span class="p">)</span>
+                                        <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                                            <span class="n">weyl_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;weyl point &quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+                                        <span class="k">elif</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                                            <span class="n">dirac_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+                                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;dirac point &quot;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+                                        <span class="k">else</span><span class="p">:</span>
+                                            <span class="n">higher_order_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                                <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                                            <span class="p">)</span>
+                                            <span class="nb">print</span><span class="p">(</span>
+                                                <span class="s2">&quot;nontrivial point &quot;</span><span class="p">,</span>
+                                                <span class="n">k</span><span class="p">,</span>
+                                                <span class="n">d</span><span class="p">,</span>
+                                                <span class="n">count</span><span class="p">,</span>
+                                            <span class="p">)</span>
+
+                                    <span class="n">DIRECTGAP</span><span class="p">[</span><span class="n">c1</span> <span class="o">+</span> <span class="n">c1a</span><span class="p">,</span> <span class="n">c2</span> <span class="o">+</span> <span class="n">c2a</span><span class="p">,</span> <span class="n">c3</span> <span class="o">+</span> <span class="n">c3a</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+                                    <span class="n">VAL</span><span class="p">[</span><span class="n">c1</span> <span class="o">+</span> <span class="n">c1a</span><span class="p">,</span> <span class="n">c2</span> <span class="o">+</span> <span class="n">c2a</span><span class="p">,</span> <span class="n">c3</span> <span class="o">+</span> <span class="n">c3a</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span>
+                                        <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span><span class="p">]</span> <span class="o">+</span> <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                                    <span class="p">)</span>
+                                    <span class="n">min_gap</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">min_gap</span><span class="p">)</span>
+                                    <span class="n">min_cond</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">min_cond</span><span class="p">,</span> <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span><span class="p">])</span>
+                                    <span class="n">max_val</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_val</span><span class="p">,</span> <span class="n">val</span><span class="p">[</span><span class="n">num_occ</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sig</span><span class="p">):</span>
+            <span class="n">IMAGE</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">cs</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">DIRECTGAP</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">s</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;num thresh &quot;</span><span class="p">,</span> <span class="n">num_thresh</span><span class="p">,</span> <span class="s2">&quot; out of &quot;</span><span class="p">,</span> <span class="n">nk1</span> <span class="o">*</span> <span class="n">nk2</span> <span class="o">*</span> <span class="n">nk3</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">4</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;min direct gap &quot;</span><span class="p">,</span> <span class="n">min_gap</span><span class="p">,</span> <span class="s2">&quot; indirect gap  &quot;</span><span class="p">,</span> <span class="n">min_cond</span> <span class="o">-</span> <span class="n">max_val</span>
+        <span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;weyl &quot;</span><span class="p">,</span> <span class="n">weyl_points</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;dirac &quot;</span><span class="p">,</span> <span class="n">dirac_points</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;higher order &quot;</span><span class="p">,</span> <span class="n">higher_order_points</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">IMAGE</span><span class="p">,</span>
+            <span class="n">DIRECTGAP</span><span class="p">,</span>
+            <span class="n">VAL</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">min_gap</span><span class="p">,</span> <span class="n">min_cond</span> <span class="o">-</span> <span class="n">max_val</span><span class="p">],</span>
+            <span class="n">weyl_points</span><span class="p">,</span>
+            <span class="n">dirac_points</span><span class="p">,</span>
+            <span class="n">higher_order_points</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="WannierHam.chern_number_simple"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.chern_number_simple">[docs]</a>    <span class="k">def</span> <span class="nf">chern_number_simple</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">nocc</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">k1</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">k2</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">nk1</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">nk2</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">Kmat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">usemod</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate Chern number.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Kmat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nk1</span><span class="p">,</span> <span class="n">nk2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+            <span class="n">k1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">k2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">k2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+            <span class="c1">#        print( &#39;K&#39;)</span>
+
+            <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nk1</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nk2</span><span class="p">):</span>
+                    <span class="n">K</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">k1</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">c1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk1</span><span class="p">)</span> <span class="o">+</span> <span class="n">k2</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span>
+                        <span class="n">c2</span>
+                    <span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk2</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="n">Kmat</span>
+
+        <span class="k">if</span> <span class="n">usemod</span><span class="p">:</span>
+
+            <span class="n">lim1</span> <span class="o">=</span> <span class="n">nk1</span>
+            <span class="n">lim2</span> <span class="o">=</span> <span class="n">nk2</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="n">lim1</span> <span class="o">=</span> <span class="n">nk1</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">lim2</span> <span class="o">=</span> <span class="n">nk2</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">VECT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">lim1</span><span class="p">,</span> <span class="n">lim2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nwan</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nwan</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+        <span class="n">gap_min</span> <span class="o">=</span> <span class="mf">100000000000.0</span>
+        <span class="n">val_max</span> <span class="o">=</span> <span class="o">-</span><span class="mf">10000000000000.0</span>
+        <span class="n">cond_min</span> <span class="o">=</span> <span class="mf">10000000000.0</span>
+
+        <span class="c1"># cond_min_p1 = 10000000000.0</span>
+
+        <span class="c1"># gap_min2 = 100000000000.0</span>
+
+        <span class="c1"># nwan = self.nwan</span>
+
+        <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lim1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lim2</span><span class="p">):</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">K</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="n">val</span><span class="p">,</span> <span class="n">vect</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_ham</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">proj</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">VECT</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">vect</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">val</span><span class="p">[</span><span class="n">nocc</span><span class="p">]</span> <span class="o">-</span> <span class="n">val</span><span class="p">[</span><span class="n">nocc</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">gap_min</span><span class="p">:</span>
+                    <span class="n">gap_min</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">nocc</span><span class="p">]</span> <span class="o">-</span> <span class="n">val</span><span class="p">[</span><span class="n">nocc</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">val</span><span class="p">[</span><span class="n">nocc</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">val_max</span><span class="p">:</span>
+                    <span class="n">val_max</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">nocc</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">val</span><span class="p">[</span><span class="n">nocc</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">cond_min</span><span class="p">:</span>
+                    <span class="n">cond_min</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="n">nocc</span><span class="p">]</span>
+
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;minimum_direct_gap&quot;</span><span class="p">,</span> <span class="n">gap_min</span><span class="p">,</span> <span class="s2">&quot;indirect_gap&quot;</span><span class="p">,</span> <span class="n">cond_min</span> <span class="o">-</span> <span class="n">val_max</span>
+        <span class="p">)</span>
+        <span class="n">direct_gap</span> <span class="o">=</span> <span class="n">gap_min</span>
+        <span class="n">indirect_gap</span> <span class="o">=</span> <span class="n">cond_min</span> <span class="o">-</span> <span class="n">val_max</span>
+
+        <span class="n">Chern</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nk1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nk2</span><span class="p">):</span>
+
+                <span class="k">if</span> <span class="n">usemod</span><span class="p">:</span>
+                    <span class="n">c1p</span> <span class="o">=</span> <span class="p">(</span><span class="n">c1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">nk1</span>
+                    <span class="n">c2p</span> <span class="o">=</span> <span class="p">(</span><span class="n">c2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">nk2</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">c1p</span> <span class="o">=</span> <span class="n">c1</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="n">c2p</span> <span class="o">=</span> <span class="n">c2</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="n">klist</span> <span class="o">=</span> <span class="p">[[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">],</span> <span class="p">[</span><span class="n">c1p</span><span class="p">,</span> <span class="n">c2</span><span class="p">],</span> <span class="p">[</span><span class="n">c1p</span><span class="p">,</span> <span class="n">c2p</span><span class="p">],</span> <span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2p</span><span class="p">],</span> <span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">]]</span>
+
+                <span class="n">phi</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                    <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+                        <span class="n">VECT</span><span class="p">[</span><span class="n">klist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">klist</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">nocc</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">conj</span><span class="p">(),</span>
+                        <span class="n">VECT</span><span class="p">[</span><span class="n">klist</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">klist</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">nocc</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="n">phi</span> <span class="o">=</span> <span class="n">phi</span> <span class="o">-</span> <span class="p">(</span><span class="n">cmath</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">M</span><span class="p">)))</span><span class="o">.</span><span class="n">imag</span>
+
+                <span class="k">if</span> <span class="n">phi</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>
+                    <span class="n">phi</span> <span class="o">=</span> <span class="n">phi</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+                <span class="k">elif</span> <span class="n">phi</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">:</span>
+                    <span class="n">phi</span> <span class="o">=</span> <span class="n">phi</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.75</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;WARNING in chern calculation, phi&quot;</span><span class="p">,</span>
+                        <span class="n">c1</span><span class="p">,</span>
+                        <span class="n">c2</span><span class="p">,</span>
+                        <span class="n">phi</span><span class="p">,</span>
+                        <span class="s2">&quot; try more k-points&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                <span class="n">Chern</span> <span class="o">+=</span> <span class="n">phi</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">usemod</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Chern</span><span class="p">,</span> <span class="n">direct_gap</span><span class="p">,</span> <span class="n">indirect_gap</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Chern</span><span class="p">,</span> <span class="n">direct_gap</span><span class="p">,</span> <span class="n">val_max</span><span class="p">,</span> <span class="n">cond_min</span></div>
 
 <div class="viewcode-block" id="WannierHam.from_dict"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
@@ -569,7 +900,7 @@
         <span class="k">return</span> <span class="n">energies</span><span class="p">,</span> <span class="n">dos</span><span class="p">,</span> <span class="n">pdos</span></div>
 
 <div class="viewcode-block" id="WannierHam.generate_supercell"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.generate_supercell">[docs]</a>    <span class="k">def</span> <span class="nf">generate_supercell</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">supercell</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">supercell</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate supercell.&quot;&quot;&quot;</span>
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -683,7 +1014,39 @@
 
         <span class="n">t3</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TIME SUPERCELL&quot;</span><span class="p">,</span> <span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span><span class="p">,</span> <span class="n">t2</span> <span class="o">-</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t3</span> <span class="o">-</span> <span class="n">t2</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">hbig</span></div></div>
+        <span class="k">return</span> <span class="n">hbig</span></div>
+
+<div class="viewcode-block" id="WannierHam.fermi_surf_2d"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.WannierHam.fermi_surf_2d">[docs]</a>    <span class="k">def</span> <span class="nf">fermi_surf_2d</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">fermi</span><span class="o">=</span><span class="mf">7.8163</span><span class="p">,</span>
+        <span class="n">origin</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+        <span class="n">k1</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+        <span class="n">k2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span>
+        <span class="n">nk1</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">nk2</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">sig</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate 2D projected Fermi-surface.&quot;&quot;&quot;</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nk1</span><span class="p">,</span> <span class="n">nk2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nk1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nk2</span><span class="p">):</span>
+                <span class="n">K</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">origin</span>
+                    <span class="o">+</span> <span class="n">k1</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">c1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk1</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="n">k2</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">c2</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nk2</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nk1</span><span class="p">,</span> <span class="n">nk2</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">c1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nk1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">c2</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nk2</span><span class="p">):</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">K</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="n">val</span><span class="p">,</span> <span class="n">vect</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_ham</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">image</span><span class="p">[</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">val</span> <span class="o">-</span> <span class="n">fermi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">sig</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">image</span></div></div>
 
 
 <div class="viewcode-block" id="Wannier90wout"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.Wannier90wout">[docs]</a><span class="k">class</span> <span class="nc">Wannier90wout</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -711,6 +1074,29 @@
                     <span class="p">]</span>
                     <span class="n">wan_cnts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">wan_cnts</span></div></div>
+
+
+<div class="viewcode-block" id="Wannier90eig"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.Wannier90eig">[docs]</a><span class="k">class</span> <span class="nc">Wannier90eig</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct wannier90.eig related object.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weig_path</span><span class="o">=</span><span class="s2">&quot;wannier90.eig&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize with file path.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weig</span> <span class="o">=</span> <span class="n">weig_path</span>
+
+<div class="viewcode-block" id="Wannier90eig.give_wannier_eigs"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.Wannier90eig.give_wannier_eigs">[docs]</a>    <span class="k">def</span> <span class="nf">give_wannier_eigs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get wannier eigs.&quot;&quot;&quot;</span>
+        <span class="n">eigs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weig</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">eigs</span></div>
+
+<div class="viewcode-block" id="Wannier90eig.neigs"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.Wannier90eig.neigs">[docs]</a>    <span class="k">def</span> <span class="nf">neigs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get wannier eigs.&quot;&quot;&quot;</span>
+        <span class="n">ne</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">give_wannier_eigs</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">ne</span></div>
+
+<div class="viewcode-block" id="Wannier90eig.nk"><a class="viewcode-back" href="../../../../jarvis.io.wannier.html#jarvis.io.wannier.outputs.Wannier90eig.nk">[docs]</a>    <span class="k">def</span> <span class="nf">nk</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get wannier eigs.&quot;&quot;&quot;</span>
+        <span class="n">nk</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">give_wannier_eigs</span><span class="p">())</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">neigs</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">nk</span></div></div>
 </pre></div>
 
           </div>
@@ -743,12 +1129,12 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>

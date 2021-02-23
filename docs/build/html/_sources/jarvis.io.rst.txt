@@ -14,6 +14,7 @@ Subpackages
     jarvis.io.vasp
     jarvis.io.wannier
     jarvis.io.wanniertools
+    jarvis.io.wien2k
 
 Module contents
 ---------------

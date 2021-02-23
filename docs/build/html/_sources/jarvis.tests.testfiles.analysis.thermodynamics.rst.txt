@@ -1,0 +1,22 @@
+jarvis.tests.testfiles.analysis.thermodynamics package
+======================================================
+
+Submodules
+----------
+
+jarvis.tests.testfiles.analysis.thermodynamics.test\_energetics module
+----------------------------------------------------------------------
+
+.. automodule:: jarvis.tests.testfiles.analysis.thermodynamics.test_energetics
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: jarvis.tests.testfiles.analysis.thermodynamics
+    :members:
+    :undoc-members:
+    :show-inheritance:

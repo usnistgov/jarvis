@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.tasks.lammps.lammps &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.tasks.lammps.lammps &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -45,18 +45,19 @@
     <span class="n">Spacegroup3D</span><span class="p">,</span>
     <span class="n">symmetrically_distinct_miller_indices</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span><span class="p">,</span> <span class="n">get_supercell_dims</span><span class="p">,</span> <span class="n">ase_to_atoms</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Poscar</span>
 <span class="kn">from</span> <span class="nn">jarvis.io.lammps.inputs</span> <span class="kn">import</span> <span class="n">LammpsInput</span><span class="p">,</span> <span class="n">LammpsData</span>
 <span class="kn">from</span> <span class="nn">jarvis.tasks.lammps.templates.templates</span> <span class="kn">import</span> <span class="n">GenericInputs</span>
-<span class="kn">from</span> <span class="nn">jarvis.io.lammps.outputs</span> <span class="kn">import</span> <span class="n">analyze_log</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.lammps.outputs</span> <span class="kn">import</span> <span class="n">analyze_log</span><span class="p">,</span> <span class="n">read_dump</span>
 <span class="kn">from</span> <span class="nn">jarvis.analysis.defects.vacancy</span> <span class="kn">import</span> <span class="n">Vacancy</span>
 <span class="kn">from</span> <span class="nn">jarvis.analysis.defects.surface</span> <span class="kn">import</span> <span class="n">Surface</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
 <div class="viewcode-block" id="JobFactory"><a class="viewcode-back" href="../../../../jarvis.tasks.lammps.html#jarvis.tasks.lammps.lammps.JobFactory">[docs]</a><span class="k">class</span> <span class="nc">JobFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -112,14 +113,9 @@
         <span class="k">if</span> <span class="n">enforce_conventional_structure</span><span class="p">:</span>
             <span class="n">atoms</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">conventional_standard_structure</span>
 
-        <span class="n">a</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">lat_lengths</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">b</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">lat_lengths</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">lat_lengths</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">enforce_c_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dim1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">enforce_c_size</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="o">+</span> <span class="n">extend</span>
-            <span class="n">dim2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">enforce_c_size</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">))</span> <span class="o">+</span> <span class="n">extend</span>
-            <span class="n">dim3</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">enforce_c_size</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="p">))</span> <span class="o">+</span> <span class="n">extend</span>
-            <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="n">dim1</span><span class="p">,</span> <span class="n">dim2</span><span class="p">,</span> <span class="n">dim3</span><span class="p">])</span>
+            <span class="n">dim</span> <span class="o">=</span> <span class="n">get_supercell_dims</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">enforce_c_size</span><span class="o">=</span><span class="n">enforce_c_size</span><span class="p">)</span>
+            <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="n">dim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dim</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pair_style</span> <span class="o">=</span> <span class="s2">&quot;eam/alloy&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pair_coeff</span> <span class="o">=</span> <span class="n">ff_path</span>
@@ -150,7 +146,7 @@
                 <span class="n">lammps_cmd</span><span class="o">=</span><span class="n">lammps_cmd</span><span class="p">,</span>
             <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        <span class="c1"># sys.exit()</span>
 
         <span class="n">v</span> <span class="o">=</span> <span class="n">Vacancy</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">final_str</span><span class="p">)</span><span class="o">.</span><span class="n">generate_defects</span><span class="p">(</span><span class="n">enforce_c_size</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;vacs=&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
@@ -168,7 +164,9 @@
                 <span class="n">jobname</span><span class="o">=</span><span class="n">jobname</span><span class="p">,</span>
                 <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
                 <span class="n">lammps_cmd</span><span class="o">=</span><span class="n">lammps_cmd</span><span class="p">,</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span></div></div>
+            <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonons</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">,</span> <span class="n">lammps_cmd</span><span class="o">=</span><span class="n">lammps_cmd</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">)</span></div>
 
     <span class="c1"># def optimize_and_elastic(self):</span>
     <span class="c1">#     pass</span>
@@ -181,6 +179,76 @@
 
     <span class="c1"># def phonon(self):</span>
     <span class="c1">#     pass</span>
+<div class="viewcode-block" id="JobFactory.phonons"><a class="viewcode-back" href="../../../../jarvis.tasks.lammps.html#jarvis.tasks.lammps.lammps.JobFactory.phonons">[docs]</a>    <span class="k">def</span> <span class="nf">phonons</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lammps_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">enforce_c_size</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">{}</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make Phonon calculation setup.&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">phonopy</span> <span class="kn">import</span> <span class="n">Phonopy</span>
+        <span class="kn">from</span> <span class="nn">phonopy.file_IO</span> <span class="kn">import</span> <span class="p">(</span>
+            <span class="c1">#    parse_FORCE_CONSTANTS,</span>
+            <span class="n">write_FORCE_CONSTANTS</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">bulk</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">phonopy_converter</span><span class="p">()</span>
+
+        <span class="n">dim</span> <span class="o">=</span> <span class="n">get_supercell_dims</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">enforce_c_size</span><span class="o">=</span><span class="n">enforce_c_size</span><span class="p">)</span>
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="n">dim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dim</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+
+        <span class="n">Poscar</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="s2">&quot;POSCAR&quot;</span><span class="p">)</span>
+
+        <span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">make_supercell_matrix</span><span class="p">([</span><span class="n">dim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dim</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+        <span class="n">Poscar</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="s2">&quot;POSCAR-Super.vasp&quot;</span><span class="p">)</span>
+
+        <span class="n">phonon</span> <span class="o">=</span> <span class="n">Phonopy</span><span class="p">(</span>
+            <span class="n">bulk</span><span class="p">,</span> <span class="p">[[</span><span class="n">dim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dim</span><span class="p">[</span><span class="mi">2</span><span class="p">]]]</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Phonopy] Atomic displacements1:&quot;</span><span class="p">,</span> <span class="n">bulk</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;[Phonopy] Atomic displacements2:&quot;</span><span class="p">,</span> <span class="n">phonon</span><span class="p">,</span> <span class="n">dim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dim</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">phonon</span><span class="o">.</span><span class="n">generate_displacements</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
+        <span class="n">disps</span> <span class="o">=</span> <span class="n">phonon</span><span class="o">.</span><span class="n">get_displacements</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Phonopy] Atomic displacements3:&quot;</span><span class="p">,</span> <span class="n">disps</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">disps</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Phonopy]&quot;</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">supercells</span> <span class="o">=</span> <span class="n">phonon</span><span class="o">.</span><span class="n">get_supercells_with_displacements</span><span class="p">()</span>
+
+        <span class="c1"># Force calculations by calculator</span>
+        <span class="n">set_of_forces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">disp</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">Atoms</span> <span class="k">as</span> <span class="n">AseAtoms</span>
+
+        <span class="k">for</span> <span class="n">scell</span> <span class="ow">in</span> <span class="n">supercells</span><span class="p">:</span>
+            <span class="n">ase_atoms</span> <span class="o">=</span> <span class="n">AseAtoms</span><span class="p">(</span>
+                <span class="n">symbols</span><span class="o">=</span><span class="n">scell</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">(),</span>
+                <span class="n">scaled_positions</span><span class="o">=</span><span class="n">scell</span><span class="o">.</span><span class="n">get_scaled_positions</span><span class="p">(),</span>
+                <span class="n">cell</span><span class="o">=</span><span class="n">scell</span><span class="o">.</span><span class="n">get_cell</span><span class="p">(),</span>
+                <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">j_atoms</span> <span class="o">=</span> <span class="n">ase_to_atoms</span><span class="p">(</span><span class="n">ase_atoms</span><span class="p">)</span>
+            <span class="n">disp</span> <span class="o">=</span> <span class="n">disp</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;control_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;run0.mod&quot;</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">forces</span> <span class="o">=</span> <span class="n">LammpsJob</span><span class="p">(</span>
+                <span class="n">atoms</span><span class="o">=</span><span class="n">j_atoms</span><span class="p">,</span>
+                <span class="n">lammps_cmd</span><span class="o">=</span><span class="n">lammps_cmd</span><span class="p">,</span>
+                <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
+                <span class="n">jobname</span><span class="o">=</span><span class="s2">&quot;disp-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">disp</span><span class="p">),</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;forces=&quot;</span><span class="p">,</span> <span class="n">forces</span><span class="p">)</span>
+            <span class="n">drift_force</span> <span class="o">=</span> <span class="n">forces</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;drift forces=&quot;</span><span class="p">,</span> <span class="n">drift_force</span><span class="p">)</span>
+            <span class="c1"># Simple translational invariance</span>
+            <span class="k">for</span> <span class="n">force</span> <span class="ow">in</span> <span class="n">forces</span><span class="p">:</span>
+                <span class="n">force</span> <span class="o">-=</span> <span class="n">drift_force</span> <span class="o">/</span> <span class="n">forces</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">set_of_forces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">forces</span><span class="p">)</span>
+        <span class="n">phonon</span><span class="o">.</span><span class="n">produce_force_constants</span><span class="p">(</span><span class="n">forces</span><span class="o">=</span><span class="n">set_of_forces</span><span class="p">)</span>
+
+        <span class="n">write_FORCE_CONSTANTS</span><span class="p">(</span>
+            <span class="n">phonon</span><span class="o">.</span><span class="n">get_force_constants</span><span class="p">(),</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;FORCE_CONSTANTS&quot;</span>
+        <span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[Phonopy] Phonon frequencies at Gamma:&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="LammpsJob"><a class="viewcode-back" href="../../../../jarvis.tasks.lammps.html#jarvis.tasks.lammps.lammps.LammpsJob">[docs]</a><span class="k">class</span> <span class="nc">LammpsJob</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -279,7 +347,9 @@
             <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;control_file&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;control_file&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;inelast.mod&quot;</span><span class="p">:</span>
-                <span class="n">GenericInputs</span><span class="p">()</span><span class="o">.</span><span class="n">elastic_general</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span></div>
+                <span class="n">GenericInputs</span><span class="p">()</span><span class="o">.</span><span class="n">elastic_general</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;control_file&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;run0.mod&quot;</span><span class="p">:</span>
+                <span class="n">GenericInputs</span><span class="p">()</span><span class="o">.</span><span class="n">run0</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LammpsJob.run"><a class="viewcode-back" href="../../../../jarvis.tasks.lammps.html#jarvis.tasks.lammps.lammps.LammpsJob.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run a job with subprocess.&quot;&quot;&quot;</span>
@@ -383,7 +453,11 @@
                 <span class="n">element_order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">element_order</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">forces</span> <span class="o">=</span> <span class="p">[]</span>
-
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">forces</span> <span class="o">=</span> <span class="n">read_dump</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s2">&quot;0.dump&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="n">forces</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">forces</span><span class="p">)</span>
             <span class="n">data_cal</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">data_cal</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="p">{</span>
@@ -436,12 +510,12 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
