@@ -43,8 +43,6 @@ class Graph(object):
     @staticmethod
     def from_atoms(
         atoms=None,
-        lengthscale=0.5,
-        variance=1.0,
         get_prim=False,
         zero_diag=False,
         node_atomwise_angle_dist=False,
@@ -78,8 +76,9 @@ class Graph(object):
             atoms = atoms.get_primitive_atoms
         dim = get_supercell_dims(atoms=atoms, enforce_c_size=enforce_c_size)
         atoms = atoms.make_supercell(dim)
-        raw_data = np.array(atoms.raw_distance_matrix)
-        adj = variance * np.exp(-raw_data / lengthscale)
+
+        adj = np.array(atoms.raw_distance_matrix)
+
         if zero_diag:
             np.fill_diagonal(adj, 0.0)
         nodes = np.arange(atoms.num_atoms)
