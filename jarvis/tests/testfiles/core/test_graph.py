@@ -35,7 +35,7 @@ def test_graph():
     g = Graph.from_atoms(
         atoms=atoms, features=["Z", "atom_mass", "max_oxid_s"]
     )
-    g = Graph.from_atoms(atoms=atoms, features="cfid")
+    g = Graph.from_atoms(atoms=atoms, features="cfid", max_cut=10000)
     print(g)
     d = g.to_dict()
     g = Graph.from_dict(d)
@@ -43,5 +43,5 @@ def test_graph():
     num_edges = g.num_edges
     print(num_nodes, num_edges)
     assert num_nodes == 48
-    assert num_edges == 2304
+    assert num_edges == 2256
     assert (g.adjacency_matrix.shape) == (48,48)
