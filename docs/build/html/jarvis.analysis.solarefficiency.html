@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.analysis.solarefficiency package &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.analysis.solarefficiency package &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -56,7 +56,7 @@
 <p>Calculate theoretical solar-efficiency using SLME or SQ approach.</p>
 <dl class="method">
 <dt id="jarvis.analysis.solarefficiency.solar.SolarEfficiency.calculate_SQ">
-<code class="descname">calculate_SQ</code><span class="sig-paren">(</span><em>bandgap_ev</em>, <em>temperature=300</em>, <em>fr=1</em>, <em>plot_current_voltage=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/solarefficiency/solar.html#SolarEfficiency.calculate_SQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.solarefficiency.solar.SolarEfficiency.calculate_SQ" title="Permalink to this definition">¶</a></dt>
+<code class="descname">calculate_SQ</code><span class="sig-paren">(</span><em>bandgap_ev</em>, <em>temperature=300</em>, <em>fr=1</em>, <em>plot_current_voltage=False</em>, <em>filename='sq.png'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/solarefficiency/solar.html#SolarEfficiency.calculate_SQ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.solarefficiency.solar.SolarEfficiency.calculate_SQ" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calcualte efficeincy using shockley queisser formalism.</p>
 <p>Requires only two inputs unlike SLME.
 Args:</p>
@@ -68,7 +68,7 @@ Args:</p>
 
 <dl class="method">
 <dt id="jarvis.analysis.solarefficiency.solar.SolarEfficiency.slme">
-<code class="descname">slme</code><span class="sig-paren">(</span><em>material_energy_for_absorbance_data</em>, <em>material_absorbance_data</em>, <em>material_direct_allowed_gap</em>, <em>material_indirect_gap</em>, <em>thickness=5e-05</em>, <em>temperature=293.15</em>, <em>absorbance_in_inverse_centimeters=False</em>, <em>cut_off_absorbance_below_direct_allowed_gap=True</em>, <em>plot_current_voltage=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/solarefficiency/solar.html#SolarEfficiency.slme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.solarefficiency.solar.SolarEfficiency.slme" title="Permalink to this definition">¶</a></dt>
+<code class="descname">slme</code><span class="sig-paren">(</span><em>material_energy_for_absorbance_data</em>, <em>material_absorbance_data</em>, <em>material_direct_allowed_gap</em>, <em>material_indirect_gap</em>, <em>thickness=5e-05</em>, <em>temperature=293.15</em>, <em>absorbance_in_inverse_centimeters=False</em>, <em>cut_off_absorbance_below_direct_allowed_gap=True</em>, <em>plot_current_voltage=False</em>, <em>filename='slme.png'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/analysis/solarefficiency/solar.html#SolarEfficiency.slme"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.analysis.solarefficiency.solar.SolarEfficiency.slme" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate spectroscopic limited maximum efficiency.</p>
 <p>Reuires more info than SQ.
 Args:</p>
@@ -149,11 +149,11 @@ whether to discard all absorption below bandgap</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>

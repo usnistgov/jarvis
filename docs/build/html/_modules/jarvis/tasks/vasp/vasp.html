@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.tasks.vasp.vasp &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.tasks.vasp.vasp &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -46,18 +46,102 @@
 <span class="kn">from</span> <span class="nn">jarvis.db.jsonutils</span> <span class="kn">import</span> <span class="n">loadjson</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">Kpoints3D</span> <span class="k">as</span> <span class="n">Kpoints</span>
 <span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="n">Spacegroup3D</span>
+
+<span class="c1"># from jarvis.core.utils import update_dict</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.wanniertools.inputs</span> <span class="kn">import</span> <span class="n">WTin</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.wannier.inputs</span> <span class="kn">import</span> <span class="n">Wannier90win</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.wannier.outputs</span> <span class="kn">import</span> <span class="n">Wannier90eig</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">find_ldau_magmom</span><span class="p">,</span> <span class="n">add_ldau_incar</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">Kpoints3D</span>
+<span class="kn">from</span> <span class="nn">jarvis.analysis.magnetism.magmom_setup</span> <span class="kn">import</span> <span class="n">MagneticOrdering</span>
+
+
+<div class="viewcode-block" id="write_vaspjob"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.write_vaspjob">[docs]</a><span class="k">def</span> <span class="nf">write_vaspjob</span><span class="p">(</span><span class="n">pyname</span><span class="o">=</span><span class="s2">&quot;job.py&quot;</span><span class="p">,</span> <span class="n">job_json</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write template job.py with VaspJob.to_dict() job.json.&quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pyname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from jarvis.tasks.vasp.vasp import VaspJob</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from jarvis.db.jsonutils import loadjson</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;d=loadjson(&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_json</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;v=VaspJob.from_dict(d)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;v.runjob()</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="write_jobfact"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.write_jobfact">[docs]</a><span class="k">def</span> <span class="nf">write_jobfact</span><span class="p">(</span>
+    <span class="n">pyname</span><span class="o">=</span><span class="s2">&quot;job.py&quot;</span><span class="p">,</span> <span class="n">job_json</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">input_arg</span><span class="o">=</span><span class="s2">&quot;v.soc_spillage()</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write template job.py with JobFactory.to_dict() job.json.&quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pyname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from jarvis.tasks.vasp.vasp import JobFactory</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from jarvis.db.jsonutils import loadjson</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;d=loadjson(&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_json</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;v=JobFactory.from_dict(d)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">input_arg</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="write_jobfact_optb88vdw"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.write_jobfact_optb88vdw">[docs]</a><span class="k">def</span> <span class="nf">write_jobfact_optb88vdw</span><span class="p">(</span><span class="n">pyname</span><span class="o">=</span><span class="s2">&quot;job.py&quot;</span><span class="p">,</span> <span class="n">job_json</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write template job.py with JobFactory.to_dict() job.json.&quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pyname</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from jarvis.tasks.vasp.vasp import JobFactory</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from jarvis.db.jsonutils import loadjson</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;d=loadjson(&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">job_json</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;v=JobFactory.from_dict(d)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;v.all_optb88vdw_calcs()</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<span class="c1"># def add_ldau_incar(use_incar_dict={}, Uval=2):</span>
 
 
 <div class="viewcode-block" id="JobFactory"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory">[docs]</a><span class="k">class</span> <span class="nc">JobFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Provide sets of VASP calculations.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">use_incar_dict</span><span class="o">=</span><span class="p">{},</span> <span class="n">pot_type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Jobs&quot;</span><span class="p">,</span>
+        <span class="n">poscar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_incar_dict</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">vasp_cmd</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">pot_type</span><span class="o">=</span><span class="s2">&quot;POT_GGA_PAW_PBE&quot;</span><span class="p">,</span>
+        <span class="n">copy_files</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">attempts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">stderr_file</span><span class="o">=</span><span class="s2">&quot;std_err.txt&quot;</span><span class="p">,</span>
+        <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;vasp.out&quot;</span><span class="p">,</span>
+        <span class="n">optional_params</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;kppa&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+            <span class="s2">&quot;extension&quot;</span><span class="p">:</span> <span class="s2">&quot;SCAN&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;encut&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">&quot;kpleng&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="s2">&quot;line_density&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="s2">&quot;wann_cmd&quot;</span><span class="p">:</span> <span class="s2">&quot;~/bin/wannier90.x wannier90&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;wt_cmd&quot;</span><span class="p">:</span> <span class="s2">&quot;~/bin/wt.x&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;run_wannier&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;ldau&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;Uval&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+            <span class="s2">&quot;ENCUT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;KPLEN&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;RELAX&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;BANDSTRUCT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LOPTICS&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MBJOPTICS&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;ELASTIC&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;SPILLAGE&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;EFG&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;MAGORDER&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;DFPT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;RAMANINTS&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;SHG&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Provide generic class for running variations of VASP calculations.</span>
 
@@ -70,48 +154,216 @@
 <span class="sd">                             that would be repreated</span>
 
 <span class="sd">            pot_type : pseudopotential type</span>
+
+<span class="sd">            vasp_cmd: vasp executable</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Make JobFactory a superclass of VaspJob class</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span> <span class="o">=</span> <span class="n">use_incar_dict</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span> <span class="o">=</span> <span class="n">pot_type</span>
+        <span class="c1"># if ldau:</span>
+        <span class="c1">#  if &#39;LSORBIT&#39; in use_incar_dict</span>
+        <span class="c1"># and use_incar_dict[&#39;LSORBIT&#39;]==&#39;.TRUE.&#39;:</span>
+        <span class="c1">#     info_ldau =</span>
+        <span class="c1"># find_ldau_magmom(U=Uval,atoms=poscar.atoms,lsorbit=True)</span>
+        <span class="c1">#  else:</span>
+        <span class="c1">#     info_ldau</span>
+        <span class="c1"># = find_ldau_magmom(U=Uval,atoms=poscar.atoms,lsorbit=False)</span>
+        <span class="c1">#  tmp = update_dict(use_incar_dict,info_ldau)</span>
+        <span class="c1">#  use_incar_dict = tmp</span>
 
-<div class="viewcode-block" id="JobFactory.all_optb88vdw_props"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.all_optb88vdw_props">[docs]</a>    <span class="k">def</span> <span class="nf">all_optb88vdw_props</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span> <span class="o">=</span> <span class="n">pot_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span> <span class="o">=</span> <span class="n">vasp_cmd</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mat</span> <span class="o">=</span> <span class="n">poscar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span> <span class="o">=</span> <span class="n">copy_files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attempts</span> <span class="o">=</span> <span class="n">attempts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span> <span class="o">=</span> <span class="n">stderr_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span> <span class="o">=</span> <span class="n">optional_params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">steps</span>
+
+<div class="viewcode-block" id="JobFactory.step_flow"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.step_flow">[docs]</a>    <span class="k">def</span> <span class="nf">step_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Asiimilate number of steps as legos for a workflow.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span>
+                <span class="n">encut</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">converg_encut</span><span class="p">(</span><span class="n">mat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encut</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;KPLEN&quot;</span><span class="p">:</span>
+                <span class="n">length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">converg_kpoint</span><span class="p">(</span><span class="n">mat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;kpleng&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">length</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;RELAX&quot;</span><span class="p">:</span>
+                <span class="n">energy</span><span class="p">,</span> <span class="n">contcar_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimize_geometry</span><span class="p">(</span>
+                    <span class="n">mat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="n">encut</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
+                <span class="p">)</span>
+                <span class="n">vrun</span> <span class="o">=</span> <span class="n">Vasprun</span><span class="p">(</span><span class="n">contcar_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CONTCAR&quot;</span><span class="p">,</span> <span class="s2">&quot;vasprun.xml&quot;</span><span class="p">))</span>
+                <span class="n">chg_path</span> <span class="o">=</span> <span class="n">contcar_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CONTCAR&quot;</span><span class="p">,</span> <span class="s2">&quot;CHGCAR&quot;</span><span class="p">)</span>
+                <span class="n">nbands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">vrun</span><span class="o">.</span><span class="n">all_input_parameters</span><span class="p">[</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;chg_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">chg_path</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;nbands&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nbands</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mat</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">contcar_path</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;BANDSTRUCT&quot;</span><span class="p">:</span>
+                <span class="n">enB</span><span class="p">,</span> <span class="n">contcB</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_structure</span><span class="p">(</span>
+                    <span class="n">mat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="p">,</span>
+                    <span class="n">encut</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">],</span>
+                    <span class="n">line_density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;line_density&quot;</span><span class="p">],</span>
+                    <span class="n">nbands</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nbands</span><span class="p">,</span>
+                    <span class="n">copy_prev_chgcar</span><span class="o">=</span><span class="n">chg_path</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;OPTICS&quot;</span><span class="p">:</span>
+                <span class="n">enL</span><span class="p">,</span> <span class="n">contcL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loptics</span><span class="p">(</span>
+                    <span class="n">mat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="p">,</span>
+                    <span class="n">encut</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">],</span>
+                    <span class="n">nbands</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;nbands&quot;</span><span class="p">],</span>
+                    <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;kpleng&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;MBJOPTICS&quot;</span><span class="p">:</span>
+                <span class="n">enM</span><span class="p">,</span> <span class="n">contcM</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mbj_loptics</span><span class="p">(</span>
+                    <span class="n">mat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="p">,</span>
+                    <span class="n">encut</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">],</span>
+                    <span class="n">nbands</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nbands</span><span class="p">,</span>
+                    <span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;ELASTIC&quot;</span><span class="p">:</span>
+                <span class="n">enE</span><span class="p">,</span> <span class="n">contcE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elastic</span><span class="p">(</span>
+                    <span class="n">mat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="p">,</span>
+                    <span class="n">encut</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">],</span>
+                    <span class="n">nbands</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;nbands&quot;</span><span class="p">],</span>
+                    <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;kpleng&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;SPILLAGE&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">soc_spillage</span><span class="p">(</span>
+                    <span class="n">mat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="p">,</span>
+                    <span class="c1"># ldau=self.optional_params[&quot;ldau&quot;],</span>
+                    <span class="c1"># Uval=self.optional_params[&quot;Uval&quot;],</span>
+                    <span class="n">encut</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">],</span>
+                    <span class="n">nbands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">kppa</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;kppa&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;EFG&quot;</span><span class="p">:</span>
+                <span class="n">enE</span><span class="p">,</span> <span class="n">contcE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">efg</span><span class="p">(</span>
+                    <span class="n">mat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="p">,</span>
+                    <span class="n">encut</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">],</span>
+                    <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;kpleng&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;DFPT&quot;</span><span class="p">:</span>
+                <span class="n">enE</span><span class="p">,</span> <span class="n">contcE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dfpt</span><span class="p">(</span>
+                    <span class="n">mat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="p">,</span>
+                    <span class="n">encut</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">],</span>
+                    <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;kpleng&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s2">&quot;MAGORDER&quot;</span><span class="p">:</span>
+                <span class="n">enE</span><span class="p">,</span> <span class="n">contcE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">magorder</span><span class="p">(</span>
+                    <span class="n">encut</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">],</span>
+                    <span class="n">length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;kpleng&quot;</span><span class="p">],</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="JobFactory.all_optb88vdw_calcs"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.all_optb88vdw_calcs">[docs]</a>    <span class="k">def</span> <span class="nf">all_optb88vdw_calcs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Use for OptB88vdW based HT.&quot;&quot;&quot;</span>
+        <span class="n">incs</span> <span class="o">=</span> <span class="n">GenericIncars</span><span class="p">()</span><span class="o">.</span><span class="n">optb88vdw</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow</span><span class="p">(</span><span class="n">generic_incar</span><span class="o">=</span><span class="n">incs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JobFactory.all_pbe_calcs"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.all_pbe_calcs">[docs]</a>    <span class="k">def</span> <span class="nf">all_pbe_calcs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Use for PBE based HT.&quot;&quot;&quot;</span>
+        <span class="n">incs</span> <span class="o">=</span> <span class="n">GenericIncars</span><span class="p">()</span><span class="o">.</span><span class="n">pbe</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow</span><span class="p">(</span><span class="n">generic_incar</span><span class="o">=</span><span class="n">incs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JobFactory.all_scan_calcs"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.all_scan_calcs">[docs]</a>    <span class="k">def</span> <span class="nf">all_scan_calcs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Use for SCAN based HT.&quot;&quot;&quot;</span>
+        <span class="n">incs</span> <span class="o">=</span> <span class="n">GenericIncars</span><span class="p">()</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow</span><span class="p">(</span><span class="n">generic_incar</span><span class="o">=</span><span class="n">incs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JobFactory.all_lda_calcs"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.all_lda_calcs">[docs]</a>    <span class="k">def</span> <span class="nf">all_lda_calcs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Use for LDA based HT.&quot;&quot;&quot;</span>
+        <span class="n">incs</span> <span class="o">=</span> <span class="n">GenericIncars</span><span class="p">()</span><span class="o">.</span><span class="n">lda</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">workflow</span><span class="p">(</span><span class="n">generic_incar</span><span class="o">=</span><span class="n">incs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JobFactory.workflow"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.workflow">[docs]</a>    <span class="k">def</span> <span class="nf">workflow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generic_incar</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Use for OptB88vdW functional based high-throughput calculations.</span>
+<span class="sd">        Use for functional based high-throughput calculations.</span>
 
 <span class="sd">        This will converge k-points, cut-offs,</span>
 <span class="sd">        and then carry several property calculations.</span>
-
 <span class="sd">        Args:</span>
 <span class="sd">            mat : Poscar object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">optb88</span> <span class="o">=</span> <span class="n">GenericIncars</span><span class="p">()</span><span class="o">.</span><span class="n">optb88vdw</span><span class="p">()</span>
-        <span class="n">job</span> <span class="o">=</span> <span class="n">JobFactory</span><span class="p">(</span><span class="n">use_incar_dict</span><span class="o">=</span><span class="n">optb88</span><span class="o">.</span><span class="n">incar</span><span class="p">,</span> <span class="n">pot_type</span><span class="o">=</span><span class="n">optb88</span><span class="o">.</span><span class="n">pot_type</span><span class="p">)</span>
-        <span class="n">encut</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">converg_encut</span><span class="p">(</span><span class="n">mat</span><span class="o">=</span><span class="n">mat</span><span class="p">)</span>
-        <span class="n">length</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">converg_kpoint</span><span class="p">(</span><span class="n">mat</span><span class="o">=</span><span class="n">mat</span><span class="p">)</span>
-        <span class="n">energy</span><span class="p">,</span> <span class="n">contcar_path</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">optimize_geometry</span><span class="p">(</span>
-            <span class="n">mat</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="n">encut</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;ENCUT&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;KPLEN&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;RELAX&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;BANDSTRUCT&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;LOPTICS&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;MBJOPTICS&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ELASTIC&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;SPILLAGE&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;EFG&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;MAGORDER&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;DFPT&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
         <span class="p">)</span>
-        <span class="n">optimized_mat</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">contcar_path</span><span class="p">)</span>
-        <span class="n">vrun</span> <span class="o">=</span> <span class="n">Vasprun</span><span class="p">(</span><span class="n">contcar_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CONTCAR&quot;</span><span class="p">,</span> <span class="s2">&quot;vasprun.xml&quot;</span><span class="p">))</span>
-        <span class="n">chg_path</span> <span class="o">=</span> <span class="n">contcar_path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CONTCAR&quot;</span><span class="p">,</span> <span class="s2">&quot;CHGCAR&quot;</span><span class="p">)</span>
-        <span class="n">nbands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">vrun</span><span class="o">.</span><span class="n">all_input_parameters</span><span class="p">[</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">])</span>
-        <span class="n">enB</span><span class="p">,</span> <span class="n">contcB</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">band_structure</span><span class="p">(</span>
-            <span class="n">mat</span><span class="o">=</span><span class="n">optimized_mat</span><span class="p">,</span>
-            <span class="n">encut</span><span class="o">=</span><span class="n">encut</span><span class="p">,</span>
-            <span class="n">line_density</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-            <span class="n">nbands</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nbands</span><span class="p">,</span>
-            <span class="n">copy_prev_chgcar</span><span class="o">=</span><span class="n">chg_path</span><span class="p">,</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_flow</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="JobFactory.magorder"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.magorder">[docs]</a>    <span class="k">def</span> <span class="nf">magorder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_configs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Determine structures for FM, AFM, FiM magnetic ordering.&quot;&quot;&quot;</span>
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">ldau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;ldau&quot;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="mf">1.3</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">]),</span>
+            <span class="s2">&quot;NEDOS&quot;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+            <span class="s2">&quot;ISIF&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">&quot;ISPIN&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;IBRION&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+            <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">inc</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
+        <span class="n">symm_list</span><span class="p">,</span> <span class="n">ss</span> <span class="o">=</span> <span class="n">MagneticOrdering</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">get_minimum_configs</span><span class="p">(</span>
+            <span class="n">min_configs</span><span class="o">=</span><span class="mi">3</span>
         <span class="p">)</span>
-        <span class="n">enL</span><span class="p">,</span> <span class="n">contcL</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">loptics</span><span class="p">(</span>
-            <span class="n">mat</span><span class="o">=</span><span class="n">optimized_mat</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="n">encut</span><span class="p">,</span> <span class="n">nbands</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nbands</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
-        <span class="p">)</span>
-        <span class="n">enM</span><span class="p">,</span> <span class="n">contcM</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">mbj_loptics</span><span class="p">(</span>
-            <span class="n">mat</span><span class="o">=</span><span class="n">optimized_mat</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="n">encut</span><span class="p">,</span> <span class="n">nbands</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nbands</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
-        <span class="p">)</span>
-        <span class="n">enE</span><span class="p">,</span> <span class="n">contcE</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">elastic</span><span class="p">(</span>
-            <span class="n">mat</span><span class="o">=</span><span class="n">optimized_mat</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="n">encut</span><span class="p">,</span> <span class="n">nbands</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nbands</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
-        <span class="p">)</span></div>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">symm_list</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">ldau</span><span class="p">:</span>
+
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">add_ldau_incar</span><span class="p">(</span>
+                    <span class="n">use_incar_dict</span><span class="o">=</span><span class="n">incar_dict</span><span class="p">,</span>
+                    <span class="n">atoms</span><span class="o">=</span><span class="n">ss</span><span class="p">,</span>
+                    <span class="n">Uval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;Uval&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="n">incar_dict</span> <span class="o">=</span> <span class="n">tmp</span>
+
+                <span class="n">info_ldau</span> <span class="o">=</span> <span class="n">find_ldau_magmom</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">ss</span><span class="p">)</span>
+                <span class="n">inc_tmp</span> <span class="o">=</span> <span class="n">inc</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">info_ldau</span><span class="p">)</span>
+                <span class="n">inc1</span> <span class="o">=</span> <span class="n">inc_tmp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s2">&quot;MAGMOM&quot;</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">symm_list</span><span class="p">[</span><span class="n">i</span><span class="p">]))}</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">inc_tmp</span> <span class="o">=</span> <span class="n">inc</span>
+                <span class="n">inc1</span> <span class="o">=</span> <span class="n">inc_tmp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s2">&quot;MAGMOM&quot;</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">symm_list</span><span class="p">[</span><span class="n">i</span><span class="p">]))}</span>
+                <span class="p">)</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">Poscar</span><span class="p">(</span><span class="n">ss</span><span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Mag-&quot;</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="c1"># pot = Potcar(elements=ss.elements)</span>
+            <span class="n">kp</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
+                <span class="n">lattice_mat</span><span class="o">=</span><span class="n">ss</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span>
+            <span class="p">)</span>
+            <span class="c1"># cwd = str(os.getcwd())</span>
+            <span class="n">sub_dir</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">sub_dir</span><span class="p">)</span>
+            <span class="n">VaspJob</span><span class="p">(</span>
+                <span class="n">poscar</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span>
+                <span class="n">incar</span><span class="o">=</span><span class="n">inc1</span><span class="p">,</span>
+                <span class="n">kpoints</span><span class="o">=</span><span class="n">kp</span><span class="p">,</span>
+                <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
+                <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
+                <span class="n">jobname</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="JobFactory.elastic"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.elastic">[docs]</a>    <span class="k">def</span> <span class="nf">elastic</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -138,19 +390,19 @@
 
 <span class="sd">            length :  K-points in length unit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">cvn</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span><span class="o">.</span><span class="n">conventional_standard_structure</span>
         <span class="n">comment</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">comment</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">Poscar</span><span class="p">(</span><span class="n">cvn</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">npar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NPAR&quot;</span><span class="p">:</span> <span class="n">npar</span><span class="p">})</span>
+            <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NPAR&quot;</span><span class="p">:</span> <span class="n">npar</span><span class="p">})</span>
 
         <span class="k">if</span> <span class="n">nbands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">nbands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nbands</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
-            <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
+            <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="mf">1.3</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">encut</span><span class="p">),</span>
+            <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="mf">1.3</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;encut&quot;</span><span class="p">]),</span>
             <span class="s2">&quot;NEDOS&quot;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
             <span class="s2">&quot;ISIF&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
             <span class="s2">&quot;POTIM&quot;</span><span class="p">:</span> <span class="n">potim</span><span class="p">,</span>
@@ -158,7 +410,8 @@
             <span class="s2">&quot;IBRION&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
             <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
         <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
             <span class="n">lattice_mat</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
         <span class="p">)</span>  <span class="c1"># Auto_Kpoints(mat=mat, length=length)</span>
@@ -168,9 +421,114 @@
             <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
             <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
             <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
             <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;MAIN-ELASTIC-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">comment</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]),</span>
         <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
+        <span class="k">return</span> <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span></div>
+
+<div class="viewcode-block" id="JobFactory.efg"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.efg">[docs]</a>    <span class="k">def</span> <span class="nf">efg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use for electric field gradient calculation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mat :  Poscar object</span>
+
+<span class="sd">            encut :  Plane-wave cut-off, 1.3 times will be used</span>
+
+<span class="sd">            nbands : number of bands, increased to threee times</span>
+
+<span class="sd">            length :  K-points in length unit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># incar = self.use_incar_dict</span>
+
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">nbands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nbands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nbands</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">,</span>
+            <span class="s2">&quot;NEDOS&quot;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+            <span class="s2">&quot;NELM&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">&quot;LORBIT&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+            <span class="s2">&quot;ISPIN&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;LEFG&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;SIGMA&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+            <span class="s2">&quot;IBRION&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
+        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
+            <span class="n">lattice_mat</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
+        <span class="p">)</span>  <span class="c1"># Auto_Kpoints(mat=mat, length=length)</span>
+
+        <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
+            <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+            <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
+            <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
+            <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+            <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;MAIN-LEFG-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span></div>
+
+<div class="viewcode-block" id="JobFactory.dfpt"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.dfpt">[docs]</a>    <span class="k">def</span> <span class="nf">dfpt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use for density functional perturbation theory calculation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mat :  Poscar object</span>
+
+<span class="sd">            encut :  Plane-wave cut-off, 1.3 times will be used</span>
+
+<span class="sd">            nbands : number of bands, increased to threee times</span>
+
+<span class="sd">            length :  K-points in length unit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># incar = self.use_incar_dict</span>
+
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">nbands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nbands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nbands</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">,</span>
+            <span class="s2">&quot;NEDOS&quot;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+            <span class="s2">&quot;NELM&quot;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+            <span class="s2">&quot;LORBIT&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+            <span class="s2">&quot;ISPIN&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;LEPSION&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;SIGMA&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+            <span class="s2">&quot;IBRION&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
+        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
+            <span class="n">lattice_mat</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
+        <span class="p">)</span>  <span class="c1"># Auto_Kpoints(mat=mat, length=length)</span>
+
+        <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
+            <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+            <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
+            <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
+            <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+            <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;MAIN-LEPSLON-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span></div>
 
 <div class="viewcode-block" id="JobFactory.mbj_loptics"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.mbj_loptics">[docs]</a>    <span class="k">def</span> <span class="nf">mbj_loptics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
@@ -186,11 +544,12 @@
 
 <span class="sd">            length :  K-points in length unit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
+        <span class="c1"># incar = self.use_incar_dict</span>
 
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">nbands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">nbands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nbands</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
-            <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
+            <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">,</span>
             <span class="s2">&quot;NEDOS&quot;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
@@ -204,7 +563,8 @@
             <span class="s2">&quot;IBRION&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
         <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
             <span class="n">lattice_mat</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
         <span class="p">)</span>  <span class="c1"># Auto_Kpoints(mat=mat, length=length)</span>
@@ -212,10 +572,317 @@
         <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
             <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
             <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
             <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
             <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
             <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;MAIN-MBJ-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]),</span>
         <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span></div>
+
+<div class="viewcode-block" id="JobFactory.soc_spillage"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.soc_spillage">[docs]</a>    <span class="k">def</span> <span class="nf">soc_spillage</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">mat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">encut</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kppa</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">leng</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use for SOC spillage calculation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mat :  Poscar object</span>
+
+<span class="sd">            encut :  Plane-wave cut-off, 1.3 times will be used</span>
+
+<span class="sd">            nbands : number of bands, increased to threee times</span>
+
+<span class="sd">            kppa :  K-points in kpoints per atom unit</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">nbands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nbands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nbands</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
+        <span class="n">ldau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;ldau&quot;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">,</span>
+            <span class="s2">&quot;NEDOS&quot;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+            <span class="s2">&quot;NELM&quot;</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+            <span class="s2">&quot;LORBIT&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+            <span class="s2">&quot;ISPIN&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;IBRION&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;NPAR&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">&quot;NSW&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+            <span class="s2">&quot;EDIFF&quot;</span><span class="p">:</span> <span class="s2">&quot;1E-6&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;SIGMA&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+            <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LWAVE&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ldau</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">add_ldau_incar</span><span class="p">(</span>
+                <span class="n">use_incar_dict</span><span class="o">=</span><span class="n">incar_dict</span><span class="p">,</span>
+                <span class="n">atoms</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
+                <span class="n">Uval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;Uval&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">incar_dict</span> <span class="o">=</span> <span class="n">tmp</span>
+
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
+        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">kpoints_per_atom</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">kppa</span><span class="o">=</span><span class="n">kppa</span><span class="p">)</span>
+
+        <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
+            <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+            <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
+            <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
+            <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+            <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;MAIN-MAGSCF-&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;extension&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">,</span>
+            <span class="s2">&quot;EDIFF&quot;</span><span class="p">:</span> <span class="s2">&quot;1E-6&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;NEDOS&quot;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+            <span class="s2">&quot;NELM&quot;</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+            <span class="s2">&quot;LORBIT&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+            <span class="s2">&quot;ICHARG&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+            <span class="s2">&quot;NSW&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;ISPIN&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;IBRION&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;NPAR&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">&quot;SIGMA&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+            <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LWAVE&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ldau</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">add_ldau_incar</span><span class="p">(</span>
+                <span class="n">use_incar_dict</span><span class="o">=</span><span class="n">incar_dict</span><span class="p">,</span>
+                <span class="n">atoms</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
+                <span class="n">Uval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;Uval&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">incar_dict</span> <span class="o">=</span> <span class="n">tmp</span>
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
+        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">kpath</span><span class="p">(</span>
+            <span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">line_density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;line_density&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span>
+        <span class="n">chg</span> <span class="o">=</span> <span class="n">contcar</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CONTCAR&quot;</span><span class="p">,</span> <span class="s2">&quot;CHGCAR&quot;</span><span class="p">)</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chg</span><span class="p">)</span>
+        <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
+            <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+            <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="n">tmp</span><span class="p">,</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
+            <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
+            <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+            <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;MAIN-MAGSCFBAND-&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;extension&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
+
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">nbands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nbands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nbands</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">,</span>
+            <span class="s2">&quot;NEDOS&quot;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+            <span class="s2">&quot;EDIFF&quot;</span><span class="p">:</span> <span class="s2">&quot;1E-6&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;NELM&quot;</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+            <span class="s2">&quot;LORBIT&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+            <span class="s2">&quot;NSW&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
+            <span class="s2">&quot;NPAR&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">&quot;LSORBIT&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;IBRION&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;SIGMA&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+            <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LWAVE&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ldau</span><span class="p">:</span>
+            <span class="n">tmp1</span> <span class="o">=</span> <span class="n">add_ldau_incar</span><span class="p">(</span>
+                <span class="n">use_incar_dict</span><span class="o">=</span><span class="n">incar_dict</span><span class="p">,</span>
+                <span class="n">lsorbit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">Uval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;Uval&quot;</span><span class="p">],</span>
+                <span class="n">atoms</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">incar_dict</span> <span class="o">=</span> <span class="n">tmp1</span>
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
+        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">kpoints_per_atom</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">kppa</span><span class="o">=</span><span class="n">kppa</span><span class="p">)</span>
+        <span class="c1"># TODO: Find nwan, exclude, sum them up and add 10% extra</span>
+
+        <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
+            <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+            <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="n">tmp</span><span class="p">,</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
+            <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
+            <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+            <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;MAIN-SOCSCF-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">,</span>
+            <span class="s2">&quot;NEDOS&quot;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+            <span class="s2">&quot;EDIFF&quot;</span><span class="p">:</span> <span class="s2">&quot;1E-6&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;NELM&quot;</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span>
+            <span class="s2">&quot;LORBIT&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+            <span class="s2">&quot;ICHARG&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+            <span class="s2">&quot;IBRION&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;NSW&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;SIGMA&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+            <span class="s2">&quot;NPAR&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">&quot;LSORBIT&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;LWAVE&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ldau</span><span class="p">:</span>
+            <span class="n">tmp1</span> <span class="o">=</span> <span class="n">add_ldau_incar</span><span class="p">(</span>
+                <span class="n">use_incar_dict</span><span class="o">=</span><span class="n">incar_dict</span><span class="p">,</span>
+                <span class="n">lsorbit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">Uval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;Uval&quot;</span><span class="p">],</span>
+                <span class="n">atoms</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">incar_dict</span> <span class="o">=</span> <span class="n">tmp1</span>
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
+        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">kpath</span><span class="p">(</span>
+            <span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">line_density</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;line_density&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span>
+        <span class="n">chg</span> <span class="o">=</span> <span class="n">contcar</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CONTCAR&quot;</span><span class="p">,</span> <span class="s2">&quot;CHGCAR&quot;</span><span class="p">)</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chg</span><span class="p">)</span>
+        <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
+            <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+            <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="n">tmp</span><span class="p">,</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
+            <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
+            <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+            <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;MAIN-SOCSCFBAND-&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;extension&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
+
+        <span class="nb">dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/MAIN-*&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;run_wannier&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="s2">&quot;BAND&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">i</span>
+                    <span class="ow">and</span> <span class="s2">&quot;WANN&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">i</span>
+                    <span class="ow">and</span> <span class="s2">&quot;SOC&quot;</span> <span class="ow">in</span> <span class="n">i</span>
+                <span class="p">):</span>
+                    <span class="n">tmp</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;MAIN-&quot;</span><span class="p">)</span>
+                    <span class="n">wann_name</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;MAIN-WANN-&quot;</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;extension&quot;</span><span class="p">])</span>
+                        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">wann_name</span><span class="p">):</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">wann_name</span><span class="p">)</span>
+                    <span class="n">cmd</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;rsync &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/* &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">wann_name</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">wann_name</span><span class="p">)</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                    <span class="n">run</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/vasprun.xml&quot;</span><span class="p">)</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="n">Outcar</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;/OUTCAR&quot;</span><span class="p">))</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="n">Vasprun</span><span class="p">(</span><span class="n">run</span><span class="p">)</span>
+                    <span class="n">efermi</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">efermi</span>
+                    <span class="n">nbands</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">out</span><span class="o">.</span><span class="n">nbands</span>
+                    <span class="p">)</span>  <span class="c1"># int(v.all_input_parameters[&quot;NBANDS&quot;])</span>
+                    <span class="n">strt</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">all_structures</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">nwan</span><span class="p">,</span> <span class="n">exclude</span> <span class="o">=</span> <span class="n">Wannier90win</span><span class="p">(</span>
+                        <span class="n">struct</span><span class="o">=</span><span class="n">strt</span><span class="p">,</span> <span class="n">efermi</span><span class="o">=</span><span class="n">efermi</span><span class="p">,</span> <span class="n">soc</span><span class="o">=</span><span class="kc">True</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">write_win</span><span class="p">()</span>
+                    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;cp win.input wannier90.win&quot;</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                    <span class="c1"># Add 10 % extra bands</span>
+                    <span class="n">tmp_bands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1.1</span> <span class="o">*</span> <span class="p">(</span><span class="n">nwan</span> <span class="o">+</span> <span class="n">exclude</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">tmp_bands</span> <span class="o">&gt;</span> <span class="n">nbands</span><span class="p">:</span>
+                        <span class="n">new_nbands</span> <span class="o">=</span> <span class="n">tmp_bands</span>
+                        <span class="k">if</span> <span class="n">nbands</span> <span class="o">&lt;</span> <span class="n">new_nbands</span><span class="p">:</span>
+                            <span class="n">nbands</span> <span class="o">=</span> <span class="n">new_nbands</span>
+
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                        <span class="n">PREC</span><span class="o">=</span><span class="s2">&quot;Accurate&quot;</span><span class="p">,</span>
+                        <span class="n">ALGO</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
+                        <span class="n">NBANDS</span><span class="o">=</span><span class="n">nbands</span><span class="p">,</span>
+                        <span class="n">LSORBIT</span><span class="o">=</span><span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+                        <span class="n">ISMEAR</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">NSW</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">NELM</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">SIGMA</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                        <span class="n">LWANNIER90</span><span class="o">=</span><span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+                        <span class="n">LWRITE_MMN_AMN</span><span class="o">=</span><span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+                        <span class="n">NEDOS</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+                        <span class="n">LORBIT</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+                        <span class="n">LWAVE</span><span class="o">=</span><span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
+                        <span class="n">LCHARG</span><span class="o">=</span><span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
+                        <span class="n">ENCUT</span><span class="o">=</span><span class="n">encut</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+                    <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">ldau</span><span class="p">:</span>
+                        <span class="n">tmp1</span> <span class="o">=</span> <span class="n">add_ldau_incar</span><span class="p">(</span>
+                            <span class="n">use_incar_dict</span><span class="o">=</span><span class="n">incar_dict</span><span class="p">,</span>
+                            <span class="n">Uval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;Uval&quot;</span><span class="p">],</span>
+                            <span class="n">atoms</span><span class="o">=</span><span class="n">strt</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">incar_dict</span> <span class="o">=</span> <span class="n">tmp1</span>
+                    <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
+                    <span class="n">incar</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="s2">&quot;INCAR&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;directory&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+                    <span class="n">vasp_cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span>
+                    <span class="k">if</span> <span class="s2">&quot;vasp_std&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">:</span>
+                        <span class="n">vasp_cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="s2">&quot;ncl&quot;</span><span class="p">)</span>
+                    <span class="n">cmd</span> <span class="o">=</span> <span class="n">vasp_cmd</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                    <span class="n">neigs</span> <span class="o">=</span> <span class="n">Wannier90eig</span><span class="p">(</span><span class="s2">&quot;wannier90.eig&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">neigs</span><span class="p">()</span>
+                    <span class="n">tmp</span> <span class="o">=</span> <span class="n">neigs</span>
+                    <span class="n">Wannier90win</span><span class="p">(</span><span class="n">struct</span><span class="o">=</span><span class="n">strt</span><span class="p">,</span> <span class="n">efermi</span><span class="o">=</span><span class="n">efermi</span><span class="p">)</span><span class="o">.</span><span class="n">write_hr_win</span><span class="p">(</span>
+                        <span class="n">nbands</span><span class="o">=</span><span class="n">tmp</span>
+                    <span class="p">)</span>
+                    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;cp hr_wannier.win wannier90.win&quot;</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                    <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;wann_cmd&quot;</span><span class="p">]</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                    <span class="n">nelect</span> <span class="o">=</span> <span class="n">Outcar</span><span class="p">(</span><span class="s2">&quot;OUTCAR&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">nelect</span>
+                    <span class="n">WTin</span><span class="p">(</span>
+                        <span class="n">atoms</span><span class="o">=</span><span class="n">strt</span><span class="p">,</span>
+                        <span class="n">wannierout</span><span class="o">=</span><span class="s2">&quot;wannier90.wout&quot;</span><span class="p">,</span>
+                        <span class="n">efermi</span><span class="o">=</span><span class="n">efermi</span><span class="p">,</span>
+                        <span class="n">nelect</span><span class="o">=</span><span class="n">nelect</span><span class="p">,</span>
+                        <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">,</span>
+                        <span class="n">nwan</span><span class="o">=</span><span class="n">nwan</span><span class="p">,</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">write_wt_in</span><span class="p">()</span>
+                    <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span><span class="p">[</span><span class="s2">&quot;wt_cmd&quot;</span><span class="p">]</span>
+                    <span class="c1"># &quot;/users/knc6/Software/wannier_tools/bin/wt.x&quot;</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                    <span class="c1"># Make sure wanniertools is the last step in the workflow</span>
 
         <span class="k">return</span> <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span></div>
 
@@ -232,11 +899,12 @@
 
 <span class="sd">            length :  K-points in length unit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
+        <span class="c1"># incar = self.use_incar_dict</span>
 
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">nbands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">nbands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nbands</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
-            <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
+            <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">,</span>
             <span class="s2">&quot;NEDOS&quot;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
@@ -247,13 +915,19 @@
             <span class="s2">&quot;IBRION&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
         <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
             <span class="n">lattice_mat</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
         <span class="p">)</span>  <span class="c1"># Auto_Kpoints(mat=mat, length=length)</span>
 
         <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
             <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
             <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
             <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
             <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
@@ -285,13 +959,16 @@
 
 <span class="sd">            copy_prev_chgcar :  path of CHGCAR file for Non-SCF step</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
+        <span class="c1"># incar = self.use_incar_dict</span>
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">copy_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span>
+        <span class="c1"># tmp = self.copy_files</span>
         <span class="k">if</span> <span class="n">copy_prev_chgcar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">copy_prev_chgcar</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="n">copy_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy_prev_chgcar</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">nbands</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">nbands</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nbands</span> <span class="o">*</span> <span class="mf">1.3</span><span class="p">)</span>
-            <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
+            <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;NBANDS&quot;</span><span class="p">:</span> <span class="n">nbands</span><span class="p">})</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">,</span>
             <span class="s2">&quot;NEDOS&quot;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
@@ -301,12 +978,17 @@
             <span class="s2">&quot;IBRION&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
             <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">kpath</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">line_density</span><span class="o">=</span><span class="n">line_density</span><span class="p">)</span>
-
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
+        <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">kpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">,</span> <span class="n">line_density</span><span class="o">=</span><span class="n">line_density</span><span class="p">)</span>
         <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
             <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
             <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="n">copy_files</span><span class="p">,</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
             <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
             <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
             <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;MAIN-BAND-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]),</span>
@@ -325,7 +1007,7 @@
 
 <span class="sd">            length :  K-points in length unit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">,</span>
             <span class="s2">&quot;EDIFFG&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1e-3</span><span class="p">,</span>
@@ -339,13 +1021,20 @@
             <span class="s2">&quot;ISPIN&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
             <span class="s2">&quot;LCHARG&quot;</span><span class="p">:</span> <span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
         <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
             <span class="n">lattice_mat</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
         <span class="p">)</span>  <span class="c1"># Auto_Kpoints(mat=mat, length=length)</span>
         <span class="n">en</span><span class="p">,</span> <span class="n">contcar</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
             <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
             <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
             <span class="n">pot_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span><span class="p">,</span>
             <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
             <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;MAIN-RELAX-&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">),</span>
@@ -372,6 +1061,7 @@
         <span class="n">convg_encut1</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">convg_encut2</span> <span class="o">=</span> <span class="kc">False</span>
 
+        <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="n">convg_encut2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">convg_encut1</span><span class="p">:</span>
             <span class="c1"># while convg_encut1 !=True and  convg_encut2 !=True:</span>
             <span class="c1"># tol = 0.001  # change 0.001</span>
@@ -379,11 +1069,11 @@
             <span class="n">encut_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">encut</span><span class="p">)</span>
             <span class="n">length</span> <span class="o">=</span> <span class="n">starting_length</span>
             <span class="n">encut1</span> <span class="o">=</span> <span class="n">encut</span> <span class="o">+</span> <span class="mi">50</span>
-            <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
+            <span class="c1"># incar_dict = self.use_incar_dict</span>
             <span class="c1"># print (&#39;incar_dict&#39;,incar_dict)</span>
             <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">})</span>
             <span class="c1"># print (use_incar_dict)</span>
-            <span class="n">incar</span> <span class="o">=</span> <span class="n">incar_dict</span>
+            <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
             <span class="n">kpoints</span> <span class="o">=</span> <span class="n">Kpoints</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
                 <span class="n">lattice_mat</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">length</span>
             <span class="p">)</span>  <span class="c1"># Auto_Kpoints(mat=mat, length=length)</span>
@@ -399,6 +1089,11 @@
                 <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
+                <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                 <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
                 <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
@@ -410,10 +1105,8 @@
                 <span class="n">encut1</span> <span class="o">=</span> <span class="n">encut</span> <span class="o">+</span> <span class="mi">50</span>
                 <span class="n">encut_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">encut</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Incrementing encut&quot;</span><span class="p">,</span> <span class="n">encut</span><span class="p">)</span>
-                <span class="c1"># incar_dict = self.use_incar_dict</span>
                 <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut1</span><span class="p">})</span>
-                <span class="c1"># incar_dict[&quot;ENCUT&quot;]= encut1</span>
-                <span class="c1"># incar = Incar.from_dict(incar_dict)</span>
+                <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span>
                     <span class="s2">&quot;running smart_converge for&quot;</span><span class="p">,</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
@@ -424,6 +1117,11 @@
                 <span class="p">)</span>
                 <span class="n">en2</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
                     <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+                    <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                    <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                    <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                    <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                    <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
@@ -438,9 +1136,14 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Some extra points to check for ENCUT&quot;</span><span class="p">)</span>
 
             <span class="n">encut2</span> <span class="o">=</span> <span class="n">encut1</span> <span class="o">+</span> <span class="mi">50</span>
-            <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut2</span><span class="p">})</span>
-            <span class="c1"># incar_dict[&quot;ENCUT&quot;]= encut2</span>
+            <span class="n">incar_dict</span><span class="p">[</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encut2</span>
+            <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
             <span class="n">en3</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
+                <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                 <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
@@ -452,11 +1155,15 @@
             <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
             <span class="n">encut3</span> <span class="o">=</span> <span class="n">encut2</span> <span class="o">+</span> <span class="mi">50</span>
-            <span class="c1"># incar[&quot;ENCUT&quot;] = encut3</span>
-            <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut3</span><span class="p">})</span>
-            <span class="c1"># incar_dict[&quot;ENCUT&quot;]= encut3</span>
+            <span class="n">incar_dict</span><span class="p">[</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encut3</span>
+            <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
             <span class="n">en4</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
                 <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+                <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                 <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
@@ -467,13 +1174,18 @@
             <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
             <span class="n">encut4</span> <span class="o">=</span> <span class="n">encut3</span> <span class="o">+</span> <span class="mi">50</span>
-            <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut4</span><span class="p">})</span>
-            <span class="c1"># incar_dict[&quot;ENCUT&quot;]= encut4</span>
+            <span class="n">incar_dict</span><span class="p">[</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encut4</span>
+            <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
             <span class="n">en5</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
                 <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                 <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+                <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                 <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">)</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
@@ -481,11 +1193,15 @@
             <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
             <span class="n">encut5</span> <span class="o">=</span> <span class="n">encut4</span> <span class="o">+</span> <span class="mi">50</span>
-            <span class="c1"># incar[&quot;ENCUT&quot;] = encut5</span>
-            <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut5</span><span class="p">})</span>
-            <span class="c1"># incar_dict[&quot;ENCUT&quot;]= encut5</span>
+            <span class="n">incar_dict</span><span class="p">[</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encut5</span>
+            <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
             <span class="n">en6</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
                 <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+                <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
@@ -496,11 +1212,15 @@
             <span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
 
             <span class="n">encut6</span> <span class="o">=</span> <span class="n">encut5</span> <span class="o">+</span> <span class="mi">50</span>
-            <span class="c1"># incar[&quot;ENCUT&quot;] = encut6</span>
-            <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut6</span><span class="p">})</span>
-            <span class="c1"># incar_dict[&quot;ENCUT&quot;]= encut6</span>
+            <span class="n">incar_dict</span><span class="p">[</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encut6</span>
+            <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
             <span class="n">en7</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
                 <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+                <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                 <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                 <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                 <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
@@ -549,8 +1269,9 @@
         <span class="n">kp_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="n">convg_kp2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">convg_kp1</span><span class="p">:</span>
             <span class="c1"># while convg_kp1 !=True and  convg_kp2 !=True:</span>
-            <span class="n">incar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
-            <span class="n">incar</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">})</span>
+            <span class="n">incar_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">incar_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;ENCUT&quot;</span><span class="p">:</span> <span class="n">encut</span><span class="p">})</span>
+            <span class="n">incar</span> <span class="o">=</span> <span class="n">Incar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">incar_dict</span><span class="p">)</span>
             <span class="c1"># incar_dict[&quot;ENCUT&quot;]= encut</span>
             <span class="n">length1</span> <span class="o">=</span> <span class="n">length1</span> <span class="o">+</span> <span class="mi">5</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Incrementing length&quot;</span><span class="p">,</span> <span class="n">length1</span><span class="p">)</span>
@@ -564,6 +1285,11 @@
                     <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
+                    <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                    <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                    <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                    <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                    <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
                     <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
                     <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
@@ -594,6 +1320,11 @@
                             <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                             <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                             <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+                            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                            <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                             <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
                             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
                             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
@@ -612,6 +1343,11 @@
                             <span class="n">mat</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
                             <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                             <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+                            <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                            <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                            <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                            <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                            <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                             <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
                             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
                             <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
@@ -633,6 +1369,11 @@
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+                    <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                    <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                    <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                    <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                    <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                     <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
                     <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
                     <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
@@ -651,6 +1392,11 @@
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+                    <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                    <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                    <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                    <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                    <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                     <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
                     <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
                     <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
@@ -669,6 +1415,11 @@
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
+                    <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                    <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                    <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                    <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                    <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                     <span class="n">jobname</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="s2">&quot;KPOINTS&quot;</span><span class="p">)</span>
                     <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
                     <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
@@ -684,6 +1435,11 @@
                 <span class="n">kp_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
                 <span class="n">en6</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
                     <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+                    <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                    <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                    <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                    <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                    <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
@@ -701,6 +1457,11 @@
                 <span class="n">kp_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
                 <span class="n">en7</span><span class="p">,</span> <span class="n">contc</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
                     <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+                    <span class="n">vasp_cmd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span><span class="p">,</span>
+                    <span class="n">output_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span>
+                    <span class="n">stderr_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span><span class="p">,</span>
+                    <span class="n">copy_files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span><span class="p">,</span>
+                    <span class="n">attempts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">attempts</span><span class="p">,</span>
                     <span class="n">incar</span><span class="o">=</span><span class="n">incar</span><span class="p">,</span>
                     <span class="n">pot_type</span><span class="o">=</span><span class="n">pot_type</span><span class="p">,</span>
                     <span class="n">kpoints</span><span class="o">=</span><span class="n">kpoints</span><span class="p">,</span>
@@ -767,7 +1528,40 @@
                     <span class="p">)</span>
                     <span class="n">convg_kp2</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">return</span> <span class="n">length1</span></div></div>
+        <span class="k">return</span> <span class="n">length1</span></div>
+
+<div class="viewcode-block" id="JobFactory.from_dict"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Load from dictionary.&quot;&quot;&quot;</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">JobFactory</span><span class="p">(</span>
+            <span class="n">use_incar_dict</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;use_incar_dict&quot;</span><span class="p">],</span>
+            <span class="n">pot_type</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;pot_type&quot;</span><span class="p">],</span>
+            <span class="n">vasp_cmd</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;vasp_cmd&quot;</span><span class="p">],</span>
+            <span class="n">copy_files</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;copy_files&quot;</span><span class="p">],</span>
+            <span class="n">attempts</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;attempts&quot;</span><span class="p">],</span>
+            <span class="n">stderr_file</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;stderr_file&quot;</span><span class="p">],</span>
+            <span class="n">output_file</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;output_file&quot;</span><span class="p">],</span>
+            <span class="n">poscar</span><span class="o">=</span><span class="n">Poscar</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;poscar&quot;</span><span class="p">]),</span>
+            <span class="n">optional_params</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;optional_params&quot;</span><span class="p">],</span>
+            <span class="n">steps</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">job</span></div>
+
+<div class="viewcode-block" id="JobFactory.to_dict"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.JobFactory.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert to dictionary.&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;use_incar_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_incar_dict</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;vasp_cmd&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vasp_cmd</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;pot_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pot_type</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;copy_files&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_files</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;attempts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attempts</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;stderr_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr_file</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;output_file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;poscar&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mat</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;optional_params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional_params</span>
+        <span class="k">return</span> <span class="n">d</span></div></div>
 
 
 <div class="viewcode-block" id="VaspJob"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.VaspJob">[docs]</a><span class="k">class</span> <span class="nc">VaspJob</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -984,10 +1778,9 @@
                 <span class="n">wait</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reached maximum attempts&quot;</span><span class="p">,</span> <span class="n">attempt</span><span class="p">)</span>
                 <span class="k">break</span>
-            <span class="c1"># print(&quot;Setting up POTCAR&quot;)</span>
             <span class="c1"># if self.potcar is None:</span>
-            <span class="c1">#  new_symb = list(set(self.poscar.atoms.elements))</span>
-            <span class="c1">#  self.potcar = Potcar(elements=new_symb, pot_type=self.pot_type)</span>
+            <span class="c1"># new_symb = list(set(self.mat.atoms.elements))</span>
+            <span class="c1"># self.potcar = Potcar(elements=new_symb, pot_type=self.pot_type)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">run_dir</span><span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting new job&quot;</span><span class="p">)</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">run_dir</span><span class="p">)</span>
@@ -1121,6 +1914,26 @@
         <span class="n">inc</span> <span class="o">=</span> <span class="n">Incar</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">GenericIncars</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;pbe&quot;</span><span class="p">,</span> <span class="n">incar</span><span class="o">=</span><span class="n">inc</span><span class="p">,</span> <span class="n">pot_type</span><span class="o">=</span><span class="s2">&quot;POT_GGA_PAW_PBE&quot;</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="GenericIncars.scan"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.GenericIncars.scan">[docs]</a>    <span class="k">def</span> <span class="nf">scan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Select GGA-PBE functional.&quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">PREC</span><span class="o">=</span><span class="s2">&quot;Accurate&quot;</span><span class="p">,</span>
+            <span class="n">ISMEAR</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">IBRION</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">METAGGA</span><span class="o">=</span><span class="s2">&quot;SCAN&quot;</span><span class="p">,</span>
+            <span class="n">LASPH</span><span class="o">=</span><span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+            <span class="n">EDIFF</span><span class="o">=</span><span class="s2">&quot;1E-7&quot;</span><span class="p">,</span>
+            <span class="n">NSW</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">NELM</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+            <span class="n">ISIF</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">LCHARG</span><span class="o">=</span><span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
+            <span class="n">LWAVE</span><span class="o">=</span><span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">inc</span> <span class="o">=</span> <span class="n">Incar</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">GenericIncars</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;scan&quot;</span><span class="p">,</span> <span class="n">incar</span><span class="o">=</span><span class="n">inc</span><span class="p">,</span> <span class="n">pot_type</span><span class="o">=</span><span class="s2">&quot;POT_GGA_PAW_PBE&quot;</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="GenericIncars.lda"><a class="viewcode-back" href="../../../../jarvis.tasks.vasp.html#jarvis.tasks.vasp.vasp.GenericIncars.lda">[docs]</a>    <span class="k">def</span> <span class="nf">lda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Select LDA functional.&quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
@@ -1168,12 +1981,12 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
