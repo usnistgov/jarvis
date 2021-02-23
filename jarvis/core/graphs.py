@@ -221,9 +221,10 @@ class Graph(object):
     @property
     def adjacency_matrix(self):
         """Provide adjacency_matrix of graph."""
-        return np.array(self.edge_attributes).reshape(
-            self.num_nodes, self.num_nodes
-        )
+        A = np.zeros((self.num_nodes, self.num_nodes))
+        for edge, a in zip(self.edges, self.edge_attributes):
+            A[edge] = a
+        return A
 
 
 """
