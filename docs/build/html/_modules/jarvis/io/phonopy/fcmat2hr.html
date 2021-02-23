@@ -1,0 +1,205 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.io.phonopy.fcmat2hr &#8212; jarvis-tools v2021.2.3 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jarvis.io.phonopy.fcmat2hr</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module to get Wannier TB format for Force-constants.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+
+<div class="viewcode-block" id="get_phonon_hr"><a class="viewcode-back" href="../../../../jarvis.io.phonopy.html#jarvis.io.phonopy.fcmat2hr.get_phonon_hr">[docs]</a><span class="k">def</span> <span class="nf">get_phonon_hr</span><span class="p">(</span>
+    <span class="n">fcmat</span><span class="p">,</span>
+    <span class="n">smallest_vectors</span><span class="p">,</span>
+    <span class="n">mass</span><span class="p">,</span>
+    <span class="n">multi</span><span class="p">,</span>
+    <span class="n">super_pos</span><span class="p">,</span>
+    <span class="n">p2s_map</span><span class="p">,</span>
+    <span class="n">s2p_map</span><span class="p">,</span>
+    <span class="n">num_satom</span><span class="p">,</span>
+    <span class="n">num_patom</span><span class="p">,</span>
+    <span class="n">out_file</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get phonon-TB Hamiltonian similar to wannier90_hr.dat.</span>
+
+<span class="sd">    Its build by FORCE_CONSTANTS</span>
+<span class="sd">    num_satom: number of atoms in super cell</span>
+<span class="sd">    num_patom: number of atoms in primitive cell</span>
+<span class="sd">    fcmat: force constansts num_satom*num_satom*3*3</span>
+<span class="sd">    Forked from WannierTools package, please cite it</span>
+<span class="sd">    along with jarvis-tools f you use this part of the code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># maximum dimension for hr matrix</span>
+    <span class="n">ndim</span> <span class="o">=</span> <span class="mi">51</span>
+    <span class="n">sdim</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">nrpt_max</span> <span class="o">=</span> <span class="mi">51</span> <span class="o">**</span> <span class="mi">3</span>
+    <span class="c1"># hr matrix</span>
+    <span class="n">norbs</span> <span class="o">=</span> <span class="n">num_patom</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="n">hr_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ndim</span><span class="p">,</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">ndim</span><span class="p">,</span> <span class="n">norbs</span><span class="p">,</span> <span class="n">norbs</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">hr_mat0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrpt_max</span><span class="p">,</span> <span class="n">norbs</span><span class="p">,</span> <span class="n">norbs</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="c1"># WS points</span>
+    <span class="n">rpts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrpt_max</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="c1"># degeneracy</span>
+    <span class="n">dege</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrpt_max</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">iatom</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_patom</span><span class="p">):</span>  <span class="c1"># atoms in primitive cell</span>
+        <span class="k">for</span> <span class="n">jatom</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_patom</span><span class="p">):</span>  <span class="c1"># atoms in primitive cell</span>
+            <span class="n">mass_sqrt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mass</span><span class="p">[</span><span class="n">iatom</span><span class="p">]</span> <span class="o">*</span> <span class="n">mass</span><span class="p">[</span><span class="n">jatom</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">katom</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_satom</span><span class="p">):</span>  <span class="c1"># atoms in supercell</span>
+                <span class="k">if</span> <span class="n">s2p_map</span><span class="p">[</span><span class="n">katom</span><span class="p">]</span> <span class="o">!=</span> <span class="n">p2s_map</span><span class="p">[</span><span class="n">jatom</span><span class="p">]:</span>
+                    <span class="k">continue</span>
+                <span class="k">for</span> <span class="n">rr</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">multi</span><span class="p">[</span><span class="n">katom</span><span class="p">,</span> <span class="n">iatom</span><span class="p">])):</span>
+                    <span class="c1"># find which rpt</span>
+                    <span class="n">rvec</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">smallest_vectors</span><span class="p">[</span><span class="n">katom</span><span class="p">,</span> <span class="n">iatom</span><span class="p">,</span> <span class="n">rr</span><span class="p">]</span>
+                        <span class="o">+</span> <span class="n">super_pos</span><span class="p">[</span><span class="n">p2s_map</span><span class="p">[</span><span class="n">iatom</span><span class="p">]]</span>
+                        <span class="o">-</span> <span class="n">super_pos</span><span class="p">[</span><span class="n">s2p_map</span><span class="p">[</span><span class="n">katom</span><span class="p">]]</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">rvec</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1.0e-6</span><span class="p">:</span>
+                            <span class="n">rvec</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="n">rx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">rvec</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                    <span class="n">ry</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">rvec</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="n">rz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">rvec</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                    <span class="n">idx</span> <span class="o">=</span> <span class="n">iatom</span> <span class="o">*</span> <span class="mi">3</span>
+                    <span class="n">idy</span> <span class="o">=</span> <span class="n">jatom</span> <span class="o">*</span> <span class="mi">3</span>
+                    <span class="n">rx</span> <span class="o">=</span> <span class="n">rx</span> <span class="o">+</span> <span class="n">sdim</span>
+                    <span class="n">ry</span> <span class="o">=</span> <span class="n">ry</span> <span class="o">+</span> <span class="n">sdim</span>
+                    <span class="n">rz</span> <span class="o">=</span> <span class="n">rz</span> <span class="o">+</span> <span class="n">sdim</span>
+                    <span class="n">hr_mat</span><span class="p">[</span><span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">,</span> <span class="n">rz</span><span class="p">,</span> <span class="n">idx</span> <span class="p">:</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="n">idy</span> <span class="p">:</span> <span class="n">idy</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">fcmat</span><span class="p">[</span>
+                        <span class="n">p2s_map</span><span class="p">[</span><span class="n">iatom</span><span class="p">],</span> <span class="n">katom</span>
+                    <span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">multi</span><span class="p">[</span><span class="n">katom</span><span class="p">,</span> <span class="n">iatom</span><span class="p">]</span> <span class="o">*</span> <span class="n">mass_sqrt</span><span class="p">)</span>
+
+    <span class="c1"># collect all hr at rpts with none-zero data</span>
+    <span class="n">irpt</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># count for useful rpts</span>
+    <span class="k">for</span> <span class="n">rx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">sdim</span><span class="p">,</span> <span class="n">sdim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">ixo</span> <span class="o">=</span> <span class="n">rx</span> <span class="o">+</span> <span class="n">sdim</span>
+        <span class="k">for</span> <span class="n">ry</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">sdim</span><span class="p">,</span> <span class="n">sdim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">iyo</span> <span class="o">=</span> <span class="n">ry</span> <span class="o">+</span> <span class="n">sdim</span>
+            <span class="k">for</span> <span class="n">rz</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">sdim</span><span class="p">,</span> <span class="n">sdim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">izo</span> <span class="o">=</span> <span class="n">rz</span> <span class="o">+</span> <span class="n">sdim</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="nb">abs</span><span class="p">(</span><span class="n">hr_mat</span><span class="p">[</span><span class="n">ixo</span><span class="p">,</span> <span class="n">iyo</span><span class="p">,</span> <span class="n">izo</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1.0e-9</span>
+                <span class="p">):</span>  <span class="c1"># ommit too small</span>
+                    <span class="k">continue</span>
+                <span class="n">dege</span><span class="p">[</span><span class="n">irpt</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">rpts</span><span class="p">[</span><span class="n">irpt</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rx</span>
+                <span class="n">rpts</span><span class="p">[</span><span class="n">irpt</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ry</span>
+                <span class="n">rpts</span><span class="p">[</span><span class="n">irpt</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">rz</span>
+                <span class="n">hr_mat0</span><span class="p">[</span><span class="n">irpt</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">hr_mat</span><span class="p">[</span><span class="n">ixo</span><span class="p">,</span> <span class="n">iyo</span><span class="p">,</span> <span class="n">izo</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+                <span class="n">irpt</span> <span class="o">=</span> <span class="n">irpt</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">nrpt</span> <span class="o">=</span> <span class="n">irpt</span>
+    <span class="n">dege_rpts</span> <span class="o">=</span> <span class="n">dege</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">nrpt</span><span class="p">]</span>
+    <span class="n">norbs</span> <span class="o">=</span> <span class="n">num_patom</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot; Writen on &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;          &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">norbs</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;        &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nrpt</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">nl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">nrpt</span> <span class="o">/</span> <span class="mf">15.0</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nl</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="s2">&quot;    &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dege_rpts</span><span class="p">[</span><span class="n">n</span> <span class="o">*</span> <span class="mi">15</span> <span class="p">:</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">15</span><span class="p">]]</span>
+            <span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">irpt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrpt</span><span class="p">):</span>
+            <span class="n">rx</span> <span class="o">=</span> <span class="n">rpts</span><span class="p">[</span><span class="n">irpt</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">ry</span> <span class="o">=</span> <span class="n">rpts</span><span class="p">[</span><span class="n">irpt</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">rz</span> <span class="o">=</span> <span class="n">rpts</span><span class="p">[</span><span class="n">irpt</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">jatomorb</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">norbs</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">iatomorb</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">norbs</span><span class="p">):</span>
+                    <span class="n">rp</span> <span class="o">=</span> <span class="n">hr_mat0</span><span class="p">[</span><span class="n">irpt</span><span class="p">,</span> <span class="n">iatomorb</span><span class="p">,</span> <span class="n">jatomorb</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+                    <span class="n">ip</span> <span class="o">=</span> <span class="n">hr_mat0</span><span class="p">[</span><span class="n">irpt</span><span class="p">,</span> <span class="n">iatomorb</span><span class="p">,</span> <span class="n">jatomorb</span><span class="p">]</span><span class="o">.</span><span class="n">imag</span>
+                    <span class="n">tmp</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:8d}{:8d}{:8d}{:8d}{:8d}{:20.10f}{:20.10f}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">rx</span><span class="p">,</span> <span class="n">ry</span><span class="p">,</span> <span class="n">rz</span><span class="p">,</span> <span class="n">iatomorb</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">jatomorb</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rp</span><span class="p">,</span> <span class="n">ip</span>
+                    <span class="p">)</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

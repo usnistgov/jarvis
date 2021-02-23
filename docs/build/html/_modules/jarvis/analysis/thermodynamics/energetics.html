@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.analysis.thermodynamics.energetics &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.analysis.thermodynamics.energetics &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>  
@@ -43,6 +43,10 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="c1"># from jarvis.io.vasp.outputs import Vasprun</span>
+<span class="c1"># import glob</span>
+<span class="kn">from</span> <span class="nn">jarvis.db.figshare</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
 
 <span class="c1"># OptB88vdW energy per atoms for elements</span>
 <span class="n">unary_json_file</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;unary.json&quot;</span><span class="p">))</span>
@@ -93,6 +97,31 @@
         <span class="n">form_en</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_energy</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
         <span class="n">form_en</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">form_en</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">),</span> <span class="mi">5</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">form_en</span></div>
+
+
+<div class="viewcode-block" id="get_twod_defect_energy"><a class="viewcode-back" href="../../../../jarvis.analysis.thermodynamics.html#jarvis.analysis.thermodynamics.energetics.get_twod_defect_energy">[docs]</a><span class="k">def</span> <span class="nf">get_twod_defect_energy</span><span class="p">(</span><span class="n">vrun</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">jid</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">atom</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get mono 2D defect formation energy with OptB88vdW data.&quot;&quot;&quot;</span>
+    <span class="n">dft2d</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="s2">&quot;dft_2d&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_enp_jid</span><span class="p">(</span><span class="n">jid</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dft2d</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="s2">&quot;jid&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">jid</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="n">i</span><span class="p">[</span><span class="s2">&quot;optb88vdw_total_energy&quot;</span><span class="p">]</span>
+                    <span class="o">/</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">num_atoms</span>
+                <span class="p">)</span>
+
+        <span class="c1"># dir=&#39;JVASP-667_C_C_c&#39;</span>
+        <span class="c1"># tmp=dir.split(&#39;_&#39;)</span>
+        <span class="c1"># jid=tmp[0]</span>
+        <span class="c1"># atom=tmp[2]</span>
+    <span class="n">strt</span> <span class="o">=</span> <span class="n">vrun</span><span class="o">.</span><span class="n">all_structures</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">natoms</span> <span class="o">=</span> <span class="n">strt</span><span class="o">.</span><span class="n">num_atoms</span>
+    <span class="n">fin_en</span> <span class="o">=</span> <span class="n">vrun</span><span class="o">.</span><span class="n">final_energy</span>
+    <span class="n">chem_pot</span> <span class="o">=</span> <span class="n">unary_energy</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+    <span class="n">bulk_en_pa</span> <span class="o">=</span> <span class="n">get_enp_jid</span><span class="p">(</span><span class="n">jid</span><span class="p">)</span>
+    <span class="n">Ef</span> <span class="o">=</span> <span class="n">fin_en</span> <span class="o">-</span> <span class="p">(</span><span class="n">natoms</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">bulk_en_pa</span> <span class="o">+</span> <span class="n">chem_pot</span>
+    <span class="k">return</span> <span class="n">Ef</span></div>
 
 
 <span class="c1"># https://wiki.fysik.dtu.dk/ase/_modules/ase/phasediagram.html#PhaseDiagram</span>
@@ -155,12 +184,12 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../../index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>

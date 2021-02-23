@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>jarvis.tasks.vasp package &#8212; JARVIS-Tools 2020.8.12 documentation</title>
+    <title>jarvis.tasks.vasp package &#8212; jarvis-tools v2021.2.3 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -28,7 +28,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -69,23 +69,41 @@
 <dd><p>Select GGA-PBE functional.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.GenericIncars.scan">
+<code class="descname">scan</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#GenericIncars.scan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.GenericIncars.scan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select GGA-PBE functional.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory">
-<em class="property">class </em><code class="descclassname">jarvis.tasks.vasp.vasp.</code><code class="descname">JobFactory</code><span class="sig-paren">(</span><em>name=''</em>, <em>use_incar_dict={}</em>, <em>pot_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">jarvis.tasks.vasp.vasp.</code><code class="descname">JobFactory</code><span class="sig-paren">(</span><em>name='Jobs', poscar=None, use_incar_dict={}, vasp_cmd='', pot_type='POT_GGA_PAW_PBE', copy_files=[], attempts=5, stderr_file='std_err.txt', output_file='vasp.out', optional_params={'Uval': 2.0, 'encut': 500, 'extension': 'SCAN', 'kpleng': 20, 'kppa': 1000, 'ldau': False, 'line_density': 20, 'run_wannier': True, 'wann_cmd': '~/bin/wannier90.x wannier90', 'wt_cmd': '~/bin/wt.x'}, steps=['ENCUT', 'KPLEN', 'RELAX', 'BANDSTRUCT', 'LOPTICS', 'MBJOPTICS', 'ELASTIC', 'SPILLAGE', 'EFG', 'MAGORDER', 'DFPT', 'RAMANINTS', 'SHG']</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Provide sets of VASP calculations.</p>
 <dl class="method">
-<dt id="jarvis.tasks.vasp.vasp.JobFactory.all_optb88vdw_props">
-<code class="descname">all_optb88vdw_props</code><span class="sig-paren">(</span><em>mat=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.all_optb88vdw_props"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.all_optb88vdw_props" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use for OptB88vdW functional based high-throughput calculations.</p>
-<p>This will converge k-points, cut-offs,
-and then carry several property calculations.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>mat : Poscar object</dd>
-</dl>
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.all_lda_calcs">
+<code class="descname">all_lda_calcs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.all_lda_calcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.all_lda_calcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for LDA based HT.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.all_optb88vdw_calcs">
+<code class="descname">all_optb88vdw_calcs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.all_optb88vdw_calcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.all_optb88vdw_calcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for OptB88vdW based HT.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.all_pbe_calcs">
+<code class="descname">all_pbe_calcs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.all_pbe_calcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.all_pbe_calcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for PBE based HT.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.all_scan_calcs">
+<code class="descname">all_scan_calcs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.all_scan_calcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.all_scan_calcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for SCAN based HT.</p>
 </dd></dl>
 
 <dl class="method">
@@ -135,6 +153,34 @@ and then carry several property calculations.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.dfpt">
+<code class="descname">dfpt</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=None</em>, <em>nbands=None</em>, <em>length=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.dfpt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.dfpt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for density functional perturbation theory calculation.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">mat :  Poscar object</p>
+<p>encut :  Plane-wave cut-off, 1.3 times will be used</p>
+<p>nbands : number of bands, increased to threee times</p>
+<p class="last">length :  K-points in length unit</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.efg">
+<code class="descname">efg</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=None</em>, <em>nbands=None</em>, <em>length=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.efg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.efg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for electric field gradient calculation.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">mat :  Poscar object</p>
+<p>encut :  Plane-wave cut-off, 1.3 times will be used</p>
+<p>nbands : number of bands, increased to threee times</p>
+<p class="last">length :  K-points in length unit</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory.elastic">
 <code class="descname">elastic</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=None</em>, <em>nbands=None</em>, <em>potim=0.015</em>, <em>npar=None</em>, <em>length=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.elastic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.elastic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use for elastic property calculations using IBRION = 6.</p>
@@ -150,6 +196,12 @@ and then carry several property calculations.</p>
 </dl>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.from_dict">
+<em class="property">classmethod </em><code class="descname">from_dict</code><span class="sig-paren">(</span><em>d={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load from dictionary.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="jarvis.tasks.vasp.vasp.JobFactory.loptics">
 <code class="descname">loptics</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=None</em>, <em>nbands=None</em>, <em>length=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.loptics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.loptics" title="Permalink to this definition">¶</a></dt>
@@ -162,6 +214,12 @@ and then carry several property calculations.</p>
 <p class="last">length :  K-points in length unit</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.magorder">
+<code class="descname">magorder</code><span class="sig-paren">(</span><em>min_configs=3</em>, <em>length=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.magorder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.magorder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine structures for FM, AFM, FiM magnetic ordering.</p>
 </dd></dl>
 
 <dl class="method">
@@ -189,6 +247,43 @@ and then carry several property calculations.</p>
 <p class="last">length :  K-points in length unit</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.soc_spillage">
+<code class="descname">soc_spillage</code><span class="sig-paren">(</span><em>mat=None</em>, <em>encut=None</em>, <em>nbands=None</em>, <em>kppa=1000</em>, <em>leng=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.soc_spillage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.soc_spillage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for SOC spillage calculation.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">mat :  Poscar object</p>
+<p>encut :  Plane-wave cut-off, 1.3 times will be used</p>
+<p>nbands : number of bands, increased to threee times</p>
+<p class="last">kppa :  K-points in kpoints per atom unit</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.step_flow">
+<code class="descname">step_flow</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.step_flow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.step_flow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asiimilate number of steps as legos for a workflow.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.to_dict">
+<code class="descname">to_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert to dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.tasks.vasp.vasp.JobFactory.workflow">
+<code class="descname">workflow</code><span class="sig-paren">(</span><em>generic_incar=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#JobFactory.workflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.JobFactory.workflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for functional based high-throughput calculations.</p>
+<p>This will converge k-points, cut-offs,
+and then carry several property calculations.
+Args:</p>
+<blockquote>
+<div>mat : Poscar object</div></blockquote>
 </dd></dl>
 
 </dd></dl>
@@ -228,6 +323,24 @@ and then carry several property calculations.</p>
 <dd><p>Write a generic python file for running jobs.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.tasks.vasp.vasp.write_jobfact">
+<code class="descclassname">jarvis.tasks.vasp.vasp.</code><code class="descname">write_jobfact</code><span class="sig-paren">(</span><em>pyname='job.py'</em>, <em>job_json=''</em>, <em>input_arg='v.soc_spillage()\n'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#write_jobfact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.write_jobfact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write template job.py with JobFactory.to_dict() job.json.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.tasks.vasp.vasp.write_jobfact_optb88vdw">
+<code class="descclassname">jarvis.tasks.vasp.vasp.</code><code class="descname">write_jobfact_optb88vdw</code><span class="sig-paren">(</span><em>pyname='job.py'</em>, <em>job_json=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#write_jobfact_optb88vdw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.write_jobfact_optb88vdw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write template job.py with JobFactory.to_dict() job.json.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.tasks.vasp.vasp.write_vaspjob">
+<code class="descclassname">jarvis.tasks.vasp.vasp.</code><code class="descname">write_vaspjob</code><span class="sig-paren">(</span><em>pyname='job.py'</em>, <em>job_json=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/tasks/vasp/vasp.html#write_vaspjob"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.tasks.vasp.vasp.write_vaspjob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write template job.py with VaspJob.to_dict() job.json.</p>
 </dd></dl>
 
 </div>
@@ -285,11 +398,11 @@ and then carry several property calculations.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">JARVIS-Tools 2020.8.12 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, Kamal Choudhary.
+        &#169; Copyright 2021, Kamal Choudhary.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
     </div>
   </body>
