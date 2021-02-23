@@ -142,6 +142,7 @@ def get_wann_electron(jid="JVASP-816"):
 
 def get_wann_phonon(jid="JVASP-1002", factor=15.633302):
     """Download phonon WTBH if available."""
+    # Requires phonopy
     from jarvis.io.phonopy.outputs import get_phonon_tb
     for i in fls["FD-ELAST"]:
         if isinstance(i, dict):
