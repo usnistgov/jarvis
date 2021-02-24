@@ -1,5 +1,5 @@
 """Methods for handling input/output files for pennylane."""
-
+# Reference: https://arxiv.org/abs/2102.11452
 from pennylane.utils import decompose_hamiltonian
 import pennylane as qml
 import numpy as np

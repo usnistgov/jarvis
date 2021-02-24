@@ -1,5 +1,5 @@
 """Module to simulate STM with Tershoff-Hamann approach."""
-
+# Reference: https://www.nature.com/articles/s41597-021-00824-y
 import matplotlib.pyplot as plt
 from jarvis.io.vasp.outputs import Chgcar
 import numpy as np

@@ -1,4 +1,5 @@
 """Methods for handling input/output files for tequilla."""
+# Reference: https://arxiv.org/abs/2102.11452
 import numpy
 import numpy as np
 import tequila as tq
