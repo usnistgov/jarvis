@@ -14,7 +14,6 @@ from jarvis.db.jsonutils import loadjson
 from jarvis.io.vasp.outputs import Vasprun
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.wannier.outputs import WannierHam
-# from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
 
 def datasets(dataset=""):
@@ -144,6 +143,7 @@ def get_wann_phonon(jid="JVASP-1002", factor=15.633302):
     """Download phonon WTBH if available."""
     # Requires phonopy
     from jarvis.io.phonopy.outputs import get_phonon_tb
+
     for i in fls["FD-ELAST"]:
         if isinstance(i, dict):
             if i["name"].split(".zip")[0] == jid:
