@@ -62,3 +62,7 @@ git push origin --delete develop
 # https://www.luxonsoftware.com/converter/xmltoxsd
 # https://extendsclass.com/xml-schema-validator.html
 
+
+
+#MD to RST after tree command
+tree --dirsfirst --noreport -I README.md | sed 's/^/    /' > README.md

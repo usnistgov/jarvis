@@ -1,28 +1,10 @@
----
-language: nix
-env:
-  global:
-    - STORE=$HOME/nix-store
-    - #NIXPKGS=https://github.com/NixOS/nixpkgs-channels/archive/6a3f5bcb061e1822f50e299f5616a0731636e4e7.tar.gz
-cache:
-  directories:
-    - $STORE
-before_install:
-  - sudo rm -f /etc/boto.cfg # see https://github.com/travis-ci/travis-ci/issues/7940 and https://api.travis-ci.org/v3/job/508575291/log.txt
-  - sudo mkdir -p /etc/nix
-  - echo "binary-caches = https://cache.nixos.org/ file://$STORE" | sudo tee -a /etc/nix/nix.conf > /dev/null
-  - echo 'require-sigs = false' | sudo tee -a /etc/nix/nix.conf > /dev/null
-before_cache:
-  - mkdir -p $STORE
-  - nix copy --to file://$STORE -f default.nix buildInputs
+language: python
+python:
+  - "3.8"
+cache: pip
 install:
-  - #nix-shell -I $NIXPKGS --pure -p python36Packages.pip --command "echo 'built pip'"
-  - #nix-shell -I $NIXPKGS --pure -p python36Packages.python --command "echo 'built python'"
-  - #nix-shell -I $NIXPKGS --pure -p python36Packages.numpy --command "echo 'built numpy'"
-  - #travis_wait nix-shell -I $NIXPKGS --pure --no-build-output -p python36Packages.scipy --command "echo 'built scipy'"
-  - #nix-shell -I $NIXPKGS --pure -p python36Packages.matplotlib --command "echo 'built matplotlib'"
-  - #nix-shell -I $NIXPKGS --pure -p python36Packages.tkinter --command "echo 'built tkinter'"
-  - #nix-shell -I $NIXPKGS --pure -p python36Packages.pandas --command "echo 'built pandas'"
-  - nix-shell --pure --command "echo 'run nix-shell and exit'"
+  - pip install -r requirements-for-ci-only.txt
+  - python setup.py develop
 script:
-  - nix-shell --pure --command "py.test"
+  - coverage run -m pytest
+  - coverage report -m
