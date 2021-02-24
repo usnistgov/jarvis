@@ -112,7 +112,7 @@ spglib==1.16.1
 sympy==1.7.1
 tensorboard==2.4.1
 tensorboard-plugin-wit==1.8.0
-tensorflow==2.5.1
+tensorflow==2.4.1
 tensorflow-estimator==2.3.0
 tequila @ git+https://github.com/aspuru-guzik-group/tequila.git@402d8eb8c4c632c2d48c75e2f798a46967d28899
 termcolor==1.1.0
