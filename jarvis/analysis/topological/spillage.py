@@ -1,9 +1,10 @@
 """
 Code to calculate spin-orbit spillage.
 
-Please find details in:
+Reference:
 https://www.nature.com/articles/s41598-019-45028-y
 https://www.nature.com/articles/s41524-020-0319-4
+https://arxiv.org/abs/2102.00237
 """
 
 import numpy as np

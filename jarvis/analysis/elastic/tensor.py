@@ -1,4 +1,5 @@
 """Module for processing elastic tensor."""
+# Reference: https://doi.org/10.1103/PhysRevB.98.014107
 import numpy as np
 from collections import OrderedDict
 
