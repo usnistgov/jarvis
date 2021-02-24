@@ -55,7 +55,7 @@ lightgbm==2.1.0
 lxml==4.6.2
 Markdown==3.3.3
 MarkupSafe==1.1.1
-matplotlib==3.4.0rc1
+matplotlib>=3.4.0rc1
 more-itertools==8.7.0
 mpmath==1.2.1
 multitasking==0.0.9
@@ -63,7 +63,7 @@ nbformat==5.1.2
 nest-asyncio==1.5.1
 networkx==2.5
 ntlm-auth==1.5.0
-numpy==1.20.1
+numpy>=1.20.1
 oauthlib==3.1.0
 openfermion==1.0.0
 opt-einsum==3.3.0
@@ -104,7 +104,7 @@ requests-oauthlib==1.3.0
 retworkx==0.7.2
 rsa==4.7.1
 scikit-learn==0.24.1
-scipy==1.6.1
+scipy>=1.6.1
 semantic-version==2.6.0
 six==1.15.0
 sortedcontainers==2.3.0
