@@ -45,7 +45,7 @@ For more details, checkout our latest article:  `The joint automated repository 
 Capabilities
 =======================================================================
 
-- **Software workflow tasks for preprcessing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM.
+- **Software workflow tasks for preprcessing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM, Qiskit, Tequila, Pennylane.
 
 - **Several examples**: Notebooks and test scripts to explain the package.
 
