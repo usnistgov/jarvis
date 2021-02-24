@@ -250,6 +250,8 @@ Module structure
     │   ├── lammps
     │   │   ├── inputs.py
     │   │   └── outputs.py
+    │   ├── pennylane
+    │   │   ├── inputs.py
     │   ├── phonopy
     │   │   ├── fcmat2hr.py
     │   │   ├── inputs.py
@@ -257,6 +259,10 @@ Module structure
     │   ├── qe
     │   │   ├── inputs.py
     │   │   └── outputs.py
+    │   ├── qiskit
+    │   │   ├── inputs.py
+    │   ├── tequile
+    │   │   ├── inputs.py
     │   ├── vasp
     │   │   ├── inputs.py
     │   │   └── outputs.py
@@ -302,8 +308,11 @@ Module structure
     │   │   │   ├── boltztrap
     │   │   │   ├── calphad
     │   │   │   ├── lammps
+    │   │   │   ├── pennylane
     │   │   │   ├── phonopy
+    │   │   │   ├── qiskit
     │   │   │   ├── qe
+    │   │   │   ├── tequila
     │   │   │   ├── vasp
     │   │   │   ├── wannier
     │   │   │   ├── wanniertools

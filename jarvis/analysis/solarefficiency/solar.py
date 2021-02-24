@@ -2,7 +2,7 @@
 Modules for calculating theoretical solar-cell efficiency.
 
 Please find more detailsin:
- https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166
+https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166
 """
 import numpy as np
 import os
