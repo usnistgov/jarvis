@@ -28,6 +28,7 @@ def get_eigvals(mat=[]):
     circuits = []
     energies = []
     factor = 22
+    # TODO: replace factor with reverse VQE value
     opt_variables = {}
     for i in range(rows):
         U = tq.gates.Ry(angle=(0, i), target=0)

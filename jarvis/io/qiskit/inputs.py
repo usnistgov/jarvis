@@ -153,6 +153,8 @@ def get_bandstruct(
     font=22,
     filename="bands.png",
     savefig=True,
+    neigs=None,
+    max_nk=None,
     tol=None,
 ):
     """Compare bandstructures using quantum algos."""
@@ -165,21 +167,31 @@ def get_bandstruct(
     eigvals_q = []
     eigvals_np = []
     for ii, i in enumerate(kpts):
-        # if ii<1:
-        try:
-            print("kp=", ii, i)
-            hk = get_hk_tb(w=w, k=i)
-            HS = HermitianSolver(hk)
-            vqe_vals, _ = HS.run_vqd()
-            np_vals, _ = HS.run_numpy()
-            print("np_vals", np_vals)
-            print("vqe_vals", vqe_vals)
-            eigvals_q.append(vqe_vals)
-            eigvals_np.append(np_vals)
-            # break
-        except Exception as exp:
-            print(exp)
-            pass
+        if max_nk is not None and ii == max_nk:
+            break
+            # For reducing CI/CD time
+            print("breaking here", ii, max_nk)
+        else:
+            try:
+                print("kp=", ii, i)
+                hk = get_hk_tb(w=w, k=i)
+                HS = HermitianSolver(hk)
+                vqe_vals, _ = HS.run_vqd()
+                np_vals, _ = HS.run_numpy()
+                print("np_vals", np_vals)
+                print("vqe_vals", vqe_vals)
+                eigvals_q.append(vqe_vals)
+                eigvals_np.append(np_vals)
+                # break
+                if (
+                    neigs is not None
+                    and isinstabce(neigs, int)
+                    and neigs == len(eigvals_q)
+                ):
+                    break
+            except Exception as exp:
+                print(exp)
+                pass
     eigvals_q = 3.14 * np.array(eigvals_q)
     eigvals_np = 3.14 * np.array(eigvals_np)
 
