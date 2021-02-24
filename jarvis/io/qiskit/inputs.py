@@ -1,5 +1,5 @@
 """Module to solve Hermitian Matrix."""
-
+# Reference: https://arxiv.org/abs/2102.11452
 import numpy as np
 from qiskit import aqua
 
