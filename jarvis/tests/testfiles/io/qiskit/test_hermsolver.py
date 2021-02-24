@@ -74,6 +74,8 @@ def test_inp():
         line_density=1,
         atoms=atoms,
         tol=0.1,
+        neigs=2,
+        max_nk=2,
         filename="Alphon.png",
         ylabel="Freq.(cm$^{-1}$)",
     )
