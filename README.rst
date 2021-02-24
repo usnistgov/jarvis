@@ -45,7 +45,7 @@ For more details, checkout our latest article:  `The joint automated repository 
 Capabilities
 =======================================================================
 
-- **Software workflow tasks for preprcessing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM.
+- **Software workflow tasks for preprcessing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM, Qiskit, Tequila, Pennylane.
 
 - **Several examples**: Notebooks and test scripts to explain the package.
 
@@ -250,6 +250,8 @@ Module structure
     │   ├── lammps
     │   │   ├── inputs.py
     │   │   └── outputs.py
+    │   ├── pennylane
+    │   │   ├── inputs.py
     │   ├── phonopy
     │   │   ├── fcmat2hr.py
     │   │   ├── inputs.py
@@ -257,6 +259,10 @@ Module structure
     │   ├── qe
     │   │   ├── inputs.py
     │   │   └── outputs.py
+    │   ├── qiskit
+    │   │   ├── inputs.py
+    │   ├── tequile
+    │   │   ├── inputs.py
     │   ├── vasp
     │   │   ├── inputs.py
     │   │   └── outputs.py
@@ -302,8 +308,11 @@ Module structure
     │   │   │   ├── boltztrap
     │   │   │   ├── calphad
     │   │   │   ├── lammps
+    │   │   │   ├── pennylane
     │   │   │   ├── phonopy
+    │   │   │   ├── qiskit
     │   │   │   ├── qe
+    │   │   │   ├── tequila
     │   │   │   ├── vasp
     │   │   │   ├── wannier
     │   │   │   ├── wanniertools
@@ -312,3 +321,4 @@ Module structure
     │   │   │   ├── test_lammps.py
     │   │   │   └── test_vasp.py
     └── README.rst
+    
