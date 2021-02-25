@@ -30,8 +30,12 @@
         :target: https://github.com/usnistgov/jarvis
 .. image:: https://img.shields.io/github/repo-size/usnistgov/jarvis   
         :target: https://github.com/usnistgov/jarvis
-  
-        
+.. image:: https://img.shields.io/badge/JARVIS-Figshare-Green.svg  
+        :target: https://figshare.com/authors/Kamal_Choudhary/4445539
+.. image:: https://img.shields.io/badge/JARVIS-DBDocs-Green.svg  
+        :target: https://jarvis-materials-design.github.io/dbdocs   
+.. image:: https://img.shields.io/badge/JARVIS-ToolsDocs-Green.svg  
+        :target: https://jarvis-tools.readthedocs.io/en/latest/index.html 
 ========================================================================================
 
 JARVIS-Tools: an open-source software package for data-driven atomistic materials design
