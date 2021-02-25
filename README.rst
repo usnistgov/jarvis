@@ -1,7 +1,9 @@
 .. class:: center
 
 .. image:: https://badge.fury.io/py/jarvis-tools.svg
-        :target: https://pypi.org/project/jarvis-tools/     
+        :target: https://pypi.org/project/jarvis-tools/ 
+.. image:: https://anaconda.org/conda-forge/jarvis-tools/badges/version.svg
+        :target: https://anaconda.org/conda-forge/jarvis-tools   
 .. image:: https://img.shields.io/github/v/tag/usnistgov/jarvis
         :target: https://github.com/usnistgov/jarvis
 .. image:: https://img.shields.io/travis/usnistgov/jarvis/master.svg?label=Travis%20CI
