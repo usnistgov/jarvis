@@ -1127,7 +1127,6 @@ class Vasprun(object):
     @property
     def dielectric_loptics(self):
         """Get real and imag. dielectric function data."""
-        tmp_val = self.ionic_steps[-1]["dielectricfunction"]
         if isinstance((self.ionic_steps[-1]["dielectricfunction"]), dict):
             tmp = self.ionic_steps[-1]["dielectricfunction"]["real"]["array"][
                 "set"

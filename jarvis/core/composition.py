@@ -115,6 +115,7 @@ class Composition(object):
 
     @property
     def atomic_fraction(self):
+        """Get atomic fraction."""
         comp_dict = self.to_dict()
         tot = sum(comp_dict.values())
         new_dict = OrderedDict()
@@ -124,6 +125,7 @@ class Composition(object):
 
     @property
     def atomic_fraction_array(self):
+        """Get atomic fraction array."""
         nelements = len(list(Specie()._data.keys()))
         frac_arr = np.zeros(nelements)
         fracs = self.atomic_fraction
