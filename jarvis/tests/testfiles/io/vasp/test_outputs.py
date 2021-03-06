@@ -84,7 +84,7 @@ non_spinpol_vrun = Vasprun(
 )
 vasp544_mbj_optics_vrun = Vasprun(
     filename=os.path.join(
-        os.path.dirname(__file__), "vasprun.xml.JVASP-96839-MBJOP",
+        os.path.dirname(__file__), "vasprun.xml.JVASP-97577",
     )
 )
 opt_vrun = Vasprun(
