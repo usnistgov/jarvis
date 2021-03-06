@@ -6,10 +6,7 @@ from collections import OrderedDict
 from collections import defaultdict
 from jarvis.core.utils import gcd
 import re
-<<<<<<< HEAD
 import numpy as np
-=======
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
 
 
 class Composition(object):
@@ -117,7 +114,6 @@ class Composition(object):
         return form.replace("1", "")
 
     @property
-<<<<<<< HEAD
     def atomic_fraction(self):
         comp_dict = self.to_dict()
         tot = sum(comp_dict.values())
@@ -136,8 +132,6 @@ class Composition(object):
         return frac_arr
 
     @property
-=======
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
     def weight(self):
         """Get atomic weight."""
         wt = 0.0
