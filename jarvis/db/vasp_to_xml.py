@@ -162,7 +162,11 @@ class VaspToApiXmlSchema(object):
                 band_dir_gap = str(round(vrun.get_dir_gap, 2))
             except Exception:
                 print("Cannot get bandgap.", kp)
+<<<<<<< HEAD
                 pass
+=======
+
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
             line += "<band_indir_gap>" + band_indir_gap + "</band_indir_gap>"
             line += "<band_dir_gap>" + band_dir_gap + "</band_dir_gap>"
 
@@ -319,6 +323,7 @@ class VaspToApiXmlSchema(object):
         """Get electronic dos information with , _ and ; seperators."""
         line = ""
         try:
+<<<<<<< HEAD
             try:
                 line = ""
                 total_dos = vrun.total_dos
@@ -385,6 +390,68 @@ class VaspToApiXmlSchema(object):
             except Exception as exp:
                 print("No spdf dos", exp)
                 pass
+=======
+            total_dos = vrun.total_dos
+            # energies = np.array(total_dos[0])
+            spdf_dos = vrun.get_spdf_dos()
+            atom_dos = vrun.get_atom_resolved_dos()
+
+            line = ""
+            for i, ii in enumerate(total_dos):
+                if i == 0:
+                    line = (
+                        line
+                        + "<edos_energies>'"
+                        + ",".join(map(str, np.array(ii) - vrun.efermi))
+                        + "'</edos_energies>"
+                    )
+                elif i == 1:
+                    line += (
+                        "<total_edos_up>'"
+                        + ",".join(map(str, ii))
+                        + "'</total_edos_up>"
+                    )
+                elif i == 2:
+                    line += (
+                        "<total_edos_down>'"
+                        + ",".join(map(str, ii))
+                        + "'</total_edos_down>"
+                    )
+
+            line += "<spdf_dos>"
+            for i, j in spdf_dos.items():
+                line += (
+                    "<"
+                    + str(i)
+                    + ">"
+                    # + ">'"
+                    + "'"
+                    + ",".join(map(str, j))
+                    + "'"
+                    + "</"
+                    # + "'</"
+                    + str(i)
+                    + ">"
+                )
+
+            line += "</spdf_dos>"
+            line += "<elemental_dos>"
+            spin_up_info = atom_dos["spin_up_info"]
+            spin_down_info = atom_dos["spin_down_info"]
+            line += '<spin_up_info>"'
+            for i, j in spin_up_info.items():
+                line += str(i) + str("_") + ",".join(map(str, j)) + ";"
+            line += '"</spin_up_info>'
+
+            line += '<spin_down_info>"'
+            # line += '<spin_down_info>"'
+            for i, j in spin_down_info.items():
+                line += str(i) + str("_") + ",".join(map(str, j)) + ";"
+            line += '"</spin_down_info>'
+            # line += '"</spin_down_info>'
+            line += "</elemental_dos>"
+
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
             fermi_velocities = ""
             try:
                 fermi_velocities = ",".join(map(str, vrun.fermi_velocities[0]))
@@ -399,7 +466,10 @@ class VaspToApiXmlSchema(object):
 
         except Exception as exp:
             print("Cannot get DOS data", vrun, exp)
+<<<<<<< HEAD
             pass
+=======
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
         return line
 
     def get_xrd(self, atoms):
@@ -418,8 +488,13 @@ class VaspToApiXmlSchema(object):
                 + array_to_string(intensities)
                 + '"</intensities>'
             )
+<<<<<<< HEAD
         except Exception as exp:
             print("Cannot gt XRD pattern.", exp)
+=======
+        except Exception:
+            print("Cannot gt XRD pattern.")
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
             pass
         return line
 
@@ -442,8 +517,13 @@ class VaspToApiXmlSchema(object):
                 data = self.electronic_band_struct(
                     vasprun=vrun, kpoints_file_path=kp
                 )
+<<<<<<< HEAD
             except Exception as exp:
                 print("Cannot get ebands info", folder, exp)
+=======
+            except Exception:
+                print("Cannot get ebands info", folder)
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                 pass
         os.chdir(folder)
         info["main_bands_info"] = data
@@ -463,8 +543,13 @@ class VaspToApiXmlSchema(object):
                 data = self.electronic_band_struct(
                     vasprun=vrun, kpoints_file_path=kp
                 )
+<<<<<<< HEAD
             except Exception as exp:
                 print("Cannot get hseband info", folder, exp)
+=======
+            except Exception:
+                print("Cannot get hseband info", folder)
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                 pass
         os.chdir(folder)
         info["main_hse_bands_info"] = data
@@ -484,8 +569,13 @@ class VaspToApiXmlSchema(object):
                 data = self.electronic_band_struct(
                     vasprun=vrun, kpoints_file_path=kp
                 )
+<<<<<<< HEAD
             except Exception as exp:
                 print("Cannot get ebands info", folder, exp)
+=======
+            except Exception:
+                print("Cannot get ebands info", folder)
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                 pass
         os.chdir(folder)
         info["main_pbe0_bands_info"] = data
@@ -709,8 +799,13 @@ class VaspToApiXmlSchema(object):
                         line += (
                             jid + "_" + atom + "_" + str(round(Ef, 3)) + ","
                         )
+<<<<<<< HEAD
         except Exception as exp:
             print("Cannot get vacancy info.", folder, exp)
+=======
+        except Exception:
+            print("Cannot get vacancy info.", folder)
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
             pass
         info["vacancy_formation_energy"] = line
         os.chdir(folder)
@@ -747,8 +842,12 @@ class VaspToApiXmlSchema(object):
                     reals[:, 6][0],
                 )
                 lopt = str(round(max_linopt_eps, 2))
+<<<<<<< HEAD
             except Exception as exp:
                 print("Error in dielectric_loptics", exp)
+=======
+            except Exception:
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                 pass
 
             line += "<max_linopt_eps>" + lopt + "</max_linopt_eps>"
@@ -757,8 +856,13 @@ class VaspToApiXmlSchema(object):
                 fermi_velocities = ",".join(
                     map(str, lvrun.fermi_velocities[0])
                 )
+<<<<<<< HEAD
             except Exception as exp:
                 print("Cannot get the lepsilon Fermi-velocity.", vrun, exp)
+=======
+            except Exception:
+                print("Cannot get the lepsilon Fermi-velocity.", vrun)
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                 pass
             line += (
                 '<fermi_velocities>"'
@@ -784,8 +888,13 @@ class VaspToApiXmlSchema(object):
                     + str(i)
                     + ">"
                 )
+<<<<<<< HEAD
         except Exception as exp:
             print("Cannot get loptics data", vrun, exp)
+=======
+        except Exception:
+            print("Cannot get loptics data", vrun)
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
             pass
         eff_slme = ""
         eff_sq = ""
@@ -803,8 +912,13 @@ class VaspToApiXmlSchema(object):
             eff_sq = SolarEfficiency().calculate_SQ(indirgap)
             eff_slme = round(100 * eff_slme, 2)
             eff_sq = round(100 * eff_sq, 2)
+<<<<<<< HEAD
         except Exception as exp:
             print("Cannot get solar data.", exp)
+=======
+        except Exception:
+            print("Cannot get solar data.")
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
             pass
         line += "<solar_slme>" + str(eff_slme) + "</solar_slme>"
         line += "<solar_sq>" + str(eff_sq) + "</solar_sq>"
@@ -825,8 +939,13 @@ class VaspToApiXmlSchema(object):
                 folder = i.split(".json")[0]
                 vrun = os.getcwd() + "/" + folder + "/vasprun.xml"
                 data = self.loptics_optoelectronics(vrun)
+<<<<<<< HEAD
             except Exception as exp:
                 print("Cannot get semilocal optics data", folder, exp)
+=======
+            except Exception:
+                print("Cannot get semilocal optics data", folder)
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                 pass
         os.chdir(folder)
         info["main_optics_info"] = data
@@ -844,8 +963,13 @@ class VaspToApiXmlSchema(object):
                 folder = i.split(".json")[0]
                 vrun = os.getcwd() + "/" + folder + "/vasprun.xml"
                 data = self.loptics_optoelectronics(vrun)
+<<<<<<< HEAD
             except Exception as exp:
                 print("Cannot get mbj optics data", folder, exp)
+=======
+            except Exception:
+                print("Cannot get mbj optics data", folder)
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                 pass
         os.chdir(folder)
         info["main_optics_mbj_info"] = data
@@ -906,8 +1030,13 @@ class VaspToApiXmlSchema(object):
             )
             max_spillage = round(max(sp["spillage_k"]), 3)
             line += "<max_spillage>" + str(max_spillage) + "</max_spillage>"
+<<<<<<< HEAD
         except Exception as exp:
             print("Cannot get spillage info", soc_wf, nonsoc_wf, exp)
+=======
+        except Exception:
+            print("Cannot get spillage info", soc_wf, nonsoc_wf)
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
             pass
         return line
 
@@ -930,8 +1059,13 @@ class VaspToApiXmlSchema(object):
                 data = self.spillage(
                     soc_wf=soc_wf, nonsoc_wf=nonsoc_wf, jid=jid
                 )
+<<<<<<< HEAD
             except Exception as exp:
                 print("Cannot get spillage info", folder, exp)
+=======
+            except Exception:
+                print("Cannot get spillage info", folder)
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                 pass
         os.chdir(folder)
         info["main_spillage_info"] = data
@@ -1911,10 +2045,13 @@ class VaspToApiXmlSchema(object):
 
 
 """
+<<<<<<< HEAD
 folder = '/rk2/knc6/JARVIS-DFT/2DRar-bulk/mp-17173_PBEBO'
 filename='/users/knc6/Software/Devs/jarvis/jarvis/db/p.xml'
 VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
+=======
+>>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
 folder = "/rk2/knc6/JARVIS-DFT/Met-Rar/mp-10891_PBEBO"
 filename = "/cluster/users/knc6/justback/MTI/JVASP-16366.xml"
 VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
