@@ -1127,7 +1127,6 @@ class Vasprun(object):
     @property
     def dielectric_loptics(self):
         """Get real and imag. dielectric function data."""
-<<<<<<< HEAD
         tmp_val = self.ionic_steps[-1]["dielectricfunction"]
         if isinstance((self.ionic_steps[-1]["dielectricfunction"]), dict):
             tmp = self.ionic_steps[-1]["dielectricfunction"]["real"]["array"][
@@ -1163,23 +1162,6 @@ class Vasprun(object):
             imags = np.array(imags)
         else:
             print("Not implemented, raise an GitHub issue.")
-=======
-        tmp = self.ionic_steps[-1]["dielectricfunction"]["real"]["array"][
-            "set"
-        ]["r"]
-        reals = []
-        for i in range(len(tmp)):
-            reals.append([float(j) for j in tmp[i].split()])
-
-        tmp = self.ionic_steps[-1]["dielectricfunction"]["imag"]["array"][
-            "set"
-        ]["r"]
-        imags = []
-        for i in range(len(tmp)):
-            imags.append([float(j) for j in tmp[i].split()])
-        reals = np.array(reals)
-        imags = np.array(imags)
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
         return reals, imags
 
     @property
@@ -1656,7 +1638,6 @@ class Vasprun(object):
         energies = []
         spin_up = []
         spin_dn = []
-<<<<<<< HEAD
         if self.is_spin_polarized:
             spin_up_data = np.array(
                 [
@@ -1666,20 +1647,6 @@ class Vasprun(object):
                     ]["set"][0]["r"]
                 ]
             )
-=======
-        spin_up_data = np.array(
-            [
-                [float(j) for j in i.split()]
-                for i in self.ionic_steps[-1]["dos"]["total"]["array"]["set"][
-                    "set"
-                ][0]["r"]
-            ]
-        )
-        energies = spin_up_data[:, 0]
-        spin_up = spin_up_data[:, 1]
-        if self.is_spin_polarized:
-            spin_dn = []
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
             spin_dn_data = np.array(
                 [
                     [float(j) for j in i.split()]
@@ -1689,7 +1656,6 @@ class Vasprun(object):
                 ]
             )
             spin_dn = -1 * spin_dn_data[:, 1]
-<<<<<<< HEAD
             spin_up = spin_up_data[:, 1]
             energies = spin_up_data[:, 0]
         else:
@@ -1704,8 +1670,6 @@ class Vasprun(object):
             spin_up = spin_up_data[:, 1]
             energies = spin_up_data[:, 0]
 
-=======
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
         return energies, spin_up, spin_dn
 
     @property
@@ -1718,7 +1682,6 @@ class Vasprun(object):
         steps_dat = self.ionic_steps[-1]["dos"]["partial"]["array"]["set"][
             "set"
         ]
-<<<<<<< HEAD
         if self.is_spin_polarized:
             if isinstance(steps_dat, list):
                 for atom in range(natoms):
@@ -1739,10 +1702,6 @@ class Vasprun(object):
                             info[spin][atom][key] = vals[:, k]
             elif isinstance(steps_dat, dict):
                 atom = 0
-=======
-        if isinstance(steps_dat, list):
-            for atom in range(natoms):
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                 for spin in range(nspin):
                     for k, key in enumerate(pdos_keys):
                         vals = np.array(
@@ -1751,18 +1710,13 @@ class Vasprun(object):
                                 for ii in (
                                     self.ionic_steps[-1]["dos"]["partial"][
                                         "array"
-<<<<<<< HEAD
                                     ]["set"]["set"]["set"][spin]["r"]
-=======
-                                    ]["set"]["set"][atom]["set"][spin]["r"]
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                                 )
                             ],
                             dtype="float",
                         )
 
                         info[spin][atom][key] = vals[:, k]
-<<<<<<< HEAD
             else:
                 raise ValueError("Bug in PDOS parser.")
         else:
@@ -1784,11 +1738,6 @@ class Vasprun(object):
                         info[atom][key] = vals[:, k]
             elif isinstance(steps_dat, dict):
                 atom = 0
-=======
-        elif isinstance(steps_dat, dict):
-            atom = 0
-            for spin in range(nspin):
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                 for k, key in enumerate(pdos_keys):
                     vals = np.array(
                         [
@@ -1796,25 +1745,15 @@ class Vasprun(object):
                             for ii in (
                                 self.ionic_steps[-1]["dos"]["partial"][
                                     "array"
-<<<<<<< HEAD
                                 ]["set"]["set"]["set"]["r"]
-=======
-                                ]["set"]["set"]["set"][spin]["r"]
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                             )
                         ],
                         dtype="float",
                     )
 
-<<<<<<< HEAD
                     info[atom][key] = vals[:, k]
             else:
                 raise ValueError("Bug in PDOS parser.")
-=======
-                    info[spin][atom][key] = vals[:, k]
-        else:
-            raise ValueError("Bug in PDOS parser.")
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
 
         return info
 
@@ -1825,7 +1764,6 @@ class Vasprun(object):
         nspin = self.nspins
         nkpoints = self.nkpoints
         nbands = self.nbands
-<<<<<<< HEAD
         if self.is_spin_polarized:
             for spin in range(nspin):
                 for kpoint in range(nkpoints):
@@ -1844,9 +1782,6 @@ class Vasprun(object):
                         ]
                         info[spin][kpoint][nb] = vals
         else:
-=======
-        for spin in range(nspin):
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
             for kpoint in range(nkpoints):
                 for nb in range(nbands):
                     vals = [
@@ -1854,17 +1789,10 @@ class Vasprun(object):
                         for ii in (
                             self.ionic_steps[-1]["projected"]["eigenvalues"][
                                 "array"
-<<<<<<< HEAD
                             ]["set"]["set"]["set"][kpoint]["r"][nb]
                         ).split()
                     ]
                     info[kpoint][nb] = vals
-=======
-                            ]["set"]["set"][spin]["set"][kpoint]["r"][nb]
-                        ).split()
-                    ]
-                    info[spin][kpoint][nb] = vals
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
         return info
 
     @property
@@ -1880,7 +1808,6 @@ class Vasprun(object):
         nkpoints = self.nkpoints
         nbands = self.nbands
         nspin = self.nspins
-<<<<<<< HEAD
         if self.is_spin_polarized:
             for atom in range(natoms):
                 for spin in range(nspin):
@@ -1900,10 +1827,6 @@ class Vasprun(object):
                                 ] = np.array(val)
         else:
             for atom in range(natoms):
-=======
-        for atom in range(natoms):
-            for spin in range(nspin):
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
                 for kpoint in range(nkpoints):
                     for band in range(nbands):
                         for orbital in dimensions:
@@ -1911,21 +1834,11 @@ class Vasprun(object):
                                 (
                                     self.ionic_steps[-1]["projected"]["array"][
                                         "set"
-<<<<<<< HEAD
                                     ]["set"]
                                 )["set"][kpoint]["set"][band]
                             )["r"][atom].split()
                             val = [float(v) for v in val]
                             info[atom][kpoint][band][orbital] = np.array(val)
-=======
-                                    ]["set"][spin]
-                                )["set"][kpoint]["set"][band]
-                            )["r"][atom].split()
-                            val = [float(v) for v in val]
-                            info[atom][spin][kpoint][band][orbital] = np.array(
-                                val
-                            )
->>>>>>> f5d6302fe6b017f8080f53cbf4a6d0110b18cfb1
         return info
 
     def get_spdf_dos(self, plot=False):
