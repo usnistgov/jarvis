@@ -77,6 +77,16 @@ band_vrun = Vasprun(
         "vasprun.xml",
     )
 )
+non_spinpol_vrun = Vasprun(
+    filename=os.path.join(
+        os.path.dirname(__file__), "vasprun.xml.JVASP-23436",
+    )
+)
+vasp544_mbj_optics_vrun = Vasprun(
+    filename=os.path.join(
+        os.path.dirname(__file__), "vasprun.xml.JVASP-96839-MBJOP",
+    )
+)
 opt_vrun = Vasprun(
     filename=os.path.join(
         os.path.dirname(__file__),
@@ -243,7 +253,7 @@ def test_vrun():
     # print ('gapp',round(vrun.get_indir_gap,2))
     assert (round(vrun.get_indir_gap[0], 2)) == (0.73)
     assert (round(vrun.get_dir_gap, 2)) == (2.62)
-    vrun.get_bandstructure(kpoints_file_path=band_kp,plot=True)
+    vrun.get_bandstructure(kpoints_file_path=band_kp, plot=True)
     assert (round(opt_vrun.get_dir_gap, 2)) == (2.62)
     assert (vrun.total_dos[0][0]) == -8.1917
     # TODO Serious issue: assert (opt_vrun.total_dos[0][0]) == -8.1917
@@ -265,6 +275,9 @@ def test_vrun():
     )
     fv = vrun_dm.fermi_velocities
     assert round(fv[0][0], 2) == round(491630.23058338434, 2)
+    # Based on bug fixes
+    tdos = non_spinpol_vrun.total_dos
+    diel_op_x, diel_op_y = vasp544_mbj_optics_vrun.dielectric_loptics
 
 
 def test_osz():

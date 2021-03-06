@@ -1127,21 +1127,41 @@ class Vasprun(object):
     @property
     def dielectric_loptics(self):
         """Get real and imag. dielectric function data."""
-        tmp = self.ionic_steps[-1]["dielectricfunction"]["real"]["array"][
-            "set"
-        ]["r"]
-        reals = []
-        for i in range(len(tmp)):
-            reals.append([float(j) for j in tmp[i].split()])
+        tmp_val = self.ionic_steps[-1]["dielectricfunction"]
+        if isinstance((self.ionic_steps[-1]["dielectricfunction"]), dict):
+            tmp = self.ionic_steps[-1]["dielectricfunction"]["real"]["array"][
+                "set"
+            ]["r"]
+            reals = []
+            for i in range(len(tmp)):
+                reals.append([float(j) for j in tmp[i].split()])
 
-        tmp = self.ionic_steps[-1]["dielectricfunction"]["imag"]["array"][
-            "set"
-        ]["r"]
-        imags = []
-        for i in range(len(tmp)):
-            imags.append([float(j) for j in tmp[i].split()])
-        reals = np.array(reals)
-        imags = np.array(imags)
+            tmp = self.ionic_steps[-1]["dielectricfunction"]["imag"]["array"][
+                "set"
+            ]["r"]
+            imags = []
+            for i in range(len(tmp)):
+                imags.append([float(j) for j in tmp[i].split()])
+            reals = np.array(reals)
+            imags = np.array(imags)
+        elif isinstance((self.ionic_steps[-1]["dielectricfunction"]), list):
+            tmp = self.ionic_steps[-1]["dielectricfunction"][-1]["real"][
+                "array"
+            ]["set"]["r"]
+            reals = []
+            for i in range(len(tmp)):
+                reals.append([float(j) for j in tmp[i].split()])
+
+            tmp = self.ionic_steps[-1]["dielectricfunction"][-1]["imag"][
+                "array"
+            ]["set"]["r"]
+            imags = []
+            for i in range(len(tmp)):
+                imags.append([float(j) for j in tmp[i].split()])
+            reals = np.array(reals)
+            imags = np.array(imags)
+        else:
+            print("Not implemented, raise an GitHub issue.")
         return reals, imags
 
     @property
@@ -1618,18 +1638,15 @@ class Vasprun(object):
         energies = []
         spin_up = []
         spin_dn = []
-        spin_up_data = np.array(
-            [
-                [float(j) for j in i.split()]
-                for i in self.ionic_steps[-1]["dos"]["total"]["array"]["set"][
-                    "set"
-                ][0]["r"]
-            ]
-        )
-        energies = spin_up_data[:, 0]
-        spin_up = spin_up_data[:, 1]
         if self.is_spin_polarized:
-            spin_dn = []
+            spin_up_data = np.array(
+                [
+                    [float(j) for j in i.split()]
+                    for i in self.ionic_steps[-1]["dos"]["total"]["array"][
+                        "set"
+                    ]["set"][0]["r"]
+                ]
+            )
             spin_dn_data = np.array(
                 [
                     [float(j) for j in i.split()]
@@ -1639,6 +1656,20 @@ class Vasprun(object):
                 ]
             )
             spin_dn = -1 * spin_dn_data[:, 1]
+            spin_up = spin_up_data[:, 1]
+            energies = spin_up_data[:, 0]
+        else:
+            spin_up_data = np.array(
+                [
+                    [float(j) for j in i.split()]
+                    for i in self.ionic_steps[-1]["dos"]["total"]["array"][
+                        "set"
+                    ]["set"]["r"]
+                ]
+            )
+            spin_up = spin_up_data[:, 1]
+            energies = spin_up_data[:, 0]
+
         return energies, spin_up, spin_dn
 
     @property
@@ -1651,8 +1682,26 @@ class Vasprun(object):
         steps_dat = self.ionic_steps[-1]["dos"]["partial"]["array"]["set"][
             "set"
         ]
-        if isinstance(steps_dat, list):
-            for atom in range(natoms):
+        if self.is_spin_polarized:
+            if isinstance(steps_dat, list):
+                for atom in range(natoms):
+                    for spin in range(nspin):
+                        for k, key in enumerate(pdos_keys):
+                            vals = np.array(
+                                [
+                                    ii.split()
+                                    for ii in (
+                                        self.ionic_steps[-1]["dos"]["partial"][
+                                            "array"
+                                        ]["set"]["set"][atom]["set"][spin]["r"]
+                                    )
+                                ],
+                                dtype="float",
+                            )
+
+                            info[spin][atom][key] = vals[:, k]
+            elif isinstance(steps_dat, dict):
+                atom = 0
                 for spin in range(nspin):
                     for k, key in enumerate(pdos_keys):
                         vals = np.array(
@@ -1661,16 +1710,34 @@ class Vasprun(object):
                                 for ii in (
                                     self.ionic_steps[-1]["dos"]["partial"][
                                         "array"
-                                    ]["set"]["set"][atom]["set"][spin]["r"]
+                                    ]["set"]["set"]["set"][spin]["r"]
                                 )
                             ],
                             dtype="float",
                         )
 
                         info[spin][atom][key] = vals[:, k]
-        elif isinstance(steps_dat, dict):
-            atom = 0
-            for spin in range(nspin):
+            else:
+                raise ValueError("Bug in PDOS parser.")
+        else:
+            if isinstance(steps_dat, list):
+                for atom in range(natoms):
+                    for k, key in enumerate(pdos_keys):
+                        vals = np.array(
+                            [
+                                ii.split()
+                                for ii in (
+                                    self.ionic_steps[-1]["dos"]["partial"][
+                                        "array"
+                                    ]["set"]["set"][atom]["set"]["r"]
+                                )
+                            ],
+                            dtype="float",
+                        )
+
+                        info[atom][key] = vals[:, k]
+            elif isinstance(steps_dat, dict):
+                atom = 0
                 for k, key in enumerate(pdos_keys):
                     vals = np.array(
                         [
@@ -1678,15 +1745,15 @@ class Vasprun(object):
                             for ii in (
                                 self.ionic_steps[-1]["dos"]["partial"][
                                     "array"
-                                ]["set"]["set"]["set"][spin]["r"]
+                                ]["set"]["set"]["set"]["r"]
                             )
                         ],
                         dtype="float",
                     )
 
-                    info[spin][atom][key] = vals[:, k]
-        else:
-            raise ValueError("Bug in PDOS parser.")
+                    info[atom][key] = vals[:, k]
+            else:
+                raise ValueError("Bug in PDOS parser.")
 
         return info
 
@@ -1697,7 +1764,24 @@ class Vasprun(object):
         nspin = self.nspins
         nkpoints = self.nkpoints
         nbands = self.nbands
-        for spin in range(nspin):
+        if self.is_spin_polarized:
+            for spin in range(nspin):
+                for kpoint in range(nkpoints):
+                    for nb in range(nbands):
+                        vals = [
+                            float(ii)
+                            for ii in (
+                                self.ionic_steps[-1]["projected"][
+                                    "eigenvalues"
+                                ]["array"]["set"]["set"][spin]["set"][kpoint][
+                                    "r"
+                                ][
+                                    nb
+                                ]
+                            ).split()
+                        ]
+                        info[spin][kpoint][nb] = vals
+        else:
             for kpoint in range(nkpoints):
                 for nb in range(nbands):
                     vals = [
@@ -1705,10 +1789,10 @@ class Vasprun(object):
                         for ii in (
                             self.ionic_steps[-1]["projected"]["eigenvalues"][
                                 "array"
-                            ]["set"]["set"][spin]["set"][kpoint]["r"][nb]
+                            ]["set"]["set"]["set"][kpoint]["r"][nb]
                         ).split()
                     ]
-                    info[spin][kpoint][nb] = vals
+                    info[kpoint][nb] = vals
         return info
 
     @property
@@ -1724,8 +1808,25 @@ class Vasprun(object):
         nkpoints = self.nkpoints
         nbands = self.nbands
         nspin = self.nspins
-        for atom in range(natoms):
-            for spin in range(nspin):
+        if self.is_spin_polarized:
+            for atom in range(natoms):
+                for spin in range(nspin):
+                    for kpoint in range(nkpoints):
+                        for band in range(nbands):
+                            for orbital in dimensions:
+                                val = (
+                                    (
+                                        self.ionic_steps[-1]["projected"][
+                                            "array"
+                                        ]["set"]["set"][spin]
+                                    )["set"][kpoint]["set"][band]
+                                )["r"][atom].split()
+                                val = [float(v) for v in val]
+                                info[atom][spin][kpoint][band][
+                                    orbital
+                                ] = np.array(val)
+        else:
+            for atom in range(natoms):
                 for kpoint in range(nkpoints):
                     for band in range(nbands):
                         for orbital in dimensions:
@@ -1733,13 +1834,11 @@ class Vasprun(object):
                                 (
                                     self.ionic_steps[-1]["projected"]["array"][
                                         "set"
-                                    ]["set"][spin]
+                                    ]["set"]
                                 )["set"][kpoint]["set"][band]
                             )["r"][atom].split()
                             val = [float(v) for v in val]
-                            info[atom][spin][kpoint][band][orbital] = np.array(
-                                val
-                            )
+                            info[atom][kpoint][band][orbital] = np.array(val)
         return info
 
     def get_spdf_dos(self, plot=False):

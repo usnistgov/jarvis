@@ -67,6 +67,8 @@ class Graph(object):
                        'atomic_number': graph with atomic numbers only.
                        'cfid': 438 chemical descriptors from CFID.
                        'basic':10 features
+                       'atomic_fraction': graph with atomic fractions 
+                                         in 103 elements.
                        array: array with CFID chemical descriptor names.
                        See: jarvis/core/specie.py
 
@@ -90,6 +92,13 @@ class Graph(object):
                 [[np.array(Specie(i).Z)] for i in atoms.elements],
                 dtype="float",
             )
+        if features == "atomic_fraction":
+            node_attributes = []
+            fracs = atoms.composition.atomic_fraction_array
+            for i in fracs:
+                node_attributes.append(np.array([float(i)]))
+            node_attributes = np.array(node_attributes)
+
         elif features == "basic":
             feats = [
                 "Z",
@@ -125,7 +134,7 @@ class Graph(object):
                 node_attributes.append(tmp)
             node_attributes = np.array(node_attributes, dtype="float")
         else:
-            raise ("Please check the input options.")
+            print("Please check the input options.")
         if node_atomwise_rdf or node_atomwise_angle_dist:
             nbr = NeighborsAnalysis(
                 atoms, max_n=max_n, verbose=verbose, max_cut=max_cut

@@ -174,7 +174,7 @@ class Atoms(object):
         f.close()
 
     @staticmethod
-    def from_cif(filename="atoms.cif"):
+    def from_cif(filename="atoms.cif",from_string=""):
         """Read .cif format file."""
         # Warnings:
         # May not work for:
@@ -182,10 +182,12 @@ class Atoms(object):
         # cif file with multiple blocks
         # _atom_site_U_iso, instead of fractn_x, cartn_x
         # with non-zero _atom_site_attached_hydrogens
-
-        f = open(filename, "r")
-        lines = f.read().splitlines()
-        f.close()
+        if from_string=="":
+          f = open(filename, "r")
+          lines = f.read().splitlines()
+          f.close()
+        else:
+           lines = from_string.splitlines()
         lat_a = ""
         lat_b = ""
         lat_c = ""
