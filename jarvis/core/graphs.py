@@ -67,7 +67,7 @@ class Graph(object):
                        'atomic_number': graph with atomic numbers only.
                        'cfid': 438 chemical descriptors from CFID.
                        'basic':10 features
-                       'atomic_fraction': graph with atomic fractions 
+                       'atomic_fraction': graph with atomic fractions
                                          in 103 elements.
                        array: array with CFID chemical descriptor names.
                        See: jarvis/core/specie.py
