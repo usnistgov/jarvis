@@ -1,4 +1,11 @@
 .. class:: center
+
+.. image:: https://badge.fury.io/py/jarvis-tools.svg
+        :target: https://pypi.org/project/jarvis-tools/ 
+.. image:: https://anaconda.org/conda-forge/jarvis-tools/badges/version.svg
+        :target: https://anaconda.org/conda-forge/jarvis-tools   
+.. image:: https://img.shields.io/github/v/tag/usnistgov/jarvis
+        :target: https://github.com/usnistgov/jarvis
 .. image:: https://img.shields.io/travis/usnistgov/jarvis/master.svg?label=Travis%20CI
         :target: https://travis-ci.org/usnistgov/jarvis
 .. image:: https://ci.appveyor.com/api/projects/status/d8na8vyfm7ulya9p/branch/master?svg=true
@@ -17,16 +24,18 @@
         :target: https://pepy.tech/badge/jarvis-tools  
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3903515.svg
         :target: https://doi.org/10.5281/zenodo.3903515  
-.. image:: https://img.shields.io/github/v/tag/usnistgov/jarvis
-        :target: https://github.com/usnistgov/jarvis
 .. image:: https://app.codacy.com/project/badge/Grade/be8fa78b1c0a49c280415ce061163e77    
         :target: https://www.codacy.com/manual/knc6/jarvis?utm_source=github.com&amp
 .. image:: https://img.shields.io/github/commit-activity/y/usnistgov/jarvis   
         :target: https://github.com/usnistgov/jarvis
 .. image:: https://img.shields.io/github/repo-size/usnistgov/jarvis   
         :target: https://github.com/usnistgov/jarvis
-        
-        
+.. image:: https://img.shields.io/badge/JARVIS-Figshare-Green.svg  
+        :target: https://figshare.com/authors/Kamal_Choudhary/4445539
+.. image:: https://img.shields.io/badge/JARVIS-DBDocs-Green.svg  
+        :target: https://jarvis-materials-design.github.io/dbdocs   
+.. image:: https://img.shields.io/badge/JARVIS-ToolsDocs-Green.svg  
+        :target: https://jarvis-tools.readthedocs.io/en/latest/index.html 
 ========================================================================================
 
 JARVIS-Tools: an open-source software package for data-driven atomistic materials design
@@ -45,7 +54,7 @@ For more details, checkout our latest article:  `The joint automated repository 
 Capabilities
 =======================================================================
 
-- **Software workflow tasks for preprcessing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM, Qiskit, Tequila, Pennylane.
+- **Software workflow tasks for preprcessing, executing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM, Qiskit, Tequila, Pennylane.
 
 - **Several examples**: Notebooks and test scripts to explain the package.
 
