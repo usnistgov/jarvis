@@ -185,7 +185,7 @@ def get_bandstruct(
                 # break
                 if (
                     neigs is not None
-                    and isinstabce(neigs, int)
+                    and isinstance(neigs, int)
                     and neigs == len(eigvals_q)
                 ):
                     break

@@ -16,3 +16,4 @@ def test_comp():
     td = c.to_dict()
     fd = Composition.from_dict(td)
     assert c.formula == "Al7Co6O4"
+    arr = c.atomic_fraction_array

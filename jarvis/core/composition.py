@@ -6,6 +6,7 @@ from collections import OrderedDict
 from collections import defaultdict
 from jarvis.core.utils import gcd
 import re
+import numpy as np
 
 
 class Composition(object):
@@ -111,6 +112,26 @@ class Composition(object):
             else:
                 form = form + str(specie) + str(count)
         return form.replace("1", "")
+
+    @property
+    def atomic_fraction(self):
+        """Get atomic fraction."""
+        comp_dict = self.to_dict()
+        tot = sum(comp_dict.values())
+        new_dict = OrderedDict()
+        for i, j in comp_dict.items():
+            new_dict[i] = j / tot
+        return new_dict
+
+    @property
+    def atomic_fraction_array(self):
+        """Get atomic fraction array."""
+        nelements = len(list(Specie()._data.keys()))
+        frac_arr = np.zeros(nelements)
+        fracs = self.atomic_fraction
+        for i, j in fracs.items():
+            frac_arr[int(Specie(i).Z) - 1] = j
+        return frac_arr
 
     @property
     def weight(self):
