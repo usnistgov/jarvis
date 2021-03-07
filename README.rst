@@ -36,6 +36,8 @@
         :target: https://jarvis-materials-design.github.io/dbdocs   
 .. image:: https://img.shields.io/badge/JARVIS-ToolsDocs-Green.svg  
         :target: https://jarvis-tools.readthedocs.io/en/latest/index.html 
+
+
 ========================================================================================
 
 JARVIS-Tools: an open-source software package for data-driven atomistic materials design
