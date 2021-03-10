@@ -565,7 +565,7 @@ class Atoms(object):
         """
         Get neighbors for each atom in the unit cell, out to a distance r.
 
-        Contains [index_i, index_j, distance] array.
+        Contains [index_i, index_j, distance, image] array.
         Adapted from pymatgen.
         """
         recp_len = np.array(self.lattice.reciprocal_lattice().abc)
