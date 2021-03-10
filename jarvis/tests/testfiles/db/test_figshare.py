@@ -7,6 +7,7 @@ def test_figshare_download():
     data_3d = data(dataset="dft_3d")
     data_ml = data(dataset="cfid_3d")
     data_ff = get_ff_eneleast()
+    #data_megnet = data(dataset="megnet")
     print("2d", len(data_2d))
     print("3d", len(data_3d))
     print("cfid3d", len(data_ml))

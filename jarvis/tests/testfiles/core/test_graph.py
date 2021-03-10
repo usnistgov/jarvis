@@ -6,6 +6,10 @@ def test_graph():
     from jarvis.db.figshare import get_jid_data
 
     atoms = Atoms.from_dict(get_jid_data("JVASP-664")["atoms"])
+    feature_sets = ("atomic_number", "basic", "cfid", "cgcnn")
+    for i in feature_sets:
+        g = Graph.dgl_multigraph(atoms=atoms, atom_features=i)
+        print(i, g)
     g = Graph.from_atoms(atoms=atoms, features="atomic_number")
     g = Graph.from_atoms(
         atoms=atoms,
@@ -44,4 +48,7 @@ def test_graph():
     print(num_nodes, num_edges)
     assert num_nodes == 48
     assert num_edges == 2256
-    assert (g.adjacency_matrix.shape) == (48,48)
+    assert (g.adjacency_matrix.shape) == (48, 48)
+
+
+test_graph()

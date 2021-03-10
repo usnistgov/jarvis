@@ -334,6 +334,44 @@ class Outcar(object):
                 nbands = int(i.split()[-1])
                 return nbands
 
+    @property
+    def efermi(self):
+        """Get Fermi energy."""
+        efermi = []
+        for i in self.data:
+            if "E-fermi :" in i:
+                efermi.append(float(i.split()[2]))
+        return efermi[-1]
+
+    @property
+    def all_band_energies(self):
+        """Get all band energies."""
+        last_efermi = None
+        for i, ii in enumerate(self.data):
+            if "E-fermi :" in ii:
+                last_efermi = i
+
+        energies_occs = []
+        s = "band No.  band energies     occupation"
+
+        for i, ii in enumerate(self.data):
+            if s in ii and i > last_efermi:
+                for j in range(self.nbands):
+                    energies_occs.append(
+                        [float(m) for m in self.data[i + j + 1].split()]
+                    )
+        energies_occs = np.array(energies_occs)
+        return energies_occs
+
+    @property
+    def bandgap(self):
+        """Get bandgap."""
+        en_oc = self.all_band_energies
+        cbm = max(en_oc[:, 1][en_oc[:, 1] < self.efermi])
+        vbm = min(en_oc[:, 1][en_oc[:, 1] >= self.efermi])
+        gap = vbm - cbm
+        return gap, vbm, cbm
+
     def magnetization(self, dir="x", elements=[]):
         """Get magnetization in x,y,z."""
         new_magt = "na"
