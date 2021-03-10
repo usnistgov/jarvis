@@ -58,7 +58,7 @@ class Graph(object):
 
     @staticmethod
     def dgl_multigraph(
-        atoms=None, cutoff=8.0, max_neighbors=12, atom_features="atomic_number"
+        atoms=None, cutoff=8.0, max_neighbors=12, atom_features="cgcnn"
     ):
         """Obtain a DGLGraph for Atoms object."""
         all_neighbors = atoms.get_all_neighbors(r=cutoff)
