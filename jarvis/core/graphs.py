@@ -67,7 +67,9 @@ class Graph(object):
         if min_nbrs < max_neighbors:
             lat = atoms.lattice
             r_cut = max(cutoff, lat.a, lat.b, lat.c)
-            return Graph.dgl_multigraph(atoms, r_cut, max_neighbors, atom_features)
+            return Graph.dgl_multigraph(
+                atoms, r_cut, max_neighbors, atom_features
+            )
 
         # build up edge list
         # NOTE: currently there's no guarantee
