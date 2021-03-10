@@ -34,6 +34,10 @@ def datasets(dataset=""):
         url = "https://ndownloader.figshare.com/files/24979850"
         js_tag = "CFID_mp_desc_data_84k.json"
         print("Obtaining Materials Project-3D CFID dataset 84k...")
+    elif dataset == "megnet":
+        url = "https://ndownloader.figshare.com/files/26724977"
+        js_tag = "megnet.json"
+        print("Obtaining MEGNET-3D CFID dataset 69k...")
     elif dataset == "oqmd_3d":
         url = "https://ndownloader.figshare.com/files/24981170"
         js_tag = "CFID_OQMD_460k.json"
