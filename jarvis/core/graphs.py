@@ -5,22 +5,21 @@ from jarvis.core.utils import random_colors
 import numpy as np
 from collections import OrderedDict
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
-import math
-import itertools
 from jarvis.core.specie import get_node_attributes
 import warnings
 from typing import List, Tuple
+from jarvis.core.atoms import Atoms
 
 try:
     import torch
     from tqdm import tqdm
 except Exception as exp:
-    warnings.warn("Pytorch and/or tqdm is not installed.")
+    warnings.warn("Pytorch and/or tqdm is not installed.", exp)
     pass
 try:
     import dgl
 except Exception as exp:
-    warnings.warn("dgl is not installed.")
+    warnings.warn("dgl is not installed.", exp)
     pass
 
 
@@ -61,18 +60,22 @@ class Graph(object):
     def dgl_multigraph(
         atoms=None, cutoff=8.0, max_neighbors=12, atom_features="atomic_number"
     ):
+        """Obtain a DGLGraph for Atoms object."""
         all_neighbors = atoms.get_all_neighbors(r=cutoff)
         # if a site has too few neighbors, increase the cutoff radius
         min_nbrs = min(len(neighborlist) for neighborlist in all_neighbors)
         if min_nbrs < max_neighbors:
             lat = atoms.lattice
             r_cut = max(cutoff, lat.a, lat.b, lat.c)
-            return dgl_multigraph(atoms, r_cut, max_neighbors, atom_features)
+            return Graph.dgl_multigraph(atoms, r_cut, max_neighbors, atom_features)
 
         # build up edge list
-        # NOTE: currently there's no guarantee that this creates undirected graphs
-        # An undirected solution would build the full edge list where nodes are
-        # keyed by (index, image), and ensure each edge has a complementary edge
+        # NOTE: currently there's no guarantee
+        # that this creates undirected graphs
+        # An undirected solution would build the full edge
+        # list where nodes are
+        # keyed by (index, image), and ensure
+        # each edge has a complementary edge
 
         u, v, r = [], [], []
         for site_idx, neighborlist in enumerate(all_neighbors):

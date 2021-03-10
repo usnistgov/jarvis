@@ -251,7 +251,7 @@ BASIC_FEATURES = [
 
 @functools.lru_cache(maxsize=None)
 def get_node_attributes(species, atom_features="atomic_number"):
-
+    """Get specific node features for an element."""
     feature_sets = ("atomic_number", "basic", "cfid", "cgcnn")
 
     if atom_features not in feature_sets:
