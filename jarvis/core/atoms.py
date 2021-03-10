@@ -12,7 +12,6 @@ from jarvis.core.utils import (
     get_new_coord_for_xyz_sym,
 )
 import math
-import itertools
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
@@ -565,6 +564,7 @@ class Atoms(object):
     def get_all_neighbors(self, r=5, bond_tol=0.15):
         """
         Get neighbors for each atom in the unit cell, out to a distance r.
+
         Contains [index_i, index_j, distance] array.
         Adapted from pymatgen.
         """
