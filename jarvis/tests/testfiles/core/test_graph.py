@@ -1,5 +1,5 @@
 from jarvis.core.graphs import Graph
-
+from jarvis.db.figshare import data
 
 def test_graph():
     from jarvis.core.atoms import Atoms
@@ -50,5 +50,15 @@ def test_graph():
     assert num_edges == 2256
     assert (g.adjacency_matrix.shape) == (48, 48)
 
+def test_dataset():
+  d=data('dft_3d')
+  x=[]
+  y=[]
+  for i in d[0:100]:
+   if i['formation_energy_peratom']!='na':
+      x.append(i['atoms'])
+      y.append(i['formation_energy_peratom'])
+  s=StructureDataset(x,y)
+     x.append(i['atoms'])
 
-test_graph()
+#test_graph()
