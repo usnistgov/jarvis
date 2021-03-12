@@ -19,42 +19,67 @@ from jarvis.io.wannier.outputs import WannierHam
 def datasets(dataset=""):
     """Get collection of dataset names and URLs."""
     if dataset == "dft_2d":
+        # Ref: https://www.nature.com/articles/s41598-017-05402-0
         url = "https://ndownloader.figshare.com/files/22471019"
         js_tag = "jdft_2d-4-26-2020.json"
         print("Obtaining 2D dataset ...")
     elif dataset == "dft_3d":
+        # Ref: https://www.nature.com/articles/s41524-020-00440-1
         url = "https://ndownloader.figshare.com/files/22471022"
         js_tag = "jdft_3d-4-26-2020.json"
         print("Obtaining 3D dataset ...")
     elif dataset == "cfid_3d":
+        # Ref: https://doi.org/10.1103/PhysRevMaterials.2.083801
         url = "https://ndownloader.figshare.com/files/22470818"
         js_tag = "jml_3d-4-26-2020.json"
         print("Obtaining JARVIS-3D CFID dataset 37k...")
     elif dataset == "mp_3d":
+        # Ref: https://doi.org/10.1063/1.4812323
         url = "https://ndownloader.figshare.com/files/24979850"
         js_tag = "CFID_mp_desc_data_84k.json"
         print("Obtaining Materials Project-3D CFID dataset 84k...")
+    elif dataset == "mp_3d_2020":
+        # Ref: https://doi.org/10.1063/1.4812323
+        url = "https://ndownloader.figshare.com/articles/13054247/versions/2"
+        js_tag = "all_mp.json"
+        print("Obtaining Materials Project-3D CFID dataset 127k...")
     elif dataset == "megnet":
+        # Ref: https://doi.org/10.1021/acs.chemmater.9b01294
         url = "https://ndownloader.figshare.com/files/26724977"
         js_tag = "megnet.json"
         print("Obtaining MEGNET-3D CFID dataset 69k...")
     elif dataset == "oqmd_3d":
+        # Ref: https://www.nature.com/articles/npjcompumats201510
         url = "https://ndownloader.figshare.com/files/24981170"
         js_tag = "CFID_OQMD_460k.json"
         print("Obtaining OQMD-3D CFID dataset 460k...")
+    elif dataset == "oqmd_3d_no_cfid":
+        # Ref: https://www.nature.com/articles/npjcompumats201510
+        url = "https://ndownloader.figshare.com/files/26790182"
+        js_tag = "all_oqmd.json"
+        print("Obtaining OQMD-3D  dataset 800k...")
+    elif dataset == "twod_matpd":
+        # Ref: https://www.nature.com/articles/s41597-019-0097-3
+        url = "https://ndownloader.figshare.com/files/26789006"
+        js_tag = "twodmatpd.json"
+        print("Obtaining 2DMatPedia dataset 6k...")
     elif dataset == "qm9":
+        # Ref: https://www.nature.com/articles/sdata201422
         url = "https://ndownloader.figshare.com/files/25159592"
         js_tag = "qm9_data_cfid.json"
         print("Obtaining QM9-molecule CFID dataset 134k...")
     elif dataset == "aflow1":
+        # Ref: https://doi.org/10.1016/j.commatsci.2012.02.005
         url = "https://ndownloader.figshare.com/files/25453256"
         js_tag = "CFID_AFLOW1.json"
         print("Obtaining AFLOW-1 CFID dataset 400k...")
     elif dataset == "aflow2":
+        # Ref: https://doi.org/10.1016/j.commatsci.2012.02.005
         url = "https://ndownloader.figshare.com/files/25453265"
         js_tag = "CFID_AFLOW2.json"
         print("Obtaining AFLOW-2 CFID dataset 400k...")
     elif dataset == "raw_files":
+        # Ref: https://www.nature.com/articles/s41524-020-00440-1
         url = "https://ndownloader.figshare.com/files/25295732"
         js_tag = "figshare_data-10-28-2020.json"
         print("Obtaining raw io files...")
