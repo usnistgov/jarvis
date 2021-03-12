@@ -1,4 +1,4 @@
-from jarvis.core.graphs import Graph
+from jarvis.core.graphs import StructureDataset,Graph
 from jarvis.db.figshare import data
 
 def test_graph():
@@ -59,6 +59,5 @@ def test_dataset():
       x.append(i['atoms'])
       y.append(i['formation_energy_peratom'])
   s=StructureDataset(x,y)
-     x.append(i['atoms'])
 
 #test_graph()
