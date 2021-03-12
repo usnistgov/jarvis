@@ -27,13 +27,16 @@ jobs:
         run: |
             python setup.py develop
             pip uninstall qiskit
-            pip install qiskit ase  numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane dgl tqdm  codecov torch keras tensorflow==2.3.0  pytest pytest-cov bokeh
+            pip install qiskit ase  numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane dgl tqdm  codecov torch keras tensorflow==2.3.0  pytest pytest-cov bokeh pytest-xdist
             # pip install git+https://github.com/aspuru-guzik-group/tequila.git
             # pip install -r requirements-for-ci-only.txt 
             echo 'CONDA LIST'
             conda list
             echo 'PIP FREEZE'
             pip freeze
+            echo 'PYTEST-COV'
+            pytest --cov=jarvis
+
             coverage run -m pytest
             coverage report -m
             codecov

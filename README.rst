@@ -169,7 +169,7 @@ Find more examples at
 References
 -----------------
 
-Please see `Publications related to JARVIS-Tools <https://github.com/usnistgov/jarvis/blob/master/Publications.rst>`__
+Please see `Publications related to JARVIS-Tools <https://jarvis-materials-design.github.io/dbdocs/publications/>`__
 
 Documentation
 -----------------------------------------
