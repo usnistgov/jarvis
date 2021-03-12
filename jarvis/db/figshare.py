@@ -9,6 +9,7 @@ import tempfile
 import os
 import numpy as np
 import io
+import json
 import requests
 from jarvis.db.jsonutils import loadjson
 from jarvis.io.vasp.outputs import Vasprun
@@ -40,7 +41,7 @@ def datasets(dataset=""):
         print("Obtaining Materials Project-3D CFID dataset 84k...")
     elif dataset == "mp_3d_2020":
         # Ref: https://doi.org/10.1063/1.4812323
-        url = "https://ndownloader.figshare.com/articles/13054247/versions/2"
+        url = "https://ndownloader.figshare.com/files/26791259"
         js_tag = "all_mp.json"
         print("Obtaining Materials Project-3D CFID dataset 127k...")
     elif dataset == "megnet":
@@ -99,20 +100,23 @@ def data(dataset="dft_2d"):
     # with os.fdopen(fd, "w") as tmp:
     #    tmp.write(wdat)
     # data = loadjson(path)
+    r = requests.get(url)
+    z = zipfile.ZipFile(io.BytesIO(r.content))
+    data = json.loads(z.read(js_tag).decode("utf-8"))
 
-    path = str(os.path.join(os.path.dirname(__file__), js_tag))
-    if not os.path.isfile(path):
-        zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
-        r = requests.get(url)
-        f = open(zfile, "wb")
-        f.write(r.content)
-        f.close()
+    # path = str(os.path.join(os.path.dirname(__file__), js_tag))
+    # if not os.path.isfile(path):
+    #    zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
+    #    r = requests.get(url)
+    #    f = open(zfile, "wb")
+    #    f.write(r.content)
+    #    f.close()
 
-        with zipfile.ZipFile(zfile, "r") as zipObj:
-            # zipObj.extract(path)
-            zipObj.extractall(os.path.join(os.path.dirname(__file__)))
-        os.remove(zfile)
-    data = loadjson(path)
+    #    with zipfile.ZipFile(zfile, "r") as zipObj:
+    #        # zipObj.extract(path)
+    #        zipObj.extractall(os.path.join(os.path.dirname(__file__)))
+    #    os.remove(zfile)
+    # data = loadjson(path)
     return data
 
 
