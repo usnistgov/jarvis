@@ -20,7 +20,7 @@ from jarvis.io.wannier.outputs import WannierHam
 def datasets(dataset=""):
     """Get collection of dataset names and URLs."""
     if dataset == "dft_2d":
-        # Ref: https://www.nature.com/articles/s41598-017-05402-0
+        # Ref: https://www.nature.com/articles/s41524-020-00440-1
         url = "https://ndownloader.figshare.com/files/22471019"
         js_tag = "jdft_2d-4-26-2020.json"
         print("Obtaining 2D dataset ...")
@@ -29,6 +29,39 @@ def datasets(dataset=""):
         url = "https://ndownloader.figshare.com/files/22471022"
         js_tag = "jdft_3d-4-26-2020.json"
         print("Obtaining 3D dataset ...")
+    elif dataset == "stm_2d":
+        # Ref: https://www.nature.com/articles/s41597-021-00824-y
+        link_1 = "https://ndownloader.figshare.com/files/21884952"
+        r_jpg = requests.get(link_1)
+        z = zipfile.ZipFile(io.BytesIO(r_jpg.content))
+        link_2 = "https://ndownloader.figshare.com/files/21893379"
+        r_json = requests.get(link_2).content
+        latts = json.loads(r_json)
+        namelist = z.namelist()
+        pos_bias = []
+        neg_bias = []
+
+        for i in namelist:
+            values = mpimg.imread(io.BytesIO((img_str)), format="jpg")
+            # img=Image(values=values)
+            jid = i.split("/")[-1].split("_")[0]
+            bias = i.split("/")[-1].split("_")[1].split(".jpg")[0]
+            lat_system = latts[jid]
+            if bias == "pos":
+                info = {}
+                info["jid"] = jid
+                info["image_values"] = values
+                info["lat_type"] = lat_system
+                pos_bias.append(info)
+            if bias == "nef":
+                info = {}
+                info["jid"] = jid
+                info["image_values"] = values
+                info["lat_type"] = lat_system
+                neg_bias.append(info)
+            return pos_bias, neg_bias
+
+        print("Obtaining 2D STM dataset ...")
     elif dataset == "cfid_3d":
         # Ref: https://doi.org/10.1103/PhysRevMaterials.2.083801
         url = "https://ndownloader.figshare.com/files/22470818"
