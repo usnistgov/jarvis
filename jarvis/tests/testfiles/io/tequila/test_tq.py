@@ -1,4 +1,5 @@
-#
+"""
+# Excluding tests because tequila doesn't seem to install well.
 from jarvis.io.tequila.inputs import get_eigvals
 from jarvis.io.qiskit.inputs import HermitianSolver
 from jarvis.db.figshare import (
@@ -16,3 +17,4 @@ def test_inp():
     ens = get_eigvals(hk)
     print(ens)
 
+"""
