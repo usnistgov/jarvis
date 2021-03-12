@@ -37,7 +37,6 @@ jobs:
             pip freeze
             echo 'PYTEST-COV'
             pytest --cov-config=.coveragerc --cov=jarvis 
-
             #coverage run -m pytest
             #coverage report -m
             codecov
