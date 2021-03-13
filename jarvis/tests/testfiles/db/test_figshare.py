@@ -1,5 +1,13 @@
-from jarvis.db.figshare import data, get_ff_eneleast, get_wann_electron, get_wann_phonon, get_hk_tb
+from jarvis.db.figshare import (
+    data,
+    get_ff_eneleast,
+    get_wann_electron,
+    get_wann_phonon,
+    get_hk_tb,
+    get_stm_2d_dataset,
+)
 from jarvis.db.webpages import Webpage
+
 
 def test_figshare_download():
 
@@ -21,19 +29,21 @@ def test_figshare_download():
     hk = get_hk_tb(w=w)
     w, atoms = get_wann_phonon()
     w = Webpage(jid="JVASP-1002")
-    info_mbj = w.get_dft_mbj_dielectric_function()    
-    info_opt = w.get_dft_semilocal_dielectric_function()    
+    info_mbj = w.get_dft_mbj_dielectric_function()
+    info_opt = w.get_dft_semilocal_dielectric_function()
     info_pdos = w.get_dft_phonon_dos()
     info_edos = w.get_dft_electron_dos()
     k = w.list_keys()
-    #dat = data(dataset="megnet")
-    #pos,neg = data(dataset="stm_2d")
-    #dat = data(dataset="mp_3d")
-    #dat = data(dataset="mp_3d_2020")
-    #dat = data(dataset="qm9")
-    #dat = data(dataset="aflow1")
-    #dat = data(dataset="aflow2")
-    #dat = data(dataset="oqmd_3d")
-    #dat = data(dataset="twod_matpd")
-    #dat = data(dataset="oqmd_3d_no_cfid")
+    # dat = data(dataset="megnet")
+    # dat = data(dataset="mp_3d")
+    # dat = data(dataset="mp_3d_2020")
+    # dat = data(dataset="qm9")
+    # dat = data(dataset="aflow1")
+    # dat = data(dataset="aflow2")
+    # dat = data(dataset="oqmd_3d")
+    # dat = data(dataset="twod_matpd")
+    # dat = data(dataset="oqmd_3d_no_cfid")
+    p, n = get_stm_2d_dataset()
+
+
 # test_figshare_download()

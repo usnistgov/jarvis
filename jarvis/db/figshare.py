@@ -15,58 +15,35 @@ from jarvis.db.jsonutils import loadjson
 from jarvis.io.vasp.outputs import Vasprun
 from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.wannier.outputs import WannierHam
+from tqdm import tqdm
+import matplotlib.image as mpimg
 
 
 def datasets(dataset=""):
     """Get collection of dataset names and URLs."""
     if dataset == "dft_2d":
         # Ref: https://www.nature.com/articles/s41524-020-00440-1
-        url = "https://ndownloader.figshare.com/files/22471019"
-        js_tag = "jdft_2d-4-26-2020.json"
-        print("Obtaining 2D dataset ...")
+        url = "https://ndownloader.figshare.com/files/26808917"
+        js_tag = "d2-3-12-2021.json"
+        # url = "https://ndownloader.figshare.com/files/22471019"
+        # js_tag = "jdft_2d-4-26-2020.json"
+        print("Obtaining 2D dataset 1.1k ...")
     elif dataset == "dft_3d":
         # Ref: https://www.nature.com/articles/s41524-020-00440-1
-        url = "https://ndownloader.figshare.com/files/22471022"
-        js_tag = "jdft_3d-4-26-2020.json"
-        print("Obtaining 3D dataset ...")
-    elif dataset == "stm_2d":
-        # Ref: https://www.nature.com/articles/s41597-021-00824-y
-        link_1 = "https://ndownloader.figshare.com/files/21884952"
-        r_jpg = requests.get(link_1)
-        z = zipfile.ZipFile(io.BytesIO(r_jpg.content))
-        link_2 = "https://ndownloader.figshare.com/files/21893379"
-        r_json = requests.get(link_2).content
-        latts = json.loads(r_json)
-        namelist = z.namelist()
-        pos_bias = []
-        neg_bias = []
+        url = "https://ndownloader.figshare.com/files/26808914"
+        js_tag = "d3-3-12-2021.json"
+        # url = "https://ndownloader.figshare.com/files/22471022"
+        # js_tag = "jdft_3d-4-26-2020.json"
+        print("Obtaining 3D dataset 43k ...")
 
-        for i in namelist:
-            values = mpimg.imread(io.BytesIO((img_str)), format="jpg")
-            # img=Image(values=values)
-            jid = i.split("/")[-1].split("_")[0]
-            bias = i.split("/")[-1].split("_")[1].split(".jpg")[0]
-            lat_system = latts[jid]
-            if bias == "pos":
-                info = {}
-                info["jid"] = jid
-                info["image_values"] = values
-                info["lat_type"] = lat_system
-                pos_bias.append(info)
-            if bias == "nef":
-                info = {}
-                info["jid"] = jid
-                info["image_values"] = values
-                info["lat_type"] = lat_system
-                neg_bias.append(info)
-            return pos_bias, neg_bias
-
-        print("Obtaining 2D STM dataset ...")
     elif dataset == "cfid_3d":
         # Ref: https://doi.org/10.1103/PhysRevMaterials.2.083801
-        url = "https://ndownloader.figshare.com/files/22470818"
-        js_tag = "jml_3d-4-26-2020.json"
-        print("Obtaining JARVIS-3D CFID dataset 37k...")
+        # Now same as dft_3d
+        url = "https://ndownloader.figshare.com/files/26808914"
+        js_tag = "d3-3-12-2021.json"
+        # url = "https://ndownloader.figshare.com/files/22470818"
+        # js_tag = "jml_3d-4-26-2020.json"
+        print("Obtaining JARVIS-3D CFID dataset 43k...")
     elif dataset == "mp_3d":
         # Ref: https://doi.org/10.1063/1.4812323
         url = "https://ndownloader.figshare.com/files/24979850"
@@ -116,12 +93,12 @@ def datasets(dataset=""):
         # Ref: https://www.kaggle.com/Cornell-University/arxiv
         url = "https://ndownloader.figshare.com/files/26804795"
         js_tag = "arXivdataset.json"
-        print("Obtaining arXiv dataset...")
+        print("Obtaining arXiv dataset 1.8 million...")
     elif dataset == "cord19":
         # Ref:https://github.com/usnistgov/cord19-cdcs-nist
         url = "https://ndownloader.figshare.com/files/26804798"
         js_tag = "cord19.json"
-        print("Obtaining CORD19 dataset...")
+        print("Obtaining CORD19 dataset 223k...")
     elif dataset == "raw_files":
         # Ref: https://www.nature.com/articles/s41524-020-00440-1
         url = "https://ndownloader.figshare.com/files/25295732"
@@ -132,9 +109,77 @@ def datasets(dataset=""):
     return url, js_tag
 
 
+def get_stm_2d_dataset():
+    """Get 2D STM image dataset."""
+    # Ref: https://www.nature.com/articles/s41597-021-00824-y
+    link_1 = "https://ndownloader.figshare.com/files/21884952"
+    r_jpg = requests.get(link_1)
+    z = zipfile.ZipFile(io.BytesIO(r_jpg.content))
+    link_2 = "https://ndownloader.figshare.com/files/21893379"
+    r_json = requests.get(link_2).content
+    latts = json.loads(r_json)
+    namelist = z.namelist()
+    pos_bias = []
+    neg_bias = []
+
+    print("Obtaining 2D STM dataset ...")
+    for i in namelist:
+        img_str = z.read(i)
+        values = mpimg.imread(io.BytesIO((img_str)), format="jpg")
+        # img=Image(values=values)
+        jid = i.split("/")[-1].split("_")[0]
+        bias = i.split("/")[-1].split("_")[1].split(".jpg")[0]
+        lat_system = latts[jid]
+        if bias == "pos":
+            info = {}
+            info["jid"] = jid
+            info["image_values"] = values
+            info["lat_type"] = lat_system
+            pos_bias.append(info)
+        if bias == "neg":
+            info = {}
+            info["jid"] = jid
+            info["image_values"] = values
+            info["lat_type"] = lat_system
+            neg_bias.append(info)
+    return pos_bias, neg_bias
+
+
+def get_request_data(
+    js_tag="jdft_2d-4-26-2020.json",
+    url="https://ndownloader.figshare.com/files/22471019",
+):
+    """Get data with progress bar."""
+    path = str(os.path.join(os.path.dirname(__file__), js_tag))
+    if not os.path.isfile(path):
+        zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
+        response = requests.get(url, stream=True)
+        total_size_in_bytes = int(response.headers.get("content-length", 0))
+        block_size = 1024  # 1 Kibibyte
+        progress_bar = tqdm(
+            total=total_size_in_bytes, unit="iB", unit_scale=True
+        )
+        with open(zfile, "wb") as file:
+            for data in response.iter_content(block_size):
+                progress_bar.update(len(data))
+                file.write(data)
+        progress_bar.close()
+        # f = open(zfile, "wb")
+        # f.write(r.content)
+        # f.close()
+
+        with zipfile.ZipFile(zfile, "r") as zipObj:
+            # zipObj.extract(path)
+            zipObj.extractall(os.path.join(os.path.dirname(__file__)))
+        os.remove(zfile)
+    data = loadjson(path)
+    return data
+
+
 def data(dataset="dft_2d"):
     """Provide main function to download datasets."""
     url, js_tag = datasets(dataset)
+    dat = []
     # r = requests.get(url)
     # z = zipfile.ZipFile(io.BytesIO(r.content))
     # data = json.loads(z.read(js_tag).decode("utf-8"))
@@ -147,20 +192,21 @@ def data(dataset="dft_2d"):
     #    tmp.write(wdat)
     # data = loadjson(path)
 
-    path = str(os.path.join(os.path.dirname(__file__), js_tag))
-    if not os.path.isfile(path):
-        zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
-        r = requests.get(url)
-        f = open(zfile, "wb")
-        f.write(r.content)
-        f.close()
+    # path = str(os.path.join(os.path.dirname(__file__), js_tag))
+    # if not os.path.isfile(path):
+    #    zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
+    #    r = requests.get(url)
+    #    f = open(zfile, "wb")
+    #    f.write(r.content)
+    #    f.close()
 
-        with zipfile.ZipFile(zfile, "r") as zipObj:
-            # zipObj.extract(path)
-            zipObj.extractall(os.path.join(os.path.dirname(__file__)))
-        os.remove(zfile)
-    data = loadjson(path)
-    return data
+    #    with zipfile.ZipFile(zfile, "r") as zipObj:
+    #        # zipObj.extract(path)
+    #        zipObj.extractall(os.path.join(os.path.dirname(__file__)))
+    #    os.remove(zfile)
+    # data = loadjson(path)
+    dat = get_request_data(js_tag=js_tag, url=url)
+    return dat
 
 
 def get_jid_data(jid="JVASP-667", dataset="dft_2d"):

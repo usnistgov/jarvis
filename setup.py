@@ -22,6 +22,7 @@ setup(
         "requests>=2.23.0",
         "toolz>=0.9.0",
         "xmltodict>=0.11.0",
+        "tqdm>=4.59.0",
     ],
     package_data={
         "jarvis.core": ["Elements.json", "element_charge.json"],

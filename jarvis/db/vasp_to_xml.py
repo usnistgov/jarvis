@@ -676,7 +676,7 @@ class VaspToApiXmlSchema(object):
             except Exception as exp:
                 print("Cannot get wannier data.", folder, exp)
                 pass
-        print("tmpw1", line)
+        # print("tmpw1", line)
         info["wannier_band_comparison"] = line
         return info
 
@@ -1012,21 +1012,30 @@ class VaspToApiXmlSchema(object):
                 info["elements"] = elements
                 info["tmp_elements"] = '"' + elements + '"'
                 info["number_uniq_species"] = len(atoms.uniq_species)
-                method = ""
+                method = "OptB88vdW"
                 try:
                     f = open(os.path.join(folder, "..", "FUNCTIONAL"), "r")
                     lines = f.read().splitlines()
                     f.close()
                     method = lines[0]
                 except Exception:
-                    print('Cannot find "FUNCTIONAL"')
+                    print('Cannot find "FUNCTIONAL"', method)
                     pass
+
                 if method == "PBEBO":
                     method = "OptB88vdW"
                 if method == "PBEOR":
                     method = "OptPBEvdW"
                 if method == "PBEMK":
                     method = "OptB86bvdW"
+                if (
+                    "PBEBO" not in info["source_folder"]
+                    and method == "OptB88vdW"
+                ):
+                    print(
+                        "Inconsistent description, check INCAR",
+                        info["source_folder"],
+                    )
                 info["method"] = method
                 info["tmp_method"] = '"' + method + '"'
                 num_atoms = atoms.num_atoms
@@ -1038,8 +1047,9 @@ class VaspToApiXmlSchema(object):
                         print("Cannot get formation energy.", exp)
                         pass
                 info["formation_energy"] = fen
+                # print ('fen=',fen)
                 rel_en = final_energy / num_atoms
-                info["relaxed_energy"] = round(rel_en, 3)
+                info["relaxed_energy"] = round(rel_en, 5)
                 spg = Spacegroup3D(atoms)
                 prim_atoms = spg.primitive_atoms
                 conv_atoms = spg.conventional_standard_structure
