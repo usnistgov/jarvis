@@ -150,16 +150,18 @@ def get_request_data(
     url="https://ndownloader.figshare.com/files/22471019",
 ):
     """Get data with progress bar."""
-    path = str(os.path.join(os.path.dirname(__file__), js_tag))
+    zfile = js_tag + ".zip"
+    path = str(os.path.join(os.path.dirname(__file__), zfile))
+    # path = str(os.path.join(os.path.dirname(__file__), js_tag))
     if not os.path.isfile(path):
-        zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
+        # zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
         response = requests.get(url, stream=True)
         total_size_in_bytes = int(response.headers.get("content-length", 0))
         block_size = 1024  # 1 Kibibyte
         progress_bar = tqdm(
             total=total_size_in_bytes, unit="iB", unit_scale=True
         )
-        with open(zfile, "wb") as file:
+        with open(path, "wb") as file:
             for data in response.iter_content(block_size):
                 progress_bar.update(len(data))
                 file.write(data)
@@ -167,12 +169,13 @@ def get_request_data(
         # f = open(zfile, "wb")
         # f.write(r.content)
         # f.close()
+    data = json.loads(zipfile.ZipFile(path).read(js_tag))
 
-        with zipfile.ZipFile(zfile, "r") as zipObj:
-            # zipObj.extract(path)
-            zipObj.extractall(os.path.join(os.path.dirname(__file__)))
-        os.remove(zfile)
-    data = loadjson(path)
+    #    with zipfile.ZipFile(zfile, "r") as zipObj:
+    #        # zipObj.extract(path)
+    #        zipObj.extractall(os.path.join(os.path.dirname(__file__)))
+    #    os.remove(zfile)
+    # data = loadjson(path)
     return data
 
 
