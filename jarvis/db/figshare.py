@@ -44,6 +44,11 @@ def datasets(dataset=""):
         # url = "https://ndownloader.figshare.com/files/22470818"
         # js_tag = "jml_3d-4-26-2020.json"
         print("Obtaining JARVIS-3D CFID dataset 43k...")
+    elif dataset == "jff":
+        # Ref: 10.1088/1361-648X/aadaff/meta
+        url = "https://ndownloader.figshare.com/files/26809760"
+        js_tag = "jff-3-12-2021.json"
+        print("Obtaining JARVIS-FF 2k ...")
     elif dataset == "mp_3d":
         # Ref: https://doi.org/10.1063/1.4812323
         url = "https://ndownloader.figshare.com/files/24979850"
