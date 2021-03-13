@@ -12,12 +12,12 @@ from jarvis.db.webpages import Webpage
 def test_figshare_download():
 
     data_2d = data(dataset="dft_2d")
-    data_3d = data(dataset="dft_3d")
-    data_ml = data(dataset="cfid_3d")
+    #data_3d = data(dataset="dft_3d")
+    #data_ml = data(dataset="cfid_3d")
     data_ff = get_ff_eneleast()
     print("2d", len(data_2d))
-    print("3d", len(data_3d))
-    print("cfid3d", len(data_ml))
+    #print("3d", len(data_3d))
+    #print("cfid3d", len(data_ml))
     print("ff", len(data_ff))
     #assert (len(data_2d), len(data_3d), len(data_ml), len(data_ff)) == (
     #    1070,
@@ -43,7 +43,7 @@ def test_figshare_download():
     # dat = data(dataset="oqmd_3d")
     # dat = data(dataset="twod_matpd")
     # dat = data(dataset="oqmd_3d_no_cfid")
-    p, n = get_stm_2d_dataset()
+    # p, n = get_stm_2d_dataset()
 
 
 # test_figshare_download()
