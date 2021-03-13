@@ -112,6 +112,16 @@ def datasets(dataset=""):
         url = "https://ndownloader.figshare.com/files/25453265"
         js_tag = "CFID_AFLOW2.json"
         print("Obtaining AFLOW-2 CFID dataset 400k...")
+    elif dataset == "arXiv":
+        # Ref: https://www.kaggle.com/Cornell-University/arxiv
+        url = "https://ndownloader.figshare.com/files/26804795"
+        js_tag = "arXivdataset.json"
+        print("Obtaining arXiv dataset...")
+    elif dataset == "cord19":
+        # Ref:https://github.com/usnistgov/cord19-cdcs-nist
+        url = "https://ndownloader.figshare.com/files/26804798"
+        js_tag = "cord19.json"
+        print("Obtaining CORD19 dataset...")
     elif dataset == "raw_files":
         # Ref: https://www.nature.com/articles/s41524-020-00440-1
         url = "https://ndownloader.figshare.com/files/25295732"
@@ -125,6 +135,9 @@ def datasets(dataset=""):
 def data(dataset="dft_2d"):
     """Provide main function to download datasets."""
     url, js_tag = datasets(dataset)
+    # r = requests.get(url)
+    # z = zipfile.ZipFile(io.BytesIO(r.content))
+    # data = json.loads(z.read(js_tag).decode("utf-8"))
 
     # r = requests.get(url)
     # z = zipfile.ZipFile(io.BytesIO(r.content))
@@ -133,23 +146,20 @@ def data(dataset="dft_2d"):
     # with os.fdopen(fd, "w") as tmp:
     #    tmp.write(wdat)
     # data = loadjson(path)
-    r = requests.get(url)
-    z = zipfile.ZipFile(io.BytesIO(r.content))
-    data = json.loads(z.read(js_tag).decode("utf-8"))
 
-    # path = str(os.path.join(os.path.dirname(__file__), js_tag))
-    # if not os.path.isfile(path):
-    #    zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
-    #    r = requests.get(url)
-    #    f = open(zfile, "wb")
-    #    f.write(r.content)
-    #    f.close()
+    path = str(os.path.join(os.path.dirname(__file__), js_tag))
+    if not os.path.isfile(path):
+        zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
+        r = requests.get(url)
+        f = open(zfile, "wb")
+        f.write(r.content)
+        f.close()
 
-    #    with zipfile.ZipFile(zfile, "r") as zipObj:
-    #        # zipObj.extract(path)
-    #        zipObj.extractall(os.path.join(os.path.dirname(__file__)))
-    #    os.remove(zfile)
-    # data = loadjson(path)
+        with zipfile.ZipFile(zfile, "r") as zipObj:
+            # zipObj.extract(path)
+            zipObj.extractall(os.path.join(os.path.dirname(__file__)))
+        os.remove(zfile)
+    data = loadjson(path)
     return data
 
 
