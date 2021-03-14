@@ -75,6 +75,12 @@ def get_db_info():
             "Obtaining 2DMatPedia dataset 6k...",
             "https://www.nature.com/articles/s41597-019-0097-3",
         ],
+        "polymer_genome": [
+            "https://ndownloader.figshare.com/files/26809907",
+            "pgnome.json",
+            "Obtaining Polymer genome 1k...",
+            "https://www.nature.com/articles/sdata201612",
+        ],
         "qm9": [
             "https://ndownloader.figshare.com/files/25159592",
             "qm9_data_cfid.json",
