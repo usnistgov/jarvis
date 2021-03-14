@@ -60,25 +60,42 @@ class Graph(object):
         max_neighbors=12,
         atom_features="cgcnn",
         enforce_undirected=False,
+        max_attempts=3,
+        id=None,
     ):
         """Obtain a DGLGraph for Atoms object."""
         all_neighbors = atoms.get_all_neighbors(r=cutoff)
         # if a site has too few neighbors, increase the cutoff radius
         min_nbrs = min(len(neighborlist) for neighborlist in all_neighbors)
-        if min_nbrs < max_neighbors:
-            print("extending cutoff radius!")
+        # print('min_nbrs,max_neighbors=',min_nbrs,max_neighbors)
+        attempt = 0
+        while min_nbrs < max_neighbors:
+            print("extending cutoff radius!", attempt, cutoff, id)
             lat = atoms.lattice
             r_cut = max(cutoff, lat.a, lat.b, lat.c)
-            return Graph.atom_dgl_multigraph(
-                atoms, r_cut, max_neighbors, atom_features
-            )
+            attempt += 1
+            if attempt >= max_attempts:
+                atoms = atoms.make_supercell([2, 2, 2])
+                print(
+                    "Making supercell, exceeded,attempts",
+                    max_attempts,
+                    "cutoff",
+                    r_cut,
+                    id,
+                )
+            cutoff = r_cut
+            all_neighbors = atoms.get_all_neighbors(r=cutoff)
+            min_nbrs = min(len(neighborlist) for neighborlist in all_neighbors)
+            # return Graph.atom_dgl_multigraph(
+            #    atoms, r_cut, max_neighbors, atom_features
+            # )
 
         # build up edge list
-        # NOTE: currently there's no guarantee that this creates undirected graphs
+        # Currently there's no guarantee that this creates undirected graphs
         # An undirected solution would build the full edge list where nodes are
-        # keyed by (index, image), and ensure each edge has a complementary edge
+        # keyed by (index,image), and ensure each edge has a complementary edge
 
-        # indeed, JVASP-59628 is an example of a calculation where this produces
+        # indeed,JVASP-59628 is an example of a calculation where this produces
         # a graph where one site has no incident edges!
 
         # build an edge dictionary u -> v
@@ -124,7 +141,7 @@ class Graph(object):
                     src, dst = edge_pair[0]
                     u.append(dst)  # swap the order!
                     v.append(src)
-                    r.append(structure.distance_matrix[src, dst])
+                    r.append(atoms.raw_distance_matrix[src, dst])
 
         u = torch.tensor(np.hstack(u))
         v = torch.tensor(np.hstack(v))
@@ -378,13 +395,12 @@ class StructureDataset(torch.utils.data.Dataset):
         self.labels = []
         self.ids = []
 
-        for idx, (structure, target, jid) in enumerate(
+        for idx, (structure, target, id) in enumerate(
             tqdm(zip(structures, targets, ids))
         ):
 
             if idx >= maxrows:
                 break
-
             a = Atoms.from_dict(structure)
             g = Graph.atom_dgl_multigraph(
                 a,
@@ -392,6 +408,7 @@ class StructureDataset(torch.utils.data.Dataset):
                 enforce_undirected=enforce_undirected,
                 cutoff=cutoff,
                 max_neighbors=max_neighbors,
+                id=id,
             )
 
             self.graphs.append(g)

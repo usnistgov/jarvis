@@ -588,7 +588,7 @@ class Atoms(object):
                 for i in indices[within_r]:
                     if d[i] > bond_tol:
                         neighbors[i].append([i, j, d[i], image])
-        return np.array(neighbors)
+        return np.array(neighbors, dtype="object")
 
     @property
     def raw_distance_matrix(self):
