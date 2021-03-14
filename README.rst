@@ -13,9 +13,7 @@
 .. image:: https://github.com/usnistgov/jarvis/workflows/JARVIS-Tools%20github%20action/badge.svg
         :target: https://github.com/usnistgov/jarvis
 .. image:: https://github.com/usnistgov/jarvis/workflows/JARVIS-Tools%20linting/badge.svg
-        :target: https://github.com/usnistgov/jarvis
-.. image:: https://readthedocs.org/projects/jarvis-tools/badge/?version=latest
-       :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest   
+        :target: https://github.com/usnistgov/jarvis  
 .. image:: https://img.shields.io/codecov/c/github/knc6/jarvis
         :target: https://codecov.io/gh/knc6/jarvis  
 .. image::  https://img.shields.io/pypi/dm/jarvis-tools.svg      
