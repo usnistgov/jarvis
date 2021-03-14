@@ -51,6 +51,12 @@ def get_db_info():
             "Obtaining Materials Project-3D CFID dataset 127k...",
             "https://doi.org/10.1063/1.4812323",
         ],
+        "megnet": [
+            "https://ndownloader.figshare.com/files/26724977",
+            "megnet.json",
+            "Obtaining MEGNET-3D CFID dataset 69k...",
+            "https://pubs.acs.org/doi/10.1021/acs.chemmater.9b01294",
+        ],
         "mp_3d": [
             "https://ndownloader.figshare.com/files/24979850",
             "CFID_mp_desc_data_84k.json",
