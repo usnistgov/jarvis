@@ -13,13 +13,9 @@ from jarvis.core.atoms import Atoms
 try:
     import torch
     from tqdm import tqdm
-except Exception as exp:
-    warnings.warn("Pytorch and/or tqdm is not installed.", exp)
-    pass
-try:
     import dgl
 except Exception as exp:
-    warnings.warn("dgl is not installed.", exp)
+    warnings.warn("dgl/torch/tqdm is not installed.", exp)
     pass
 
 
@@ -57,7 +53,7 @@ class Graph(object):
         self.labels = labels
 
     @staticmethod
-    def dgl_multigraph(
+    def atom_dgl_multigraph(
         atoms=None, cutoff=8.0, max_neighbors=12, atom_features="cgcnn"
     ):
         """Obtain a DGLGraph for Atoms object."""
@@ -67,7 +63,7 @@ class Graph(object):
         if min_nbrs < max_neighbors:
             lat = atoms.lattice
             r_cut = max(cutoff, lat.a, lat.b, lat.c)
-            return Graph.dgl_multigraph(
+            return Graph.atom_dgl_multigraph(
                 atoms, r_cut, max_neighbors, atom_features
             )
 
@@ -342,6 +338,7 @@ class StructureDataset(torch.utils.data.Dataset):
         maxrows=np.inf,
         atom_features="atomic_number",
         transform=None,
+        max_neighbors=12,
     ):
         """Initialize the class."""
         self.graphs = []
@@ -355,8 +352,11 @@ class StructureDataset(torch.utils.data.Dataset):
                 break
 
             a = Atoms.from_dict(structure)
-            g = Graph.dgl_multigraph(
-                a, atom_features=atom_features, cutoff=cutoff
+            g = Graph.atom_dgl_multigraph(
+                a,
+                atom_features=atom_features,
+                cutoff=cutoff,
+                max_neighbors=max_neighbors,
             )
 
             self.graphs.append(g)
