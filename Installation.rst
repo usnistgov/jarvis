@@ -7,7 +7,7 @@ Installing jarvis-tools
       bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
       Download 32/64 bit python 3.6 miniconda exe and install (for windows)
       Now, let's make a conda environment just for JARVIS::
-      conda create --name my_jarvis python=3.6
+      conda create --name my_jarvis python=3.8
       source activate my_jarvis
 
 - Git clone install (Recommended)::
@@ -23,7 +23,6 @@ Installing jarvis-tools
       pip install numpy scipy matplotlib
       pip install jarvis-tools
 
-- Alternative nix install::
-  Nix allows a robust and reproducible package for Linux. To generate a Nix environment for using JARVIS, follow the `Nix instructions`_.
-
-.. _`Nix instructions`: ./nix/README.md
+- Alternative conda install::
+ 
+      conda install -c conda-forge jarvis-tools

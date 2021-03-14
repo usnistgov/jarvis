@@ -5,6 +5,18 @@ from jarvis.core.utils import random_colors
 import numpy as np
 from collections import OrderedDict
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
+from jarvis.core.specie import get_node_attributes
+import warnings
+from typing import List, Tuple
+from jarvis.core.atoms import Atoms
+
+try:
+    import torch
+    from tqdm import tqdm
+    import dgl
+except Exception as exp:
+    warnings.warn("dgl/torch/tqdm is not installed.", exp)
+    pass
 
 
 class Graph(object):
@@ -39,6 +51,68 @@ class Graph(object):
         self.edge_attributes = edge_attributes
         self.color_map = color_map
         self.labels = labels
+
+    @staticmethod
+    def atom_dgl_multigraph(
+        atoms=None, cutoff=8.0, max_neighbors=12, atom_features="cgcnn"
+    ):
+        """Obtain a DGLGraph for Atoms object."""
+        all_neighbors = atoms.get_all_neighbors(r=cutoff)
+        # if a site has too few neighbors, increase the cutoff radius
+        min_nbrs = min(len(neighborlist) for neighborlist in all_neighbors)
+        if min_nbrs < max_neighbors:
+            lat = atoms.lattice
+            r_cut = max(cutoff, lat.a, lat.b, lat.c)
+            return Graph.atom_dgl_multigraph(
+                atoms, r_cut, max_neighbors, atom_features
+            )
+
+        # build up edge list
+        # NOTE: currently there's no guarantee
+        # that this creates undirected graphs
+        # An undirected solution would build the full edge
+        # list where nodes are
+        # keyed by (index, image), and ensure
+        # each edge has a complementary edge
+
+        u, v, r = [], [], []
+        for site_idx, neighborlist in enumerate(all_neighbors):
+
+            # sort on distance
+            neighborlist = sorted(neighborlist, key=lambda x: x[2])
+
+            ids = np.array([nbr[1] for nbr in neighborlist])
+            distances = np.array([nbr[2] for nbr in neighborlist])
+
+            # find the distance to the k-th nearest neighbor
+            max_dist = distances[max_neighbors - 1]
+
+            # keep all edges out to the neighbor shell of the k-th neighbor
+            ids = ids[distances <= max_dist]
+            distances = distances[distances <= max_dist]
+
+            u.append([site_idx] * len(ids))
+            v.append(ids)
+            r.append(distances)
+
+        u = torch.tensor(np.hstack(u))
+        v = torch.tensor(np.hstack(v))
+        r = torch.tensor(np.hstack(r)).type(torch.get_default_dtype())
+
+        # build up atom attribute tensor
+        species = atoms.elements
+        node_features = torch.tensor(
+            [
+                get_node_attributes(s, atom_features=atom_features)
+                for s in species
+            ]
+        ).type(torch.get_default_dtype())
+
+        g = dgl.graph((u, v))
+        g.ndata["atom_features"] = node_features
+        g.edata["bondlength"] = r
+
+        return g
 
     @staticmethod
     def from_atoms(
@@ -234,6 +308,93 @@ class Graph(object):
         for edge, a in zip(self.edges, self.edge_attributes):
             A[edge] = a
         return A
+
+
+class Standardize(torch.nn.Module):
+    """Standardize atom_features: subtract mean and divide by std."""
+
+    def __init__(self, mean: torch.Tensor, std: torch.Tensor):
+        """Register featurewise mean and standard deviation."""
+        super().__init__()
+        self.mean = mean
+        self.std = std
+
+    def forward(self, g: dgl.DGLGraph):
+        """Apply standardization to atom_features."""
+        g = g.local_var()
+        h = g.ndata.pop("atom_features")
+        g.ndata["atom_features"] = (h - self.mean) / self.std
+        return g
+
+
+class StructureDataset(torch.utils.data.Dataset):
+    """Dataset of crystal DGLGraphs."""
+
+    def __init__(
+        self,
+        structures,
+        targets,
+        cutoff=8.0,
+        maxrows=np.inf,
+        atom_features="atomic_number",
+        transform=None,
+        max_neighbors=12,
+    ):
+        """Initialize the class."""
+        self.graphs = []
+        self.labels = []
+
+        for idx, (structure, target) in enumerate(
+            tqdm(zip(structures, targets))
+        ):
+
+            if idx >= maxrows:
+                break
+
+            a = Atoms.from_dict(structure)
+            g = Graph.atom_dgl_multigraph(
+                a,
+                atom_features=atom_features,
+                cutoff=cutoff,
+                max_neighbors=max_neighbors,
+            )
+
+            self.graphs.append(g)
+            self.labels.append(target)
+
+        self.labels = torch.tensor(self.labels).type(torch.get_default_dtype())
+        self.transform = transform
+
+    def __len__(self):
+        """Get length."""
+        return self.labels.shape[0]
+
+    def __getitem__(self, idx):
+        """Get StructureDataset sample."""
+        g = self.graphs[idx]
+        label = self.labels[idx]
+
+        if self.transform:
+            g = self.transform(g)
+
+        return g, label
+
+    def setup_standardizer(self):
+        """Atom-wise feature standardization transform."""
+        x = torch.cat([g.ndata["atom_features"] for g in self.graphs])
+        self.atom_feature_mean = x.mean(0)
+        self.atom_feature_std = x.std(0)
+
+        self.transform = Standardize(
+            self.atom_feature_mean, self.atom_feature_std
+        )
+
+    @staticmethod
+    def collate(samples: List[Tuple[dgl.DGLGraph, torch.Tensor]]):
+        """Dataloader helper to batch graphs cross `samples`."""
+        graphs, labels = map(list, zip(*samples))
+        batched_graph = dgl.batch(graphs)
+        return batched_graph, torch.tensor(labels)
 
 
 """

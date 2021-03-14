@@ -1,4 +1,5 @@
-from jarvis.core.graphs import Graph
+from jarvis.core.graphs import StructureDataset, Graph
+from jarvis.db.figshare import data
 
 
 def test_graph():
@@ -6,7 +7,12 @@ def test_graph():
     from jarvis.db.figshare import get_jid_data
 
     atoms = Atoms.from_dict(get_jid_data("JVASP-664")["atoms"])
+    feature_sets = ("atomic_number", "basic", "cfid", "cgcnn")
+    for i in feature_sets:
+        g = Graph.atom_dgl_multigraph(atoms=atoms, atom_features=i)
+        print(i, g)
     g = Graph.from_atoms(atoms=atoms, features="atomic_number")
+    g = Graph.from_atoms(atoms=atoms, features="atomic_fraction")
     g = Graph.from_atoms(
         atoms=atoms,
         features="basic",
@@ -44,4 +50,18 @@ def test_graph():
     print(num_nodes, num_edges)
     assert num_nodes == 48
     assert num_edges == 2256
-    assert (g.adjacency_matrix.shape) == (48,48)
+    assert (g.adjacency_matrix.shape) == (48, 48)
+
+
+def test_dataset():
+    d = data("dft_2d")
+    x = []
+    y = []
+    for i in d[0:100]:
+        if i["formation_energy_peratom"] != "na":
+            x.append(i["atoms"])
+            y.append(i["formation_energy_peratom"])
+    s = StructureDataset(x, y)
+
+
+# test_graph()
