@@ -20,6 +20,7 @@ import matplotlib.image as mpimg
 
 
 def get_db_info():
+    """Get DB info."""
     db_info = {
         "dft_2d": [
             "https://ndownloader.figshare.com/files/26808917",
