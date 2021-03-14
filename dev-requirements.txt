@@ -18,7 +18,7 @@ pennylane>=0.14.1
 codecov >=2.1.11
 torch >=1.8.0
 keras >=2.4.3
-tensorflow==2.4.0  
+tensorflow>=2.4.0  
 pytest >=6.2.2
 pytest-cov >=2.11.1
 pytest-xdist>=2.2.1

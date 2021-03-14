@@ -57,11 +57,13 @@ def test_dataset():
     d = data("dft_2d")
     x = []
     y = []
+    z = []
     for i in d[0:100]:
         if i["formation_energy_peratom"] != "na":
             x.append(i["atoms"])
             y.append(i["formation_energy_peratom"])
-    s = StructureDataset(x, y)
+            z.append(i["jid"])
+    s = StructureDataset(x, y, ids=z)
 
 
 # test_graph()

@@ -185,7 +185,9 @@ def get_request_data(
         # f = open(zfile, "wb")
         # f.write(r.content)
         # f.close()
+    print("Loading the zipfile...")
     data = json.loads(zipfile.ZipFile(path).read(js_tag))
+    print("Loading completed.")
 
     #    with zipfile.ZipFile(zfile, "r") as zipObj:
     #        # zipObj.extract(path)
