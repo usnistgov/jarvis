@@ -11,7 +11,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2021.3.11",
+    version="2021.3.12",
     long_description=long_d,
     install_requires=[
         "numpy>=1.18.5",
