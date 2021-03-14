@@ -11,6 +11,7 @@ from jarvis.core.utils import (
     check_duplicate_coords,
     get_new_coord_for_xyz_sym,
 )
+import math
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
@@ -559,6 +560,35 @@ class Atoms(object):
         from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
         return Spacegroup3D(self).primitive_atoms
+
+    def get_all_neighbors(self, r=5, bond_tol=0.15):
+        """
+        Get neighbors for each atom in the unit cell, out to a distance r.
+
+        Contains [index_i, index_j, distance, image] array.
+        Adapted from pymatgen.
+        """
+        recp_len = np.array(self.lattice.reciprocal_lattice().abc)
+        maxr = np.ceil((r + bond_tol) * recp_len / (2 * math.pi))
+        nmin = np.floor(np.min(self.frac_coords, axis=0)) - maxr
+        nmax = np.ceil(np.max(self.frac_coords, axis=0)) + maxr
+        all_ranges = [np.arange(x, y) for x, y in zip(nmin, nmax)]
+        matrix = self.lattice_mat
+        neighbors = [list() for _ in range(len(self.cart_coords))]
+        all_fcoords = np.mod(self.frac_coords, 1)
+        coords_in_cell = np.dot(all_fcoords, matrix)
+        site_coords = self.cart_coords
+        indices = np.arange(len(site_coords))
+        for image in itertools.product(*all_ranges):
+            coords = np.dot(image, matrix) + coords_in_cell
+            z = (coords[:, None, :] - site_coords[None, :, :]) ** 2
+            all_dists = np.sum(z, axis=-1) ** 0.5
+            all_within_r = np.bitwise_and(all_dists <= r, all_dists > 1e-8)
+            for (j, d, within_r) in zip(indices, all_dists, all_within_r):
+                for i in indices[within_r]:
+                    if d[i] > bond_tol:
+                        neighbors[i].append([i, j, d[i], image])
+        return np.array(neighbors)
 
     @property
     def raw_distance_matrix(self):

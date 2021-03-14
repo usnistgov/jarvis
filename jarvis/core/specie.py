@@ -3,18 +3,22 @@
 import os
 import json
 import numpy as np
+import functools
 
-el_chem_json_file = str(os.path.join(
-                        os.path.dirname(__file__), "Elements.json"))
+el_chem_json_file = str(
+    os.path.join(os.path.dirname(__file__), "Elements.json")
+)
 el_chem_json = open(el_chem_json_file, "r")
 chem_data = json.load(el_chem_json)
 el_chem_json.close()
 
-el_chrg_json_file = str(os.path.join(
-                        os.path.dirname(__file__), "element_charge.json"))
+el_chrg_json_file = str(
+    os.path.join(os.path.dirname(__file__), "element_charge.json")
+)
 el_chrg_json = open(el_chrg_json_file, "r")
 chrg_data = json.load(el_chrg_json)
 el_chrg_json.close()
+cgcnn_feature_json = os.path.join(os.path.dirname(__file__), "atom_init.json")
 
 
 def get_descrp_arr_name(elm="Al"):
@@ -228,6 +232,47 @@ class Specie(object):
         except Exception:
             pass
         return val
+
+
+BASIC_FEATURES = [
+    "Z",
+    "coulmn",
+    "row",
+    "X",
+    "atom_rad",
+    "nsvalence",
+    "npvalence",
+    "ndvalence",
+    "nfvalence",
+    "first_ion_en",
+    "elec_aff",
+]
+
+
+@functools.lru_cache(maxsize=None)
+def get_node_attributes(species, atom_features="atomic_number"):
+    """Get specific node features for an element."""
+    feature_sets = ("atomic_number", "basic", "cfid", "cgcnn")
+
+    if atom_features not in feature_sets:
+        raise NotImplementedError(
+            f"atom features must be one of {feature_sets}"
+        )
+
+    if atom_features == "cfid":
+        return Specie(species).get_descrp_arr
+    elif atom_features == "atomic_number":
+        return [Specie(species).element_property("Z")]
+    elif atom_features == "basic":
+        return [
+            Specie(species).element_property(prop) for prop in BASIC_FEATURES
+        ]
+    elif atom_features == "cgcnn":
+        # load from json, key by atomic number
+        key = str(Specie(species).element_property("Z"))
+        with open(cgcnn_feature_json, "r") as f:
+            i = json.load(f)
+        return i[key]
 
 
 """

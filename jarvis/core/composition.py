@@ -84,6 +84,16 @@ class Composition(object):
         """Return dictionary format."""
         return self._content
 
+    @property
+    def nspecies(self):
+        """Return number of species."""
+        return len(list(self.to_dict().keys()))
+
+    @property
+    def search_string(self):
+        """Return JARVIS sorted search string."""
+        return "-".join(sorted(list(self.to_dict().keys())))
+
     @classmethod
     def from_dict(self, d={}):
         """Load the class from a dictionary."""

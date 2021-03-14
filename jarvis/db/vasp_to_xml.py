@@ -676,7 +676,7 @@ class VaspToApiXmlSchema(object):
             except Exception as exp:
                 print("Cannot get wannier data.", folder, exp)
                 pass
-        print("tmpw1", line)
+        # print("tmpw1", line)
         info["wannier_band_comparison"] = line
         return info
 
@@ -967,9 +967,27 @@ class VaspToApiXmlSchema(object):
             main_outcar = os.getcwd() + "/" + folder + "/OUTCAR"
             # vrun = Vasprun(main_vrun)
             # atoms = vrun.all_structures[-1]
-
             try:
+                final_energy = "na"
+                scf_indir_gap = "na"
+                scf_dir_gap = "na"
                 vrun = Vasprun(main_vrun)
+                final_energy = vrun.final_energy
+                scf_indir_gap = vrun.get_indir_gap[0]
+                scf_dir_gap = vrun.get_dir_gap
+
+            except Exception as exp:
+                print("Error in vasprun.xml.", exp)
+            try:
+                oszicar = Oszicar(os.path.join(folder, "OSZICAR"))
+                magmom = oszicar.magnetic_moment
+                info["magmom"] = round(float(magmom), 3)
+                if final_energy == "na":
+                    final_energy = float(oszicar.ionic_steps[-1][4])
+            except Exception as exp:
+                print("Check oszicar", exp)
+                pass
+            try:
                 atoms = Atoms.from_poscar(main_contcar)
                 # atoms = vrun.all_structures[-1]
                 info["XRD"] = self.get_xrd(atoms)
@@ -994,24 +1012,32 @@ class VaspToApiXmlSchema(object):
                 info["elements"] = elements
                 info["tmp_elements"] = '"' + elements + '"'
                 info["number_uniq_species"] = len(atoms.uniq_species)
-                method = ""
+                method = "OptB88vdW"
                 try:
                     f = open(os.path.join(folder, "..", "FUNCTIONAL"), "r")
                     lines = f.read().splitlines()
                     f.close()
                     method = lines[0]
                 except Exception:
-                    print('Cannot find "FUNCTIONAL"')
+                    print('Cannot find "FUNCTIONAL"', method)
                     pass
+
                 if method == "PBEBO":
                     method = "OptB88vdW"
                 if method == "PBEOR":
                     method = "OptPBEvdW"
                 if method == "PBEMK":
                     method = "OptB86bvdW"
+                if (
+                    "PBEBO" not in info["source_folder"]
+                    and method == "OptB88vdW"
+                ):
+                    print(
+                        "Inconsistent description, check INCAR",
+                        info["source_folder"],
+                    )
                 info["method"] = method
                 info["tmp_method"] = '"' + method + '"'
-                final_energy = vrun.final_energy
                 num_atoms = atoms.num_atoms
                 fen = ""
                 if method == "OptB88vdW":
@@ -1021,8 +1047,9 @@ class VaspToApiXmlSchema(object):
                         print("Cannot get formation energy.", exp)
                         pass
                 info["formation_energy"] = fen
+                # print ('fen=',fen)
                 rel_en = final_energy / num_atoms
-                info["relaxed_energy"] = round(rel_en, 3)
+                info["relaxed_energy"] = round(rel_en, 5)
                 spg = Spacegroup3D(atoms)
                 prim_atoms = spg.primitive_atoms
                 conv_atoms = spg.conventional_standard_structure
@@ -1083,6 +1110,13 @@ class VaspToApiXmlSchema(object):
                 except Exception as exp:
                     print("magnetization, chg", exp)
                     pass
+                if scf_indir_gap == "na":
+                    try:
+                        tmp_out = Outcar(main_outcar)
+                        scf_indir_gap = tmp_out.bandgap[0]
+                    except Exception as exp:
+                        print("Outcar bandgap issue", exp)
+                        pass
                 info["volume"] = volume
                 packing_fr = ""
                 try:
@@ -1176,17 +1210,11 @@ class VaspToApiXmlSchema(object):
                 info["dihedral_hist"] = (
                     "'" + ",".join(map(str, dhd_hist)) + "'"
                 )
-
-                scf_indir_gap = vrun.get_indir_gap[0]
-                scf_dir_gap = vrun.get_dir_gap
-                info["scf_indir_gap"] = round(scf_indir_gap, 3)
-                info["scf_dir_gap"] = round(scf_dir_gap, 3)
                 try:
-                    oszicar = Oszicar(os.path.join(folder, "OSZICAR"))
-                    magmom = oszicar.magnetic_moment
-                    info["magmom"] = round(float(magmom), 3)
-                except Exception:
-                    print("Check oszicar")
+                    info["scf_indir_gap"] = round(scf_indir_gap, 3)
+                    info["scf_dir_gap"] = round(scf_dir_gap, 3)
+                except Exception as exp:
+                    print("Error in bandgap update info.", exp)
                     pass
                 if include_dos_info:
                     main_relax_dos = self.electronic_dos_info(vrun)
