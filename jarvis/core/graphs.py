@@ -447,7 +447,11 @@ class StructureDataset(torch.utils.data.Dataset):
         """Dataloader helper to batch graphs cross `samples`."""
         graphs, labels = map(list, zip(*samples))
         batched_graph = dgl.batch(graphs)
-        return batched_graph, torch.tensor(labels)
+        device = "cpu"
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+
+        return batched_graph.to(device), torch.tensor(labels).to(device)
 
 
 """

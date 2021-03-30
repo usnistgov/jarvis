@@ -1,4 +1,4 @@
-from jarvis.core.specie import Specie
+from jarvis.core.specie import Specie,get_feats_hot_encoded
 
 
 def test_sp():
@@ -10,3 +10,4 @@ def test_sp():
         round(el.get_chgdescrp_arr[1], 2),
         round(el.get_descrp_arr[1], 2),
     ) == (13, 26.98, "Al", 12.17, 2792.11)
+    get_feats_hot_encoded()
