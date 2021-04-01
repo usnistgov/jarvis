@@ -1357,6 +1357,39 @@ def ase_to_atoms(ase_atoms=""):
     )
 
 
+def crop_squre(atoms=None, csize=10):
+    """Crop a sqaur portion from a surface/2D system."""
+    sz = csize / 2
+    # just to make sure we have enough material to crop from
+    enforce_c_size = sz * 3
+    dims = get_supercell_dims(atoms, enforce_c_size=enforce_c_size)
+    b = atoms.make_supercell_matrix(dims).center_around_origin()
+    lat_mat = [
+        [enforce_c_size, 0, 0],
+        [0, enforce_c_size, 0],
+        [0, 0, b.lattice_mat[2][2]],
+    ]
+    M = np.linalg.solve(b.lattice_mat, lat_mat)
+    tol = 3
+
+    els = []
+    coords = []
+    for i, j in zip(b.cart_coords, b.elements):
+        if i[0] <= sz and i[0] >= -sz and i[1] <= sz and i[1] >= -sz:
+            els.append(j)
+            coords.append(i)
+    coords = np.array(coords)
+    new_mat = (
+        [max(coords[:, 0]) - min(coords[:, 0]) + tol, 0, 0],
+        [0, max(coords[:, 1]) - min(coords[:, 1]) + tol, 0],
+        [0, 0, b.lattice_mat[2][2]],
+    )
+    new_atoms = Atoms(
+        lattice_mat=lat_mat, elements=els, coords=coords, cartesian=True
+    ).center_around_origin([0.5, 0.5, 0.5])
+    return new_atoms
+
+
 """
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
