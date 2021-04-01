@@ -237,6 +237,14 @@ def operate_affine(cart_coord=[], affine_matrix=[]):
     return np.dot(np.array(affine_matrix), affine_point)[0:3]
 
 
+# def get_gaussian(x,sigma):
+#    """Get Gaussian profile."""
+#    return np.exp(-x ** 2 / (2 * sigma ** 2))
+# def get_lorentzian(x,gamma):
+#    """Get Lorentziann profile."""
+#    return gamma / 2 / (np.pi * (x ** 2 + (gamma / 2) ** 2)) / (2 / (np.pi * gamma))
+
+
 # def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
 #    """Check if XML is valid."""
 #    xml_file = etree.parse(xml)
