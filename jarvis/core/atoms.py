@@ -1357,7 +1357,7 @@ def ase_to_atoms(ase_atoms=""):
     )
 
 
-def crop_squre(atoms=None, csize=10):
+def crop_square(atoms=None, csize=10):
     """Crop a sqaur portion from a surface/2D system."""
     sz = csize / 2
     # just to make sure we have enough material to crop from
