@@ -252,6 +252,18 @@ def lorentzian2(x, gamma):
     )
 
 
+def digitize_array(values=[], max_len=10):
+    """Digitze an array."""
+    has_float = False in [float(i).is_integer() for i in values]
+    if has_float:
+        arr = np.array([float(i) for i in values])
+        max_val = max(arr)
+        min_val = min(arr)
+        bins = np.arange(1, max_len + 1) * (max_val - min_val) / 10
+        values = np.digitize(arr, bins)
+    return values
+
+
 # def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
 #   """Check if XML is valid."""
 #   xml_file = etree.parse(xml)

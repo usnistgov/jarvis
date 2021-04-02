@@ -4,6 +4,8 @@ import os
 import json
 import numpy as np
 import functools
+from jarvis.core.utils import digitize_array
+from collections import defaultdict
 
 el_chem_json_file = str(
     os.path.join(os.path.dirname(__file__), "Elements.json")
@@ -271,6 +273,8 @@ def get_node_attributes(species, atom_features="atomic_number"):
         # load from json, key by atomic number
         key = str(Specie(species).element_property("Z"))
         with open(cgcnn_feature_json, "r") as f:
+            # For alternative features use
+            # get_digitized_feats_hot_encoded()
             i = json.load(f)
         return i[key]
 
@@ -363,8 +367,56 @@ keys = [
 ]
 
 
+def get_specie_data():
+    """Get the json and key data from Specie."""
+    return keys, chem_data, chrg_data
+
+
+def get_digitized_feats_hot_encoded(
+    feature_names=keys, filename="feats_encoded.json"
+):
+    """Get OneHotEncoded features with digitized features."""
+    from sklearn.preprocessing import OneHotEncoder
+    import pandas as pd
+
+    encoder = OneHotEncoder(categories="auto", sparse=False)
+    dat = defaultdict()
+    for i, j in chem_data.items():
+        tmp = defaultdict()
+        for r, s in j.items():
+            if r in feature_names:
+                tmp[r] = s
+        dat[Specie(i).Z] = tmp  # j.values()
+    df = pd.DataFrame(dat)
+    df = df.T.replace(-9999.0, 0).replace(-0.0, 0).astype("float")
+
+    for i in df.columns:
+        df[i] = digitize_array(df[i])
+    df = df.T
+
+    vals = []
+    for i in range(len(df.values)):
+        output = encoder.fit_transform(
+            np.array(df.values[i], dtype="float").reshape(-1, 1)
+        )  # .toarray()
+        vals.extend(output.T)
+    vals = np.array(vals, dtype="float").T
+    cols = df.columns.tolist()
+    new_dat = {}
+    for i, j in zip(cols, vals):
+        new_dat[i] = list(j)
+
+    if filename is not None:
+        from jarvis.db.jsonutils import dumpjson
+
+        dumpjson(data=new_dat, filename=filename)
+    return new_dat
+
+
 def get_feats_hot_encoded(feature_names=keys, filename="feats_encoded.json"):
     """Get OneHotEncoded features."""
+    # Deprecated
+    # Kept for reference only
     from sklearn.preprocessing import OneHotEncoder
     import pandas as pd
 
