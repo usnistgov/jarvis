@@ -3,7 +3,8 @@
 import numpy as np
 from scipy.interpolate import interp1d
 from numbers import Number
-from jarvis.core.utils import gaussian, lorentzian
+from jarvis.core.utils import gaussian
+from jarvis.core.utils import lorentzian2 as lorentzian
 
 
 class STEMConv(object):

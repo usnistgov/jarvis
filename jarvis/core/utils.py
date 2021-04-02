@@ -242,7 +242,7 @@ def gaussian(x, sigma):
     return np.exp(-(x ** 2) / (2 * sigma ** 2))
 
 
-def lorentzian(x, gamma):
+def lorentzian2(x, gamma):
     """Get Lorentziann profile."""
     return (
         gamma
