@@ -65,75 +65,169 @@ class QEout(object):
 class DataFileSchema(object):
     """Module to parse data-file-schema.xml file."""
 
-    def __init__(self, filename="", data={}):
+    def __init__(self, filename="", data={}, set_key=None):
         """Initialize class."""
         self.filename = filename
         self.data = data
+        self.set_key = set_key
         if self.data == {}:
             self.xml_to_dict()
 
     def xml_to_dict(self):
         """Read XML file."""
-        with open(self.filename) as fd:
-            data = xmltodict.parse(fd.read())
-            self.data = data
+        if ".gz" in self.filename:
+            import gzip
+
+            with open(self.filename, "rb") as f:
+                file_content = f.read()
+                self.data = xmltodict.parse(file_content)
+        else:
+            with open(self.filename) as fd:
+                data = xmltodict.parse(fd.read())
+                self.data = data
+        if self.set_key is None:
+            if "step" in self.data["qes:espresso"]:
+                self.set_key = "step"
+            elif "output" in self.data["qes:espresso"]:
+                self.set_key = "output"
+            else:
+                raise ValueError("Inconsisten QE version.")
 
     @property
     def final_energy(self):
         """Get final energy."""
-        return float(
-            self.data["qes:espresso"]["step"][-1]["total_energy"]["etot"]
-        )
+        line = self.data["qes:espresso"][self.set_key]
+        if isinstance(line, list):
+            line = line[-1]
+        return float(line["total_energy"]["etot"])
 
     @property
     def forces(self):
         """Get final forces."""
+        line = self.data["qes:espresso"][self.set_key]
+        if isinstance(line, list):
+            line = line[-1]
         return [
             [float(j) for j in i.split()]
-            for i in self.data["qes:espresso"]["step"][-1]["forces"][
-                "#text"
-            ].split("\n")
+            for i in line["forces"]["#text"].split("\n")
         ]
 
     @property
-    def final_structure(self):
-        """Get final atoms."""
+    def initial_structure(self):
+        """Get input atoms."""
+        line = self.data["qes:espresso"]["input"]
+        if isinstance(line, list):
+            line = line[-1]
         elements = []
         pos = []
         lat = []
         lat.append(
-            [
-                float(i)
-                for i in self.data["qes:espresso"]["step"][-1][
-                    "atomic_structure"
-                ]["cell"]["a1"].split()
-            ]
+            [float(i) for i in line["atomic_structure"]["cell"]["a1"].split()]
         )
         lat.append(
-            [
-                float(i)
-                for i in self.data["qes:espresso"]["step"][-1][
-                    "atomic_structure"
-                ]["cell"]["a2"].split()
-            ]
+            [float(i) for i in line["atomic_structure"]["cell"]["a2"].split()]
         )
         lat.append(
-            [
-                float(i)
-                for i in self.data["qes:espresso"]["step"][-1][
-                    "atomic_structure"
-                ]["cell"]["a3"].split()
+            [float(i) for i in line["atomic_structure"]["cell"]["a3"].split()]
+        )
+        if isinstance(
+            line["atomic_structure"]["atomic_positions"]["atom"], list
+        ):
+            for i in line["atomic_structure"]["atomic_positions"]["atom"]:
+                elements.append(i["@name"])
+                pos.append([float(j) for j in i["#text"].split()])
+            atoms = Atoms(
+                elements=elements, coords=pos, lattice_mat=lat, cartesian=True
+            )
+        else:
+            elements = [
+                line["atomic_structure"]["atomic_positions"]["atom"]["@name"]
             ]
-        )
-        for i in self.data["qes:espresso"]["step"][-1]["atomic_structure"][
-            "atomic_positions"
-        ]["atom"]:
-            elements.append(i["@name"])
-            pos.append([float(j) for j in i["#text"].split()])
-        atoms = Atoms(
-            elements=elements, coords=pos, lattice_mat=lat, cartesian=True
-        )
+            pos = [
+                [
+                    float(j)
+                    for j in line["atomic_structure"]["atomic_positions"][
+                        "atom"
+                    ]["#text"].split()
+                ]
+            ]
+            atoms = Atoms(
+                elements=elements, coords=pos, lattice_mat=lat, cartesian=True
+            )
         return atoms
+
+    @property
+    def final_structure(self):
+        """Get final atoms."""
+        line = self.data["qes:espresso"][self.set_key]
+        if isinstance(line, list):
+            line = line[-1]
+        elements = []
+        pos = []
+        lat = []
+        lat.append(
+            [float(i) for i in line["atomic_structure"]["cell"]["a1"].split()]
+        )
+        lat.append(
+            [float(i) for i in line["atomic_structure"]["cell"]["a2"].split()]
+        )
+        lat.append(
+            [float(i) for i in line["atomic_structure"]["cell"]["a3"].split()]
+        )
+        if isinstance(
+            line["atomic_structure"]["atomic_positions"]["atom"], list
+        ):
+            for i in line["atomic_structure"]["atomic_positions"]["atom"]:
+                elements.append(i["@name"])
+                pos.append([float(j) for j in i["#text"].split()])
+            atoms = Atoms(
+                elements=elements, coords=pos, lattice_mat=lat, cartesian=True
+            )
+        else:
+            elements = [
+                line["atomic_structure"]["atomic_positions"]["atom"]["@name"]
+            ]
+            pos = [
+                [
+                    float(j)
+                    for j in line["atomic_structure"]["atomic_positions"][
+                        "atom"
+                    ]["#text"].split()
+                ]
+            ]
+            atoms = Atoms(
+                elements=elements, coords=pos, lattice_mat=lat, cartesian=True
+            )
+        return atoms
+
+    @property
+    def efermi(self):
+        """Get Fermi energy."""
+        return float(
+            self.data["qes:espresso"]["output"]["band_structure"][
+                "fermi_energy"
+            ]
+        )
+
+    @property
+    def functional(self):
+        """Get name of DFT functional."""
+        return self.data["qes:espresso"]["input"]["dft"]["functional"]
+
+    @property
+    def nelec(self):
+        """Get number of electrons."""
+        return int(
+            float(
+                self.data["qes:espresso"]["output"]["band_structure"]["nelec"]
+            )
+        )
+
+    @property
+    def indir_gap(self):
+        eigs = self.bandstruct_eigvals()
+        nelec = self.nelec
+        return min(eigs[:, 4]) - max(eigs[:, 3])
 
     def bandstruct_eigvals(self, plot=False, filename="band.png"):
         """Get eigenvalues to plot bandstructure."""
@@ -141,9 +235,7 @@ class DataFileSchema(object):
         #    self.data["qes:espresso"]["output"]["band_structure"]["nbnd"]
         # )
         nkpts = int(
-            self.data["qes:espresso"]["output"]["band_structure"][
-                "starting_k_points"
-            ]["nk"]
+            self.data["qes:espresso"]["output"]["band_structure"]["nks"]
         )
         eigvals = []
         for i in range(nkpts):
@@ -156,6 +248,7 @@ class DataFileSchema(object):
                 .split()
             ]
             eigvals.append(eig)
+        # Eigenvalues for each k-point
         eigvals = np.array(eigvals)
         if plot:
             import matplotlib.pyplot as plt

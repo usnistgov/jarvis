@@ -6,7 +6,6 @@ import numpy as np
 from collections import OrderedDict
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.core.specie import get_node_attributes
-import warnings
 from typing import List, Tuple
 from jarvis.core.atoms import Atoms
 from collections import defaultdict
@@ -16,7 +15,7 @@ try:
     from tqdm import tqdm
     import dgl
 except Exception as exp:
-    warnings.warn("dgl/torch/tqdm is not installed.", exp)
+    print("dgl/torch/tqdm is not installed.", exp)
     pass
 
 
@@ -61,10 +60,31 @@ class Graph(object):
         atom_features="cgcnn",
         enforce_undirected=False,
         max_attempts=3,
+        include_prdf_angles=False,
+        partial_rcut=4.0,
         id=None,
     ):
         """Obtain a DGLGraph for Atoms object."""
-        all_neighbors = atoms.get_all_neighbors(r=cutoff)
+        if include_prdf_angles:
+            (
+                all_neighbors,
+                prdf_arr,
+                pangle_arr,
+                pval,
+                aval,
+                nbor,
+            ) = atoms.atomwise_angle_and_radial_distribution(r=cutoff)
+            pval = np.fliplr(np.sort(pval))[:, 0:max_neighbors]
+            aval = np.fliplr(np.sort(aval))[:, 0:max_neighbors]
+            # if len(aval[-1])<max_neighbors:
+            #    extra=max_neighbors-len(aval[0])
+            #    aval=np.fliplr(np.sort(np.pad(aval, ((0,0),(0,extra)), mode='constant', constant_values=0)))[:,0:max_neighbors]
+            #    #print ('Here',len(aval[0]),max_neighbors,extra)
+            #    #print(aval)
+            # else:
+            #    aval=np.fliplr(np.sort(aval))[:,0:max_neighbors]
+        else:
+            all_neighbors = atoms.get_all_neighbors(r=cutoff)
         # if a site has too few neighbors, increase the cutoff radius
         min_nbrs = min(len(neighborlist) for neighborlist in all_neighbors)
         # print('min_nbrs,max_neighbors=',min_nbrs,max_neighbors)
@@ -104,7 +124,7 @@ class Graph(object):
         # so what's left is the odd ones out
         edges = defaultdict(list)
 
-        u, v, r = [], [], []
+        u, v, r, prdf, adf = [], [], [], [], []
         for site_idx, neighborlist in enumerate(all_neighbors):
 
             # sort on distance
@@ -125,7 +145,9 @@ class Graph(object):
             u.append([site_idx] * len(ids))
             v.append(ids)
             r.append(distances)
-
+            if include_prdf_angles:
+                prdf.append(pval[site_idx])
+                adf.append(aval[site_idx])
             # keep track of cell-resolved edges
             # to enforce undirected graph construction
             for dst, cell_id in zip(ids, c):
@@ -145,20 +167,57 @@ class Graph(object):
 
         u = torch.tensor(np.hstack(u))
         v = torch.tensor(np.hstack(v))
-        r = torch.tensor(np.hstack(r)).type(torch.get_default_dtype())
+        r = np.hstack(r)
+        # r = torch.tensor(np.array(r)).type(torch.get_default_dtype())
+        if include_prdf_angles:
+            prdf = np.array(prdf)
+            adf = np.array(adf)
+            prdf = np.hstack(prdf)
+            adf = np.cos(np.hstack(adf))
+            if len(r) != len(prdf):
+                prdf = np.append(prdf, np.zeros(len(r) - len(prdf)))
+            if len(r) != len(adf):
+                adf = np.append(adf, np.zeros(len(r) - len(adf)))
+            prdf = torch.tensor(np.array(np.hstack(prdf))).type(
+                torch.get_default_dtype()
+            )
+            adf = torch.tensor(np.array(np.hstack(adf))).type(
+                torch.get_default_dtype()
+            )
 
+        r = torch.tensor(np.array(r)).type(torch.get_default_dtype())
         # build up atom attribute tensor
         species = atoms.elements
-        node_features = torch.tensor(
-            [
-                get_node_attributes(s, atom_features=atom_features)
-                for s in species
-            ]
-        ).type(torch.get_default_dtype())
+        sps_features = []
+        for ii, s in enumerate(species):
+            feat = list(get_node_attributes(s, atom_features=atom_features))
+            # if include_prdf_angles:
+            #    feat=feat+list(prdf[ii])+list(adf[ii])
+            sps_features.append(feat)
+        sps_features = np.array(sps_features)
+        node_features = torch.tensor(sps_features).type(
+            torch.get_default_dtype()
+        )
 
         g = dgl.graph((u, v))
         g.ndata["atom_features"] = node_features
+        # g.edata["bondlength"] = r #*adf
+        # torch.tensor(np.concatenate((r[:,None],adf[:,None]),axis=1)).type(torch.get_default_dtype())
+        # tmp=torch.tensor(np.concatenate((r[:,None],adf[:,None]),axis=1)).type(torch.get_default_dtype())
+        # print (np.hstack(( r,prdf,adf )).ravel(),np.hstack(( r,prdf,adf )).ravel().shape)
+
         g.edata["bondlength"] = r
+        # torch.tensor(np.concatenate((r[:,None],adf[:,None]),axis=1)).type(torch.get_default_dtype())
+        # np.hstack(( r,prdf,adf )).ravel()
+        # torch.tensor(np.concatenate((r[:,None],adf[:,None]),axis=0)).type(torch.get_default_dtype())
+        """
+        if include_prdf_angles:
+           #pval=torch.tensor(np.array(np.hstack(pval))).type(torch.get_default_dtype())
+           #aval=torch.tensor(np.array(np.hstack(aval))).type(torch.get_default_dtype())
+           #print ('rpa',r.shape,np.hstack(prdf).shape,np.hstack(adf).shape)
+           g.edata["partial_distance"] = prdf
+           g.edata["partial_angle"] = adf
+        """
 
         return g
 
@@ -389,6 +448,7 @@ class StructureDataset(torch.utils.data.Dataset):
         transform=None,
         enforce_undirected=False,
         max_neighbors=12,
+        classification=False,
     ):
         """Initialize the class."""
         self.graphs = []
@@ -416,6 +476,10 @@ class StructureDataset(torch.utils.data.Dataset):
             self.ids.append(id)
 
         self.labels = torch.tensor(self.labels).type(torch.get_default_dtype())
+        if classification:
+            self.labels = self.labels.view(-1).long()
+            print("Classification dataset.", self.labels)
+
         self.transform = transform
 
     def __len__(self):

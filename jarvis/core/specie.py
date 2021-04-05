@@ -404,8 +404,7 @@ def get_digitized_feats_hot_encoded(
     cols = df.columns.tolist()
     new_dat = {}
     for i, j in zip(cols, vals):
-        new_dat[i] = list(j)
-
+        new_dat[int(i)] = list([int(m) for m in j])
     if filename is not None:
         from jarvis.db.jsonutils import dumpjson
 
@@ -448,6 +447,7 @@ def get_feats_hot_encoded(feature_names=keys, filename="feats_encoded.json"):
     return new_dat
 
 
+# get_digitized_feats_hot_encoded()
 """
 if __name__ == "__main__":
     el = Specie("Al")
