@@ -590,6 +590,127 @@ class Atoms(object):
                         neighbors[i].append([i, j, d[i], image])
         return np.array(neighbors, dtype="object")
 
+    def get_neighbors_cutoffs(self, max_cut=10, r=5, bond_tol=0.15):
+        neighbors = self.get_all_neighbors(r=r, bond_tol=bond_tol)
+        dists = np.hstack(([[xx[2] for xx in yy] for yy in neighbors]))
+        hist, bins = np.histogram(dists, bins=np.arange(0.1, 10.2, 0.1))
+        shell_vol = (
+            4.0
+            / 3.0
+            * np.pi
+            * (np.power(bins[1:], 3) - np.power(bins[:-1], 3))
+        )
+        arr = []
+        for i, j in zip(bins[:-1], hist):
+            if j > 0:
+                arr.append(i)
+        rcut_buffer = 0.11
+        io1 = 0
+        io2 = 1
+        io3 = 2
+        try:
+            delta = arr[io2] - arr[io1]
+            while delta < rcut_buffer and arr[io2] < max_cut:
+                io1 = io1 + 1
+                io2 = io2 + 1
+                io3 = io3 + 1
+                delta = arr[io2] - arr[io1]
+
+            rcut1 = (arr[io2] + arr[io1]) / float(2.0)
+        except Exception:
+            print("Warning:Setting first nbr cut-off as minimum bond-dist")
+            rcut1 = arr[0]
+            pass
+        try:
+            delta = arr[io3] - arr[io2]
+            while (
+                delta < rcut_buffer
+                and arr[io3] < max_cut
+                and arr[io2] < max_cut
+            ):
+                io2 = io2 + 1
+                io3 = io3 + 1
+                delta = arr[io3] - arr[io2]
+            rcut2 = float(arr[io3] + arr[io2]) / float(2.0)
+        except Exception:
+            print("Warning:Setting first and second nbr cut-off equal")
+            print("You might consider increasing max_n parameter")
+            rcut2 = rcut1
+            pass
+        return rcut1, rcut2, neighbors
+
+    def atomwise_angle_and_radial_distribution(
+        self, r=5, bond_tol=0.15, c_size=10, verbose=False
+    ):
+        rcut1, rcut2, neighbors = self.get_neighbors_cutoffs(
+            r=r, bond_tol=bond_tol
+        )
+        from jarvis.analysis.structure.neighbors import NeighborsAnalysis
+        from jarvis.core.utils import bond_angle as angle
+
+        nbor_info = NeighborsAnalysis(
+            self, rcut1=rcut1, rcut2=rcut2
+        ).nbor_list(rcut=rcut1, c_size=c_size)
+        nat = nbor_info["nat"]
+        dist = nbor_info["dist"]
+        atom_rdfs = []
+        nbins = 180
+        actual_prdf = []
+        # actual_pangs = []
+        actual_pangs = np.zeros((nat, 380))
+        for i in range(nat):
+            hist, bins = np.histogram(
+                dist[:, i], bins=np.arange(0.1, rcut1 + 0.2, 0.1)
+            )
+            actual_prdf.append(dist[:, i])
+            atom_rdfs.append(hist.tolist())
+            if verbose:
+                exact_dists = np.arange(0.1, rcut1 + 0.2, 0.1)[hist.nonzero()]
+                print("exact_dists", exact_dists)
+        # prdf_arr = np.array(atom_rdfs)[0 : self.num_atoms]
+
+        atom_angles = []
+        for i in range(nbor_info["nat"]):
+            angles = [
+                angle(
+                    nbor_info["dist"][in1][i],
+                    nbor_info["dist"][in2][i],
+                    nbor_info["bondx"][in1][i],
+                    nbor_info["bondx"][in2][i],
+                    nbor_info["bondy"][in1][i],
+                    nbor_info["bondy"][in2][i],
+                    nbor_info["bondz"][in1][i],
+                    nbor_info["bondz"][in2][i],
+                )
+                for in1 in range(nbor_info["nn"][i])
+                for in2 in range(nbor_info["nn"][i])
+                if in2 > in1
+                and nbor_info["dist"][in1][i] * nbor_info["dist"][in2][i] != 0
+            ]
+            ang_hist, ang_bins = np.histogram(
+                angles,
+                bins=np.arange(1, nbins + 2, 1),
+                density=False,
+            )
+            for jj, j in enumerate(angles):
+                actual_pangs[i, jj] = j
+            # actual_pangs.append(angles)
+            atom_angles.append(ang_hist)
+            if verbose:
+                exact_angles = np.arange(1, nbins + 2, 1)[ang_hist.nonzero()]
+                print("exact_angles", exact_angles)
+        # return (atom_angles)#/nbor_info['nat']
+
+        pangle_arr = np.array(atom_angles)[0 : self.num_atoms]
+        return (
+            neighbors,
+            np.array(atom_rdfs)[0 : self.num_atoms],
+            np.array(atom_angles)[0 : self.num_atoms],
+            np.array(actual_prdf[0 : self.num_atoms]),
+            np.array(actual_pangs[0 : self.num_atoms]),
+            nbor_info,
+        )
+
     @property
     def raw_distance_matrix(self):
         """Provide distance matrix."""

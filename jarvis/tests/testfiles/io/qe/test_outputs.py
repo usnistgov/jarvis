@@ -22,8 +22,11 @@ def test_outputs():
     dxml = DataFileSchema(filename=xml)
     print(dxml.final_energy)
     print(dxml.forces)
+    print(dxml.indir_gap)
+    print(dxml.functional)
+    print(dxml.initial_structure)
+    print(dxml.initial_structure)
     print(dxml.final_structure)
     print(dxml.bandstruct_eigvals(plot=True))
     cmd = "rm band.png"
     os.system(cmd)
-    

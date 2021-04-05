@@ -264,6 +264,30 @@ def digitize_array(values=[], max_len=10):
     return values
 
 
+def bond_angle(
+    dist1,
+    dist2,
+    bondx1,
+    bondx2,
+    bondy1,
+    bondy2,
+    bondz1,
+    bondz2,
+):
+    """Get an angle."""
+    nm = dist1 * dist2
+    rrx = bondx1 * bondx2
+    rry = bondy1 * bondy2
+    rrz = bondz1 * bondz2
+    cos = (rrx + rry + rrz) / (nm)
+    if cos <= -1.0:
+        cos = cos + 0.000001
+    if cos >= 1.0:
+        cos = cos - 0.000001
+    deg = math.degrees(math.acos(cos))
+    return deg
+
+
 # def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
 #   """Check if XML is valid."""
 #   xml_file = etree.parse(xml)

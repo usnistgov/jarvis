@@ -11,6 +11,9 @@ def test_graph():
     for i in feature_sets:
         g = Graph.atom_dgl_multigraph(atoms=atoms, atom_features=i)
         print(i, g)
+    g = Graph.from_atoms(
+        atoms=atoms, features="atomic_number", include_prdf_angles=True
+    )
     g = Graph.from_atoms(atoms=atoms, features="atomic_number")
     g = Graph.from_atoms(atoms=atoms, features="atomic_fraction")
     g = Graph.from_atoms(
