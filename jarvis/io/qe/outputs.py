@@ -227,7 +227,7 @@ class DataFileSchema(object):
     def indir_gap(self):
         eigs = self.bandstruct_eigvals()
         nelec = self.nelec
-        return min(eigs[:, 4]) - max(eigs[:, 3])
+        return min(eigs[:, nelec+1]) - max(eigs[:, nelec])
 
     def bandstruct_eigvals(self, plot=False, filename="band.png"):
         """Get eigenvalues to plot bandstructure."""
