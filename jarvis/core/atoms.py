@@ -336,7 +336,7 @@ class Atoms(object):
                         tmp[occupancy_index].split("(")[0]
                     ).is_integer()
                 ):
-
+                    tmp = " -p vasp --vasp-cartesian-positions --vca -o "
                     try:
 
                         if use_cif2cell:
@@ -344,12 +344,7 @@ class Atoms(object):
                             # tested on version 2.0.0a3
                             try:
                                 new_file, fname = tempfile.mkstemp()
-                                cmd = (
-                                    "cif2cell "
-                                    + filename
-                                    + " -p vasp --vasp-cartesian-positions --vca -o "
-                                    + fname
-                                )
+                                cmd = "cif2cell " + filename + tmp + fname
                                 os.system(cmd)
                             except Exception as exp:
                                 print(exp)

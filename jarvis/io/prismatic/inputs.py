@@ -1,5 +1,8 @@
 """Module to prepare input file for prismatic."""
+
 # Use jarvis.core.atoms.crop_squre for non rectangles
+
+
 def write_prismatic_xyz(atoms=None):
     """Write Atoms in prismatic format."""
     from jarvis.core.specie import Specie

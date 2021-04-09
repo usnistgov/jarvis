@@ -136,6 +136,11 @@ class Specie(object):
         """Get atomic radii."""
         return self.element_property("atom_rad")
 
+    @property
+    def X(self):
+        """Get electronegativity."""
+        return self.element_property("X")
+
     def element_property(self, key=""):
         """
         Get element property from the list of keys.
