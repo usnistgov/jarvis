@@ -1,0 +1,74 @@
+data_34-ICSD
+#©2015 by Fachinformationszentrum Karlsruhe, and the U.S. Secretary of 
+#Commerce on behalf of the United States.  All rights reserved.
+_database_code_ICSD                34
+_audit_creation_date               1985/10/25
+_audit_update_record               2005/10/01
+_chemical_name_systematic          'Boron Arsenide (12.2/1.8)'
+_chemical_formula_structural       'B12 (As1.808 B0.192)'
+_chemical_formula_sum              'As1.808 B12.192'
+_exptl_crystal_density_meas        3.45
+_chemical_formula_weight           267.2631
+_publ_section_title                'Borreiches Borarsenid'
+loop_
+_citation_id
+_citation_journal_abbrev
+_citation_year
+_citation_journal_volume
+_citation_page_first
+_citation_page_last
+_citation_journal_id_ASTM
+primary 'Acta Crystallographica B (24,1968-38,1982)' 1976 32 972 973 ACBCAR
+_publ_author_name                  'Amberger, E.;Rauh, P.A.'
+_cell_length_a                     5.3370(3)
+_cell_length_b                     5.3370(3)
+_cell_length_c                     5.3370(3)
+_cell_angle_alpha                  70.216(3)
+_cell_angle_beta                   70.216(3)
+_cell_angle_gamma                  70.216(3)
+_cell_volume                       130.23
+_cell_formula_units_Z              1
+_symmetry_space_group_name_H-M     'R -3 m R'
+_symmetry_Int_Tables_number        166
+_symmetry_cell_setting             rhombohedral
+_refine_ls_R_factor_all            0.044
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+  1	'-z, -y, -x'
+  2	'-z, -x, -y'
+  3	'-x, -z, -y'
+  4	'-y, -z, -x'
+  5	'-y, -x, -z'
+  6	'-x, -y, -z'
+  7	'z, y, x'
+  8	'z, x, y'
+  9	'x, z, y'
+ 10	'y, z, x'
+ 11	'y, x, z'
+ 12	'x, y, z'
+loop_
+_atom_type_symbol
+_atom_type_oxidation_number
+As0+	0
+B0+	0
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_symmetry_multiplicity
+_atom_site_Wyckoff_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_attached_hydrogens
+_atom_site_B_iso_or_equiv
+As1 As0+ 2 c 0.3999(1) 0.3999(1) 0.3999(1) 0.904 0 0.36(3) 
+Br1 B0+ 2 c 0.3999(1) 0.3999(1) 0.3999(1) 0.096 0 0.36(3) 
+Br2 B0+ 6 h 0.8208(1) 0.8208(11) 0.2755(19) 1. 0 0.89(3) 
+Br3 B0+ 6 h 0.9826(11) 0.9826(11) 0.6755(91) 1. 0 0.88(3) 
+
+#End of data_34-ICSD
+
+
+

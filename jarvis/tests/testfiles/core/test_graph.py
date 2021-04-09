@@ -10,9 +10,10 @@ def test_graph():
     feature_sets = ("atomic_number", "basic", "cfid", "cgcnn")
     for i in feature_sets:
         g = Graph.atom_dgl_multigraph(atoms=atoms, atom_features=i)
+        g = Graph.atom_dgl_multigraph(atoms=atoms, atom_features=i,include_prdf_angles=True)
         print(i, g)
     g = Graph.from_atoms(
-        atoms=atoms, features="atomic_number", include_prdf_angles=True
+        atoms=atoms, features="atomic_number"
     )
     g = Graph.from_atoms(atoms=atoms, features="atomic_number")
     g = Graph.from_atoms(atoms=atoms, features="atomic_fraction")
