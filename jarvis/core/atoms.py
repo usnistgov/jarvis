@@ -11,7 +11,9 @@ from jarvis.core.utils import (
     check_duplicate_coords,
     get_new_coord_for_xyz_sym,
 )
+import os
 import math
+import tempfile
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
@@ -175,7 +177,12 @@ class Atoms(object):
         f.close()
 
     @staticmethod
-    def from_cif(filename="atoms.cif", from_string=""):
+    def from_cif(
+        filename="atoms.cif",
+        from_string="",
+        get_primitive_atoms=True,
+        use_cif2cell=True,
+    ):
         """Read .cif format file."""
         # Warnings:
         # May not work for:
@@ -235,7 +242,7 @@ class Atoms(object):
         terminate = False
         count = 0
         while not terminate:
-            print("sym_xyz_line", sym_xyz_line)
+            # print("sym_xyz_line", sym_xyz_line)
             tmp = lines[sym_xyz_line + count + 1]
             if "x" in tmp and "y" in tmp and "z" in tmp:
                 # print("tmp", tmp)
@@ -329,6 +336,75 @@ class Atoms(object):
                         tmp[occupancy_index].split("(")[0]
                     ).is_integer()
                 ):
+
+                    try:
+
+                        if use_cif2cell:
+                            # https://pypi.org/project/cif2cell/
+                            # tested on version 2.0.0a3
+                            try:
+                                new_file, fname = tempfile.mkstemp()
+                                cmd = (
+                                    "cif2cell "
+                                    + filename
+                                    + " -p vasp --vasp-cartesian-positions --vca -o "
+                                    + fname
+                                )
+                                os.system(cmd)
+                            except Exception as exp:
+                                print(exp)
+                            f = open(fname, "r")
+                            text = f.read().splitlines()
+                            f.close()
+                            elements = (
+                                text[0].split("Species order:")[1].split()
+                            )
+                            scale = float(text[1])
+                            lattice_mat = []
+                            lattice_mat.append(
+                                [float(i) for i in text[2].split()]
+                            )
+                            lattice_mat.append(
+                                [float(i) for i in text[3].split()]
+                            )
+                            lattice_mat.append(
+                                [float(i) for i in text[4].split()]
+                            )
+                            lattice_mat = scale * np.array(lattice_mat)
+                            uniq_elements = elements
+                            element_count = np.array(
+                                [int(i) for i in text[5].split()]
+                            )
+                            elements = []
+                            for i, ii in enumerate(element_count):
+                                for j in range(ii):
+                                    elements.append(uniq_elements[i])
+                            cartesian = True
+                            if "d" in text[6] or "D" in text[6]:
+                                cartesian = False
+                            # print ('cartesian poscar=',cartesian,text[7])
+                            num_atoms = int(np.sum(element_count))
+                            coords = []
+                            for i in range(num_atoms):
+                                coords.append(
+                                    [
+                                        float(i)
+                                        for i in text[7 + i].split()[0:3]
+                                    ]
+                                )
+                            coords = np.array(coords)
+                            atoms = Atoms(
+                                lattice_mat=lattice_mat,
+                                coords=coords,
+                                elements=elements,
+                                cartesian=cartesian,
+                            )
+                            if get_primitive_atoms:
+                                atoms = atoms.get_primitive_atoms
+                            return atoms
+
+                    except Exception as exp:
+                        print(exp)
                     raise ValueError(
                         "Fractional occupancy is not supported.",
                         float(tmp[occupancy_index].split("(")[0]),
@@ -401,6 +477,8 @@ class Atoms(object):
                 cartesian=False,
             )
             cif_atoms = new_atoms
+        if get_primitive_atoms:
+            cif_atoms = cif_atoms.get_primitive_atoms
         return cif_atoms
 
     def write_poscar(self, filename="POSCAR"):

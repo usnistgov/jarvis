@@ -64,7 +64,39 @@ class Graph(object):
         partial_rcut=4.0,
         id=None,
     ):
+
         """Obtain a DGLGraph for Atoms object."""
+        dists = atoms.raw_distance_matrix
+
+        def cos_formula(a, b, c):
+            """formula to calculate the angle between two edges
+            a and b are the edge lengths, c is the angle length.
+            """
+            res = (a ** 2 + b ** 2 - c ** 2) / (2 * a * b)
+
+            # sanity check
+            res = -1.0 if res < -1.0 else res
+            res = 1.0 if res > 1.0 else res
+            return np.arccos(res)
+
+        def bond_to_bond_feats(nb):
+            tmp = 0
+            angles_tmp = []
+            for ii, i in enumerate(nb):
+                tmp = ii + 1
+                if tmp > len(nb) - 1:
+                    tmp = 0
+                ang = 0
+                try:
+                    ang = cos_formula(
+                        i[2], nb[tmp][2], dists[i[1], nb[tmp][1]]
+                    )
+                except Exception as exp:
+                    print("Setting angle zeros", id, exp)
+                    pass
+                angles_tmp.append(ang)
+            return np.array(angles_tmp)
+
         if include_prdf_angles:
             (
                 all_neighbors,
@@ -76,18 +108,12 @@ class Graph(object):
             ) = atoms.atomwise_angle_and_radial_distribution(r=cutoff)
             pval = np.fliplr(np.sort(pval))[:, 0:max_neighbors]
             aval = np.fliplr(np.sort(aval))[:, 0:max_neighbors]
-            # if len(aval[-1])<max_neighbors:
-            #    extra=max_neighbors-len(aval[0])
-            #    aval=np.fliplr(np.sort(np.pad(aval, ((0,0),(0,extra)), mode='constant', constant_values=0)))[:,0:max_neighbors]
-            #    #print ('Here',len(aval[0]),max_neighbors,extra)
-            #    #print(aval)
-            # else:
-            #    aval=np.fliplr(np.sort(aval))[:,0:max_neighbors]
         else:
             all_neighbors = atoms.get_all_neighbors(r=cutoff)
         # if a site has too few neighbors, increase the cutoff radius
         min_nbrs = min(len(neighborlist) for neighborlist in all_neighbors)
         # print('min_nbrs,max_neighbors=',min_nbrs,max_neighbors)
+
         attempt = 0
         while min_nbrs < max_neighbors:
             print("extending cutoff radius!", attempt, cutoff, id)
@@ -124,7 +150,7 @@ class Graph(object):
         # so what's left is the odd ones out
         edges = defaultdict(list)
 
-        u, v, r, prdf, adf = [], [], [], [], []
+        u, v, r, w, prdf, adf = [], [], [], [], [], []
         for site_idx, neighborlist in enumerate(all_neighbors):
 
             # sort on distance
@@ -139,12 +165,19 @@ class Graph(object):
 
             # keep all edges out to the neighbor shell of the k-th neighbor
             ids = ids[distances <= max_dist]
+            new_angles = bond_to_bond_feats(neighborlist)
+            try:
+                new_angles = new_angles[ids - 1]
+            except Exception as exp:
+                new_angles = np.zeros(len(ids))
+                pass
             c = c[distances <= max_dist]
             distances = distances[distances <= max_dist]
-
             u.append([site_idx] * len(ids))
             v.append(ids)
             r.append(distances)
+            w.append(new_angles)
+
             if include_prdf_angles:
                 prdf.append(pval[site_idx])
                 adf.append(aval[site_idx])
@@ -165,9 +198,13 @@ class Graph(object):
                     v.append(src)
                     r.append(atoms.raw_distance_matrix[src, dst])
 
-        u = torch.tensor(np.hstack(u))
-        v = torch.tensor(np.hstack(v))
+        u = np.hstack(u)
+        v = np.hstack(v)
         r = np.hstack(r)
+        w = np.hstack(w)
+        u = torch.tensor(u)
+        v = torch.tensor(v)
+        w = torch.tensor(w)
         # r = torch.tensor(np.array(r)).type(torch.get_default_dtype())
         if include_prdf_angles:
             prdf = np.array(prdf)
@@ -186,6 +223,7 @@ class Graph(object):
             )
 
         r = torch.tensor(np.array(r)).type(torch.get_default_dtype())
+        w = torch.tensor(np.array(w)).type(torch.get_default_dtype())
         # build up atom attribute tensor
         species = atoms.elements
         sps_features = []
@@ -202,11 +240,15 @@ class Graph(object):
         g = dgl.graph((u, v))
         g.ndata["atom_features"] = node_features
         # g.edata["bondlength"] = r #*adf
-        # torch.tensor(np.concatenate((r[:,None],adf[:,None]),axis=1)).type(torch.get_default_dtype())
-        # tmp=torch.tensor(np.concatenate((r[:,None],adf[:,None]),axis=1)).type(torch.get_default_dtype())
-        # print (np.hstack(( r,prdf,adf )).ravel(),np.hstack(( r,prdf,adf )).ravel().shape)
+        # torch.tensor(np.concatenate((r[:,None],
+        # adf[:,None]),axis=1)).type(torch.get_default_dtype())
+        # tmp=torch.tensor(np.concatenate((r[:,None],adf[:,None]),
+        # axis=1)).type(torch.get_default_dtype())
+        # print (np.hstack(( r,prdf,adf )).ravel(),
+        # np.hstack(( r,prdf,adf )).ravel().shape)
 
         g.edata["bondlength"] = r
+        g.edata["bondangle"] = w
         # torch.tensor(np.concatenate((r[:,None],adf[:,None]),axis=1)).type(torch.get_default_dtype())
         # np.hstack(( r,prdf,adf )).ravel()
         # torch.tensor(np.concatenate((r[:,None],adf[:,None]),axis=0)).type(torch.get_default_dtype())
