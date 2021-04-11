@@ -279,6 +279,11 @@ def test_vrun():
     pdos3 = vrun.projected_spins_kpoints_bands
     pdos4 = vrun.get_atom_resolved_dos(plot=True)
     pdos5 = vrun.get_spdf_dos(plot=True)
+    pdos1 = opt_vrun.partial_dos_spdf
+    pdos2 = opt_vrun.projected_atoms_spins_kpoints_bands
+    pdos3 = opt_vrun.projected_spins_kpoints_bands
+    # TODO pdos4 = opt_vrun.get_atom_resolved_dos()
+    # TODO #pdos5 = opt_vrun.get_spdf_dos()
     td = vrun.to_dict()
     fd = Vasprun.from_dict(td)
     vrun_dm = Vasprun(
@@ -318,6 +323,8 @@ def test_out():
     print()
     print("out_efg", out_efg.efg_tensor_diag())
     print()
+    # TODO: compare withvasprun gap
+    gap = out_efg.bandgap
 
 
 def test_dfpt():
