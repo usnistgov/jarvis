@@ -1,20 +1,28 @@
 from jarvis.core.graphs import StructureDataset, Graph
 from jarvis.db.figshare import data
+import os
+
+test_pos = os.path.join(
+    os.path.dirname(__file__),
+    "POSCAR-JVASP-7577",
+)
 
 
 def test_graph():
     from jarvis.core.atoms import Atoms
     from jarvis.db.figshare import get_jid_data
 
+    atoms = Atoms.from_poscar(test_pos)
+    g = g = Graph.atom_dgl_multigraph(atoms=atoms, atom_features="cgcnn")
     atoms = Atoms.from_dict(get_jid_data("JVASP-664")["atoms"])
     feature_sets = ("atomic_number", "basic", "cfid", "cgcnn")
     for i in feature_sets:
         g = Graph.atom_dgl_multigraph(atoms=atoms, atom_features=i)
-        g = Graph.atom_dgl_multigraph(atoms=atoms, atom_features=i,include_prdf_angles=True)
+        g = Graph.atom_dgl_multigraph(
+            atoms=atoms, atom_features=i, include_prdf_angles=True
+        )
         print(i, g)
-    g = Graph.from_atoms(
-        atoms=atoms, features="atomic_number"
-    )
+    g = Graph.from_atoms(atoms=atoms, features="atomic_number")
     g = Graph.from_atoms(atoms=atoms, features="atomic_number")
     g = Graph.from_atoms(atoms=atoms, features="atomic_fraction")
     g = Graph.from_atoms(
@@ -68,6 +76,7 @@ def test_dataset():
             y.append(i["formation_energy_peratom"])
             z.append(i["jid"])
     s = StructureDataset(x, y, ids=z)
+    col = s.collate
 
 
 # test_graph()

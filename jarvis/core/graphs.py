@@ -69,12 +69,8 @@ class Graph(object):
         dists = atoms.raw_distance_matrix
 
         def cos_formula(a, b, c):
-            """formula to calculate the angle between two edges
-            a and b are the edge lengths, c is the angle length.
-            """
+            """Get angle between three edges for oblique triangles."""
             res = (a ** 2 + b ** 2 - c ** 2) / (2 * a * b)
-
-            # sanity check
             res = -1.0 if res < -1.0 else res
             res = 1.0 if res > 1.0 else res
             return np.arccos(res)
@@ -92,7 +88,7 @@ class Graph(object):
                         i[2], nb[tmp][2], dists[i[1], nb[tmp][1]]
                     )
                 except Exception as exp:
-                    print("Setting angle zeros", id, exp)
+                    # print("Setting angle zeros", id, exp)
                     pass
                 angles_tmp.append(ang)
             return np.array(angles_tmp)
@@ -205,7 +201,6 @@ class Graph(object):
         u = torch.tensor(u)
         v = torch.tensor(v)
         w = torch.tensor(w)
-        # r = torch.tensor(np.array(r)).type(torch.get_default_dtype())
         if include_prdf_angles:
             prdf = np.array(prdf)
             adf = np.array(adf)
@@ -239,27 +234,11 @@ class Graph(object):
 
         g = dgl.graph((u, v))
         g.ndata["atom_features"] = node_features
-        # g.edata["bondlength"] = r #*adf
-        # torch.tensor(np.concatenate((r[:,None],
-        # adf[:,None]),axis=1)).type(torch.get_default_dtype())
-        # tmp=torch.tensor(np.concatenate((r[:,None],adf[:,None]),
-        # axis=1)).type(torch.get_default_dtype())
-        # print (np.hstack(( r,prdf,adf )).ravel(),
-        # np.hstack(( r,prdf,adf )).ravel().shape)
-
         g.edata["bondlength"] = r
         g.edata["bondangle"] = w
-        # torch.tensor(np.concatenate((r[:,None],adf[:,None]),axis=1)).type(torch.get_default_dtype())
-        # np.hstack(( r,prdf,adf )).ravel()
-        # torch.tensor(np.concatenate((r[:,None],adf[:,None]),axis=0)).type(torch.get_default_dtype())
-        """
         if include_prdf_angles:
-           #pval=torch.tensor(np.array(np.hstack(pval))).type(torch.get_default_dtype())
-           #aval=torch.tensor(np.array(np.hstack(aval))).type(torch.get_default_dtype())
-           #print ('rpa',r.shape,np.hstack(prdf).shape,np.hstack(adf).shape)
-           g.edata["partial_distance"] = prdf
-           g.edata["partial_angle"] = adf
-        """
+            g.edata["partial_distance"] = prdf
+            g.edata["partial_angle"] = adf
 
         return g
 

@@ -12,6 +12,7 @@ def normalize_vecs(phonon_eigenvectors, masses):
     Return the eigenvectors after division of each component by sqrt(mass).
 
     Adapted from https://github.com/JMSkelton/Phonopy-Spectroscopy/
+    TODO: include LO-TO splitting.
     """
     nmodes = len(phonon_eigenvectors)
     nmasses = len(masses)
@@ -32,6 +33,8 @@ def ir_intensity(
     phonon_eigenvalues=[],
     masses=[],
     born_charges=[],
+    nac=True,
+    epsilon=[],
     smoothen=True,
 ):
     """Calculate IR intensity using DFPT."""
@@ -74,12 +77,12 @@ if __name__ == "__main__":
         phonon_eigenvalues=phonon_eigenvalues,
         masses=masses,
         born_charges=born_charges,
+        smoothen=False,
     )
     for i, j in zip(x, y):
         if j > 0.1:
             print(i, j)
     print()
-    print(round(y[1], 2))
     # for i, j in zip(phonon_eigenvalues, vrun_eigs):
     #    print(i, j)
 """

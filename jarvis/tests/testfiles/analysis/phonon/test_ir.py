@@ -4,11 +4,18 @@ from jarvis.analysis.phonon.ir import ir_intensity
 import os
 
 out = Outcar(
-    os.path.join(os.path.dirname(__file__), "..", "..", "io", "vasp", "OUTCAR.JVASP-39")
+    os.path.join(
+        os.path.dirname(__file__), "..", "..", "io", "vasp", "OUTCAR.JVASP-39"
+    )
 )
 vrun = Vasprun(
     os.path.join(
-        os.path.dirname(__file__), "..", "..", "io", "vasp", "vasprun.xml.JVASP-39"
+        os.path.dirname(__file__),
+        "..",
+        "..",
+        "io",
+        "vasp",
+        "vasprun.xml.JVASP-39",
     )
 )
 
@@ -25,6 +32,9 @@ def test_ir():
         masses=masses,
         born_charges=born_charges,
     )
-    print (max(y))
-    assert max(y) == 0.3511482090386446 
+    print(max(y))
+    assert max(y) == 0.3511482090386446
+    pdos = vrun.partial_dos_spdf
+
+
 test_ir()
