@@ -7,6 +7,7 @@ import numpy as np
 import math
 import xmltodict
 import re
+import requests
 
 
 def xml_to_dict(fname):
@@ -286,6 +287,17 @@ def bond_angle(
         cos = cos - 0.000001
     deg = math.degrees(math.acos(cos))
     return deg
+
+
+def check_url_exists(
+    url="https://www.ctcms.nist.gov/~knc6/static/JARVIS-DFT/JVASP-77580.xml",
+):
+    """Check if a url exists."""
+    request = requests.get(url)
+    if request.status_code == 200:
+        return True
+    else:
+        return False
 
 
 # def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):

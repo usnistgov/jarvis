@@ -9,9 +9,9 @@ from jarvis.io.phonopy.inputs import PhonopyInputs
 # from jarvis.io.wannier.outputs import WannierHam
 from jarvis.io.phonopy.fcmat2hr import get_phonon_hr
 
+VaspToTHz = 15.633302300230191
 try:
     from phonopy import Phonopy
-    from phonopy.units import VaspToTHz
     from phonopy.structure.cells import determinant
     from phonopy.structure.cells import get_reduced_bases
 except Exception as exp:

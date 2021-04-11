@@ -22,6 +22,7 @@ from jarvis.tasks.boltztrap.run import run_boltztrap
 from jarvis.tasks.phonopy.run import run_phonopy
 from jarvis.io.phonopy.outputs import bandstructure_plot
 from jarvis.ai.pkgs.utils import get_ml_data
+from jarvis.core.utils import check_url_exists
 from jarvis.analysis.diffraction.xrd import XRD
 import numpy as np
 from jarvis.analysis.elastic.tensor import ElasticTensor
@@ -76,7 +77,7 @@ def get_figshare_files(jid="JVASP-1067"):
     return line
 
 
-icsd_mp_dat = loadjson("/rk2/knc6/JARVIS-DFT/icsd_mp_dat.json")
+icsd_mp_dat = loadjson("/home/knc6/Software/jarvis/jarvis/db/icsd_mp_dat.json")
 
 # Number of ICSDs
 # x=[]
@@ -965,6 +966,14 @@ class VaspToApiXmlSchema(object):
             print("Cannot get seel also data", exp)
             pass
         info["tmp_source_folder"] = "'" + str(self.folder) + "'"
+        see_also_url = "https://www.materialsproject.org/materials/" + str(
+            self.folder.split("_")[0].split("/")[-1]
+        )
+        if "L" in see_also_url or "POS" in see_also_url:
+            see_also_url = ""
+        # if not check_url_exists(see_also_url):
+        info["see_also"] = "'" + see_also_url + "'"
+        print('info["see_also"]', info["see_also"])
         for i, j in self.meta_data.items():
             info[i] = j
         id_file = self.meta_data["id_file"]
@@ -1954,6 +1963,11 @@ class VaspToApiXmlSchema(object):
             """
 
 
+folder = (
+    "/home/knc6/Software/jarvis/jarvis/examples/vasp/mp-149_PBEBO/mp-149_PBEBO"
+)
+filename = "JVASP-1002.xml"
+VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 """
 folder = '/rk2/knc6/JARVIS-DFT/2DRar-bulk/mp-17173_PBEBO'
 filename='/users/knc6/Software/Devs/jarvis/jarvis/db/p.xml'
@@ -1967,7 +1981,7 @@ folder = "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO"
 filename = "JVASP-664.xml"
 VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
-
+ 
 folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
 filename = "JVASP-1002.xml"
 VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
