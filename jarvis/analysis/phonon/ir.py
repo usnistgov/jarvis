@@ -38,6 +38,7 @@ def ir_intensity(
     smoothen=True,
 ):
     """Calculate IR intensity using DFPT."""
+    # TODO:add non-analytical correction
     eigendisplacements = normalize_vecs(phonon_eigenvectors, masses)
     becDim1, becDim2, becDim3 = np.shape(born_charges)
     freq = []
