@@ -1956,18 +1956,13 @@ class VaspToApiXmlSchema(object):
         # )
         # f.write(str(line))
         """
-            line = "<stm_image>" + image_to_string() + "</stm_image>"+ "\n"
-            f.write(str(line))
-            line ='</basic_info>'
-            f.write(str(line))
-            """
+        line = "<stm_image>" + image_to_string() + "</stm_image>"+ "\n"
+        f.write(str(line))
+        line ='</basic_info>'
+        f.write(str(line))
+        """
 
 
-folder = (
-    "/home/knc6/Software/jarvis/jarvis/examples/vasp/mp-149_PBEBO/mp-149_PBEBO"
-)
-filename = "JVASP-1002.xml"
-VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 """
 folder = '/rk2/knc6/JARVIS-DFT/2DRar-bulk/mp-17173_PBEBO'
 filename='/users/knc6/Software/Devs/jarvis/jarvis/db/p.xml'
@@ -1981,7 +1976,6 @@ folder = "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO"
 filename = "JVASP-664.xml"
 VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 
- 
 folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
 filename = "JVASP-1002.xml"
 VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
