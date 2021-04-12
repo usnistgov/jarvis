@@ -22,6 +22,7 @@ from jarvis.tasks.boltztrap.run import run_boltztrap
 from jarvis.tasks.phonopy.run import run_phonopy
 from jarvis.io.phonopy.outputs import bandstructure_plot
 from jarvis.ai.pkgs.utils import get_ml_data
+from jarvis.core.utils import check_url_exists
 from jarvis.analysis.diffraction.xrd import XRD
 import numpy as np
 from jarvis.analysis.elastic.tensor import ElasticTensor
@@ -76,7 +77,7 @@ def get_figshare_files(jid="JVASP-1067"):
     return line
 
 
-icsd_mp_dat = loadjson("/rk2/knc6/JARVIS-DFT/icsd_mp_dat.json")
+icsd_mp_dat = loadjson("/home/knc6/Software/jarvis/jarvis/db/icsd_mp_dat.json")
 
 # Number of ICSDs
 # x=[]
@@ -160,6 +161,10 @@ class VaspToApiXmlSchema(object):
             try:
                 band_indir_gap = str(round(vrun.get_indir_gap[0], 2))
                 band_dir_gap = str(round(vrun.get_dir_gap, 2))
+                if band_indir_gap < 0:
+                    band_indir_gap = 0
+                if band_dir_gap < 0:
+                    band_dir_gap = 0
             except Exception:
                 print("Cannot get bandgap.", kp)
                 pass
@@ -794,6 +799,10 @@ class VaspToApiXmlSchema(object):
         try:
             dirgap = round(lvrun.get_dir_gap, 3)
             indirgap = round(lvrun.get_indir_gap[0], 3)
+            if indirgap < 0:
+                indirgap = 0
+            if dirgap < 0:
+                dirgap = 0
             en, abz = lvrun.avg_absorption_coefficient
             abz = abz * 100
             eff_slme = SolarEfficiency().slme(
@@ -957,6 +966,14 @@ class VaspToApiXmlSchema(object):
             print("Cannot get seel also data", exp)
             pass
         info["tmp_source_folder"] = "'" + str(self.folder) + "'"
+        see_also_url = "https://www.materialsproject.org/materials/" + str(
+            self.folder.split("_")[0].split("/")[-1]
+        )
+        if "L" in see_also_url or "POS" in see_also_url:
+            see_also_url = ""
+        # if not check_url_exists(see_also_url):
+        info["see_also"] = "'" + see_also_url + "'"
+        print('info["see_also"]', info["see_also"])
         for i, j in self.meta_data.items():
             info[i] = j
         id_file = self.meta_data["id_file"]
@@ -975,6 +992,10 @@ class VaspToApiXmlSchema(object):
                 final_energy = vrun.final_energy
                 scf_indir_gap = vrun.get_indir_gap[0]
                 scf_dir_gap = vrun.get_dir_gap
+                if scf_indir_gap < 0:
+                    scf_indir_gap = 0
+                if scf_dir_gap < 0:
+                    scf_dir_gap = 0
 
             except Exception as exp:
                 print("Error in vasprun.xml.", exp)
@@ -1351,7 +1372,8 @@ class VaspToApiXmlSchema(object):
         return info
 
     def elastic_props(
-        self, outcar="MAIN-ELASTIC-bulk@mp-149/OUTCAR",
+        self,
+        outcar="MAIN-ELASTIC-bulk@mp-149/OUTCAR",
     ):
         """Get elastic property data."""
         out = Outcar(outcar)
@@ -1538,7 +1560,9 @@ class VaspToApiXmlSchema(object):
         info["raman_dat"] = line
         return info
 
-    def effective_mass_data(self,):
+    def effective_mass_data(
+        self,
+    ):
         """Get effective-mass data."""
         folder = self.folder
         info = {}
@@ -1697,7 +1721,8 @@ class VaspToApiXmlSchema(object):
         return info
 
     def image_to_string(
-        self, img_path="2DSTM/PNG_JSON3/JVASP-60776_mp-19795_pos.jpg",
+        self,
+        img_path="2DSTM/PNG_JSON3/JVASP-60776_mp-19795_pos.jpg",
     ):
         """Transform image to string."""
         # 2D array only
@@ -1931,11 +1956,11 @@ class VaspToApiXmlSchema(object):
         # )
         # f.write(str(line))
         """
-            line = "<stm_image>" + image_to_string() + "</stm_image>"+ "\n"
-            f.write(str(line))
-            line ='</basic_info>'
-            f.write(str(line))
-            """
+        line = "<stm_image>" + image_to_string() + "</stm_image>"+ "\n"
+        f.write(str(line))
+        line ='</basic_info>'
+        f.write(str(line))
+        """
 
 
 """
@@ -1950,7 +1975,6 @@ VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
 folder = "/rk2/knc6/JARVIS-DFT/2D-1L/POSCAR-mp-2815-1L.vasp_PBEBO"
 filename = "JVASP-664.xml"
 VaspToApiXmlSchema(folder=folder).write_xml(filename=filename)
-
 
 folder = "/rk2/knc6/JARVIS-DFT/Elements-bulkk/mp-149_bulk_PBEBO"
 filename = "JVASP-1002.xml"

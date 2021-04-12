@@ -1044,9 +1044,12 @@ class Wavecar(object):
                 % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid))
             )
         else:
-            assert Gvec.shape[0] == self._nplws[ikpt - 1], (
-                "No. of planewaves not consistent! %d %d %d"
-                % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid))
+            assert (
+                Gvec.shape[0] == self._nplws[ikpt - 1]
+            ), "No. of planewaves not consistent! %d %d %d" % (
+                Gvec.shape[0],
+                self._nplws[ikpt - 1],
+                np.prod(self._ngrid),
             )
         self._gvec = np.asarray(Gvec, dtype=int)
 
@@ -1264,6 +1267,26 @@ class Vasprun(object):
         info["masses"] = masses
         info["force_constants"] = force_constants
         return info
+
+    @property
+    def converged_electronic(self):
+        """Check whether electronically converged."""
+        return len(self.ionic_steps[-1]["scstep"]) <= int(
+            self.all_input_parameters["NELM"]
+        )
+
+    @property
+    def converged_ionic(self):
+        """Check whether ionically converged."""
+        nsw = int(self.all_input_parameters["NSW"])
+        if nsw == 0:
+            nsw = 1
+        return len(self.ionic_steps) <= nsw
+
+    @property
+    def converged(self):
+        """Check whether both electronically and ionically converged."""
+        return self.converged_electronic and self.converged_ionic
 
     @property
     def dfpt_data(self, fc_mass=True):
