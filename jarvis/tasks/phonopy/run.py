@@ -9,7 +9,7 @@ def run_phonopy(path="MAIN-ELAST"):
     os.chdir(path)
     try:
         vrun = Vasprun(os.path.join(path, "vasprun.xml"))
-        atoms = vrun.all_Structures[-1]
+        atoms = vrun.all_structures[-1]
         PhonopyInputs(atoms=atoms).generate_all_files()
         cmd = "phonopy -p meshdos.conf"
         os.system(cmd)
@@ -19,6 +19,6 @@ def run_phonopy(path="MAIN-ELAST"):
         os.system(cmd)
         cmd = "bandplot -o PBAND.png"
         os.system(cmd)
-    except Exception:
-        print("Cannot run phonopy. Check phonopy PATH and vasprun.")
+    except Exception as exp:
+        print("Cannot run phonopy. Check phonopy PATH and vasprun.", exp)
         pass
