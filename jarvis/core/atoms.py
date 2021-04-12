@@ -11,7 +11,9 @@ from jarvis.core.utils import (
     check_duplicate_coords,
     get_new_coord_for_xyz_sym,
 )
+import os
 import math
+import tempfile
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
@@ -175,7 +177,12 @@ class Atoms(object):
         f.close()
 
     @staticmethod
-    def from_cif(filename="atoms.cif", from_string=""):
+    def from_cif(
+        filename="atoms.cif",
+        from_string="",
+        get_primitive_atoms=True,
+        use_cif2cell=True,
+    ):
         """Read .cif format file."""
         # Warnings:
         # May not work for:
@@ -235,7 +242,7 @@ class Atoms(object):
         terminate = False
         count = 0
         while not terminate:
-            print("sym_xyz_line", sym_xyz_line)
+            # print("sym_xyz_line", sym_xyz_line)
             tmp = lines[sym_xyz_line + count + 1]
             if "x" in tmp and "y" in tmp and "z" in tmp:
                 # print("tmp", tmp)
@@ -329,6 +336,70 @@ class Atoms(object):
                         tmp[occupancy_index].split("(")[0]
                     ).is_integer()
                 ):
+                    tmp = " -p vasp --vasp-cartesian-positions --vca -o "
+                    try:
+
+                        if use_cif2cell:
+                            # https://pypi.org/project/cif2cell/
+                            # tested on version 2.0.0a3
+                            try:
+                                new_file, fname = tempfile.mkstemp()
+                                cmd = "cif2cell " + filename + tmp + fname
+                                os.system(cmd)
+                            except Exception as exp:
+                                print(exp)
+                            f = open(fname, "r")
+                            text = f.read().splitlines()
+                            f.close()
+                            elements = (
+                                text[0].split("Species order:")[1].split()
+                            )
+                            scale = float(text[1])
+                            lattice_mat = []
+                            lattice_mat.append(
+                                [float(i) for i in text[2].split()]
+                            )
+                            lattice_mat.append(
+                                [float(i) for i in text[3].split()]
+                            )
+                            lattice_mat.append(
+                                [float(i) for i in text[4].split()]
+                            )
+                            lattice_mat = scale * np.array(lattice_mat)
+                            uniq_elements = elements
+                            element_count = np.array(
+                                [int(i) for i in text[5].split()]
+                            )
+                            elements = []
+                            for i, ii in enumerate(element_count):
+                                for j in range(ii):
+                                    elements.append(uniq_elements[i])
+                            cartesian = True
+                            if "d" in text[6] or "D" in text[6]:
+                                cartesian = False
+                            # print ('cartesian poscar=',cartesian,text[7])
+                            num_atoms = int(np.sum(element_count))
+                            coords = []
+                            for i in range(num_atoms):
+                                coords.append(
+                                    [
+                                        float(i)
+                                        for i in text[7 + i].split()[0:3]
+                                    ]
+                                )
+                            coords = np.array(coords)
+                            atoms = Atoms(
+                                lattice_mat=lattice_mat,
+                                coords=coords,
+                                elements=elements,
+                                cartesian=cartesian,
+                            )
+                            if get_primitive_atoms:
+                                atoms = atoms.get_primitive_atoms
+                            return atoms
+
+                    except Exception as exp:
+                        print(exp)
                     raise ValueError(
                         "Fractional occupancy is not supported.",
                         float(tmp[occupancy_index].split("(")[0]),
@@ -401,6 +472,8 @@ class Atoms(object):
                 cartesian=False,
             )
             cif_atoms = new_atoms
+        if get_primitive_atoms:
+            cif_atoms = cif_atoms.get_primitive_atoms
         return cif_atoms
 
     def write_poscar(self, filename="POSCAR"):
@@ -589,6 +662,127 @@ class Atoms(object):
                     if d[i] > bond_tol:
                         neighbors[i].append([i, j, d[i], image])
         return np.array(neighbors, dtype="object")
+
+    def get_neighbors_cutoffs(self, max_cut=10, r=5, bond_tol=0.15):
+        neighbors = self.get_all_neighbors(r=r, bond_tol=bond_tol)
+        dists = np.hstack(([[xx[2] for xx in yy] for yy in neighbors]))
+        hist, bins = np.histogram(dists, bins=np.arange(0.1, 10.2, 0.1))
+        shell_vol = (
+            4.0
+            / 3.0
+            * np.pi
+            * (np.power(bins[1:], 3) - np.power(bins[:-1], 3))
+        )
+        arr = []
+        for i, j in zip(bins[:-1], hist):
+            if j > 0:
+                arr.append(i)
+        rcut_buffer = 0.11
+        io1 = 0
+        io2 = 1
+        io3 = 2
+        try:
+            delta = arr[io2] - arr[io1]
+            while delta < rcut_buffer and arr[io2] < max_cut:
+                io1 = io1 + 1
+                io2 = io2 + 1
+                io3 = io3 + 1
+                delta = arr[io2] - arr[io1]
+
+            rcut1 = (arr[io2] + arr[io1]) / float(2.0)
+        except Exception:
+            print("Warning:Setting first nbr cut-off as minimum bond-dist")
+            rcut1 = arr[0]
+            pass
+        try:
+            delta = arr[io3] - arr[io2]
+            while (
+                delta < rcut_buffer
+                and arr[io3] < max_cut
+                and arr[io2] < max_cut
+            ):
+                io2 = io2 + 1
+                io3 = io3 + 1
+                delta = arr[io3] - arr[io2]
+            rcut2 = float(arr[io3] + arr[io2]) / float(2.0)
+        except Exception:
+            print("Warning:Setting first and second nbr cut-off equal")
+            print("You might consider increasing max_n parameter")
+            rcut2 = rcut1
+            pass
+        return rcut1, rcut2, neighbors
+
+    def atomwise_angle_and_radial_distribution(
+        self, r=5, bond_tol=0.15, c_size=10, verbose=False
+    ):
+        rcut1, rcut2, neighbors = self.get_neighbors_cutoffs(
+            r=r, bond_tol=bond_tol
+        )
+        from jarvis.analysis.structure.neighbors import NeighborsAnalysis
+        from jarvis.core.utils import bond_angle as angle
+
+        nbor_info = NeighborsAnalysis(
+            self, rcut1=rcut1, rcut2=rcut2
+        ).nbor_list(rcut=rcut1, c_size=c_size)
+        nat = nbor_info["nat"]
+        dist = nbor_info["dist"]
+        atom_rdfs = []
+        nbins = 180
+        actual_prdf = []
+        # actual_pangs = []
+        actual_pangs = np.zeros((nat, 380))
+        for i in range(nat):
+            hist, bins = np.histogram(
+                dist[:, i], bins=np.arange(0.1, rcut1 + 0.2, 0.1)
+            )
+            actual_prdf.append(dist[:, i])
+            atom_rdfs.append(hist.tolist())
+            if verbose:
+                exact_dists = np.arange(0.1, rcut1 + 0.2, 0.1)[hist.nonzero()]
+                print("exact_dists", exact_dists)
+        # prdf_arr = np.array(atom_rdfs)[0 : self.num_atoms]
+
+        atom_angles = []
+        for i in range(nbor_info["nat"]):
+            angles = [
+                angle(
+                    nbor_info["dist"][in1][i],
+                    nbor_info["dist"][in2][i],
+                    nbor_info["bondx"][in1][i],
+                    nbor_info["bondx"][in2][i],
+                    nbor_info["bondy"][in1][i],
+                    nbor_info["bondy"][in2][i],
+                    nbor_info["bondz"][in1][i],
+                    nbor_info["bondz"][in2][i],
+                )
+                for in1 in range(nbor_info["nn"][i])
+                for in2 in range(nbor_info["nn"][i])
+                if in2 > in1
+                and nbor_info["dist"][in1][i] * nbor_info["dist"][in2][i] != 0
+            ]
+            ang_hist, ang_bins = np.histogram(
+                angles,
+                bins=np.arange(1, nbins + 2, 1),
+                density=False,
+            )
+            for jj, j in enumerate(angles):
+                actual_pangs[i, jj] = j
+            # actual_pangs.append(angles)
+            atom_angles.append(ang_hist)
+            if verbose:
+                exact_angles = np.arange(1, nbins + 2, 1)[ang_hist.nonzero()]
+                print("exact_angles", exact_angles)
+        # return (atom_angles)#/nbor_info['nat']
+
+        pangle_arr = np.array(atom_angles)[0 : self.num_atoms]
+        return (
+            neighbors,
+            np.array(atom_rdfs)[0 : self.num_atoms],
+            np.array(atom_angles)[0 : self.num_atoms],
+            np.array(actual_prdf[0 : self.num_atoms]),
+            np.array(actual_pangs[0 : self.num_atoms]),
+            nbor_info,
+        )
 
     @property
     def raw_distance_matrix(self):
@@ -1355,6 +1549,39 @@ def ase_to_atoms(ase_atoms=""):
         coords=ase_atoms.get_positions(),
         pbc=True,
     )
+
+
+def crop_square(atoms=None, csize=10):
+    """Crop a sqaur portion from a surface/2D system."""
+    sz = csize / 2
+    # just to make sure we have enough material to crop from
+    enforce_c_size = sz * 3
+    dims = get_supercell_dims(atoms, enforce_c_size=enforce_c_size)
+    b = atoms.make_supercell_matrix(dims).center_around_origin()
+    lat_mat = [
+        [enforce_c_size, 0, 0],
+        [0, enforce_c_size, 0],
+        [0, 0, b.lattice_mat[2][2]],
+    ]
+    M = np.linalg.solve(b.lattice_mat, lat_mat)
+    tol = 3
+
+    els = []
+    coords = []
+    for i, j in zip(b.cart_coords, b.elements):
+        if i[0] <= sz and i[0] >= -sz and i[1] <= sz and i[1] >= -sz:
+            els.append(j)
+            coords.append(i)
+    coords = np.array(coords)
+    new_mat = (
+        [max(coords[:, 0]) - min(coords[:, 0]) + tol, 0, 0],
+        [0, max(coords[:, 1]) - min(coords[:, 1]) + tol, 0],
+        [0, 0, b.lattice_mat[2][2]],
+    )
+    new_atoms = Atoms(
+        lattice_mat=lat_mat, elements=els, coords=coords, cartesian=True
+    ).center_around_origin([0.5, 0.5, 0.5])
+    return new_atoms
 
 
 """

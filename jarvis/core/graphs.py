@@ -6,7 +6,6 @@ import numpy as np
 from collections import OrderedDict
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.core.specie import get_node_attributes
-import warnings
 from typing import List, Tuple
 from jarvis.core.atoms import Atoms
 from collections import defaultdict
@@ -16,7 +15,7 @@ try:
     from tqdm import tqdm
     import dgl
 except Exception as exp:
-    warnings.warn("dgl/torch/tqdm is not installed.", exp)
+    print("dgl/torch/tqdm is not installed.", exp)
     pass
 
 
@@ -61,13 +60,56 @@ class Graph(object):
         atom_features="cgcnn",
         enforce_undirected=False,
         max_attempts=3,
+        include_prdf_angles=False,
+        partial_rcut=4.0,
         id=None,
     ):
+
         """Obtain a DGLGraph for Atoms object."""
-        all_neighbors = atoms.get_all_neighbors(r=cutoff)
+        dists = atoms.raw_distance_matrix
+
+        def cos_formula(a, b, c):
+            """Get angle between three edges for oblique triangles."""
+            res = (a ** 2 + b ** 2 - c ** 2) / (2 * a * b)
+            res = -1.0 if res < -1.0 else res
+            res = 1.0 if res > 1.0 else res
+            return np.arccos(res)
+
+        def bond_to_bond_feats(nb):
+            tmp = 0
+            angles_tmp = []
+            for ii, i in enumerate(nb):
+                tmp = ii + 1
+                if tmp > len(nb) - 1:
+                    tmp = 0
+                ang = 0
+                try:
+                    ang = cos_formula(
+                        i[2], nb[tmp][2], dists[i[1], nb[tmp][1]]
+                    )
+                except Exception as exp:
+                    # print("Setting angle zeros", id, exp)
+                    pass
+                angles_tmp.append(ang)
+            return np.array(angles_tmp)
+
+        if include_prdf_angles:
+            (
+                all_neighbors,
+                prdf_arr,
+                pangle_arr,
+                pval,
+                aval,
+                nbor,
+            ) = atoms.atomwise_angle_and_radial_distribution(r=cutoff)
+            pval = np.fliplr(np.sort(pval))[:, 0:max_neighbors]
+            aval = np.fliplr(np.sort(aval))[:, 0:max_neighbors]
+        else:
+            all_neighbors = atoms.get_all_neighbors(r=cutoff)
         # if a site has too few neighbors, increase the cutoff radius
         min_nbrs = min(len(neighborlist) for neighborlist in all_neighbors)
         # print('min_nbrs,max_neighbors=',min_nbrs,max_neighbors)
+
         attempt = 0
         while min_nbrs < max_neighbors:
             print("extending cutoff radius!", attempt, cutoff, id)
@@ -104,7 +146,7 @@ class Graph(object):
         # so what's left is the odd ones out
         edges = defaultdict(list)
 
-        u, v, r = [], [], []
+        u, v, r, w, prdf, adf = [], [], [], [], [], []
         for site_idx, neighborlist in enumerate(all_neighbors):
 
             # sort on distance
@@ -119,13 +161,22 @@ class Graph(object):
 
             # keep all edges out to the neighbor shell of the k-th neighbor
             ids = ids[distances <= max_dist]
+            new_angles = bond_to_bond_feats(neighborlist)
+            try:
+                new_angles = new_angles[ids - 1]
+            except Exception as exp:
+                new_angles = np.zeros(len(ids))
+                pass
             c = c[distances <= max_dist]
             distances = distances[distances <= max_dist]
-
             u.append([site_idx] * len(ids))
             v.append(ids)
             r.append(distances)
+            w.append(new_angles)
 
+            if include_prdf_angles:
+                prdf.append(pval[site_idx])
+                adf.append(aval[site_idx])
             # keep track of cell-resolved edges
             # to enforce undirected graph construction
             for dst, cell_id in zip(ids, c):
@@ -143,22 +194,51 @@ class Graph(object):
                     v.append(src)
                     r.append(atoms.raw_distance_matrix[src, dst])
 
-        u = torch.tensor(np.hstack(u))
-        v = torch.tensor(np.hstack(v))
-        r = torch.tensor(np.hstack(r)).type(torch.get_default_dtype())
+        u = np.hstack(u)
+        v = np.hstack(v)
+        r = np.hstack(r)
+        w = np.hstack(w)
+        u = torch.tensor(u)
+        v = torch.tensor(v)
+        w = torch.tensor(w)
+        if include_prdf_angles:
+            prdf = np.array(prdf)
+            adf = np.array(adf)
+            prdf = np.hstack(prdf)
+            adf = np.cos(np.hstack(adf))
+            if len(r) != len(prdf):
+                prdf = np.append(prdf, np.zeros(len(r) - len(prdf)))
+            if len(r) != len(adf):
+                adf = np.append(adf, np.zeros(len(r) - len(adf)))
+            prdf = torch.tensor(np.array(np.hstack(prdf))).type(
+                torch.get_default_dtype()
+            )
+            adf = torch.tensor(np.array(np.hstack(adf))).type(
+                torch.get_default_dtype()
+            )
 
+        r = torch.tensor(np.array(r)).type(torch.get_default_dtype())
+        w = torch.tensor(np.array(w)).type(torch.get_default_dtype())
         # build up atom attribute tensor
         species = atoms.elements
-        node_features = torch.tensor(
-            [
-                get_node_attributes(s, atom_features=atom_features)
-                for s in species
-            ]
-        ).type(torch.get_default_dtype())
+        sps_features = []
+        for ii, s in enumerate(species):
+            feat = list(get_node_attributes(s, atom_features=atom_features))
+            # if include_prdf_angles:
+            #    feat=feat+list(prdf[ii])+list(adf[ii])
+            sps_features.append(feat)
+        sps_features = np.array(sps_features)
+        node_features = torch.tensor(sps_features).type(
+            torch.get_default_dtype()
+        )
 
         g = dgl.graph((u, v))
         g.ndata["atom_features"] = node_features
         g.edata["bondlength"] = r
+        g.edata["bondangle"] = w
+        if include_prdf_angles:
+            g.edata["partial_distance"] = prdf
+            g.edata["partial_angle"] = adf
 
         return g
 
@@ -389,6 +469,7 @@ class StructureDataset(torch.utils.data.Dataset):
         transform=None,
         enforce_undirected=False,
         max_neighbors=12,
+        classification=False,
     ):
         """Initialize the class."""
         self.graphs = []
@@ -416,6 +497,10 @@ class StructureDataset(torch.utils.data.Dataset):
             self.ids.append(id)
 
         self.labels = torch.tensor(self.labels).type(torch.get_default_dtype())
+        if classification:
+            self.labels = self.labels.view(-1).long()
+            print("Classification dataset.", self.labels)
+
         self.transform = transform
 
     def __len__(self):
@@ -447,7 +532,11 @@ class StructureDataset(torch.utils.data.Dataset):
         """Dataloader helper to batch graphs cross `samples`."""
         graphs, labels = map(list, zip(*samples))
         batched_graph = dgl.batch(graphs)
-        return batched_graph, torch.tensor(labels)
+        device = "cpu"
+        if torch.cuda.is_available():
+            device = torch.device("cuda")
+
+        return batched_graph.to(device), torch.tensor(labels).to(device)
 
 
 """

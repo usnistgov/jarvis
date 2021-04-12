@@ -7,6 +7,7 @@ import numpy as np
 import math
 import xmltodict
 import re
+import requests
 
 
 def xml_to_dict(fname):
@@ -237,9 +238,71 @@ def operate_affine(cart_coord=[], affine_matrix=[]):
     return np.dot(np.array(affine_matrix), affine_point)[0:3]
 
 
+def gaussian(x, sigma):
+    """Get Gaussian profile."""
+    return np.exp(-(x ** 2) / (2 * sigma ** 2))
+
+
+def lorentzian2(x, gamma):
+    """Get Lorentziann profile."""
+    return (
+        gamma
+        / 2
+        / (np.pi * (x ** 2 + (gamma / 2) ** 2))
+        / (2 / (np.pi * gamma))
+    )
+
+
+def digitize_array(values=[], max_len=10):
+    """Digitze an array."""
+    has_float = False in [float(i).is_integer() for i in values]
+    if has_float:
+        arr = np.array([float(i) for i in values])
+        max_val = max(arr)
+        min_val = min(arr)
+        bins = np.arange(1, max_len + 1) * (max_val - min_val) / 10
+        values = np.digitize(arr, bins)
+    return values
+
+
+def bond_angle(
+    dist1,
+    dist2,
+    bondx1,
+    bondx2,
+    bondy1,
+    bondy2,
+    bondz1,
+    bondz2,
+):
+    """Get an angle."""
+    nm = dist1 * dist2
+    rrx = bondx1 * bondx2
+    rry = bondy1 * bondy2
+    rrz = bondz1 * bondz2
+    cos = (rrx + rry + rrz) / (nm)
+    if cos <= -1.0:
+        cos = cos + 0.000001
+    if cos >= 1.0:
+        cos = cos - 0.000001
+    deg = math.degrees(math.acos(cos))
+    return deg
+
+
+def check_url_exists(
+    url="https://www.ctcms.nist.gov/~knc6/static/JARVIS-DFT/JVASP-77580.xml",
+):
+    """Check if a url exists."""
+    request = requests.get(url)
+    if request.status_code == 200:
+        return True
+    else:
+        return False
+
+
 # def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
-#    """Check if XML is valid."""
-#    xml_file = etree.parse(xml)
-#    xml_validator = etree.XMLSchema(file=xsd)
-#    is_valid = xml_validator.validate(xml_file)
-#    return is_valid
+#   """Check if XML is valid."""
+#   xml_file = etree.parse(xml)
+#   xml_validator = etree.XMLSchema(file=xsd)
+#   is_valid = xml_validator.validate(xml_file)
+#   return is_valid

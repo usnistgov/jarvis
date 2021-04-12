@@ -11,7 +11,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2021.3.13",
+    version="2021.4.10",
     long_description=long_d,
     install_requires=[
         "numpy>=1.18.5",
@@ -22,10 +22,14 @@ setup(
         "requests>=2.23.0",
         "toolz>=0.9.0",
         "xmltodict>=0.11.0",
-        "tqdm>=4.59.0",
+        "tqdm>=4.41.1",
     ],
     package_data={
-        "jarvis.core": ["Elements.json", "element_charge.json"],
+        "jarvis.core": [
+            "Elements.json",
+            "element_charge.json",
+            "atom_init.json",
+        ],
         "jarvis.tasks.lammps.templates": [
             "displace.mod",
             "inelastcomb.mod",

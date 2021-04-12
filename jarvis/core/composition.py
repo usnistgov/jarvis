@@ -104,7 +104,14 @@ class Composition(object):
         """Get reduced formula."""
         form = ""
         reduced, repeat = self.reduce()
-        for specie, count in reduced.items():
+        X = {}
+        for i, j in reduced.items():
+            X[i] = Specie(i).X
+        Y = dict(sorted(X.items(), key=lambda item: item[1]))
+        Z = {}
+        for i, j in Y.items():
+            Z[i] = reduced[i]
+        for specie, count in Z.items():
             if float(count).is_integer():
                 form = form + specie + str(int(count))
             else:
