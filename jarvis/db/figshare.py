@@ -18,6 +18,17 @@ from jarvis.io.wannier.outputs import WannierHam
 from tqdm import tqdm
 import matplotlib.image as mpimg
 
+"""
+>>> def get_val(filename=''):
+f=open(filename,'r')
+lines=f.read().splitlines()
+f.close()
+info={}
+for i in range(len(attr_index)):
+  info[attr_index[i]]=float(lines[1].split()[i+2])
+return info
+"""
+
 
 def get_db_info():
     """Get DB info."""
@@ -89,9 +100,9 @@ def get_db_info():
             "https://www.nature.com/articles/sdata201612",
         ],
         "qm9": [
-            "https://ndownloader.figshare.com/files/25159592",
+            "https://ndownloader.figshare.com/files/27627596",
             "qm9_data_cfid.json",
-            "Obtaining 2DMatPedia dataset 6k...",
+            "Obtaining QM9 dataset 134k...",
             "https://www.nature.com/articles/sdata201422",
         ],
         "aflow1": [

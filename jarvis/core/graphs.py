@@ -6,17 +6,152 @@ import numpy as np
 from collections import OrderedDict
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.core.specie import get_node_attributes
-from typing import List, Tuple
 from jarvis.core.atoms import Atoms
 from collections import defaultdict
+import random
+import os
 
 try:
+    from sklearn.model_selection import train_test_split
+    from torch.utils.data import DataLoader
     import torch
     from tqdm import tqdm
     import dgl
 except Exception as exp:
     print("dgl/torch/tqdm is not installed.", exp)
     pass
+
+
+def canonize_edge(
+    src_id,
+    dst_id,
+    src_image,
+    dst_image,
+):
+    """Compute canonical edge representation.
+
+    Sort vertex ids
+    shift periodic images so the first vertex is in (0,0,0) image
+    """
+    # store directed edges src_id <= dst_id
+    if dst_id < src_id:
+        src_id, dst_id = dst_id, src_id
+        src_image, dst_image = dst_image, src_image
+
+    # shift periodic images so that src is in (0,0,0) image
+    if not np.array_equal(src_image, (0, 0, 0)):
+        shift = src_image
+        src_image = tuple(np.subtract(src_image, shift))
+        dst_image = tuple(np.subtract(dst_image, shift))
+
+    assert src_image == (0, 0, 0)
+
+    return src_id, dst_id, src_image, dst_image
+
+
+def nearest_neighbor_edges(
+    atoms=None,
+    cutoff=8,
+    max_neighbors=12,
+    id=None,
+):
+    """Construct k-NN edge list."""
+    # returns List[List[Tuple[site, distance, index, image]]]
+    all_neighbors = atoms.get_all_neighbors(r=cutoff)
+
+    # if a site has too few neighbors, increase the cutoff radius
+    min_nbrs = min(len(neighborlist) for neighborlist in all_neighbors)
+
+    attempt = 0
+    # print ('cutoff=',all_neighbors)
+    if min_nbrs < max_neighbors:
+        print("extending cutoff radius!", attempt, cutoff, id)
+        lat = atoms.lattice
+        if cutoff < max(lat.a, lat.b, lat.c):
+            r_cut = max(lat.a, lat.b, lat.c)
+        else:
+            r_cut = 2 * cutoff
+        attempt += 1
+
+        return nearest_neighbor_edges(
+            atoms=atoms, cutoff=r_cut, max_neighbors=max_neighbors, id=id
+        )
+    # build up edge list
+    # NOTE: currently there's no guarantee that this creates undirected graphs
+    # An undirected solution would build the full edge list where nodes are
+    # keyed by (index, image), and ensure each edge has a complementary edge
+
+    # indeed, JVASP-59628 is an example of a calculation where this produces
+    # a graph where one site has no incident edges!
+
+    # build an edge dictionary u -> v
+    # so later we can run through the dictionary
+    # and remove all pairs of edges
+    # so what's left is the odd ones out
+    edges = defaultdict(set)
+    for site_idx, neighborlist in enumerate(all_neighbors):
+
+        # sort on distance
+        neighborlist = sorted(neighborlist, key=lambda x: x[2])
+        distances = np.array([nbr[2] for nbr in neighborlist])
+        ids = np.array([nbr[1] for nbr in neighborlist])
+        images = np.array([nbr[3] for nbr in neighborlist])
+
+        # find the distance to the k-th nearest neighbor
+        max_dist = distances[max_neighbors - 1]
+        # max_dist = distances[max_neighbors - 1]
+
+        # keep all edges out to the neighbor shell of the k-th neighbor
+        ids = ids[distances <= max_dist]
+        images = images[distances <= max_dist]
+        distances = distances[distances <= max_dist]
+
+        # keep track of cell-resolved edges
+        # to enforce undirected graph construction
+        for dst, image in zip(ids, images):
+            src_id, dst_id, src_image, dst_image = canonize_edge(
+                site_idx, dst, (0, 0, 0), tuple(image)
+            )
+            edges[(src_id, dst_id)].add(dst_image)
+
+    return edges
+
+
+def build_undirected_edgedata(
+    atoms=None,
+    edges={},
+):
+    """Build undirected graph data from edge set.
+
+    edges: dictionary mapping (src_id, dst_id) to set of dst_image
+    r: cartesian displacement vector from src -> dst
+    """
+    # second pass: construct *undirected* graph
+    # import pprint
+    # print ('edges_j',pprint.pprint(edges),len(edges))
+    u, v, r = [], [], []
+    for (src_id, dst_id), images in edges.items():
+
+        for dst_image in images:
+            # fractional coordinate for periodic image of dst
+            dst_coord = atoms.frac_coords[dst_id] + dst_image
+            # cartesian displacement vector pointing from src -> dst
+            d = atoms.lattice.cart_coords(
+                dst_coord - atoms.frac_coords[src_id]
+            )
+            # if np.linalg.norm(d)!=0:
+            # print ('jv',dst_image,d)
+            # add edges for both directions
+            for uu, vv, dd in [(src_id, dst_id, d), (dst_id, src_id, -d)]:
+                u.append(uu)
+                v.append(vv)
+                r.append(dd)
+
+    u = torch.tensor(u)
+    v = torch.tensor(v)
+    r = torch.tensor(r).type(torch.get_default_dtype())
+
+    return u, v, r
 
 
 class Graph(object):
@@ -55,170 +190,28 @@ class Graph(object):
     @staticmethod
     def atom_dgl_multigraph(
         atoms=None,
+        neighbor_strategy="k-nearest",
         cutoff=8.0,
         max_neighbors=12,
         atom_features="cgcnn",
-        enforce_undirected=False,
         max_attempts=3,
-        include_prdf_angles=False,
-        partial_rcut=4.0,
-        id=None,
+        id="JVASP-6172",
     ):
-
         """Obtain a DGLGraph for Atoms object."""
-        dists = atoms.raw_distance_matrix
-
-        def cos_formula(a, b, c):
-            """Get angle between three edges for oblique triangles."""
-            res = (a ** 2 + b ** 2 - c ** 2) / (2 * a * b)
-            res = -1.0 if res < -1.0 else res
-            res = 1.0 if res > 1.0 else res
-            return np.arccos(res)
-
-        def bond_to_bond_feats(nb):
-            tmp = 0
-            angles_tmp = []
-            for ii, i in enumerate(nb):
-                tmp = ii + 1
-                if tmp > len(nb) - 1:
-                    tmp = 0
-                ang = 0
-                try:
-                    ang = cos_formula(
-                        i[2], nb[tmp][2], dists[i[1], nb[tmp][1]]
-                    )
-                except Exception as exp:
-                    # print("Setting angle zeros", id, exp)
-                    pass
-                angles_tmp.append(ang)
-            return np.array(angles_tmp)
-
-        if include_prdf_angles:
-            (
-                all_neighbors,
-                prdf_arr,
-                pangle_arr,
-                pval,
-                aval,
-                nbor,
-            ) = atoms.atomwise_angle_and_radial_distribution(r=cutoff)
-            pval = np.fliplr(np.sort(pval))[:, 0:max_neighbors]
-            aval = np.fliplr(np.sort(aval))[:, 0:max_neighbors]
+        if neighbor_strategy == "k-nearest":
+            edges = nearest_neighbor_edges(
+                atoms=atoms,
+                cutoff=cutoff,
+                max_neighbors=max_neighbors,
+                id=id,
+            )
         else:
-            all_neighbors = atoms.get_all_neighbors(r=cutoff)
-        # if a site has too few neighbors, increase the cutoff radius
-        min_nbrs = min(len(neighborlist) for neighborlist in all_neighbors)
-        # print('min_nbrs,max_neighbors=',min_nbrs,max_neighbors)
+            raise ValueError("Not implemented yet", neighbor_strategy)
+        # elif neighbor_strategy == "voronoi":
+        #    edges = voronoi_edges(structure)
 
-        attempt = 0
-        while min_nbrs < max_neighbors:
-            print("extending cutoff radius!", attempt, cutoff, id)
-            lat = atoms.lattice
-            r_cut = max(cutoff, lat.a, lat.b, lat.c)
-            attempt += 1
-            if attempt >= max_attempts:
-                atoms = atoms.make_supercell([2, 2, 2])
-                print(
-                    "Making supercell, exceeded,attempts",
-                    max_attempts,
-                    "cutoff",
-                    r_cut,
-                    id,
-                )
-            cutoff = r_cut
-            all_neighbors = atoms.get_all_neighbors(r=cutoff)
-            min_nbrs = min(len(neighborlist) for neighborlist in all_neighbors)
-            # return Graph.atom_dgl_multigraph(
-            #    atoms, r_cut, max_neighbors, atom_features
-            # )
+        u, v, r = build_undirected_edgedata(atoms, edges)
 
-        # build up edge list
-        # Currently there's no guarantee that this creates undirected graphs
-        # An undirected solution would build the full edge list where nodes are
-        # keyed by (index,image), and ensure each edge has a complementary edge
-
-        # indeed,JVASP-59628 is an example of a calculation where this produces
-        # a graph where one site has no incident edges!
-
-        # build an edge dictionary u -> v
-        # so later we can run through the dictionary
-        # and remove all pairs of edges
-        # so what's left is the odd ones out
-        edges = defaultdict(list)
-
-        u, v, r, w, prdf, adf = [], [], [], [], [], []
-        for site_idx, neighborlist in enumerate(all_neighbors):
-
-            # sort on distance
-            neighborlist = sorted(neighborlist, key=lambda x: x[2])
-
-            ids = np.array([nbr[1] for nbr in neighborlist])
-            distances = np.array([nbr[2] for nbr in neighborlist])
-            c = np.array([nbr[3] for nbr in neighborlist])
-
-            # find the distance to the k-th nearest neighbor
-            max_dist = distances[max_neighbors - 1]
-
-            # keep all edges out to the neighbor shell of the k-th neighbor
-            ids = ids[distances <= max_dist]
-            new_angles = bond_to_bond_feats(neighborlist)
-            try:
-                new_angles = new_angles[ids - 1]
-            except Exception as exp:
-                new_angles = np.zeros(len(ids))
-                pass
-            c = c[distances <= max_dist]
-            distances = distances[distances <= max_dist]
-            u.append([site_idx] * len(ids))
-            v.append(ids)
-            r.append(distances)
-            w.append(new_angles)
-
-            if include_prdf_angles:
-                prdf.append(pval[site_idx])
-                adf.append(aval[site_idx])
-            # keep track of cell-resolved edges
-            # to enforce undirected graph construction
-            for dst, cell_id in zip(ids, c):
-                u_key = f"{site_idx}-(0.0, 0.0, 0.0)"
-                v_key = f"{dst}-{tuple(cell_id)}"
-                edge_key = tuple(sorted((u_key, v_key)))
-                edges[edge_key].append((site_idx, dst))
-
-        if enforce_undirected:
-            # add complementary edges to unpaired edges
-            for edge_pair in edges.values():
-                if len(edge_pair) == 1:
-                    src, dst = edge_pair[0]
-                    u.append(dst)  # swap the order!
-                    v.append(src)
-                    r.append(atoms.raw_distance_matrix[src, dst])
-
-        u = np.hstack(u)
-        v = np.hstack(v)
-        r = np.hstack(r)
-        w = np.hstack(w)
-        u = torch.tensor(u)
-        v = torch.tensor(v)
-        w = torch.tensor(w)
-        if include_prdf_angles:
-            prdf = np.array(prdf)
-            adf = np.array(adf)
-            prdf = np.hstack(prdf)
-            adf = np.cos(np.hstack(adf))
-            if len(r) != len(prdf):
-                prdf = np.append(prdf, np.zeros(len(r) - len(prdf)))
-            if len(r) != len(adf):
-                adf = np.append(adf, np.zeros(len(r) - len(adf)))
-            prdf = torch.tensor(np.array(np.hstack(prdf))).type(
-                torch.get_default_dtype()
-            )
-            adf = torch.tensor(np.array(np.hstack(adf))).type(
-                torch.get_default_dtype()
-            )
-
-        r = torch.tensor(np.array(r)).type(torch.get_default_dtype())
-        w = torch.tensor(np.array(w)).type(torch.get_default_dtype())
         # build up atom attribute tensor
         species = atoms.elements
         sps_features = []
@@ -231,16 +224,13 @@ class Graph(object):
         node_features = torch.tensor(sps_features).type(
             torch.get_default_dtype()
         )
-
         g = dgl.graph((u, v))
         g.ndata["atom_features"] = node_features
-        g.edata["bondlength"] = r
-        g.edata["bondangle"] = w
-        if include_prdf_angles:
-            g.edata["partial_distance"] = prdf
-            g.edata["partial_angle"] = adf
+        g.edata["r"] = r
+        lg = g.line_graph(shared=True)
+        lg.apply_edges(compute_bond_cosines)
 
-        return g
+        return g, lg
 
     @staticmethod
     def from_atoms(
@@ -455,6 +445,50 @@ class Standardize(torch.nn.Module):
         return g
 
 
+def prepare_dgl_batch(batch, device=None, non_blocking=False):
+    """Send batched dgl graph to device."""
+    g, lg, t = batch
+    batch = ((g.to(device), lg.to(device)), t.to(device))
+    # g, t = batch
+    # batch = (g.to(device), t.to(device))
+
+    return batch
+
+
+def prepare_line_graph_batch(batch, device=None, non_blocking=False):
+    """Send batched dgl graph to device."""
+    g, lg, t = batch
+    batch = ((g.to(device), lg.to(device)), t.to(device))
+
+    return batch
+
+
+def prepare_batch(batch, device=None):
+    """Send tuple to device, including DGLGraphs."""
+    return tuple(x.to(device) for x in batch)
+
+
+def compute_bond_cosines(edges):
+    """Compute bond angle cosines from bond displacement vectors."""
+    # line graph edge: (a, b), (b, c)
+    # `a -> b -> c`
+    # use law of cosines to compute angles cosines
+    # negate src bond so displacements are like `a <- b -> c`
+    # cos(theta) = ba \dot bc / (||ba|| ||bc||)
+    r1 = -edges.src["r"]
+    r2 = edges.dst["r"]
+    bond_cosine = torch.sum(r1 * r2, dim=1) / (
+        torch.norm(r1, dim=1) * torch.norm(r2, dim=1)
+    )
+    bond_cosine = torch.arccos(
+        torch.nan_to_num(torch.clamp(bond_cosine, -1, 1), nan=0.00001)
+    )
+    # print (r1,r1.shape)
+    # print (r2,r2.shape)
+    # print (bond_cosine,bond_cosine.shape)
+    return {"h": bond_cosine}
+
+
 class StructureDataset(torch.utils.data.Dataset):
     """Dataset of crystal DGLGraphs."""
 
@@ -465,16 +499,20 @@ class StructureDataset(torch.utils.data.Dataset):
         ids=None,
         cutoff=8.0,
         maxrows=np.inf,
-        atom_features="atomic_number",
+        atom_features="cgcnn",
         transform=None,
         enforce_undirected=False,
         max_neighbors=12,
+        line_graph=True,
+        neighbor_strategy="k-nearest",
         classification=False,
     ):
         """Initialize the class."""
+        print("line_graph", line_graph)
         self.graphs = []
         self.labels = []
         self.ids = []
+        self.line_graphs = []
 
         for idx, (structure, target, id) in enumerate(
             tqdm(zip(structures, targets, ids))
@@ -483,16 +521,16 @@ class StructureDataset(torch.utils.data.Dataset):
             if idx >= maxrows:
                 break
             a = Atoms.from_dict(structure)
-            g = Graph.atom_dgl_multigraph(
+            g, lg = Graph.atom_dgl_multigraph(
                 a,
                 atom_features=atom_features,
-                enforce_undirected=enforce_undirected,
                 cutoff=cutoff,
                 max_neighbors=max_neighbors,
                 id=id,
             )
 
             self.graphs.append(g)
+            self.line_graphs.append(lg)
             self.labels.append(target)
             self.ids.append(id)
 
@@ -502,6 +540,7 @@ class StructureDataset(torch.utils.data.Dataset):
             print("Classification dataset.", self.labels)
 
         self.transform = transform
+        self.prepare_batch = prepare_line_graph_batch
 
     def __len__(self):
         """Get length."""
@@ -514,8 +553,8 @@ class StructureDataset(torch.utils.data.Dataset):
 
         if self.transform:
             g = self.transform(g)
-
-        return g, label
+        # return g,  label
+        return g, self.line_graphs[idx], label
 
     def setup_standardizer(self):
         """Atom-wise feature standardization transform."""
@@ -528,15 +567,131 @@ class StructureDataset(torch.utils.data.Dataset):
         )
 
     @staticmethod
-    def collate(samples: List[Tuple[dgl.DGLGraph, torch.Tensor]]):
+    def collate(samples):
         """Dataloader helper to batch graphs cross `samples`."""
-        graphs, labels = map(list, zip(*samples))
+        # device = "cpu"
+        # if torch.cuda.is_available():
+        #    device = torch.device("cuda")
+        # graphs,  labels = map(list, zip(*samples))
+        graphs, line_graphs, labels = map(list, zip(*samples))
         batched_graph = dgl.batch(graphs)
-        device = "cpu"
-        if torch.cuda.is_available():
-            device = torch.device("cuda")
+        batched_line_graph = dgl.batch(line_graphs)
+        # return batched_graph.to(device),  torch.tensor(labels).to(device)
+        return (
+            batched_graph,
+            batched_line_graph,
+            torch.tensor(labels),
+        )  # .to(device)
 
-        return batched_graph.to(device), torch.tensor(labels).to(device)
+
+def get_train_val_loaders(
+    dataset: str = "dft_3d",
+    target: str = "formation_energy_peratom",
+    atom_features: str = "atomic_number",
+    neighbor_strategy: str = "k-nearest",
+    n_train: int = 0.8,
+    n_val: int = 0.2,
+    n_test: int = 0.2,
+    filename="tsample",
+    save_dataloader=True,
+    batch_size: int = 8,
+    standardize: bool = False,
+    split_seed=123,
+    pin_memory=False,
+    workers=4,
+    id_tag="jid",
+):
+    """Help function to set up Jarvis train and val dataloaders."""
+    t_sample = filename + "_train.data"
+    v_sample = filename + "_val.data"
+
+    if (
+        os.path.exists(t_sample)
+        and os.path.exists(v_sample)
+        and save_dataloader
+    ):
+        print("Loading from saved file...")
+        print("Make sure all the DataLoader params are same.")
+        print("This module is made for debugging only.")
+        train_loader = torch.load(t_sample)
+        val_loader = torch.load(v_sample)
+        print("train", len(train_loader.dataset))
+        print("val", len(val_loader.dataset))
+    else:
+        from jarvis.db.figshare import data as jdata
+
+        d = jdata(dataset)
+
+        structures, targets, jv_ids = [], [], []
+        for row in d:
+            if row[target] != "na":
+                structures.append(row["atoms"])
+                targets.append(row[target])
+                jv_ids.append(row[id_tag])
+        structures = np.array(structures)
+        targets = np.array(targets)
+        jv_ids = np.array(jv_ids)
+
+        # shuffle consistently with https://github.com/txie-93/cgcnn/data.py
+        # i.e. shuffle the index in place with standard library random.shuffle
+        # ids = np.arange(len(structures))
+        random.seed(split_seed)
+        # random.shuffle(ids)
+
+        # id_train = ids[:n_train]
+        # id_val = ids[-(n_val + n_test) : -n_test]  # noqa:E203
+
+        X_train, X_test, y_train, y_test, id_train, id_test = train_test_split(
+            structures, targets, jv_ids, test_size=n_test, random_state=int(37)
+        )
+        # id_test = ids[:-n_test]
+
+        train_data = StructureDataset(
+            X_train,
+            y_train,
+            ids=id_train,
+            atom_features=atom_features,
+            neighbor_strategy=neighbor_strategy,
+        )
+        if standardize:
+            train_data.setup_standardizer()
+
+        val_data = StructureDataset(
+            X_test,
+            y_test,
+            ids=id_test,
+            atom_features=atom_features,
+            neighbor_strategy=neighbor_strategy,
+            transform=train_data.transform,
+        )
+
+        # use a regular pytorch dataloader
+        train_loader = DataLoader(
+            train_data,
+            batch_size=batch_size,
+            shuffle=True,
+            collate_fn=train_data.collate,
+            drop_last=True,
+            num_workers=workers,
+            pin_memory=pin_memory,
+        )
+
+        val_loader = DataLoader(
+            val_data,
+            batch_size=batch_size,
+            shuffle=False,
+            collate_fn=val_data.collate,
+            drop_last=True,
+            num_workers=workers,
+            pin_memory=pin_memory,
+        )
+
+        if save_dataloader:
+            torch.save(train_loader, t_sample)
+            torch.save(val_loader, v_sample)
+    from jarvis.core.graphs import prepare_line_graph_batch
+
+    return train_loader, val_loader, prepare_line_graph_batch
 
 
 """
