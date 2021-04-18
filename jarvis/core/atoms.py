@@ -193,6 +193,7 @@ class Atoms(object):
         if from_string == "":
             f = open(filename, "r")
             lines = f.read().splitlines()
+            # lines = [ii.encode('utf-8') for ii in f.read().splitlines()]
             f.close()
         else:
             lines = from_string.splitlines()
