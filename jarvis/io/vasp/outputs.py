@@ -1243,7 +1243,7 @@ class Vasprun(object):
                     i * 3 : (i + 1) * 3, j * 3 : (j + 1) * 3
                 ]
         masses = [Specie(i).atomic_mass for i in struct.elements]
-        print("Vasp masses", masses)
+        # print("Vasp masses", masses)
         if fc_mass:
             for i in range(natoms):
                 for j in range(natoms):
