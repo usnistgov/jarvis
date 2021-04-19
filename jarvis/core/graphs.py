@@ -8,12 +8,8 @@ from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.core.specie import get_node_attributes
 from jarvis.core.atoms import Atoms
 from collections import defaultdict
-import random
-import os
 
 try:
-    from sklearn.model_selection import train_test_split
-    from torch.utils.data import DataLoader
     import torch
     from tqdm import tqdm
     import dgl
@@ -128,7 +124,6 @@ def build_undirected_edgedata(
     """
     # second pass: construct *undirected* graph
     # import pprint
-    # print ('edges_j',pprint.pprint(edges),len(edges))
     u, v, r = [], [], []
     for (src_id, dst_id), images in edges.items():
 
@@ -258,6 +253,7 @@ class Graph(object):
              features: Node features.
                        'atomic_number': graph with atomic numbers only.
                        'cfid': 438 chemical descriptors from CFID.
+                       'cgcnn': hot encoded 92 features.
                        'basic':10 features
                        'atomic_fraction': graph with atomic fractions
                                          in 103 elements.
@@ -480,9 +476,7 @@ def compute_bond_cosines(edges):
     bond_cosine = torch.sum(r1 * r2, dim=1) / (
         torch.norm(r1, dim=1) * torch.norm(r2, dim=1)
     )
-    bond_cosine = torch.arccos(
-        torch.nan_to_num(torch.clamp(bond_cosine, -1, 1), nan=0.00001)
-    )
+    bond_cosine = torch.arccos((torch.clamp(bond_cosine, -1, 1)))
     # print (r1,r1.shape)
     # print (r2,r2.shape)
     # print (bond_cosine,bond_cosine.shape)
@@ -503,12 +497,10 @@ class StructureDataset(torch.utils.data.Dataset):
         transform=None,
         enforce_undirected=False,
         max_neighbors=12,
-        line_graph=True,
         neighbor_strategy="k-nearest",
         classification=False,
     ):
         """Initialize the class."""
-        print("line_graph", line_graph)
         self.graphs = []
         self.labels = []
         self.ids = []
@@ -582,116 +574,6 @@ class StructureDataset(torch.utils.data.Dataset):
             batched_line_graph,
             torch.tensor(labels),
         )  # .to(device)
-
-
-def get_train_val_loaders(
-    dataset: str = "dft_3d",
-    target: str = "formation_energy_peratom",
-    atom_features: str = "atomic_number",
-    neighbor_strategy: str = "k-nearest",
-    n_train: int = 0.8,
-    n_val: int = 0.2,
-    n_test: int = 0.2,
-    filename="tsample",
-    save_dataloader=True,
-    batch_size: int = 8,
-    standardize: bool = False,
-    split_seed=123,
-    pin_memory=False,
-    workers=4,
-    id_tag="jid",
-):
-    """Help function to set up Jarvis train and val dataloaders."""
-    t_sample = filename + "_train.data"
-    v_sample = filename + "_val.data"
-
-    if (
-        os.path.exists(t_sample)
-        and os.path.exists(v_sample)
-        and save_dataloader
-    ):
-        print("Loading from saved file...")
-        print("Make sure all the DataLoader params are same.")
-        print("This module is made for debugging only.")
-        train_loader = torch.load(t_sample)
-        val_loader = torch.load(v_sample)
-        print("train", len(train_loader.dataset))
-        print("val", len(val_loader.dataset))
-    else:
-        from jarvis.db.figshare import data as jdata
-
-        d = jdata(dataset)
-
-        structures, targets, jv_ids = [], [], []
-        for row in d:
-            if row[target] != "na":
-                structures.append(row["atoms"])
-                targets.append(row[target])
-                jv_ids.append(row[id_tag])
-        structures = np.array(structures)
-        targets = np.array(targets)
-        jv_ids = np.array(jv_ids)
-
-        # shuffle consistently with https://github.com/txie-93/cgcnn/data.py
-        # i.e. shuffle the index in place with standard library random.shuffle
-        # ids = np.arange(len(structures))
-        random.seed(split_seed)
-        # random.shuffle(ids)
-
-        # id_train = ids[:n_train]
-        # id_val = ids[-(n_val + n_test) : -n_test]  # noqa:E203
-
-        X_train, X_test, y_train, y_test, id_train, id_test = train_test_split(
-            structures, targets, jv_ids, test_size=n_test, random_state=int(37)
-        )
-        # id_test = ids[:-n_test]
-
-        train_data = StructureDataset(
-            X_train,
-            y_train,
-            ids=id_train,
-            atom_features=atom_features,
-            neighbor_strategy=neighbor_strategy,
-        )
-        if standardize:
-            train_data.setup_standardizer()
-
-        val_data = StructureDataset(
-            X_test,
-            y_test,
-            ids=id_test,
-            atom_features=atom_features,
-            neighbor_strategy=neighbor_strategy,
-            transform=train_data.transform,
-        )
-
-        # use a regular pytorch dataloader
-        train_loader = DataLoader(
-            train_data,
-            batch_size=batch_size,
-            shuffle=True,
-            collate_fn=train_data.collate,
-            drop_last=True,
-            num_workers=workers,
-            pin_memory=pin_memory,
-        )
-
-        val_loader = DataLoader(
-            val_data,
-            batch_size=batch_size,
-            shuffle=False,
-            collate_fn=val_data.collate,
-            drop_last=True,
-            num_workers=workers,
-            pin_memory=pin_memory,
-        )
-
-        if save_dataloader:
-            torch.save(train_loader, t_sample)
-            torch.save(val_loader, v_sample)
-    from jarvis.core.graphs import prepare_line_graph_batch
-
-    return train_loader, val_loader, prepare_line_graph_batch
 
 
 """
