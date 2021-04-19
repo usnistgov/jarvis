@@ -71,6 +71,7 @@ def ir_intensity(
 
 
 def ir_intensity_phonopy(
+    run_dir=".",
     vasprun="vasprun.xml",
     BornFileName="BORN",
     PoscarName="POSCAR",
@@ -96,9 +97,13 @@ def ir_intensity_phonopy(
     #    degenerate_sets as get_degenerate_sets,
     # )
     # adapted from https://github.com/JaGeo/IR
+    # TODO: Make directory indepndent
+    cwd = os.getcwd()
+    os.chdir(run_dir)
     cmd = str("phonopy --fc ") + str(vasprun)
     os.system(cmd)
-    cmd = str("phonopy-vasp-born >  BORN")
+    born_file = os.path.join(os.getcwd(), BornFileName)
+    cmd = str("phonopy-vasp-born >  ") + str(born_file)
     os.system(cmd)
     from jarvis.io.vasp.outputs import Vasprun
 
@@ -155,7 +160,7 @@ def ir_intensity_phonopy(
                     tmp += asum
             Intensity[freq] = Intensity[freq] + np.power(np.absolute(asum), 2)
         intensities.append(Intensity[freq])
-
+    os.chdir(cwd)
     return frequencies, intensities
 
 

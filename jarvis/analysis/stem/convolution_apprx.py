@@ -2,7 +2,8 @@
 # Adapted from https://github.com/jacobjma/fourier-scale-calibration
 import numpy as np
 from scipy.interpolate import interp1d
-from numbers import Number
+
+# from numbers import Number
 from jarvis.core.utils import gaussian
 from jarvis.core.utils import lorentzian2 as lorentzian
 
@@ -59,7 +60,7 @@ class STEMConv(object):
 
         extent = np.diag(self.atoms.lattice_mat)[:2]
 
-        shape = 1
+        # shape = 1
         sampling = (
             extent[0] / self.output_size[0],
             extent[1] / self.output_size[1],
