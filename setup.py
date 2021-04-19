@@ -11,7 +11,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2021.4.18",
+    version="2021.4.19",
     long_description=long_d,
     install_requires=[
         "numpy>=1.18.5",
@@ -23,6 +23,7 @@ setup(
         "toolz>=0.9.0",
         "xmltodict>=0.11.0",
         "tqdm>=4.41.1",
+        "cif2cell>=2.0.0a3",
     ],
     package_data={
         "jarvis.core": [

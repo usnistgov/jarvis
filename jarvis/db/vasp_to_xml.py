@@ -22,7 +22,7 @@ from jarvis.tasks.boltztrap.run import run_boltztrap
 from jarvis.tasks.phonopy.run import run_phonopy
 from jarvis.io.phonopy.outputs import bandstructure_plot
 from jarvis.ai.pkgs.utils import get_ml_data
-from jarvis.core.utils import check_url_exists
+# from jarvis.core.utils import check_url_exists
 from jarvis.analysis.diffraction.xrd import XRD
 import numpy as np
 from jarvis.analysis.elastic.tensor import ElasticTensor
