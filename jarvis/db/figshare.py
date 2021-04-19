@@ -89,9 +89,9 @@ def get_db_info():
             "https://www.nature.com/articles/sdata201612",
         ],
         "qm9": [
-            "https://ndownloader.figshare.com/files/25159592",
+            "https://ndownloader.figshare.com/files/27627596",
             "qm9_data_cfid.json",
-            "Obtaining 2DMatPedia dataset 6k...",
+            "Obtaining QM9 dataset 134k...",
             "https://www.nature.com/articles/sdata201422",
         ],
         "aflow1": [
@@ -335,6 +335,18 @@ def get_hk_tb(k=np.array([0, 0, 0]), w=[]):
     hk = (hk + hk.T.conj()) / 2.0
     return hk
 
+
+"""
+QM9 xyz file
+>>> def get_val(filename=''):
+        f=open(filename,'r')
+        lines=f.read().splitlines()
+        f.close()
+        info={}
+        for i in range(len(attr_index)):
+           info[attr_index[i]]=float(lines[1].split()[i+2])
+        return info
+"""
 
 """
 if __name__ == "__main__":

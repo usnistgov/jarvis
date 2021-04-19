@@ -193,6 +193,7 @@ class Atoms(object):
         if from_string == "":
             f = open(filename, "r")
             lines = f.read().splitlines()
+            # lines = [ii.encode('utf-8') for ii in f.read().splitlines()]
             f.close()
         else:
             lines = from_string.splitlines()
@@ -648,8 +649,8 @@ class Atoms(object):
         all_ranges = [np.arange(x, y) for x, y in zip(nmin, nmax)]
         matrix = self.lattice_mat
         neighbors = [list() for _ in range(len(self.cart_coords))]
-        all_fcoords = np.mod(self.frac_coords, 1)
-        coords_in_cell = np.dot(all_fcoords, matrix)
+        # all_fcoords = np.mod(self.frac_coords, 1)
+        coords_in_cell = self.cart_coords  # np.dot(all_fcoords, matrix)
         site_coords = self.cart_coords
         indices = np.arange(len(site_coords))
         for image in itertools.product(*all_ranges):
@@ -660,6 +661,7 @@ class Atoms(object):
             for (j, d, within_r) in zip(indices, all_dists, all_within_r):
                 for i in indices[within_r]:
                     if d[i] > bond_tol:
+                        # if d[i] > bond_tol and i!=j:
                         neighbors[i].append([i, j, d[i], image])
         return np.array(neighbors, dtype="object")
 
