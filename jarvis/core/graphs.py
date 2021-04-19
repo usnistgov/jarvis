@@ -476,7 +476,8 @@ def compute_bond_cosines(edges):
     bond_cosine = torch.sum(r1 * r2, dim=1) / (
         torch.norm(r1, dim=1) * torch.norm(r2, dim=1)
     )
-    bond_cosine = torch.arccos((torch.clamp(bond_cosine, -1, 1)))
+    bond_cosine = torch.clamp(bond_cosine, -1, 1)
+    # bond_cosine = torch.arccos((torch.clamp(bond_cosine, -1, 1)))
     # print (r1,r1.shape)
     # print (r2,r2.shape)
     # print (bond_cosine,bond_cosine.shape)
