@@ -18,17 +18,6 @@ from jarvis.io.wannier.outputs import WannierHam
 from tqdm import tqdm
 import matplotlib.image as mpimg
 
-"""
->>> def get_val(filename=''):
-f=open(filename,'r')
-lines=f.read().splitlines()
-f.close()
-info={}
-for i in range(len(attr_index)):
-  info[attr_index[i]]=float(lines[1].split()[i+2])
-return info
-"""
-
 
 def get_db_info():
     """Get DB info."""
@@ -346,6 +335,18 @@ def get_hk_tb(k=np.array([0, 0, 0]), w=[]):
     hk = (hk + hk.T.conj()) / 2.0
     return hk
 
+
+"""
+QM9 xyz file
+>>> def get_val(filename=''):
+        f=open(filename,'r')
+        lines=f.read().splitlines()
+        f.close()
+        info={}
+        for i in range(len(attr_index)):
+           info[attr_index[i]]=float(lines[1].split()[i+2])
+        return info
+"""
 
 """
 if __name__ == "__main__":
