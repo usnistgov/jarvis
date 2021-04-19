@@ -669,12 +669,12 @@ class Atoms(object):
         neighbors = self.get_all_neighbors(r=r, bond_tol=bond_tol)
         dists = np.hstack(([[xx[2] for xx in yy] for yy in neighbors]))
         hist, bins = np.histogram(dists, bins=np.arange(0.1, 10.2, 0.1))
-        shell_vol = (
-            4.0
-            / 3.0
-            * np.pi
-            * (np.power(bins[1:], 3) - np.power(bins[:-1], 3))
-        )
+        # shell_vol = (
+        #    4.0
+        #    / 3.0
+        #    * np.pi
+        #    * (np.power(bins[1:], 3) - np.power(bins[:-1], 3))
+        # )
         arr = []
         for i, j in zip(bins[:-1], hist):
             if j > 0:
@@ -776,7 +776,7 @@ class Atoms(object):
                 print("exact_angles", exact_angles)
         # return (atom_angles)#/nbor_info['nat']
 
-        pangle_arr = np.array(atom_angles)[0 : self.num_atoms]
+        # pangle_arr = np.array(atom_angles)[0 : self.num_atoms]
         return (
             neighbors,
             np.array(atom_rdfs)[0 : self.num_atoms],
@@ -1565,8 +1565,8 @@ def crop_square(atoms=None, csize=10):
         [0, enforce_c_size, 0],
         [0, 0, b.lattice_mat[2][2]],
     ]
-    M = np.linalg.solve(b.lattice_mat, lat_mat)
-    tol = 3
+    # M = np.linalg.solve(b.lattice_mat, lat_mat)
+    # tol = 3
 
     els = []
     coords = []
@@ -1575,11 +1575,11 @@ def crop_square(atoms=None, csize=10):
             els.append(j)
             coords.append(i)
     coords = np.array(coords)
-    new_mat = (
-        [max(coords[:, 0]) - min(coords[:, 0]) + tol, 0, 0],
-        [0, max(coords[:, 1]) - min(coords[:, 1]) + tol, 0],
-        [0, 0, b.lattice_mat[2][2]],
-    )
+    # new_mat = (
+    #    [max(coords[:, 0]) - min(coords[:, 0]) + tol, 0, 0],
+    #    [0, max(coords[:, 1]) - min(coords[:, 1]) + tol, 0],
+    #    [0, 0, b.lattice_mat[2][2]],
+    # )
     new_atoms = Atoms(
         lattice_mat=lat_mat, elements=els, coords=coords, cartesian=True
     ).center_around_origin([0.5, 0.5, 0.5])

@@ -76,7 +76,7 @@ class DataFileSchema(object):
     def xml_to_dict(self):
         """Read XML file."""
         if ".gz" in self.filename:
-            import gzip
+            # import gzip
 
             with open(self.filename, "rb") as f:
                 file_content = f.read()
