@@ -91,6 +91,7 @@ def ir_intensity_phonopy(
         parse_BORN,
         parse_FORCE_CONSTANTS,
     )
+    import shutil
     from phonopy.units import VaspToCm
 
     # from phonopy.phonon.degeneracy import (
@@ -100,7 +101,8 @@ def ir_intensity_phonopy(
     # TODO: Make directory indepndent
     cwd = os.getcwd()
     os.chdir(run_dir)
-    cmd = str("phonopy --fc ") + str(vasprun)
+    shutil.copy2(vasprun, "vasprun.xml")
+    cmd = str("phonopy --fc vasprun.xml")
     os.system(cmd)
     born_file = os.path.join(os.getcwd(), BornFileName)
     cmd = str("phonopy-vasp-born >  ") + str(born_file)
