@@ -7,12 +7,16 @@ import functools
 from jarvis.core.utils import digitize_array
 from collections import defaultdict
 
-el_chem_json_file = str(os.path.join(os.path.dirname(__file__), "Elements.json"))
+el_chem_json_file = str(
+    os.path.join(os.path.dirname(__file__), "Elements.json")
+)
 el_chem_json = open(el_chem_json_file, "r")
 chem_data = json.load(el_chem_json)
 el_chem_json.close()
 
-el_chrg_json_file = str(os.path.join(os.path.dirname(__file__), "element_charge.json"))
+el_chrg_json_file = str(
+    os.path.join(os.path.dirname(__file__), "element_charge.json")
+)
 el_chrg_json = open(el_chrg_json_file, "r")
 chrg_data = json.load(el_chrg_json)
 el_chrg_json.close()
@@ -258,14 +262,18 @@ def get_node_attributes(species, atom_features="atomic_number"):
     feature_sets = ("atomic_number", "basic", "cfid", "cgcnn")
 
     if atom_features not in feature_sets:
-        raise NotImplementedError(f"atom features must be one of {feature_sets}")
+        raise NotImplementedError(
+            f"atom features must be one of {feature_sets}"
+        )
 
     if atom_features == "cfid":
         return Specie(species).get_descrp_arr
     elif atom_features == "atomic_number":
         return [Specie(species).element_property("Z")]
     elif atom_features == "basic":
-        return [Specie(species).element_property(prop) for prop in BASIC_FEATURES]
+        return [
+            Specie(species).element_property(prop) for prop in BASIC_FEATURES
+        ]
     elif atom_features == "cgcnn":
         # load from json, key by atomic number
         key = str(Specie(species).element_property("Z"))
@@ -373,7 +381,9 @@ def get_specie_data():
     return keys, chem_data, chrg_data
 
 
-def get_digitized_feats_hot_encoded(feature_names=keys, filename="feats_encoded.json"):
+def get_digitized_feats_hot_encoded(
+    feature_names=keys, filename="feats_encoded.json"
+):
     """Get OneHotEncoded features with digitized features."""
     from sklearn.preprocessing import OneHotEncoder
     import pandas as pd

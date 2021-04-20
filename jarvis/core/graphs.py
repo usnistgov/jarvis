@@ -133,7 +133,9 @@ def build_undirected_edgedata(
             # fractional coordinate for periodic image of dst
             dst_coord = atoms.frac_coords[dst_id] + dst_image
             # cartesian displacement vector pointing from src -> dst
-            d = atoms.lattice.cart_coords(dst_coord - atoms.frac_coords[src_id])
+            d = atoms.lattice.cart_coords(
+                dst_coord - atoms.frac_coords[src_id]
+            )
             # if np.linalg.norm(d)!=0:
             # print ('jv',dst_image,d)
             # add edges for both directions
@@ -216,7 +218,9 @@ class Graph(object):
             #    feat=feat+list(prdf[ii])+list(adf[ii])
             sps_features.append(feat)
         sps_features = np.array(sps_features)
-        node_features = torch.tensor(sps_features).type(torch.get_default_dtype())
+        node_features = torch.tensor(sps_features).type(
+            torch.get_default_dtype()
+        )
         g = dgl.graph((u, v))
         g.ndata["atom_features"] = node_features
         g.edata["r"] = r
@@ -530,7 +534,9 @@ class StructureDataset(torch.utils.data.Dataset):
 
         self.labels = self.df[target]
         self.ids = self.df["jid"]
-        self.labels = torch.tensor(self.df[target]).type(torch.get_default_dtype())
+        self.labels = torch.tensor(self.df[target]).type(
+            torch.get_default_dtype()
+        )
         self.transform = transform
 
         features = self._get_attribute_lookup(atom_features)
@@ -609,7 +615,9 @@ class StructureDataset(torch.utils.data.Dataset):
         self.atom_feature_mean = x.mean(0)
         self.atom_feature_std = x.std(0)
 
-        self.transform = Standardize(self.atom_feature_mean, self.atom_feature_std)
+        self.transform = Standardize(
+            self.atom_feature_mean, self.atom_feature_std
+        )
 
     @staticmethod
     def collate(samples: List[Tuple[dgl.DGLGraph, torch.Tensor]]):
