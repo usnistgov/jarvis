@@ -3,11 +3,13 @@ from jarvis.core.atoms import get_supercell_dims
 from jarvis.core.specie import Specie
 from jarvis.core.utils import random_colors
 import numpy as np
+import pandas as pd
 from collections import OrderedDict
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
-from jarvis.core.specie import get_node_attributes
+from jarvis.core.specie import chem_data, get_node_attributes
 from jarvis.core.atoms import Atoms
 from collections import defaultdict
+from typing import List, Tuple, Sequence, Optional
 
 try:
     import torch
@@ -190,7 +192,8 @@ class Graph(object):
         max_neighbors=12,
         atom_features="cgcnn",
         max_attempts=3,
-        id="JVASP-6172",
+        id: Optional[str] = None,
+        compute_line_graph: bool = True,
     ):
         """Obtain a DGLGraph for Atoms object."""
         if neighbor_strategy == "k-nearest":
@@ -208,9 +211,8 @@ class Graph(object):
         u, v, r = build_undirected_edgedata(atoms, edges)
 
         # build up atom attribute tensor
-        species = atoms.elements
         sps_features = []
-        for ii, s in enumerate(species):
+        for ii, s in enumerate(atoms.elements):
             feat = list(get_node_attributes(s, atom_features=atom_features))
             # if include_prdf_angles:
             #    feat=feat+list(prdf[ii])+list(adf[ii])
@@ -222,10 +224,16 @@ class Graph(object):
         g = dgl.graph((u, v))
         g.ndata["atom_features"] = node_features
         g.edata["r"] = r
-        lg = g.line_graph(shared=True)
-        lg.apply_edges(compute_bond_cosines)
 
-        return g, lg
+        if compute_line_graph:
+            # construct atomistic line graph
+            # (nodes are bonds, edges are bond pairs)
+            # and add bond angle cosines as edge features
+            lg = g.line_graph(shared=True)
+            lg.apply_edges(compute_bond_cosines)
+            return g, lg
+        else:
+            return g
 
     @staticmethod
     def from_atoms(
@@ -441,27 +449,43 @@ class Standardize(torch.nn.Module):
         return g
 
 
-def prepare_dgl_batch(batch, device=None, non_blocking=False):
-    """Send batched dgl graph to device."""
-    g, lg, t = batch
-    batch = ((g.to(device), lg.to(device)), t.to(device))
-    # g, t = batch
-    # batch = (g.to(device), t.to(device))
+def prepare_dgl_batch(
+    batch: Tuple[dgl.DGLGraph, torch.Tensor], device=None, non_blocking=False
+):
+    """Send batched dgl crystal graph to device."""
+    g, t = batch
+    batch = (
+        g.to(device, non_blocking=non_blocking),
+        t.to(device, non_blocking=non_blocking),
+    )
 
     return batch
 
 
-def prepare_line_graph_batch(batch, device=None, non_blocking=False):
-    """Send batched dgl graph to device."""
+def prepare_line_graph_batch(
+    batch: Tuple[Tuple[dgl.DGLGraph, dgl.DGLGraph], torch.Tensor],
+    device=None,
+    non_blocking=False,
+):
+    """Send line graph batch to device.
+
+    Note: the batch is a nested tuple, with the graph and line graph together
+    """
     g, lg, t = batch
-    batch = ((g.to(device), lg.to(device)), t.to(device))
+    batch = (
+        (
+            g.to(device, non_blocking=non_blocking),
+            lg.to(device, non_blocking=non_blocking),
+        ),
+        t.to(device, non_blocking=non_blocking),
+    )
 
     return batch
 
 
-def prepare_batch(batch, device=None):
-    """Send tuple to device, including DGLGraphs."""
-    return tuple(x.to(device) for x in batch)
+# def prepare_batch(batch, device=None):
+#     """Send tuple to device, including DGLGraphs."""
+#     return tuple(x.to(device) for x in batch)
 
 
 def compute_bond_cosines(edges):
@@ -489,51 +513,78 @@ class StructureDataset(torch.utils.data.Dataset):
 
     def __init__(
         self,
-        structures,
-        targets,
-        ids=None,
-        cutoff=8.0,
-        maxrows=np.inf,
-        atom_features="cgcnn",
+        df: pd.DataFrame,
+        graphs: Sequence[dgl.DGLGraph],
+        target: str,
+        atom_features="atomic_number",
         transform=None,
-        enforce_undirected=False,
-        max_neighbors=12,
-        neighbor_strategy="k-nearest",
+        line_graph=False,
         classification=False,
     ):
-        """Initialize the class."""
-        self.graphs = []
-        self.labels = []
-        self.ids = []
-        self.line_graphs = []
+        """Pytorch Dataset for atomistic graphs.
 
-        for idx, (structure, target, id) in enumerate(
-            tqdm(zip(structures, targets, ids))
-        ):
+        `df`: pandas dataframe from e.g. jarvis.db.figshare.data
+        `graphs`: DGLGraph representations corresponding to rows in `df`
+        `target`: key for label column in `df`
+        """
+        self.df = df
+        self.graphs = graphs
+        self.target = target
+        self.line_graph = line_graph
 
-            if idx >= maxrows:
-                break
-            a = Atoms.from_dict(structure)
-            g, lg = Graph.atom_dgl_multigraph(
-                a,
-                atom_features=atom_features,
-                cutoff=cutoff,
-                max_neighbors=max_neighbors,
-                id=id,
-            )
+        self.labels = self.df[target]
+        self.ids = self.df["jid"]
+        self.labels = torch.tensor(self.df[target]).type(
+            torch.get_default_dtype()
+        )
+        self.transform = transform
 
-            self.graphs.append(g)
-            self.line_graphs.append(lg)
-            self.labels.append(target)
-            self.ids.append(id)
+        features = self._get_attribute_lookup(atom_features)
 
-        self.labels = torch.tensor(self.labels).type(torch.get_default_dtype())
+        # load selected node representation
+        # assume graphs contain atomic number in g.ndata["atom_features"]
+        for g in graphs:
+            z = g.ndata.pop("atom_features")
+            g.ndata["atomic_number"] = z
+            z = z.type(torch.IntTensor).squeeze()
+            f = torch.tensor(features[z]).type(torch.FloatTensor)
+            if g.num_nodes() == 1:
+                f = f.unsqueeze(0)
+            g.ndata["atom_features"] = f
+
+        self.prepare_batch = prepare_dgl_batch
+        if line_graph:
+            self.prepare_batch = prepare_line_graph_batch
+
+            print("building line graphs")
+            self.line_graphs = []
+            for g in tqdm(graphs):
+                lg = g.line_graph(shared=True)
+                lg.apply_edges(compute_bond_cosines)
+                self.line_graphs.append(lg)
+
         if classification:
             self.labels = self.labels.view(-1).long()
             print("Classification dataset.", self.labels)
 
-        self.transform = transform
-        self.prepare_batch = prepare_line_graph_batch
+    @staticmethod
+    def _get_attribute_lookup(atom_features: str = "cgcnn"):
+        """Build a lookup array indexed by atomic number."""
+        max_z = max(v["Z"] for v in chem_data.values())
+
+        # get feature shape (referencing Carbon)
+        template = get_node_attributes("C", atom_features)
+
+        features = np.zeros((1 + max_z, len(template)))
+
+        for element, v in chem_data.items():
+            z = v["Z"]
+            x = get_node_attributes(element, atom_features)
+
+            if x is not None:
+                features[z, :] = x
+
+        return features
 
     def __len__(self):
         """Get length."""
@@ -546,12 +597,21 @@ class StructureDataset(torch.utils.data.Dataset):
 
         if self.transform:
             g = self.transform(g)
-        # return g,  label
-        return g, self.line_graphs[idx], label
 
-    def setup_standardizer(self):
+        if self.line_graph:
+            return g, self.line_graphs[idx], label
+
+        return g, label
+
+    def setup_standardizer(self, ids):
         """Atom-wise feature standardization transform."""
-        x = torch.cat([g.ndata["atom_features"] for g in self.graphs])
+        x = torch.cat(
+            [
+                g.ndata["atom_features"]
+                for idx, g in enumerate(self.graphs)
+                if idx in ids
+            ]
+        )
         self.atom_feature_mean = x.mean(0)
         self.atom_feature_std = x.std(0)
 
@@ -560,21 +620,21 @@ class StructureDataset(torch.utils.data.Dataset):
         )
 
     @staticmethod
-    def collate(samples):
+    def collate(samples: List[Tuple[dgl.DGLGraph, torch.Tensor]]):
         """Dataloader helper to batch graphs cross `samples`."""
-        # device = "cpu"
-        # if torch.cuda.is_available():
-        #    device = torch.device("cuda")
-        # graphs,  labels = map(list, zip(*samples))
+        graphs, labels = map(list, zip(*samples))
+        batched_graph = dgl.batch(graphs)
+        return batched_graph, torch.tensor(labels)
+
+    @staticmethod
+    def collate_line_graph(
+        samples: List[Tuple[dgl.DGLGraph, dgl.DGLGraph, torch.Tensor]]
+    ):
+        """Dataloader helper to batch graphs cross `samples`."""
         graphs, line_graphs, labels = map(list, zip(*samples))
         batched_graph = dgl.batch(graphs)
         batched_line_graph = dgl.batch(line_graphs)
-        # return batched_graph.to(device),  torch.tensor(labels).to(device)
-        return (
-            batched_graph,
-            batched_line_graph,
-            torch.tensor(labels),
-        )  # .to(device)
+        return batched_graph, batched_line_graph, torch.tensor(labels)
 
 
 """
