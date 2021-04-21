@@ -1,5 +1,7 @@
+from jarvis.core.atoms import Atoms
 from jarvis.core.graphs import StructureDataset, Graph
 from jarvis.db.figshare import data
+import pandas as pd
 import os
 
 test_pos = os.path.join(
@@ -65,15 +67,19 @@ def test_graph():
 
 def test_dataset():
     d = data("dft_2d")
-    x = []
-    y = []
-    z = []
-    for i in d[0:100]:
-        if i["formation_energy_peratom"] != "na":
-            x.append(i["atoms"])
-            y.append(i["formation_energy_peratom"])
-            z.append(i["jid"])
-    s = StructureDataset(x, y, ids=z)
+    d = pd.DataFrame(d[:100])
+
+    graphs = []
+    for i, row in d.iterrows():
+        structure = Atoms.from_dict(row["atoms"])
+        g = Graph.atom_dgl_multigraph(
+            structure,
+            atom_features="atomic_number",
+            compute_line_graph=False,
+        )
+        graphs.append(g)
+
+    s = StructureDataset(d, graphs, "formation_energy_peratom")
     col = s.collate
 
 

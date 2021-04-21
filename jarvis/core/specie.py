@@ -6,6 +6,7 @@ import numpy as np
 import functools
 from jarvis.core.utils import digitize_array
 from collections import defaultdict
+from collections.abc import Iterable
 
 el_chem_json_file = str(
     os.path.join(os.path.dirname(__file__), "Elements.json")
@@ -261,10 +262,21 @@ def get_node_attributes(species, atom_features="atomic_number"):
     """Get specific node features for an element."""
     feature_sets = ("atomic_number", "basic", "cfid", "cgcnn")
 
-    if atom_features not in feature_sets:
-        raise NotImplementedError(
-            f"atom features must be one of {feature_sets}"
-        )
+    if isinstance(atom_features, str):
+        if atom_features not in feature_sets:
+            raise NotImplementedError(
+                f"atom features must be one of {feature_sets}"
+            )
+    elif isinstance(atom_features, Iterable):
+        # allow custom list of features
+        for prop in atom_features:
+            if prop not in keys:
+                raise NotImplementedError(
+                    f"{prop} not supported in custom atom feature list"
+                )
+        return [
+            Specie(species).element_property(prop) for prop in atom_features
+        ]
 
     if atom_features == "cfid":
         return Specie(species).get_descrp_arr
@@ -281,7 +293,11 @@ def get_node_attributes(species, atom_features="atomic_number"):
             # For alternative features use
             # get_digitized_feats_hot_encoded()
             i = json.load(f)
-        return i[key]
+        try:
+            return i[key]
+        except KeyError:
+            print(f"warning: could not load CGCNN features for {key}")
+            return None
 
 
 keys = [
