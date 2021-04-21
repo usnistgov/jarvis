@@ -19,7 +19,7 @@ jobs:
       with:
         path: ${{ env.pythonLocation }}
         key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
-        
+
     - name: Install requirements
       run: |
         python setup.py develop
@@ -27,12 +27,12 @@ jobs:
 
         echo 'CONDA LIST'
         conda list
-        
+
         echo 'PIP FREEZE'
         pip freeze
 
         #echo 'PYTEST-COV'
-        #pytest --cov-config=.coveragerc --cov=jarvis -n 2 
+        #pytest --cov-config=.coveragerc --cov=jarvis -n 2
 
 
         coverage run -m pytest
@@ -44,7 +44,7 @@ jobs:
         # ./configure
         # make pw
 
-        
+
 
 #jobs:
 #   miniconda:
@@ -77,7 +77,7 @@ jobs:
 #         run: |
 #             python setup.py develop
 #             #pip uninstall qiskit
-#             # pip install qiskit ase  numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane dgl tqdm  codecov torch keras tensorflow==2.3.0  pytest pytest-cov bokeh pytest-xdist
+#             # pip install qiskit ase  numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane==0.14.1 dgl tqdm  codecov torch keras tensorflow==2.3.0  pytest pytest-cov bokeh pytest-xdist
 #             # pip install git+https://github.com/aspuru-guzik-group/tequila.git
 #             # pip install -r requirements-for-ci-only.txt
 #             # pip install -r dev-requirements.txt
@@ -97,4 +97,3 @@ jobs:
 #             # cd q-e
 #             # ./configure
 #             # make pw
-

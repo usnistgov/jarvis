@@ -193,6 +193,7 @@ class Atoms(object):
         if from_string == "":
             f = open(filename, "r")
             lines = f.read().splitlines()
+            # lines = [ii.encode('utf-8') for ii in f.read().splitlines()]
             f.close()
         else:
             lines = from_string.splitlines()
@@ -648,8 +649,8 @@ class Atoms(object):
         all_ranges = [np.arange(x, y) for x, y in zip(nmin, nmax)]
         matrix = self.lattice_mat
         neighbors = [list() for _ in range(len(self.cart_coords))]
-        all_fcoords = np.mod(self.frac_coords, 1)
-        coords_in_cell = np.dot(all_fcoords, matrix)
+        # all_fcoords = np.mod(self.frac_coords, 1)
+        coords_in_cell = self.cart_coords  # np.dot(all_fcoords, matrix)
         site_coords = self.cart_coords
         indices = np.arange(len(site_coords))
         for image in itertools.product(*all_ranges):
@@ -660,6 +661,7 @@ class Atoms(object):
             for (j, d, within_r) in zip(indices, all_dists, all_within_r):
                 for i in indices[within_r]:
                     if d[i] > bond_tol:
+                        # if d[i] > bond_tol and i!=j:
                         neighbors[i].append([i, j, d[i], image])
         return np.array(neighbors, dtype="object")
 
@@ -667,12 +669,12 @@ class Atoms(object):
         neighbors = self.get_all_neighbors(r=r, bond_tol=bond_tol)
         dists = np.hstack(([[xx[2] for xx in yy] for yy in neighbors]))
         hist, bins = np.histogram(dists, bins=np.arange(0.1, 10.2, 0.1))
-        shell_vol = (
-            4.0
-            / 3.0
-            * np.pi
-            * (np.power(bins[1:], 3) - np.power(bins[:-1], 3))
-        )
+        # shell_vol = (
+        #    4.0
+        #    / 3.0
+        #    * np.pi
+        #    * (np.power(bins[1:], 3) - np.power(bins[:-1], 3))
+        # )
         arr = []
         for i, j in zip(bins[:-1], hist):
             if j > 0:
@@ -774,7 +776,7 @@ class Atoms(object):
                 print("exact_angles", exact_angles)
         # return (atom_angles)#/nbor_info['nat']
 
-        pangle_arr = np.array(atom_angles)[0 : self.num_atoms]
+        # pangle_arr = np.array(atom_angles)[0 : self.num_atoms]
         return (
             neighbors,
             np.array(atom_rdfs)[0 : self.num_atoms],
@@ -1563,8 +1565,8 @@ def crop_square(atoms=None, csize=10):
         [0, enforce_c_size, 0],
         [0, 0, b.lattice_mat[2][2]],
     ]
-    M = np.linalg.solve(b.lattice_mat, lat_mat)
-    tol = 3
+    # M = np.linalg.solve(b.lattice_mat, lat_mat)
+    # tol = 3
 
     els = []
     coords = []
@@ -1573,11 +1575,11 @@ def crop_square(atoms=None, csize=10):
             els.append(j)
             coords.append(i)
     coords = np.array(coords)
-    new_mat = (
-        [max(coords[:, 0]) - min(coords[:, 0]) + tol, 0, 0],
-        [0, max(coords[:, 1]) - min(coords[:, 1]) + tol, 0],
-        [0, 0, b.lattice_mat[2][2]],
-    )
+    # new_mat = (
+    #    [max(coords[:, 0]) - min(coords[:, 0]) + tol, 0, 0],
+    #    [0, max(coords[:, 1]) - min(coords[:, 1]) + tol, 0],
+    #    [0, 0, b.lattice_mat[2][2]],
+    # )
     new_atoms = Atoms(
         lattice_mat=lat_mat, elements=els, coords=coords, cartesian=True
     ).center_around_origin([0.5, 0.5, 0.5])
