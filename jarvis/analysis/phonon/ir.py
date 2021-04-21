@@ -5,6 +5,7 @@ Please find more details in https://doi.org/10.1038/s41524-020-0337-2 .
 """
 from jarvis.core.spectrum import Spectrum
 import numpy as np
+import os
 
 
 def normalize_vecs(phonon_eigenvectors, masses):
@@ -33,8 +34,10 @@ def ir_intensity(
     phonon_eigenvalues=[],
     masses=[],
     born_charges=[],
+    factor=33.35641,
     nac=True,
     epsilon=[],
+    enforce_positive_freqs=True,
     smoothen=True,
 ):
     """Calculate IR intensity using DFPT."""
@@ -55,11 +58,112 @@ def ir_intensity(
                     sumTemp2 += born_charges[j][a][b] * eigendisplacement[j][b]
                 sumTemp1 += sumTemp2
             irIntensity += sumTemp1 ** 2
-        freq.append(v * 33.35641)  # Thz to cm-1
-        ir_ints.append(irIntensity)
+        if enforce_positive_freqs:
+            if v > 0:
+                freq.append(v * factor)  # Thz to cm-1
+                ir_ints.append(irIntensity)
+        else:
+            freq.append(v * factor)  # Thz to cm-1
+            ir_ints.append(irIntensity)
     if smoothen:
         freq, ir_ints = Spectrum(x=freq, y=ir_ints).smoothen_spiky_spectrum()
     return freq, ir_ints
+
+
+def ir_intensity_phonopy(
+    run_dir=".",
+    vasprun="vasprun.xml",
+    BornFileName="BORN",
+    PoscarName="POSCAR",
+    ForceConstantsName="FORCE_CONSTANTS",
+    supercell=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+    nac=True,
+    symprec=1e-5,
+    primitive=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+    degeneracy_tolerance=1e-5,
+    vector=[0, 0, 0],
+    smoothen=False,
+):
+    """Calculate IR intensity using DFPT and phonopy."""
+    from phonopy import Phonopy
+    from phonopy.interface.vasp import read_vasp
+    from phonopy.file_IO import (
+        parse_BORN,
+        parse_FORCE_CONSTANTS,
+    )
+    import shutil
+    from phonopy.units import VaspToCm
+
+    # from phonopy.phonon.degeneracy import (
+    #    degenerate_sets as get_degenerate_sets,
+    # )
+    # adapted from https://github.com/JaGeo/IR
+    # TODO: Make directory indepndent
+    cwd = os.getcwd()
+    os.chdir(run_dir)
+    shutil.copy2(vasprun, "vasprun.xml")
+    cmd = str("phonopy --fc vasprun.xml")
+    os.system(cmd)
+    born_file = os.path.join(os.getcwd(), BornFileName)
+    cmd = str("phonopy-vasp-born >  ") + str(born_file)
+    os.system(cmd)
+    from jarvis.io.vasp.outputs import Vasprun
+
+    v = Vasprun(vasprun)
+    strt = v.all_structures[0]
+    strt.write_poscar(PoscarName)
+    unitcell = read_vasp(PoscarName)
+    phonon = Phonopy(
+        unitcell,
+        supercell_matrix=supercell,
+        primitive_matrix=primitive,
+        factor=VaspToCm,
+        symprec=symprec,
+    )
+    natoms = phonon.get_primitive().get_number_of_atoms()
+    force_constants = parse_FORCE_CONSTANTS(filename=ForceConstantsName)
+    phonon.set_force_constants(force_constants)
+    masses = phonon.get_primitive().get_masses()
+    phonon.set_masses(masses)
+    BORN_file = parse_BORN(phonon.get_primitive(), filename=BornFileName)
+    BORN_CHARGES = BORN_file["born"]
+    # print ('born_charges2',BORN_CHARGES)
+    if nac:
+        phonon.set_nac_params(BORN_file)
+    frequencies, eigvecs = phonon.get_frequencies_with_eigenvectors(vector)
+    # frequencies=VaspToTHz*frequencies/VaspToCm
+    # x, y = ir_intensity(
+    #    phonon_eigenvectors=np.real(eigvecs),
+    #    phonon_eigenvalues=frequencies,
+    #    masses=masses, #np.ones(len(masses)),
+    #    born_charges=born_charges,
+    #    smoothen=smoothen,
+    # )
+    NumberOfBands = len(frequencies)
+    EigFormat = {}
+    for alpha in range(NumberOfBands):
+        laufer = 0
+        for beta in range(natoms):
+            for xyz in range(0, 3):
+                EigFormat[beta, alpha, xyz] = eigvecs[laufer][alpha]
+                laufer = laufer + 1
+    Intensity = {}
+    intensities = []
+    for freq in range(len(frequencies)):
+        Intensity[freq] = 0
+        tmp = 0
+        for alpha in range(3):
+            asum = 0
+            for n in range(natoms):
+                for beta in range(3):
+                    asum = asum + BORN_CHARGES[n, alpha, beta] * np.real(
+                        EigFormat[n, freq, beta]
+                    ) / np.sqrt(masses[n])
+                    tmp += asum
+            Intensity[freq] = Intensity[freq] + np.power(np.absolute(asum), 2)
+        intensities.append(Intensity[freq])
+    os.chdir(cwd)
+    return frequencies, intensities
 
 
 """
@@ -82,8 +186,12 @@ if __name__ == "__main__":
     )
     for i, j in zip(x, y):
         if j > 0.1:
-            print(i, j)
+            print("first", i, j)
     print()
+    x, y = ir_intensity_phonopy()
+    for i, j in zip(x, y):
+        if j > 0.1:
+            print("later", i, j)
     # for i, j in zip(phonon_eigenvalues, vrun_eigs):
     #    print(i, j)
 """

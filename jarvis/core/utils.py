@@ -300,6 +300,14 @@ def check_url_exists(
         return False
 
 
+def cos_formula(a, b, c):
+    """Get angle between three edges for oblique triangles."""
+    res = (a ** 2 + b ** 2 - c ** 2) / (2 * a * b)
+    res = -1.0 if res < -1.0 else res
+    res = 1.0 if res > 1.0 else res
+    return np.arccos(res)
+
+
 # def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
 #   """Check if XML is valid."""
 #   xml_file = etree.parse(xml)
