@@ -82,17 +82,6 @@ or
 
 For detailed instructions, please see `Installation instructions <https://github.com/usnistgov/jarvis/blob/master/Installation.rst>`__
 
-**Do not** install like this:
-
-.. |ss| raw:: html
-
-   <strike>
-
-.. |se| raw:: html
-
-   </strike>
-   
-|ss| pip install jarvis |se| 
 
 Example function
 -----------------
