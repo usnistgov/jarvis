@@ -1,6 +1,7 @@
 from jarvis.core.atoms import Atoms
 from jarvis.core.graphs import StructureDataset, Graph
 from jarvis.db.figshare import data
+import pandas as pd
 import os
 
 test_pos = os.path.join(
@@ -66,7 +67,7 @@ def test_graph():
 
 def test_dataset():
     d = data("dft_2d")
-    d = d.iloc[:100]
+    d = pd.DataFrame(d[:100])
 
     graphs = []
     for i, row in d.iterrows():

@@ -6,6 +6,7 @@ import numpy as np
 import functools
 from jarvis.core.utils import digitize_array
 from collections import defaultdict
+from collections.abc import Iterable
 
 el_chem_json_file = str(
     os.path.join(os.path.dirname(__file__), "Elements.json")
@@ -254,8 +255,6 @@ BASIC_FEATURES = [
     "first_ion_en",
     "elec_aff",
 ]
-
-from collections.abc import Iterable
 
 
 @functools.lru_cache(maxsize=None)
