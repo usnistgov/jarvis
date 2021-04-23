@@ -79,14 +79,12 @@ band_vrun = Vasprun(
 )
 non_spinpol_vrun = Vasprun(
     filename=os.path.join(
-        os.path.dirname(__file__),
-        "vasprun.xml.JVASP-23436",
+        os.path.dirname(__file__), "vasprun.xml.JVASP-23436",
     )
 )
 vasp544_mbj_optics_vrun = Vasprun(
     filename=os.path.join(
-        os.path.dirname(__file__),
-        "vasprun.xml.JVASP-97577",
+        os.path.dirname(__file__), "vasprun.xml.JVASP-97577",
     )
 )
 opt_vrun = Vasprun(
@@ -226,11 +224,7 @@ def test_chgcar():
         chg.is_spin_polarized(),
         chg.is_spin_orbit(),
         np.array(chg.chg).shape,
-    ) == (
-        True,
-        False,
-        (4, 56, 56, 56),
-    )
+    ) == (True, False, (4, 56, 56, 56),)
     td = chg.to_dict()
     fd = Chgcar.from_dict(td)
 
@@ -241,11 +235,7 @@ def test_locpot():
         loc.is_spin_polarized(),
         loc.is_spin_orbit(),
         np.array(chg.chg).shape,
-    ) == (
-        False,
-        False,
-        (4, 56, 56, 56),
-    )
+    ) == (False, False, (4, 56, 56, 56),)
     vac = loc.vac_potential()[0]
     assert round(vac, 2) == round(7.62302803577618, 2)
 
@@ -262,6 +252,8 @@ def test_locpot():
 def test_vrun():
     # print ('gapp',round(vrun.get_indir_gap,2))
     assert (round(vrun.get_indir_gap[0], 2)) == (0.73)
+    gap2 = vrun.bandgap_occupation_tol()
+    assert round(gap2[0], 2) == 0.73
     assert (round(vrun.get_dir_gap, 2)) == (2.62)
     vrun.get_bandstructure(kpoints_file_path=band_kp, plot=True)
     assert (round(opt_vrun.get_dir_gap, 2)) == (2.62)
