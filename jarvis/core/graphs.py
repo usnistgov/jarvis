@@ -520,6 +520,7 @@ class StructureDataset(torch.utils.data.Dataset):
         transform=None,
         line_graph=False,
         classification=False,
+        id_tag="jid",
     ):
         """Pytorch Dataset for atomistic graphs.
 
@@ -533,7 +534,7 @@ class StructureDataset(torch.utils.data.Dataset):
         self.line_graph = line_graph
 
         self.labels = self.df[target]
-        self.ids = self.df["jid"]
+        self.ids = self.df[id_tag]
         self.labels = torch.tensor(self.df[target]).type(
             torch.get_default_dtype()
         )
