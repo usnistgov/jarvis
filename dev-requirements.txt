@@ -19,7 +19,8 @@ codecov >=2.1.11
 torch >=1.8.0
 keras >=2.4.3
 tensorflow>=2.4.0
-cif2cell
+cif2cell==2.0.0a3
+PyCifRW==4.4
 pytest >=6.2.2
 pytest-cov >=2.11.1
 pytest-xdist>=2.2.1
