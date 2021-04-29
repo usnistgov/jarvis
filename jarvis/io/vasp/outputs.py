@@ -1044,12 +1044,9 @@ class Wavecar(object):
                 % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid))
             )
         else:
-            assert (
-                Gvec.shape[0] == self._nplws[ikpt - 1]
-            ), "No. of planewaves not consistent! %d %d %d" % (
-                Gvec.shape[0],
-                self._nplws[ikpt - 1],
-                np.prod(self._ngrid),
+            assert Gvec.shape[0] == self._nplws[ikpt - 1], (
+                "No. of planewaves not consistent! %d %d %d"
+                % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid),)
             )
         self._gvec = np.asarray(Gvec, dtype=int)
 
@@ -1374,6 +1371,40 @@ class Vasprun(object):
             vbm = min(cat[:, nelect])
             gap = min(cat[:, nelect]) - max(cat[:, nelect - 1])
         return gap, cbm, vbm
+
+    def bandgap_occupation_tol(self, occu_tol=0.1):
+        """Get bandgap based on occupation tolerance."""
+        eigs = np.concatenate(
+            (self.eigenvalues[0][:, :, 0], self.eigenvalues[1][:, :, 0]),
+            axis=1,
+        )
+        occs = np.concatenate(
+            (self.eigenvalues[0][:, :, 1], self.eigenvalues[1][:, :, 1]),
+            axis=1,
+        )
+
+        vbm = -np.inf
+        vbm_kpoint = None
+        cbm = np.inf
+        cbm_kpoint = None
+        k = 0
+        for i, j in zip(eigs, occs):
+            k += 1
+            for (eigenval, occu) in zip(i, j):
+                if occu > occu_tol and eigenval > vbm:
+                    vbm = eigenval
+                    vbm_kpoint = k
+                elif occu <= occu_tol and eigenval < cbm:
+                    cbm = eigenval
+                    cbm_kpoint = k
+        return (
+            max(cbm - vbm, 0),
+            cbm,
+            vbm,
+            vbm_kpoint,
+            cbm_kpoint,
+            vbm_kpoint == cbm_kpoint,
+        )
 
     @property
     def fermi_velocities(self):
