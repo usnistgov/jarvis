@@ -52,6 +52,7 @@ def nearest_neighbor_edges(
     cutoff=8,
     max_neighbors=12,
     id=None,
+    use_canonize=False,
 ):
     """Construct k-NN edge list."""
     # returns List[List[Tuple[site, distance, index, image]]]
@@ -72,7 +73,11 @@ def nearest_neighbor_edges(
         attempt += 1
 
         return nearest_neighbor_edges(
-            atoms=atoms, cutoff=r_cut, max_neighbors=max_neighbors, id=id
+            atoms=atoms,
+            use_canonize=use_canonize,
+            cutoff=r_cut,
+            max_neighbors=max_neighbors,
+            id=id,
         )
     # build up edge list
     # NOTE: currently there's no guarantee that this creates undirected graphs
@@ -110,7 +115,10 @@ def nearest_neighbor_edges(
             src_id, dst_id, src_image, dst_image = canonize_edge(
                 site_idx, dst, (0, 0, 0), tuple(image)
             )
-            edges[(src_id, dst_id)].add(dst_image)
+            if use_canonize:
+                edges[(src_id, dst_id)].add(dst_image)
+            else:
+                edges[(site_idx, dst)].add(tuple(image))
 
     return edges
 
@@ -194,6 +202,7 @@ class Graph(object):
         max_attempts=3,
         id: Optional[str] = None,
         compute_line_graph: bool = True,
+        use_canonize: bool = False,
     ):
         """Obtain a DGLGraph for Atoms object."""
         if neighbor_strategy == "k-nearest":
@@ -202,6 +211,7 @@ class Graph(object):
                 cutoff=cutoff,
                 max_neighbors=max_neighbors,
                 id=id,
+                use_canonize=use_canonize,
             )
         else:
             raise ValueError("Not implemented yet", neighbor_strategy)
