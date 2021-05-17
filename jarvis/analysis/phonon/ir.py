@@ -101,7 +101,8 @@ def ir_intensity_phonopy(
     # TODO: Make directory indepndent
     cwd = os.getcwd()
     os.chdir(run_dir)
-    shutil.copy2(vasprun, "vasprun.xml")
+    if not os.path.exists(vasprun):
+        shutil.copy2(vasprun, "vasprun.xml")
     cmd = str("phonopy --fc vasprun.xml")
     os.system(cmd)
     born_file = os.path.join(os.getcwd(), BornFileName)
