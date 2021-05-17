@@ -7,7 +7,8 @@ import pandas as pd
 from collections import OrderedDict
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.core.specie import chem_data, get_node_attributes
-from jarvis.core.atoms import Atoms
+
+# from jarvis.core.atoms import Atoms
 from collections import defaultdict
 from typing import List, Tuple, Sequence, Optional
 
