@@ -100,6 +100,7 @@ def ir_intensity_phonopy(
     # adapted from https://github.com/JaGeo/IR
     # TODO: Make directory indepndent
     cwd = os.getcwd()
+    print("Directory:", cwd)
     os.chdir(run_dir)
     if not os.path.exists(vasprun):
         shutil.copy2(vasprun, "vasprun.xml")
