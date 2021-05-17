@@ -1,7 +1,7 @@
 from jarvis.io.vasp.outputs import Vasprun, Outcar
 from jarvis.analysis.phonon.ir import ir_intensity, ir_intensity_phonopy
-
 import os
+import shutil
 
 out = Outcar(
     os.path.join(
@@ -42,7 +42,10 @@ def test_ir():
     print(max(y))
     assert round(max(y), 2) == round(0.3511482090386446, 2)
     pdos = vrun.partial_dos_spdf
-    x, y = ir_intensity_phonopy(vasprun=vrun_file, run_dir=dirc)
+    cwd = os.getcwd()
+    if not os.path.exists("vasprun.xml"):
+        shutil.copy2(vrun_file, "vasprun.xml")
+    x, y = ir_intensity_phonopy(vasprun=vrun_file)  # , run_dir=dirc)
 
 
 test_ir()

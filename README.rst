@@ -132,6 +132,7 @@ Example function
 ...     s = Spectrum(x=ens,y=tot_dos_up)
 ...     interp = s.get_interpolated_values(new_dist=new_dist)
 ...     atoms=Atoms.from_dict(i['atoms'])
+...     ase_atoms=atoms.ase_converter()
 ...     all_dos_up.append(interp)
 ...     all_atoms.append(atoms)
 ...     all_jids.append(i['jid'])
