@@ -13,7 +13,7 @@ from matplotlib.pyplot import imread
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.analysis.topological.spillage import Spillage
 from jarvis.db.jsonutils import loadjson
-from jarvis.analysis.phonon.ir import ir_intensity
+from jarvis.analysis.phonon.ir import ir_intensity_phonopy
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.analysis.solarefficiency.solar import SolarEfficiency
 from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
@@ -22,6 +22,7 @@ from jarvis.tasks.boltztrap.run import run_boltztrap
 from jarvis.tasks.phonopy.run import run_phonopy
 from jarvis.io.phonopy.outputs import bandstructure_plot
 from jarvis.ai.pkgs.utils import get_ml_data
+
 # from jarvis.core.utils import check_url_exists
 from jarvis.analysis.diffraction.xrd import XRD
 import numpy as np
@@ -77,7 +78,9 @@ def get_figshare_files(jid="JVASP-1067"):
     return line
 
 
-icsd_mp_dat = loadjson("/home/knc6/Software/jarvis/jarvis/db/icsd_mp_dat.json")
+icsd_mp_dat = loadjson(
+    "/users/knc6/Software/Devs/jarvis/jarvis/jarvis/db/icsd_mp_dat.json"
+)
 
 # Number of ICSDs
 # x=[]
@@ -988,14 +991,24 @@ class VaspToApiXmlSchema(object):
                 final_energy = "na"
                 scf_indir_gap = "na"
                 scf_dir_gap = "na"
+                scf_indir_gap_cbm = "na"
+                scf_indir_gap_vbm = "na"
+                scf_indir_gap_tol = "na"
+                scf_indir_gap_tol_cbm = "na"
+                scf_indir_gap_tol_vbm = "na"
                 vrun = Vasprun(main_vrun)
                 final_energy = vrun.final_energy
                 scf_indir_gap = vrun.get_indir_gap[0]
+                scf_indir_gap_cbm = vrun.get_indir_gap[1]
+                scf_indir_gap_vbm = vrun.get_indir_gap[2]
                 scf_dir_gap = vrun.get_dir_gap
                 if scf_indir_gap < 0:
                     scf_indir_gap = 0
                 if scf_dir_gap < 0:
                     scf_dir_gap = 0
+                scf_indir_gap_tol = vrun.bandgap_occupation_tol()[0]
+                scf_indir_gap_tol_cbm = vrun.bandgap_occupation_tol()[1]
+                scf_indir_gap_tol_vbm = vrun.bandgap_occupation_tol()[2]
 
             except Exception as exp:
                 print("Error in vasprun.xml.", exp)
@@ -1234,6 +1247,16 @@ class VaspToApiXmlSchema(object):
                 try:
                     info["scf_indir_gap"] = round(scf_indir_gap, 3)
                     info["scf_dir_gap"] = round(scf_dir_gap, 3)
+
+                    info["scf_indir_gap_cbm"] = round(scf_indir_gap_cbm, 3)
+                    info["scf_indir_gap_vbm"] = round(scf_indir_gap_vbm, 3)
+                    info["scf_indir_gap_tol"] = round(scf_indir_gap_tol, 3)
+                    info["scf_indir_gap_tol_cbm"] = round(
+                        scf_indir_gap_tol_cbm, 3
+                    )
+                    info["scf_indir_gap_tol_vbm"] = round(
+                        scf_indir_gap_tol_vbm, 3
+                    )
                 except Exception as exp:
                     print("Error in bandgap update info.", exp)
                     pass
@@ -1251,6 +1274,7 @@ class VaspToApiXmlSchema(object):
         """Get DFPT data."""
         vrun = Vasprun(vrun)
         data = vrun.dfpt_data
+        out_tmp = out
         out = Outcar(out)
         line = ""
         line += (
@@ -1313,42 +1337,48 @@ class VaspToApiXmlSchema(object):
             + '"</dfpt_piezoelectric_tensor>'
         )
 
-        phonon_eigenvalues = out.phonon_eigenvalues
-        phonon_eigenvectors = data["phonon_eigenvectors"]
-        masses = data["masses"]
+        # phonon_eigenvalues = out.phonon_eigenvalues
+        # phonon_eigenvalues = data["phonon_eigenvalues"]
+        # phonon_eigenvectors = data["phonon_eigenvectors"]
+        # masses = data["masses"]
         born_charges = data["born_charges"]
-        x, y = ir_intensity(
-            phonon_eigenvectors=phonon_eigenvectors,
-            phonon_eigenvalues=phonon_eigenvalues,
-            masses=masses,
-            born_charges=born_charges,
-        )
+        # x, y = ir_intensity(
+        #    phonon_eigenvectors=phonon_eigenvectors,
+        #    phonon_eigenvalues=phonon_eigenvalues,
+        #    masses=masses,
+        #    born_charges=born_charges,
+        # )
+        run_dir = out_tmp.split("/OUTCAR")[0]
+        x, y = ir_intensity_phonopy(smoothen=True, run_dir=run_dir)
 
         line += "<ir_intensity>'"
         line += ",".join(map(str, x)) + ";" + ",".join(map(str, y))
         line += "'</ir_intensity>"
 
-        xx, yy = ir_intensity(
-            smoothen=False,
-            phonon_eigenvectors=phonon_eigenvectors,
-            phonon_eigenvalues=phonon_eigenvalues,
-            masses=masses,
-            born_charges=born_charges,
-        )
+        xx, yy = ir_intensity_phonopy(run_dir=run_dir)
+        # xx, yy = ir_intensity(
+        #    smoothen=False,
+        #    phonon_eigenvectors=phonon_eigenvectors,
+        #    phonon_eigenvalues=phonon_eigenvalues,
+        #    masses=masses,
+        #    born_charges=born_charges,
+        # )
         xx = np.array(xx)
         yy = np.array(yy)
         max_ir_mode = ""
         min_ir_mode = ""
+        for i, j in zip(xx, yy):
+            print(i, j)
         try:
             tol = 1e-5
             non_zero_modes = yy > tol
-            max_ir_mode = max(yy[non_zero_modes])
-            min_ir_mode = min(yy[non_zero_modes])
-        except Exception:
-            print("Cannot find max min IR mode.", out)
+            max_ir_mode = max(xx[non_zero_modes])
+            min_ir_mode = min(xx[non_zero_modes])
+        except Exception as exp:
+            print("Cannot find max min IR mode.", out, exp)
         line += "<max_ir_mode>" + str(round(max_ir_mode, 2)) + "</max_ir_mode>"
         line += "<min_ir_mode>" + str(round(min_ir_mode, 2)) + "</min_ir_mode>"
-
+        print("Max IR mode:", max_ir_mode)
         return line
 
     def main_lepsilon(self):
@@ -1363,8 +1393,8 @@ class VaspToApiXmlSchema(object):
                 vrun = os.getcwd() + "/" + folder + "/vasprun.xml"
                 out = os.getcwd() + "/" + folder + "/OUTCAR"
                 data = self.dfpt_related(out=out, vrun=vrun)
-            except Exception:
-                print("Cannot find LEPSION data", folder)
+            except Exception as exp:
+                print("Cannot find LEPSION data", folder, exp)
                 pass
         os.chdir(folder)
         info["main_lepsilon_info"] = data
@@ -1442,9 +1472,12 @@ class VaspToApiXmlSchema(object):
                 + str(round(min(out_phonon_eigenvalues), 1))
                 + "</min_fd_phonon_mode>"
             )
-            line + '<outcar_phonons>"' + ",".join(
-                map(str, out_phonon_eigenvalues)
-            ) + '"</outcar_phonons>'
+            (
+                line
+                + '<outcar_phonons>"'
+                + ",".join(map(str, out_phonon_eigenvalues))
+                + '"</outcar_phonons>'
+            )
             line += (
                 "<phonon_dos_frequencies>'"
                 + ",".join(map(str, freq))

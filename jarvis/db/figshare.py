@@ -28,12 +28,14 @@ def get_db_info():
             "Obtaining 2D dataset 1.1k ...",
             "https://www.nature.com/articles/s41524-020-00440-1",
         ],
+        # https://doi.org/10.6084/m9.figshare.6815705
         "dft_3d": [
-            "https://ndownloader.figshare.com/files/26808914",
-            "d3-3-12-2021.json",
-            "Obtaining 3D dataset 43k ...",
+            "https://ndownloader.figshare.com/files/28034994",
+            "d3-5-16-2021.json",
+            "Obtaining 3D dataset 48k ...",
             "https://www.nature.com/articles/s41524-020-00440-1",
         ],
+        # https://doi.org/10.6084/m9.figshare.6815699
         "cfid_3d": [
             "https://ndownloader.figshare.com/files/26808914",
             "d3-3-12-2021.json",
