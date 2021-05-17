@@ -13,7 +13,7 @@ from matplotlib.pyplot import imread
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.analysis.topological.spillage import Spillage
 from jarvis.db.jsonutils import loadjson
-from jarvis.analysis.phonon.ir import ir_intensity, ir_intensity_phonopy
+from jarvis.analysis.phonon.ir import ir_intensity_phonopy
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
 from jarvis.analysis.solarefficiency.solar import SolarEfficiency
 from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
@@ -1338,9 +1338,9 @@ class VaspToApiXmlSchema(object):
         )
 
         # phonon_eigenvalues = out.phonon_eigenvalues
-        phonon_eigenvalues = data["phonon_eigenvalues"]
-        phonon_eigenvectors = data["phonon_eigenvectors"]
-        masses = data["masses"]
+        # phonon_eigenvalues = data["phonon_eigenvalues"]
+        # phonon_eigenvectors = data["phonon_eigenvectors"]
+        # masses = data["masses"]
         born_charges = data["born_charges"]
         # x, y = ir_intensity(
         #    phonon_eigenvectors=phonon_eigenvectors,
