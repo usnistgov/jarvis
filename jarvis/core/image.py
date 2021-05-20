@@ -148,9 +148,87 @@ class Image(object):
         rot = scipy.ndimage.rotate(self.values, angle)
         return Image(values=rot)
 
+    @staticmethod
+    def get_blob_angles(
+        filename="image.png",
+        tol=0.005,
+        tmp_path="tmp.png",
+        param1=100,
+        param2=255,
+        s1=3,
+        s2=20,
+        rad=10,
+        color="r",
+        out_name="final.png",
+    ):
+        """Get angles between atoms."""
+        try:
+            import cv2
+        except ImportError as error:
+            print(error.__class__.__name__ + ": " + error.message)
+        # https://www.geeksforgeeks.org/
+        # white-and-black-dot-detection-using-opencv-python/
+        plt.clf()
+        im = Image.from_file(filename)
+        vals = im.black_and_white(tol).values
+        plt.imshow(vals, cmap="jet", interpolation="none")
+        plt.axis("off")
+        plt.savefig(tmp_path)
+        plt.close()
+        path = tmp_path
+        # reading the image in grayscale mode
+        gray = cv2.imread(path, 0)
+        # reading the image in grayscale mode
+        th, threshed = cv2.threshold(
+            gray, param1, param2, cv2.THRESH_BINARY | cv2.THRESH_OTSU
+        )
+        # findcontours
+        cnts = cv2.findContours(
+            threshed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE
+        )[-2]
+
+        # filter by area
+        xcnts = []
+
+        for cnt in cnts:
+            if s1 < cv2.contourArea(cnt) < s2:
+                xcnts.append(cnt)
+        canvas = gray
+        cv2.drawContours(canvas, xcnts, -1, (0, 255, 0), 1)
+        fig, ax = plt.subplots()
+        plt.imshow(canvas)
+        plt.savefig(out_name)
+        plt.close()
+        my_coords = []
+        for i in xcnts:
+
+            circle1 = plt.Circle((i[0][0][0], i[0][0][1]), rad, color=color)
+            my_coords.append([i[0][0][0], i[0][0][1]])
+            ax.add_patch(circle1)
+        #
+
+        # printing output
+        print("\nDots number: {}".format(len(xcnts)))
+
+        def angle_between(p1, p2):
+            ang1 = np.arctan2(*p1[::-1])
+            ang2 = np.arctan2(*p2[::-1])
+            return np.rad2deg((ang1 - ang2) % (2 * np.pi))
+
+        all_angle_data = []
+        for i in my_coords:
+            for j in my_coords:
+                if i != j:
+                    all_angle_data.append([i, j, angle_between(i, j)])
+                    print(i, j, angle_between(i, j))
+        return all_angle_data
+
 
 """
 if __name__ == "__main__":
+    from jarvis.db.figshare import make_stm_from_prev_parchg
+    make_stm_from_prev_parchg()
+    Image.get_blob_angles(filename='stm_image.png')
     p = "JVASP-667_neg.jpg"
     im = Image.from_file(p)
 

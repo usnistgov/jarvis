@@ -4,6 +4,7 @@ from jarvis.db.figshare import (
     get_wann_electron,
     get_wann_phonon,
     get_hk_tb,
+    make_stm_from_prev_parchg,
     get_stm_2d_dataset,
 )
 from jarvis.db.webpages import Webpage
@@ -44,6 +45,8 @@ def test_figshare_download():
     # dat = data(dataset="twod_matpd")
     # dat = data(dataset="oqmd_3d_no_cfid")
     p, n = get_stm_2d_dataset()
+
+    make_stm_from_prev_parchg()
 
 
 # test_figshare_download()

@@ -17,6 +17,7 @@ from jarvis.io.vasp.inputs import Poscar
 from jarvis.io.wannier.outputs import WannierHam
 from tqdm import tqdm
 import matplotlib.image as mpimg
+from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
 
 
 def get_db_info():
@@ -264,6 +265,29 @@ def get_ff_eneleast():
         f.close()
     data_ff1 = loadjson(jff1)
     return data_ff1
+
+
+def make_stm_from_prev_parchg(
+    jid="JVASP-667", bias="Negative", filename="stm_image.png", min_size=10
+):
+    """Make STM images from previously calculated PARVHG files for 2D."""
+    fls = data("raw_files")
+    for i in fls["STM"]:
+        zip_name = jid + "_" + bias + ".zip"
+        if i["name"] == zip_name:
+            zip_file_url = i["download_url"]
+            r = requests.get(zip_file_url)
+            z = zipfile.ZipFile(io.BytesIO(r.content))
+            pchg = z.read("PARCHG").decode("utf-8")
+            fd, path = tempfile.mkstemp()
+            with os.fdopen(fd, "w") as tmp:
+                tmp.write(pchg)
+            TH_STM = TersoffHamannSTM(
+                chg_name=path, min_size=min_size, zcut=None
+            )
+            t_height = TH_STM.constant_height(filename=filename)
+            print("t_height", t_height)
+            return i
 
 
 def get_wann_electron(jid="JVASP-816"):
