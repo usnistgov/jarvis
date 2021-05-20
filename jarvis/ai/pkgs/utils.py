@@ -94,7 +94,7 @@ def get_ml_data(
 
 def mean_absolute_deviation(data, axis=None):
     """Get Mean absolute deviation."""
-    return np.mean(np.absolute(data - np.mean(data, axis)), axis)
+    return np.mean(np.absolute(data - np.mean(np.array(data), axis)), axis)
 
 
 def regr_scores(test, pred):
