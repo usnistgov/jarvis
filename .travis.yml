@@ -1,4 +1,5 @@
 language: python
+install: travis_wait 30 mvn install
 python:
   - "3.8"
 cache: pip
