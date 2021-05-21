@@ -37,8 +37,11 @@ typical_data_ranges = {
 }
 
 
-def get_ml_data(ml_property="formation_energy_peratom",
-                dataset='cfid_3d', data_ranges=typical_data_ranges):
+def get_ml_data(
+    ml_property="formation_energy_peratom",
+    dataset="cfid_3d",
+    data_ranges=typical_data_ranges,
+):
     """
     Provide arrays/pandas-dataframe as input for ML algorithms.
 
@@ -54,6 +57,7 @@ def get_ml_data(ml_property="formation_energy_peratom",
            X, Y , ids
     """
     import pandas as pd
+
     if isinstance(dataset, str):
         dataml = data(dataset)
         df = pd.DataFrame(dataml)
@@ -86,6 +90,11 @@ def get_ml_data(ml_property="formation_energy_peratom",
                 y.append(i[ml_property])
                 jid.append(i["jid"])
     return np.array(x, dtype="float"), np.array(y, dtype="float"), jid
+
+
+def mean_absolute_deviation(data, axis=None):
+    """Get Mean absolute deviation."""
+    return np.mean(np.absolute(data - np.mean(np.array(data), axis)), axis)
 
 
 def regr_scores(test, pred):

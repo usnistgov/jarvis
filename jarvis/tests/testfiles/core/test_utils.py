@@ -6,12 +6,15 @@ from jarvis.core.utils import (
     check_url_exists,
 )
 
+from jarvis.ai.pkgs.utils import mean_absolute_deviation
+
 
 def test_utils():
     info = {"a": "b", "c": "d"}
     sd = stringdict_to_xml(info)
     sd = stringdict_to_xml(info, enforce_string=True)
     ar = [1, 2, 3, 4, 5]
+    mad = mean_absolute_deviation(ar)
     sarr = array_to_string(ar)
     x = {"x": 1, "y": 2, "z": 3}
     y = {"m": 1, "n": 2, "o": 3}
