@@ -9,8 +9,11 @@ import matplotlib.transforms as mtransforms
 class TersoffHamannSTM(object):
     """Generate constant height and constant current STM images."""
 
-    def __init__(self, chg_name="PARCHG", min_size=50.0, skew=True, zcut=None):
+    def __init__(
+        self, chg_name="PARCHG", min_size=50.0, skew=True, zcut=None, extend=0
+    ):
         """Initialize class with pathe of PARCHG and other input params."""
+        # In original paper, extend used as 1
         chgcar = Chgcar(filename=chg_name)
         self.atoms = chgcar.atoms
         self.dim = chgcar.dim
@@ -25,6 +28,7 @@ class TersoffHamannSTM(object):
         self.c = self.atoms.lattice.c
         self.skew = skew
         self.zcut = zcut
+        self.extend = extend
         z_frac_coords = self.atoms.frac_coords[:, 2]
         z_frac_coords_moved = []
         for i in z_frac_coords:
@@ -34,8 +38,8 @@ class TersoffHamannSTM(object):
                 i = i + 1
             z_frac_coords_moved.append(i)
         self.zmaxp = max(np.array(z_frac_coords_moved) * self.c)
-        rep_x = int(min_size / self.a) + 1
-        rep_y = int(min_size / self.b) + 1
+        rep_x = int(min_size / self.a) + self.extend
+        rep_y = int(min_size / self.b) + self.extend
         self.repeat = [rep_x, rep_y]
         self.scell = self.atoms.make_supercell_matrix([rep_x, rep_y, 1])
 
@@ -54,7 +58,10 @@ class TersoffHamannSTM(object):
         else:
             tmp = 0
         data = self.get_plot(
-            ax, img_ext, exts, mtransforms.Affine2D().skew_deg(tmp, 0),
+            ax,
+            img_ext,
+            exts,
+            mtransforms.Affine2D().skew_deg(tmp, 0),
         )
         info = {}
         info["img_ext"] = img_ext
@@ -99,7 +106,10 @@ class TersoffHamannSTM(object):
             tmp = 0
 
         data = self.get_plot(
-            ax, img_ext, exts, mtransforms.Affine2D().skew_deg(tmp, 0),
+            ax,
+            img_ext,
+            exts,
+            mtransforms.Affine2D().skew_deg(tmp, 0),
         )
         plt.savefig(filename)
         plt.close()

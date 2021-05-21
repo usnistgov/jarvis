@@ -1,6 +1,8 @@
 from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
 import matplotlib.pyplot as plt
 import os
+from jarvis.db.figshare import make_stm_from_prev_parchg
+from jarvis.core.image import Image
 
 name = os.path.join(os.path.dirname(__file__), "PARCHG")
 from jarvis.core.image import Image
@@ -28,6 +30,10 @@ def test_th_stm():
     TH_STM2 = TersoffHamannSTM(chg_name=name)
     t2 = TH_STM2.constant_current()
     t2 = TH_STM2.constant_current(pc=5)
+    from jarvis.db.figshare import make_stm_from_prev_parchg
+
+    make_stm_from_prev_parchg()
+    Image.get_blob_angles(filename="stm_image.png")
     cmd = "rm *.png"
     os.system(cmd)
 
