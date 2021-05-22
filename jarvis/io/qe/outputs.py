@@ -113,6 +113,29 @@ class DataFileSchema(object):
         ]
 
     @property
+    def qe_version(self):
+        """Get QE version number."""
+        return self.data["qes:espresso"]["general_info"]["creator"]["@VERSION"]
+
+    @property
+    def is_spin_orbit(self):
+        """Check if spin-orbit coupling in True."""
+        tag = self.data["qes:espresso"]["input"]["spin"]["spinorbit"]
+        if tag == "true":
+            return True
+        else:
+            return False
+
+    @property
+    def is_spin_polarized(self):
+        """Check if spin-polarization coupling in True."""
+        tag = self.data["qes:espresso"]["output"]["band_structure"]["lsda"]
+        if tag == "true":
+            return True
+        else:
+            return False
+
+    @property
     def initial_structure(self):
         """Get input atoms."""
         line = self.data["qes:espresso"]["input"]
@@ -224,22 +247,36 @@ class DataFileSchema(object):
         )
 
     @property
+    def nkpts(self):
+        """Get number of electrons."""
+        return int(
+            float(self.data["qes:espresso"]["output"]["band_structure"]["nks"])
+        )
+
+    @property
     def indir_gap(self):
-        eigs = self.bandstruct_eigvals()
+        eigs = self.bandstruct_eigvals()  # .T
         nelec = self.nelec
         # TODO
         # Check error
-        nelec = 3
-        return min(eigs[:, nelec + 1]) - max(eigs[:, nelec])
+        # nelec = 3
+        if not self.is_spin_polarized and nelec % 2 != 0:
+            raise ValueError(
+                "Odd #electrons cant have band gaps in non-spin-polarized."
+            )
+        if not self.is_spin_polarized:
+            nelec = int(nelec / 2)
+        return min(eigs[:, nelec]) - max(eigs[:, nelec - 1])
 
     def bandstruct_eigvals(self, plot=False, filename="band.png"):
         """Get eigenvalues to plot bandstructure."""
         # nbnd = int(
         #    self.data["qes:espresso"]["output"]["band_structure"]["nbnd"]
         # )
-        nkpts = int(
-            self.data["qes:espresso"]["output"]["band_structure"]["nks"]
-        )
+        nkpts = self.nkpts
+        # int(
+        #    self.data["qes:espresso"]["output"]["band_structure"]["nks"]
+        # )
         eigvals = []
         for i in range(nkpts):
             eig = [
