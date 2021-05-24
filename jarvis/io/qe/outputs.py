@@ -6,6 +6,9 @@ from collections import OrderedDict
 import xmltodict
 import numpy as np
 
+bohr_to_ang = 0.529177249
+hartree_to_ev = 27.2113839
+
 
 class QEout(object):
     """Module for parsing screen QE output files."""
@@ -99,7 +102,7 @@ class DataFileSchema(object):
         line = self.data["qes:espresso"][self.set_key]
         if isinstance(line, list):
             line = line[-1]
-        return float(line["total_energy"]["etot"])
+        return float(line["total_energy"]["etot"]) * hartree_to_ev
 
     @property
     def forces(self):
@@ -160,7 +163,10 @@ class DataFileSchema(object):
                 elements.append(i["@name"])
                 pos.append([float(j) for j in i["#text"].split()])
             atoms = Atoms(
-                elements=elements, coords=pos, lattice_mat=lat, cartesian=True
+                elements=elements,
+                coords=np.array(pos) * bohr_to_ang,
+                lattice_mat=np.array(lat) * bohr_to_ang,
+                cartesian=True,
             )
         else:
             elements = [
@@ -175,7 +181,10 @@ class DataFileSchema(object):
                 ]
             ]
             atoms = Atoms(
-                elements=elements, coords=pos, lattice_mat=lat, cartesian=True
+                elements=elements,
+                coords=np.array(pos) * bohr_to_ang,
+                lattice_mat=np.array(lat) * bohr_to_ang,
+                cartesian=True,
             )
         return atoms
 
@@ -204,7 +213,10 @@ class DataFileSchema(object):
                 elements.append(i["@name"])
                 pos.append([float(j) for j in i["#text"].split()])
             atoms = Atoms(
-                elements=elements, coords=pos, lattice_mat=lat, cartesian=True
+                elements=elements,
+                coords=np.array(pos) * bohr_to_ang,
+                lattice_mat=np.array(lat) * bohr_to_ang,
+                cartesian=True,
             )
         else:
             elements = [
@@ -219,17 +231,23 @@ class DataFileSchema(object):
                 ]
             ]
             atoms = Atoms(
-                elements=elements, coords=pos, lattice_mat=lat, cartesian=True
+                elements=elements,
+                coords=np.array(pos) * bohr_to_ang,
+                lattice_mat=np.array(lat) * bohr_to_ang,
+                cartesian=True,
             )
         return atoms
 
     @property
     def efermi(self):
         """Get Fermi energy."""
-        return float(
-            self.data["qes:espresso"]["output"]["band_structure"][
-                "fermi_energy"
-            ]
+        return (
+            float(
+                self.data["qes:espresso"]["output"]["band_structure"][
+                    "fermi_energy"
+                ]
+            )
+            * hartree_to_ev
         )
 
     @property
@@ -298,7 +316,7 @@ class DataFileSchema(object):
             )
             eigvals.append(eig)
         # Eigenvalues for each k-point
-        eigvals = np.array(eigvals)
+        eigvals = np.array(eigvals) * hartree_to_ev
         if plot:
             import matplotlib.pyplot as plt
 
