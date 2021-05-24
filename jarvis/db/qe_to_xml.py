@@ -7,9 +7,12 @@ from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.core.utils import stringdict_to_xml, xml_to_dict, array_to_string
 from jarvis.io.qe.outputs import DataFileSchema
 
+# import pprint
+
 
 def parse_material_calculation_folder(
-    path="Ag_Al_kspace/dimer.in_vnscf_coords_min_2", source="JARVIS-DFT-QE",
+    path="Ag_Al_kspace/dimer.in_vnscf_coords_min_2",
+    source="JARVIS-DFT-QE",
 ):
     """Parse QE calculation folder."""
     save_path = os.path.join(path, "qe.save")
@@ -21,16 +24,16 @@ def parse_material_calculation_folder(
         "jid",
         "source_folder",
         "final_energy",
-        "initial_structure",
+        # "initial_structure",
         "natoms",
         "final_spacegroup_number",
         "final_spacegroup_symbol",
         "final_pointgroup_symbol",
         "final_crystal_system",
-        "initial_spacegroup_number",
-        "initial_spacegroup_symbol",
-        "initial_pointgroup_symbol",
-        "initial_crystal_system",
+        # "initial_spacegroup_number",
+        # "initial_spacegroup_symbol",
+        # "initial_pointgroup_symbol",
+        # "initial_crystal_system",
         "energy_per_atom",
         "elements",
         "formula",
@@ -45,6 +48,7 @@ def parse_material_calculation_folder(
         "is_spin_orbit",
         "data_source",
         "forces",
+        "nelec",
     ]
     for i in keys:
         info[i] = "na"
@@ -120,6 +124,7 @@ def parse_material_calculation_folder(
             info["initial_beta"] = round(initial_lat_params[4], 2)
             info["initial_gamma"] = round(initial_lat_params[5], 2)
             info["initial_density"] = round(initial_strt.density, 3)
+            """
             initial_spg = Spacegroup3D(initial_strt)
             info["initial_spacegroup_number"] = initial_spg.space_group_number
             info["initial_spacegroup_symbol"] = initial_spg.space_group_symbol
@@ -130,6 +135,7 @@ def parse_material_calculation_folder(
                 + data_schm.initial_structure.get_string().replace("\n", "\\n")
                 + "'"
             )
+            """
 
             info["energy_per_atom"] = round(
                 float(data_schm.final_energy) / float(final_strt.num_atoms), 5
@@ -156,10 +162,11 @@ def parse_material_calculation_folder(
                 "'" + final_strt.composition.reduced_formula + "'"
             )
             info["number_uniq_species"] = len(final_strt.uniq_species)
-            info["efermi"] = data_schm.efermi
+            info["efermi"] = round(data_schm.efermi, 4)
             info["functional"] = data_schm.functional
             info["indir_gap"] = round(data_schm.indir_gap, 3)
             info["nkpts"] = data_schm.nkpts
+            info["nelec"] = data_schm.nelec
             info["qe_version"] = data_schm.qe_version
             info["is_spin_polarized"] = data_schm.is_spin_polarized
             info["is_spin_orbit"] = data_schm.is_spin_orbit
@@ -192,7 +199,7 @@ def write_xml(path="", filename="temp.xml"):
 
 """
 if __name__ == "__main__":
-    path = "Ag_Al_kspace/dimer.in_vnscf_coords_min_2"
-    path = "Si_C_kspace/POSCAR_tio2_rutile_vnscf_vol_1"
+    path = "/rk2/knc6/UniveralTB/julia_data/
+    Si_C_kspace/POSCAR_tio2_rutile_vnscf_vol_1"
     write_xml(path=path)
 """
