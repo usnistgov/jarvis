@@ -254,19 +254,29 @@ class DataFileSchema(object):
         )
 
     @property
+    def nbands(self):
+        """Get number of bands."""
+        return int(
+            float(
+                self.data["qes:espresso"]["output"]["band_structure"]["nbnd"]
+            )
+        )
+
+    @property
     def indir_gap(self):
+        """Get indirect bandgap."""
         eigs = self.bandstruct_eigvals()  # .T
         nelec = self.nelec
-        # TODO
-        # Check error
-        # nelec = 3
         if not self.is_spin_polarized and nelec % 2 != 0:
             raise ValueError(
                 "Odd #electrons cant have band gaps in non-spin-polarized."
             )
         if not self.is_spin_polarized:
             nelec = int(nelec / 2)
-        return min(eigs[:, nelec]) - max(eigs[:, nelec - 1])
+        gap = min(eigs[:, nelec]) - max(eigs[:, nelec - 1])
+        if gap < 0:
+            gap = 0
+        return gap
 
     def bandstruct_eigvals(self, plot=False, filename="band.png"):
         """Get eigenvalues to plot bandstructure."""
@@ -277,16 +287,15 @@ class DataFileSchema(object):
         # int(
         #    self.data["qes:espresso"]["output"]["band_structure"]["nks"]
         # )
+        # nbnd = self.nbands
         eigvals = []
         for i in range(nkpts):
-            eig = [
-                float(j)
-                for j in self.data["qes:espresso"]["output"]["band_structure"][
+            eig = np.array(
+                self.data["qes:espresso"]["output"]["band_structure"][
                     "ks_energies"
-                ][i]["eigenvalues"]["#text"]
-                .split("\n")[0]
-                .split()
-            ]
+                ][i]["eigenvalues"]["#text"].split(),
+                dtype="float",
+            )
             eigvals.append(eig)
         # Eigenvalues for each k-point
         eigvals = np.array(eigvals)
