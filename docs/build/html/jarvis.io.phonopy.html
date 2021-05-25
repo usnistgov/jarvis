@@ -1,0 +1,206 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.io.phonopy package &#8212; jarvis-tools v2021.2.3 documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="jarvis-io-phonopy-package">
+<h1>jarvis.io.phonopy package<a class="headerlink" href="#jarvis-io-phonopy-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jarvis.io.phonopy.fcmat2hr">
+<span id="jarvis-io-phonopy-fcmat2hr-module"></span><h2>jarvis.io.phonopy.fcmat2hr module<a class="headerlink" href="#module-jarvis.io.phonopy.fcmat2hr" title="Permalink to this headline">¶</a></h2>
+<p>Module to get Wannier TB format for Force-constants.</p>
+<dl class="function">
+<dt id="jarvis.io.phonopy.fcmat2hr.get_phonon_hr">
+<code class="descclassname">jarvis.io.phonopy.fcmat2hr.</code><code class="descname">get_phonon_hr</code><span class="sig-paren">(</span><em>fcmat</em>, <em>smallest_vectors</em>, <em>mass</em>, <em>multi</em>, <em>super_pos</em>, <em>p2s_map</em>, <em>s2p_map</em>, <em>num_satom</em>, <em>num_patom</em>, <em>out_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/fcmat2hr.html#get_phonon_hr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.fcmat2hr.get_phonon_hr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get phonon-TB Hamiltonian similar to wannier90_hr.dat.</p>
+<p>Its build by FORCE_CONSTANTS
+num_satom: number of atoms in super cell
+num_patom: number of atoms in primitive cell
+fcmat: force constansts num_satom*num_satom*3*3
+Forked from WannierTools package, please cite it
+along with jarvis-tools f you use this part of the code.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.io.phonopy.inputs">
+<span id="jarvis-io-phonopy-inputs-module"></span><h2>jarvis.io.phonopy.inputs module<a class="headerlink" href="#module-jarvis.io.phonopy.inputs" title="Permalink to this headline">¶</a></h2>
+<p>Modules to generate input files for phonopy using Atoms object.</p>
+<dl class="class">
+<dt id="jarvis.io.phonopy.inputs.PhonopyInputs">
+<em class="property">class </em><code class="descclassname">jarvis.io.phonopy.inputs.</code><code class="descname">PhonopyInputs</code><span class="sig-paren">(</span><em>atoms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/inputs.html#PhonopyInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.inputs.PhonopyInputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Generate input files for phonopy post-processing.</p>
+<p>Make sure to obtain FORCE_CONSTANTS first
+E.g. run phonopy –fc vasprun.xml first.</p>
+<dl class="method">
+<dt id="jarvis.io.phonopy.inputs.PhonopyInputs.animation">
+<code class="descname">animation</code><span class="sig-paren">(</span><em>factor=521.471, filename='anim.conf', dim=[1, 1, 1]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/inputs.html#PhonopyInputs.animation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.inputs.PhonopyInputs.animation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for atom dancing/movement animation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.phonopy.inputs.PhonopyInputs.generate_all_files">
+<code class="descname">generate_all_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/inputs.html#PhonopyInputs.generate_all_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.inputs.PhonopyInputs.generate_all_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate all the input files mentioned above.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.phonopy.inputs.PhonopyInputs.mesh_bands">
+<code class="descname">mesh_bands</code><span class="sig-paren">(</span><em>dim=[1, 1, 1], filename='band.conf', factor=521.471, line_density=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/inputs.html#PhonopyInputs.mesh_bands"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.inputs.PhonopyInputs.mesh_bands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for making phonon bandstructure plot.</p>
+<p>After running phonopy -p bandd.conf, bandplot -o PBAND.png</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.phonopy.inputs.PhonopyInputs.mesh_dos">
+<code class="descname">mesh_dos</code><span class="sig-paren">(</span><em>filename='meshdos.conf', dim=[1, 1, 1], factor=521.471, grid=[31, 31, 31]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/inputs.html#PhonopyInputs.mesh_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.inputs.PhonopyInputs.mesh_dos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for DOS and thermal properties.</p>
+<p>phonopy -p meshdos.conf
+phonopy -t meshdos.conf</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.phonopy.inputs.PhonopyInputs.mesh_irreps">
+<code class="descname">mesh_irreps</code><span class="sig-paren">(</span><em>factor=521.471, filename='irreps.conf', dim=[1, 1, 1], tol=0.001</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/inputs.html#PhonopyInputs.mesh_irreps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.inputs.PhonopyInputs.mesh_irreps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use for irreducible phonon representation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="jarvis.io.phonopy.inputs.PhonopyInputs.prim_axis">
+<code class="descname">prim_axis</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/inputs.html#PhonopyInputs.prim_axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.inputs.PhonopyInputs.prim_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use when taking conventional cell.</p>
+<p>Such as elastic constant calculations.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.io.phonopy.outputs">
+<span id="jarvis-io-phonopy-outputs-module"></span><h2>jarvis.io.phonopy.outputs module<a class="headerlink" href="#module-jarvis.io.phonopy.outputs" title="Permalink to this headline">¶</a></h2>
+<p>Module for post-processing phonopy outputs.</p>
+<dl class="function">
+<dt id="jarvis.io.phonopy.outputs.bandstructure_plot">
+<code class="descclassname">jarvis.io.phonopy.outputs.</code><code class="descname">bandstructure_plot</code><span class="sig-paren">(</span><em>band_yaml=''</em>, <em>plot=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/outputs.html#bandstructure_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.outputs.bandstructure_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get phonopy bandstructure info.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.io.phonopy.outputs.get_phonon_tb">
+<code class="descclassname">jarvis.io.phonopy.outputs.</code><code class="descname">get_phonon_tb</code><span class="sig-paren">(</span><em>atoms=[], fc=[], out_file='phonopyTB_hr.dat', distance_to_A=1.0, scell=array([[1, 0, 0],        [0, 1, 0],        [0, 0, 1]]), factor=15.633302300230191, symprec=1e-05, displacement_distance=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/outputs.html#get_phonon_tb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.outputs.get_phonon_tb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate phonon TB Hamiltonia, along with WannierHamn.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.io.phonopy.outputs.read_fc">
+<code class="descclassname">jarvis.io.phonopy.outputs.</code><code class="descname">read_fc</code><span class="sig-paren">(</span><em>filename='FORCE_CONSTANTS'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/outputs.html#read_fc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.outputs.read_fc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read phonopy generated force constants.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="jarvis.io.phonopy.outputs.total_dos">
+<code class="descclassname">jarvis.io.phonopy.outputs.</code><code class="descname">total_dos</code><span class="sig-paren">(</span><em>tot_dos=''</em>, <em>plot=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/jarvis/io/phonopy/outputs.html#total_dos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#jarvis.io.phonopy.outputs.total_dos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get total dos info.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jarvis.io.phonopy">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jarvis.io.phonopy" title="Permalink to this headline">¶</a></h2>
+<p>Modules for running phonopy package.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">jarvis.io.phonopy package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-jarvis.io.phonopy.fcmat2hr">jarvis.io.phonopy.fcmat2hr module</a></li>
+<li><a class="reference internal" href="#module-jarvis.io.phonopy.inputs">jarvis.io.phonopy.inputs module</a></li>
+<li><a class="reference internal" href="#module-jarvis.io.phonopy.outputs">jarvis.io.phonopy.outputs module</a></li>
+<li><a class="reference internal" href="#module-jarvis.io.phonopy">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/jarvis.io.phonopy.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>

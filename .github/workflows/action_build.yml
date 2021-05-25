@@ -1,0 +1,99 @@
+name: JARVIS-Tools github action
+
+on: [push, pull_request]
+
+
+jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+
+    - uses: actions/cache@v2
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
+
+    - name: Install requirements
+      run: |
+        python setup.py develop
+        pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
+
+        echo 'CONDA LIST'
+        conda list
+
+        echo 'PIP FREEZE'
+        pip freeze
+
+        #echo 'PYTEST-COV'
+        #pytest --cov-config=.coveragerc --cov=jarvis -n 2
+
+
+        coverage run -m pytest
+        coverage report -m
+        codecov
+        codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
+        # git clone https://github.com/QEF/q-e.git
+        # cd q-e
+        # ./configure
+        # make pw
+
+
+
+#jobs:
+#   miniconda:
+#     name: Miniconda ${{ matrix.os }}
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#         matrix:
+#             os: ["ubuntu-latest"]
+#     steps:
+#       - uses: actions/checkout@v2
+#       - uses: conda-incubator/setup-miniconda@v2
+
+#         with:
+#           activate-environment: test
+
+#           python-version: 3.8
+#           auto-activate-base: false
+#       - shell: bash -l {0}
+#         run: |
+#           conda info
+#           conda list
+
+#       - uses: actions/cache@v2
+#         with:
+#           path: ~/.cache/pip
+#           key: ${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
+
+#       - name: Run pytest
+#         shell: bash -l {0}
+#         run: |
+#             python setup.py develop
+#             #pip uninstall qiskit
+#             # pip install qiskit ase  numpy==1.18.5 scipy==1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx scikit-learn pandas pennylane==0.14.1 dgl tqdm  codecov torch keras tensorflow==2.3.0  pytest pytest-cov bokeh pytest-xdist
+#             # pip install git+https://github.com/aspuru-guzik-group/tequila.git
+#             # pip install -r requirements-for-ci-only.txt
+#             # pip install -r dev-requirements.txt
+#             pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
+#             echo 'CONDA LIST'
+#             conda list
+
+#             echo 'PIP FREEZE'
+#             pip freeze
+#             #echo 'PYTEST-COV'
+#             #pytest --cov-config=.coveragerc --cov=jarvis -n 2
+#             coverage run -m pytest
+#             coverage report -m
+#             codecov
+#             codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
+#             # git clone https://github.com/QEF/q-e.git
+#             # cd q-e
+#             # ./configure
+#             # make pw

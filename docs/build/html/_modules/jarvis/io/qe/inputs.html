@@ -1,0 +1,366 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>jarvis.io.qe.inputs &#8212; jarvis-tools v2021.2.3 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for jarvis.io.qe.inputs</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Modules for generating input files for QE.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.specie</span> <span class="kn">import</span> <span class="n">Specie</span>
+
+
+<div class="viewcode-block" id="QEinfile"><a class="viewcode-back" href="../../../../jarvis.io.qe.html#jarvis.io.qe.inputs.QEinfile">[docs]</a><span class="k">class</span> <span class="nc">QEinfile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gnererate quantum espresso input files.</span>
+
+<span class="sd">    jarvis.core.Atoms and Kpoints are required as inputs.</span>
+<span class="sd">    For other input parameters,</span>
+<span class="sd">    see https://www.quantum-espresso.org/Doc/INPUT_PW.html .</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">kpoints</span><span class="p">,</span> <span class="n">psp_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_params</span><span class="o">=</span><span class="p">{},</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize input parameters for qunatum espresso.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">input_params</span> <span class="o">==</span> <span class="p">{}:</span>
+            <span class="n">input_params</span> <span class="o">=</span> <span class="n">GenericInputs</span><span class="p">()</span><span class="o">.</span><span class="n">geometry_optimization</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">psp_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">psp_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;QE_PSPs&quot;</span><span class="p">))</span>
+            <span class="c1"># Download GBRV PSPs by default</span>
+            <span class="k">if</span> <span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;http://www.physics.rutgers.edu/&quot;</span>
+                       <span class="s2">&quot;gbrv/all_pbesol_UPF_v1.5.tar.gz&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">psp_dir</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Downloading PSPs&quot;</span><span class="p">)</span>
+                <span class="n">tar_file_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;psp.tar.gz&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">tar_file_name</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="n">tar</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">tar_file_name</span><span class="p">)</span>
+                <span class="n">tar</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">psp_dir</span><span class="p">)</span>
+                <span class="n">tar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tar_file_name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">psp_dir</span> <span class="o">=</span> <span class="n">psp_dir</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="n">atoms</span>
+        <span class="n">input_params</span><span class="p">[</span><span class="s2">&quot;system_params&quot;</span><span class="p">][</span><span class="s2">&quot;nat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">num_atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">species</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">uniq_species</span>
+        <span class="n">input_params</span><span class="p">[</span><span class="s2">&quot;system_params&quot;</span><span class="p">][</span><span class="s2">&quot;ntyp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">species</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span> <span class="o">=</span> <span class="n">kpoints</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_params</span> <span class="o">=</span> <span class="n">input_params</span><span class="p">[</span><span class="s2">&quot;control_params&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_params</span><span class="p">[</span><span class="s2">&quot;pseudo_dir&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">psp_dir</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system_params</span> <span class="o">=</span> <span class="n">input_params</span><span class="p">[</span><span class="s2">&quot;system_params&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electron_params</span> <span class="o">=</span> <span class="n">input_params</span><span class="p">[</span><span class="s2">&quot;electron_params&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ion_params</span> <span class="o">=</span> <span class="n">input_params</span><span class="p">[</span><span class="s2">&quot;ion_params&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_params</span> <span class="o">=</span> <span class="n">input_params</span><span class="p">[</span><span class="s2">&quot;cell_params&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_params</span> <span class="o">=</span> <span class="n">input_params</span>
+
+<div class="viewcode-block" id="QEinfile.dictionary_to_string"><a class="viewcode-back" href="../../../../jarvis.io.qe.html#jarvis.io.qe.inputs.QEinfile.dictionary_to_string">[docs]</a>    <span class="k">def</span> <span class="nf">dictionary_to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Convert a dictionary to string with &#39;=&#39; sign.&quot;&quot;&quot;</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="n">lines</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot; = &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">lines</span></div>
+
+<div class="viewcode-block" id="QEinfile.kpoints_to_string"><a class="viewcode-back" href="../../../../jarvis.io.qe.html#jarvis.io.qe.inputs.QEinfile.kpoints_to_string">[docs]</a>    <span class="k">def</span> <span class="nf">kpoints_to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert a jarvis.core.Kpoints3D to string.&quot;&quot;&quot;</span>
+        <span class="n">kp</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">kpoint_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">_kpoint_mode</span>
+        <span class="k">if</span> <span class="n">kpoint_mode</span> <span class="o">==</span> <span class="s2">&quot;automatic&quot;</span><span class="p">:</span>
+            <span class="n">kp</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">kp</span>
+                <span class="o">+</span> <span class="s2">&quot;K_POINTS automatic</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">kpts</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="s2">&quot; 0 0 0</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">kpoint_mode</span> <span class="o">==</span> <span class="s2">&quot;linemode&quot;</span><span class="p">:</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">kpts</span><span class="p">:</span>
+                <span class="n">points</span> <span class="o">=</span> <span class="n">points</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; 1.0&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">kp</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">kp</span>
+                <span class="o">+</span> <span class="s2">&quot;K_POINTS crystal</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">kpts</span><span class="p">))</span>
+                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="n">points</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Kpoint scheme not implemented except linemode, &amp; automatic&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">kp</span></div>
+
+<div class="viewcode-block" id="QEinfile.get_psp"><a class="viewcode-back" href="../../../../jarvis.io.qe.html#jarvis.io.qe.inputs.QEinfile.get_psp">[docs]</a>    <span class="k">def</span> <span class="nf">get_psp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Obtain psuedopotential for an element.&quot;&quot;&quot;</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">psp_dir</span><span class="p">):</span>
+            <span class="n">el</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">el</span> <span class="o">==</span> <span class="n">element</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">i</span></div>
+
+<div class="viewcode-block" id="QEinfile.atomic_species_string"><a class="viewcode-back" href="../../../../jarvis.io.qe.html#jarvis.io.qe.inputs.QEinfile.atomic_species_string">[docs]</a>    <span class="k">def</span> <span class="nf">atomic_species_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Obtain string for QE atomic species.&quot;&quot;&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">species</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="p">(</span>
+                <span class="n">i</span>
+                <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">Specie</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">atomic_mass</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+                <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_psp</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">line</span></div>
+
+<div class="viewcode-block" id="QEinfile.atomic_pos"><a class="viewcode-back" href="../../../../jarvis.io.qe.html#jarvis.io.qe.inputs.QEinfile.atomic_pos">[docs]</a>    <span class="k">def</span> <span class="nf">atomic_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Obtain string for QE atomic positions.&quot;&quot;&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">elements</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">frac_coords</span><span class="p">):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">line</span></div>
+
+<div class="viewcode-block" id="QEinfile.atomic_cell_params"><a class="viewcode-back" href="../../../../jarvis.io.qe.html#jarvis.io.qe.inputs.QEinfile.atomic_cell_params">[docs]</a>    <span class="k">def</span> <span class="nf">atomic_cell_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Obtain string for QE atomic lattice parameters.&quot;&quot;&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot; &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">line</span></div>
+
+<div class="viewcode-block" id="QEinfile.to_string"><a class="viewcode-back" href="../../../../jarvis.io.qe.html#jarvis.io.qe.inputs.QEinfile.to_string">[docs]</a>    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert inputs to a string to write in file.&quot;&quot;&quot;</span>
+        <span class="n">control</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dictionary_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">control_params</span><span class="p">)</span>
+        <span class="n">system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dictionary_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system_params</span><span class="p">)</span>
+        <span class="n">electrons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dictionary_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">electron_params</span><span class="p">)</span>
+        <span class="n">ions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dictionary_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ion_params</span><span class="p">)</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dictionary_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cell_params</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;&amp;control</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="n">control</span>
+            <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&amp;system</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="n">system</span>
+            <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&amp;electrons</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="n">electrons</span>
+            <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&amp;ions</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="n">ions</span>
+            <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&amp;cell</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="n">cell</span>
+            <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;ATOMIC_SPECIES</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomic_species_string</span><span class="p">()</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;ATOMIC_POSITIONS crystal</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomic_pos</span><span class="p">()</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;CELL_PARAMETERS angstrom</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">atomic_cell_params</span><span class="p">()</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints_to_string</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">line</span></div>
+
+<div class="viewcode-block" id="QEinfile.write_file"><a class="viewcode-back" href="../../../../jarvis.io.qe.html#jarvis.io.qe.inputs.QEinfile.write_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;qe.in&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write input file.&quot;&quot;&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="GenericInputs"><a class="viewcode-back" href="../../../../jarvis.io.qe.html#jarvis.io.qe.inputs.GenericInputs">[docs]</a><span class="k">class</span> <span class="nc">GenericInputs</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Obtain set of minimal QE input parameters.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize with minimum parameters that can be updated.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_qe_inputs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;control_params&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;calculation&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;scf&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;restart_mode&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;from_scratch&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;prefix&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;QE&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;outdir&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;./&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tstress&quot;</span><span class="p">:</span> <span class="s2">&quot;.true.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;tprnfor&quot;</span><span class="p">:</span> <span class="s2">&quot;.true.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;disk_io&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;low&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;wf_collect&quot;</span><span class="p">:</span> <span class="s2">&quot;.true.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;pseudo_dir&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;verbosity&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;high&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;nstep&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;system_params&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;ibrav&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s2">&quot;nat&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;ntyp&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">&quot;ecutwfc&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
+                <span class="s2">&quot;ecutrho&quot;</span><span class="p">:</span> <span class="mi">250</span><span class="p">,</span>
+                <span class="s2">&quot;q2sigma&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s2">&quot;ecfixed&quot;</span><span class="p">:</span> <span class="mf">44.5</span><span class="p">,</span>
+                <span class="s2">&quot;qcutz&quot;</span><span class="p">:</span> <span class="mi">800</span><span class="p">,</span>
+                <span class="s2">&quot;occupations&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;smearing&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;degauss&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+                <span class="s2">&quot;lda_plus_u&quot;</span><span class="p">:</span> <span class="s2">&quot;.false.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;force_symmorphic&quot;</span><span class="p">:</span> <span class="s2">&quot;.true.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;nosym&quot;</span><span class="p">:</span> <span class="s2">&quot;.false.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;noinv&quot;</span><span class="p">:</span> <span class="s2">&quot;.false.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;electron_params&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;diagonalization&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;david&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mixing_mode&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;local-TF&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mixing_beta&quot;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+                <span class="s2">&quot;conv_thr&quot;</span><span class="p">:</span> <span class="s2">&quot;1d-9&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;ion_params&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ion_dynamics&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;bfgs&#39;&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;cell_params&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;cell_dynamics&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;bfgs&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;cell_dofree&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;all&#39;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;cell_factor&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="GenericInputs.geometry_optimization"><a class="viewcode-back" href="../../../../jarvis.io.qe.html#jarvis.io.qe.inputs.GenericInputs.geometry_optimization">[docs]</a>    <span class="k">def</span> <span class="nf">geometry_optimization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Obtain QE inputs for geometry optimization.&quot;&quot;&quot;</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_qe_inputs</span>
+        <span class="nb">input</span><span class="p">[</span><span class="s2">&quot;control_params&quot;</span><span class="p">][</span><span class="s2">&quot;calculation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;vc-relax&#39;&quot;</span>
+        <span class="k">return</span> <span class="nb">input</span></div></div>
+
+    <span class="c1"># def simple_scf(self):</span>
+    <span class="c1">#    &quot;&quot;&quot;Obtain QE inputs for single SCF.&quot;&quot;&quot;</span>
+    <span class="c1">#    input = self.sample_qe_inputs</span>
+    <span class="c1">#    return input</span>
+
+    <span class="c1"># def electron_band_structure(self):</span>
+    <span class="c1">#    &quot;&quot;&quot;Obtain QE inputs for bandstructure calculations optimization.&quot;&quot;&quot;</span>
+    <span class="c1">#    input = self.sample_qe_inputs</span>
+    <span class="c1">#    # TODO: increase nbands</span>
+    <span class="c1">#    input[&quot;control_params&quot;][&quot;calculation&quot;] = &quot;&#39;nscf&#39;&quot;</span>
+    <span class="c1">#    input[&quot;control_params&quot;][&quot;restart_mode&quot;] = None</span>
+    <span class="c1">#    return input</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">if __name__ == &quot;__main__&quot;:</span>
+<span class="sd">    from jarvis.core.kpoints import Kpoints3D</span>
+<span class="sd">    from jarvis.core.atoms import Atoms</span>
+<span class="sd">    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]</span>
+<span class="sd">    coords = [[0, 0, 0], [0.25, 0.25, 0.25]]</span>
+<span class="sd">    elements = [&quot;Si&quot;, &quot;Si&quot;]</span>
+<span class="sd">    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)</span>
+<span class="sd">    print(Si)</span>
+<span class="sd">    kp = Kpoints3D().automatic_length_mesh(</span>
+<span class="sd">        lattice_mat=Si.lattice_mat, length=20</span>
+<span class="sd">    )</span>
+<span class="sd">    qe = QEinfile(Si, kp)</span>
+<span class="sd">    qe.write_file()</span>
+<span class="sd">    kp = Kpoints3D().kpath(atoms=Si)</span>
+<span class="sd">    qe = QEinfile(Si, kp)</span>
+<span class="sd">    qe.write_file(&quot;qe.in2&quot;)</span>
+<span class="sd">    sp = qe.atomic_species_string()</span>
+<span class="sd">    sp = qe.atomic_cell_params()</span>
+<span class="sd">    print(&quot;sp&quot;, sp)</span>
+<span class="sd">    print(qe.input_params[&#39;system_params&#39;][&#39;nat&#39;])</span>
+<span class="sd">#  /users/knc6/Software/QE/q-e/bin/pw.x -i qe.in</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">jarvis-tools v2021.2.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Kamal Choudhary.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.1.
+    </div>
+  </body>
+</html>
