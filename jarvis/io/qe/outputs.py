@@ -337,9 +337,9 @@ class ProjHamXml(object):
     ):
         """Initialize class."""
         self.filename = filename
+        self.data = data
         if data is None:
             self.read()
-        # self.data = data
 
     def read(self):
         """Read file."""
