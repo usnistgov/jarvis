@@ -1,10 +1,11 @@
 import os
-from jarvis.io.qe.outputs import QEout, DataFileSchema
+from jarvis.io.qe.outputs import QEout, DataFileSchema, ProjHamXml
 import matplotlib.pyplot as plt
 
 plt.switch_backend("agg")
 out = os.path.join(os.path.dirname(__file__), "qe.out")
 xml = os.path.join(os.path.dirname(__file__), "data-file-schema.xml")
+projham_xml = os.path.join(os.path.dirname(__file__), "projham_K.xml")
 
 
 def test_outputs():
@@ -29,4 +30,5 @@ def test_outputs():
     print(dxml.final_structure)
     print(dxml.bandstruct_eigvals(plot=True))
     cmd = "rm band.png"
+    projham=ProjHamXml(filename=projham_xml).get_tight_binding()
     os.system(cmd)
