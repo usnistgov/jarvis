@@ -337,9 +337,9 @@ class ProjHamXml(object):
     ):
         """Initialize class."""
         self.filename = filename
-        self.data = data
-        if self.data is None:
+        if data is None:
             self.read()
+        # self.data = data
 
     def read(self):
         """Read file."""
@@ -347,6 +347,7 @@ class ProjHamXml(object):
             f = gzip.open(self.filename, "rb")
             file_content = f.read()
             data = xmltodict.parse(file_content)
+            self.data = data
         else:
             with open(self.filename) as fd:
                 data = xmltodict.parse(fd.read())
