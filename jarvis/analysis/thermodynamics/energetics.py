@@ -1,17 +1,21 @@
 """Get formation energy."""
 
 import os
-import json
-# from jarvis.io.vasp.outputs import Vasprun
-# import glob
 from jarvis.db.figshare import data
 from jarvis.core.atoms import Atoms
+from jarvis.db.jsonutils import loadjson
 
-# OptB88vdW energy per atoms for elements
-unary_json_file = str(os.path.join(os.path.dirname(__file__), "unary.json"))
-unary_json = open(unary_json_file, "r")
-unary_data = json.load(unary_json)
-unary_json.close()
+
+def get_optb88vdw_energy():
+    """Get OptB88vdW energy per atoms for elements."""
+    return loadjson(os.path.join(os.path.dirname(__file__), "unary.json"))
+
+
+def get_unary_qe_tb_energy():
+    """Get elemental chemical potential for GBRV tight-binding project."""
+    return loadjson(
+        os.path.join(os.path.dirname(__file__), "unary_qe_tb.json")
+    )
 
 
 def isfloat(value):
@@ -26,16 +30,18 @@ def isfloat(value):
         return False
 
 
-def unary_energy(el="Na"):
+def unary_energy(el="Na", chem_pots=None):
     """Provide energy per atoms of an element."""
+    if chem_pots is None:
+        chem_pots = get_optb88vdw_energy()
     en = "na"
-    for i, j in unary_data.items():
+    for i, j in chem_pots.items():
         if str(i) == str(el):
             en = j["energy"]
     return en
 
 
-def form_enp(atoms=None, total_energy=None):
+def form_enp(atoms=None, total_energy=None, chem_pots=None):
     """
     Calculate formation energy given the total energy and the atoms object.
 
@@ -45,7 +51,7 @@ def form_enp(atoms=None, total_energy=None):
     dd = atoms.composition.to_dict()
     ref = 0.0
     for k, v in dd.items():
-        e1 = unary_energy(k)
+        e1 = unary_energy(el=k, chem_pots=chem_pots)
         if e1 == "na":
             ref = "na"
             ValueError("Element reference does not exist", e1)
@@ -74,6 +80,7 @@ def get_twod_defect_energy(vrun="", jid="", atom=""):
         # tmp=dir.split('_')
         # jid=tmp[0]
         # atom=tmp[2]
+
     strt = vrun.all_structures[-1]
     natoms = strt.num_atoms
     fin_en = vrun.final_energy

@@ -6,6 +6,10 @@ from jarvis.core.atoms import get_supercell_dims
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.core.utils import stringdict_to_xml, xml_to_dict, array_to_string
 from jarvis.io.qe.outputs import DataFileSchema
+from jarvis.analysis.thermodynamics.energetics import (
+    form_enp,
+    get_unary_qe_tb_energy,
+)
 
 # import pprint
 
@@ -49,6 +53,7 @@ def parse_material_calculation_folder(
         "data_source",
         "forces",
         "nelec",
+        "f_enp",
     ]
     for i in keys:
         info[i] = "na"
@@ -92,6 +97,16 @@ def parse_material_calculation_folder(
                 + data_schm.final_structure.get_string().replace("\n", "\\n")
                 + "'"
             )
+            try:
+                f_enp = form_enp(
+                    atoms=final_strt,
+                    chem_pots=get_unary_qe_tb_energy(),
+                    total_energy=data_schm.final_energy,
+                )
+                info["f_enp"] = round(f_enp, 4)
+            except Exception as exp:
+                print(exp)
+                pass
             dim = get_supercell_dims(final_strt)
             info["xyz"] = (
                 '"'
@@ -138,7 +153,7 @@ def parse_material_calculation_folder(
             """
 
             info["energy_per_atom"] = round(
-                float(data_schm.final_energy) / float(final_strt.num_atoms), 5
+                float(data_schm.final_energy) / float(final_strt.num_atoms), 4
             )
 
             info["cif"] = ""

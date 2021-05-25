@@ -1,10 +1,10 @@
 """Module for analyzing QE outputs."""
 
-
 from jarvis.core.atoms import Atoms
 from collections import OrderedDict
 import xmltodict
 import numpy as np
+import gzip
 
 bohr_to_ang = 0.529177249
 hartree_to_ev = 27.2113839
@@ -79,11 +79,10 @@ class DataFileSchema(object):
     def xml_to_dict(self):
         """Read XML file."""
         if ".gz" in self.filename:
-            # import gzip
+            f = gzip.open(self.filename, "rb")
+            file_content = f.read()
+            self.data = xmltodict.parse(file_content)
 
-            with open(self.filename, "rb") as f:
-                file_content = f.read()
-                self.data = xmltodict.parse(file_content)
         else:
             with open(self.filename) as fd:
                 data = xmltodict.parse(fd.read())
@@ -327,6 +326,62 @@ class DataFileSchema(object):
         return eigvals
 
 
+class ProjHamXml(object):
+    """Module to parse projham_K.xml."""
+
+    # Adapted from https://github.com/kfgarrity/TightlyBound.jl
+    def __init__(
+        self,
+        filename="projham_K.xml",
+        data=None,
+    ):
+        """Initialize class."""
+        self.filename = filename
+        self.data = data
+        if self.data is None:
+            self.read()
+
+    def read(self):
+        """Read file."""
+        if ".gz" in self.filename:
+            f = gzip.open(self.filename, "rb")
+            file_content = f.read()
+            data = xmltodict.parse(file_content)
+        else:
+            with open(self.filename) as fd:
+                data = xmltodict.parse(fd.read())
+                self.data = data
+
+    def get_tight_binding(self):
+        """Get tight_binding parameters."""
+        tmp_tb = self.data["root"]["tightbinding"]
+        nwan = int(float(tmp_tb["nwan"]))
+        h1 = np.array(tmp_tb["h1"].split(), dtype="float").reshape(nwan, nwan)
+        nonorth = tmp_tb["nonorth"]
+        grid = [0, 0, 0]
+        if "grid" in list(tmp_tb.keys()):
+            grid = np.array(tmp_tb["grid"].split(), dtype="int")
+        kweights = np.array(tmp_tb["kweights"].split(), dtype="float")
+        nk = int(float(tmp_tb["nk"]))
+        kind_arr = np.array(tmp_tb["kind_arr"].split(), dtype="float").reshape(
+            3, nk
+        )
+        hk_lines = tmp_tb["Hk"].split("\n")
+        H = np.zeros((nwan, nwan, nk), dtype=complex)
+        S = np.zeros((nwan, nwan, nk), dtype=complex)
+
+        for i in hk_lines:
+            tmp = i.split()
+            if len(tmp) == 7:
+                r = int(tmp[0]) - 1
+                m = int(tmp[1]) - 1
+                n = int(tmp[2]) - 1
+                H[m, n, r] = float(tmp[3]) + 1j * float(tmp[4])
+                S[m, n, r] = float(tmp[5]) + 1j * float(tmp[6])
+        return H, S, h1, kind_arr, kweights, nonorth, grid
+
+
+# ProjHamXml().get_tight_binding()
 """
 if __name__ == "__main__":
     en = QEout("qe.out").get_total_energy()

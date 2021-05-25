@@ -42,7 +42,7 @@ setup(
         ],
         "jarvis.io.vasp": ["default_potcars.json"],
         "jarvis.analysis.solarefficiency": ["am1.5G.dat"],
-        "jarvis.analysis.thermodynamics": ["unary.json"],
+        "jarvis.analysis.thermodynamics": ["unary.json", "unary_qe_tb.json"],
         "jarvis.io.wannier": ["default_semicore.json"],
         "jarvis.analysis.diffraction": ["atomic_scattering_params.json"],
         "jarvis": ["LICENSE.rst"],
