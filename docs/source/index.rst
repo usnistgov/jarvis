@@ -1,3 +1,4 @@
+
 =========================================================================================
 JARVIS-Tools
 =========================================================================================
@@ -57,14 +58,14 @@ API reference
 ===================================
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 4
    :glob:
 
 
 Capabilities
 =======================================================================
 
-- **Software workflow tasks for preprcessing, executing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM, Qiskit, Tequila, Pennylane.
+- **Software workflow tasks for preprcessing, executing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM, Qiskit, Tequila, Pennylane, DGL, PyTorch.
 
 - **Several examples**: Notebooks and test scripts to explain the package.
 
