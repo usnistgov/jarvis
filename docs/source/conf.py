@@ -4,6 +4,7 @@ sys.path.insert(0, os.path.abspath('../..'))  # Source code dir relative to this
 
 extensions = [
     'autoapi.extension',  # Core library for html generation from docstrings
+    'sphinx.ext.viewcode',
 ]
 
 autoapi_type = 'python'
