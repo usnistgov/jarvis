@@ -171,16 +171,7 @@ Please cite the following if you happen to use JARVIS-Tools for a publication.
 
 https://www.nature.com/articles/s41524-020-00440-1
 
-  @article{choudhary2020joint,
-    title={The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design},
-    author={Choudhary, Kamal and Garrity, Kevin F and Reid, Andrew CE and DeCost, Brian and Biacchi, Adam J and Walker, Angela R Hight and Trautt, Zachary and Hattrick-Simpers, Jason and Kusne, A Gilad and Centrone, Andrea and others},
-    journal={npj Computational Materials},
-    volume={6},
-    number={1},
-    pages={1--13},
-    year={2020},
-    publisher={Nature Publishing Group}
-  }
+    Choudhary, K. et al. The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design. npj Computational Materials, 6(1), 1-13 (2020).
 
 
 References
