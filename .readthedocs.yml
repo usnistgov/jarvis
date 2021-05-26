@@ -16,6 +16,7 @@ requirements_file: dev-requirements.txt
 # Optionally set the version of Python and requirements required to build your docs
 python:
   version: 3.8
-  install:
-    - requirements: dev-requirements.txt
+  pip_install: true
+
+requirements_file: dev-requirements.txt
   
