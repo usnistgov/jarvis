@@ -213,8 +213,9 @@ def write_xml(path="", filename="temp.xml"):
 
 
 """
+path='/rk2/knc6/UniveralTB/julia_data/TEST_ELS/POSCAR_JVASP-1002'
 if __name__ == "__main__":
-    path = "/rk2/knc6/UniveralTB/julia_data/
-    Si_C_kspace/POSCAR_tio2_rutile_vnscf_vol_1"
+    #path = "/rk2/knc6/UniveralTB/julia_data/
+    #Si_C_kspace/POSCAR_tio2_rutile_vnscf_vol_1"
     write_xml(path=path)
 """
