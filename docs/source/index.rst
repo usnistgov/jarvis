@@ -1,4 +1,6 @@
-.. class:: center
+JARVIS-Tools: an open-source software package for data-driven atomistic materials design
+=========================================================================================
+
 
 .. image:: https://badge.fury.io/py/jarvis-tools.svg
         :target: https://pypi.org/project/jarvis-tools/ 
@@ -37,14 +39,10 @@
 .. image:: https://readthedocs.org/projects/jarvis-tools/badge/?version=latest
        :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest  
 
-========================================================================================
-
-JARVIS-Tools: an open-source software package for data-driven atomistic materials design
-=========================================================================================
 
 
-NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) is an integrated framework for computational science using density functional theory,
-classical force-field/molecular dynamics and machine-learning. The jarvis-tools package consists of scripts used in generating and analyzing the dataset. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/). 
+
+NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) is an integrated framework for computational science using density functional theory, classical force-field/molecular dynamics and machine-learning. The jarvis-tools package consists of scripts used in generating and analyzing the dataset. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/). 
 
 For more details, checkout our latest article:  `The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design <https://www.nature.com/articles/s41524-020-00440-1>`__ and `YouTube videos <https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel=JARVIS-repository>`__ 
 
@@ -80,7 +78,7 @@ Capabilities
 
 
 Installation
----------------
+=======================================================================
 
 >>> pip install -U jarvis-tools
 
@@ -92,7 +90,7 @@ For detailed instructions, please see `Installation instructions <https://github
 
 
 Example function
------------------
+=======================================================================
 >>> from jarvis.core.atoms import Atoms
 >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
 >>> coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
@@ -163,32 +161,34 @@ Find more examples at
       
       
 References
------------------
+=======================================================================
 
 Please see `Publications related to JARVIS-Tools <https://jarvis-materials-design.github.io/dbdocs/publications/>`__
 
 Documentation
------------------------------------------
+=======================================================================
+
       https://jarvis-materials-design.github.io/dbdocs/
 
 
 
 Correspondence
---------------------
+=======================================================================
+
 Please report bugs as Github issues (https://github.com/usnistgov/jarvis/issues) or email to kamal.choudhary@nist.gov.
 
 Funding support
---------------------
+=======================================================================
 
 NIST-MGI (https://www.nist.gov/mgi).
 
 Code of conduct
---------------------
+=======================================================================
 
 Please see `Code of conduct <https://github.com/usnistgov/jarvis/blob/master/CODE_OF_CONDUCT.md>`__
 
 Module structure
---------------------
+=======================================================================
 ::
 
     jarvis/
