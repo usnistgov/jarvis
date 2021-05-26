@@ -40,8 +40,10 @@ JARVIS-Tools
        :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest  
 
 
+
 About
 =======================================================================================================
+
 The JARVIS-Tools is an open-access software package for atomistic data-driven materials desgin.
 JARVIS-Tools can be use a) setting up calculations, b) analysis, c) plotting, d) database and e) web-page development.
 
@@ -50,10 +52,12 @@ JARVIS-Tools empowers NIST-JARVIS (Joint Automated Repository for Various Integr
 For more details, checkout our latest article:  `The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design <https://www.nature.com/articles/s41524-020-00440-1>`__ and `YouTube videos <https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel=JARVIS-repository>`__ 
 
 
-API reference
+Module details
 ===================================
 
+* :ref:`genindex`
 * :ref:`modindex`
+* :ref:`search`
 
 
 Capabilities
