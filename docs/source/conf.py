@@ -17,10 +17,6 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
               'sphinx.ext.autosummary',
               'sphinx.ext.napoleon',
-              'nbsphinx',
-              'm2r2',
-              'sphinxcontrib.jinja',
-              'IPython.sphinxext.ipython_console_highlighting'
 ]
 
 # sys.path.append(os.path.dirname(__file__))
