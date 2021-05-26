@@ -8,6 +8,7 @@ extensions = [
 
 autoapi_type = 'python'
 autoapi_dirs = ['../../jarvis']
+autoapi_ignore = ['*test*']
 
 
 # sys.path.append(os.path.dirname(__file__))
