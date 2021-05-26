@@ -17,6 +17,7 @@ requirements_file: dev-requirements.txt
 python:
   version: 3.8
   pip_install: true
+   install:
+   - requirements: dev-requirements.txt
 
-requirements_file: dev-requirements.txt
   
