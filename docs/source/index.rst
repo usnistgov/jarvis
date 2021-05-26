@@ -56,7 +56,7 @@ Documentation
 --------------------
 
 
-      https://jarvis-tools.readthedocs.io/en/latest/
+      https://jarvis-tools.readthedocs.io
 
       https://jarvis-materials-design.github.io/dbdocs/
 
