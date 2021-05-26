@@ -58,12 +58,6 @@ API reference
    :maxdepth: 2
    :glob:
 
-Module details
-===================================
-
-* :ref:`modindex`
-* :ref:`genindex`
-
 
 Capabilities
 =======================================================================
@@ -111,7 +105,7 @@ Example function
 >>> from jarvis.db.figshare import data
 >>> dft_3d = data(dataset='dft_3d')
 >>> print (len(dft_3d))
-36099
+48527
 >>> from jarvis.io.vasp.inputs import Poscar
 >>> for i in dft_3d:
 ...     atoms = Atoms.from_dict(i['atoms'])
@@ -178,7 +172,14 @@ Documentation
 
       https://jarvis-materials-design.github.io/dbdocs/
 
+      https://jarvis-tools.readthedocs.io/en/latest/
 
+
+Module details
+===================================
+
+* :ref:`modindex`
+* :ref:`genindex`
 
 Correspondence
 =======================================================================
