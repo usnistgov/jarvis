@@ -1,25 +1,13 @@
-# -*- coding: utf-8 -*-
-#
-
-import sys
 import os
-import alabaster
+import sys
+sys.path.insert(0, os.path.abspath('../..'))  # Source code dir relative to this file
 
-html_theme_path = [alabaster.get_path()]
-extensions = ['alabaster']
-html_theme = 'alabaster'
-
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent / '../..'))
-
-root_doc = 'index'
-
-extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.mathjax',
-              'sphinx.ext.autosummary',
-              'sphinx.ext.napoleon',
+extensions = [
+    'autoapi.extension',  # Core library for html generation from docstrings
 ]
+
+autoapi_type = 'python'
+autoapi_dirs = ['../../jarvis']
 
 
 # sys.path.append(os.path.dirname(__file__))
