@@ -1,4 +1,4 @@
-JARVIS-Tools: an open-source software package for data-driven atomistic materials design
+JARVIS-Tools
 =========================================================================================
 
 
@@ -40,21 +40,20 @@ JARVIS-Tools: an open-source software package for data-driven atomistic material
        :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest  
 
 
+About
+=======================================================================================================
+The JARVIS-Tools is an open-access software package for atomistic data-driven materials desgin.
+JARVIS-Tools can be use a) setting up calculations, b) analysis, c) plotting, d) database and e) web-page development.
 
-
-NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) is an integrated framework for computational science using density functional theory, classical force-field/molecular dynamics and machine-learning. The jarvis-tools package consists of scripts used in generating and analyzing the dataset. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/). 
+JARVIS-Tools empowers NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) repository which is an integrated framework for computational science using density functional theory, classical force-field/molecular dynamics and machine-learning. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/). 
 
 For more details, checkout our latest article:  `The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design <https://www.nature.com/articles/s41524-020-00440-1>`__ and `YouTube videos <https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel=JARVIS-repository>`__ 
 
-.. image:: https://www.ctcms.nist.gov/~knc6/images/logo/jarvis-mission.png
-   :target: https://jarvis.nist.gov/
 
-Detailed module indices and tables
+API reference
 ===================================
 
-* :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
 
 
 Capabilities
