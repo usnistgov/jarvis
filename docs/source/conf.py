@@ -9,7 +9,9 @@ html_theme_path = [alabaster.get_path()]
 extensions = ['alabaster']
 html_theme = 'alabaster'
 
-sys.path.insert(0, os.path.abspath('..'))
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent / '../..'))
 
 root_doc = 'index'
 
@@ -18,6 +20,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.napoleon',
 ]
+
 
 # sys.path.append(os.path.dirname(__file__))
 # -- General configuration -----------------------------------------------------
