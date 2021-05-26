@@ -11,12 +11,10 @@ python:
           path: .
           extra_requirements:
             - docs
-            - tests
-
+      
 # Let the build fail if there are any warnings
 sphinx:
     builder: html
-    fail_on_warning: true
 
 search:
   ranking:
