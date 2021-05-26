@@ -17,4 +17,4 @@ sphinx:
 python:
   version: 3.8
   install:
-    - requirements: ../dev-requirements.txt
+    - requirements: dev-requirements.txt
