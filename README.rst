@@ -53,8 +53,16 @@ For more details, checkout our latest article:  `The joint automated repository 
    :target: https://jarvis.nist.gov/
 
 
+Documentation
+-----------------------------------------
+
+      https://jarvis-tools.readthedocs.io/en/latest/
+
+      https://jarvis-materials-design.github.io/dbdocs/
+
+
 Capabilities
-=======================================================================
+-----------------------------------------
 
 - **Software workflow tasks for preprcessing, executing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM, Qiskit, Tequila, Pennylane, DGL, PyTorch.
 
@@ -155,22 +163,35 @@ Find more examples at
       
       3) https://github.com/usnistgov/jarvis/tree/master/jarvis/tests/testfiles
       
+
+Citing
+--------------------
       
+Please cite the following if you happen to use JARVIS-Tools for a publication.
+
+https://www.nature.com/articles/s41524-020-00440-1
+
+  @article{choudhary2020joint,
+    title={The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design},
+    author={Choudhary, Kamal and Garrity, Kevin F and Reid, Andrew CE and DeCost, Brian and Biacchi, Adam J and Walker, Angela R Hight and Trautt, Zachary and Hattrick-Simpers, Jason and Kusne, A Gilad and Centrone, Andrea and others},
+    journal={npj Computational Materials},
+    volume={6},
+    number={1},
+    pages={1--13},
+    year={2020},
+    publisher={Nature Publishing Group}
+  }
+
+
 References
 -----------------
 
 Please see `Publications related to JARVIS-Tools <https://jarvis-materials-design.github.io/dbdocs/publications/>`__
 
-Documentation
------------------------------------------
-
-      https://jarvis-tools.readthedocs.io/en/latest/
-
-      https://jarvis-materials-design.github.io/dbdocs/
-
 
 Correspondence
 --------------------
+
 Please report bugs as Github issues (https://github.com/usnistgov/jarvis/issues) or email to kamal.choudhary@nist.gov.
 
 Funding support
