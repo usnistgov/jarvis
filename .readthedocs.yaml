@@ -1,11 +1,23 @@
 version: 2
 
+
+formats: []
+
+# Need to install the package itself such that the entry points are installed and the API doc can build properly
 python:
-  version: 3.7
-  install:
-    - method: pip
-      path: .
-      extra_requirements:
-        - docs
-    - method: setuptools
-      path: .
+    version: 3.8
+    install:
+        - method: pip
+          path: .
+          extra_requirements:
+            - docs
+            - tests
+
+# Let the build fail if there are any warnings
+sphinx:
+    builder: html
+    fail_on_warning: true
+
+search:
+  ranking:
+    reference/apidoc/*: -7
