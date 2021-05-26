@@ -49,7 +49,7 @@ classical force-field/molecular dynamics and machine-learning. The jarvis-tools 
 For more details, checkout our latest article:  `The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design <https://www.nature.com/articles/s41524-020-00440-1>`__ and `YouTube videos <https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel=JARVIS-repository>`__ 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :numbered: 3
    :caption: Contents:
 
