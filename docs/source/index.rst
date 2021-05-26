@@ -52,7 +52,9 @@ For more details, checkout our latest article:  `The joint automated repository 
     :members:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
+   :glob:
+   :hidden:
    :caption: Contents:
 
 
