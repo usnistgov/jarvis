@@ -1,6 +1,10 @@
 JARVIS-Tools
 =========================================================================================
 
+.. toctree::
+   :maxdepth: 2
+   :glob:
+
 
 .. image:: https://badge.fury.io/py/jarvis-tools.svg
         :target: https://pypi.org/project/jarvis-tools/ 
