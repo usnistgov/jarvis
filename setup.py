@@ -11,7 +11,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2021.05.19",
+    version="2021.05.25",
     long_description=long_d,
     install_requires=[
         "numpy>=1.19.5",
@@ -42,7 +42,7 @@ setup(
         ],
         "jarvis.io.vasp": ["default_potcars.json"],
         "jarvis.analysis.solarefficiency": ["am1.5G.dat"],
-        "jarvis.analysis.thermodynamics": ["unary.json"],
+        "jarvis.analysis.thermodynamics": ["unary.json", "unary_qe_tb.json"],
         "jarvis.io.wannier": ["default_semicore.json"],
         "jarvis.analysis.diffraction": ["atomic_scattering_params.json"],
         "jarvis": ["LICENSE.rst"],
