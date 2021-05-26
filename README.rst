@@ -163,8 +163,10 @@ Please see `Publications related to JARVIS-Tools <https://jarvis-materials-desig
 
 Documentation
 -----------------------------------------
-      https://jarvis-materials-design.github.io/dbdocs/
 
+      https://jarvis-tools.readthedocs.io/en/latest/
+
+      https://jarvis-materials-design.github.io/dbdocs/
 
 
 Correspondence
