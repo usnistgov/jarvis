@@ -30,7 +30,6 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'JARVIS-Tools'
-#project = u'Django Kong'
 copyright = u'2021, Kamal Choudhary'
 
 # The version info for the project you're documenting, acts as replacement for
