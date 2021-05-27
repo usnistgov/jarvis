@@ -815,19 +815,19 @@ if __name__ == "__main__":
     assert en == 6.4236
 """
 
-#p = ProjHamXml("/home/kfg/projham_K.xml.gz")
-#print("A")
-#print(p.A)
-#print("coords")
-#print(p.coords)
-#print("types")
-#print(p.types)
+# p = ProjHamXml("/home/kfg/projham_K.xml.gz")
+# print("A")
+# print(p.A)
+# print("coords")
+# print(p.coords)
+# print("types")
+# print(p.types)
 
-#energies, dos, pdos, names = p.dos()
+# energies, dos, pdos, names = p.dos()
 
-#import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
-#plt.plot(energies, dos, "b")
-#plt.plot(energies, pdos[:,0], "r")
-#plt.plot(energies, pdos[:,1], "g")
-#plt.show()
+# plt.plot(energies, dos, "b")
+# plt.plot(energies, pdos[:,0], "r")
+# plt.plot(energies, pdos[:,1], "g")
+# plt.show()
