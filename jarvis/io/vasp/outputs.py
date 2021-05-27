@@ -2145,6 +2145,7 @@ def parse_raman_dat(
     info["intensity"] = intensity
     return info
 
+
 """
 kp='/users/knc6/Software/Devs/jarvis/jarvis/examples/vasp/SiOptb88/MAIN-RELAX-bulk@mp_149/KPOINT'
 kpt=Kpoints(filename=kp)
