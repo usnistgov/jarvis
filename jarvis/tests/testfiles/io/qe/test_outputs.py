@@ -21,8 +21,11 @@ def test_outputs():
     print((en))
     assert en == 6.4236
     dxml = DataFileSchema(filename=xml)
-    print(dxml.final_energy)
-    print(dxml.forces)
+    print("final energy", dxml.final_energy)
+    print("final energy breakdown", dxml.final_energy_breakdown)
+    print("forces=", dxml.forces)
+    print("stress", dxml.stress)
+    print("magnetization", dxml.magnetization)
     print(dxml.indir_gap)
     print(dxml.functional)
     print(dxml.initial_structure)
@@ -30,5 +33,8 @@ def test_outputs():
     print(dxml.final_structure)
     print(dxml.bandstruct_eigvals(plot=True))
     cmd = "rm band.png"
-    projham=ProjHamXml(filename=projham_xml).get_tight_binding()
+    projham = ProjHamXml(filename=projham_xml).get_tight_binding()
     os.system(cmd)
+
+
+# test_outputs()
