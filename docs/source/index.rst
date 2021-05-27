@@ -35,8 +35,8 @@ JARVIS-Tools
         :target: https://jarvis-materials-design.github.io/dbdocs   
 .. image:: https://img.shields.io/badge/JARVIS-ToolsDocs-Green.svg  
         :target: https://jarvis-tools.readthedocs.io/en/latest/index.html 
-.. image:: https://readthedocs.org/projects/jarvis-tools/badge/?version=latest
-       :target: https://jarvis-tools.readthedocs.io/en/latest/?badge=latest  
+.. image:: https://readthedocs.org/projects/jarvis-tools/badge/?version=master
+       :target: https://jarvis-tools.readthedocs.io/en/master/?badge=latest  
 .. image:: https://colab.research.google.com/assets/colab-badge.svg  
        :target: https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
 
@@ -56,7 +56,7 @@ Documentation
 --------------------
 
 
-      https://jarvis-tools.readthedocs.io/en/latest/
+      https://jarvis-tools.readthedocs.io
 
       https://jarvis-materials-design.github.io/dbdocs/
 

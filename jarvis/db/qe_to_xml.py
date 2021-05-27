@@ -28,6 +28,7 @@ def parse_material_calculation_folder(
         "jid",
         "source_folder",
         "final_energy",
+        "final_energy_breakdown",
         # "initial_structure",
         "natoms",
         "final_spacegroup_number",
@@ -52,6 +53,7 @@ def parse_material_calculation_folder(
         "is_spin_orbit",
         "data_source",
         "forces",
+        "stress",
         "nelec",
         "f_enp",
     ]
@@ -91,6 +93,8 @@ def parse_material_calculation_folder(
                     raise ValueError("Inconsisten QE version.")
                 data_schm = DataFileSchema(data=data, set_key=set_key)
             info["final_energy"] = data_schm.final_energy
+            for ii, jj in data_schm.final_energy_breakdown.items():
+                info[ii] = jj
             final_strt = data_schm.final_structure
             info["final_structure"] = (
                 "'"
@@ -186,8 +190,19 @@ def parse_material_calculation_folder(
             info["is_spin_polarized"] = data_schm.is_spin_polarized
             info["is_spin_orbit"] = data_schm.is_spin_orbit
             info["data_source"] = source
-            info["forces"] = array_to_string(
-                [" ".join(map(str, j)) for j in data_schm.forces]
+            info["forces"] = (
+                "'"
+                + array_to_string(
+                    [" ".join(map(str, j)) for j in data_schm.forces]
+                )
+                + "'"
+            )
+            info["stress"] = (
+                "'"
+                + array_to_string(
+                    [" ".join(map(str, j)) for j in data_schm.stress]
+                )
+                + "'"
             )
 
     # print(pprint.pprint(info))
