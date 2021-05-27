@@ -14,4 +14,5 @@ install:
   #- pip install git+https://github.com/aspuru-guzik-group/tequila.git@402d8eb8c4c632c2d48c75e2f798a46967d28899
   #- python setup.py develop
   
-#script:
+script:
+  - pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
