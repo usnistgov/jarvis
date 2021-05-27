@@ -5,9 +5,12 @@ from collections import OrderedDict
 import xmltodict
 import numpy as np
 import gzip
+import scipy.linalg as la
+import copy
 
 bohr_to_ang = 0.529177249
 hartree_to_ev = 27.2113839
+ryd_to_ev = hartree_to_ev / 2.0
 
 
 class QEout(object):
