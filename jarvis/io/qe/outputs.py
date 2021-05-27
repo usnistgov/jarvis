@@ -422,7 +422,7 @@ class ProjHamXml(object):
         self.nat = nat
 
         scf = self.data["root"]["scf"]
-        if scf == True:
+        if scf is True:
             print("error scf ", scf)
 
         # info for deciding which orbital goes with which index.
@@ -563,7 +563,7 @@ class ProjHamXml(object):
 
     def calculate_eigenvalues(self, kpoint=None, kind=-1):
 
-        if self.scf == True:
+        if self.scf is True:
             print("warning, not accurate for scf=True")
 
         if kind == -1 and kpoint is not None:  # must find kpoint
@@ -585,10 +585,10 @@ class ProjHamXml(object):
 
         hk = self.H[:, :, kind]
         hk = 0.5 * (hk + np.conj(hk.T))
-        if self.nonorth == False:
+        if self.nonorth is False:
             vals, vects = la.eigh(hk)
             return vals, vects
-        elif self.nonorth == True:
+        elif self.nonorth is True:
             sk = self.S[:, :, kind]
             sk = 0.5 * (sk + np.conj(sk.T))
             vals, vects = la.eigh(hk, b=sk)
@@ -711,9 +711,9 @@ class ProjHamXml(object):
                     #        print("proj_atoms ", proj_atoms)
                     #        print("proj_orbs ", proj_orbs)
 
-        l = len(proj_atoms)
+        num_proj = len(proj_atoms)
         proj = []
-        for cp in range(l):
+        for cp in range(num_proj):
             proj.append([])
 
             for (c, o) in enumerate(ORBS):
@@ -731,7 +731,7 @@ class ProjHamXml(object):
         do_proj=True,
     ):
 
-        if do_proj == False:
+        if do_proj is False:
             proj = None
             names = None
         else:
@@ -814,3 +814,20 @@ if __name__ == "__main__":
     print((en))
     assert en == 6.4236
 """
+
+#p = ProjHamXml("/home/kfg/projham_K.xml.gz")
+#print("A")
+#print(p.A)
+#print("coords")
+#print(p.coords)
+#print("types")
+#print(p.types)
+
+#energies, dos, pdos, names = p.dos()
+
+#import matplotlib.pyplot as plt
+
+#plt.plot(energies, dos, "b")
+#plt.plot(energies, pdos[:,0], "r")
+#plt.plot(energies, pdos[:,1], "g")
+#plt.show()
