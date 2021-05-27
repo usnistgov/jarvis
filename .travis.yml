@@ -5,8 +5,8 @@ cache: pip
 install:
   - pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
   - python setup.py develop
-  - coverage run -m pytest
-  - coverage report -m
+  #- coverage run -m pytest
+  #- coverage report -m
   #- pip uninstall qiskit
   #- pip install qiskit ase  numpy>=1.18.5 scipy>=1.4.1 matplotlib>=3.0.0 phonopy==2.8.1 coverage lightgbm==2.1.0  flask joblib networkx tqdm dgl scikit-learn pandas pennylane codecov torch keras tensorflow==2.3.0  pytest pytest-cov bokeh
   #- pip install -r requirements-for-ci-only.txt
