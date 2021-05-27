@@ -5,12 +5,9 @@ from collections import OrderedDict
 import xmltodict
 import numpy as np
 import gzip
-import scipy.linalg as la
-import copy
 
 bohr_to_ang = 0.529177249
 hartree_to_ev = 27.2113839
-ryd_to_ev = hartree_to_ev / 2.0
 
 
 class QEout(object):
@@ -91,10 +88,10 @@ class DataFileSchema(object):
                 data = xmltodict.parse(fd.read())
                 self.data = data
         if self.set_key is None:
-            if "step" in self.data["qes:espresso"]:
-                self.set_key = "step"
-            elif "output" in self.data["qes:espresso"]:
+            if "output" in self.data["qes:espresso"]:
                 self.set_key = "output"
+            elif "step" in self.data["qes:espresso"]:
+                self.set_key = "step"
             else:
                 raise ValueError("Inconsisten QE version.")
 
@@ -107,15 +104,49 @@ class DataFileSchema(object):
         return float(line["total_energy"]["etot"]) * hartree_to_ev
 
     @property
+    def final_energy_breakdown(self):
+        """Get final energy."""
+        line = self.data["qes:espresso"][self.set_key]
+        if isinstance(line, list):
+            line = line[-1]
+        tmp = line["total_energy"]
+        for i, j in tmp.items():
+            tmp[i] = float(j) * hartree_to_ev
+        return tmp
+
+    @property
     def forces(self):
         """Get final forces."""
         line = self.data["qes:espresso"][self.set_key]
         if isinstance(line, list):
             line = line[-1]
-        return [
-            [float(j) for j in i.split()]
-            for i in line["forces"]["#text"].split("\n")
-        ]
+        return np.array(
+            [
+                [float(j) for j in i.split()]
+                for i in line["forces"]["#text"].split("\n")
+            ]
+        ) * (hartree_to_ev / bohr_to_ang)
+
+    @property
+    def stress(self):
+        """Get final stress."""
+        line = self.data["qes:espresso"][self.set_key]
+        if isinstance(line, list):
+            line = line[-1]
+        return np.array(
+            [
+                [float(j) for j in i.split()]
+                for i in line["stress"]["#text"].split("\n")
+            ]
+        ) * (hartree_to_ev / bohr_to_ang ** 3)
+
+    @property
+    def magnetization(self):
+        """Get final magnetization."""
+        line = self.data["qes:espresso"][self.set_key]
+        if isinstance(line, list):
+            line = line[-1]
+        return float(line["magnetization"]["total"])
 
     @property
     def qe_version(self):
@@ -287,13 +318,15 @@ class DataFileSchema(object):
         """Get indirect bandgap."""
         eigs = self.bandstruct_eigvals()  # .T
         nelec = self.nelec
-        if not self.is_spin_polarized and nelec % 2 != 0:
-            raise ValueError(
-                "Odd #electrons cant have band gaps in non-spin-polarized."
-            )
         if not self.is_spin_polarized:
             nelec = int(nelec / 2)
         gap = min(eigs[:, nelec]) - max(eigs[:, nelec - 1])
+        if not self.is_spin_polarized and nelec % 2 != 0 and gap > 0.1:
+            raise ValueError(
+                "Odd #electrons cant have band gaps in non-spin-polarized.",
+                self.is_spin_polarized,
+                nelec,
+            )
         if gap < 0:
             gap = 0
         return gap
@@ -525,8 +558,6 @@ class ProjHamXml(object):
                 S[m, n, r] = float(tmp[5]) + 1j * float(tmp[6])
         return H, S, h1, kind_arr, kweights, nonorth, grid, scf, nelec
 
-    # get eigenvalues at a k point. can specify either kind, the kpoint index,
-    # or the kpoint itself as 3 number array.
     def calculate_eigenvalues(self, kpoint=None, kind=-1):
 
         if self.scf == True:
@@ -688,11 +719,6 @@ class ProjHamXml(object):
 
         return proj, names
 
-    # calculate dos. smearing in eV, npts is number of energies, can leave the rest as default.
-    # you can set proj_orbs to something like ["s", "p"] or proj_atoms to ["Na"]
-    # if you set both proj_orbs and proj_atoms, they should be the same length
-    # if you set neither but do_proj=True, will project onto atoms for compounds
-    # or orbitals for elements.
     def dos(
         self,
         smearing=0.3,
@@ -758,39 +784,18 @@ class ProjHamXml(object):
 
         for i in range(npts):
             if occ[i] > self.nelec / 2.0:
-                fermi_ind = i + 1
+                fermi_ind = i
                 break
 
         print(
             "Int occupied DOS (only exact as npts goes to inf) = ",
-            np.sum(dos[0:fermi_ind]) * de * 2.0,
+            np.sum(dos[0 : fermi_ind + 1]) * de * 2.0,
         )
 
         energies = energies - energies[fermi_ind]  # shift fermi energy to zero
 
         return energies, dos, pdos, names
 
-
-"""
-if __name__ == "__main__":
-    p = ProjHamXml("/home/kfg/projham_K.xml.gz")
-    print("A")
-    print(p.A)
-    print("coords")
-    print(p.coords)
-    print("types")
-    print(p.types)
-
-    energies, dos, pdos, names = p.dos()
-
-    import matplotlib.pyplot as plt
-
-    plt.plot(energies, dos, "b")
-    plt.plot(energies, pdos[:,0], "r")
-    plt.plot(energies, pdos[:,1], "g")
-    plt.show()
-
-"""
 
 # ProjHamXml().get_tight_binding()
 """
