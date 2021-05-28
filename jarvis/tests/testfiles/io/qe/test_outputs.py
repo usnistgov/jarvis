@@ -34,6 +34,8 @@ def test_outputs():
     print(dxml.bandstruct_eigvals(plot=True))
     cmd = "rm band.png"
     projham = ProjHamXml(filename=projham_xml).get_tight_binding()
+    energies, dos, pdos, names = ProjHamXml(filename=projham_xml).dos()
+    print("energies", energies)
     os.system(cmd)
 
 
