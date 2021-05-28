@@ -129,6 +129,7 @@ class TersoffHamannSTM(object):
             origin="lower",
             extent=extent,
             clip_on=True,
+            aspect="auto",
         )  # ,cmap=plt.get_cmap('gray')
 
         trans_data = transform + ax.transData
