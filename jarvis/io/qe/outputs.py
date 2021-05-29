@@ -47,7 +47,7 @@ class QEout(object):
                 print(i)
                 energy = float(i.split()[-2])
                 energies.append(energy)
-        return energies[-1]
+        return float(energies[-1]) * ryd_to_ev
 
     def get_efermi(self):
         """Get fermi energy in eV."""
@@ -101,10 +101,21 @@ class DataFileSchema(object):
     @property
     def final_energy(self):
         """Get final energy."""
+        # Energy in eV already ??
         line = self.data["qes:espresso"][self.set_key]
         if isinstance(line, list):
             line = line[-1]
-        return float(line["total_energy"]["etot"]) * hartree_to_ev
+        return float(line["total_energy"]["etot"])  # * hartree_to_ev
+
+    @property
+    def num_atoms(self):
+        "Get total number of atoms." ""
+        return self.final_structure.num_atoms
+
+    @property
+    def energy_per_atom(self):
+        """Get final energy per atom."""
+        return self.final_energy / self.num_atoms
 
     @property
     def final_energy_breakdown(self):
