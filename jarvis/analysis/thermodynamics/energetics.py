@@ -49,9 +49,11 @@ def form_enp(atoms=None, total_energy=None, chem_pots=None):
     but can be generalized by changing unary_energy.
     """
     dd = atoms.composition.to_dict()
+    # print ('dd',dd)
     ref = 0.0
     for k, v in dd.items():
         e1 = unary_energy(el=k, chem_pots=chem_pots)
+        # print (k,v,e1,total_energy)
         if e1 == "na":
             ref = "na"
             ValueError("Element reference does not exist", e1)
