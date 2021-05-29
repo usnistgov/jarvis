@@ -43,8 +43,10 @@ class TersoffHamannSTM(object):
         self.repeat = [rep_x, rep_y]
         self.scell = self.atoms.make_supercell_matrix([rep_x, rep_y, 1])
 
-    def constant_height(self, tol=2, filename="testh.png"):
+    def constant_height(self, tol=2, filename="testh.png", skew_tol=7):
         """Get iso-height image."""
+        # TODO: Find out reason for the mysterious skew_tol=7
+        # Maybe try opencv or code up affine module tself
         if not self.zcut:
             self.zcut = int((self.zmaxp + tol) / self.c * self.nz)
         img_ext = np.tile(self.chg[:, :, self.zcut], self.repeat)
@@ -54,7 +56,7 @@ class TersoffHamannSTM(object):
         plt.xticks([])
         plt.yticks([])
         if self.skew:
-            tmp = 90 - self.atoms.lattice.angles[2]
+            tmp = 90 - self.atoms.lattice.angles[2] + skew_tol
         else:
             tmp = 0
         data = self.get_plot(
@@ -74,7 +76,9 @@ class TersoffHamannSTM(object):
 
         return info
 
-    def constant_current(self, tol=2, pc=None, ext=0.15, filename="testc.png"):
+    def constant_current(
+        self, tol=2, pc=None, ext=0.15, filename="testc.png", skew_tol=7
+    ):
         """Return the constant-current cut the charge density."""
         zmax_ind = int(self.zmaxp / self.c * self.nz) + 1
         # Find what z value is near the current, and take avergae
@@ -101,7 +105,7 @@ class TersoffHamannSTM(object):
         plt.xticks([])
         plt.yticks([])
         if self.skew:
-            tmp = 90 - self.atoms.lattice.angles[2]
+            tmp = 90 - self.atoms.lattice.angles[2] + skew_tol
         else:
             tmp = 0
 
@@ -129,6 +133,7 @@ class TersoffHamannSTM(object):
             origin="lower",
             extent=extent,
             clip_on=True,
+            aspect="auto",
         )  # ,cmap=plt.get_cmap('gray')
 
         trans_data = transform + ax.transData
