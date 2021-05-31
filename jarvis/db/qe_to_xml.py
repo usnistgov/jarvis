@@ -5,7 +5,7 @@ import xmltodict
 from jarvis.core.atoms import get_supercell_dims
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.core.utils import stringdict_to_xml, xml_to_dict, array_to_string
-from jarvis.io.qe.outputs import DataFileSchema
+from jarvis.io.qe.outputs import ProjHamXml, DataFileSchema
 from jarvis.analysis.thermodynamics.energetics import (
     form_enp,
     get_unary_qe_tb_energy,
@@ -56,6 +56,7 @@ def parse_material_calculation_folder(
         "stress",
         "nelec",
         "f_enp",
+        "dos",
     ]
     for i in keys:
         info[i] = "na"
@@ -75,20 +76,20 @@ def parse_material_calculation_folder(
                 f = gzip.open(dat_path, "rb")
                 file_content = f.read()
                 data = xmltodict.parse(file_content)
-                if "step" in data["qes:espresso"]:
-                    set_key = "step"
-                elif "output" in data["qes:espresso"]:
+                if "output" in data["qes:espresso"]:
                     set_key = "output"
+                elif "step" in data["qes:espresso"]:
+                    set_key = "step"
                 else:
                     raise ValueError("Inconsisten QE version.")
                 data_schm = DataFileSchema(data=data, set_key=set_key)
             else:
                 dat_path = os.path.join(save_path, i)
                 data = xml_to_dict(dat_path)
-                if "step" in data["qes:espresso"]:
-                    set_key = "step"
-                elif "output" in data["qes:espresso"]:
+                if "output" in data["qes:espresso"]:
                     set_key = "output"
+                elif "step" in data["qes:espresso"]:
+                    set_key = "step"
                 else:
                     raise ValueError("Inconsisten QE version.")
                 data_schm = DataFileSchema(data=data, set_key=set_key)
@@ -102,6 +103,7 @@ def parse_material_calculation_folder(
                 + "'"
             )
             try:
+                print("data_schm.final_energy", data_schm.final_energy)
                 f_enp = form_enp(
                     atoms=final_strt,
                     chem_pots=get_unary_qe_tb_energy(),
@@ -157,7 +159,7 @@ def parse_material_calculation_folder(
             """
 
             info["energy_per_atom"] = round(
-                float(data_schm.final_energy) / float(final_strt.num_atoms), 4
+                float(data_schm.energy_per_atom), 4
             )
 
             info["cif"] = ""
@@ -204,8 +206,55 @@ def parse_material_calculation_folder(
                 )
                 + "'"
             )
+    try:
+        projham_xml_path_gz = os.path.join(path, "projham_K.xml.gz")
+        projham_xml_path = os.path.join(path, "projham_K.xml")
+        if os.path.exists(projham_xml_path):
+            energies, dos, pdos, names = ProjHamXml(
+                filename=projham_xml_path
+            ).dos()
+            line = (
+                "<edos_energies>'"
+                + ",".join(map(str, energies))
+                + "'</edos_energies>"
+            )
+            line += (
+                "<total_edos_up>'"
+                + ",".join(map(str, dos))
+                + "'</total_edos_up>"
+            )
+            line += "<elemental_dos>"
+            for n, nn in enumerate(names):
+                pdos_n = pdos[:, n]
+                line += str(nn) + "_" + ",".join(map(str, pdos_n)) + ";"
+            line += "</elemental_dos>"
 
+            info["dos"] = line
+        elif os.path.exists(projham_xml_path_gz):
+            energies, dos, pdos, names = ProjHamXml(
+                filename=projham_xml_path_gz
+            ).dos()
+            line = (
+                "<edos_energies>'"
+                + ",".join(map(str, energies))
+                + "'</edos_energies>"
+            )
+            line += (
+                "<total_edos_up>'"
+                + ",".join(map(str, dos))
+                + "'</total_edos_up>"
+            )
+            line += "<elemental_dos>'"
+            for n, nn in enumerate(names):
+                pdos_n = pdos[:, n]
+                line += str(nn) + "_" + ",".join(map(str, pdos_n)) + ";"
+            line += "'</elemental_dos>"
+            info["dos"] = line
+        else:
+            info["dos"] = "na"
     # print(pprint.pprint(info))
+    except Exception as exp:
+        pass
     return info
 
 
@@ -228,7 +277,8 @@ def write_xml(path="", filename="temp.xml"):
 
 
 """
-path='/rk2/knc6/UniveralTB/julia_data/TEST_ELS/POSCAR_JVASP-1002'
+#path='/rk2/knc6/UniveralTB/julia_data/TEST_ELS/POSCAR_JVASP-1002'
+#path='/rk2/knc6/UniveralTB/julia_data/TEST_BIN/POSCAR_JVASP-10016'
 if __name__ == "__main__":
     #path = "/rk2/knc6/UniveralTB/julia_data/
     #Si_C_kspace/POSCAR_tio2_rutile_vnscf_vol_1"
