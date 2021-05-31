@@ -4,7 +4,6 @@ from scipy import fftpack, ndimage
 import numpy as np
 from matplotlib import pyplot as plt
 
-plt.switch_backend("agg")
 try:
     from skimage.transform import rotate
     from skimage.util import random_noise
@@ -14,6 +13,8 @@ except Exception as exp:
     print("Install skimage, Pillow.", exp)
 # from scipy.ndimage import rotate
 import scipy
+
+plt.switch_backend("agg")
 
 
 class Image(object):
@@ -159,16 +160,25 @@ class Image(object):
     @staticmethod
     def crop_from_center(
         image_path="stm_image.png",
+        image_arr=None,
         target_left=512,
         target_right=512,
         greyscale=True,
     ):
         """Crop squarre from an image."""
         # For STM image, use min_size=50
-        if greyscale:
-            pil_image = PIL_Image.open(image_path).convert("L")
+        if image_arr is not None:
+            if greyscale:
+                pil_image = PIL_Image.fromarray(
+                    image_arr.astype("uint8")
+                ).convert("L")
+            else:
+                pil_image = PIL_Image.fromarray(image_arr.astype("uint8"))
         else:
-            pil_image = PIL_Image.open(image_path)
+            if greyscale:
+                pil_image = PIL_Image.open(image_path).convert("L")
+            else:
+                pil_image = PIL_Image.open(image_path)
         left = int(pil_image.size[0] / 2 - target_left / 2)
         upper = int(pil_image.size[1] / 2 - target_right / 2)
         right = left + target_left
@@ -180,15 +190,23 @@ class Image(object):
     @staticmethod
     def augment_image(
         image_path="stm_image.png",
+        image_arr=None,
         wrap="wrap",
         rotation_angles=[30, 45, 60],
-        rand_noise_var=[0.04],
-        sigma=[1],
+        rand_noise_var=[0.05, 0.1, 0.5],
+        sigma=[5],
+        target_left=512,
+        target_right=512,
         multichannel=True,
+        use_crop=True,
     ):
         """Augment images using skimage."""
-        img_arr = plt.imread(image_path)
-        images = []
+        if image_arr is None:
+            img_arr = plt.imread(image_path)
+        else:
+            img_arr = image_arr
+
+        images = [img_arr]
         for i in rotation_angles:
             rot = rotate(img_arr, angle=i, mode=wrap)
             images.append(rot)
@@ -202,6 +220,16 @@ class Image(object):
         for i in sigma:
             blurred = gaussian(img_arr, sigma=i, multichannel=True)
             images.append(blurred)
+        if use_crop:
+            images = [
+                Image.crop_from_center(
+                    image_arr=255 * i,
+                    greyscale=True,
+                    target_left=target_left,
+                    target_right=target_right,
+                )
+                for i in images
+            ]
         return images
 
     @staticmethod
@@ -280,21 +308,27 @@ class Image(object):
         return all_angle_data
 
 
+# fig,ax = plt.subplots(nrows=1,ncols=len(ims),figsize=(20,20))
+# for i in range(len(ims)):
+#     ax[i].imshow(ims[i]/255,cmap='gray')
+#     ax[i].axis('off')
+
 """
 if __name__ == "__main__":
     from jarvis.db.figshare import make_stm_from_prev_parchg
+
     make_stm_from_prev_parchg()
-    #Image.get_blob_angles(filename='stm_image.png')
-    #p = "JVASP-667_neg.jpg"
-    #im = Image.from_file(p)
-    im = Image.crop_from_center() 
+    # Image.get_blob_angles(filename='stm_image.png')
+    # p = "JVASP-667_neg.jpg"
+    # im = Image.from_file(p)
+    im = Image.crop_from_center()
     ims = Image.augment_image()
-    print (ims)
-    #plt.imshow(
+    print(ims)
+    # plt.imshow(
     #    im.fourier_transform2D(use_crop=True, zoom_factor=50)
     #    .rotate(angle=0)
     #    .black_and_white(threshold=0.05)
     #    .values,
     #    cmap="Greys",
-    #)
+    # )
 """
