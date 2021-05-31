@@ -1586,6 +1586,19 @@ def crop_square(atoms=None, csize=10):
     return new_atoms
 
 
+# {'lattice_mat': [[0.0, 3.078478, 3.078478], [3.078478, 0.0, 3.078478], [3.078478, 3.078478, 0.0]], 'coords': [[0.0, 0.0, 0.0], [0.5, 0.5, 0.5], [0.25, 0.25, 0.25], [0.75, 0.75, 0.75]], 'elements': ['Mn ', 'Mn ', 'Ru ', 'U '], 'abc': [4.353628, 4.353628, 4.353628], 'angles': [60.0, 60.0, 60.0], 'cartesian': False, 'props': ['', '', '', '']}
+
+# def clear_elements(atoms=None):
+# return info
+#    info={}
+#    info['lattice_mat']=atoms['lattice_mat']
+#    info['coords']=atoms['coords']
+#    info['props']=atoms['props']
+#    info['cartesian']=atoms['cartesian']
+#    elements=[i.strip() for i in atoms['elements']]
+#    info['elements']=elements
+#    return info
+
 """
 if __name__ == "__main__":
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
