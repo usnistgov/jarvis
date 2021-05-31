@@ -199,6 +199,10 @@ class Image(object):
         target_right=512,
         multichannel=True,
         use_crop=True,
+        save_figures=True,
+        greyscale=True,
+        prefix="example",
+        suffix=".png",
     ):
         """Augment images using skimage."""
         if image_arr is None:
@@ -224,12 +228,25 @@ class Image(object):
             images = [
                 Image.crop_from_center(
                     image_arr=255 * i,
-                    greyscale=True,
+                    greyscale=greyscale,
                     target_left=target_left,
                     target_right=target_right,
                 )
                 for i in images
             ]
+        if save_figures:
+            for ii, i in enumerate(images):
+                name = prefix + "_" + str(ii) + suffix
+                if greyscale:
+                    plt.imshow(i / 255, cmap="gray")
+                    plt.tight_layout()
+                    plt.axis("off")
+                    plt.savefig(name)
+                else:
+                    plt.imshow(i)
+                    plt.tight_layout()
+                    plt.axis("off")
+                    plt.savefig(name)
         return images
 
     @staticmethod
@@ -308,12 +325,7 @@ class Image(object):
         return all_angle_data
 
 
-# fig,ax = plt.subplots(nrows=1,ncols=len(ims),figsize=(20,20))
-# for i in range(len(ims)):
-#     ax[i].imshow(ims[i]/255,cmap='gray')
-#     ax[i].axis('off')
-
-"""
+# """
 if __name__ == "__main__":
     from jarvis.db.figshare import make_stm_from_prev_parchg
 
@@ -331,4 +343,4 @@ if __name__ == "__main__":
     #    .values,
     #    cmap="Greys",
     # )
-"""
+# """
