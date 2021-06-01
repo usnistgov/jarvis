@@ -26,3 +26,5 @@ pytest-cov >=2.11.1
 pytest-xdist>=2.2.1
 bokeh>=2.3.0
 opencv-python>=4.5.2.52
+scikit-image>=0.16.2
+Pillow>=7.1.2

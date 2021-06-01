@@ -297,7 +297,10 @@ def get_node_attributes(species, atom_features="atomic_number"):
             return i[key]
         except KeyError:
             print(f"warning: could not load CGCNN features for {key}")
-            return None
+            print("Setting it to max atomic number available here, 103")
+            # TODO Check for the error in oqmd_3d_no_cfid dataset
+            # return i['Lr']
+            return i["100"]
 
 
 keys = [

@@ -254,6 +254,7 @@ def parse_material_calculation_folder(
             info["dos"] = "na"
     # print(pprint.pprint(info))
     except Exception as exp:
+        print(exp)
         pass
     return info
 
