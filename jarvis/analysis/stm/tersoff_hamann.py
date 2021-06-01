@@ -103,7 +103,7 @@ class TersoffHamannSTM(object):
         plt.xticks([])
         plt.yticks([])
         if self.skew:
-            tmp = 90 - self.atoms.lattice.angles[2] + skew_tol
+            tmp = 90 - self.atoms.lattice.angles[2]
         else:
             tmp = 0
 
