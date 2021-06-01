@@ -541,7 +541,7 @@ class ProjHamXml(object):
                 nwan, nwan
             )
         else:
-            h1 = zeros((nwan, nwan), dtype=float)
+            h1 = np.zeros((nwan, nwan), dtype=float)
 
         t = tmp_tb["nonorth"]
         if t == "false":

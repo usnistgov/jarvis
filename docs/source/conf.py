@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0, os.path.abspath('../..'))  # Source code dir relative to this file
 
 extensions = [
-    'autoapi.extension',  # Core library for html generation from docstrings
+    'sphinx.ext.autodoc','autoapi.extension','sphinx.ext.doctest'  # Core library for html generation from docstrings
 ]
 
 autoapi_type = 'python'

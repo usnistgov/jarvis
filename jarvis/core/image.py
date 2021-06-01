@@ -4,8 +4,17 @@ from scipy import fftpack, ndimage
 import numpy as np
 from matplotlib import pyplot as plt
 
+try:
+    from skimage.transform import rotate as sk_rotate
+    from skimage.util import random_noise
+    from skimage.filters import gaussian
+    from PIL import Image as PIL_Image
+except Exception as exp:
+    print("Install skimage, Pillow.", exp)
 # from scipy.ndimage import rotate
 import scipy
+
+plt.switch_backend("agg")
 
 
 class Image(object):
@@ -149,6 +158,98 @@ class Image(object):
         return Image(values=rot)
 
     @staticmethod
+    def crop_from_center(
+        image_path="stm_image.png",
+        image_arr=None,
+        target_left=512,
+        target_right=512,
+        greyscale=True,
+    ):
+        """Crop squarre from an image."""
+        # For STM image, use min_size=50
+        if image_arr is not None:
+            if greyscale:
+                pil_image = PIL_Image.fromarray(
+                    image_arr.astype("uint8")
+                ).convert("L")
+            else:
+                pil_image = PIL_Image.fromarray(image_arr.astype("uint8"))
+        else:
+            if greyscale:
+                pil_image = PIL_Image.open(image_path).convert("L")
+            else:
+                pil_image = PIL_Image.open(image_path)
+        left = int(pil_image.size[0] / 2 - target_left / 2)
+        upper = int(pil_image.size[1] / 2 - target_right / 2)
+        right = left + target_left
+        lower = upper + target_right
+
+        im_cropped = pil_image.crop((left, upper, right, lower))
+        return np.asarray(im_cropped)
+
+    @staticmethod
+    def augment_image(
+        image_path="stm_image.png",
+        image_arr=None,
+        wrap="wrap",
+        rotation_angles=[30, 45, 60],
+        rand_noise_var=[0.05, 0.1, 0.5],
+        sigma=[5],
+        target_left=512,
+        target_right=512,
+        multichannel=True,
+        use_crop=True,
+        save_figures=True,
+        greyscale=True,
+        prefix="example",
+        suffix=".png",
+    ):
+        """Augment images using skimage."""
+        if image_arr is None:
+            img_arr = plt.imread(image_path)
+        else:
+            img_arr = image_arr
+
+        images = [img_arr]
+        for i in rotation_angles:
+            rot = sk_rotate(img_arr, angle=i, mode=wrap)
+            images.append(rot)
+        lr = np.fliplr(img_arr)
+        images.append(lr)
+        ud = np.flipud(img_arr)
+        images.append(ud)
+        for i in rand_noise_var:
+            rand = random_noise(img_arr, var=i)
+            images.append(rand)
+        for i in sigma:
+            blurred = gaussian(img_arr, sigma=i, multichannel=True)
+            images.append(blurred)
+        if use_crop:
+            images = [
+                Image.crop_from_center(
+                    image_arr=255 * i,
+                    greyscale=greyscale,
+                    target_left=target_left,
+                    target_right=target_right,
+                )
+                for i in images
+            ]
+        if save_figures:
+            for ii, i in enumerate(images):
+                name = prefix + "_" + str(ii) + suffix
+                if greyscale:
+                    plt.imshow(i / 255, cmap="gray")
+                    plt.tight_layout()
+                    plt.axis("off")
+                    plt.savefig(name)
+                else:
+                    plt.imshow(i)
+                    plt.tight_layout()
+                    plt.axis("off")
+                    plt.savefig(name)
+        return images
+
+    @staticmethod
     def get_blob_angles(
         filename="image.png",
         tol=0.005,
@@ -227,16 +328,19 @@ class Image(object):
 """
 if __name__ == "__main__":
     from jarvis.db.figshare import make_stm_from_prev_parchg
-    make_stm_from_prev_parchg()
-    Image.get_blob_angles(filename='stm_image.png')
-    p = "JVASP-667_neg.jpg"
-    im = Image.from_file(p)
 
-    plt.imshow(
-        im.fourier_transform2D(use_crop=True, zoom_factor=50)
-        .rotate(angle=0)
-        .black_and_white(threshold=0.05)
-        .values,
-        cmap="Greys",
-    )
+    make_stm_from_prev_parchg()
+    # Image.get_blob_angles(filename='stm_image.png')
+    # p = "JVASP-667_neg.jpg"
+    # im = Image.from_file(p)
+    im = Image.crop_from_center()
+    ims = Image.augment_image()
+    print(ims)
+    # plt.imshow(
+    #    im.fourier_transform2D(use_crop=True, zoom_factor=50)
+    #    .rotate(angle=0)
+    #    .black_and_white(threshold=0.05)
+    #    .values,
+    #    cmap="Greys",
+    # )
 """

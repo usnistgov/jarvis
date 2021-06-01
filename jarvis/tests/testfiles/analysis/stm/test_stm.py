@@ -34,6 +34,9 @@ def test_th_stm():
 
     make_stm_from_prev_parchg()
     Image.get_blob_angles(filename="stm_image.png")
+    im = Image.crop_from_center()
+    ims = Image.augment_image()
+
     cmd = "rm *.png"
     os.system(cmd)
 
