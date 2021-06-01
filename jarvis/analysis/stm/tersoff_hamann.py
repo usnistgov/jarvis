@@ -43,20 +43,18 @@ class TersoffHamannSTM(object):
         self.repeat = [rep_x, rep_y]
         self.scell = self.atoms.make_supercell_matrix([rep_x, rep_y, 1])
 
-    def constant_height(self, tol=2, filename="testh.png", skew_tol=7):
+    def constant_height(self, tol=2, filename="testh.png"):
         """Get iso-height image."""
-        # TODO: Find out reason for the mysterious skew_tol=7
-        # Maybe try opencv or code up affine module tself
         if not self.zcut:
             self.zcut = int((self.zmaxp + tol) / self.c * self.nz)
         img_ext = np.tile(self.chg[:, :, self.zcut], self.repeat)
-        exts = (0, self.a * self.repeat[0], 0, self.b * self.repeat[1])
+        exts = (0, self.a * self.repeat[0], 0, self.b * (self.repeat[1] - 1))
         plt.close()
         fig, ax = plt.subplots()
         plt.xticks([])
         plt.yticks([])
         if self.skew:
-            tmp = 90 - self.atoms.lattice.angles[2] + skew_tol
+            tmp = 90 - self.atoms.lattice.angles[2]
         else:
             tmp = 0
         data = self.get_plot(
@@ -71,14 +69,14 @@ class TersoffHamannSTM(object):
         info["scell"] = self.scell
         info["zcut"] = self.zcut
         fig.subplots_adjust(bottom=0, top=1, left=0.0, right=1)
-        plt.savefig(filename, bbox_inches="tight", pad_inches=0.0, dpi=240)
+        plt.savefig(
+            filename
+        )  # , bbox_inches="tight", pad_inches=0.0, dpi=240)
         plt.close()
 
         return info
 
-    def constant_current(
-        self, tol=2, pc=None, ext=0.15, filename="testc.png", skew_tol=7
-    ):
+    def constant_current(self, tol=2, pc=None, ext=0.15, filename="testc.png"):
         """Return the constant-current cut the charge density."""
         zmax_ind = int(self.zmaxp / self.c * self.nz) + 1
         # Find what z value is near the current, and take avergae
@@ -101,7 +99,7 @@ class TersoffHamannSTM(object):
         img = np.argmin(np.abs(self.chg[:, :, zcut_min:zcut_max] - c), axis=2)
         img_ext = np.tile(img, self.repeat[::-1]) + self.zcut - zext
         fig, ax = plt.subplots()
-        exts = (0, self.a * self.repeat[0], 0, self.b * self.repeat[1])
+        exts = (0, self.a * self.repeat[0], 0, self.b * (self.repeat[1] - 1))
         plt.xticks([])
         plt.yticks([])
         if self.skew:
@@ -133,7 +131,7 @@ class TersoffHamannSTM(object):
             origin="lower",
             extent=extent,
             clip_on=True,
-            aspect="auto",
+            aspect="equal",
         )  # ,cmap=plt.get_cmap('gray')
 
         trans_data = transform + ax.transData

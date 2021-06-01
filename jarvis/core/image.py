@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 try:
-    from skimage.transform import rotate
+    from skimage.transform import rotate as sk_rotate
     from skimage.util import random_noise
     from skimage.filters import gaussian
     from PIL import Image as PIL_Image
@@ -212,7 +212,7 @@ class Image(object):
 
         images = [img_arr]
         for i in rotation_angles:
-            rot = rotate(img_arr, angle=i, mode=wrap)
+            rot = sk_rotate(img_arr, angle=i, mode=wrap)
             images.append(rot)
         lr = np.fliplr(img_arr)
         images.append(lr)
@@ -325,7 +325,7 @@ class Image(object):
         return all_angle_data
 
 
-# """
+"""
 if __name__ == "__main__":
     from jarvis.db.figshare import make_stm_from_prev_parchg
 
@@ -343,4 +343,4 @@ if __name__ == "__main__":
     #    .values,
     #    cmap="Greys",
     # )
-# """
+"""
