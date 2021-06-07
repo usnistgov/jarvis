@@ -646,7 +646,10 @@ class StructureDataset(torch.utils.data.Dataset):
         graphs, line_graphs, labels = map(list, zip(*samples))
         batched_graph = dgl.batch(graphs)
         batched_line_graph = dgl.batch(line_graphs)
-        return batched_graph, batched_line_graph, torch.tensor(labels)
+        if len(labels[0].size()) > 0:
+            return batched_graph, batched_line_graph, torch.stack(labels)
+        else:
+            return batched_graph, batched_line_graph, torch.tensor(labels)
 
 
 """
