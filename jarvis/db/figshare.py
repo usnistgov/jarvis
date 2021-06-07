@@ -61,6 +61,18 @@ def get_db_info():
             "Obtaining MEGNET-3D CFID dataset 69k...",
             "https://pubs.acs.org/doi/10.1021/acs.chemmater.9b01294",
         ],
+        "megnet2": [
+            "https://ndownloader.figshare.com/files/28332741",
+            "megnet-mp-2019-04-01.json",
+            "Obtaining MEGNET-3D CFID dataset 133k...",
+            "https://pubs.acs.org/doi/10.1021/acs.chemmater.9b01294",
+        ],
+        "edos_up": [
+            "https://ndownloader.figshare.com/files/28332450",
+            "edos_up-5_10_05.json",
+            "Obtaining interpolated electronic total dos spin-up dataset 48k...",
+            "https://www.nature.com/articles/s41524-020-00440-1",
+        ],
         "mp_3d": [
             "https://ndownloader.figshare.com/files/24979850",
             "CFID_mp_desc_data_84k.json",
