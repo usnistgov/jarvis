@@ -536,7 +536,12 @@ def get_nelect(atoms=None, default_pot=None):
     """Get number of electrons fro default POTCAR settings."""
     if default_pot is None:
         default_pot = loadjson(
-            os.path.join("..", "wannier", "default_semicore.json")
+            os.path.join(
+                os.path.join(os.path.dirname(__file__)),
+                "..",
+                "wannier",
+                "default_semicore.json",
+            )
         )
     comp = atoms.composition.to_dict()
     nelect = 0
