@@ -143,14 +143,15 @@ class Chgcar(object):
         else:
             nlines = int(ngs / 5.0) + 1
         end = nlines + start  # +1
-
+        chg_arr = []
         for ii, i in enumerate(text):
             if text[ii] == ng_line:
                 start = ii + 1
                 end = start + nlines
                 chg = self.chg_set(text, start, end, volume, ng)
-                self.chg.append(chg)
-        self.chg = np.array(self.chg)
+                chg_arr.append(chg)
+        chg = np.array(chg_arr)
+        self.chg = chg
 
     def chg_set(self, text, start, end, volume, ng):
         """Return CHGCAR sets."""
@@ -463,7 +464,7 @@ class Outcar(object):
         for ii, i in enumerate(self.data):
             if "Electric field gradients after diagonalization" in i:
                 tmp = ii
-        arr = self.data[tmp + 5: tmp + 5 + nions]
+        arr = self.data[tmp + 5 : tmp + 5 + nions]
         efg_arr = []
         for i in arr:
             if std_conv:
@@ -495,7 +496,7 @@ class Outcar(object):
         for ii, i in enumerate(self.data):
             if "Electric field gradients (V/A^2)" in i:
                 tmp = ii
-        arr = self.data[tmp + 4: tmp + 4 + nions]
+        arr = self.data[tmp + 4 : tmp + 4 + nions]
         efg_arr = []
         for i in arr:
             line = i.split()
@@ -518,7 +519,7 @@ class Outcar(object):
                 in i
             ):
                 tmp = ii
-        arr = self.data[tmp + 4: tmp + 4 + nions]
+        arr = self.data[tmp + 4 : tmp + 4 + nions]
         quad_arr = []
         for i in arr:
             tmp = [i.split()[1], i.split()[2], i.split()[3]]
@@ -1044,9 +1045,12 @@ class Wavecar(object):
                 % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid))
             )
         else:
-            assert Gvec.shape[0] == self._nplws[ikpt - 1], (
-                "No. of planewaves not consistent! %d %d %d"
-                % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid),)
+            assert (
+                Gvec.shape[0] == self._nplws[ikpt - 1]
+            ), "No. of planewaves not consistent! %d %d %d" % (
+                Gvec.shape[0],
+                self._nplws[ikpt - 1],
+                np.prod(self._ngrid),
             )
         self._gvec = np.asarray(Gvec, dtype=int)
 
@@ -1237,7 +1241,7 @@ class Vasprun(object):
         for i in range(natoms):
             for j in range(natoms):
                 force_constants[i, j] = hessian[
-                    i * 3: (i + 1) * 3, j * 3: (j + 1) * 3
+                    i * 3 : (i + 1) * 3, j * 3 : (j + 1) * 3
                 ]
         masses = [Specie(i).atomic_mass for i in struct.elements]
         # print("Vasp masses", masses)

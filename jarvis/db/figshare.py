@@ -70,7 +70,7 @@ def get_db_info():
         "edos_up": [
             "https://ndownloader.figshare.com/files/28332450",
             "edos_up-5_10_05.json",
-            "Obtaining interpolated electronic total dos spin-up dataset 48k...",
+            "Interpolated electronic total dos spin-up dataset 48k...",
             "https://www.nature.com/articles/s41524-020-00440-1",
         ],
         "mp_3d": [
@@ -109,11 +109,29 @@ def get_db_info():
             "Obtaining QM9 dataset 134k...",
             "https://www.nature.com/articles/sdata201422",
         ],
-        "aflow1": [
-            "https://ndownloader.figshare.com/files/25453256",
-            "CFID_AFLOW1.json",
-            "Obtaining AFLOW-1 CFID dataset 400k...",
+        "qe_tb": [
+            "https://ndownloader.figshare.com/files/TODO",
+            "jqe_tb_folder.json",
+            "Obtaining QETB dataset 860k...",
+            "https://www.nature.com/articles/s41524-020-00440-1",
+        ],
+        "omdb": [
+            "https://ndownloader.figshare.com/files/TODO",
+            "omdbv1.json",
+            "Obtaining OMDB dataset 12.5k...",
+            "https://doi.org/10.1002/qute.201900023",
+        ],
+        "qmof": [
+            "TODO",
+            "qmof_db.json",
+            "Obtaining QMOF dataset 18k...",
             "https://doi.org/10.1016/j.commatsci.2012.02.005",
+        ],
+        "c2db": [
+            "TODO",
+            "c2db_atoms.json",
+            "Obtaining C2DB dataset 2k...",
+            "https://iopscience.iop.org/article/10.1088/2053-1583/aacfc1",
         ],
         "aflow2": [
             "https://ndownloader.figshare.com/files/25453265",

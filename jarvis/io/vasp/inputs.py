@@ -9,6 +9,7 @@ from jarvis.core.kpoints import generate_kgrid, Kpoints3D
 from jarvis.core.utils import get_counts
 from jarvis.core.specie import Specie
 from jarvis.core.utils import update_dict
+from jarvis.db.jsonutils import loadjson
 
 
 class Poscar(object):
@@ -529,6 +530,19 @@ def find_ldau_magmom(
     info["AMIX_MAG"] = amixmag
     info["BMIX_MAG"] = bmixmag
     return info
+
+
+def get_nelect(atoms=None, default_pot=None):
+    """Get number of electrons fro default POTCAR settings."""
+    if default_pot is None:
+        default_pot = loadjson(
+            os.path.join("..", "wannier", "default_semicore.json")
+        )
+    comp = atoms.composition.to_dict()
+    nelect = 0
+    for i, j in comp.items():
+        nelect = nelect + j * (default_pot[i][0] + default_pot[i][1])
+    return nelect
 
 
 def add_ldau_incar(
