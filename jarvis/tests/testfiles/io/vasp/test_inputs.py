@@ -12,6 +12,7 @@ import os
 import tarfile
 from jarvis.db.figshare import data
 from jarvis.core.atoms import Atoms
+from jarvis.io.vasp.inputs import get_nelect
 
 example_fold_tgz = os.path.join(
     os.path.dirname(__file__),
@@ -101,6 +102,8 @@ kp2 = os.path.join(
 def test_inputs():
     p = Poscar.from_file(pos)
     print(p)
+    pstr = p.to_string()
+
     td = p.to_dict()
     print("td is:", td)
     fd = Poscar.from_dict(td)
@@ -150,7 +153,7 @@ def test_ldau():
             atoms = Atoms.from_dict(i["atoms"])
             ld = find_ldau_magmom(atoms=atoms, lsorbit=True)
             ld = find_ldau_magmom(atoms=atoms, lsorbit=False)
-
+            nelect = get_nelect(atoms)
         if i["jid"] == "JVASP-45":
             atoms = Atoms.from_dict(i["atoms"])
             ld = find_ldau_magmom(atoms=atoms, lsorbit=True)

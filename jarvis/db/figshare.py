@@ -61,6 +61,18 @@ def get_db_info():
             "Obtaining MEGNET-3D CFID dataset 69k...",
             "https://pubs.acs.org/doi/10.1021/acs.chemmater.9b01294",
         ],
+        "megnet2": [
+            "https://ndownloader.figshare.com/files/28332741",
+            "megnet-mp-2019-04-01.json",
+            "Obtaining MEGNET-3D CFID dataset 133k...",
+            "https://pubs.acs.org/doi/10.1021/acs.chemmater.9b01294",
+        ],
+        "edos_pdos": [
+            "https://ndownloader.figshare.com/files/28501764",
+            "edos-up_pdos-elast_interp-6-19-2021.json",
+            "Interpolated electronic total dos spin-up dataset 48k...",
+            "https://www.nature.com/articles/s41524-020-00440-1",
+        ],
         "mp_3d": [
             "https://ndownloader.figshare.com/files/24979850",
             "CFID_mp_desc_data_84k.json",
@@ -97,11 +109,29 @@ def get_db_info():
             "Obtaining QM9 dataset 134k...",
             "https://www.nature.com/articles/sdata201422",
         ],
-        "aflow1": [
-            "https://ndownloader.figshare.com/files/25453256",
-            "CFID_AFLOW1.json",
-            "Obtaining AFLOW-1 CFID dataset 400k...",
-            "https://doi.org/10.1016/j.commatsci.2012.02.005",
+        "qe_tb": [
+            "https://ndownloader.figshare.com/files/TODO",
+            "jqe_tb_folder.json",
+            "Obtaining QETB dataset 860k...",
+            "https://www.nature.com/articles/s41524-020-00440-1",
+        ],
+        "omdb": [
+            "https://ndownloader.figshare.com/files/28501761",
+            "omdbv1.json",
+            "Obtaining OMDB dataset 12.5k...",
+            "https://doi.org/10.1002/qute.201900023",
+        ],
+        "qmof": [
+            "https://ndownloader.figshare.com/files/28501740",
+            "qmof_db.json",
+            "Obtaining QMOF dataset 18k...",
+            "https://www.cell.com/matter/fulltext/S2590-2385(21)00070-9",
+        ],
+        "c2db": [
+            "https://ndownloader.figshare.com/files/28501722",
+            "c2db_atoms.json",
+            "Obtaining C2DB dataset 3.5k...",
+            "https://iopscience.iop.org/article/10.1088/2053-1583/aacfc1",
         ],
         "aflow2": [
             "https://ndownloader.figshare.com/files/25453265",

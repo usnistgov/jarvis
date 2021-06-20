@@ -300,6 +300,26 @@ def check_url_exists(
         return False
 
 
+def volumetric_grid_reshape(data=[], final_grid=[50, 50, 50]):
+    """Reshape volumetric data."""
+    import torch
+
+    data = torch.tensor(data).unsqueeze(0).unsqueeze(0)
+    new_data = (
+        torch.nn.functional.interpolate(
+            data,
+            size=final_grid,
+            scale_factor=None,
+            mode="trilinear",
+            align_corners=True,
+            recompute_scale_factor=None,
+        )
+        .squeeze()
+        .squeeze()
+    )
+    return new_data.numpy()
+
+
 def cos_formula(a, b, c):
     """Get angle between three edges for oblique triangles."""
     res = (a ** 2 + b ** 2 - c ** 2) / (2 * a * b)

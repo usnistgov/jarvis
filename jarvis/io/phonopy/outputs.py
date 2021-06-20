@@ -9,7 +9,7 @@ from jarvis.io.phonopy.inputs import PhonopyInputs
 # from jarvis.io.wannier.outputs import WannierHam
 from jarvis.io.phonopy.fcmat2hr import get_phonon_hr
 
-VaspToTHz = 15.633302300230191
+# VaspToTHz = 15.633302300230191
 try:
     from phonopy import Phonopy
     from phonopy.structure.cells import determinant
@@ -88,11 +88,15 @@ def get_phonon_tb(
     out_file="phonopyTB_hr.dat",
     distance_to_A=1.0,
     scell=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
-    factor=VaspToTHz,
+    factor=None,
     symprec=1e-05,
     displacement_distance=0.01,
 ):
     """Generate phonon TB Hamiltonia, along with WannierHamn."""
+    if factor is None:
+        from phonopy.units import VaspToCm
+
+        factor = VaspToCm
     # Forked from Wannier-tools
     unitcell = atoms.phonopy_converter()
     # unitcell = phonopy_atoms

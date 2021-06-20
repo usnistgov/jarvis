@@ -13,6 +13,8 @@ from matplotlib import pyplot as plt
 from jarvis.core.utils import rec_dict
 from jarvis.core.utils import recast_array_on_uniq_array_elements
 import scipy.signal as ss
+from jarvis.core.utils import chunks
+from jarvis.core.utils import volumetric_grid_reshape
 
 RYTOEV = 13.605826
 AUTOA = 0.529177249
@@ -64,7 +66,8 @@ class Chgcar(object):
         self.augdiff = augdiff
         self.nsets = nsets
         if self.atoms is None:
-            self.read_file()
+            chg = self.read_file()
+            self.chg = chg
 
     def to_dict(self):
         """Convert to a dictionary."""
@@ -115,6 +118,35 @@ class Chgcar(object):
         else:
             return False
 
+    def modify_grid(
+        self,
+        chg_set=0,
+        multiply_volume=True,
+        final_grid=[50, 50, 50],
+        write_file=True,
+        filename="New_CHGCAR",
+    ):
+        """Modify grid and Write a charge set to a file for visualization."""
+        chg = self.chg[chg_set]
+        if multiply_volume:
+            chg = np.array(chg) * self.atoms.volume
+        else:
+            chg = np.array(chg)
+        if final_grid is not None:
+            chg = volumetric_grid_reshape(chg, final_grid=final_grid)
+        if write_file:
+            with open(filename, "w") as f:
+                string_pos = Poscar(self.atoms).to_string()
+                f.write(string_pos)
+                f.write("\n")
+                f.write("  %d %d %d\n" % tuple(chg.shape))
+                # TODO: Write in fortran format
+                chnk_chg = chunks(chg.flatten(), 5)
+                for i in chnk_chg:
+                    line = " " + " ".join(map(str, i)) + "\n"
+                    f.write(line)
+        return chg
+
     def read_file(self):
         """Read CHGCAR."""
         f = open(self.filename, "r")
@@ -143,14 +175,16 @@ class Chgcar(object):
         else:
             nlines = int(ngs / 5.0) + 1
         end = nlines + start  # +1
-
+        chg_arr = []
         for ii, i in enumerate(text):
             if text[ii] == ng_line:
                 start = ii + 1
                 end = start + nlines
                 chg = self.chg_set(text, start, end, volume, ng)
-                self.chg.append(chg)
-        self.chg = np.array(self.chg)
+                chg_arr.append(chg)
+        chg = np.array(chg_arr)
+        # self.chg = chg
+        return chg
 
     def chg_set(self, text, start, end, volume, ng):
         """Return CHGCAR sets."""
@@ -463,7 +497,7 @@ class Outcar(object):
         for ii, i in enumerate(self.data):
             if "Electric field gradients after diagonalization" in i:
                 tmp = ii
-        arr = self.data[tmp + 5: tmp + 5 + nions]
+        arr = self.data[tmp + 5 : tmp + 5 + nions]
         efg_arr = []
         for i in arr:
             if std_conv:
@@ -495,7 +529,7 @@ class Outcar(object):
         for ii, i in enumerate(self.data):
             if "Electric field gradients (V/A^2)" in i:
                 tmp = ii
-        arr = self.data[tmp + 4: tmp + 4 + nions]
+        arr = self.data[tmp + 4 : tmp + 4 + nions]
         efg_arr = []
         for i in arr:
             line = i.split()
@@ -518,7 +552,7 @@ class Outcar(object):
                 in i
             ):
                 tmp = ii
-        arr = self.data[tmp + 4: tmp + 4 + nions]
+        arr = self.data[tmp + 4 : tmp + 4 + nions]
         quad_arr = []
         for i in arr:
             tmp = [i.split()[1], i.split()[2], i.split()[3]]
@@ -1044,9 +1078,12 @@ class Wavecar(object):
                 % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid))
             )
         else:
-            assert Gvec.shape[0] == self._nplws[ikpt - 1], (
-                "No. of planewaves not consistent! %d %d %d"
-                % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid),)
+            assert (
+                Gvec.shape[0] == self._nplws[ikpt - 1]
+            ), "No. of planewaves not consistent! %d %d %d" % (
+                Gvec.shape[0],
+                self._nplws[ikpt - 1],
+                np.prod(self._ngrid),
             )
         self._gvec = np.asarray(Gvec, dtype=int)
 
@@ -1237,7 +1274,7 @@ class Vasprun(object):
         for i in range(natoms):
             for j in range(natoms):
                 force_constants[i, j] = hessian[
-                    i * 3: (i + 1) * 3, j * 3: (j + 1) * 3
+                    i * 3 : (i + 1) * 3, j * 3 : (j + 1) * 3
                 ]
         masses = [Specie(i).atomic_mass for i in struct.elements]
         # print("Vasp masses", masses)
