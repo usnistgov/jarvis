@@ -5,7 +5,11 @@ from jarvis.db.jsonutils import loadjson
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.core.utils import stringdict_to_xml
 
-mp_jv = loadjson("/rk2/knc6/DB/MP/mp_jv_id.json")
+try:
+    # For reference link purposes only, hence kept local
+    mp_jv = loadjson("/rk2/knc6/DB/MP/mp_jv_id.json")
+except Exception:
+    pass
 
 
 def get_jvid(mp=""):
