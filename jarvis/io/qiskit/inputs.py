@@ -40,7 +40,7 @@ class HermitianSolver(object):
         backend=Aer.get_backend("statevector_simulator"),
         var_form=None,
         optimizer=None,
-        reps=5,
+        reps=None,
         mode="min_val",
     ):
         """Run variational quantum eigensolver."""
@@ -58,6 +58,9 @@ class HermitianSolver(object):
             Hamil_mat
         )
         if var_form is None:
+            if reps is None:
+                reps = 2
+                # reps=5
             from qiskit.circuit.library import EfficientSU2
 
             var_form = EfficientSU2(N, reps=reps)
@@ -108,7 +111,8 @@ class HermitianSolver(object):
         backend=Aer.get_backend("statevector_simulator"),
         var_form=None,
         optimizer=None,
-        reps=5,
+        reps=2,
+        # reps=5,
     ):
         """Run variational quantum deflation."""
         tmp = HermitianSolver(self.mat)
@@ -151,6 +155,7 @@ def get_bandstruct(
     line_density=1,
     ylabel="Energy (cm-1)",
     font=22,
+    var_form=None,
     filename="bands.png",
     savefig=True,
     neigs=None,
@@ -176,7 +181,7 @@ def get_bandstruct(
                 print("kp=", ii, i)
                 hk = get_hk_tb(w=w, k=i)
                 HS = HermitianSolver(hk)
-                vqe_vals, _ = HS.run_vqd()
+                vqe_vals, _ = HS.run_vqd(var_form=var_form)
                 np_vals, _ = HS.run_numpy()
                 print("np_vals", np_vals)
                 print("vqe_vals", vqe_vals)
@@ -290,7 +295,9 @@ def get_dos(
         # plt.xlim(xrange)
 
     energies = np.arange(
-        xrange[0], xrange[1] + 1e-5, (xrange[1] - xrange[0]) / float(nenergy),
+        xrange[0],
+        xrange[1] + 1e-5,
+        (xrange[1] - xrange[0]) / float(nenergy),
     )
     dos = np.zeros(np.size(energies))
     pdos = np.zeros(np.size(energies))
