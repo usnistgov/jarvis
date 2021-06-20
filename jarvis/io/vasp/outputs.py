@@ -64,7 +64,8 @@ class Chgcar(object):
         self.augdiff = augdiff
         self.nsets = nsets
         if self.atoms is None:
-            self.read_file()
+            chg = self.read_file()
+            self.chg = chg
 
     def to_dict(self):
         """Convert to a dictionary."""
@@ -151,7 +152,8 @@ class Chgcar(object):
                 chg = self.chg_set(text, start, end, volume, ng)
                 chg_arr.append(chg)
         chg = np.array(chg_arr)
-        self.chg = chg
+        # self.chg = chg
+        return chg
 
     def chg_set(self, text, start, end, volume, ng):
         """Return CHGCAR sets."""

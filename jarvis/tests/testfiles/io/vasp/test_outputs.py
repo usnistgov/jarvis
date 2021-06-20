@@ -224,7 +224,7 @@ def test_chgcar():
         chg.is_spin_polarized(),
         chg.is_spin_orbit(),
         np.array(chg.chg).shape,
-    ) == (True, False, (4, 56, 56, 56),)
+    ) == (True, False, (2, 56, 56, 56),)
     td = chg.to_dict()
     fd = Chgcar.from_dict(td)
 
@@ -235,7 +235,7 @@ def test_locpot():
         loc.is_spin_polarized(),
         loc.is_spin_orbit(),
         np.array(chg.chg).shape,
-    ) == (False, False, (4, 56, 56, 56),)
+    ) == (False, False, (2, 56, 56, 56),)
     vac = loc.vac_potential()[0]
     assert round(vac, 2) == round(7.62302803577618, 2)
 
