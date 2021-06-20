@@ -47,8 +47,65 @@ class Poscar(object):
         """Construct Poscar object from a dictionary."""
         return Poscar(atoms=Atoms.from_dict(d["atoms"]), comment=d["comment"])
 
+    def to_string(self):
+        """Make the Poscar object to a string."""
+        header = (
+            str(self.comment)
+            + str("\n1.0\n")
+            + str(self.atoms.lattice_mat[0][0])
+            + " "
+            + str(self.atoms.lattice_mat[0][1])
+            + " "
+            + str(self.atoms.lattice_mat[0][2])
+            + "\n"
+            + str(self.atoms.lattice_mat[1][0])
+            + " "
+            + str(self.atoms.lattice_mat[1][1])
+            + " "
+            + str(self.atoms.lattice_mat[1][2])
+            + "\n"
+            + str(self.atoms.lattice_mat[2][0])
+            + " "
+            + str(self.atoms.lattice_mat[2][1])
+            + " "
+            + str(self.atoms.lattice_mat[2][2])
+            + "\n"
+        )
+        # order = np.argsort(self.atoms.elements)
+        coords = self.atoms.frac_coords
+        # DO NOT USE ORDER
+        coords_ordered = np.array(coords)  # [order]
+        elements_ordered = np.array(self.atoms.elements)  # [order]
+        props_ordered = np.array(self.atoms.props)  # [order]
+        # check_selective_dynamics = False
+        counts = get_counts(elements_ordered)
+        if "T" in "".join(map(str, self.atoms.props[0])):
+            middle = (
+                " ".join(map(str, counts.keys()))
+                + "\n"
+                + " ".join(map(str, counts.values()))
+                + "\nSelective dynamics\n"
+                + "Direct\n"
+            )
+        else:
+            middle = (
+                " ".join(map(str, counts.keys()))
+                + "\n"
+                + " ".join(map(str, counts.values()))
+                + "\ndirect\n"
+            )
+        rest = ""
+        # print ('repr',self.frac_coords, self.frac_coords.shape)
+        for ii, i in enumerate(coords_ordered):
+            p_ordered = str(props_ordered[ii])
+            rest = rest + " ".join(map(str, i)) + " " + str(p_ordered) + "\n"
+
+        result = header + middle + rest
+        return result
+
     def write_file(self, filename):
         """Write the Poscar object to a file."""
+        # TODO: Use to_string instead of re-writing the code here
         f = open(filename, "w")
         header = (
             str(self.comment)

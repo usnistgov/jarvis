@@ -79,12 +79,14 @@ band_vrun = Vasprun(
 )
 non_spinpol_vrun = Vasprun(
     filename=os.path.join(
-        os.path.dirname(__file__), "vasprun.xml.JVASP-23436",
+        os.path.dirname(__file__),
+        "vasprun.xml.JVASP-23436",
     )
 )
 vasp544_mbj_optics_vrun = Vasprun(
     filename=os.path.join(
-        os.path.dirname(__file__), "vasprun.xml.JVASP-97577",
+        os.path.dirname(__file__),
+        "vasprun.xml.JVASP-97577",
     )
 )
 opt_vrun = Vasprun(
@@ -224,9 +226,16 @@ def test_chgcar():
         chg.is_spin_polarized(),
         chg.is_spin_orbit(),
         np.array(chg.chg).shape,
-    ) == (True, False, (2, 56, 56, 56),)
+    ) == (
+        True,
+        False,
+        (2, 56, 56, 56),
+    )
     td = chg.to_dict()
     fd = Chgcar.from_dict(td)
+    x = chg.modify_grid()
+    cmd = "rm New_CHGCAR"
+    os.system(cmd)
 
 
 def test_locpot():
@@ -235,7 +244,11 @@ def test_locpot():
         loc.is_spin_polarized(),
         loc.is_spin_orbit(),
         np.array(chg.chg).shape,
-    ) == (False, False, (2, 56, 56, 56),)
+    ) == (
+        False,
+        False,
+        (2, 56, 56, 56),
+    )
     vac = loc.vac_potential()[0]
     assert round(vac, 2) == round(7.62302803577618, 2)
 

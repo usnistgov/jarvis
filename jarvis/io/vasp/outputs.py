@@ -13,6 +13,8 @@ from matplotlib import pyplot as plt
 from jarvis.core.utils import rec_dict
 from jarvis.core.utils import recast_array_on_uniq_array_elements
 import scipy.signal as ss
+from jarvis.core.utils import chunks
+from jarvis.core.utils import volumetric_grid_reshape
 
 RYTOEV = 13.605826
 AUTOA = 0.529177249
@@ -115,6 +117,35 @@ class Chgcar(object):
             return True
         else:
             return False
+
+    def modify_grid(
+        self,
+        chg_set=0,
+        multiply_volume=True,
+        final_grid=[50, 50, 50],
+        write_file=True,
+        filename="New_CHGCAR",
+    ):
+        """Modify grid and Write a charge set to a file for visualization."""
+        chg = self.chg[chg_set]
+        if multiply_volume:
+            chg = np.array(chg) * self.atoms.volume
+        else:
+            chg = np.array(chg)
+        if final_grid is not None:
+            chg = volumetric_grid_reshape(chg, final_grid=final_grid)
+        if write_file:
+            with open(filename, "w") as f:
+                string_pos = Poscar(self.atoms).to_string()
+                f.write(string_pos)
+                f.write("\n")
+                f.write("  %d %d %d\n" % tuple(chg.shape))
+                # TODO: Write in fortran format
+                chnk_chg = chunks(chg.flatten(), 5)
+                for i in chnk_chg:
+                    line = " " + " ".join(map(str, i)) + "\n"
+                    f.write(line)
+        return chg
 
     def read_file(self):
         """Read CHGCAR."""

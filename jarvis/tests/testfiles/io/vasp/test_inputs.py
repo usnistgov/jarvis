@@ -102,6 +102,8 @@ kp2 = os.path.join(
 def test_inputs():
     p = Poscar.from_file(pos)
     print(p)
+    pstr = p.to_string()
+
     td = p.to_dict()
     print("td is:", td)
     fd = Poscar.from_dict(td)
