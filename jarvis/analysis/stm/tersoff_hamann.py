@@ -24,6 +24,8 @@ class TersoffHamannSTM(object):
         interp_step=0.5,
         skew=True,
         extend=0,
+        ft_image_path=None,
+        ft_image_zoom_factor=5,
     ):
         """Initialize class with pathe of PARCHG and other input params."""
         # In original paper, extend used as 1
@@ -36,6 +38,8 @@ class TersoffHamannSTM(object):
         tmp = chgcar.chg[-1] * volume
         chg = tmp.reshape(self.dim[::-1]).T
         self.chg = chg
+        self.ft_image_path = ft_image_path
+        self.ft_image_zoom_factor = ft_image_zoom_factor
         self.height_tol = height_tol
         self.a = self.atoms.lattice.a
         self.b = self.atoms.lattice.b
@@ -125,8 +129,6 @@ class TersoffHamannSTM(object):
             plt.margins(0, 0)
             plt.gca().xaxis.set_major_locator(plt.NullLocator())
             plt.gca().yaxis.set_major_locator(plt.NullLocator())
-            # plt.imshow(img_ext,interpolation="none")
-            # plt.savefig("tmp.png", bbox_inches = 'tight',pad_inches = 0,dpi=240)
 
             plt.close()
         info["img_ext"] = img_ext
@@ -144,7 +146,11 @@ class TersoffHamannSTM(object):
             plt.axis("off")
             plt.savefig(filename)
             plt.close()
-
+        if self.ft_image_path is not None:
+            im = Image.from_file(filename).fourier_transform2D(
+                zoom_factor=self.ft_image_zoom_factor
+            )
+            im.save(self.ft_image_path)
         return info
 
     def constant_current(
