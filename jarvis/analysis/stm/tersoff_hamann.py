@@ -5,13 +5,25 @@ from jarvis.io.vasp.outputs import Chgcar
 import numpy as np
 import matplotlib.transforms as mtransforms
 import scipy
+from jarvis.core.image import Image
 
 
 class TersoffHamannSTM(object):
     """Generate constant height and constant current STM images."""
 
     def __init__(
-        self, chg_name="PARCHG", min_size=50.0, skew=True, zcut=None, extend=0
+        self,
+        chg_name="PARCHG",
+        min_size=50.0,
+        height_tol=2,
+        zcut=None,
+        use_interpolated=True,
+        crop_from_center=True,
+        crop_mult=4,
+        min_pixel=288,
+        interp_step=0.5,
+        skew=True,
+        extend=0,
     ):
         """Initialize class with pathe of PARCHG and other input params."""
         # In original paper, extend used as 1
@@ -24,6 +36,7 @@ class TersoffHamannSTM(object):
         tmp = chgcar.chg[-1] * volume
         chg = tmp.reshape(self.dim[::-1]).T
         self.chg = chg
+        self.height_tol = height_tol
         self.a = self.atoms.lattice.a
         self.b = self.atoms.lattice.b
         self.c = self.atoms.lattice.c
@@ -38,22 +51,35 @@ class TersoffHamannSTM(object):
             elif i < -0.5:
                 i = i + 1
             z_frac_coords_moved.append(i)
+        self.crop_mult = crop_mult
+        self.crop_from_center = crop_from_center
+        if self.crop_from_center:
+            min_size = min_size * self.crop_mult
+        self.min_size = min_size
         self.zmaxp = max(np.array(z_frac_coords_moved) * self.c)
         rep_x = int(min_size / self.a) + self.extend
         rep_y = int(min_size / self.b) + self.extend
         self.repeat = [rep_x, rep_y]
         self.scell = self.atoms.make_supercell_matrix([rep_x, rep_y, 1])
 
+        self.use_interpolated = use_interpolated
+        self.interp_step = interp_step
+
+        self.min_pixel = min_pixel
+
     def constant_height(
-        self, tol=2, filename="testh.png", use_interpolated=True
+        self,
+        filename="testh.png",
     ):
         """Get iso-height image."""
+        tol = self.height_tol
         if not self.zcut:
             self.zcut = int((self.zmaxp + tol) / self.c * self.nz)
         # print("zcut", self.zcut, self.repeat)
         info = {}
+
         img_ext = np.tile(self.chg[:, :, self.zcut], self.repeat)
-        if not use_interpolated:
+        if not self.use_interpolated:
             exts = (
                 0,
                 self.a * self.repeat[0],
@@ -85,19 +111,44 @@ class TersoffHamannSTM(object):
             img_ext = self.get_interpolated_data(img_data=img_ext)
             plt.close()
             # fig, ax = plt.subplots()
-            plt.imshow(img_ext)
+            plt.imshow(img_ext, interpolation="none")
             # ax.set_aspect('equal')
             plt.axis("off")
             plt.savefig(filename)
+
+            plt.close()
+
+            plt.gca().set_axis_off()
+            plt.subplots_adjust(
+                top=1, bottom=0, right=1, left=0, hspace=0, wspace=0
+            )
+            plt.margins(0, 0)
+            plt.gca().xaxis.set_major_locator(plt.NullLocator())
+            plt.gca().yaxis.set_major_locator(plt.NullLocator())
+            # plt.imshow(img_ext,interpolation="none")
+            # plt.savefig("tmp.png", bbox_inches = 'tight',pad_inches = 0,dpi=240)
+
             plt.close()
         info["img_ext"] = img_ext
         info["scell"] = self.scell
         info["zcut"] = self.zcut
+        if self.crop_from_center:
+            im = Image.from_file(filename)
+
+            p_x = int(self.min_pixel / self.crop_mult)
+            # print('shape',im.values.shape,p_x)
+            im = Image.crop_from_center(
+                image_path=filename, target_left=p_x, target_right=p_x
+            )
+            plt.imshow(im)
+            plt.axis("off")
+            plt.savefig(filename)
+            plt.close()
+
         return info
 
     def constant_current(
         self,
-        tol=2,
         pc=None,
         ext=0.15,
         filename="testc.png",
@@ -106,6 +157,7 @@ class TersoffHamannSTM(object):
         """Return the constant-current cut the charge density."""
         zmax_ind = int(self.zmaxp / self.c * self.nz) + 1
         info = {}
+        tol = self.height_tol
         # Find what z value is near the current, and take avergae
         if not self.zcut:
             self.zcut = int((self.zmaxp + tol) / self.c * self.nz)
@@ -153,8 +205,20 @@ class TersoffHamannSTM(object):
             img_ext = self.get_interpolated_data(img_data=img_ext)
             plt.close()
             # fig, ax = plt.subplots()
-            plt.imshow(img_ext)
+            plt.imshow(img_ext, interpolation="none")
             # ax.set_aspect('equal')
+            plt.axis("off")
+            plt.savefig(filename)
+            plt.close()
+        if self.crop_from_center:
+            im = Image.from_file(filename)
+
+            p_x = int(self.min_pixel / self.crop_mult)
+            # print('shape',im.values.shape,p_x)
+            im = Image.crop_from_center(
+                image_path=filename, target_left=p_x, target_right=p_x
+            )
+            plt.imshow(im)
             plt.axis("off")
             plt.savefig(filename)
             plt.close()
@@ -189,11 +253,13 @@ class TersoffHamannSTM(object):
         print("min Z and maxZ", np.min(Z), np.max(Z))
         return data
 
-    def get_interpolated_data(self, img_data=[], step=0.5):
+    def get_interpolated_data(self, img_data=[]):
+        """Get interpolated data after moving pixels."""
         x = []
         y = []
         zz = []
         xy = []
+        step = self.interp_step
         atoms = self.atoms
         for i in range(img_data.shape[0]):
             for j in range(img_data.shape[1]):
