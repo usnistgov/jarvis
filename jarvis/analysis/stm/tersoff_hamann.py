@@ -26,6 +26,7 @@ class TersoffHamannSTM(object):
         extend=0,
         ft_image_path=None,
         ft_image_zoom_factor=5,
+        dpi=240,
     ):
         """Initialize class with pathe of PARCHG and other input params."""
         # In original paper, extend used as 1
@@ -70,6 +71,7 @@ class TersoffHamannSTM(object):
         self.interp_step = interp_step
 
         self.min_pixel = min_pixel
+        self.dpi = dpi
 
     def constant_height(
         self,
@@ -108,7 +110,7 @@ class TersoffHamannSTM(object):
 
             fig.subplots_adjust(bottom=0, top=1, left=0.0, right=1)
             plt.savefig(
-                filename
+                filename, dpi=self.dpi
             )  # , bbox_inches="tight", pad_inches=0.0, dpi=240)
             plt.close()
         else:
@@ -118,7 +120,7 @@ class TersoffHamannSTM(object):
             plt.imshow(img_ext, interpolation="none")
             # ax.set_aspect('equal')
             plt.axis("off")
-            plt.savefig(filename)
+            plt.savefig(filename, dpi=self.dpi)
 
             plt.close()
 
@@ -144,7 +146,7 @@ class TersoffHamannSTM(object):
             )
             plt.imshow(im)
             plt.axis("off")
-            plt.savefig(filename)
+            plt.savefig(filename, dpi=self.dpi)
             plt.close()
         if self.ft_image_path is not None:
             im = Image.from_file(filename).fourier_transform2D(
@@ -205,7 +207,7 @@ class TersoffHamannSTM(object):
                 mtransforms.Affine2D().skew_deg(tmp, 0),
             )
             info["data"] = data
-            plt.savefig(filename)
+            plt.savefig(filename, dpi=self.dpi)
             plt.close()
         else:
             img_ext = self.get_interpolated_data(img_data=img_ext)
@@ -214,7 +216,7 @@ class TersoffHamannSTM(object):
             plt.imshow(img_ext, interpolation="none")
             # ax.set_aspect('equal')
             plt.axis("off")
-            plt.savefig(filename)
+            plt.savefig(filename, dpi=self.dpi)
             plt.close()
         if self.crop_from_center:
             im = Image.from_file(filename)
@@ -226,7 +228,7 @@ class TersoffHamannSTM(object):
             )
             plt.imshow(im)
             plt.axis("off")
-            plt.savefig(filename)
+            plt.savefig(filename, dpi=self.dpi)
             plt.close()
         info["img_ext"] = img_ext
         info["scell"] = self.scell
