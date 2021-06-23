@@ -21,7 +21,7 @@ class TersoffHamannSTM(object):
         crop_from_center=True,
         crop_mult=4,
         min_pixel=288,
-        interp_step=0.5,
+        interp_step=1.0,
         skew=True,
         extend=0,
         ft_image_path=None,
