@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from jarvis.io.vasp.outputs import Chgcar
 import numpy as np
 import matplotlib.transforms as mtransforms
+import scipy
 
 
 class TersoffHamannSTM(object):
@@ -43,42 +44,68 @@ class TersoffHamannSTM(object):
         self.repeat = [rep_x, rep_y]
         self.scell = self.atoms.make_supercell_matrix([rep_x, rep_y, 1])
 
-    def constant_height(self, tol=2, filename="testh.png"):
+    def constant_height(
+        self, tol=2, filename="testh.png", use_interpolated=True
+    ):
         """Get iso-height image."""
         if not self.zcut:
             self.zcut = int((self.zmaxp + tol) / self.c * self.nz)
-        img_ext = np.tile(self.chg[:, :, self.zcut], self.repeat)
-        exts = (0, self.a * self.repeat[0], 0, self.b * (self.repeat[1] - 1))
-        plt.close()
-        fig, ax = plt.subplots()
-        plt.xticks([])
-        plt.yticks([])
-        if self.skew:
-            tmp = 90 - self.atoms.lattice.angles[2]
-        else:
-            tmp = 0
-        data = self.get_plot(
-            ax,
-            img_ext,
-            exts,
-            mtransforms.Affine2D().skew_deg(tmp, 0),
-        )
+        # print("zcut", self.zcut, self.repeat)
         info = {}
+        img_ext = np.tile(self.chg[:, :, self.zcut], self.repeat)
+        if not use_interpolated:
+            exts = (
+                0,
+                self.a * self.repeat[0],
+                0,
+                self.b * (self.repeat[1] - 1),
+            )
+            plt.close()
+            fig, ax = plt.subplots()
+            plt.xticks([])
+            plt.yticks([])
+            if self.skew:
+                tmp = 90 - self.atoms.lattice.angles[2]
+            else:
+                tmp = 0
+            data = self.get_plot(
+                ax,
+                img_ext,
+                exts,
+                mtransforms.Affine2D().skew_deg(tmp, 0),
+            )
+            info["data"] = data
+
+            fig.subplots_adjust(bottom=0, top=1, left=0.0, right=1)
+            plt.savefig(
+                filename
+            )  # , bbox_inches="tight", pad_inches=0.0, dpi=240)
+            plt.close()
+        else:
+            img_ext = self.get_interpolated_data(img_data=img_ext)
+            plt.close()
+            # fig, ax = plt.subplots()
+            plt.imshow(img_ext)
+            # ax.set_aspect('equal')
+            plt.axis("off")
+            plt.savefig(filename)
+            plt.close()
         info["img_ext"] = img_ext
-        info["data"] = data
         info["scell"] = self.scell
         info["zcut"] = self.zcut
-        fig.subplots_adjust(bottom=0, top=1, left=0.0, right=1)
-        plt.savefig(
-            filename
-        )  # , bbox_inches="tight", pad_inches=0.0, dpi=240)
-        plt.close()
-
         return info
 
-    def constant_current(self, tol=2, pc=None, ext=0.15, filename="testc.png"):
+    def constant_current(
+        self,
+        tol=2,
+        pc=None,
+        ext=0.15,
+        filename="testc.png",
+        use_interpolated=True,
+    ):
         """Return the constant-current cut the charge density."""
         zmax_ind = int(self.zmaxp / self.c * self.nz) + 1
+        info = {}
         # Find what z value is near the current, and take avergae
         if not self.zcut:
             self.zcut = int((self.zmaxp + tol) / self.c * self.nz)
@@ -98,26 +125,40 @@ class TersoffHamannSTM(object):
         # height of iso-current
         img = np.argmin(np.abs(self.chg[:, :, zcut_min:zcut_max] - c), axis=2)
         img_ext = np.tile(img, self.repeat[::-1]) + self.zcut - zext
-        fig, ax = plt.subplots()
-        exts = (0, self.a * self.repeat[0], 0, self.b * (self.repeat[1] - 1))
-        plt.xticks([])
-        plt.yticks([])
-        if self.skew:
-            tmp = 90 - self.atoms.lattice.angles[2]
-        else:
-            tmp = 0
+        if not use_interpolated:
+            fig, ax = plt.subplots()
+            exts = (
+                0,
+                self.a * self.repeat[0],
+                0,
+                self.b * (self.repeat[1] - 1),
+            )
+            plt.xticks([])
+            plt.yticks([])
+            if self.skew:
+                tmp = 90 - self.atoms.lattice.angles[2]
+            else:
+                tmp = 0
 
-        data = self.get_plot(
-            ax,
-            img_ext,
-            exts,
-            mtransforms.Affine2D().skew_deg(tmp, 0),
-        )
-        plt.savefig(filename)
-        plt.close()
-        info = {}
+            data = self.get_plot(
+                ax,
+                img_ext,
+                exts,
+                mtransforms.Affine2D().skew_deg(tmp, 0),
+            )
+            info["data"] = data
+            plt.savefig(filename)
+            plt.close()
+        else:
+            img_ext = self.get_interpolated_data(img_data=img_ext)
+            plt.close()
+            # fig, ax = plt.subplots()
+            plt.imshow(img_ext)
+            # ax.set_aspect('equal')
+            plt.axis("off")
+            plt.savefig(filename)
+            plt.close()
         info["img_ext"] = img_ext
-        info["data"] = data
         info["scell"] = self.scell
         info["zcut"] = self.zcut
         return info
@@ -147,6 +188,33 @@ class TersoffHamannSTM(object):
         )
         print("min Z and maxZ", np.min(Z), np.max(Z))
         return data
+
+    def get_interpolated_data(self, img_data=[], step=0.5):
+        x = []
+        y = []
+        zz = []
+        xy = []
+        atoms = self.atoms
+        for i in range(img_data.shape[0]):
+            for j in range(img_data.shape[1]):
+                z = img_data[i][j]
+                xyz = i * atoms.lattice_mat[0] + j * atoms.lattice_mat[1]
+                x.append(xyz[0])
+                y.append(xyz[1])
+                zz.append(z)
+                xy.append([xyz[0], xyz[1]])
+
+        grid_x, grid_y = np.mgrid[
+            min(x) : max(x) : step, min(y) : max(y) : step
+        ]
+        # stepx=(max(x)-min(x))/bins
+        # stepy=(max(y)-min(y))/bins
+        # grid_x, grid_y = np.mgrid[min(x):max(x):stepx, min(y):max(y):stepy]
+        interp = scipy.interpolate.griddata(xy, zz, (grid_x, grid_y)).T
+        # plt.scatter(x, y, 1, zz)
+        # plt.savefig("ok.png")
+        # plt.close()
+        return interp
 
 
 """

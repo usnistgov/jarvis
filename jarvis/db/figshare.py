@@ -103,6 +103,12 @@ def get_db_info():
             "Obtaining Polymer genome 1k...",
             "https://www.nature.com/articles/sdata201612",
         ],
+        "qm9_dgl": [
+            "https://ndownloader.figshare.com/files/28541196",
+            "qm9_dgl.json",
+            "Obtaining QM9 dataset 130k, from DGL...",
+            "https://www.nature.com/articles/sdata201422",
+        ],
         "qm9": [
             "https://ndownloader.figshare.com/files/27627596",
             "qm9_data_cfid.json",
