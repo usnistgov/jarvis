@@ -4,6 +4,8 @@ from collections import OrderedDict
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.core.utils import rand_select
 from jarvis.core.atoms import Atoms
+# import numpy as np
+import random
 
 
 class Vacancy(object):
@@ -100,6 +102,38 @@ class Vacancy(object):
     def __repr__(self, indent=2):
         """Representation of the class as dict."""
         return pprint.pformat(self.to_dict(), indent=indent)
+
+
+def generate_random_defects(n_vacs=10, atoms=None, element=None, seed=123):
+    """Generate random defects for an element."""
+    # natoms = atoms.num_atoms
+    atoms = atoms.to_dict()
+    elements = atoms["elements"]
+    if element is None:
+        element = elements[0]
+    coords = atoms["coords"]
+    lattice_mat = atoms["lattice_mat"]
+    # ids = np.arange(natoms)
+    new_elements = []
+    new_coords = []
+    options = []
+    for ii, i in enumerate(elements):
+        if i == element:
+            options.append(ii)
+    random.seed(seed)
+    random.shuffle(options)
+    to_delete = options[0:n_vacs]
+    for ii, i in enumerate(elements):
+        if ii not in to_delete:
+            new_elements.append(i)
+            new_coords.append(coords[ii])
+    new_atoms = Atoms(
+        coords=new_coords,
+        lattice_mat=lattice_mat,
+        elements=new_elements,
+        cartesian=False,
+    )
+    return new_atoms
 
 
 """
