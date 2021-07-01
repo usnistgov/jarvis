@@ -181,7 +181,11 @@ class Atoms(object):
         # https://pypi.org/project/cif2cell/
         # tested on version 2.0.0a3
         try:
-            new_file, fname = tempfile.mkstemp()
+            new_file, fname = tempfile.mkstemp(text=True)
+            # with tempfile.NamedTemporaryFile('w',prefix=section,dir=indir,delete=False) as f:
+            #     fname=f.name
+            # tf = tempfile.NamedTemporaryFile()
+            # fname=tf.name
             cmd = (
                 "cif2cell "
                 + filename
@@ -189,11 +193,14 @@ class Atoms(object):
                 + fname
             )
             os.system(cmd)
+
         except Exception as exp:
             print(exp)
+            pass
         f = open(fname, "r")
         text = f.read().splitlines()
         f.close()
+        os.close(new_file)
         elements = text[0].split("Species order:")[1].split()
         scale = float(text[1])
         lattice_mat = []
@@ -246,13 +253,14 @@ class Atoms(object):
                 # https://pypi.org/project/cif2cell/
                 # tested on version 2.0.0a3
                 if from_string != "":
-                    new_file, filename = tempfile.mkstemp()
+                    new_file, filename = tempfile.mkstemp(text=True)
                     f = open(filename, "w")
                     f.write(from_string)
                     f.close()
                 atoms = Atoms.read_with_cif2cell(
                     filename=filename, get_primitive_atoms=get_primitive_atoms
                 )
+
                 return atoms
         except Exception as exp:
             print(exp)
