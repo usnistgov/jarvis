@@ -134,7 +134,7 @@ def get_db_info():
             "https://www.cell.com/matter/fulltext/S2590-2385(21)00070-9",
         ],
         "c2db": [
-            "https://ndownloader.figshare.com/files/28501722",
+            "https://ndownloader.figshare.com/files/28682010",
             "c2db_atoms.json",
             "Obtaining C2DB dataset 3.5k...",
             "https://iopscience.iop.org/article/10.1088/2053-1583/aacfc1",

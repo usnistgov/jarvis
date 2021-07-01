@@ -65,34 +65,6 @@ class Atoms(object):
         Create atomic structure.
 
         Requires lattice, coordinates, atom type  information.
-
-        >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-        >>> coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
-        >>> elements = ["Si", "Si"]
-        >>> Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-        >>> print(round(Si.volume,2))
-        40.03
-        >>> Si.composition
-        {'Si': 2}
-        >>> round(Si.density,2)
-        2.33
-        >>> round(Si.packing_fraction,2)
-        0.28
-        >>> Si.atomic_numbers
-        [14, 14]
-        >>> Si.num_atoms
-        2
-        >>> Si.frac_coords[0][0]
-        0
-        >>> Si.cart_coords[0][0]
-        0.0
-        >>> coords = [[0, 0, 0], [1.3575 , 1.22175, 1.22175]]
-        >>> round(Si.density,2)
-        2.33
-        >>> Si.spacegroup()
-        'C2/m (12)'
-        >>> Si.pymatgen_converter()!={}
-        True
         """
         self.lattice_mat = np.array(lattice_mat)
         self.show_props = show_props
