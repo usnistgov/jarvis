@@ -185,10 +185,6 @@ class Atoms(object):
         # tested on version 2.0.0a3
         try:
             new_file, fname = tempfile.mkstemp(text=True)
-            # with tempfile.NamedTemporaryFile('w',prefix=section,dir=indir,delete=False) as f:
-            #     fname=f.name
-            # tf = tempfile.NamedTemporaryFile()
-            # fname=tf.name
             cmd = (
                 "cif2cell "
                 + filename
