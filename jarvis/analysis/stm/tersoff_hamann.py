@@ -18,8 +18,8 @@ class TersoffHamannSTM(object):
         height_tol=2,
         zcut=None,
         use_interpolated=True,
-        crop_from_center=True,
-        crop_mult=4,
+        crop_from_center=False,
+        crop_mult=3,
         min_pixel=288,
         interp_step=1.0,
         skew=True,
@@ -27,6 +27,7 @@ class TersoffHamannSTM(object):
         ft_image_path=None,
         ft_image_zoom_factor=5,
         dpi=240,
+        cmap="gray",
     ):
         """Initialize class with pathe of PARCHG and other input params."""
         # In original paper, extend used as 1
@@ -39,6 +40,7 @@ class TersoffHamannSTM(object):
         tmp = chgcar.chg[-1] * volume
         chg = tmp.reshape(self.dim[::-1]).T
         self.chg = chg
+        self.cmap = cmap
         self.ft_image_path = ft_image_path
         self.ft_image_zoom_factor = ft_image_zoom_factor
         self.height_tol = height_tol
@@ -107,7 +109,7 @@ class TersoffHamannSTM(object):
                 mtransforms.Affine2D().skew_deg(tmp, 0),
             )
             info["data"] = data
-
+            info["img_ext"] = img_ext
             fig.subplots_adjust(bottom=0, top=1, left=0.0, right=1)
             plt.savefig(
                 filename, dpi=self.dpi
@@ -115,9 +117,10 @@ class TersoffHamannSTM(object):
             plt.close()
         else:
             img_ext = self.get_interpolated_data(img_data=img_ext)
+            # print ('img_ext',img_ext)
             plt.close()
             # fig, ax = plt.subplots()
-            plt.imshow(img_ext, interpolation="none")
+            plt.imshow(img_ext, interpolation="none", cmap=self.cmap)
             # ax.set_aspect('equal')
             plt.axis("off")
             plt.savefig(filename, dpi=self.dpi)
@@ -131,11 +134,12 @@ class TersoffHamannSTM(object):
             plt.margins(0, 0)
             plt.gca().xaxis.set_major_locator(plt.NullLocator())
             plt.gca().yaxis.set_major_locator(plt.NullLocator())
-
+            # print ('img_ext',img_ext)
             plt.close()
-        info["img_ext"] = img_ext
+
         info["scell"] = self.scell
         info["zcut"] = self.zcut
+        info["img_ext"] = img_ext
         if self.crop_from_center:
             im = Image.from_file(filename)
 
@@ -144,7 +148,9 @@ class TersoffHamannSTM(object):
             im = Image.crop_from_center(
                 image_path=filename, target_left=p_x, target_right=p_x
             )
-            plt.imshow(im)
+            info["img_ext"] = im
+            plt.imshow(im, cmap=self.cmap)
+            plt.tight_layout()
             plt.axis("off")
             plt.savefig(filename, dpi=self.dpi)
             plt.close()
@@ -207,13 +213,14 @@ class TersoffHamannSTM(object):
                 mtransforms.Affine2D().skew_deg(tmp, 0),
             )
             info["data"] = data
+            info["img_ext"] = img_ext
             plt.savefig(filename, dpi=self.dpi)
             plt.close()
         else:
             img_ext = self.get_interpolated_data(img_data=img_ext)
             plt.close()
             # fig, ax = plt.subplots()
-            plt.imshow(img_ext, interpolation="none")
+            plt.imshow(img_ext, interpolation="none", cmap=self.cmap)
             # ax.set_aspect('equal')
             plt.axis("off")
             plt.savefig(filename, dpi=self.dpi)
@@ -226,11 +233,11 @@ class TersoffHamannSTM(object):
             im = Image.crop_from_center(
                 image_path=filename, target_left=p_x, target_right=p_x
             )
-            plt.imshow(im)
+            plt.imshow(im, cmap=self.cmap)
             plt.axis("off")
             plt.savefig(filename, dpi=self.dpi)
             plt.close()
-        info["img_ext"] = img_ext
+
         info["scell"] = self.scell
         info["zcut"] = self.zcut
         return info

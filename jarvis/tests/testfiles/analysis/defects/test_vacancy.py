@@ -1,4 +1,4 @@
-from jarvis.analysis.defects.vacancy import Vacancy
+from jarvis.analysis.defects.vacancy import Vacancy, generate_random_defects
 from jarvis.core.atoms import Atoms
 from jarvis.io.vasp.inputs import Poscar
 import os
@@ -21,6 +21,7 @@ def test_vacancy():
         len(vacs),
         Atoms.from_dict(vacs[0].to_dict()["defect_structure"]).num_atoms,
     ) == (1, 53)
+    x = generate_random_defects(atoms=Si.make_supercell([2, 2, 2]), n_vacs=2)
 
 
 def test_2d():
