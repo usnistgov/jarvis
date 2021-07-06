@@ -70,6 +70,7 @@ setup(
     packages=find_packages(),
     # long_description=open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
     classifiers=[
+      
         "Programming Language :: Python :: 3.6",
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
