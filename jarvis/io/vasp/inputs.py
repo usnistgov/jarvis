@@ -421,6 +421,18 @@ class Potcar(object):
                 msg = "Number of elements not same as potcar_strings"
                 raise ValueError(msg)
 
+    @staticmethod
+    def from_atoms(atoms=None, pot_type=None):
+        """Obtain POTCAR for atoms object."""
+        new_symb = []
+        for i in atoms.elements:
+            if i not in new_symb:
+                new_symb.append(i)
+        if pot_type is None:
+            pot_type = "POT_GGA_PAW_PBE"
+        potcar = Potcar(elements=new_symb, pot_type=pot_type)
+        return potcar
+
     @classmethod
     def from_dict(self, d={}):
         """Build class from a dictionary."""

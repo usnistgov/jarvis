@@ -20,7 +20,37 @@ ang_cm = 1e-8
 
 
 class Atoms(object):
-    """Generate Atoms python object."""
+    """
+    Generate Atoms python object.
+
+    >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+    >>> coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
+    >>> elements = ["Si", "Si"]
+    >>> Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
+    >>> print(round(Si.volume,2))
+    40.03
+    >>> Si.composition
+    {'Si': 2}
+    >>> round(Si.density,2)
+    2.33
+    >>> round(Si.packing_fraction,2)
+    0.28
+    >>> Si.atomic_numbers
+    [14, 14]
+    >>> Si.num_atoms
+    2
+    >>> Si.frac_coords[0][0]
+    0
+    >>> Si.cart_coords[0][0]
+    0.0
+    >>> coords = [[0, 0, 0], [1.3575 , 1.22175, 1.22175]]
+    >>> round(Si.density,2)
+    2.33
+    >>> Si.spacegroup()
+    'C2/m (12)'
+    >>> Si.pymatgen_converter()!={}
+    True
+    """
 
     def __init__(
         self,
@@ -35,34 +65,6 @@ class Atoms(object):
         Create atomic structure.
 
         Requires lattice, coordinates, atom type  information.
-
-        >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-        >>> coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
-        >>> elements = ["Si", "Si"]
-        >>> Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-        >>> print(round(Si.volume,2))
-        40.03
-        >>> Si.composition
-        {'Si': 2}
-        >>> round(Si.density,2)
-        2.33
-        >>> round(Si.packing_fraction,2)
-        0.28
-        >>> Si.atomic_numbers
-        [14, 14]
-        >>> Si.num_atoms
-        2
-        >>> Si.frac_coords[0][0]
-        0
-        >>> Si.cart_coords[0][0]
-        0.0
-        >>> coords = [[0, 0, 0], [1.3575 , 1.22175, 1.22175]]
-        >>> round(Si.density,2)
-        2.33
-        >>> Si.spacegroup()
-        'C2/m (12)'
-        >>> Si.pymatgen_converter()!={}
-        True
         """
         self.lattice_mat = np.array(lattice_mat)
         self.show_props = show_props
@@ -177,6 +179,60 @@ class Atoms(object):
         f.close()
 
     @staticmethod
+    def read_with_cif2cell(filename="1000000.cif", get_primitive_atoms=False):
+        """Use cif2cell package to read cif files."""
+        # https://pypi.org/project/cif2cell/
+        # tested on version 2.0.0a3
+        try:
+            new_file, fname = tempfile.mkstemp(text=True)
+            cmd = (
+                "cif2cell "
+                + filename
+                + " -p vasp --vasp-cartesian-positions --vca -o "
+                + fname
+            )
+            os.system(cmd)
+
+        except Exception as exp:
+            print(exp)
+            pass
+        f = open(fname, "r")
+        text = f.read().splitlines()
+        f.close()
+        os.close(new_file)
+        elements = text[0].split("Species order:")[1].split()
+        scale = float(text[1])
+        lattice_mat = []
+        lattice_mat.append([float(i) for i in text[2].split()])
+        lattice_mat.append([float(i) for i in text[3].split()])
+        lattice_mat.append([float(i) for i in text[4].split()])
+        lattice_mat = scale * np.array(lattice_mat)
+        uniq_elements = elements
+        element_count = np.array([int(i) for i in text[5].split()])
+        elements = []
+        for i, ii in enumerate(element_count):
+            for j in range(ii):
+                elements.append(uniq_elements[i])
+        cartesian = True
+        if "d" in text[6] or "D" in text[6]:
+            cartesian = False
+        # print ('cartesian poscar=',cartesian,text[7])
+        num_atoms = int(np.sum(element_count))
+        coords = []
+        for i in range(num_atoms):
+            coords.append([float(i) for i in text[7 + i].split()[0:3]])
+        coords = np.array(coords)
+        atoms = Atoms(
+            lattice_mat=lattice_mat,
+            coords=coords,
+            elements=elements,
+            cartesian=cartesian,
+        )
+        if get_primitive_atoms:
+            atoms = atoms.get_primitive_atoms
+        return atoms
+
+    @staticmethod
     def from_cif(
         filename="atoms.cif",
         from_string="",
@@ -190,6 +246,25 @@ class Atoms(object):
         # cif file with multiple blocks
         # _atom_site_U_iso, instead of fractn_x, cartn_x
         # with non-zero _atom_site_attached_hydrogens
+        try:
+
+            if use_cif2cell:
+                # https://pypi.org/project/cif2cell/
+                # tested on version 2.0.0a3
+                if from_string != "":
+                    new_file, filename = tempfile.mkstemp(text=True)
+                    f = open(filename, "w")
+                    f.write(from_string)
+                    f.close()
+                atoms = Atoms.read_with_cif2cell(
+                    filename=filename, get_primitive_atoms=get_primitive_atoms
+                )
+
+                return atoms
+        except Exception as exp:
+            print(exp)
+            pass
+
         if from_string == "":
             f = open(filename, "r")
             lines = f.read().splitlines()
@@ -337,70 +412,6 @@ class Atoms(object):
                         tmp[occupancy_index].split("(")[0]
                     ).is_integer()
                 ):
-                    tmp = " -p vasp --vasp-cartesian-positions --vca -o "
-                    try:
-
-                        if use_cif2cell:
-                            # https://pypi.org/project/cif2cell/
-                            # tested on version 2.0.0a3
-                            try:
-                                new_file, fname = tempfile.mkstemp()
-                                cmd = "cif2cell " + filename + tmp + fname
-                                os.system(cmd)
-                            except Exception as exp:
-                                print(exp)
-                            f = open(fname, "r")
-                            text = f.read().splitlines()
-                            f.close()
-                            elements = (
-                                text[0].split("Species order:")[1].split()
-                            )
-                            scale = float(text[1])
-                            lattice_mat = []
-                            lattice_mat.append(
-                                [float(i) for i in text[2].split()]
-                            )
-                            lattice_mat.append(
-                                [float(i) for i in text[3].split()]
-                            )
-                            lattice_mat.append(
-                                [float(i) for i in text[4].split()]
-                            )
-                            lattice_mat = scale * np.array(lattice_mat)
-                            uniq_elements = elements
-                            element_count = np.array(
-                                [int(i) for i in text[5].split()]
-                            )
-                            elements = []
-                            for i, ii in enumerate(element_count):
-                                for j in range(ii):
-                                    elements.append(uniq_elements[i])
-                            cartesian = True
-                            if "d" in text[6] or "D" in text[6]:
-                                cartesian = False
-                            # print ('cartesian poscar=',cartesian,text[7])
-                            num_atoms = int(np.sum(element_count))
-                            coords = []
-                            for i in range(num_atoms):
-                                coords.append(
-                                    [
-                                        float(i)
-                                        for i in text[7 + i].split()[0:3]
-                                    ]
-                                )
-                            coords = np.array(coords)
-                            atoms = Atoms(
-                                lattice_mat=lattice_mat,
-                                coords=coords,
-                                elements=elements,
-                                cartesian=cartesian,
-                            )
-                            if get_primitive_atoms:
-                                atoms = atoms.get_primitive_atoms
-                            return atoms
-
-                    except Exception as exp:
-                        print(exp)
                     raise ValueError(
                         "Fractional occupancy is not supported.",
                         float(tmp[occupancy_index].split("(")[0]),
@@ -1601,6 +1612,13 @@ def crop_square(atoms=None, csize=10):
 
 """
 if __name__ == "__main__":
+    x=Atoms.from_cif('1000000.cif')
+    f=open('1000000.cif','r')
+    lines=f.read()
+    f.close()
+    x=Atoms.from_cif(from_string=lines)
+    print (x)
+    print (x.num_atoms)
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
     coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
     elements = ["Si", "Si"]

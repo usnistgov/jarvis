@@ -123,12 +123,12 @@ class Image(object):
 
         return Image(values=img_cropped)
 
-    def save(self, filename):
+    def save(self, filename, interpolation="nearest"):
         """Save an image."""
         # if size is None:
         # from matplotlib import pyplot as plt
 
-        plt.imshow(self.values, interpolation="nearest")
+        plt.imshow(self.values, interpolation=interpolation)
         plt.savefig(filename)
         plt.close()
 

@@ -137,6 +137,11 @@ def test_inputs():
     fd = Potcar.from_dict(td)
     print(pot)
     pot.write_file(filename)
+    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+    coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
+    elements = ["Xe", "Xe"]
+    xe = Atoms(lattice_mat=box, coords=coords, elements=elements)
+    p = Potcar.from_atoms(atoms=xe)
 
 
 def test_kpoints():
