@@ -165,7 +165,7 @@ def get_db_info():
         ],
         # https://doi.org/10.6084/m9.figshare.14812044
         "c2db": [
-            "https://ndownloader.figshare.com/files/28501722",
+            "https://ndownloader.figshare.com/files/28682010",
             "c2db_atoms.json",
             "Obtaining C2DB dataset 3.5k...",
             "https://iopscience.iop.org/article/10.1088/2053-1583/aacfc1",

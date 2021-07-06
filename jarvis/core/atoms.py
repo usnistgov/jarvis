@@ -20,7 +20,37 @@ ang_cm = 1e-8
 
 
 class Atoms(object):
-    """Generate Atoms python object."""
+    """
+    Generate Atoms python object.
+
+    >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+    >>> coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
+    >>> elements = ["Si", "Si"]
+    >>> Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
+    >>> print(round(Si.volume,2))
+    40.03
+    >>> Si.composition
+    {'Si': 2}
+    >>> round(Si.density,2)
+    2.33
+    >>> round(Si.packing_fraction,2)
+    0.28
+    >>> Si.atomic_numbers
+    [14, 14]
+    >>> Si.num_atoms
+    2
+    >>> Si.frac_coords[0][0]
+    0
+    >>> Si.cart_coords[0][0]
+    0.0
+    >>> coords = [[0, 0, 0], [1.3575 , 1.22175, 1.22175]]
+    >>> round(Si.density,2)
+    2.33
+    >>> Si.spacegroup()
+    'C2/m (12)'
+    >>> Si.pymatgen_converter()!={}
+    True
+    """
 
     def __init__(
         self,
@@ -35,34 +65,6 @@ class Atoms(object):
         Create atomic structure.
 
         Requires lattice, coordinates, atom type  information.
-
-        >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-        >>> coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
-        >>> elements = ["Si", "Si"]
-        >>> Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-        >>> print(round(Si.volume,2))
-        40.03
-        >>> Si.composition
-        {'Si': 2}
-        >>> round(Si.density,2)
-        2.33
-        >>> round(Si.packing_fraction,2)
-        0.28
-        >>> Si.atomic_numbers
-        [14, 14]
-        >>> Si.num_atoms
-        2
-        >>> Si.frac_coords[0][0]
-        0
-        >>> Si.cart_coords[0][0]
-        0.0
-        >>> coords = [[0, 0, 0], [1.3575 , 1.22175, 1.22175]]
-        >>> round(Si.density,2)
-        2.33
-        >>> Si.spacegroup()
-        'C2/m (12)'
-        >>> Si.pymatgen_converter()!={}
-        True
         """
         self.lattice_mat = np.array(lattice_mat)
         self.show_props = show_props
@@ -178,10 +180,11 @@ class Atoms(object):
 
     @staticmethod
     def read_with_cif2cell(filename="1000000.cif", get_primitive_atoms=False):
+        """Use cif2cell package to read cif files."""
         # https://pypi.org/project/cif2cell/
         # tested on version 2.0.0a3
         try:
-            new_file, fname = tempfile.mkstemp()
+            new_file, fname = tempfile.mkstemp(text=True)
             cmd = (
                 "cif2cell "
                 + filename
@@ -189,11 +192,14 @@ class Atoms(object):
                 + fname
             )
             os.system(cmd)
+
         except Exception as exp:
             print(exp)
+            pass
         f = open(fname, "r")
         text = f.read().splitlines()
         f.close()
+        os.close(new_file)
         elements = text[0].split("Species order:")[1].split()
         scale = float(text[1])
         lattice_mat = []
@@ -246,13 +252,14 @@ class Atoms(object):
                 # https://pypi.org/project/cif2cell/
                 # tested on version 2.0.0a3
                 if from_string != "":
-                    new_file, filename = tempfile.mkstemp()
+                    new_file, filename = tempfile.mkstemp(text=True)
                     f = open(filename, "w")
                     f.write(from_string)
                     f.close()
                 atoms = Atoms.read_with_cif2cell(
                     filename=filename, get_primitive_atoms=get_primitive_atoms
                 )
+
                 return atoms
         except Exception as exp:
             print(exp)
