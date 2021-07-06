@@ -65,7 +65,7 @@ def nearest_neighbor_edges(
     attempt = 0
     # print ('cutoff=',all_neighbors)
     if min_nbrs < max_neighbors:
-        print("extending cutoff radius!", attempt, cutoff, id)
+        # print("extending cutoff radius!", attempt, cutoff, id)
         lat = atoms.lattice
         if cutoff < max(lat.a, lat.b, lat.c):
             r_cut = max(lat.a, lat.b, lat.c)
@@ -646,7 +646,10 @@ class StructureDataset(torch.utils.data.Dataset):
         graphs, line_graphs, labels = map(list, zip(*samples))
         batched_graph = dgl.batch(graphs)
         batched_line_graph = dgl.batch(line_graphs)
-        return batched_graph, batched_line_graph, torch.tensor(labels)
+        if len(labels[0].size()) > 0:
+            return batched_graph, batched_line_graph, torch.stack(labels)
+        else:
+            return batched_graph, batched_line_graph, torch.tensor(labels)
 
 
 """

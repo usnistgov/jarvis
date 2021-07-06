@@ -64,6 +64,8 @@ class Wannier90win(object):
         self.frozen_tol = frozen_tol
         self.semi_core_states = semi_core_states
         self.kmesh_tol = kmesh_tol
+        # Check default potcars after Er in the json
+        # Not tested completely
         if self.semi_core_states is None:
             path_semi_core = str(
                 os.path.join(

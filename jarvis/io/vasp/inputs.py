@@ -9,6 +9,7 @@ from jarvis.core.kpoints import generate_kgrid, Kpoints3D
 from jarvis.core.utils import get_counts
 from jarvis.core.specie import Specie
 from jarvis.core.utils import update_dict
+from jarvis.db.jsonutils import loadjson
 
 
 class Poscar(object):
@@ -46,8 +47,65 @@ class Poscar(object):
         """Construct Poscar object from a dictionary."""
         return Poscar(atoms=Atoms.from_dict(d["atoms"]), comment=d["comment"])
 
+    def to_string(self):
+        """Make the Poscar object to a string."""
+        header = (
+            str(self.comment)
+            + str("\n1.0\n")
+            + str(self.atoms.lattice_mat[0][0])
+            + " "
+            + str(self.atoms.lattice_mat[0][1])
+            + " "
+            + str(self.atoms.lattice_mat[0][2])
+            + "\n"
+            + str(self.atoms.lattice_mat[1][0])
+            + " "
+            + str(self.atoms.lattice_mat[1][1])
+            + " "
+            + str(self.atoms.lattice_mat[1][2])
+            + "\n"
+            + str(self.atoms.lattice_mat[2][0])
+            + " "
+            + str(self.atoms.lattice_mat[2][1])
+            + " "
+            + str(self.atoms.lattice_mat[2][2])
+            + "\n"
+        )
+        # order = np.argsort(self.atoms.elements)
+        coords = self.atoms.frac_coords
+        # DO NOT USE ORDER
+        coords_ordered = np.array(coords)  # [order]
+        elements_ordered = np.array(self.atoms.elements)  # [order]
+        props_ordered = np.array(self.atoms.props)  # [order]
+        # check_selective_dynamics = False
+        counts = get_counts(elements_ordered)
+        if "T" in "".join(map(str, self.atoms.props[0])):
+            middle = (
+                " ".join(map(str, counts.keys()))
+                + "\n"
+                + " ".join(map(str, counts.values()))
+                + "\nSelective dynamics\n"
+                + "Direct\n"
+            )
+        else:
+            middle = (
+                " ".join(map(str, counts.keys()))
+                + "\n"
+                + " ".join(map(str, counts.values()))
+                + "\ndirect\n"
+            )
+        rest = ""
+        # print ('repr',self.frac_coords, self.frac_coords.shape)
+        for ii, i in enumerate(coords_ordered):
+            p_ordered = str(props_ordered[ii])
+            rest = rest + " ".join(map(str, i)) + " " + str(p_ordered) + "\n"
+
+        result = header + middle + rest
+        return result
+
     def write_file(self, filename):
         """Write the Poscar object to a file."""
+        # TODO: Use to_string instead of re-writing the code here
         f = open(filename, "w")
         header = (
             str(self.comment)
@@ -363,6 +421,18 @@ class Potcar(object):
                 msg = "Number of elements not same as potcar_strings"
                 raise ValueError(msg)
 
+    @staticmethod
+    def from_atoms(atoms=None, pot_type=None):
+        """Obtain POTCAR for atoms object."""
+        new_symb = []
+        for i in atoms.elements:
+            if i not in new_symb:
+                new_symb.append(i)
+        if pot_type is None:
+            pot_type = "POT_GGA_PAW_PBE"
+        potcar = Potcar(elements=new_symb, pot_type=pot_type)
+        return potcar
+
     @classmethod
     def from_dict(self, d={}):
         """Build class from a dictionary."""
@@ -529,6 +599,24 @@ def find_ldau_magmom(
     info["AMIX_MAG"] = amixmag
     info["BMIX_MAG"] = bmixmag
     return info
+
+
+def get_nelect(atoms=None, default_pot=None):
+    """Get number of electrons fro default POTCAR settings."""
+    if default_pot is None:
+        default_pot = loadjson(
+            os.path.join(
+                os.path.join(os.path.dirname(__file__)),
+                "..",
+                "wannier",
+                "default_semicore.json",
+            )
+        )
+    comp = atoms.composition.to_dict()
+    nelect = 0
+    for i, j in comp.items():
+        nelect = nelect + j * (default_pot[i][0] + default_pot[i][1])
+    return nelect
 
 
 def add_ldau_incar(

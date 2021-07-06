@@ -34,16 +34,18 @@
         :target: https://jarvis-materials-design.github.io/dbdocs   
 .. image:: https://img.shields.io/badge/JARVIS-ToolsDocs-Green.svg  
         :target: https://jarvis-tools.readthedocs.io/en/latest/index.html 
+.. image:: https://colab.research.google.com/assets/colab-badge.svg
+       :target: https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
 
 
 ========================================================================================
 
-JARVIS-Tools: an open-source software package for data-driven atomistic materials design
+JARVIS-Tools
 =========================================================================================
 
+The JARVIS-Tools is an open-access software package for atomistic data-driven materials desgin. JARVIS-Tools can be used for a) setting up calculations, b) analysis and informatics, c) plotting, d) database development and e) web-page development.
 
-NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) is an integrated framework for computational science using density functional theory,
-classical force-field/molecular dynamics and machine-learning. The jarvis-tools package consists of scripts used in generating and analyzing the dataset. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/). 
+JARVIS-Tools empowers NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) repository which is an integrated framework for computational science using density functional theory, classical force-field/molecular dynamics and machine-learning. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/). 
 
 For more details, checkout our latest article:  `The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design <https://www.nature.com/articles/s41524-020-00440-1>`__ and `YouTube videos <https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel=JARVIS-repository>`__ 
 
@@ -51,10 +53,18 @@ For more details, checkout our latest article:  `The joint automated repository 
    :target: https://jarvis.nist.gov/
 
 
-Capabilities
-=======================================================================
+Documentation
+-----------------------------------------
 
-- **Software workflow tasks for preprcessing, executing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM, Qiskit, Tequila, Pennylane.
+      https://jarvis-tools.readthedocs.io
+
+      https://jarvis-materials-design.github.io/dbdocs/
+
+
+Capabilities
+-----------------------------------------
+
+- **Software workflow tasks for preprcessing, executing and post-processing**:  VASP, Quantum Espresso, Wien2k BoltzTrap, Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM, Qiskit, Tequila, Pennylane, DGL, PyTorch.
 
 - **Several examples**: Notebooks and test scripts to explain the package.
 
@@ -97,7 +107,7 @@ Example function
 >>> from jarvis.db.figshare import data
 >>> dft_3d = data(dataset='dft_3d')
 >>> print (len(dft_3d))
-36099
+48527
 >>> from jarvis.io.vasp.inputs import Poscar
 >>> for i in dft_3d:
 ...     atoms = Atoms.from_dict(i['atoms'])
@@ -153,20 +163,26 @@ Find more examples at
       
       3) https://github.com/usnistgov/jarvis/tree/master/jarvis/tests/testfiles
       
+
+Citing
+--------------------
       
+Please cite the following if you happen to use JARVIS-Tools for a publication.
+
+https://www.nature.com/articles/s41524-020-00440-1
+
+    Choudhary, K. et al. The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design. npj Computational Materials, 6(1), 1-13 (2020).
+
+
 References
 -----------------
 
 Please see `Publications related to JARVIS-Tools <https://jarvis-materials-design.github.io/dbdocs/publications/>`__
 
-Documentation
------------------------------------------
-      https://jarvis-materials-design.github.io/dbdocs/
-
-
 
 Correspondence
 --------------------
+
 Please report bugs as Github issues (https://github.com/usnistgov/jarvis/issues) or email to kamal.choudhary@nist.gov.
 
 Funding support

@@ -297,7 +297,10 @@ def get_node_attributes(species, atom_features="atomic_number"):
             return i[key]
         except KeyError:
             print(f"warning: could not load CGCNN features for {key}")
-            return None
+            print("Setting it to max atomic number available here, 103")
+            # TODO Check for the error in oqmd_3d_no_cfid dataset
+            # return i['Lr']
+            return i["100"]
 
 
 keys = [
@@ -466,6 +469,20 @@ def get_feats_hot_encoded(feature_names=keys, filename="feats_encoded.json"):
 
         dumpjson(data=new_dat, filename=filename)
     return new_dat
+
+
+x, y, z = get_specie_data()
+info_z = {}
+for i, j in y.items():
+    info_z[j["Z"]] = i
+
+
+def atomic_numbers_to_symbols(numbers=[1, 2, 3, 4]):
+    """Convert atomic number array to atomic symbols."""
+    symbs = []
+    for i in numbers:
+        symbs.append(info_z[i])
+    return symbs
 
 
 # get_digitized_feats_hot_encoded()
