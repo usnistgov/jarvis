@@ -113,11 +113,14 @@ class Composition(object):
             Z[i] = reduced[i]
         for specie, count in Z.items():
             if float(count).is_integer():
-                form = form + specie + str(int(count))
+                if count == 1:
+                    form = form + specie
+                else:
+                    form = form + specie + str(int(count))
             else:
                 form = form + specie + str(count)
 
-        return form.replace("1", "")
+        return form  # .replace("1", "")
 
     @property
     def formula(self):

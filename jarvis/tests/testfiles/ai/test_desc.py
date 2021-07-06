@@ -1,5 +1,6 @@
 from jarvis.ai.descriptors.cfid import CFID
 from jarvis.ai.descriptors.coulomb import coulomb_matrix
+from jarvis.ai.descriptors.elemental import get_element_fraction_desc
 from jarvis.core.atoms import Atoms
 
 
@@ -3141,6 +3142,7 @@ def test_desc():
     z = coulomb_matrix(Si)
     assert len(z) == 100
     assert round(z[0], 2) == round(281.62894609, 2)
+    get_element_fraction_desc()
 
 
 # test_desc()
