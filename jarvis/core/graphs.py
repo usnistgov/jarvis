@@ -65,7 +65,7 @@ def nearest_neighbor_edges(
     attempt = 0
     # print ('cutoff=',all_neighbors)
     if min_nbrs < max_neighbors:
-        print("extending cutoff radius!", attempt, cutoff, id)
+        # print("extending cutoff radius!", attempt, cutoff, id)
         lat = atoms.lattice
         if cutoff < max(lat.a, lat.b, lat.c):
             r_cut = max(lat.a, lat.b, lat.c)

@@ -62,6 +62,10 @@ cif_example4 = os.path.join(
     os.path.dirname(__file__),
     "exp_000034.cif",
 )
+cif_example5 = os.path.join(
+    os.path.dirname(__file__),
+    "1000000.cif",
+)
 
 
 def test_from_cif():
@@ -69,6 +73,11 @@ def test_from_cif():
     a = Atoms.from_cif(cif_example2)
     a = Atoms.from_cif(cif_example3)
     a = Atoms.from_cif(cif_example4)
+    a = Atoms.from_cif(cif_example5)
+    f = open(cif_example, "r")
+    lines = f.read()
+    f.close()
+    x = Atoms.from_cif(from_string=lines)
 
 
 def test_basic_atoms():
