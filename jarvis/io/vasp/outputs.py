@@ -497,7 +497,7 @@ class Outcar(object):
         for ii, i in enumerate(self.data):
             if "Electric field gradients after diagonalization" in i:
                 tmp = ii
-        arr = self.data[tmp + 5 : tmp + 5 + nions]
+        arr = self.data[tmp + 5: tmp + 5 + nions]
         efg_arr = []
         for i in arr:
             if std_conv:
@@ -529,7 +529,7 @@ class Outcar(object):
         for ii, i in enumerate(self.data):
             if "Electric field gradients (V/A^2)" in i:
                 tmp = ii
-        arr = self.data[tmp + 4 : tmp + 4 + nions]
+        arr = self.data[tmp + 4: tmp + 4 + nions]
         efg_arr = []
         for i in arr:
             line = i.split()
@@ -552,7 +552,7 @@ class Outcar(object):
                 in i
             ):
                 tmp = ii
-        arr = self.data[tmp + 4 : tmp + 4 + nions]
+        arr = self.data[tmp + 4: tmp + 4 + nions]
         quad_arr = []
         for i in arr:
             tmp = [i.split()[1], i.split()[2], i.split()[3]]
@@ -1274,7 +1274,7 @@ class Vasprun(object):
         for i in range(natoms):
             for j in range(natoms):
                 force_constants[i, j] = hessian[
-                    i * 3 : (i + 1) * 3, j * 3 : (j + 1) * 3
+                    i * 3: (i + 1) * 3, j * 3: (j + 1) * 3
                 ]
         masses = [Specie(i).atomic_mass for i in struct.elements]
         # print("Vasp masses", masses)
