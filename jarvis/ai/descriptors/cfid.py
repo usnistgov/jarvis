@@ -32,10 +32,12 @@ Descriptor_name                            Details
 jv_enp                      Energy per atom of an element from JARVIS-DFT
 KV                          Bulk modulus of an element from JARVIS-DFT
 GV                          Shear modulus of an element from JARVIS-DFT
-C-m (m=0 to 35)             Elastic constants of element from JARVIS-DFT (total 36)
+C-m (m=0 to 35)             Elastic constants of element from JARVIS-DFT
+                            (total 36)
 op_eg                       OptB88vdW bandgap during SCF for an element
 mop_eg                      OptB88vdW bandgap during linear optics for element
-voro_coord                  Voronoi coordination number of an elemental-crystal structure
+voro_coord                  Voronoi coordination number of an elemental-crystal
+                            structure
 ndunfilled                  Number of unfilled d-orbitals
 ndvalence                   Number of valence d-orbitals
 nsunfilled                  Number of unfilled s-orbitals
@@ -75,12 +77,18 @@ bp                          Boiling point
 mp                          Melting point
 avg_ion_rad                 Average ionic radii
 polzbl                      Polarizability
-e1                          Static dielectric function in x-direction from JARVIS-DFT using OptB88vdW functional
-e2                          Static dielectric function in y-direction from JARVIS-DFT using OptB88vdW functional
-e3                          Static dielectric function in z-direction from JARVIS-DFT using OptB88vdW functional
-me1                         Static dielectric function in x-direction from JARVIS-DFT using TB-mBJ potential
-me2                         Static dielectric function in y-direction from JARVIS-DFT using TB-mBJ potential
-me3                         Static dielectric function in z-direction from JARVIS-DFT using TB-mBJ potential
+e1                          Static dielectric function in x-direction from
+                            JARVIS-DFT using OptB88vdW functional
+e2                          Static dielectric function in y-direction from
+                            JARVIS-DFT using OptB88vdW functional
+e3                          Static dielectric function in z-direction from
+                            JARVIS-DFT using OptB88vdW functional
+me1                         Static dielectric function in x-direction from
+                            JARVIS-DFT using TB-mBJ potential
+me2                         Static dielectric function in y-direction from
+                            JARVIS-DFT using TB-mBJ potential
+me3                         Static dielectric function in z-direction from
+                            JARVIS-DFT using TB-mBJ potential
 ===================         ==================================================
 
 Addition (‘add’), multiplications (‘mult’), subtraction (‘subs’) and quotient
