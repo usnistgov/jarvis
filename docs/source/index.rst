@@ -9,4 +9,5 @@ JARVIS-Tools
    tutorials
    databases
    gallery
+   publications
 
