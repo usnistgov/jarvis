@@ -163,7 +163,7 @@ html_static_path = ["_static"]
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "jarvis-tools"
-html_style = "css/mystyle.css"
+# html_style = "css/mystyle.css"
 
 # -- Options for LaTeX output --------------------------------------------------
 
