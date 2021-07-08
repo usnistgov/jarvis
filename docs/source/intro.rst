@@ -182,10 +182,6 @@ https://www.nature.com/articles/s41524-020-00440-1
   }
 
       
-References
---------------------
-
-Please see `Publications related to JARVIS-Tools <https://jarvis-materials-design.github.io/dbdocs/publications/>`__
 
 Module details
 --------------------
