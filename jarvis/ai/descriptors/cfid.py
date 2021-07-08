@@ -12,7 +12,8 @@ elasticity for 3D materials as well as exfoliation energies of two-dimensional
 
 The 1557 CFID are described in detail below:
 
-Descriptor name                               Array_index     Total number
+============================================== ===========     ============
+Descriptor name                                Array_index     Total number
 Chemical (mean_chem)                                0-437          438
 Simulation cell-size (cell)                       438-441            4
 Radial charge (mean_chg)                          442-819          378
@@ -21,19 +22,20 @@ Angular distribution upto 1st nn cutoff (adfa)   920-1098          179
 Angular distribution upto 2nd nn cutoff (adfb)  1099-1277          179
 Dihedral distribution upto 1st nn cutoff (ddf)  1278-1456          179
 Nearest neighbor distribution (nn)              1457-1556          100
-                                                        Total     1557
+Total                                                   -          1557
+============================================== ===========     ============
 
 Details of element based chemical descriptors are below:
+
+===================         ==================================================
 Descriptor_name                            Details
 jv_enp                      Energy per atom of an element from JARVIS-DFT
 KV                          Bulk modulus of an element from JARVIS-DFT
 GV                          Shear modulus of an element from JARVIS-DFT
-C-m (m=0 to 35)             Elastic constants of element from JARVIS-DFT
-                               (total 36)
+C-m (m=0 to 35)             Elastic constants of element from JARVIS-DFT (total 36)
 op_eg                       OptB88vdW bandgap during SCF for an element
 mop_eg                      OptB88vdW bandgap during linear optics for element
-voro_coord                  Voronoi coordination number of an elemental-crystal
-                               structure
+voro_coord                  Voronoi coordination number of an elemental-crystal structure
 ndunfilled                  Number of unfilled d-orbitals
 ndvalence                   Number of valence d-orbitals
 nsunfilled                  Number of unfilled s-orbitals
@@ -73,18 +75,13 @@ bp                          Boiling point
 mp                          Melting point
 avg_ion_rad                 Average ionic radii
 polzbl                      Polarizability
-e1                          Static dielectric function in x-direction
-                                   from JARVIS-DFT using OptB88vdW functional
-e2                          Static dielectric function in y-direction
-                                   from JARVIS-DFT using OptB88vdW functional
-e3                          Static dielectric function in z-direction
-                                   from JARVIS-DFT using OptB88vdW functional
-me1                         Static dielectric function in x-direction
-                                   from JARVIS-DFT using TB-mBJ potential
-me2                         Static dielectric function in y-direction
-                                   from JARVIS-DFT using TB-mBJ potential
-me3                         Static dielectric function in z-direction
-                                   from JARVIS-DFT using TB-mBJ potential
+e1                          Static dielectric function in x-direction from JARVIS-DFT using OptB88vdW functional
+e2                          Static dielectric function in y-direction from JARVIS-DFT using OptB88vdW functional
+e3                          Static dielectric function in z-direction from JARVIS-DFT using OptB88vdW functional
+me1                         Static dielectric function in x-direction from JARVIS-DFT using TB-mBJ potential
+me2                         Static dielectric function in y-direction from JARVIS-DFT using TB-mBJ potential
+me3                         Static dielectric function in z-direction from JARVIS-DFT using TB-mBJ potential
+===================         ==================================================
 
 Addition (‘add’), multiplications (‘mult’), subtraction (‘subs’) and quotient
 (‘divi’) of hfus, polzbl, first_ion_en, mol_vol, bp,mp, mol_vol, mol_vol,
@@ -92,11 +89,14 @@ therm_cond and voro_coord were performed to give additional chemical
 descriptors.
 
 Details of simulation cell-size based descriptors are below:
+
+===============   =========================================
 Descriptor_name          Details
 cell_0            Volume per atom of the cell
 cell_1            Logarithm of volume per atom of the cell
 cell_2            Packing fraction
 cell_3            Density
+===============   =========================================
 
 Find details in:
 https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
@@ -128,9 +128,6 @@ class CFID(object):
         Get chemo-structural CFID decriptors.
 
         Args:
-
-            struct: Structure object
-
             jcell: whether to use cell-size descriptors
 
             jmean_chem: whether to use average chemical descriptors
@@ -220,10 +217,17 @@ class CFID(object):
             nmes = []
             chem_nm = get_descrp_arr_name()
             for d, nm in zip(
-                [mean_chem, cell, mean_chg, rdf,
-                 adfa, adfb, ddf, nn],
-                ["mean_chem", "cell", "mean_chg",
-                 "rdf", "adfa", "adfb", "ddf", "nn"],
+                [mean_chem, cell, mean_chg, rdf, adfa, adfb, ddf, nn],
+                [
+                    "mean_chem",
+                    "cell",
+                    "mean_chg",
+                    "rdf",
+                    "adfa",
+                    "adfb",
+                    "ddf",
+                    "nn",
+                ],
             ):
                 if len(d) != 0:
                     for ff, dd in enumerate(d):
@@ -238,10 +242,17 @@ class CFID(object):
             return nmes
         else:
             for d, nm in zip(
-                [mean_chem, cell, mean_chg, rdf,
-                 adfa, adfb, ddf, nn],
-                ["mean_chem", "cell", "mean_chg",
-                 "rdf", "adfa", "adfb", "ddf", "nn"],
+                [mean_chem, cell, mean_chg, rdf, adfa, adfb, ddf, nn],
+                [
+                    "mean_chem",
+                    "cell",
+                    "mean_chg",
+                    "rdf",
+                    "adfa",
+                    "adfb",
+                    "ddf",
+                    "nn",
+                ],
             ):
                 if len(d) != 0:
                     # if d != []:

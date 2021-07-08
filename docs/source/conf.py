@@ -8,12 +8,14 @@ sys.path.insert(
 extensions = [
     "sphinx.ext.autodoc",
     "autoapi.extension",
+    "sphinx.ext.viewcode",
     "sphinx.ext.doctest",  # Core library for html generation from docstrings
 ]
 
 autoapi_type = "python"
 autoapi_dirs = ["../../jarvis"]
-autoapi_ignore = ["*test*", "*examples*"]
+autoapi_ignore = ["*test*", "*examples*","*vasp_to_xml*"]
+#exclude_patterns = ["*vasp_to_xml*"]
 
 
 # sys.path.append(os.path.dirname(__file__))
