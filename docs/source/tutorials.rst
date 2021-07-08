@@ -4,13 +4,18 @@ Tutorials
 .. _customise-templates:
 
 
-How to analyze an atomic structure and generate XRD patterns
+How to analyze an atomic structure
 ------------------------------------------------------------
+
+(Coming soon)
+How to get RDF, ADF, DDF
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+How to get XRD paterns
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 How to setup/analyze DFT calculations using VASP
 ------------------------------------------------
-(Coming soon)
-You can setup a calculation as the following:
 
 How to setup a single calculation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -52,6 +57,12 @@ How to get piezoelectic/dielecrric/BEC constants
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 How to get electric field gradients
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+How to get work-function of a surface
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+How to get exfoliation energy of a 2D material
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 How to run/analyze MD static/dynamic calculation using LAMMPS

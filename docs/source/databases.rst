@@ -82,10 +82,10 @@ JARVIS-DFT structure relaxation
 JARVIS-DFT Elastic constants/finite difference
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-JARVIS-WTB
+JARVIS-WTnnierB
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-JARVIS-STM
+JARVIS-STM and STEM
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 External datasets used for ML training
