@@ -91,7 +91,7 @@ JARVIS-STM
 External datasets used for ML training
 -------------------------------------------------------------
 
-Materials project dataset (Atoms format) for AI training
+Materials project dataset 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 QM9 dataset 
@@ -118,3 +118,5 @@ QMOF dataset
 C2DB dataset
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+HPOV dataset
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
