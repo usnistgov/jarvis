@@ -28,7 +28,7 @@ JARVIS-Elastic constants
 JARVIS-Topological materials (Spin-orbit Spillage)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-JARVIS-DFPT (Piezoelectric, IR,Raman, dielectric, BEC)
+JARVIS-DFPT (Piezoelectric, IR, Raman, dielectric, BEC)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 JARVIS-BoltzTrap (Thermoelectrics coeff, eff. mass)
@@ -58,33 +58,63 @@ JARVIS-Kpoint and cut-off
 JARVIS-FF
 -------------------------------------------------------------
 
+Energetics
+^^^^^^^^^^^^
+
+Elastic constants
+^^^^^^^^^^^^
+
+Vacancy formation energy
+^^^^^^^^^^^^
+
+Surface energy and Wulff-plots
+^^^^^^^^^^^^
+
+Phonon DOS
+^^^^^^^^^^^^
+
 JARVIS-RAW Files
 -------------------------------------------------------------
 
+JARVIS-DFT structure relaxation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+JARVIS-DFT Elastic constants/finite difference
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+JARVIS-WTB
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+JARVIS-STM
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+External datasets used for ML training
+-------------------------------------------------------------
+
 Materials project dataset (Atoms format) for AI training
---------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-QM9 dataset (Atoms format) for AI training
---------------------------------------------------------
+QM9 dataset 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-OQMD dataset (Atoms format) for AI training
---------------------------------------------------------
+OQMD dataset
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-AFLOW dataset (Atoms format) for AI training
---------------------------------------------------------
+AFLOW dataset 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Polymer genome dataset (Atoms format) for AI training
---------------------------------------------------------
+Polymer genome dataset
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-COD dataset (Atoms format) for AI training
---------------------------------------------------------
+COD dataset 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-OMDB dataset (Atoms format) for AI training
---------------------------------------------------------
+OMDB dataset 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-QMOF dataset (Atoms format) for AI training
---------------------------------------------------------
+QMOF dataset
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-C2DB dataset (Atoms format) for AI training
---------------------------------------------------------
+C2DB dataset
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
