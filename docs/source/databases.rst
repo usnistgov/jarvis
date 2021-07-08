@@ -19,7 +19,7 @@ JARVIS-MetaGGA (dielectric function and SLME, solar cells)
 JARVIS-STM and STEM
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-JARVIS-WannierB
+JARVIS-WannierTB
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 JARVIS-Elastic constants
