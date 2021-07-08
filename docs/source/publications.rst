@@ -3,7 +3,7 @@ Publications
 
 .. _customise-templates:
 
-JARVIS-OVERVIEW
+JARVIS-Overview
 ------------------------------------------------
 [1. The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design, npj Computational Materials  6, 173 (2020).](https://www.nature.com/articles/s41524-020-00440-1)
 
