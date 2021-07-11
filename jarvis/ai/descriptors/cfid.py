@@ -114,6 +114,8 @@ from jarvis.core.specie import Specie
 from jarvis.core.specie import get_descrp_arr_name
 import numpy as np
 from math import log
+from jarvis.core.composition import Composition
+from jarvis.core.specie import Specie
 
 
 class CFID(object):
@@ -1832,6 +1834,22 @@ def feat_names():
         "nn_99",
     ]
     return names
+
+
+def get_chem_only_descriptor(formula="Al2O3"):
+    """Get 438 descriptors for a chemical formula."""
+    s = Composition.from_string(formula)
+    # print (formula,s)
+    el_dict = s.to_dict()
+    arr = []
+    tot = 0
+    for k, v in el_dict.items():
+        tot += v
+        des = v * Specie(k).get_descrp_arr
+        arr.append(des)
+    mean_chem = np.mean(np.array(arr), axis=0) / tot
+    names = feat_names()[0:438]
+    return mean_chem, names
 
 
 """
