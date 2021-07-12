@@ -45,7 +45,8 @@ JARVIS-Tools
 About
 ---------------------
 
-The JARVIS-Tools is an open-access software package for atomistic data-driven materials desgin. JARVIS-Tools can be used for a) setting up calculations, b) analysis and informatics, c) plotting, d) database development and e) web-page development.
+The JARVIS-Tools is an open-access software package for atomistic data-driven materials desgin. JARVIS-Tools can be used for:
+a) setting up calculations, b) analysis and informatics, c) plotting, d) database development, e) machine-learning, and f) web-page development.
 
 JARVIS-Tools empowers NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) repository which is an integrated framework for computational science using density functional theory, classical force-field/molecular dynamics and machine-learning. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/). 
 
@@ -140,6 +141,8 @@ Get JARVIS-DFT 2D dataset
 
 
 Example to parse DOS data from JARVIS-DFT XML webpages
+
+
 >>> from jarvis.db.webpages import Webpage
 >>> from jarvis.core.spectrum import Spectrum
 >>> import numpy as np
@@ -177,7 +180,7 @@ Find more examples at
       
       2) https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
       
-      2) https://github.com/usnistgov/jarvis/tree/master/jarvis/tests/testfiles
+      3) https://github.com/usnistgov/jarvis/tree/master/jarvis/tests/testfiles
       
 Citing
 ---------------------

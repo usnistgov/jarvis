@@ -20,6 +20,9 @@ An example of constructing an atomic structure class using ``jarvis.core.Atoms``
                 elements = ["Si", "Si"]
                 Si = Atoms(lattice_mat=box, coords=coords, elements=elements, cartesian=False)
                 print (Si) # To visualize 
+                Si.write_poscar('POSCAR.vasp')
+                Si.write_cif('POSCAR.vasp')
+
 
 The `Atoms` class here is created from the raw data, but it can also be read from different file formats such as: `'.cif', 'POSCAR', '.xyz', '.pdb', '.sdf', '.mol2'` etc. The Atoms class can also be written to files in formats such as POSCAR/.cif etc.
 
