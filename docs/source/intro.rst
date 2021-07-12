@@ -52,14 +52,6 @@ JARVIS-Tools empowers NIST-JARVIS (Joint Automated Repository for Various Integr
 For more details, checkout our latest article:  `The joint automated repository for various integrated simulations (JARVIS) for data-driven materials design <https://www.nature.com/articles/s41524-020-00440-1>`__ and `YouTube videos <https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel=JARVIS-repository>`__ 
 
 
-Documentation
---------------------
-
-
-      https://jarvis-tools.readthedocs.io
-
-      https://jarvis-materials-design.github.io/dbdocs/
-
 
 Capabilities
 ---------------------
@@ -89,6 +81,8 @@ Installation
 or
 
 >>> conda install -c conda-forge jarvis-tools
+
+Please make sure to use python>3.7.
 
 For detailed instructions, please see `Installation instructions <https://github.com/usnistgov/jarvis/blob/master/Installation.rst>`__
 
@@ -157,11 +151,10 @@ Example function
 
 Find more examples at
 
-      1) https://jarvis-materials-design.github.io/dbdocs/tutorials
       
-      2) https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
+      1) https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
       
-      3) https://github.com/usnistgov/jarvis/tree/master/jarvis/tests/testfiles
+      2) https://github.com/usnistgov/jarvis/tree/master/jarvis/tests/testfiles
       
 Citing
 ---------------------

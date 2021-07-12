@@ -233,6 +233,52 @@ class Atoms(object):
         return atoms
 
     @staticmethod
+    def from_pdb_old(filename="abc.pdb"):
+        """Read PDB file, kept of checking, use from_pdb instead."""
+        f = open(filename, "r")
+        lines = f.read().splitlines()
+        f.close()
+        coords = []
+        species = []
+        for i in lines:
+            tmp = i.split()
+            if "ATOM " in i and "REMARK" not in i and "SITE" not in i:
+                coord = [float(tmp[6]), float(tmp[7]), float(tmp[8])]
+                coords.append(coord)
+                species.append(tmp[11])
+                # print (coord,tmp[11])
+        coords = np.array(coords)
+
+        max_c = np.max(coords, axis=0)
+        min_c = np.min(coords, axis=0)
+        box = np.zeros((3, 3))
+        for j in range(3):
+            box[j, j] = abs(max_c[j] - min_c[j])
+        pdb = Atoms(
+            lattice_mat=box, elements=species, coords=coords, cartesian=True
+        )
+        mol = VacuumPadding(pdb, vacuum=20.0).get_effective_molecule()
+        return mol
+
+    @staticmethod
+    def from_pdb(filename="abc.pdb", max_lat=200):
+        """Read pdb/sdf/mol2 etc. file and make Atoms object, using pytraj."""
+        import pytraj as pt
+
+        x = pt.load(filename)
+        coords = x.xyz
+        at_numbs = [int(i.atomic_number) for i in list(x.top.atoms)]
+        elements = atomic_numbers_to_symbols(at_numbs)
+        lattice_mat = [[max_lat, 0, 0], [0, max_lat, 0], [0, 0, max_lat]]
+        a = Atoms(
+            lattice_mat=lattice_mat,
+            elements=elements,
+            coords=coords[0],
+            cartesian=True,
+        )
+        return a
+
+    @staticmethod
     def from_cif(
         filename="atoms.cif",
         from_string="",

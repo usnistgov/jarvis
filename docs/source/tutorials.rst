@@ -569,8 +569,8 @@ How to setup a single calculation
 
 An example for running QE simulation is shown below:
 
-.. code-block:: python
 
+.. code-block:: python
 
                     from jarvis.core.kpoints import Kpoints3D
                     from jarvis.core.atoms import Atoms
@@ -592,6 +592,7 @@ An example for running QE simulation is shown below:
                     print("sp", sp)
                     print(qe.input_params['system_params']['nat'])
                     $PATH_TO_PWSCF/pw.x -i qe.in
+
 
 
 How to setup high-throughput calculations
@@ -715,12 +716,74 @@ How to train classification model
 
 How to use quantum computation algorithms using Qiskit/Tequila/Pennylane
 ------------------------------------------------------------------------
+Quantum chemistry is one of the most attractive applications for quantum computations. 
+Predicting the energy levels of a Hamiltonian is a key problem in quantum chemistry. 
+Variational quantum eigen solver (VQE) is one of the most celebrated methods for predicting an
+approximate ground state of a Hamiltonian on a quantum computer following the variational
+principles of quantum mechanics.VQE utilizes Ritz
+variational principle where a quantum computer is used to prepare a wave function ansatz of the
+system and estimate the expectation value of its electronic Hamiltonian while a classical optimizer
+is used to adjust the quantum circuit parameters in order to find the ground state energy.
+A typical VQE task is carried out as follows: an ansatz/circuit model with tunable parameters is constructed and
+a quantum circuit capable of representing this ansatz is designed.
+In this section, we show a few examples to apply quantum algorithms for solids using Wannier-tight binding
+Hamiltonians (WTBH). WTBHs can be generated from several DFT codes. Here, we use JARVIS-WTBH database.
 
 How to generate circuit model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Developing a heuristic quantum circuit model is probably the most challenging part of applying quantum algorithms.
+Fortunately, there are few well-known generalized models that we can use or generate ourselves.
+There are several circuit models (for a fixed number of qubits and repeat units) available in
+``jarvis.core.circuits.``. In the following example, we use circuit6/EfficientSU2 model and use it to predict
+electronic energy levels (at a K-point in the Brillouin zone) of FCC Aluminum using a WTBH.
+
+
+.. code-block:: python
+
+
+                from jarvis.db.figshare import get_wann_electron, get_wann_phonon, get_hk_tb
+                from jarvis.io.qiskit.inputs import HermitianSolver
+                from jarvis.core.circuits import QuantumCircuitLibrary
+                from qiskit import Aer
+
+                backend = Aer.get_backend("statevector_simulator")
+                # Aluminum JARVIS-ID: JVASP-816
+                wtbh, Ef, atoms = get_wann_electron("JVASP-816") 
+                kpt = [0.5, 0., 0.5] # X-point
+                hk = get_hk_tb(w=wtbh, k=kpt)
+                HS = HermitianSolver(hk)
+                n_qubits = HS.n_qubits()
+                circ = QuantumCircuitLibrary(n_qubits=n_qubits).circuit6()
+                en, vqe_result, vqe = HS.run_vqe(var_form=circ, backend=backend)
+                vals,vecs = HS.run_numpy()
+                # Ef: Fermi-level
+                print('Classical, VQE (eV):', vals[0]-Ef, en-Ef)
+                print('Show model\n', circ)
+ 
+
+
+
 How to run cals. on simulators
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+In the above example, we run simulations on ``statevector_simulator``. Qiskit provides several other simulators, which can also be used.
 
 How to run cals. on actual quantum computers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To run calculations on real quantum computers, we just replace the ``backend`` parameter above such as the following:
+
+
+.. code-block:: python
+
+
+
+                token='Get Token from your IBM account' 
+                qiskit.IBMQ.save_account(token)
+                provider = IBMQ.load_account()
+                backend = provider.get_backend('ibmq_5_yorktown')
+
+Your job will put in a queue and as the simulation complete result will be sent back to you. 
+Note that there might be a lot of jobs in the queue already, so it might take a while.
+You may run simulations using IBM GUI or use something like Jupyter notebook/Colab notebook.
+
