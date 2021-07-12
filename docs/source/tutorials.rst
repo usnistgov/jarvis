@@ -649,7 +649,7 @@ For each chemical formula, we can obtain `438 descriptors` consisting of feature
                     Y.append(i[1])
                     IDs.append(ii)
 
-                    X = np.array(X)
+                X = np.array(X)
                 Y = np.array(Y).reshape(-1, 1)
                 IDs = np.array(IDs)
 

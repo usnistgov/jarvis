@@ -6,9 +6,9 @@ Databases
 ====================     =========================   ======================================================= 
 Database name            Number of data-points       Description                                             
 ====================     =========================   ======================================================= 
-``dft_3d``               48538                       Various 3D materials properties in JARVIS-DFT database  
+``dft_3d``               48527                       Various 3D materials properties in JARVIS-DFT database  
                                                      computed with OptB88vdW and TBmBJ methods             
-``dft_2d``               1100                        Various 2D materials properties in JARVIS-DFT database  
+``dft_2d``               1079                        Various 2D materials properties in JARVIS-DFT database  
                                                      computed with OptB88vdW                                
 ``stm``                  1132                        2D materials STM images in JARVIS-STM database  
 ``wtbh_electron``        1440                        3D and 2D materials Wannier tight-binding Hamiltonian
@@ -16,26 +16,52 @@ Database name            Number of data-points       Description
                                                      in JARVIS-WTB
 ``wtbh_phonon``          1440                        3D and 2D materials Wannier tight-binding Hamiltonian
                                                      for phonons at Gamma with finite difference
-``jff``                  2100                        Various 3D materials properties in JARVIS-FF database   
+``jff``                  2538                        Various 3D materials properties in JARVIS-FF database   
                                                      computed with several force-fields                     
-``edos_pdos``            48454                       Normalized electron and phonon density of states with 
+``edos_pdos``            48469                       Normalized electron and phonon density of states with 
                                                      interpolated values and fixed number of bins
-``megnet``               69000                       Formation energy and bandgaps of 3D materials properties
+``megnet``               69239                       Formation energy and bandgaps of 3D materials properties
                                                      in Materials project database as on 2018, used in megnet
-``twod_matpd``           6000                        Formation energy and bandgaps of 2D materials properties
+``twod_matpd``           6351                        Formation energy and bandgaps of 2D materials properties
                                                      in 2DMatPedia database
-``polymer_genome``       1000                        Electronic bandgap and diecltric constants of crystall
+``c2db``                 3514                        Various properties in C2DB database
+``polymer_genome``       1073                        Electronic bandgap and diecltric constants of crystall
                                                      ine polymer in polymer genome database
-``qm9_std_jctc``         138000                      Various properties of molecules in QM9 database
-``cod``                  438000                      Atomic structures from crystallographic open database
-``oqmd_3d_no_cfid``      800000                      Formation energies and bandgaps of 3D materials 
+``qm9_std_jctc``         130829                      Various properties of molecules in QM9 database
+``cod``                  431778                      Atomic structures from crystallographic open database
+``oqmd_3d_no_cfid``      817636                      Formation energies and bandgaps of 3D materials 
                                                      from OQMD database
 ``omdb``                 12500                       Bandgaps  for organic polymers in OMDB database
-``qmof``                 18000                       Bandgaps and total energies of metal organic frameowrks
+``hpov``                 4855                        Various properties of molecules in HPOV15 dataset 
+``pdbbind``              11189                       Bio-molecular complexes database from PDBBind v2015
+``qmof``                 18321                       Bandgaps and total energies of metal organic frameowrks
                                                      in QMOF database
-``raw_files``            145000                      Figshare links to download raw calculations VASP files
+``raw_files``            144895                      Figshare links to download raw calculations VASP files
+                                                     from JARVIS-DFT
 ====================     =========================   ======================================================= 
 
+All these datasets can be obtained using jarvis-tools as follows, exception to ``stm``, ``wtbh_electron``, ``wtbh_phonon``
+which have their own modules in ``jarvis.db.figshare``:
+
+.. code-block:: python
+
+                from jarvis.db.figshare import data
+                d = data('dft_3d') #choose a name of dataset from above
+                # See available keys
+                print (d[0].keys())
+                # Dataset size
+                print (len(d)
+
+                # Visualize an atoms object
+                from jarvis.core.atoms import Atoms
+                a = Atoms.from_dict(d[0]['atoms'])
+                #You can visualize this in VESTA or other similar packages
+                print (a)
+
+                # If pandas framework needed
+                import pandas as pd
+                df = pd.DataFrame(d)
+                print (df)
 
 JARVIS-DFT
 ------------------------------------------------

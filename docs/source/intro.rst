@@ -70,25 +70,35 @@ Capabilities
 
 - **HPC clusters**: Torque/PBS and SLURM.
 
-- **Available datasets**: `Summary of several datasets <https://github.com/usnistgov/jarvis/blob/master/DatasetSummary.rst>`__ .
-
 
 Installation
 ---------------------
-
+Using pip
+^^^^^^^^^
 >>> pip install -U jarvis-tools
 
 or
 
+Using conda
+^^^^^^^^^^^^
+First create a conda environment: Install miniconda environment from https://conda.io/miniconda.html Based on your system requirements, you'll get a file something like 'Miniconda3-latest-XYZ'.
+
+>>> bash Miniconda3-latest-Linux-x86_64.sh (for linux)
+>>> bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
+
+Now let's create a conda environment and install jarvis-tools from conda-forge:
+
+>>> conda create --name my_jarvis python=3.8
+>>> source activate my_jarvis
 >>> conda install -c conda-forge jarvis-tools
 
 Please make sure to use python>3.7.
 
-For detailed instructions, please see `Installation instructions <https://github.com/usnistgov/jarvis/blob/master/Installation.rst>`__
-
 
 Example function
 ---------------------
+Create Atoms object:
+
 >>> from jarvis.core.atoms import Atoms
 >>> box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
 >>> coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
@@ -97,11 +107,16 @@ Example function
 >>> density = round(Si.density,2)
 >>> print (density)
 2.33
->>>
+
+Obtain JARVIS-DFT 3D dataset with various materials and their properties
+
 >>> from jarvis.db.figshare import data
 >>> dft_3d = data(dataset='dft_3d')
 >>> print (len(dft_3d))
 48527
+
+Write to POSCAR files to visualize/analyze in VESTA or other packages
+
 >>> from jarvis.io.vasp.inputs import Poscar
 >>> for i in dft_3d:
 ...     atoms = Atoms.from_dict(i['atoms'])
@@ -109,6 +124,9 @@ Example function
 ...     jid = i['jid']
 ...     filename = 'POSCAR-'+jid+'.vasp'
 ...     poscar.write_file(filename)
+
+Get JARVIS-DFT 2D dataset
+
 >>> dft_2d = data(dataset='dft_2d')
 >>> print (len(dft_2d))
 1070
@@ -118,7 +136,10 @@ Example function
 ...     jid = i['jid']
 ...     filename = 'POSCAR-'+jid+'.vasp'
 ...     poscar.write_file(filename)
->>> # Example to parse DOS data from JARVIS-DFT webpages
+
+
+
+Example to parse DOS data from JARVIS-DFT XML webpages
 >>> from jarvis.db.webpages import Webpage
 >>> from jarvis.core.spectrum import Spectrum
 >>> import numpy as np
@@ -152,7 +173,9 @@ Example function
 Find more examples at
 
       
-      1) https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
+      1) https://jarvis-tools.readthedocs.io/
+      
+      2) https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
       
       2) https://github.com/usnistgov/jarvis/tree/master/jarvis/tests/testfiles
       
