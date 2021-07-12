@@ -13,7 +13,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7.10
+        python-version: 3.8
 
     - uses: actions/cache@v2
       with:
@@ -24,7 +24,7 @@ jobs:
       run: |
         python setup.py develop
         pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
-        conda install -c ambermd pytraj
+        #conda install -c ambermd pytraj
         echo 'CONDA LIST'
         conda list
 

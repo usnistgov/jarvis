@@ -1,4 +1,4 @@
-from jarvis.core.pdb_atoms import Atoms
+from jarvis.core.atoms import Atoms
 import os
 
 pdb_path = os.path.join(os.path.dirname(__file__), ".", "pdb101d.ent")

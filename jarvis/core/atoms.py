@@ -263,8 +263,11 @@ class Atoms(object):
     @staticmethod
     def from_pdb(filename="abc.pdb", max_lat=200):
         """Read pdb/sdf/mol2 etc. file and make Atoms object, using pytraj."""
-        import pytraj as pt
-
+        try:
+            import pytraj as pt
+        except Exception:
+            print("Pytraj not installed, trying native version.")
+            return Atoms.from_pdb_old(filename)
         x = pt.load(filename)
         coords = x.xyz
         at_numbs = [int(i.atomic_number) for i in list(x.top.atoms)]
