@@ -170,6 +170,20 @@ def get_db_info():
             "Obtaining C2DB dataset 3.5k...",
             "https://iopscience.iop.org/article/10.1088/2053-1583/aacfc1",
         ],
+        # https://figshare.com/account/projects/100325/articles/14960157
+        "hpov": [
+            "https://ndownloader.figshare.com/files/28814184",
+            "hopv_15.json",
+            "Obtaining HPOV15 dataset 4.5k...",
+            "https://www.nature.com/articles/sdata201686",
+        ],
+        # https://figshare.com/account/projects/100325/articles/14962356
+        "pdbbind": [
+            "https://ndownloader.figshare.com/files/28816368",
+            "pdbbind_2015.json",
+            "Obtaining PDBBind dataset 11k...",
+            "https://doi.org/10.1093/bioinformatics/btu626",
+        ],
         # https://doi.org/10.6084/m9.figshare.14812038
         "aflow2": [
             "https://ndownloader.figshare.com/files/25453265",

@@ -1,6 +1,111 @@
 """
 Classical Force-field Inspired Descriptors (CFID).
 
+The CFID provide a complete set of chemo-structural descriptors able to
+differentiate between structural prototypes. Specifically, the combination
+of pairwise radial, nearest neighbor, bond-angle, dihedral-angle and
+core-charge distributions, together with hundreds of chemistry-related
+descriptors, plays an important role in predicting formation energies,
+bandgaps, static refractive indices, magnetic properties, and modulus of
+elasticity for 3D materials as well as exfoliation energies of two-dimensional
+(2D) layered materials.
+
+The 1557 CFID are described in detail below:
+
+============================================== ===========     ============
+Descriptor name                                Array_index     Total number
+Chemical (mean_chem)                                0-437          438
+Simulation cell-size (cell)                       438-441            4
+Radial charge (mean_chg)                          442-819          378
+Radial distribution function (rdf)                820-919          100
+Angular distribution upto 1st nn cutoff (adfa)   920-1098          179
+Angular distribution upto 2nd nn cutoff (adfb)  1099-1277          179
+Dihedral distribution upto 1st nn cutoff (ddf)  1278-1456          179
+Nearest neighbor distribution (nn)              1457-1556          100
+Total                                                   -          1557
+============================================== ===========     ============
+
+Details of element based chemical descriptors are below:
+
+===================         ==================================================
+Descriptor_name                            Details
+jv_enp                      Energy per atom of an element from JARVIS-DFT
+KV                          Bulk modulus of an element from JARVIS-DFT
+GV                          Shear modulus of an element from JARVIS-DFT
+C-m (m=0 to 35)             Elastic constants of element from JARVIS-DFT
+                            (total 36)
+op_eg                       OptB88vdW bandgap during SCF for an element
+mop_eg                      OptB88vdW bandgap during linear optics for element
+voro_coord                  Voronoi coordination number of an elemental-crystal
+                            structure
+ndunfilled                  Number of unfilled d-orbitals
+ndvalence                   Number of valence d-orbitals
+nsunfilled                  Number of unfilled s-orbitals
+nsunfilled                  Number of valence s-orbitals
+npunfilled                  Number of unfilled p-orbitals
+npvalence                   Number of valence p-orbitals
+nfunfilled                  Number of unfilled f-orbitals
+nfvalence                   Number of valence f-orbitals
+first_ion                   First ionization energy of an element
+oq_bg                       OQMD bandgap for an element
+elec_aff                    Electron affinity
+vol_pa                      Volume per atom of an element
+hfus                        Heat of fusion of an element
+oq_enp                      OQMD energy per atom
+Polariz                     Polarizability
+Z                           Atomic number
+X                           Electronegativity
+row                         Row number in the periodic table
+column                      Column number in the periodic table
+max_oxid_s                  Maximum oxidation state
+min_oxid_s                  Minimum oxidation state
+block                       s,p,d,f block assigned to 0,1,2,3 blocks
+is_alkali                   Is it alkali element 0/1
+is_alkaline                 Is it alkaline element 0/1
+is_metalloid                Is it metalloid element 0/1
+is_noble_gas                Is it noble gas element 0/1
+is_transition_metal         Is it transition element 0/1
+is_metalloid                Is it metalloid element 0/1
+is_halogen                  Is it halogen element 0/1
+is_lanthanoid               Is it lanthanoid element 0/1
+is_actinoid                 Is it actinoid element 0/1
+atom_mass                   Atomic mass
+atom_rad                    Atomic radii
+therm_cond                  Thermal conductivity
+mol_vol                     Molar volume
+bp                          Boiling point
+mp                          Melting point
+avg_ion_rad                 Average ionic radii
+polzbl                      Polarizability
+e1                          Static dielectric function in x-direction from
+                            JARVIS-DFT using OptB88vdW functional
+e2                          Static dielectric function in y-direction from
+                            JARVIS-DFT using OptB88vdW functional
+e3                          Static dielectric function in z-direction from
+                            JARVIS-DFT using OptB88vdW functional
+me1                         Static dielectric function in x-direction from
+                            JARVIS-DFT using TB-mBJ potential
+me2                         Static dielectric function in y-direction from
+                            JARVIS-DFT using TB-mBJ potential
+me3                         Static dielectric function in z-direction from
+                            JARVIS-DFT using TB-mBJ potential
+===================         ==================================================
+
+Addition (‘add’), multiplications (‘mult’), subtraction (‘subs’) and quotient
+(‘divi’) of hfus, polzbl, first_ion_en, mol_vol, bp,mp, mol_vol, mol_vol,
+therm_cond and voro_coord were performed to give additional chemical
+descriptors.
+
+Details of simulation cell-size based descriptors are below:
+
+===============   =========================================
+Descriptor_name          Details
+cell_0            Volume per atom of the cell
+cell_1            Logarithm of volume per atom of the cell
+cell_2            Packing fraction
+cell_3            Density
+===============   =========================================
+
 Find details in:
 https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 """
@@ -9,6 +114,8 @@ from jarvis.core.specie import Specie
 from jarvis.core.specie import get_descrp_arr_name
 import numpy as np
 from math import log
+from jarvis.core.composition import Composition
+from jarvis.core.specie import Specie
 
 
 class CFID(object):
@@ -31,9 +138,6 @@ class CFID(object):
         Get chemo-structural CFID decriptors.
 
         Args:
-
-            struct: Structure object
-
             jcell: whether to use cell-size descriptors
 
             jmean_chem: whether to use average chemical descriptors
@@ -123,10 +227,17 @@ class CFID(object):
             nmes = []
             chem_nm = get_descrp_arr_name()
             for d, nm in zip(
-                [mean_chem, cell, mean_chg, rdf,
-                 adfa, adfb, ddf, nn],
-                ["mean_chem", "cell", "mean_chg",
-                 "rdf", "adfa", "adfb", "ddf", "nn"],
+                [mean_chem, cell, mean_chg, rdf, adfa, adfb, ddf, nn],
+                [
+                    "mean_chem",
+                    "cell",
+                    "mean_chg",
+                    "rdf",
+                    "adfa",
+                    "adfb",
+                    "ddf",
+                    "nn",
+                ],
             ):
                 if len(d) != 0:
                     for ff, dd in enumerate(d):
@@ -141,10 +252,17 @@ class CFID(object):
             return nmes
         else:
             for d, nm in zip(
-                [mean_chem, cell, mean_chg, rdf,
-                 adfa, adfb, ddf, nn],
-                ["mean_chem", "cell", "mean_chg",
-                 "rdf", "adfa", "adfb", "ddf", "nn"],
+                [mean_chem, cell, mean_chg, rdf, adfa, adfb, ddf, nn],
+                [
+                    "mean_chem",
+                    "cell",
+                    "mean_chg",
+                    "rdf",
+                    "adfa",
+                    "adfb",
+                    "ddf",
+                    "nn",
+                ],
             ):
                 if len(d) != 0:
                     # if d != []:
@@ -1716,6 +1834,22 @@ def feat_names():
         "nn_99",
     ]
     return names
+
+
+def get_chem_only_descriptor(formula="Al2O3"):
+    """Get 438 descriptors for a chemical formula."""
+    s = Composition.from_string(formula)
+    # print (formula,s)
+    el_dict = s.to_dict()
+    arr = []
+    tot = 0
+    for k, v in el_dict.items():
+        tot += v
+        des = v * Specie(k).get_descrp_arr
+        arr.append(des)
+    mean_chem = np.mean(np.array(arr), axis=0) / tot
+    names = feat_names()[0:438]
+    return mean_chem, names
 
 
 """
