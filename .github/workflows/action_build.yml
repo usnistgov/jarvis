@@ -24,7 +24,7 @@ jobs:
       run: |
         python setup.py develop
         pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
-
+        #conda install -c ambermd pytraj
         echo 'CONDA LIST'
         conda list
 

@@ -19,6 +19,8 @@ def get_porosity(atoms=None, network_cmd="./network", output_file=None):
     largest_included_sphere = lines[0].split()[1]
     largest_free_sphere = lines[0].split()[2]
     largest_included_sphere_along_free_sphere_path = lines[0].split()[3]
+    os.close(filename)
+    os.remove(filename)
     return (
         largest_included_sphere,
         largest_free_sphere,
