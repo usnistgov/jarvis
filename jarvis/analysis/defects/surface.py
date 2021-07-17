@@ -1,5 +1,5 @@
 """Modules for making crystallographic plane surfaces."""
-from jarvis.core.atoms import Atoms
+from jarvis.core.atoms import Atoms, get_supercell_dims
 from jarvis.core.utils import ext_gcd
 import numpy as np
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
@@ -35,6 +35,7 @@ class Surface(object):
         atoms=None,
         indices=[0, 0, 1],
         layers=3,
+        thickness=25,
         vacuum=18.0,
         tol=1e-10,
         from_conventional_structure=True,
@@ -47,6 +48,8 @@ class Surface(object):
              indices: Miller indices
 
              layers: Number of surface layers
+
+             thickness: Provide thickness instead of layers
 
              vacuum: vacuum padding
 
@@ -63,6 +66,8 @@ class Surface(object):
         self.tol = tol
         self.vacuum = vacuum
         self.layers = layers
+        self.thickness = thickness
+        # Note thickness overwrites layers
 
     def to_dict(self):
         """Convert to a dictionary."""
@@ -141,7 +146,12 @@ class Surface(object):
             elements=atoms.elements,
             cartesian=True,
         )
-
+        if self.thickness is not None and (self.thickness) > 0:
+            self.layers = int(self.thickness / new_atoms.lattice.c) + 1
+            # dims=get_supercell_dims(new_atoms,enforce_c_size=self.thickness)
+            # print ('dims=',dims,self.layers)
+            # surf_atoms = new_atoms.make_supercell_matrix([1, 1, dims[2]])
+            # print('self.layers',self.layers,self.thickness,new_atoms.lattice.c)
         surf_atoms = new_atoms.make_supercell_matrix([1, 1, self.layers])
         # print("supercell_cart_coords", surf_atoms.frac_coords)
 
