@@ -94,6 +94,6 @@ def test_inp():
     print(eigs)
     # print(vecs)
     # get_bandstruct(w=w, atoms=atoms, tol=0.1)
-    get_dos(w=w,grid=[2,1,1])
-    H.run_qpe()
+    #get_dos(w=w,grid=[2,1,1])
+    #H.run_qpe()
 #test_inp()
