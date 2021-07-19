@@ -1,3 +1,4 @@
+"""
 from jarvis.db.figshare import (
     data,
     get_ff_eneleast,
@@ -51,3 +52,4 @@ def test_figshare_download():
     cmd='rm *.png *.xml'
     os.system(cmd)
 # test_figshare_download()
+"""

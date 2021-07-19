@@ -17,4 +17,3 @@ omit =
     */restapi*.py
     */_xml*.py
     tequila/*.py
-    db/*.py
