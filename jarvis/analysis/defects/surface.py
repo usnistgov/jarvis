@@ -1,5 +1,5 @@
 """Modules for making crystallographic plane surfaces."""
-from jarvis.core.atoms import Atoms, get_supercell_dims
+from jarvis.core.atoms import Atoms
 from jarvis.core.utils import ext_gcd
 import numpy as np
 from jarvis.analysis.structure.spacegroup import Spacegroup3D

@@ -7,6 +7,7 @@ import functools
 from jarvis.core.utils import digitize_array
 from collections import defaultdict
 from collections.abc import Iterable
+from jarvis.db.jsonutils import loadjson
 
 el_chem_json_file = str(
     os.path.join(os.path.dirname(__file__), "Elements.json")
@@ -14,6 +15,10 @@ el_chem_json_file = str(
 el_chem_json = open(el_chem_json_file, "r")
 chem_data = json.load(el_chem_json)
 el_chem_json.close()
+
+chem_data_magpie = loadjson(
+    os.path.join(os.path.dirname(__file__), "magpie.json")
+)
 
 el_chrg_json_file = str(
     os.path.join(os.path.dirname(__file__), "element_charge.json")
@@ -72,10 +77,19 @@ class Specie(object):
 
     """
 
-    def __init__(self, symbol=""):
+    def __init__(self, symbol="", source="cfid"):
         """Initialize with periodic table element."""
         self.symbol = symbol
-        self._data = chem_data
+        if source == "cfid":
+            # Cite reference:
+            # https://doi.org/10.1103/PhysRevMaterials.2.083801
+            self._data = chem_data
+        elif source == "magpie":
+            # Cite reference:
+            # https://doi.org/10.1038/npjcompumats.2016.28
+            self._data = chem_data_magpie
+        else:
+            raise ValueError("Option not available.", source)
 
     @property
     def Z(self):
@@ -124,8 +138,9 @@ class Specie(object):
              arr: array value
         """
         arr = []
-
-        d = chem_data[self.symbol]
+        # print ('self._data')
+        d = self._data[self.symbol]
+        # d = chem_data[self.symbol]
         arr = []
         for k, v in d.items():
             arr.append(v)

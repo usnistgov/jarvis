@@ -178,6 +178,13 @@ def get_db_info():
             "https://www.nature.com/articles/sdata201686",
         ],
         # https://figshare.com/account/projects/100325/articles/14962356
+        "pdbbind_core": [
+            "https://ndownloader.figshare.com/files/28874802",
+            "pdbbind_2015_core.json",
+            "Obtaining PDBBind dataset 195...",
+            "https://doi.org/10.1093/bioinformatics/btu626",
+        ],
+        # https://figshare.com/account/projects/100325/articles/14962356
         "pdbbind": [
             "https://ndownloader.figshare.com/files/28816368",
             "pdbbind_2015.json",
