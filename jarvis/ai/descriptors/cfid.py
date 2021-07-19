@@ -110,12 +110,59 @@ Find details in:
 https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801
 """
 from jarvis.analysis.structure.neighbors import NeighborsAnalysis
-from jarvis.core.specie import Specie
 from jarvis.core.specie import get_descrp_arr_name
 import numpy as np
 from math import log
 from jarvis.core.composition import Composition
 from jarvis.core.specie import Specie
+
+
+def get_chem_only_descriptors(
+    formula="Al2O3",
+    extra=[],
+    mean_only=False,
+    max_only=False,
+    min_only=False,
+    source="cfid",
+):
+    """Get jarvis_cfid or magpie descriptors for each formula."""
+    s = Composition.from_string(formula)
+    el_dict = s.to_dict()
+    arr = []
+    sum = 0
+    for k, v in el_dict.items():
+        sum += v
+        des = v * Specie(k, source=source).get_descrp_arr
+        arr.append(des)
+    names = list(Specie("H", source=source)._data["H"].keys())
+    if mean_only:
+        chem = np.mean(np.array(arr), axis=0) / sum
+        names = ["Mean_" + source + "_" + str(n) for n in names]
+    elif max_only:
+        chem = np.max(np.array(arr), axis=0) / sum
+        names = ["Max_" + source + "_" + str(n) for n in names]
+    elif min_only:
+        chem = np.min(np.array(arr), axis=0) / sum
+        names = ["Min_" + source + "_" + str(n) for n in names]
+    else:
+        chem = (
+            list(np.mean(np.array(arr), axis=0) / sum)
+            + list(np.max(np.array(arr), axis=0) / sum)
+            + list(np.min(np.array(arr), axis=0) / sum)
+        )
+        chem = np.array(chem)
+        names = (
+            ["Mean_" + source + "_" + str(n) for n in names]
+            + ["Max_" + source + "_" + str(n) for n in names]
+            + ["Min_" + source + "_" + str(n) for n in names]
+        )
+    chem = list(chem)
+    for ii, i in enumerate(extra):
+        chem.append(i)
+        nm = "extra_" + str(ii)
+        names.append(nm)
+    chem = np.array(chem)
+    return chem, names
 
 
 class CFID(object):
@@ -1834,22 +1881,6 @@ def feat_names():
         "nn_99",
     ]
     return names
-
-
-def get_chem_only_descriptor(formula="Al2O3"):
-    """Get 438 descriptors for a chemical formula."""
-    s = Composition.from_string(formula)
-    # print (formula,s)
-    el_dict = s.to_dict()
-    arr = []
-    tot = 0
-    for k, v in el_dict.items():
-        tot += v
-        des = v * Specie(k).get_descrp_arr
-        arr.append(des)
-    mean_chem = np.mean(np.array(arr), axis=0) / tot
-    names = feat_names()[0:438]
-    return mean_chem, names
 
 
 """
