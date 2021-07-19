@@ -52,7 +52,7 @@ pos = os.path.join(
     "examples",
     "vasp",
     "SiOptb88",
-#    "SiOptb88",
+    "SiOptb88",
     "MAIN-RELAX-bulk@mp_149",
     "CONTCAR",
 )
@@ -65,7 +65,7 @@ inc = os.path.join(
     "examples",
     "vasp",
     "SiOptb88",
-#    "SiOptb88",
+    "SiOptb88",
     "MAIN-RELAX-bulk@mp_149",
     "INCAR",
 )
@@ -79,7 +79,7 @@ kp1 = os.path.join(
     "examples",
     "vasp",
     "SiOptb88",
-#    "SiOptb88",
+    "SiOptb88",
     "MAIN-RELAX-bulk@mp_149",
     "KPOINTS",
 )
@@ -93,7 +93,7 @@ kp2 = os.path.join(
     "examples",
     "vasp",
     "SiOptb88",
-#    "SiOptb88",
+    "SiOptb88",
     "MAIN-BAND-bulk@mp_149",
     "KPOINTS",
 )
