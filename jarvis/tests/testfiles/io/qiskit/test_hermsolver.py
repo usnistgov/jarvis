@@ -75,7 +75,7 @@ def test_inp():
         atoms=atoms,
         tol=0.1,
         neigs=2,
-        max_nk=2,
+        max_nk=1,
         filename="Alphon.png",
         ylabel="Freq.(cm$^{-1}$)",
     )
