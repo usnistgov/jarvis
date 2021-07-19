@@ -55,6 +55,7 @@ def variational_circuit(num_qubits = 2,reps = 1):
 
 qc=variational_circuit()
 
+"""
 def test_inp():
     w, ef, atoms = get_wann_electron("JVASP-816")
 #     info = get_bandstruct(
@@ -70,7 +71,6 @@ def test_inp():
     hk = get_hk_tb(w=w, k=[0.0, 0.0, 0.0])
     print ('shape=',hk.shape)
     H = HermitianSolver(hk)
-    """
     from jarvis.core.circuits import QuantumCircuitLibrary
     qc=QuantumCircuitLibrary(n_qubits=2).circuit1()
     #en, vqe_result, vqe = H.run_vqe(mode="max_val", reps=1)#,optimizer=optimizer)
@@ -97,5 +97,5 @@ def test_inp():
     # get_bandstruct(w=w, atoms=atoms, tol=0.1)
     #get_dos(w=w,grid=[2,1,1])
     #H.run_qpe()
-    """
+"""
 #test_inp()
