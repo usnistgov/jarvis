@@ -48,5 +48,6 @@ def test_figshare_download():
 
     make_stm_from_prev_parchg()
 
-
+    cmd='rm *.png *.xml'
+    os.system(cmd)
 # test_figshare_download()
