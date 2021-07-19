@@ -1,7 +1,7 @@
 """This module provides classes to specify atomic structure."""
 import numpy as np
 from jarvis.core.composition import Composition
-from jarvis.core.specie import Specie
+from jarvis.core.specie import Specie, atomic_numbers_to_symbols
 from jarvis.core.lattice import Lattice, lattice_coords_transformer
 from collections import OrderedDict
 from jarvis.core.utils import get_counts

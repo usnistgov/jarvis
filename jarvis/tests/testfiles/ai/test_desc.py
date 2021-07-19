@@ -2,11 +2,11 @@ from jarvis.ai.descriptors.cfid import CFID
 from jarvis.ai.descriptors.coulomb import coulomb_matrix
 from jarvis.ai.descriptors.elemental import get_element_fraction_desc
 from jarvis.core.atoms import Atoms
-from jarvis.ai.descriptors.cfid import get_chem_only_descriptor
+from jarvis.ai.descriptors.cfid import get_chem_only_descriptors
 
 
 def test_formula_only():
-    desc, names = get_chem_only_descriptor("Al2O3")
+    desc, names = get_chem_only_descriptors("Al2O3", source="magpie")
 
 
 def test_desc():
