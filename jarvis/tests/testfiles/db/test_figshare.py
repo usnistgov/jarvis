@@ -8,7 +8,7 @@ from jarvis.db.figshare import (
     get_stm_2d_dataset,
 )
 from jarvis.db.webpages import Webpage
-
+import os
 
 def test_figshare_download():
 
