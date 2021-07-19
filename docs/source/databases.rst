@@ -13,9 +13,10 @@ Database name            Number of data-points       Description
 ``stm``                  1132                        2D materials STM images in JARVIS-STM database  
 ``wtbh_electron``        1440                        3D and 2D materials Wannier tight-binding Hamiltonian
                                                      dtaabase for electrons with spin-orbit coupling
-                                                     in JARVIS-WTB
-``wtbh_phonon``          1440                        3D and 2D materials Wannier tight-binding Hamiltonian
-                                                     for phonons at Gamma with finite difference
+                                                     in JARVIS-WTB (Keyword: 'WANN')
+``wtbh_phonon``          15502                       3D and 2D materials Wannier tight-binding Hamiltonian
+                                                     for phonons at Gamma with finite difference 
+                                                     (Keyword:FD-ELAST)
 ``jff``                  2538                        Various 3D materials properties in JARVIS-FF database   
                                                      computed with several force-fields                     
 ``edos_pdos``            48469                       Normalized electron and phonon density of states with 
