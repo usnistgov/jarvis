@@ -55,7 +55,6 @@ def variational_circuit(num_qubits = 2,reps = 1):
 
 qc=variational_circuit()
 
-"""
 def test_inp():
     w, ef, atoms = get_wann_electron("JVASP-816")
 #     info = get_bandstruct(
@@ -95,7 +94,6 @@ def test_inp():
     print(eigs)
     # print(vecs)
     # get_bandstruct(w=w, atoms=atoms, tol=0.1)
-    #get_dos(w=w,grid=[2,1,1])
-    #H.run_qpe()
-"""
+    get_dos(w=w,grid=[2,1,1])
+    H.run_qpe()
 #test_inp()
