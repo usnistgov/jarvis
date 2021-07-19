@@ -87,7 +87,7 @@ def test_kp():
 def test_extra_spgs():
     from jarvis.db.figshare import data
 
-    d = data("dft_3d")
+    #d = data("dft_3d")
     few_spgs = {
         "JVASP-4663": 119,
         "JVASP-4666": 194,
@@ -307,10 +307,8 @@ def test_extra_spgs():
             break
  """
     for i, j in few_spgs.items():
-        for ii in d:
-            if ii["jid"] == i:
-
-                a = Atoms.from_dict(ii["atoms"])
+                name='POSCAR-'+str(i)
+                a = Atoms.from_poscar(name)
                 spg = Spacegroup3D(a).space_group_number
                 assert j == spg
 

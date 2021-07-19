@@ -19,6 +19,9 @@ import numpy as np
 from qiskit import Aer, execute
 
 import math
+import gc
+
+gc.collect()
 
 def nCr(n,r):
     f = math.factorial
@@ -67,6 +70,9 @@ def test_inp():
     hk = get_hk_tb(w=w, k=[0.0, 0.0, 0.0])
     print ('shape=',hk.shape)
     H = HermitianSolver(hk)
+    from jarvis.core.circuits import QuantumCircuitLibrary
+    qc=QuantumCircuitLibrary(n_qubits=2).circuit1()
+    #en, vqe_result, vqe = H.run_vqe(mode="max_val", reps=1)#,optimizer=optimizer)
     en, vqe_result, vqe = H.run_vqe(mode="max_val", var_form=qc)#,optimizer=optimizer)
     print("en=", en)
     info = get_bandstruct(
@@ -88,5 +94,6 @@ def test_inp():
     print(eigs)
     # print(vecs)
     # get_bandstruct(w=w, atoms=atoms, tol=0.1)
-    get_dos(w=w)
+    get_dos(w=w,grid=[2,1,1])
     H.run_qpe()
+#test_inp()
