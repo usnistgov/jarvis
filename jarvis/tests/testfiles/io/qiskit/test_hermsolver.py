@@ -70,8 +70,10 @@ def test_inp():
     hk = get_hk_tb(w=w, k=[0.0, 0.0, 0.0])
     print ('shape=',hk.shape)
     H = HermitianSolver(hk)
-    en, vqe_result, vqe = H.run_vqe(mode="max_val", reps=1)#,optimizer=optimizer)
-   # en, vqe_result, vqe = H.run_vqe(mode="max_val", var_form=qc)#,optimizer=optimizer)
+    from jarvis.core.circuits import QuantumCircuitLibrary
+    qc=QuantumCircuitLibrary(n_qubits=2).circuit1()
+    #en, vqe_result, vqe = H.run_vqe(mode="max_val", reps=1)#,optimizer=optimizer)
+    en, vqe_result, vqe = H.run_vqe(mode="max_val", var_form=qc)#,optimizer=optimizer)
     print("en=", en)
     info = get_bandstruct(
         w=w,
@@ -79,7 +81,7 @@ def test_inp():
         atoms=atoms,
         tol=0.1,
         neigs=2,
-        max_nk=1,
+        max_nk=2,
         filename="Alphon.png",
         ylabel="Freq.(cm$^{-1}$)",
     )
@@ -92,5 +94,6 @@ def test_inp():
     print(eigs)
     # print(vecs)
     # get_bandstruct(w=w, atoms=atoms, tol=0.1)
-    get_dos(w=w,grid=[1,1,1])
+    get_dos(w=w,grid=[2,1,1])
     H.run_qpe()
+#test_inp()
