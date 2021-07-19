@@ -134,12 +134,16 @@ def get_chem_only_descriptors(
         sum += v
         des = v * Specie(k, source=source).get_descrp_arr
         arr.append(des)
+    names = list(Specie("H", source=source)._data["H"].keys())
     if mean_only:
         chem = np.mean(np.array(arr), axis=0) / sum
+        names = ["Mean_" + source + "_" + str(n) for n in names]
     elif max_only:
         chem = np.max(np.array(arr), axis=0) / sum
+        names = ["Max_" + source + "_" + str(n) for n in names]
     elif min_only:
         chem = np.min(np.array(arr), axis=0) / sum
+        names = ["Min_" + source + "_" + str(n) for n in names]
     else:
         chem = (
             list(np.mean(np.array(arr), axis=0) / sum)
@@ -147,11 +151,18 @@ def get_chem_only_descriptors(
             + list(np.min(np.array(arr), axis=0) / sum)
         )
         chem = np.array(chem)
+        names = (
+            ["Mean_" + source + "_" + str(n) for n in names]
+            + ["Max_" + source + "_" + str(n) for n in names]
+            + ["Min_" + source + "_" + str(n) for n in names]
+        )
     chem = list(chem)
-    for i in extra:
+    for ii, i in enumerate(extra):
         chem.append(i)
+        nm = "extra_" + str(ii)
+        names.append(nm)
     chem = np.array(chem)
-    return chem
+    return chem, names
 
 
 class CFID(object):

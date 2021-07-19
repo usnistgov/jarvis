@@ -6,7 +6,7 @@ from jarvis.ai.descriptors.cfid import get_chem_only_descriptors
 
 
 def test_formula_only():
-    desc, names = get_chem_only_descriptor("Al2O3")
+    desc, names = get_chem_only_descriptors("Al2O3", source="magpie")
 
 
 def test_desc():
