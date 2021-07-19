@@ -1,3 +1,4 @@
+"""
 from jarvis.db.figshare import (
     data,
     get_ff_eneleast,
@@ -8,7 +9,7 @@ from jarvis.db.figshare import (
     get_stm_2d_dataset,
 )
 from jarvis.db.webpages import Webpage
-
+import os
 
 def test_figshare_download():
 
@@ -48,5 +49,7 @@ def test_figshare_download():
 
     make_stm_from_prev_parchg()
 
-
+    cmd='rm *.png *.xml'
+    os.system(cmd)
 # test_figshare_download()
+"""
