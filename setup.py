@@ -11,7 +11,7 @@ with open(os.path.join(base_dir, "README.rst")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2021.07.18",
+    version="2021.07.19",
     long_description=long_d,
     install_requires=[
         "numpy>=1.19.5",
@@ -27,6 +27,7 @@ setup(
     package_data={
         "jarvis.core": [
             "Elements.json",
+            "magpie.json",
             "element_charge.json",
             "atom_init.json",
         ],
