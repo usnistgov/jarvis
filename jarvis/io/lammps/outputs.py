@@ -5,6 +5,7 @@ import os
 from jarvis.analysis.elastic.tensor import ElasticTensor
 from jarvis.io.lammps.inputs import LammpsData
 from jarvis.io.phonopy.outputs import bandstructure_plot, total_dos
+from jarvis.core.atoms import Atoms
 
 
 def parse_potential_mod(mod="potential.mod"):
@@ -187,11 +188,17 @@ def get_chem_pot(all_json_data={}):
             and i != "bulk_data"
             and i != "bulk_energy_per_atom"
         ):
-            for el in j["final_str"].elements:
+            fin_strt = j["final_str"]
+            if isinstance(j["final_str"], dict):
+                fin_strt = Atoms.from_dict(fin_strt)
+            for el in fin_strt.elements:
+                # for el in j["final_str"].elements:
                 if el not in all_possible_species:
                     all_possible_species.append(el)
-            if len(j["final_str"].uniq_species) == 1:
-                tmp_element = j["final_str"].uniq_species[0]
+            if len(fin_strt.uniq_species) == 1:
+                # if len(j["final_str"].uniq_species) == 1:
+                tmp_element = fin_strt.uniq_species[0]
+                # tmp_element = j["final_str"].uniq_species[0]
                 tmp_energy = j["energy_per_atom"]
                 elemental_energies.setdefault(tmp_element, []).append(
                     [tmp_energy, i]
@@ -207,7 +214,7 @@ def get_chem_pot(all_json_data={}):
     return chem_pot
 
 
-def parse_folder(path="bulk@mp-1487_fold/bulk@mp-1487",):
+def parse_folder(path="bulk@mp-1487_fold/bulk@mp-1487", atoms_to_dict=False):
     """Parse individual LAMMPS run."""
     info = {}
     ff = os.path.join(path, "potential.mod")
@@ -221,16 +228,23 @@ def parse_folder(path="bulk@mp-1487_fold/bulk@mp-1487",):
     info["pair_coeff"] = pair_coeff
     info["initial_str"] = initial_str
     info["final_str"] = final_str
+    if atoms_to_dict:
+        info["initial_str"] = initial_str.to_dict()
+        info["final_str"] = final_str.to_dict()
 
     dat = parse_log(log_path)
     info["energy_per_atom"] = dat["energy_per_atom"]
     info["system_pressure"] = dat["system_pressure"]
     info["elastic_tensor"] = dat["elastic_tensor"]
+    if atoms_to_dict:
+        info["elastic_tensor"] = list(dat["elastic_tensor"])
 
     return info
 
 
-def parse_material_calculation_folder(path="bulk@mp-1487_fold", jid="x"):
+def parse_material_calculation_folder(
+    path="bulk@mp-1487_fold", jid="x", atoms_to_dict=False
+):
     """
     Parse individual LAMMPS material run.
 
@@ -255,7 +269,9 @@ def parse_material_calculation_folder(path="bulk@mp-1487_fold", jid="x"):
             print("json_file_name", json_file_name)
             print("json_file_path", json_file_path)
             fold_path = os.path.join(path, json_file_path)
-            tmp_info = parse_folder(fold_path)
+            tmp_info = parse_folder(
+                path=fold_path, atoms_to_dict=atoms_to_dict
+            )
             info[json_file_name] = tmp_info
             if (
                 "bulk" in json_file_name
@@ -284,36 +300,50 @@ def parse_material_calculation_folder(path="bulk@mp-1487_fold", jid="x"):
         for i, j in info.items():
             if "vacancy" in i:
                 try:
+                    fin_strt = j["final_str"]
+                    if isinstance(fin_strt, dict):
+                        fin_strt = Atoms.from_dict(fin_strt)
                     element_vacant = i.split("-")[-1].split("@")[0]
                     perfect_energy = (
-                        j["final_str"].num_atoms + 1
+                        fin_strt.num_atoms
+                        + 1
+                        # j["final_str"].num_atoms + 1
                     ) * bulk_energy_per_atom
                     defect_energy = (
-                        j["final_str"].num_atoms * j["energy_per_atom"]
+                        fin_strt.num_atoms
+                        * j["energy_per_atom"]
+                        # j["final_str"].num_atoms * j["energy_per_atom"]
                     )
                     mu = chem_pot[element_vacant]
                     Ef = defect_energy - perfect_energy + mu
                     mult = i.split("mult-")[1].split("_")[0]
                     vacancy_info.append([element_vacant, mult, Ef])
                     # print ('Ef',i,element_vacant, Ef,mult)
-                except Exception:
-                    print("Error parsing vacancy.", i)
+                except Exception as exp:
+                    print("Error parsing vacancy.", i, exp)
                     pass
             if "Surf" in i:
                 try:
+                    fin_strt = j["final_str"]
+                    if isinstance(fin_strt, dict):
+                        fin_strt = Atoms.from_dict(fin_strt)
                     perfect_energy = (
-                        j["final_str"].num_atoms
+                        fin_strt.num_atoms
+                        # j["final_str"].num_atoms
                     ) * bulk_energy_per_atom
                     defect_energy = (
-                        j["final_str"].num_atoms * j["energy_per_atom"]
+                        fin_strt.num_atoms
+                        * j["energy_per_atom"]
+                        # j["final_str"].num_atoms * j["energy_per_atom"]
                     )
-                    m = j["final_str"].lattice.matrix
+                    m = fin_strt.lattice.matrix
+                    # m = j["final_str"].lattice.matrix
                     area = np.linalg.norm(np.cross(m[0], m[1]))
                     Ef = 16 * (defect_energy - perfect_energy) / (2 * area)
                     surf_name = i.split("@")[0].split("-")[1].replace("_", " ")
                     surface_info.append([surf_name, Ef])
-                except Exception:
-                    print("Error parsing surface.", i)
+                except Exception as exp:
+                    print("Error parsing surface.", i, exp)
                     pass
                 # print (i,Ef)
     except Exception:

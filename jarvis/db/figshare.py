@@ -47,7 +47,8 @@ def get_db_info():
             "https://www.nature.com/articles/s41524-020-00440-1",
         ],
         "jff": [
-            "https://ndownloader.figshare.com/files/26809760",
+            "https://ndownloader.figshare.com/files/28937793",
+            # "https://ndownloader.figshare.com/files/26809760",
             "jff-3-12-2021.json",
             "Obtaining JARVIS-FF 2k ...",
             "https://www.nature.com/articles/s41524-020-00440-1",
