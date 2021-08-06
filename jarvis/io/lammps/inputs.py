@@ -95,6 +95,7 @@ class LammpsData(object):
         element_order=[],
         potential_file="pot.mod",
         verbose=True,
+        has_charges=True,
     ):
         """Read Lammps data file."""
         # n_atoms = len(self._species)
@@ -128,6 +129,9 @@ class LammpsData(object):
         # print("symb=", symb)
         f = open(filename, "r")
         lines = f.read().splitlines()
+        xy = 0
+        xz = 0
+        yz = 0
         for i, line in enumerate(lines):
             if "atoms" in line.split():
                 natoms = int(line.split()[0])
@@ -160,16 +164,22 @@ class LammpsData(object):
         z = np.zeros((natoms))
         q = np.zeros((natoms))
         coords = list()
+        if has_charges:
+            it = 2
+        else:
+            it = 1
         for i, line in enumerate(lines):
             if "Atoms" in line.split():
                 for j in range(0, natoms):
                     # print int(((lines[j+2]).split()[1]))-1
                     typ[j] = symb[int(((lines[i + j + 2]).split()[1])) - 1]
-                    q[j] = (lines[i + j + 2]).split()[2]
-                    x[j] = (lines[i + j + 2]).split()[3]
-                    y[j] = (lines[i + j + 2]).split()[4]
-                    z[j] = (lines[i + j + 2]).split()[5]
+                    if has_charges:
+                        q[j] = float((lines[i + j + 2]).split()[2])
+                    x[j] = float((lines[i + j + 2]).split()[it + 1])
+                    y[j] = float((lines[i + j + 2]).split()[it + 2])
+                    z[j] = float((lines[i + j + 2]).split()[it + 3])
                     coords.append([x[j], y[j], z[j]])
+                    print(coords[-1])
         f.close()
         # print ("info",(typ),'coo',(coords),'latt',lat)
         typ_sp = [str(i, "utf-8") for i in typ]
