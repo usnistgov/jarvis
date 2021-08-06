@@ -10,7 +10,8 @@ try:
     from skimage.filters import gaussian
     from PIL import Image as PIL_Image
 except Exception as exp:
-    print("Install skimage, Pillow.", exp)
+    # print("Install skimage, Pillow.", exp)
+    pass
 # from scipy.ndimage import rotate
 import scipy
 
