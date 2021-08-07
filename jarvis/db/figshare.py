@@ -183,10 +183,10 @@ def get_db_info():
             "https://iopscience.iop.org/article/10.1088/2053-1583/aacfc1",
         ],
         # https://figshare.com/account/projects/100325/articles/14962356
-        "hpov": [
+        "hopv": [
             "https://ndownloader.figshare.com/files/28814184",
             "hopv_15.json",
-            "Obtaining HPOV15 dataset 4.5k...",
+            "Obtaining HOPV15 dataset 4.5k...",
             "https://www.nature.com/articles/sdata201686",
         ],
         # https://figshare.com/account/projects/100325/articles/14962356
