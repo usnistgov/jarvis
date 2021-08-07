@@ -80,7 +80,11 @@ class ElasticTensor(object):
         d["poisson_ratio"] = self.poisson_ratio
         d["youngs_modulus"] = self.youngs_modulus
         d["universal_ansiotropy_ratio"] = self.universal_ansiotropy_ratio
-        d["raw_et_tensor"] = self.et_tensor
+        if not isinstance(self.et_tensor, list):
+            et_tensor = self.et_tensor.tolist()
+        else:
+            et_tensor = self.et_tensor
+        d["raw_et_tensor"] = et_tensor
         return d
 
 
