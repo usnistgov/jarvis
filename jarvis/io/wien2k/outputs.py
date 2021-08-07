@@ -81,7 +81,8 @@ def band_eigvals(energy_file="FeSe.energy", plot=False, band_file="band.png"):
         if len(sp) == 2 and start:
             tmp = float(sp[1])
             eig_bands.append(tmp)
-        if len(sp) == 7:
+        if len(sp) > 2:
+            # if len(sp) == 7:
             start = True
             if eig_bands != []:
                 eigs.append(eig_bands)
