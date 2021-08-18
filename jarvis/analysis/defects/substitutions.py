@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """Modules for making point-defect substituions."""
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.core.utils import rand_select
@@ -69,18 +68,3 @@ def generate_defect(
 """
 x = generate_defect(atoms=a, selected_element="Br")
 """
-=======
-"""Module to substitute atoms."""
-
-from jarvis.core.atoms import Atoms
-def substitute_atoms(atoms=None, element="Na", site=0):
-    """Substitute element in Atoms class."""
-    elements = atoms.elements
-    elements[site] = element
-    return Atoms(
-        lattice_mat=atoms.lattice_mat,
-        elements=elements,
-        coords=atoms.coords,
-        cartesian=atoms.cartesian,
-    )
->>>>>>> 38a18db6d472dc12c5b23e1a12d83f9029e18a67
