@@ -6,7 +6,7 @@ Databases
 ====================     =========================   ======================================================= 
 Database name            Number of data-points       Description                                             
 ====================     =========================   ======================================================= 
-``dft_3d``               48527                       Various 3D materials properties in JARVIS-DFT database  
+``dft_3d``               55723                       Various 3D materials properties in JARVIS-DFT database  
                                                      computed with OptB88vdW and TBmBJ methods             
 ``dft_2d``               1079                        Various 2D materials properties in JARVIS-DFT database  
                                                      computed with OptB88vdW                                
@@ -37,6 +37,8 @@ Database name            Number of data-points       Description
 ``pdbbind``              11189                       Bio-molecular complexes database from PDBBind v2015
 ``qmof``                 18321                       Bandgaps and total energies of metal organic frameowrks
                                                      in QMOF database
+``cfid_3d``              55723                       Various 3D materials properties in JARVIS-DFT database  
+                                                     computed with OptB88vdW and TBmBJ methods with CFID             
 ``raw_files``            144895                      Figshare links to download raw calculations VASP files
                                                      from JARVIS-DFT
 ====================     =========================   ======================================================= 
