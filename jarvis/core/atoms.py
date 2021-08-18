@@ -642,8 +642,22 @@ class Atoms(object):
             polar = False
         return polar
 
+    def strain_atoms(self, strain):
+        """Apply volumetric strain to atoms."""
+        # strains=np.arange(0.80,1.2,0.02)
+        s = np.eye(3) + np.array(strain) * np.eye(3)
+        lattice_mat = np.array(self.lattice_mat)
+        lattice_mat = np.dot(lattice_mat, s)
+        return Atoms(
+            lattice_mat=lattice_mat,
+            elements=self.elements,
+            coords=self.coords,
+            cartesian=self.cartesian,
+        )
+
     def apply_strain(self, strain):
         """Apply a strain(e.g. 0.01, [0,0,.01]) to the lattice."""
+        print("Use strain_atoms instead.")
         s = (1 + np.array(strain)) * np.eye(3)
         self.lattice_mat = np.dot(self.lattice_mat.T, s).T
 

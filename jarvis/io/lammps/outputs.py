@@ -27,7 +27,7 @@ def parse_potential_mod(mod="potential.mod"):
     return info
 
 
-def read_data(data=None, ff=None, element_order=[]):
+def read_data(data=None, ff=None, element_order=[], has_charges=True):
     """
     Read LAMMPS data file.
 
@@ -45,6 +45,7 @@ def read_data(data=None, ff=None, element_order=[]):
         element_order=element_order,
         potential_file=ff,
         verbose=False,
+        has_charges=has_charges,
     )
 
 

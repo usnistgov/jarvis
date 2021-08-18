@@ -33,7 +33,7 @@ Database name            Number of data-points       Description
 ``oqmd_3d_no_cfid``      817636                      Formation energies and bandgaps of 3D materials 
                                                      from OQMD database
 ``omdb``                 12500                       Bandgaps  for organic polymers in OMDB database
-``hpov``                 4855                        Various properties of molecules in HPOV15 dataset 
+``hopv``                 4855                        Various properties of molecules in HOPV15 dataset 
 ``pdbbind``              11189                       Bio-molecular complexes database from PDBBind v2015
 ``qmof``                 18321                       Bandgaps and total energies of metal organic frameowrks
                                                      in QMOF database
