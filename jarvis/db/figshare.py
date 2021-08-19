@@ -78,9 +78,9 @@ def get_db_info():
         ],
         # https://doi.org/10.6084/m9.figshare.14745327
         "edos_pdos": [
-            "https://ndownloader.figshare.com/files/28501764",
-            "edos-up_pdos-elast_interp-6-19-2021.json",
-            "Interpolated electronic total dos spin-up dataset 48k...",
+            "https://ndownloader.figshare.com/files/29216859",
+            "edos-up_pdos-elast_interp-8-18-2021.json",
+            "Interpolated electronic total dos spin-up dataset 55k...",
             "https://www.nature.com/articles/s41524-020-00440-1",
         ],
         # https://doi.org/10.6084/m9.figshare.13054247
