@@ -9,7 +9,7 @@ try:
     from skimage.util import random_noise
     from skimage.filters import gaussian
     from PIL import Image as PIL_Image
-except Exception as exp:
+except Exception:
     # print("Install skimage, Pillow.", exp)
     pass
 # from scipy.ndimage import rotate

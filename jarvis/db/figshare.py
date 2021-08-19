@@ -35,16 +35,16 @@ def get_db_info():
         ],
         # https://doi.org/10.6084/m9.figshare.6815699
         "dft_3d": [
-            "https://ndownloader.figshare.com/files/28034994",
-            "d3-5-16-2021.json",
-            "Obtaining 3D dataset 48k ...",
+            "https://ndownloader.figshare.com/files/29204826",
+            "jdft_3d-8-18-2021.json",
+            "Obtaining 3D dataset 55k ...",
             "https://www.nature.com/articles/s41524-020-00440-1",
         ],
         # https://doi.org/10.6084/m9.figshare.6815699
         "cfid_3d": [
-            "https://ndownloader.figshare.com/files/26808914",
-            "d3-3-12-2021.json",
-            "Obtaining 3D dataset 43k ...",
+            "https://ndownloader.figshare.com/files/29205201",
+            "cfid_3d-8-18-2021.json",
+            "Obtaining 3D dataset 55k ...",
             "https://www.nature.com/articles/s41524-020-00440-1",
         ],
         # https://doi.org/10.6084/m9.figshare.14213522
@@ -78,9 +78,9 @@ def get_db_info():
         ],
         # https://doi.org/10.6084/m9.figshare.14745327
         "edos_pdos": [
-            "https://ndownloader.figshare.com/files/28501764",
-            "edos-up_pdos-elast_interp-6-19-2021.json",
-            "Interpolated electronic total dos spin-up dataset 48k...",
+            "https://ndownloader.figshare.com/files/29216859",
+            "edos-up_pdos-elast_interp-8-18-2021.json",
+            "Interpolated electronic total dos spin-up dataset 55k...",
             "https://www.nature.com/articles/s41524-020-00440-1",
         ],
         # https://doi.org/10.6084/m9.figshare.13054247
