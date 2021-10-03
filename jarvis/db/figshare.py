@@ -172,7 +172,7 @@ def get_db_info():
         "hmof": [
             "https://ndownloader.figshare.com/files/29070516",
             "hmof_db_7_27_2021.json",
-            "Obtaining QMOF dataset 137k...",
+            "Obtaining hMOF dataset 137k...",
             "https://doi.org/10.1021/acs.jpcc.6b08729",
         ],
         # https://figshare.com/account/projects/100325/articles/14960157
