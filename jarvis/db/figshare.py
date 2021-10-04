@@ -163,16 +163,16 @@ def get_db_info():
         ],
         # https://doi.org/10.6084/m9.figshare.14812044
         "qmof": [
-            "https://ndownloader.figshare.com/files/28501740",
+            "https://figshare.com/ndownloader/files/30972640",
             "qmof_db.json",
-            "Obtaining QMOF dataset 18k...",
+            "Obtaining QMOF dataset 20k...",
             "https://www.cell.com/matter/fulltext/S2590-2385(21)00070-9",
         ],
         # https://doi.org/10.6084/m9.figshare.15127758
         "hmof": [
-            "https://ndownloader.figshare.com/files/29070516",
-            "hmof_db_7_27_2021.json",
-            "Obtaining QMOF dataset 137k...",
+            "https://figshare.com/ndownloader/files/30972655",
+            "hmof_db_9_18_2021.json",
+            "Obtaining hMOF dataset 137k...",
             "https://doi.org/10.1021/acs.jpcc.6b08729",
         ],
         # https://figshare.com/account/projects/100325/articles/14960157

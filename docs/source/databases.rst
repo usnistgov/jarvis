@@ -35,7 +35,7 @@ Database name            Number of data-points       Description
 ``omdb``                 12500                       Bandgaps  for organic polymers in OMDB database
 ``hopv``                 4855                        Various properties of molecules in HOPV15 dataset 
 ``pdbbind``              11189                       Bio-molecular complexes database from PDBBind v2015
-``qmof``                 18321                       Bandgaps and total energies of metal organic frameowrks
+``qmof``                 20425                       Bandgaps and total energies of metal organic frameowrks
                                                      in QMOF database
 ``cfid_3d``              55723                       Various 3D materials properties in JARVIS-DFT database  
                                                      computed with OptB88vdW and TBmBJ methods with CFID             
