@@ -35,7 +35,7 @@ Database name            Number of data-points       Description
 ``omdb``                 12500                       Bandgaps  for organic polymers in OMDB database
 ``hopv``                 4855                        Various properties of molecules in HOPV15 dataset 
 ``pdbbind``              11189                       Bio-molecular complexes database from PDBBind v2015
-``qmof``                 18321                       Bandgaps and total energies of metal organic frameowrks
+``qmof``                 20425                       Bandgaps and total energies of metal organic frameowrks
                                                      in QMOF database
 ``cfid_3d``              55723                       Various 3D materials properties in JARVIS-DFT database  
                                                      computed with OptB88vdW and TBmBJ methods with CFID             
@@ -53,18 +53,18 @@ which have their own modules in ``jarvis.db.figshare``:
                 # See available keys
                 print (d[0].keys())
                 # Dataset size
-                print (len(d)
+                print(len(d))
 
                 # Visualize an atoms object
                 from jarvis.core.atoms import Atoms
                 a = Atoms.from_dict(d[0]['atoms'])
                 #You can visualize this in VESTA or other similar packages
-                print (a)
+                print(a)
 
                 # If pandas framework needed
                 import pandas as pd
                 df = pd.DataFrame(d)
-                print (df)
+                print(df)
 
 JARVIS-DFT
 ------------------------------------------------
