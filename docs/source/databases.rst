@@ -53,18 +53,18 @@ which have their own modules in ``jarvis.db.figshare``:
                 # See available keys
                 print (d[0].keys())
                 # Dataset size
-                print (len(d)
+                print(len(d))
 
                 # Visualize an atoms object
                 from jarvis.core.atoms import Atoms
                 a = Atoms.from_dict(d[0]['atoms'])
                 #You can visualize this in VESTA or other similar packages
-                print (a)
+                print(a)
 
                 # If pandas framework needed
                 import pandas as pd
                 df = pd.DataFrame(d)
-                print (df)
+                print(df)
 
 JARVIS-DFT
 ------------------------------------------------
