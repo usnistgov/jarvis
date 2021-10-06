@@ -59,7 +59,12 @@ class Kpoints3D(object):
 
     def automatic_length_mesh(self, lattice_mat=[], length=20, header="Gamma"):
         """Length based automatic k-points."""
-        inv_lat = Lattice(lattice_mat=lattice_mat).inv_lattice()
+        inv_lat = (
+            Lattice(lattice_mat=lattice_mat)
+            .reciprocal_lattice_crystallographic()
+            .matrix
+        )
+        # inv_lat = Lattice(lattice_mat=lattice_mat).inv_lattice()
         b1 = LA.norm(np.array(inv_lat[0]))
         b2 = LA.norm(np.array(inv_lat[1]))
         b3 = LA.norm(np.array(inv_lat[2]))
