@@ -4,6 +4,7 @@ from collections import OrderedDict
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
 from jarvis.core.utils import rand_select
 from jarvis.core.atoms import Atoms
+
 # import numpy as np
 import random
 
@@ -67,7 +68,12 @@ class Vacancy(object):
             dim3 = int(float(enforce_c_size) / float(c)) + extend
             # atoms = atoms.make_supercell([dim1, dim2, dim3])
             supercell_size = [dim1, dim2, dim3]
-
+            if dim1 == 0:
+                dim1 = 1
+            if dim2 == 0:
+                dim2 = 1
+            if dim3 == 0:
+                dim3 = 1
         spg = Spacegroup3D(atoms)
         wyckoffs = spg._dataset["wyckoffs"]
         atoms.props = wyckoffs
