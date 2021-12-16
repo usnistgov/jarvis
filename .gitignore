@@ -104,3 +104,6 @@ ENV/
 .mypy_cache/
 
 .pytest_cache/
+
+#Test files for io modules
+jarvis/io/phono3py/Si-testing/
