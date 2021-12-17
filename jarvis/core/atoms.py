@@ -702,6 +702,30 @@ class Atoms(object):
             cartesian=False,
         )
 
+    def add_site(
+        self, element="Si", coords=[0.1, 0.1, 0.1], props=[], index=0
+    ):
+        """Ad an atom, coords in fractional coordinates."""
+        new_els = list(self.elements)
+        new_coords = list(self.frac_coords)
+        new_props = list(self.props)
+        new_els.insert(index, element)
+        new_coords.insert(index, coords)
+        new_props.insert(index, props)
+        # new_els.append(element)
+        # new_coords.append(coords)
+        # new_props.append(props)
+        new_els = np.array(new_els)
+        new_coords = np.array(new_coords)
+        new_props = np.array(new_props, dtype=object)
+        return Atoms(
+            lattice_mat=self.lattice_mat,
+            elements=new_els,
+            coords=np.array(new_coords),
+            props=new_props,
+            cartesian=False,
+        )
+
     @property
     def get_primitive_atoms(self):
         """Get primitive Atoms using spacegroup information."""
@@ -1658,6 +1682,63 @@ def crop_square(atoms=None, csize=10):
         lattice_mat=lat_mat, elements=els, coords=coords, cartesian=True
     ).center_around_origin([0.5, 0.5, 0.5])
     return new_atoms
+
+
+def build_xanes_poscar(
+    atoms=None,
+    selected_element="Si",
+    prefix="-",
+    extend=1,
+    enforce_c_size=12,
+    dir=".",
+    filename_with_prefix=False,
+):
+    """Generate POSCAR file for XANES, note the element ordering."""
+    from jarvis.core.utils import rand_select
+    from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
+    dims = get_supercell_dims(
+        atoms, enforce_c_size=enforce_c_size, extend=extend
+    )
+    atoms = atoms.make_supercell_matrix(dims)
+    spath = os.path.join(dir, "POSCAR-supercell.vasp")
+    atoms.write_poscar(spath)
+    spg = Spacegroup3D(atoms)
+    wyckoffs = spg._dataset["wyckoffs"]
+    atoms.props = wyckoffs
+    props = rand_select(atoms.props)
+    tmp_atoms = atoms
+    for i, j in props.items():
+        if tmp_atoms.elements[j] == selected_element:
+            atoms = tmp_atoms
+            defect_strt = atoms.remove_site_by_index(j)
+            coords = tmp_atoms.frac_coords[j]
+            added_strt = defect_strt.add_site(element="XANES", coords=coords)
+            if filename_with_prefix:
+                filename = (
+                    "POSCAR"
+                    + prefix
+                    + tmp_atoms.elements[j]
+                    + "_"
+                    + str(j)
+                    + "_"
+                    + tmp_atoms.props[j]
+                    + ".vasp"
+                )
+            else:
+                filename = "POSCAR"
+
+            filename = os.path.join(dir, filename)
+            added_strt.props = ["" for i in range(added_strt.num_atoms)]
+            added_strt.write_poscar(filename)
+            f = open(filename, "r")
+            filedata = f.read()
+            f.close()
+
+            newdata = filedata.replace("XANES", tmp_atoms.elements[j])
+            f = open(filename, "w")
+            f.write(newdata)
+            f.close()
 
 
 # ['Mn ', 'Mn ', 'Ru ', 'U ']

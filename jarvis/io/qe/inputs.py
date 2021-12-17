@@ -60,6 +60,17 @@ class QEinfile(object):
             ):
                 self.species = self.atoms.uniq_species
                 input_params["system"]["ntyp"] = len(self.species)
+            if (
+                "nspin" in input_params["system"]
+                and input_params["system"]["nspin"] == 2
+            ):
+
+                for ii in range(input_params["system"]["nat"]):
+                    tmp = "starting_magnetization(" + str(ii + 1) + str(")")
+                    input_params["system"][tmp] = 1.0
+
+                #'starting_magnetization' in input_params["system"] and input_params["system"]['starting_magnetization'] is None:
+
         else:
             self.system_params = {}
 
@@ -71,6 +82,13 @@ class QEinfile(object):
         if "control" in input_params:
             self.control_params = input_params["control"]
             self.control_params["pseudo_dir"] = str("'") + self.psp_dir + "'"
+            if (
+                "prefix" in self.control_params
+                and self.control_params["prefix"] is None
+            ):
+                self.control_params[
+                    "prefix"
+                ] = self.atoms.composition.reduced_formula
         else:
             self.control_params = {}
 

@@ -369,6 +369,14 @@ class Outcar(object):
                 return nbands
 
     @property
+    def nedos(self):
+        """Get number of dos points."""
+        for i in self.data:
+            if "NEDOS =" in i:
+                n_edos = int(i.split()[-7])
+                return n_edos
+
+    @property
     def efermi(self):
         """Get Fermi energy."""
         efermi = []
@@ -579,6 +587,39 @@ class Outcar(object):
         ionic_piezo = np.array(ionic_piezo, dtype="float")
         total_piezo = np.array(total_piezo, dtype="float")
         return ionic_piezo, total_piezo
+
+    def freq_dielectric_tensor(self):
+        """Parse dielectric function."""
+        lines = self.data
+        nedos = self.nedos
+        imag_data = []
+        real_data = []
+        found_real = 0
+        found_imag = 0
+        for ii, i in enumerate(lines):
+            if "frequency dependent      REAL DIELECTRIC FUNCTION" in i:
+                found_real = ii
+            if "frequency dependent IMAGINARY DIELECTRIC FUNCTION" in i:
+                found_imag = ii
+        for j in range(found_real + 3, len(lines)):
+            if "        " in lines[j + 1]:
+                break
+            if "4ORBIT" in lines[j + 1]:
+                break
+            tmp = lines[j].split()
+            if len(tmp) == 7:
+                real_data.append(tmp)
+        for j in range(found_imag + 3, len(lines)):
+            if "        " in lines[j + 1]:
+                break
+            if "4ORBIT" in lines[j + 1]:
+                break
+            tmp = lines[j].split()
+            if len(tmp) == 7:
+                imag_data.append(tmp)
+        imag_data = np.array(imag_data, dtype="float")
+        real_data = np.array(real_data, dtype="float")
+        return real_data, imag_data
 
     def elastic_props(self, atoms=None, vacuum=False):
         """
@@ -1078,9 +1119,12 @@ class Wavecar(object):
                 % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid))
             )
         else:
-            assert Gvec.shape[0] == self._nplws[ikpt - 1], (
-                "No. of planewaves not consistent! %d %d %d"
-                % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid),)
+            assert (
+                Gvec.shape[0] == self._nplws[ikpt - 1]
+            ), "No. of planewaves not consistent! %d %d %d" % (
+                Gvec.shape[0],
+                self._nplws[ikpt - 1],
+                np.prod(self._ngrid),
             )
         self._gvec = np.asarray(Gvec, dtype=int)
 

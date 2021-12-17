@@ -101,7 +101,7 @@ Example function
 >>> from jarvis.db.figshare import data
 >>> dft_3d = data(dataset='dft_3d')
 >>> print (len(dft_3d))
-48527
+55723
 >>> from jarvis.io.vasp.inputs import Poscar
 >>> for i in dft_3d:
 ...     atoms = Atoms.from_dict(i['atoms'])
@@ -111,7 +111,7 @@ Example function
 ...     poscar.write_file(filename)
 >>> dft_2d = data(dataset='dft_2d')
 >>> print (len(dft_2d))
-1070
+1079
 >>> for i in dft_2d:
 ...     atoms = Atoms.from_dict(i['atoms'])
 ...     poscar = Poscar(atoms)
@@ -151,7 +151,7 @@ Example function
 
 Find more examples at
 
-      1) https://jarvis-materials-design.github.io/dbdocs/tutorials
+      1) https://jarvis-tools.readthedocs.io/en/master/tutorials.html 
       
       2) https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks
       
@@ -171,8 +171,12 @@ https://www.nature.com/articles/s41524-020-00440-1
 References
 -----------------
 
-Please see `Publications related to JARVIS-Tools <https://jarvis-materials-design.github.io/dbdocs/publications/>`__
+Please see `Publications related to JARVIS-Tools <https://jarvis-tools.readthedocs.io/en/master/publications.html>`__
 
+How to contribute
+-----------------
+
+For detailed instructions, please see `Contribution instructions <https://github.com/usnistgov/jarvis/blob/master/Contribution.rst>`__
 
 Correspondence
 --------------------
