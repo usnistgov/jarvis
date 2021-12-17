@@ -13,17 +13,21 @@ How to contribute
 
 - black -l 79 YOUR_MODIFIED_SCRIPT.py 
 
-- At the jarvis folder level, run the following commands. You can also tun these for individual python scripts.
+- At the jarvis folder level, run the following commands. You can also tun these for individual python scripts::
+
 
       pycodestyle --ignore E203,W503 --exclude=examples,testfiles jarvis
       flake8 --ignore E203,W503 --exclude=examples,tests --statistics --count --exit-zero jarvis
       pydocstyle --match-dir=core --match-dir=io --match-dir=io --match-dir=ai --match-dir=analysis --match-dir=db --match-dir=tasks --count jarvis
 
-- After fixing the errors in the above step, 
+
+- After fixing the errors in the above step::
+
 
       git add YOUR_MODIFIED_SCRIPT.py  
       git commit -m 'Modified xyz.py for xyz.'
       git push origin master (or main depending on your repo)
+
 
 - After the above steps, you can send a pull request (PR) from your forked repo to the main repo's develop branch. DO NOT submit the PR to main pr master branch.
 
