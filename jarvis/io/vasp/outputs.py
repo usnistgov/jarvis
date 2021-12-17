@@ -591,7 +591,7 @@ class Outcar(object):
     def freq_dielectric_tensor(self):
         """Parse dielectric function."""
         lines = self.data
-        nedos = self.nedos
+        # nedos = self.nedos
         imag_data = []
         real_data = []
         found_real = 0

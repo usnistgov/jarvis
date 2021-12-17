@@ -69,7 +69,8 @@ class QEinfile(object):
                     tmp = "starting_magnetization(" + str(ii + 1) + str(")")
                     input_params["system"][tmp] = 1.0
 
-                #'starting_magnetization' in input_params["system"] and input_params["system"]['starting_magnetization'] is None:
+                # 'starting_magnetization' in input_params["system"] and
+                # input_params["system"]['starting_magnetization'] is None:
 
         else:
             self.system_params = {}
@@ -158,7 +159,7 @@ class QEinfile(object):
 
             else:
                 print(
-                    "Kpoint scheme not implemented except linemode, & automatic"
+                    "Kpoint scheme not implemented except linemode&automatic"
                 )
         return kp
 

@@ -329,6 +329,7 @@ def test_out():
         os.path.join(os.path.dirname(__file__), "OUTCAR.EFG-JVASP-12148")
     )
     rl, imag = opt_out.freq_dielectric_tensor()
+    nedos = opt_out.nedos
     out_efg_raw = Outcar(
         os.path.join(os.path.dirname(__file__), "OUTCAR.EFG-JVASP-12148")
     ).efg_raw_tensor
