@@ -78,13 +78,33 @@ Capabilities
 Installation
 ---------------
 
->>> pip install -U jarvis-tools
+- We recommend installing miniconda environment from https://conda.io/miniconda.html ::
 
-or
+      bash Miniconda3-latest-Linux-x86_64.sh (for linux)
+      bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
+      Download 32/64 bit python 3.8 miniconda exe and install (for windows)
+      Now, let's make a conda environment just for JARVIS::
+      conda create --name my_jarvis python=3.8
+      source activate my_jarvis
 
->>> conda install -c conda-forge jarvis-tools
+- Method-1: Installation using pip::
 
-For detailed instructions, please see `Installation instructions <https://github.com/usnistgov/jarvis/blob/master/Installation.rst>`__
+      pip install -U jarvis-tools
+
+- Method-2: Installation using conda::
+
+      conda install -c conda-forge jarvis-tools
+
+- Method-3: Installation using setup.py::
+
+      pip install numpy scipy matplotlib
+      git clone https://github.com/usnistgov/jarvis.git
+      cd jarvis
+      python setup.py install
+
+- Note on installing additional dependencies for all modules to function::
+
+      pip install -r dev-requirements.txt
 
 
 Example function
