@@ -1,10 +1,15 @@
 wheel
-qiskit >= 0.24.0
+qiskit==0.30.1
+qiskit-aer==0.9.0
+qiskit-aqua==0.9.5
+qiskit-ibmq-provider==0.16.0
+qiskit-ignis==0.6.0
+qiskit-terra==0.18.3
 ase>=3.21.1
 numpy>=1.18.5
 scipy>=1.4.1
 matplotlib>=3.0.0
-phonopy==2.10.0
+phonopy>=2.10.0
 coverage>=5.5
 lightgbm>=2.1.0
 flask >=1.1.2
