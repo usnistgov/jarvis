@@ -21,5 +21,5 @@ def test_inputs():
     qe.write_file(filename)
     sp = qe.atomic_species_string()
     sp = qe.atomic_cell_params()
-    assert qe.input_params["system_params"]["nat"] == 2
+    assert qe.input_params["system"]["nat"] == 2
     
