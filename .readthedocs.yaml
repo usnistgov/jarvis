@@ -8,6 +8,6 @@ python:
       path: .
       extra_requirements:
         - docs
-    - method: setuptools
-      path: .
+    - method: pip
+      path: jarvis-tools
   system_packages: true
