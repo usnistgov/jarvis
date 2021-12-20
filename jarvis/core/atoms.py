@@ -1647,7 +1647,7 @@ def ase_to_atoms(ase_atoms=""):
         lattice_mat=ase_atoms.get_cell(),
         elements=ase_atoms.get_chemical_symbols(),
         coords=ase_atoms.get_positions(),
-        pbc=True,
+#         pbc=True,
     )
 
 
