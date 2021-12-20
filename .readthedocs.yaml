@@ -8,6 +8,6 @@ python:
       path: .
       extra_requirements:
         - docs
-    - method: pip
-      path: jarvis-tools
-  system_packages: true
+#     - method: pip
+#       path: jarvis-tools
+#   system_packages: true
