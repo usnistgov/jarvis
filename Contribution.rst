@@ -1,9 +1,16 @@
 How to contribute
 ----------------------------------------
 
+If you are new to GitHub, please look into some general guidelines on how to contribute to GitHub projects:
+
+.. image:: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
+        :target: http://makeapullrequest.com
+
+Some common steps are:
+
 - Fork the repository
 
-- git clone YOUR_FORKED_REPOSITORY
+- git clone YOUR_FORKED_REPOSITORY 
 
 - Add/modify your modules/scripts etc. in the repo
 
@@ -13,7 +20,7 @@ How to contribute
 
 - black -l 79 YOUR_MODIFIED_SCRIPT.py 
 
-- At the jarvis folder level, run the following commands. You can also tun these for individual python scripts::
+- At the jarvis folder level, run the following commands. You can also run these for individual python scripts::
 
 
       pycodestyle --ignore E203,W503 --exclude=examples,testfiles jarvis

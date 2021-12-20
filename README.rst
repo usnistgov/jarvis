@@ -196,6 +196,9 @@ Please see `Publications related to JARVIS-Tools <https://jarvis-tools.readthedo
 How to contribute
 -----------------
 
+.. image:: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
+        :target: http://makeapullrequest.com
+
 For detailed instructions, please see `Contribution instructions <https://github.com/usnistgov/jarvis/blob/master/Contribution.rst>`__
 
 Correspondence
