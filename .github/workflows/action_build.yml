@@ -38,7 +38,7 @@ jobs:
 
 
         coverage run -m pytest
-        coverage report -m
+        coverage report -m -i
         codecov
         codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
         # git clone https://github.com/QEF/q-e.git
