@@ -72,7 +72,7 @@ packaging==21.3
 pandas==1.3.5
 pbr==5.8.0
 PennyLane==0.14.1
-phonopy==2.10.0
+#phonopy==2.10.0
 Pillow==8.4.0
 pluggy==1.0.0
 ply==3.11
