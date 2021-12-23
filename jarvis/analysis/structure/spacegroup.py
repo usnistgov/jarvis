@@ -7,7 +7,9 @@ from jarvis.core.specie import Specie
 import numpy as np
 from numpy import sin, cos
 import itertools
-from fractions import gcd
+
+# from fractions import gcd
+from jarvis.core.utils import gcd
 
 # from numpy import gcd
 # from math import gcd

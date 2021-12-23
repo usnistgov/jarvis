@@ -63,12 +63,16 @@ def read_fc(filename="FORCE_CONSTANTS"):
     f = open(filename, "r")
     lines = f.read().splitlines()
     f.close()
-    natoms = int(lines[0].split()[0])
-    fc = np.zeros((natoms, natoms, 3, 3), dtype="double")
-    # print ('natoms=',natoms)
+    n_patoms = int(lines[0].split()[0])
+    n_satoms = int(lines[0].split()[1])
+    fc = np.zeros((n_patoms, n_satoms, 3, 3), dtype="double")
+    #print ('natoms=',natoms)
+    patom_id = 0
+    satom_id = 0
     for ii, i in enumerate(lines):
         if ii > 0 and ii % 4 == 0:
             atoms_ids = [int(a) for a in lines[ii - 3].split()]
+            print(atoms_ids)
             vals = (
                 str(lines[ii - 2])
                 + " "
@@ -77,7 +81,12 @@ def read_fc(filename="FORCE_CONSTANTS"):
                 + (lines[ii])
             )
             vals = np.array(vals.split(), dtype="double").reshape(3, 3)
-            fc[atoms_ids[0] - 1, atoms_ids[1] - 1] = vals
+            fc[patom_id, satom_id] = vals
+            satom_id += 1
+            if satom_id == n_satoms:
+                satom_id = 0
+                patom_id += 1
+#            fc[atoms_ids[0] - 1, atoms_ids[1] - 1] = vals
     return fc
 
 
@@ -108,6 +117,7 @@ def get_phonon_tb(
     num_satom = determinant(scell) * num_atom
     if fc.shape[0] != num_satom:
         print("Check Force constant matrix.")
+
     phonon = Phonopy(
         unitcell,
         scell,
@@ -120,7 +130,7 @@ def get_phonon_tb(
         use_lapack_solver=False,
         log_level=1,
     )
-
+    print('Phonopy object generated')
     supercell = phonon.get_supercell()
     primitive = phonon.get_primitive()
     # Set force constants
@@ -161,17 +171,18 @@ def get_phonon_tb(
     print("phonopy_TB.dat generated! ")
 
 
-"""
+
 if __name__ == "__main__":
     from phonopy.interface.vasp import read_vasp
     from jarvis.core.atoms import Atoms
-    pos = "POSCAR"
-    fc_file = "FORCE_CONSTANTS"
+    test_dir = 'Si-testing/'
+    pos = test_dir + "POSCAR-unitcell"
+    fc_file = test_dir + "FORCE_CONSTANTS"
     a = Atoms.from_poscar(pos)
     fc = read_fc(fc_file)
     phonopy_atoms = read_vasp(pos)
-    get_phonon_tb(phonopy_atoms=phonopy_atoms, fc=fc, atoms=a)
-    cvn = Spacegroup3D(a).conventional_standard_structure
-    w = WannierHam("phonopyTB_hr.dat")
-    w.get_bandstructure_plot(atoms=cvn, yrange=[0, 550])
-"""
+    dos = np.array(total_dos('Si-testing/total_dos.dat'))
+#    get_phonon_tb(fc=fc, atoms=a)
+#    cvn = Spacegroup3D(a).conventional_standard_structure
+#    w = WannierHam("phonopyTB_hr.dat")
+#    w.get_bandstructure_plot(atoms=cvn, yrange=[0, 550])

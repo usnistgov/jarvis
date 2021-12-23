@@ -205,7 +205,6 @@ class PhonopyInputs(object):
         self.animation()
 
 
-"""
 if __name__ == "__main__":
     from jarvis.core.atoms import Atoms
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
@@ -213,4 +212,8 @@ if __name__ == "__main__":
     elements = ["Si", "Si"]
     Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
     PhonopyInputs(atoms=Si).generate_all_files()
-"""
+    outfiles = ['meshdos.conf', 'band.conf', 'anim.conf', 'irreps.conf']
+    test_dir = 'Si-testing/'
+    import shutil
+    for out in outfiles:
+        shutil.move(out, test_dir + out)

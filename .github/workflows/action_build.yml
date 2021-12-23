@@ -7,13 +7,15 @@ jobs:
   checks:
     name: Checks
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8,3.9]
     steps:
     - uses: actions/checkout@v2
-
-    - name: Setup Python
-      uses: actions/setup-python@v1
+    - name: Setup Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: ${{ matrix.python-version }}
 
     - uses: actions/cache@v2
       with:
@@ -36,7 +38,7 @@ jobs:
 
 
         coverage run -m pytest
-        coverage report -m
+        coverage report -m -i
         codecov
         codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
         # git clone https://github.com/QEF/q-e.git
