@@ -181,6 +181,7 @@ if __name__ == "__main__":
     a = Atoms.from_poscar(pos)
     fc = read_fc(fc_file)
     phonopy_atoms = read_vasp(pos)
+    dos = np.array(total_dos('Si-testing/total_dos.dat'))
 #    get_phonon_tb(fc=fc, atoms=a)
 #    cvn = Spacegroup3D(a).conventional_standard_structure
 #    w = WannierHam("phonopyTB_hr.dat")
