@@ -5,7 +5,9 @@ import os
 
 def test(*args):
 
+
     import pytest
 
     path = os.path.join(os.path.split(__file__)[0], "tests")
-    pytest.main(args = [path] + list(args))
+    pytest.main(args=[path] + list(args))
+
