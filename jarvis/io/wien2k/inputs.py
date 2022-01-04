@@ -1,9 +1,12 @@
 """Module to prepare input files for WIEN2k."""
 from scipy import array, zeros, sqrt, dot
 import os
-from fractions import gcd
+from jarvis.core.utils import gcd
+
+# from fractions import gcd
 import numpy as np
 from functools import reduce
+
 # from jarvis.core.atoms import Atoms
 from jarvis.core.kpoints import Kpoints3D
 
