@@ -90,6 +90,34 @@ def read_fc(filename="FORCE_CONSTANTS"):
     return fc
 
 
+def get_Phonopy_obj(atoms, factor = None, symprec = 1e-05,
+                    scell = np.array([[1, 0, 0],[0, 1, 0],[0, 0, 1]]),
+                    ):
+    """
+    Create separate method for generating a Phonopy object
+    """
+    unitcell = atoms.phonopy_converter()
+    prim_mat = np.array(
+        PhonopyInputs(atoms).prim_axis().split("=")[1].split(), dtype="float"
+    ).reshape(3, 3)
+    if factor is None:
+        from phonopy.units import VaspToCm
+
+        factor = VaspToCm    
+    phonon = Phonopy(
+        unitcell,
+        scell,
+        primitive_matrix=prim_mat,
+        factor=factor,
+        dynamical_matrix_decimals=None,
+        force_constants_decimals=None,
+        symprec=symprec,
+        is_symmetry=True,
+        use_lapack_solver=False,
+        log_level=1,
+    )   
+    return phonon
+
 def get_phonon_tb(
     # phonopy_atoms=[],
     atoms=[],
@@ -182,6 +210,8 @@ if __name__ == "__main__":
     fc = read_fc(fc_file)
     phonopy_atoms = read_vasp(pos)
     dos = np.array(total_dos('Si-testing/total_dos.dat'))
+    
+    phonon_obj = get_Phonopy_obj(a, scell = np.array([[2, 0, 0],[0, 2, 0],[0, 0, 2]]))
 #    get_phonon_tb(fc=fc, atoms=a)
 #    cvn = Spacegroup3D(a).conventional_standard_structure
 #    w = WannierHam("phonopyTB_hr.dat")

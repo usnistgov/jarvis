@@ -107,3 +107,6 @@ ENV/
 
 #Test files for io modules
 jarvis/io/phono3py/Si-testing/
+
+#MacOS Finder files
+.DS_Store
