@@ -1,8 +1,9 @@
 phonopy:
-  version: 2.7.0
+  version: 2.12.0
   frequency_unit_conversion_factor: 15.633302
   symmetry_tolerance: 1.00000e-05
   configuration:
+    cell_filename: "POSCAR-unitcell"
     create_displacements: ".true."
     primitive_axes: "auto"
     dim: "2 2 2"
