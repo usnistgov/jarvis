@@ -6,7 +6,7 @@ Created on Wed Dec 15 21:34:38 2021
 @author: rlg3
 
 Module for post-processing phono3py output
-kappa-mxxx.hdf, jdos-mxxx-gy-tz.hdf
+kappa-mxxx.hdf, jdos-mxxx-gy-tz.hdf, phono3py_disp.yaml
 
 
 Notes for inputs.py:
@@ -22,8 +22,9 @@ bandstructure properties
 import h5py
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.core.composition import Composition
-from jarvis.io.phonopy.outputs import total_dos
+from jarvis.io.phonopy.outputs import total_dos, get_Phonopy_obj
 import numpy as np
+import spglib
 
 try:
     from phonopy import Phonopy
@@ -35,6 +36,7 @@ class Kappa():
     
     def __init__(self,
             filename = "",
+            mesh = None,
             total_dos_dat = "",
             temperatures = None,
             kappa_format = 'scalar_xx', #need this?
@@ -72,6 +74,7 @@ class Kappa():
     def to_dict(self):
         return self.dict
     
+    
     def kappa(self, T):
         if T not in self.temperatures:
             raise Exception('Thermal conductivity not evaluated at this temperature.')
@@ -80,6 +83,7 @@ class Kappa():
             return self.dict['kappa'][T_indx]
         if self.kappa_format == 'scalar_xx':
             return self.dict['kappa'][T_indx][0]
+        
     
     
     # def generate_spectral_property(self,
@@ -104,15 +108,16 @@ class Kappa():
 class JDOS():
     
     def __init__(self,
-                  directory = "",
-                  qpoints = None,
+                 phonopy_obj,
+                  directory,
+                  mesh = [1, 1, 1],
                   temperature = None):
         '''
         
 
         Parameters
         ----------
-        directory : TYPE, optional
+        directory : string, required
             DESCRIPTION. The default is "".
         qpoints : TYPE, optional
             DESCRIPTION. The default is None.
@@ -121,11 +126,12 @@ class JDOS():
         None, unweighted JDOS is computed.
 
         '''
-        self.qpoints = qpoints
+        self.mesh = mesh
         self.temperature = temperature
         self.directory = directory
+        self.phonopy_obj = phonopy_obj
         
-    def select_jdos():
+    def select_jdos(self):
         '''
 
         Returns
@@ -133,9 +139,48 @@ class JDOS():
         None.
 
         '''
+        def get_gridpt_indices(self):
+            '''
+            Generates list of gridpoint indices for JDOS calculation
+
+            Parameters
+            ----------
+            phonopy_obj : TYPE
+                DESCRIPTION.
+
+            Returns
+            -------
+            None.
+
+            '''
+            latt_vecs = self.phonopy_obj.get_primitive.get_cell()
+            positions = self.phonopy_obj.get_primitive().get_scaled_positions()
+            atom_type = self.phonopy_obj.get_primitive().get_atomic_numbers()
+            cell = (latt_vecs, positions, atom_type)
+            mapping, grid = spglib.get_ir_reciprocal_mesh(self.mesh, cell, is_shift=[0, 0, 0])
+            gridpt_list = np.unique(mapping)
+            return gridpt_list
+        gridpt_list = get_gridpt_indices(self)
+        return gridpt_list
+            
+        
+        
+        
+        
+        
+        
         
 
 if __name__ == '__main__':  
     kappa_Si = Kappa('Si-testing/kappa-m111111.hdf5', total_dos_dat =\
                      '../phonopy/Si-testing/total_dos.dat')
     RT_kappa = kappa_Si.kappa(300.)
+    from jarvis.core.atoms import Atoms
+    test_dir = 'Si-testing/'
+    pos = test_dir + "POSCAR-unitcell"
+    atoms = Atoms.from_poscar(pos)
+    phonon_obj = get_Phonopy_obj(atoms, scell = np.array([[2, 0, 0],[0, 2, 0],[0, 0, 2]]))
+    jdos_dir = 'Si-testing/jdos_output'
+    jdos = JDOS(phonon_obj, directory = jdos_dir, mesh = [11, 11, 11], temperature = 300)
+    
+    
