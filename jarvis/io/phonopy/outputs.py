@@ -216,9 +216,7 @@ if __name__ == "__main__":
     fc = read_fc(fc_file)
     phonopy_atoms = read_vasp(pos)
     dos = np.array(total_dos('Si-testing/total_dos.dat'))
-    
-    phonon_obj = get_Phonopy_obj(a, phonopy_yaml = 'Si-testing/phonopy.yaml',\
-                                 FC_file = 'Si-testing/FORCE_CONSTANTS', scell = np.array([[2, 0, 0],[0, 2, 0],[0, 0, 2]]))
+
 #    get_phonon_tb(fc=fc, atoms=a)
 #    cvn = Spacegroup3D(a).conventional_standard_structure
 #    w = WannierHam("phonopyTB_hr.dat")
