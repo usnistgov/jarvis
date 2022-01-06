@@ -58,9 +58,12 @@ def total_dos(tot_dos="", plot=False):
         plt.plot(freq, pdos)
     return freq, pdos
 
+
 """
 More generalized read_fcmethod. But need to fix.
 """
+
+
 def read_fc(filename="FORCE_CONSTANTS"):
     """Read phonopy generated force constants."""
     f = open(filename, "r")
@@ -72,28 +75,23 @@ def read_fc(filename="FORCE_CONSTANTS"):
     except:
         n_satoms = n_patoms
     fc = np.zeros((n_patoms, n_satoms, 3, 3), dtype="double")
-    #print ('natoms=',natoms)
+    # print ('natoms=',natoms)
     patom_id = 0
     satom_id = 0
     for ii, i in enumerate(lines):
         if ii > 0 and ii % 4 == 0:
             atoms_ids = [int(a) for a in lines[ii - 3].split()]
             print(atoms_ids)
-            vals = (
-                str(lines[ii - 2])
-                + " "
-                + str(lines[ii - 1])
-                + " "
-                + (lines[ii])
-            )
+            vals = str(lines[ii - 2]) + " " + str(lines[ii - 1]) + " " + (lines[ii])
             vals = np.array(vals.split(), dtype="double").reshape(3, 3)
             fc[patom_id, satom_id] = vals
             satom_id += 1
             if satom_id == n_satoms:
                 satom_id = 0
                 patom_id += 1
-#            fc[atoms_ids[0] - 1, atoms_ids[1] - 1] = vals
+    #            fc[atoms_ids[0] - 1, atoms_ids[1] - 1] = vals
     return fc
+
 
 """
 Old read_fc file
@@ -121,14 +119,19 @@ Old read_fc file
 #     return fc
 
 
-def get_Phonopy_obj(atoms, phonopy_yaml = None, FC_file = None, factor = None, symprec = 1e-05,
-                    scell = np.array([[1, 0, 0],[0, 1, 0],[0, 0, 1]]),
-                    ):
+def get_Phonopy_obj(
+    atoms,
+    phonopy_yaml=None,
+    FC_file=None,
+    factor=None,
+    symprec=1e-05,
+    scell=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+):
     """
     Create separate method for generating a Phonopy object
     """
     if phonopy_yaml is not None:
-        phonon = load(phonopy_yaml, force_constants_filename = FC_file)
+        phonon = load(phonopy_yaml, force_constants_filename=FC_file)
     else:
         unitcell = atoms.phonopy_converter()
         prim_mat = np.array(
@@ -136,8 +139,8 @@ def get_Phonopy_obj(atoms, phonopy_yaml = None, FC_file = None, factor = None, s
         ).reshape(3, 3)
         if factor is None:
             from phonopy.units import VaspToCm
-    
-            factor = VaspToCm    
+
+            factor = VaspToCm
         phonon = Phonopy(
             unitcell,
             scell,
@@ -149,8 +152,9 @@ def get_Phonopy_obj(atoms, phonopy_yaml = None, FC_file = None, factor = None, s
             is_symmetry=True,
             use_lapack_solver=False,
             log_level=1,
-        )  
+        )
     return phonon
+
 
 def get_phonon_tb(
     # phonopy_atoms=[],
@@ -192,13 +196,13 @@ def get_phonon_tb(
         use_lapack_solver=False,
         log_level=1,
     )
-    print('Phonopy object generated')
+    print("Phonopy object generated")
     supercell = phonon.get_supercell()
     primitive = phonon.get_primitive()
     # Set force constants
     phonon.set_force_constants(fc)
     phonon._set_dynamical_matrix()
-    print('here')
+    print("here")
     dmat = phonon._dynamical_matrix
     print(dmat)
     # rescale fcmat by THZ**2
@@ -235,17 +239,17 @@ def get_phonon_tb(
     print("phonopy_TB.dat generated! ")
 
 
-
 if __name__ == "__main__":
     from phonopy.interface.vasp import read_vasp
     from jarvis.core.atoms import Atoms
-    test_dir = 'Si-testing/'
+
+    test_dir = "Si-testing/"
     pos = test_dir + "POSCAR-unitcell"
     fc_file = test_dir + "FORCE_CONSTANTS"
     a = Atoms.from_poscar(pos)
     fc = read_fc(fc_file)
     phonopy_atoms = read_vasp(pos)
-    dos = np.array(total_dos('Si-testing/total_dos.dat'))
+    dos = np.array(total_dos("Si-testing/total_dos.dat"))
 
 #    get_phonon_tb(fc=fc, atoms=a)
 #    cvn = Spacegroup3D(a).conventional_standard_structure
