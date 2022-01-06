@@ -58,14 +58,19 @@ def total_dos(tot_dos="", plot=False):
         plt.plot(freq, pdos)
     return freq, pdos
 
-
+"""
+More generalized read_fcmethod. But need to fix.
+"""
 def read_fc(filename="FORCE_CONSTANTS"):
     """Read phonopy generated force constants."""
     f = open(filename, "r")
     lines = f.read().splitlines()
     f.close()
     n_patoms = int(lines[0].split()[0])
-    n_satoms = int(lines[0].split()[1])
+    try:
+        n_satoms = int(lines[0].split()[1])
+    except:
+        n_satoms = n_patoms
     fc = np.zeros((n_patoms, n_satoms, 3, 3), dtype="double")
     #print ('natoms=',natoms)
     patom_id = 0
@@ -89,6 +94,31 @@ def read_fc(filename="FORCE_CONSTANTS"):
                 patom_id += 1
 #            fc[atoms_ids[0] - 1, atoms_ids[1] - 1] = vals
     return fc
+
+"""
+Old read_fc file
+"""
+# def read_fc(filename="FORCE_CONSTANTS"):
+#     """Read phonopy generated force constants."""
+#     f = open(filename, "r")
+#     lines = f.read().splitlines()
+#     f.close()
+#     natoms = int(lines[0].split()[0])
+#     fc = np.zeros((natoms, natoms, 3, 3), dtype="double")
+#     # print ('natoms=',natoms)
+#     for ii, i in enumerate(lines):
+#         if ii > 0 and ii % 4 == 0:
+#             atoms_ids = [int(a) for a in lines[ii - 3].split()]
+#             vals = (
+#                 str(lines[ii - 2])
+#                 + " "
+#                 + str(lines[ii - 1])
+#                 + " "
+#                 + (lines[ii])
+#             )
+#             vals = np.array(vals.split(), dtype="double").reshape(3, 3)
+#             fc[atoms_ids[0] - 1, atoms_ids[1] - 1] = vals
+#     return fc
 
 
 def get_Phonopy_obj(atoms, phonopy_yaml = None, FC_file = None, factor = None, symprec = 1e-05,
