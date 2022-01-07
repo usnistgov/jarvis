@@ -93,8 +93,6 @@ def read_fc(filename="FORCE_CONSTANTS"):
     return fc
 
 
-
-
 def get_Phonopy_obj(
     atoms,
     phonopy_yaml=None,
@@ -131,9 +129,9 @@ def get_Phonopy_obj(
         )
     try:
         dim = np.array([scell[i][i] for i in range(3)])
-        setattr(phonon, 'scell_dim', dim)
+        setattr(phonon, "scell_dim", dim)
     except:
-        setattr(phonon, 'scell_dim', None)
+        setattr(phonon, "scell_dim", None)
     return phonon
 
 
@@ -230,7 +228,7 @@ if __name__ == "__main__":
     a = Atoms.from_poscar(pos)
     fc = read_fc(fc_file)
     phonopy_atoms = read_vasp(pos)
-    total_dos("Si-testing/total_dos.dat", plot = True)
+    total_dos("Si-testing/total_dos.dat", plot=True)
 
 #    get_phonon_tb(fc=fc, atoms=a)
 #    cvn = Spacegroup3D(a).conventional_standard_structure
