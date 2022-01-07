@@ -17,15 +17,16 @@ Think I should initialize a Phonopy object to run these.
     
 Might need a mesh_dict from phonon.get_mesh_dict() so that I have the phonon
 bandstructure properties
+
+Add function for mode gruneisen from third order force constants
 """
 
 import h5py
-from jarvis.core.kpoints import Kpoints3D
-from jarvis.core.composition import Composition
+from jarvis.core.specie import Specie
 from jarvis.io.phonopy.outputs import total_dos, get_Phonopy_obj
-from jarvis.io.phonopy.inputs import PhonopyInputs
 import numpy as np
 import spglib
+import matplotlib.pyplot as plt
 
 try:
     from phonopy import Phonopy
@@ -35,37 +36,11 @@ except Exception as exp:
     pass
 
 
-# def get_Phonopy_obj(atoms, phonopy_yaml = None, FC_file = None, factor = None, symprec = 1e-05,
-#                     scell = np.array([[1, 0, 0],[0, 1, 0],[0, 0, 1]]),
-#                     ):
-#     """
-#     Create separate method for generating a Phonopy object
-#     """
-#     if phonopy_yaml is not None:
-#         phonon = load(phonopy_yaml, force_constants_filename = FC_file)
-#     else:
-#         unitcell = atoms.phonopy_converter()
-#         prim_mat = np.array(
-#             PhonopyInputs(atoms).prim_axis().split("=")[1].split(), dtype="float"
-#         ).reshape(3, 3)
-#         if factor is None:
-#             from phonopy.units import VaspToCm
-
-#             factor = VaspToCm
-#         phonon = Phonopy(
-#             unitcell,
-#             scell,
-#             primitive_matrix=prim_mat,
-#             factor=factor,
-#             dynamical_matrix_decimals=None,
-#             force_constants_decimals=None,
-#             symprec=symprec,
-#             is_symmetry=True,
-#             use_lapack_solver=False,
-#             log_level=1,
-#         )
-#     return phonon
-
+"""
+Constants 
+"""
+kB = 1.38e-23
+hbar = 1.0546e-34
 
 class Kappa:
     def __init__(
@@ -85,13 +60,15 @@ class Kappa:
         filename : string,required
             Name of kappa-mxxxx.hdf file. The default is "".
         temperatures : list, optional
-            List of temperatures to use for post-processing. The default is None.
-            If None, uses all temperatures computed in thermal conductivity run.
+            List of temperatures to use for post-processing. Default is None.
+            If None, uses all temperatures computed in thermal
+            conductivity run.
         kappa_format : string, optional
             Desired kappa output format. The default is 'scalar_xx'.
             Other choices : "tensor" or ...
         composition : Composition object of jarvis.core.composition, optional
-            Composition object for material used in property calculation. The default is None.
+            Composition object for material used in property calculation.
+            The default is None.
         tags : string, optional
         Descriptors of thermal conductivity calculation. The default is None.
         """
@@ -112,7 +89,7 @@ class Kappa:
 
     def kappa(self, T):
         if T not in self.temperatures:
-            raise Exception("Thermal conductivity not evaluated at this temperature.")
+            raise Exception("Kappa not evaluated at this temperature.")
         T_indx = self.temperatures.index(T)
         if self.kappa_format == "tensor":
             return self.dict["kappa"][T_indx]
@@ -139,10 +116,9 @@ class Kappa:
 
 
 class JDOS:
-    def __init__(self, phonopy_obj, directory, mesh=[1, 1, 1], temperature=None):
+    def __init__(self, phonopy_obj, directory, mesh=[1, 1, 1],\
+                 temperature=None):
         """
-        
-
         Parameters
         ----------
         directory : string, required
@@ -158,7 +134,7 @@ class JDOS:
         self.temperature = temperature
         self.directory = directory
         self.phonopy_obj = phonopy_obj
-        phonopy_obj.run_mesh(mesh)
+        phonopy_obj.run_mesh(mesh, with_group_velocities=True)
         self.mesh_dict = phonopy_obj.get_mesh_dict()
 
     def select_jdos(self):
@@ -201,10 +177,10 @@ class JDOS:
         key : irreducible grid point index
         value : JDOS spectrum [frequency, N1 process, N2 process]
         """
-        jdos_ir = np.zeros([len(gridpt_uids), len(self.mesh_dict["frequencies"][0])])
+        jdos_ir = np.zeros([len(gridpt_uids),\
+                            len(self.mesh_dict["frequencies"][0])])
 
         for g, gp in enumerate(gridpt_uids):
-            print(gp)
             if self.temperature is not None:
                 file = (
                     self.directory
@@ -231,7 +207,6 @@ class JDOS:
             indices = np.digitize(
                 self.mesh_dict["frequencies"][g], freq
             )  # select freqeuncy bin of branch frequency
-            print(indices)
             # JDOS values for each irreducible q-point
             jdos_ir[g] = np.array(
                 [(N2[i] + N2[i - 1]) / 2 for i in indices]
@@ -248,14 +223,63 @@ class JDOS:
         # Get tetrahedron mesh object
         thm = self.phonopy_obj._total_dos._tetrahedron_mesh
         thm.set(
-            value="I", frequency_points=self.phonopy_obj._total_dos._frequency_points
+            value="I", frequency_points=\
+                self.phonopy_obj._total_dos._frequency_points
         )
-        spectral_jdos = np.zeros_like(self.phonopy_obj._total_dos._frequency_points)
+        spectral_jdos=\
+            np.zeros_like(self.phonopy_obj._total_dos._frequency_points)
         for i, iw in enumerate(thm):
             spectral_jdos += np.sum(
-                iw * mode_jdos[i] * self.phonopy_obj._total_dos._weights[i], axis=1
+                iw * mode_jdos[i] * self.phonopy_obj._total_dos._weights[i],\
+                    axis=1
             )
         return spectral_jdos
+    
+    def plot_jdos(self, spectral_jdos):
+        freq_pts = self.phonopy_obj._total_dos._frequency_points
+        plt.figure()
+        plt.plot(freq_pts, spectral_jdos)
+        plt.ylabel(r'JDOS (THz$^{-1}$)')
+        plt.xlabel(r'Frequency (THz)')
+    
+    def kappa_from_jdos(self, spectral_jdos, atoms, vs, grun = 1, T = 300,\
+                        plot = False):
+        """
+        
+
+        Parameters
+        ----------
+        spectral_jdos : TYPE
+            DESCRIPTION.
+        atoms : TYPE
+            DESCRIPTION.
+        vs : float
+            Sound velocity. (Group velocity may be more accurate?)
+        gamma : TYPE, optional
+            DESCRIPTION. The default is 1.
+        T : TYPE, optional
+            DESCRIPTION. The default is 300.
+
+        Returns
+        -------
+        None.
+        
+        Need to write hbar in terms of THz? Or convert other values to seconds
+
+        """
+        prefactor = np.pi * hbar / 8
+        freq_pts = self.phonopy_obj._total_dos._frequency_points
+        species = [Specie(i) for i in atoms.elements]
+        N = len(species)
+        avgM = sum([species[j].atomic_mass for j in range(N)]) / N
+        spectral_Gamma = prefactor * (grun**2 / (3 * avgM * vs**2)) *\
+                          freq_pts**3 * spectral_jdos
+        if plot:
+            plt.figure()
+            plt.plot(freq_pts, spectral_Gamma)
+        return spectral_Gamma
+        
+        
 
 
 if __name__ == "__main__":
@@ -275,8 +299,12 @@ if __name__ == "__main__":
         FC_file="../phonopy/Si-testing/FORCE_CONSTANTS",
         scell=np.array([[2, 0, 0], [0, 2, 0], [0, 0, 2]]),
     )
-    #    phonon_obj = get_Phonopy_obj(atoms, fc, scell = np.array([[2, 0, 0],[0, 2, 0],[0, 0, 2]]))
     jdos_dir = "Si-testing/jdos_output/"
-    jdos = JDOS(phonon_obj, directory=jdos_dir, mesh=[11, 11, 11], temperature=300)
+    jdos = JDOS(phonon_obj, directory=jdos_dir, mesh=[11, 11, 11],\
+                temperature=300)
     jdos_ir = jdos.select_jdos()
     spectral_jdos = jdos.mode_to_spectral(jdos_ir)
+    jdos.plot_jdos(spectral_jdos)
+    
+    spectral_Gamma = jdos.kappa_from_jdos(spectral_jdos, atoms, vs=6084,\
+                                          plot=True)
