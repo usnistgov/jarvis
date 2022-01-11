@@ -14,6 +14,7 @@ from jarvis.core.utils import (
 import os
 import math
 import tempfile
+import random
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
@@ -1698,13 +1699,23 @@ def build_xanes_poscar(
     dims = get_supercell_dims(
         atoms, enforce_c_size=enforce_c_size, extend=extend
     )
+    # spg = Spacegroup3D(atoms)
+    # wyckoffs = spg._dataset["wyckoffs"]
+    # atoms.props = wyckoffs
     atoms = atoms.make_supercell_matrix(dims)
     spath = os.path.join(dir, "POSCAR-supercell.vasp")
     atoms.write_poscar(spath)
     spg = Spacegroup3D(atoms)
     wyckoffs = spg._dataset["wyckoffs"]
     atoms.props = wyckoffs
-    props = rand_select(atoms.props)
+    # print ('atoms.props',atoms.props)
+    el_props = []
+    elements = atoms.elements
+    for ii, i in enumerate(elements):
+        if i == selected_element:
+            el_props.append(ii)
+    choice = random.choice(el_props)
+    props = {atoms.props[choice]: choice}
     tmp_atoms = atoms
     for i, j in props.items():
         if tmp_atoms.elements[j] == selected_element:
@@ -1729,14 +1740,13 @@ def build_xanes_poscar(
             filename = os.path.join(dir, filename)
             added_strt.props = ["" for i in range(added_strt.num_atoms)]
             added_strt.write_poscar(filename)
-            f = open(filename, "r")
-            filedata = f.read()
-            f.close()
-
+            with open(filename, "r") as f:
+                filedata = f.read()
             newdata = filedata.replace("XANES", tmp_atoms.elements[j])
-            f = open(filename, "w")
-            f.write(newdata)
-            f.close()
+            with open(filename, "w") as f:
+                f.write(newdata)
+
+    return atoms
 
 
 # ['Mn ', 'Mn ', 'Ru ', 'U ']

@@ -44,7 +44,6 @@ class QEout(object):
         energies = []
         for i in self.lines:
             if "total energy              =" in i:
-                print(i)
                 energy = float(i.split()[-2])
                 energies.append(energy)
         return float(energies[-1]) * ryd_to_ev
@@ -56,6 +55,15 @@ class QEout(object):
             if "the Fermi energy is" in i:
                 efs.append(float(i.split()[-2]))
         return efs[-1]
+
+    @property
+    def job_done(self):
+        """Check if job is completed."""
+        done = False
+        for i in self.lines:
+            if "JOB DONE." in i:
+                done = True
+        return done
 
     def get_band_enegies(self):
         """Get band energies in eV."""
@@ -381,9 +389,7 @@ class ProjHamXml(object):
 
     # Adapted from https://github.com/kfgarrity/TightlyBound.jl
     def __init__(
-        self,
-        filename="projham_K.xml",
-        data=None,
+        self, filename="projham_K.xml", data=None,
     ):
         """Initialize class."""
         self.filename = filename
