@@ -1,11 +1,14 @@
+"""Module to run QE jobs."""
 from jarvis.io.qe.inputs import QEinfile
-from jarvis.io.qe.outputs import QEout, DataFileSchema
-import os, time, sys
+from jarvis.io.qe.outputs import QEout
+import os
 from jarvis.db.jsonutils import loadjson, dumpjson
 import subprocess
 
 
 class QEjob(object):
+    """Module to run generic QE job."""
+
     def __init__(
         self,
         atoms=None,
@@ -19,6 +22,7 @@ class QEjob(object):
         input_file="qe.in",
         stderr_file="std.err",
     ):
+        """Intitialize class."""
         self.atoms = atoms
         self.kpoints = kpoints
         self.input_params = input_params
@@ -38,9 +42,11 @@ class QEjob(object):
         )
 
     def write_input(self):
+        """Write inputs."""
         self.qeinput.write_file(self.input_file)
 
     def runjob(self):
+        """Run job and make or return a metadata file."""
         fname = self.jobname + ".json"
         info = {}
         if not os.path.exists(fname):
@@ -66,6 +72,7 @@ class QEjob(object):
         return p
 
     def parse_outputs(self):
+        """Parse outputs from .out or .xml files."""
         info = {}
         info["out_path"] = "na"
         info["xml_path_"] = "na"
@@ -81,6 +88,7 @@ class QEjob(object):
                 total_energy = qe_out.get_total_energy()
                 info["total_energy"] = total_energy
             except Exception as exp:
+                print("Exception", exp)
                 pass
         if (
             "control" in self.input_params

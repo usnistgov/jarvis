@@ -16,4 +16,6 @@ omit =
     */job*.py
     */restapi*.py
     */_xml*.py
+    */qe.py
+    */super.py
     tequila/*.py

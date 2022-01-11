@@ -581,6 +581,12 @@ class Atoms(object):
         f = open(filename, "r")
         lines = f.read().splitlines()
         f.close()
+        try:
+            lattice_mat = np.array(lines[1].split(","), dtype="float").reshape(
+                3, 3
+            )
+        except Exception:
+            pass
         coords = []
         species = []
         natoms = int(lines[0])
@@ -765,6 +771,7 @@ class Atoms(object):
         return np.array(neighbors, dtype="object")
 
     def get_neighbors_cutoffs(self, max_cut=10, r=5, bond_tol=0.15):
+        """Get neighbors within cutoff."""
         neighbors = self.get_all_neighbors(r=r, bond_tol=bond_tol)
         dists = np.hstack(([[xx[2] for xx in yy] for yy in neighbors]))
         hist, bins = np.histogram(dists, bins=np.arange(0.1, 10.2, 0.1))
@@ -816,6 +823,7 @@ class Atoms(object):
     def atomwise_angle_and_radial_distribution(
         self, r=5, bond_tol=0.15, c_size=10, verbose=False
     ):
+        """Get atomwise distributions."""
         rcut1, rcut2, neighbors = self.get_neighbors_cutoffs(
             r=r, bond_tol=bond_tol
         )
@@ -1693,7 +1701,7 @@ def build_xanes_poscar(
     filename_with_prefix=False,
 ):
     """Generate POSCAR file for XANES, note the element ordering."""
-    from jarvis.core.utils import rand_select
+    # from jarvis.core.utils import rand_select
     from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
     dims = get_supercell_dims(
