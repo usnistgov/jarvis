@@ -1,5 +1,5 @@
 """Version number."""
-__version__ = "2021.12.16"
+__version__ = "2022.01.10"
 
 import os
 
