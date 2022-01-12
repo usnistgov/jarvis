@@ -74,9 +74,7 @@ def get_phonon_hr(
             iyo = ry + sdim
             for rz in range(-sdim, sdim + 1):
                 izo = rz + sdim
-                if (
-                    abs(hr_mat[ixo, iyo, izo, :, :]).sum() < 1.0e-9
-                ):  # ommit too small
+                if abs(hr_mat[ixo, iyo, izo, :, :]).sum() < 1.0e-9:  # ommit too small
                     continue
                 dege[irpt] = 1
                 rpts[irpt, 0] = rx
@@ -116,7 +114,5 @@ def get_phonon_hr(
                     rp = hr_mat0[irpt, iatomorb, jatomorb].real
                     ip = hr_mat0[irpt, iatomorb, jatomorb].imag
                     tmp = "{:8d}{:8d}{:8d}{:8d}{:8d}{:20.10f}{:20.10f}\n"
-                    line = tmp.format(
-                        rx, ry, rz, iatomorb + 1, jatomorb + 1, rp, ip
-                    )
+                    line = tmp.format(rx, ry, rz, iatomorb + 1, jatomorb + 1, rp, ip)
                     f.write(line)

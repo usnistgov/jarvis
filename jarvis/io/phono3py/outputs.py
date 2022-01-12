@@ -42,6 +42,7 @@ Constants
 kB = 1.38e-23
 hbar = 1.0546e-34
 
+
 class Kappa:
     def __init__(
         self,
@@ -116,8 +117,7 @@ class Kappa:
 
 
 class JDOS:
-    def __init__(self, phonopy_obj, directory, mesh=[1, 1, 1],\
-                 temperature=None):
+    def __init__(self, phonopy_obj, directory, mesh=[1, 1, 1], temperature=None):
         """
         Parameters
         ----------
@@ -177,8 +177,7 @@ class JDOS:
         key : irreducible grid point index
         value : JDOS spectrum [frequency, N1 process, N2 process]
         """
-        jdos_ir = np.zeros([len(gridpt_uids),\
-                            len(self.mesh_dict["frequencies"][0])])
+        jdos_ir = np.zeros([len(gridpt_uids), len(self.mesh_dict["frequencies"][0])])
 
         for g, gp in enumerate(gridpt_uids):
             if self.temperature is not None:
@@ -223,27 +222,23 @@ class JDOS:
         # Get tetrahedron mesh object
         thm = self.phonopy_obj._total_dos._tetrahedron_mesh
         thm.set(
-            value="I", frequency_points=\
-                self.phonopy_obj._total_dos._frequency_points
+            value="I", frequency_points=self.phonopy_obj._total_dos._frequency_points
         )
-        spectral_jdos=\
-            np.zeros_like(self.phonopy_obj._total_dos._frequency_points)
+        spectral_jdos = np.zeros_like(self.phonopy_obj._total_dos._frequency_points)
         for i, iw in enumerate(thm):
             spectral_jdos += np.sum(
-                iw * mode_jdos[i] * self.phonopy_obj._total_dos._weights[i],\
-                    axis=1
+                iw * mode_jdos[i] * self.phonopy_obj._total_dos._weights[i], axis=1
             )
         return spectral_jdos
-    
+
     def plot_jdos(self, spectral_jdos):
         freq_pts = self.phonopy_obj._total_dos._frequency_points
         plt.figure()
         plt.plot(freq_pts, spectral_jdos)
-        plt.ylabel(r'JDOS (THz$^{-1}$)')
-        plt.xlabel(r'Frequency (THz)')
-    
-    def kappa_from_jdos(self, spectral_jdos, atoms, vs, grun = 1, T = 300,\
-                        plot = False):
+        plt.ylabel(r"JDOS (THz$^{-1}$)")
+        plt.xlabel(r"Frequency (THz)")
+
+    def kappa_from_jdos(self, spectral_jdos, atoms, vs, grun=1, T=300, plot=False):
         """
         
 
@@ -272,14 +267,16 @@ class JDOS:
         species = [Specie(i) for i in atoms.elements]
         N = len(species)
         avgM = sum([species[j].atomic_mass for j in range(N)]) / N
-        spectral_Gamma = prefactor * (grun**2 / (3 * avgM * vs**2)) *\
-                          freq_pts**3 * spectral_jdos
+        spectral_Gamma = (
+            prefactor
+            * (grun ** 2 / (3 * avgM * vs ** 2))
+            * freq_pts ** 3
+            * spectral_jdos
+        )
         if plot:
             plt.figure()
             plt.plot(freq_pts, spectral_Gamma)
         return spectral_Gamma
-        
-        
 
 
 if __name__ == "__main__":
@@ -300,11 +297,9 @@ if __name__ == "__main__":
         scell=np.array([[2, 0, 0], [0, 2, 0], [0, 0, 2]]),
     )
     jdos_dir = "Si-testing/jdos_output/"
-    jdos = JDOS(phonon_obj, directory=jdos_dir, mesh=[11, 11, 11],\
-                temperature=300)
+    jdos = JDOS(phonon_obj, directory=jdos_dir, mesh=[11, 11, 11], temperature=300)
     jdos_ir = jdos.select_jdos()
     spectral_jdos = jdos.mode_to_spectral(jdos_ir)
     jdos.plot_jdos(spectral_jdos)
-    
-    spectral_Gamma = jdos.kappa_from_jdos(spectral_jdos, atoms, vs=6084,\
-                                          plot=True)
+
+    spectral_Gamma = jdos.kappa_from_jdos(spectral_jdos, atoms, vs=6084, plot=True)
