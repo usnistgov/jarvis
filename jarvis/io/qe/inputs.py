@@ -102,10 +102,12 @@ class QEinfile(object):
             self.cell_params = input_params["cell"]
         else:
             self.cell_params = {}
-
         if "input" in input_params:
             self.input = input_params["input"]
-            if "amass(1)" not in input_params["input"]:
+            if (
+                "amass(1)" not in input_params["input"]
+                and "zasr" not in input_params["input"]
+            ):
                 for ii, jj in enumerate(self.atoms.uniq_species):
                     tmp = "amass(" + str(ii + 1) + ")"
                     input_params["input"][tmp] = str(
