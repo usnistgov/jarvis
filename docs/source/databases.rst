@@ -10,6 +10,7 @@ Database name            Number of data-points       Description
                                                      computed with OptB88vdW and TBmBJ methods             
 ``dft_2d``               1079                        Various 2D materials properties in JARVIS-DFT database  
                                                      computed with OptB88vdW                                
+``qe_tb``                829574                      Various 3D materials properties in JARVIS-QETB database  
 ``stm``                  1132                        2D materials STM images in JARVIS-STM database  
 ``wtbh_electron``        1440                        3D and 2D materials Wannier tight-binding Hamiltonian
                                                      dtaabase for electrons with spin-orbit coupling

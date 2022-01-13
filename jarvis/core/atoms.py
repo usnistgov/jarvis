@@ -14,6 +14,7 @@ from jarvis.core.utils import (
 import os
 import math
 import tempfile
+import random
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
@@ -580,6 +581,12 @@ class Atoms(object):
         f = open(filename, "r")
         lines = f.read().splitlines()
         f.close()
+        try:
+            lattice_mat = np.array(lines[1].split(","), dtype="float").reshape(
+                3, 3
+            )
+        except Exception:
+            pass
         coords = []
         species = []
         natoms = int(lines[0])
@@ -764,6 +771,7 @@ class Atoms(object):
         return np.array(neighbors, dtype="object")
 
     def get_neighbors_cutoffs(self, max_cut=10, r=5, bond_tol=0.15):
+        """Get neighbors within cutoff."""
         neighbors = self.get_all_neighbors(r=r, bond_tol=bond_tol)
         dists = np.hstack(([[xx[2] for xx in yy] for yy in neighbors]))
         hist, bins = np.histogram(dists, bins=np.arange(0.1, 10.2, 0.1))
@@ -815,6 +823,7 @@ class Atoms(object):
     def atomwise_angle_and_radial_distribution(
         self, r=5, bond_tol=0.15, c_size=10, verbose=False
     ):
+        """Get atomwise distributions."""
         rcut1, rcut2, neighbors = self.get_neighbors_cutoffs(
             r=r, bond_tol=bond_tol
         )
@@ -1692,19 +1701,29 @@ def build_xanes_poscar(
     filename_with_prefix=False,
 ):
     """Generate POSCAR file for XANES, note the element ordering."""
-    from jarvis.core.utils import rand_select
+    # from jarvis.core.utils import rand_select
     from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
     dims = get_supercell_dims(
         atoms, enforce_c_size=enforce_c_size, extend=extend
     )
+    # spg = Spacegroup3D(atoms)
+    # wyckoffs = spg._dataset["wyckoffs"]
+    # atoms.props = wyckoffs
     atoms = atoms.make_supercell_matrix(dims)
     spath = os.path.join(dir, "POSCAR-supercell.vasp")
     atoms.write_poscar(spath)
     spg = Spacegroup3D(atoms)
     wyckoffs = spg._dataset["wyckoffs"]
     atoms.props = wyckoffs
-    props = rand_select(atoms.props)
+    # print ('atoms.props',atoms.props)
+    el_props = []
+    elements = atoms.elements
+    for ii, i in enumerate(elements):
+        if i == selected_element:
+            el_props.append(ii)
+    choice = random.choice(el_props)
+    props = {atoms.props[choice]: choice}
     tmp_atoms = atoms
     for i, j in props.items():
         if tmp_atoms.elements[j] == selected_element:
@@ -1729,14 +1748,13 @@ def build_xanes_poscar(
             filename = os.path.join(dir, filename)
             added_strt.props = ["" for i in range(added_strt.num_atoms)]
             added_strt.write_poscar(filename)
-            f = open(filename, "r")
-            filedata = f.read()
-            f.close()
-
+            with open(filename, "r") as f:
+                filedata = f.read()
             newdata = filedata.replace("XANES", tmp_atoms.elements[j])
-            f = open(filename, "w")
-            f.write(newdata)
-            f.close()
+            with open(filename, "w") as f:
+                f.write(newdata)
+
+    return atoms
 
 
 # ['Mn ', 'Mn ', 'Ru ', 'U ']
