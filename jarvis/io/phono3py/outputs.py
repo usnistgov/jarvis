@@ -39,8 +39,9 @@ except Exception as exp:
 """
 Constants 
 """
-kB = 1.38e-23
-hbar = 1.0546e-34
+kB = 1.38064852e-23
+hbar = 1.0545718e-34
+Na = 6.0221409e23
 
 
 class Kappa:
@@ -238,7 +239,7 @@ class JDOS:
         plt.ylabel(r"JDOS (THz$^{-1}$)")
         plt.xlabel(r"Frequency (THz)")
 
-    def kappa_from_jdos(self, spectral_jdos, atoms, vs, grun=1, T=300, plot=False):
+    def linewidth_from_jdos(self, spectral_jdos, atoms, vs, grun=1, T=300, plot=False):
         """
         
 
@@ -262,21 +263,18 @@ class JDOS:
         Need to write hbar in terms of THz? Or convert other values to seconds
 
         """
-        prefactor = np.pi * hbar / 8
+        prefactor = np.pi * kB * T / 6
         freq_pts = self.phonopy_obj._total_dos._frequency_points
         species = [Specie(i) for i in atoms.elements]
         N = len(species)
-        avgM = sum([species[j].atomic_mass for j in range(N)]) / N
-        spectral_Gamma = (
-            prefactor
-            * (grun ** 2 / (3 * avgM * vs ** 2))
-            * freq_pts ** 3
-            * spectral_jdos
+        avgM = sum([species[j].atomic_mass / Na / 1e3 for j in range(N)]) / N
+        spectral_2Gamma = (
+            prefactor * (grun ** 2 / (avgM * vs ** 2)) * freq_pts ** 2 * spectral_jdos
         )
         if plot:
             plt.figure()
-            plt.plot(freq_pts, spectral_Gamma)
-        return spectral_Gamma
+            plt.plot(freq_pts, spectral_2Gamma)
+        return spectral_2Gamma
 
 
 if __name__ == "__main__":
@@ -296,8 +294,8 @@ if __name__ == "__main__":
         FC_file="../phonopy/Si-testing/FORCE_CONSTANTS",
         scell=np.array([[2, 0, 0], [0, 2, 0], [0, 0, 2]]),
     )
-    jdos_dir = "Si-testing/jdos_output/"
-    jdos = JDOS(phonon_obj, directory=jdos_dir, mesh=[11, 11, 11], temperature=300)
+    jdos_dir = "Si-testing/unweighted_jdos/"
+    jdos = JDOS(phonon_obj, directory=jdos_dir, mesh=[11, 11, 11])
     jdos_ir = jdos.select_jdos()
     spectral_jdos = jdos.mode_to_spectral(jdos_ir)
     jdos.plot_jdos(spectral_jdos)

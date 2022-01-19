@@ -4,6 +4,7 @@ import spglib
 from jarvis.io.phonopy.outputs import get_Phonopy_obj
 from jarvis.core.atoms import Atoms
 from jarvis.core.kpoints import Kpoints3D
+from jarvis.io.vasp.inputs import Poscar
 import os
 
 # Maybe add get_gridpoints function here?
@@ -78,6 +79,28 @@ def prepare_jdos(
 
 
 # Should add a prepare_gruneisen_quasiharmonic function as well
+
+
+def prepare_gruneisen_quasiharmonic(orig_poscar: str, scale):
+    """
+    Generates the dilated and constricted POSCAR files for a VASP run
+    scale : should be larger than 1, scales to the dilated unit cell
+    """
+    # Read original POSCAR
+    orig_file = open(orig_poscar, "r")
+    pos_text = orig_file.read().splitlines()
+    scale_plus = float(pos_text[1]) * scale
+    scale_minus = float(pos_text[1]) / scale
+    # First write the large unit cell POSCAR
+    pos_text[1] = str(scale_plus)
+    new_file = open("POSCAR-plus", "w")
+    new_file.writelines("\n".join(pos_text))
+    # Next write small unit cell POSCAR
+    pos_text[1] = str(scale_minus)
+    new_file = open("POSCAR-minus", "w")
+    new_file.writelines("\n".join(pos_text))
+
+
 def prepare_gruneisen_FC3(
     phonopy_obj,
     poscar="",
@@ -156,9 +179,10 @@ if __name__ == "__main__":
         FC_file="FORCE_CONSTANTS",
         scell=np.array([[2, 0, 0], [0, 2, 0], [0, 0, 2]]),
     )
-    prepare_jdos(
-        phonon_obj, poscar=pos, mesh=[11, 11, 11], scell_dim=[2, 2, 2], run=False
-    )
-    prepare_gruneisen_FC3(
-        phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=True, run=False
-    )
+    # prepare_jdos(
+    #     phonon_obj, poscar=pos, mesh=[11, 11, 11], scell_dim=[2, 2, 2], run=True
+    # )
+    # prepare_gruneisen_FC3(
+    #     phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=True, run=False
+    # )
+    prepare_gruneisen_quasiharmonic("POSCAR-unitcell", 1.00335)
