@@ -80,27 +80,25 @@ def prepare_jdos(
 
 # Should add a prepare_gruneisen_quasiharmonic function as well
 
-def prepare_gruneisen_quasiharmonic(orig_poscar : str, scale):
+
+def prepare_gruneisen_quasiharmonic(orig_poscar: str, scale):
     """
     Generates the dilated and constricted POSCAR files for a VASP run
     scale : should be larger than 1, scales to the dilated unit cell
     """
-    #Read original POSCAR
+    # Read original POSCAR
     orig_file = open(orig_poscar, "r")
     pos_text = orig_file.read().splitlines()
     scale_plus = float(pos_text[1]) * scale
     scale_minus = float(pos_text[1]) / scale
-    #First write the large unit cell POSCAR
+    # First write the large unit cell POSCAR
     pos_text[1] = str(scale_plus)
-    new_file = open('POSCAR-plus', "w")
-    new_file.writelines('\n'.join(pos_text))
-    #Next write small unit cell POSCAR
+    new_file = open("POSCAR-plus", "w")
+    new_file.writelines("\n".join(pos_text))
+    # Next write small unit cell POSCAR
     pos_text[1] = str(scale_minus)
-    new_file = open('POSCAR-minus', "w")
-    new_file.writelines('\n'.join(pos_text))    
-    
-        
-    
+    new_file = open("POSCAR-minus", "w")
+    new_file.writelines("\n".join(pos_text))
 
 
 def prepare_gruneisen_FC3(
@@ -187,4 +185,4 @@ if __name__ == "__main__":
     # prepare_gruneisen_FC3(
     #     phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=True, run=False
     # )
-    prepare_gruneisen_quasiharmonic('POSCAR-unitcell', 1.00335)
+    prepare_gruneisen_quasiharmonic("POSCAR-unitcell", 1.00335)
