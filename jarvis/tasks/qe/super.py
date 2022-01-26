@@ -5,6 +5,7 @@ import numpy as np
 
 
 def calc_Tc(wlog=300, lamb=1.0, mu=0.1):
+    """Calculate Tc."""
     tc = (wlog / 1.2) * np.exp(
         -1.04 * (1 + lamb) / (lamb * (1 - 0.062 * mu) - mu)
     )
@@ -12,6 +13,7 @@ def calc_Tc(wlog=300, lamb=1.0, mu=0.1):
 
 
 def parse_lambda(filename="lambda"):
+    """Parse lambda file."""
     f = open(filename, "r")
     lines = f.read().splitlines()
     f.close()
@@ -57,9 +59,6 @@ def supercond_workflow(atoms=None, kp=None):
             "occupations": "'smearing'",
             "degauss": 0.01,
             "lda_plus_u": ".false.",
-            # "force_symmorphic": ".true.",
-            # "nosym": ".true.",
-            # "noinv": ".false.",
         },
         "electrons": {
             "diagonalization": "'david'",
@@ -133,6 +132,7 @@ def supercond_workflow(atoms=None, kp=None):
     )
 
     info_scf = qejob_scf_init.runjob()
+    print(info_scf)
     ph = {
         "inputph": {
             "prefix": "'QE'",
@@ -142,14 +142,14 @@ def supercond_workflow(atoms=None, kp=None):
             "trans": ".true.",
             "fildvscf": "'dvscf'",
             "electron_phonon": "'interpolated'",
-            "nq1": 3,
-            "nq2": 3,
-            "nq3": 3,
-            "tr2_ph": "1.0d-14",
+            "nq1": 2,
+            "nq2": 2,
+            "nq3": 2,
+            "tr2_ph": "1.0d-12",
         }
     }
     qejob_ph = QEjob(
-        atoms=atoms,
+        atoms=final_strt,
         input_params=ph,
         output_file="ph.out",
         qe_cmd="/home/knc6/Software/qe/q-e/bin/ph.x",
@@ -170,7 +170,7 @@ def supercond_workflow(atoms=None, kp=None):
         }
     }
     qejob_qr = QEjob(
-        atoms=atoms,
+        atoms=final_strt,
         input_params=qr,
         output_file="q2r.out",
         qe_cmd="/home/knc6/Software/qe/q-e/bin/q2r.x",
@@ -197,7 +197,7 @@ def supercond_workflow(atoms=None, kp=None):
     }
 
     qejob_matdyn = QEjob(
-        atoms=atoms,
+        atoms=final_strt,
         input_params=matdyn,
         output_file="matdyn.out",
         qe_cmd="/home/knc6/Software/qe/q-e/bin/matdyn.x",
@@ -211,20 +211,21 @@ def supercond_workflow(atoms=None, kp=None):
 
 
 if __name__ == "__main__":
-    from jarvis.db.jsonutils import loadjson, dumpjson
+    # from jarvis.db.jsonutils import loadjson, dumpjson
     from jarvis.core.atoms import Atoms
     from jarvis.db.figshare import get_jid_data
     from jarvis.core.kpoints import Kpoints3D
 
-    # dat = get_jid_data(jid="JVASP-4406", dataset="dft_3d")
+    dat = get_jid_data(jid="JVASP-4406", dataset="dft_3d")
     # dat = get_jid_data(jid="JVASP-19821", dataset="dft_3d")
-    dat = get_jid_data(jid="JVASP-816", dataset="dft_3d")
+    # dat = get_jid_data(jid="JVASP-816", dataset="dft_3d")
     atoms = Atoms.from_dict(dat["atoms"])
     kp = Kpoints3D().automatic_length_mesh(
-        lattice_mat=atoms.lattice_mat, length=20
+        lattice_mat=atoms.lattice_mat, length=10
     )
     # lattice_mat=atoms.lattice_mat, length=int(dat["kpoint_length_unit"])
     # )
+    kp = Kpoints3D(kpoints=[[2, 2, 2]])
     print("kpoint_length_unit", dat["kpoint_length_unit"], kp)
     # kp=Kpoints3D(kpoints=[[3,3,3]])
     print(atoms)
