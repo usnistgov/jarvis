@@ -28,7 +28,15 @@ def parse_lambda(filename="lambda"):
             print()
 
 
-# """
+def get_factors(x, start=2):
+    """Get factors of a number."""
+    facts = []
+    for i in range(start, x + 1):
+        if x % i == 0:
+            facts.append(i)
+    return facts
+
+
 def supercond_workflow(atoms=None, kp=None):
     """Calculate Tc using QE."""
     # Still under development,
@@ -133,6 +141,10 @@ def supercond_workflow(atoms=None, kp=None):
 
     info_scf = qejob_scf_init.runjob()
     print(info_scf)
+    kpts = kp._kpoints[0]
+    nq1 = get_factors(kpts[0])[0]
+    nq2 = get_factors(kpts[0])[0]
+    nq3 = get_factors(kpts[0])[0]
     ph = {
         "inputph": {
             "prefix": "'QE'",
@@ -142,9 +154,9 @@ def supercond_workflow(atoms=None, kp=None):
             "trans": ".true.",
             "fildvscf": "'dvscf'",
             "electron_phonon": "'interpolated'",
-            "nq1": 2,
-            "nq2": 2,
-            "nq3": 2,
+            "nq1": nq1,
+            "nq2": nq2,
+            "nq3": nq3,
             "tr2_ph": "1.0d-12",
         }
     }
@@ -210,8 +222,8 @@ def supercond_workflow(atoms=None, kp=None):
     parse_lambda()
 
 
+# """
 if __name__ == "__main__":
-    # from jarvis.db.jsonutils import loadjson, dumpjson
     from jarvis.core.atoms import Atoms
     from jarvis.db.figshare import get_jid_data
     from jarvis.core.kpoints import Kpoints3D
@@ -223,11 +235,5 @@ if __name__ == "__main__":
     kp = Kpoints3D().automatic_length_mesh(
         lattice_mat=atoms.lattice_mat, length=10
     )
-    # lattice_mat=atoms.lattice_mat, length=int(dat["kpoint_length_unit"])
-    # )
-    kp = Kpoints3D(kpoints=[[2, 2, 2]])
-    print("kpoint_length_unit", dat["kpoint_length_unit"], kp)
-    # kp=Kpoints3D(kpoints=[[3,3,3]])
-    print(atoms)
     supercond_workflow(atoms=atoms, kp=kp)
 # """
