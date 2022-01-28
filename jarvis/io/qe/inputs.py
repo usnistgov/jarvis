@@ -198,7 +198,7 @@ class QEinfile(object):
         return line
 
     def check_frac(self, n):
-        """Check fractional coordinates or lattice parameters follow conventions."""
+        """Check fractional coordinates or lattice parameters."""
         items = [
             0.0,
             0.3333333333333333,

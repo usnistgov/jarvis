@@ -50,11 +50,15 @@ def very_clean():
 
 
 class SuperCond(object):
+    """Module to calculate Tc."""
+
     def __init__(self, atoms=None, kp=None):
+        """Initialize the class."""
         self.atoms = atoms
         self.kp = kp
 
     def to_dict(self):
+        """Get dictionary."""
         info = {}
         info["atoms"] = self.atoms.to_dict()
         info["kp"] = self.kp.to_dict()
@@ -62,6 +66,7 @@ class SuperCond(object):
 
     @classmethod
     def from_dict(self, info={}):
+        """Load from a dictionary."""
         return SuperCond(
             atoms=Atoms.from_dict(info["atoms"]),
             kp=Kpoints3D.from_dict(info["kp"]),
@@ -175,8 +180,8 @@ class SuperCond(object):
         print(info_scf)
         kpts = kp._kpoints[0]
         nq1 = get_factors(kpts[0])[0]
-        nq2 = get_factors(kpts[0])[0]
-        nq3 = get_factors(kpts[0])[0]
+        nq2 = get_factors(kpts[1])[0]
+        nq3 = get_factors(kpts[2])[0]
         ph = {
             "inputph": {
                 "prefix": "'QE'",
@@ -252,20 +257,3 @@ class SuperCond(object):
 
         qejob_matdyn.runjob()
         parse_lambda()
-
-
-# """
-if __name__ == "__main__":
-    from jarvis.core.atoms import Atoms
-    from jarvis.db.figshare import get_jid_data
-    from jarvis.core.kpoints import Kpoints3D
-
-    dat = get_jid_data(jid="JVASP-4406", dataset="dft_3d")
-    # dat = get_jid_data(jid="JVASP-19821", dataset="dft_3d")
-    # dat = get_jid_data(jid="JVASP-816", dataset="dft_3d")
-    atoms = Atoms.from_dict(dat["atoms"])
-    kp = Kpoints3D().automatic_length_mesh(
-        lattice_mat=atoms.lattice_mat, length=10
-    )
-    supercond_workflow(atoms=atoms, kp=kp)
-# """
