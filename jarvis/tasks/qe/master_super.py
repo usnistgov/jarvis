@@ -1,5 +1,5 @@
 """Run multiple jobs."""
-from jarvis.tasks.qe.super import SuperCond
+from jarvis.tasks.qe.super import SuperCond, get_factors
 from jarvis.core.atoms import Atoms
 from jarvis.db.figshare import get_jid_data
 from jarvis.core.kpoints import Kpoints3D
@@ -34,7 +34,13 @@ for i in jids:
         length=10
         # lattice_mat=atoms.lattice_mat, length=dat["kpoint_length_unit"]
     )
-    sup = SuperCond(atoms=atoms, kp=kp).to_dict()
+    kpts = kp._kpoints[0]
+    nq1 = get_factors(kpts[0])[0]
+    nq2 = get_factors(kpts[1])[0]
+    nq3 = get_factors(kpts[2])[0]
+    qp = Kpoints3D(kpoints=[[nq1, nq2, nq3]])
+
+    sup = SuperCond(atoms=atoms, kp=kp, qp=qp).to_dict()
     dumpjson(data=sup, filename="sup.json")
     write_qejob(job_json=os.path.abspath("sup.json"))
     path = (

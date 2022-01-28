@@ -52,16 +52,18 @@ def very_clean():
 class SuperCond(object):
     """Module to calculate Tc."""
 
-    def __init__(self, atoms=None, kp=None):
+    def __init__(self, atoms=None, kp=None, qp=None):
         """Initialize the class."""
         self.atoms = atoms
         self.kp = kp
+        self.qp = qp
 
     def to_dict(self):
         """Get dictionary."""
         info = {}
         info["atoms"] = self.atoms.to_dict()
         info["kp"] = self.kp.to_dict()
+        info["qp"] = self.qp.to_dict()
         return info
 
     @classmethod
@@ -70,6 +72,7 @@ class SuperCond(object):
         return SuperCond(
             atoms=Atoms.from_dict(info["atoms"]),
             kp=Kpoints3D.from_dict(info["kp"]),
+            qp=Kpoints3D.from_dict(info["qp"]),
         )
 
     def runjob(self):
@@ -77,6 +80,7 @@ class SuperCond(object):
         # Still under development,
         atoms = self.atoms
         kp = self.kp
+        qp = self.qp
         relax = {
             "control": {
                 # "calculation": "'scf'",
@@ -178,10 +182,11 @@ class SuperCond(object):
 
         info_scf = qejob_scf_init.runjob()
         print(info_scf)
-        kpts = kp._kpoints[0]
-        nq1 = get_factors(kpts[0])[0]
-        nq2 = get_factors(kpts[1])[0]
-        nq3 = get_factors(kpts[2])[0]
+        # kpts = kp._kpoints[0]
+        qpts = qp._kpoints[0]
+        nq1 = qpts[0]  # get_factors(kpts[0])[0]
+        nq2 = qpts[1]  # get_factors(kpts[1])[0]
+        nq3 = qpts[2]  # get_factors(kpts[2])[0]
         ph = {
             "inputph": {
                 "prefix": "'QE'",
