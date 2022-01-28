@@ -32,7 +32,7 @@ for i in jids:
     dat = get_jid_data(jid=i, dataset="dft_3d")
     atoms = Atoms.from_dict(dat["atoms"])
     kp = Kpoints3D().automatic_length_mesh(
-        lattice_mat=atoms.lattice_mat, length=10
+        lattice_mat=atoms.lattice_mat, length=dat["kpoint_length_unit"]
     )
     sup = SuperCond(atoms=atoms, kp=kp).to_dict()
     dumpjson(data=sup, filename="sup.json")
