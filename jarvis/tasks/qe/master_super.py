@@ -1,12 +1,10 @@
 """Run multiple jobs."""
 from jarvis.tasks.qe.super import SuperCond
 from jarvis.core.atoms import Atoms
-from jarvis.io.vasp.inputs import Poscar
-from jarvis.db.figshare import data, get_jid_data
-from jarvis.io.vasp.inputs import Poscar, Incar, Potcar
+from jarvis.db.figshare import get_jid_data
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.tasks.queue_jobs import Queue
-from jarvis.db.jsonutils import loadjson, dumpjson
+from jarvis.db.jsonutils import dumpjson
 import os
 
 jids = ["JVASP-816"]
@@ -32,7 +30,9 @@ for i in jids:
     dat = get_jid_data(jid=i, dataset="dft_3d")
     atoms = Atoms.from_dict(dat["atoms"])
     kp = Kpoints3D().automatic_length_mesh(
-        lattice_mat=atoms.lattice_mat, length=dat["kpoint_length_unit"]
+        lattice_mat=atoms.lattice_mat,
+        length=10
+        # lattice_mat=atoms.lattice_mat, length=dat["kpoint_length_unit"]
     )
     sup = SuperCond(atoms=atoms, kp=kp).to_dict()
     dumpjson(data=sup, filename="sup.json")
