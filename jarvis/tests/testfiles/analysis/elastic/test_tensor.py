@@ -70,7 +70,7 @@ def test_vasp_et():
     print(et.to_dict())
     theta = et.debye_temperature(atoms=atoms)
     print(
-        et.is_brittle(), et.cauchy_pressure(), et.melting_temperature_metals()
+        et.is_brittle, et.is_ductile,et.cauchy_pressure, et.melting_temperature_metals
     )
 
 
