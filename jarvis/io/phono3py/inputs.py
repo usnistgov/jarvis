@@ -109,6 +109,7 @@ def prepare_gruneisen_FC3(
     mesh=[1, 1, 1],
     nac=False,
     run=False,
+    plot=False,
 ):
     """
     
@@ -141,6 +142,7 @@ def prepare_gruneisen_FC3(
 
     if nac:
         phono3py_cmd = phono3py_cmd + " --nac"
+
     if band_calc:
         atoms = Atoms.from_poscar(poscar)
         kpoints = Kpoints3D().kpath(atoms, line_density=line_density)
@@ -157,32 +159,31 @@ def prepare_gruneisen_FC3(
                 + str("  ")
             )
         phono3py_cmd = phono3py_cmd + ' --band="' + all_lines + '"'
-        print(phono3py_cmd)
     else:
         phono3py_cmd = (
             phono3py_cmd + ' --mesh="' + " ".join([str(d) for d in mesh])
         ) + '"'
-        print(phono3py_cmd)
+    print(phono3py_cmd)
     if run:
         subprocess.call(phono3py_cmd, shell=True)
 
 
 if __name__ == "__main__":
 
-    test_dir = "Si-testing/"
+    test_dir = "Si-testing/phono3py-example-Si-PBEsol/"
     os.chdir(test_dir)
     pos = "POSCAR-unitcell"
     atoms = Atoms.from_poscar(pos)
     phonon_obj = get_Phonopy_obj(
         atoms,
-        phonopy_yaml="phonopy.yaml",
-        FC_file="FORCE_CONSTANTS",
+        phonopy_yaml="../phonopy.yaml",
+        FC_file="../FORCE_CONSTANTS",
         scell=np.array([[2, 0, 0], [0, 2, 0], [0, 0, 2]]),
     )
     # prepare_jdos(
     #     phonon_obj, poscar=pos, mesh=[11, 11, 11], scell_dim=[2, 2, 2], run=True
     # )
-    # prepare_gruneisen_FC3(
-    #     phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=True, run=False
-    # )
+    prepare_gruneisen_FC3(
+        phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=True, run=True, plot=True
+    )
     prepare_gruneisen_quasiharmonic("POSCAR-unitcell", 1.00335)
