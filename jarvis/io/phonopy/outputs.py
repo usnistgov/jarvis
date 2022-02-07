@@ -19,6 +19,14 @@ except Exception as exp:
     print("Phonopy is not installed.", exp)
     pass
 
+"""
+Constants 
+"""
+kB = 1.38064852e-23
+hbar = 1.0545718e-34
+Na = 6.0221409e23
+e = 1.60218e-19
+
 
 def bandstructure_plot(band_yaml="", plot=False):
     """Get phonopy bandstructure info."""
@@ -135,6 +143,35 @@ def get_Phonopy_obj(
     return phonon
 
 
+def get_thermal_properties(phonon_obj, mesh=[1, 1, 1], tmin=0, tmax=100, step=10):
+    phonon_obj.run_mesh(mesh)
+    phonon_obj.run_thermal_properties(t_step=step, t_max=tmax, t_min=tmin)
+    tp_dict = phonon_obj.get_thermal_properties_dict()
+    return tp_dict
+
+
+def get_spectral_heat_capacity(phonon_obj, mesh=[1, 1, 1], T=300, plot=True):
+    phonon_obj.run_mesh(mesh)
+    mesh_dict = phonon_obj.get_mesh_dict()
+    omega = np.array(mesh_dict["frequencies"])
+    x = hbar * omega / (kB * T)
+    mode_C = kB / e * (x) ** 2 * (np.exp(x) / (np.exp(x) - 1) ** 2)
+    phonon_obj.run_total_dos()
+    # Get tetrahedron mesh object
+    thm = phonon_obj._total_dos._tetrahedron_mesh
+    freq_pts = phonon_obj._total_dos._frequency_points
+    thm.set(value="I", frequency_points=freq_pts)
+    spectral_C = np.zeros_like(freq_pts)
+    for i, iw in enumerate(thm):
+        spectral_C += np.sum(iw * mode_C[i] * phonon_obj._total_dos._weights[i], axis=1)
+    if plot:
+        plt.figure()
+        plt.plot(freq_pts, spectral_C)
+        plt.ylabel(r"C (eV/K$\cdot$THz)")
+        plt.xlabel("Frequency (THz)")
+    return spectral_C
+
+
 def get_phonon_tb(
     # phonopy_atoms=[],
     atoms=[],
@@ -228,8 +265,24 @@ if __name__ == "__main__":
     a = Atoms.from_poscar(pos)
     fc = read_fc(fc_file)
     phonopy_atoms = read_vasp(pos)
-    total_dos("Si-testing/total_dos.dat", plot=True)
-
+    phonon_obj = get_Phonopy_obj(
+        a,
+        phonopy_yaml="Si-testing/phonopy.yaml",
+        FC_file=fc_file,
+        scell=np.array([[2, 0, 0], [0, 2, 0], [0, 0, 2]]),
+    )
+    phonon_obj.run_mesh(
+        [11, 11, 11],
+        with_eigenvectors=True,
+        with_group_velocities=True,
+        is_mesh_symmetry=False,
+    )
+    phonon_obj.run_total_dos()
+    phonon_obj.plot_total_dos().show()
+    C = get_spectral_heat_capacity(phonon_obj, mesh=[11, 11, 11], T=300, plot=True)
+    tp_dict = get_thermal_properties(
+        phonon_obj, mesh=[11, 11, 11], tmin=0, tmax=300, step=100
+    )
 #    get_phonon_tb(fc=fc, atoms=a)
 #    cvn = Spacegroup3D(a).conventional_standard_structure
 #    w = WannierHam("phonopyTB_hr.dat")
