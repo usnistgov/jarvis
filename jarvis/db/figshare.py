@@ -152,7 +152,7 @@ def get_db_info():
             "https://ndownloader.figshare.com/files/29070555",
             "jqe_tb_folder.json",
             "Obtaining QETB dataset 860k...",
-            "https://www.nature.com/articles/s41524-020-00440-1",
+            "https://arxiv.org/abs/2112.11585",
         ],
         # https://doi.org/10.6084/m9.figshare.14812050
         "omdb": [
