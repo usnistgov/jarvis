@@ -211,8 +211,8 @@ class JDOS:
 
         return jdos_ir
 
-    # For spectral quantities that need to be scaled by DOS
-    def mode_to_spectral_1(self, mode_jdos):
+    # For spectral quantities that need to be scaled by DOS: kappa, Cp
+    def mode_to_spectral_wtd(self, mode_prop):
         self.phonopy_obj.run_total_dos()
         # Get tetrahedron mesh object
         thm = self.phonopy_obj._total_dos._tetrahedron_mesh
@@ -221,24 +221,14 @@ class JDOS:
         )
         spectral_jdos = np.zeros_like(self.phonopy_obj._total_dos._frequency_points)
         for i, iw in enumerate(thm):
-            spectral_jdos += np.sum(iw * mode_jdos[i]* self.phonopy_obj._total_dos._weights[i], axis=1)
+            spectral_jdos += np.sum(iw * mode_prop[i]* self.phonopy_obj._total_dos._weights[i], axis=1)
         return spectral_jdos
 
-    # For spectral quantities that do not need to be scaled by DOS
-    def mode_to_spectral_2(self, mode_jdos):
-        self.phonopy_obj.run_total_dos()
-        # Get tetrahedron mesh object
-        thm = self.phonopy_obj._total_dos._tetrahedron_mesh
-        thm.set(
-            value="I", frequency_points=self.phonopy_obj._total_dos._frequency_points
-        )
-        spectral_jdos = np.zeros_like(self.phonopy_obj._total_dos._frequency_points)
-        for i, iw in enumerate(thm):
-            spectral_jdos += np.sum(
-                iw * mode_jdos[i], axis=1
-            )
-            print(np.sum(iw * mode_jdos[i], axis=1))
-        return spectral_jdos
+#    For spectral quantities that do not need to be scaled by DOS: gamma, vg
+    def mode_to_spectral(self, mode_prop):
+        spectral_wtd = self.mode_to_spectral_wtd(mode_prop)
+        dos = self.mode_to_spectral_wtd(np.ones_like(mode_prop))
+        return spectral_wtd / dos
 
     def plot_jdos(self, spectral_jdos):
         freq_pts = self.phonopy_obj._total_dos._frequency_points
@@ -293,7 +283,7 @@ class JDOS:
         """
         Currently only works for scalar_xx kappa format
         """
-        ij_dict = {"x": 0, "y": 1, "z": 3}
+        #ij_dict = {"x": 0, "y": 1, "z": 3}
         freq_pts = self.phonopy_obj._total_dos._frequency_points
         find_zeros = np.where(spectral_2Gamma == 0)[0]
         # freq_pts = np.delete(freq_pts, find_zeros)
@@ -304,7 +294,7 @@ class JDOS:
         #     :, :, ij_dict[component[0]]
         # ]   *\
         # jdos.mesh_dict['group_velocities'][:, :, ij_dict[component[1]]]
-        spectral_vg2 = self.mode_to_spectral_2(
+        spectral_vg2 = self.mode_to_spectral(
             mode_vg2_ij
         )  # Need to check group velocity units !!
         plt.figure()
@@ -344,7 +334,7 @@ if __name__ == "__main__":
     jdos_dir = "Si-testing/unweighted_jdos/"
     jdos = JDOS(phonon_obj, directory=jdos_dir, mesh=[11, 11, 11])
     jdos_ir = jdos.select_jdos()
-    spectral_jdos = jdos.mode_to_spectral_2(jdos_ir)
+    spectral_jdos = jdos.mode_to_spectral(jdos_ir)
     jdos.plot_jdos(spectral_jdos)
 
     spectral_2Gamma = jdos.linewidth_from_jdos(spectral_jdos, atoms, vs=6084, plot=True)
@@ -352,7 +342,7 @@ if __name__ == "__main__":
     
     #Doesn't need factor of DOS?
     freq_pts = jdos.phonopy_obj._total_dos._frequency_points
-    spectral_kappa = jdos.mode_to_spectral_1(kappa_Si.dict["mode_kappa"][30, :, :, 0])
+    spectral_kappa = jdos.mode_to_spectral_wtd(kappa_Si.dict["mode_kappa"][30, :, :, 0])
     plt.figure()
     plt.plot(freq_pts, spectral_kappa)
     plt.xlabel("Frequency (THz)")
@@ -376,21 +366,17 @@ if __name__ == "__main__":
     plt.scatter(np.array(kappa_Si.dict["frequency"]), mode_vg2[:,:,0], s=2)
     
     
-    '''
-    Get DOS at 56 frequencies
-    '''
-    dos = jdos.mode_to_spectral_1(np.ones((56,6)))
     
-    spectral_vg_ph3 = jdos.mode_to_spectral_1(np.array(kappa_Si.dict["gv_by_gv"][:, :, 0]))
+    spectral_vg_ph3 = jdos.mode_to_spectral(np.array(kappa_Si.dict["gv_by_gv"][:, :, 0]))
     plt.figure()
-    plt.plot(freq_pts, spectral_vg_ph3 / dos)
+    plt.plot(freq_pts, spectral_vg_ph3)
     plt.xlabel("Frequency (THz)")
     plt.ylabel(r"Phono3py Group Velocity (THz)")
     plt.scatter(np.array(kappa_Si.dict["frequency"]), np.array(kappa_Si.dict["gv_by_gv"][:, :, 0]), s=2)
 
-    spectral_gamma = jdos.mode_to_spectral_1(np.array(kappa_Si.dict["gamma"][30, :, :]))
+    spectral_gamma = jdos.mode_to_spectral(np.array(kappa_Si.dict["gamma"][30, :, :]))
     plt.figure()
-    plt.plot(freq_pts, spectral_gamma / dos)
+    plt.plot(freq_pts, spectral_gamma)
     plt.xlabel("Frequency (THz)")
     plt.ylabel(r"2$\Gamma$ (THz)")
     plt.scatter(np.array(kappa_Si.dict["frequency"]), np.array(kappa_Si.dict["gamma"][30, :, :]), s=2)
@@ -403,7 +389,7 @@ if __name__ == "__main__":
     
     
     #Needs factor of DOS!
-    spectral_Cp_ph3 = jdos.mode_to_spectral_1(kappa_Si.dict["heat_capacity"][30, :, :])
+    spectral_Cp_ph3 = jdos.mode_to_spectral_wtd(kappa_Si.dict["heat_capacity"][30, :, :])
     plt.figure()
     plt.plot(freq_pts, spectral_Cp_ph3)
     plt.scatter(np.array(kappa_Si.dict["frequency"]), np.array(kappa_Si.dict["heat_capacity"][30, :, :]), s=2)
