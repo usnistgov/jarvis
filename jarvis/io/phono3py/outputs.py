@@ -26,7 +26,7 @@ from jarvis.core.specie import Specie
 from jarvis.io.phonopy.outputs import (
     total_dos,
     get_Phonopy_obj,
-    get_spectral_heat_capacity,
+    get_spectral_heat_capacity, get_gv_outer_product
 )
 import numpy as np
 import spglib
@@ -39,7 +39,7 @@ except Exception as exp:
     print("Phonopy is not installed.", exp)
     pass
 
-
+from phono3py.phonon3.conductivity import Conductivity
 """
 Constants 
 """
@@ -127,7 +127,8 @@ class JDOS:
         self.temperature = temperature
         self.directory = directory
         self.phonopy_obj = phonopy_obj
-        phonopy_obj.run_mesh(mesh, with_group_velocities=True)
+        self.phonopy_obj.run_mesh(mesh, with_group_velocities=True)
+        self.phonopy_obj.run_total_dos(use_tetrahedron_method = True)
         self.mesh_dict = phonopy_obj.get_mesh_dict()
 
     def select_jdos(self):
@@ -210,7 +211,7 @@ class JDOS:
 
         return jdos_ir
 
-    # For spectral quantities that already include factor of DOS
+    # For spectral quantities that need to be scaled by DOS
     def mode_to_spectral_1(self, mode_jdos):
         self.phonopy_obj.run_total_dos()
         # Get tetrahedron mesh object
@@ -220,10 +221,10 @@ class JDOS:
         )
         spectral_jdos = np.zeros_like(self.phonopy_obj._total_dos._frequency_points)
         for i, iw in enumerate(thm):
-            spectral_jdos += np.sum(iw * mode_jdos[i], axis=1)
+            spectral_jdos += np.sum(iw * mode_jdos[i]* self.phonopy_obj._total_dos._weights[i], axis=1)
         return spectral_jdos
 
-    # For spectral quantities that need to be scaled by DOS
+    # For spectral quantities that do not need to be scaled by DOS
     def mode_to_spectral_2(self, mode_jdos):
         self.phonopy_obj.run_total_dos()
         # Get tetrahedron mesh object
@@ -234,8 +235,9 @@ class JDOS:
         spectral_jdos = np.zeros_like(self.phonopy_obj._total_dos._frequency_points)
         for i, iw in enumerate(thm):
             spectral_jdos += np.sum(
-                iw * mode_jdos[i] * self.phonopy_obj._total_dos._weights[i], axis=1
+                iw * mode_jdos[i], axis=1
             )
+            print(np.sum(iw * mode_jdos[i], axis=1))
         return spectral_jdos
 
     def plot_jdos(self, spectral_jdos):
@@ -295,21 +297,20 @@ class JDOS:
         freq_pts = self.phonopy_obj._total_dos._frequency_points
         find_zeros = np.where(spectral_2Gamma == 0)[0]
         # freq_pts = np.delete(freq_pts, find_zeros)
-        mode_vg2_ij = jdos.mesh_dict["group_velocities"][
-            :, :, ij_dict[component[0]]
-        ]  # *\
+        
+        mode_vg2 = get_gv_outer_product(self.phonopy_obj, self.mesh)
+        mode_vg2_ij = mode_vg2[:, :, 0]
+        # jdos.mesh_dict["group_velocities"][
+        #     :, :, ij_dict[component[0]]
+        # ]   *\
         # jdos.mesh_dict['group_velocities'][:, :, ij_dict[component[1]]]
         spectral_vg2 = self.mode_to_spectral_2(
             mode_vg2_ij
         )  # Need to check group velocity units !!
         plt.figure()
         plt.plot(freq_pts, spectral_vg2)
-        plt.xlabel("Frequency (THz)")
-        plt.ylabel("Squared group velocity")
-
+        plt.ylabel('gv_by_gv')
         spectral_Cp = get_spectral_heat_capacity(self.phonopy_obj, self.mesh, T)
-        plt.xlabel("Frequency (THz)")
-        plt.ylabel(r"C (eV/K$\cdot$THz)")
         spectral_2Gamma = np.delete(spectral_2Gamma, find_zeros)
         spectral_vg2 = np.delete(spectral_vg2, find_zeros)
         spectral_Cp = np.delete(spectral_Cp, find_zeros)
@@ -331,13 +332,13 @@ if __name__ == "__main__":
     RT_kappa = kappa_Si.kappa(300.0)
     from jarvis.core.atoms import Atoms
 
-    test_dir = "Si-testing/"
+    test_dir = "Si-testing/phono3py-example-Si-PBEsol/"
     pos = test_dir + "POSCAR-unitcell"
     atoms = Atoms.from_poscar(pos)
     phonon_obj = get_Phonopy_obj(
         atoms,
-        phonopy_yaml="../phonopy/Si-testing/phonopy.yaml",
-        FC_file="../phonopy/Si-testing/FORCE_CONSTANTS",
+        phonopy_yaml=test_dir + "phono3py.yaml",
+        FC_file=test_dir + "fc2.hdf5",
         scell=np.array([[2, 0, 0], [0, 2, 0], [0, 0, 2]]),
     )
     jdos_dir = "Si-testing/unweighted_jdos/"
@@ -348,47 +349,69 @@ if __name__ == "__main__":
 
     spectral_2Gamma = jdos.linewidth_from_jdos(spectral_jdos, atoms, vs=6084, plot=True)
     jdos.kappa_from_linewidth(spectral_2Gamma)
-
-    spectral_kappa = jdos.mode_to_spectral_1(kappa_Si.dict["mode_kappa"][30, :, :, 0])
-    plt.xlabel("Frequency (THz)")
-    plt.ylabel(r"$\kappa$ (W/m$\cdot$K$\cdot$THz)")
-
+    
+    #Doesn't need factor of DOS?
     freq_pts = jdos.phonopy_obj._total_dos._frequency_points
+    spectral_kappa = jdos.mode_to_spectral_1(kappa_Si.dict["mode_kappa"][30, :, :, 0])
     plt.figure()
     plt.plot(freq_pts, spectral_kappa)
     plt.xlabel("Frequency (THz)")
     plt.ylabel(r"$\kappa$ (W/m$\cdot$K$\cdot$THz)")
+    #plt.scatter(np.array(kappa_Si.dict["frequency"]), np.array(kappa_Si.dict["mode_kappa"][30, :, :, 0]), s=2)
 
-    spectral_C = get_spectral_heat_capacity(jdos.phonopy_obj, jdos.mesh, T=30)
-    plt.xlabel("Frequency (THz)")
-    plt.ylabel(r"C (eV/K$\cdot$THz)")
+    # plt.figure()
+    # plt.plot(freq_pts, spectral_kappa)
+    # plt.xlabel("Frequency (THz)")
+    # plt.ylabel(r"$\kappa$ (W/m$\cdot$K$\cdot$THz)")
 
-    spectral_vg2_ph3 = jdos.mode_to_spectral_2(kappa_Si.dict["gv_by_gv"][:, :, 0])
+
+    # spectral_vg = jdos.mode_to_spectral_2(jdos.mesh_dict["group_velocities"][:, :, 0])
+    # plt.figure()
+    # plt.plot(freq_pts, spectral_vg)
+    # plt.xlabel("Frequency (THz)")
+    # plt.ylabel(r"Group Velocity (THz)")
+    mode_vg2 = get_gv_outer_product(jdos.phonopy_obj, jdos.mesh)
     plt.figure()
-    plt.plot(freq_pts, spectral_vg2_ph3)
+    plt.scatter(np.array(kappa_Si.dict["frequency"]), np.array(kappa_Si.dict["gv_by_gv"][:, :, 0]), s=4)
+    plt.scatter(np.array(kappa_Si.dict["frequency"]), mode_vg2[:,:,0], s=2)
+    
+    spectral_vg_ph3 = jdos.mode_to_spectral_2(np.array(kappa_Si.dict["gv_by_gv"][:, :, 0]))
+    plt.figure()
+    plt.plot(freq_pts, spectral_vg_ph3)
     plt.xlabel("Frequency (THz)")
     plt.ylabel(r"Phono3py Group Velocity (THz)")
+    plt.scatter(np.array(kappa_Si.dict["frequency"]), np.array(kappa_Si.dict["gv_by_gv"][:, :, 0]), s=2)
 
     spectral_gamma = jdos.mode_to_spectral_2(kappa_Si.dict["gamma"][30, :, :])
     plt.figure()
-    plt.plot(freq_pts, 2 * spectral_gamma)
+    plt.plot(freq_pts, spectral_gamma)
     plt.xlabel("Frequency (THz)")
     plt.ylabel(r"2$\Gamma$ (THz)")
+    plt.scatter(np.array(kappa_Si.dict["frequency"]), np.array(kappa_Si.dict["gamma"][30, :, :]), s=2)
 
-    spectral_Cp = jdos.mode_to_spectral_1(kappa_Si.dict["heat_capacity"][3, :, :])
+    spectral_C = get_spectral_heat_capacity(jdos.phonopy_obj, jdos.mesh, T=300)
     plt.figure()
-    plt.plot(freq_pts, spectral_Cp)
+    plt.plot(freq_pts, spectral_C)
+    plt.xlabel("Frequency (THz)")
+    plt.ylabel(r"C2 (eV/K$\cdot$THz)")
+    
+    
+    #Needs factor of DOS!
+    spectral_Cp_ph3 = jdos.mode_to_spectral_1(kappa_Si.dict["heat_capacity"][30, :, :])
+    plt.figure()
+    plt.plot(freq_pts, spectral_Cp_ph3)
+    plt.scatter(np.array(kappa_Si.dict["frequency"]), np.array(kappa_Si.dict["heat_capacity"][30, :, :]), s=2)
     plt.xlabel("Frequency (THz)")
     plt.ylabel(r"C (eV/K$\cdot$THz)")
 
-    # kappa_unit_conversion = kappa_Si.dict['kappa_unit_conversion'][()]
-    # kappa_spec = kappa_unit_conversion * spectral_vg2_ph3 *\
-    #     (1 / (2 * spectral_gamma)) * spectral_Cp
+    kappa_unit_conversion = kappa_Si.dict['kappa_unit_conversion'][()]
+    kappa_spec = kappa_unit_conversion * spectral_vg_ph3 *\
+        (1 / (2 * spectral_gamma)) * spectral_Cp_ph3
 
-    # plt.figure()
-    # plt.plot(freq_pts, kappa_spec)
-    # plt.xlabel('Frequency (THz)')
-    # plt.ylabel(r'$\kappa$ (W/m$\cdot$K$\cdot$THz)')
+    plt.figure()
+    plt.plot(freq_pts, kappa_spec)
+    plt.xlabel('Frequency (THz)')
+    plt.ylabel(r'$\kappa$ (W/m$\cdot$K$\cdot$THz)')
 
     plt.figure()
     plt.plot(freq_pts, spectral_2Gamma - (2 * spectral_gamma))
