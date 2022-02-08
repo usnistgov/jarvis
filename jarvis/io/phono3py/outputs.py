@@ -375,16 +375,22 @@ if __name__ == "__main__":
     plt.scatter(np.array(kappa_Si.dict["frequency"]), np.array(kappa_Si.dict["gv_by_gv"][:, :, 0]), s=4)
     plt.scatter(np.array(kappa_Si.dict["frequency"]), mode_vg2[:,:,0], s=2)
     
-    spectral_vg_ph3 = jdos.mode_to_spectral_2(np.array(kappa_Si.dict["gv_by_gv"][:, :, 0]))
+    
+    '''
+    Get DOS at 56 frequencies
+    '''
+    dos = jdos.mode_to_spectral_1(np.ones((56,6)))
+    
+    spectral_vg_ph3 = jdos.mode_to_spectral_1(np.array(kappa_Si.dict["gv_by_gv"][:, :, 0]))
     plt.figure()
-    plt.plot(freq_pts, spectral_vg_ph3)
+    plt.plot(freq_pts, spectral_vg_ph3 / dos)
     plt.xlabel("Frequency (THz)")
     plt.ylabel(r"Phono3py Group Velocity (THz)")
     plt.scatter(np.array(kappa_Si.dict["frequency"]), np.array(kappa_Si.dict["gv_by_gv"][:, :, 0]), s=2)
 
-    spectral_gamma = jdos.mode_to_spectral_2(kappa_Si.dict["gamma"][30, :, :])
+    spectral_gamma = jdos.mode_to_spectral_1(np.array(kappa_Si.dict["gamma"][30, :, :]))
     plt.figure()
-    plt.plot(freq_pts, spectral_gamma)
+    plt.plot(freq_pts, spectral_gamma / dos)
     plt.xlabel("Frequency (THz)")
     plt.ylabel(r"2$\Gamma$ (THz)")
     plt.scatter(np.array(kappa_Si.dict["frequency"]), np.array(kappa_Si.dict["gamma"][30, :, :]), s=2)
