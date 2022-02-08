@@ -176,14 +176,16 @@ if __name__ == "__main__":
     atoms = Atoms.from_poscar(pos)
     phonon_obj = get_Phonopy_obj(
         atoms,
-        phonopy_yaml="../phonopy.yaml",
-        FC_file="../FORCE_CONSTANTS",
+        phonopy_yaml="phono3py.yaml",
+        FC_file="fc2.hdf5",
         scell=np.array([[2, 0, 0], [0, 2, 0], [0, 0, 2]]),
     )
+    phonon_obj.run_mesh([11, 11, 11], with_group_velocities=True)
+    mesh_dict = phonon_obj.get_mesh_dict()
     # prepare_jdos(
     #     phonon_obj, poscar=pos, mesh=[11, 11, 11], scell_dim=[2, 2, 2], run=True
     # )
-    prepare_gruneisen_FC3(
-        phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=True, run=True, plot=True
-    )
-    prepare_gruneisen_quasiharmonic("POSCAR-unitcell", 1.00335)
+    # prepare_gruneisen_FC3(
+    #     phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=True, run=True, plot=True
+    # )
+    # prepare_gruneisen_quasiharmonic("POSCAR-unitcell", 1.00335)
