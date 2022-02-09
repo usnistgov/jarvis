@@ -19,11 +19,15 @@ except Exception as exp:
     print("Phonopy is not installed.", exp)
     pass
 
+from phonopy.harmonic.force_constants import similarity_transformation
+from phono3py.phonon.grid import BZGrid, get_grid_points_by_rotations
+
 """
 Constants 
 """
 kB = 1.38064852e-23
 hbar = 1.0545718e-34
+h = 6.62607004e-34
 Na = 6.0221409e23
 e = 1.60218e-19
 
@@ -143,18 +147,95 @@ def get_Phonopy_obj(
     return phonon
 
 
+def get_gv_outer_product(phonon_obj, mesh=[1, 1, 1]):
+    """
+    Returns 3x3 vg X vg matrix for each irreducible q-point
+    Inspired by the get_gv_by_gv method in Conductivity class of phono3py
+
+    Parameters
+    ----------
+    phonon_obj : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    phonon_obj.run_mesh(mesh, with_group_velocities=True)
+    mesh_dict = phonon_obj.get_mesh_dict()
+    gv_obj = phonon_obj._group_velocity
+    nbranches = np.shape(mesh_dict["group_velocities"])[1]
+    gv_by_gv = np.zeros((len(mesh_dict["qpoints"]), nbranches, 6))
+
+    for qindx in range(len(mesh_dict["qpoints"])):
+        rec_lat = gv_obj._reciprocal_lattice
+        rotations_cartesian = np.array(
+            [
+                similarity_transformation(rec_lat, r)
+                for r in gv_obj._symmetry._pointgroup_operations
+            ],
+            dtype="double",
+            order="C",
+        )
+        gv = mesh_dict["group_velocities"][qindx]
+        for r in rotations_cartesian:
+            gv_rot = np.dot(gv, r.T)
+            gv_by_gv[qindx] += [
+                np.outer(r_gv, r_gv)[[0, 1, 2, 1, 0, 0], [0, 1, 2, 2, 2, 1]]
+                for r_gv in gv_rot
+            ]
+            bzgrid = BZGrid(
+                phonon_obj.mesh._mesh,
+                gv_obj._reciprocal_lattice,
+                phonon_obj._primitive_matrix,
+            )
+        rotation_map = get_grid_points_by_rotations(
+            phonon_obj._mesh.ir_grid_points[qindx],
+            bzgrid,
+            reciprocal_rotations=gv_obj._symmetry._pointgroup_operations,
+        )
+        gv_by_gv[qindx] /= len(rotation_map) // len(np.unique(rotation_map))
+        gv_by_gv[qindx] /= nbranches
+
+    return gv_by_gv
+
+
 def get_thermal_properties(phonon_obj, mesh=[1, 1, 1], tmin=0, tmax=100, step=10):
+    """
+    Returns dictionary of thermal properties, including Helmholtz free energy,
+    vibrational entropy, and heat capacity
+
+    Parameters
+    ----------
+    phonon_obj : Phonopy
+        phonopy object
+    mesh : list, optional
+        Mesh size for thermal property calculation. The default is [1, 1, 1].
+    tmin : float, optional
+        Minimum temperature. The default is 0.
+    tmax : float, optional
+        Maximum temperature. The default is 100.
+    step : float, optional
+        Temperature step size. The default is 10.
+
+    Returns
+    -------
+    tp_dict : TYPE
+        DESCRIPTION.
+
+    """
     phonon_obj.run_mesh(mesh)
     phonon_obj.run_thermal_properties(t_step=step, t_max=tmax, t_min=tmin)
     tp_dict = phonon_obj.get_thermal_properties_dict()
     return tp_dict
 
 
-def get_spectral_heat_capacity(phonon_obj, mesh=[1, 1, 1], T=300, plot=True):
+def get_spectral_heat_capacity(phonon_obj, mesh=[1, 1, 1], T=300, plot=False):
     phonon_obj.run_mesh(mesh)
     mesh_dict = phonon_obj.get_mesh_dict()
     omega = np.array(mesh_dict["frequencies"])
-    x = hbar * omega / (kB * T)
+    x = h * omega / (kB * T)  # omega is ordinal not angular
     mode_C = kB / e * (x) ** 2 * (np.exp(x) / (np.exp(x) - 1) ** 2)
     phonon_obj.run_total_dos()
     # Get tetrahedron mesh object
@@ -272,17 +353,16 @@ if __name__ == "__main__":
         scell=np.array([[2, 0, 0], [0, 2, 0], [0, 0, 2]]),
     )
     phonon_obj.run_mesh(
-        [11, 11, 11],
-        with_eigenvectors=True,
-        with_group_velocities=True,
-        is_mesh_symmetry=False,
+        [11, 11, 11], with_eigenvectors=True, with_group_velocities=True
     )
+    mesh_dict = phonon_obj.get_mesh_dict()
     phonon_obj.run_total_dos()
     phonon_obj.plot_total_dos().show()
     C = get_spectral_heat_capacity(phonon_obj, mesh=[11, 11, 11], T=300, plot=True)
     tp_dict = get_thermal_properties(
         phonon_obj, mesh=[11, 11, 11], tmin=0, tmax=300, step=100
     )
+    gv_by_gv = get_gv_outer_product(phonon_obj, mesh=[11, 11, 11])
 #    get_phonon_tb(fc=fc, atoms=a)
 #    cvn = Spacegroup3D(a).conventional_standard_structure
 #    w = WannierHam("phonopyTB_hr.dat")
