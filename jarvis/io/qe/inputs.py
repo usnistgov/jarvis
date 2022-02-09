@@ -5,6 +5,7 @@ import requests
 import tarfile
 from jarvis.core.specie import Specie
 import numpy as np
+from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
 
 class QEinfile(object):
@@ -233,6 +234,7 @@ class QEinfile(object):
     def atomic_pos(self):
         """Obtain string for QE atomic positions."""
         line = ""
+        self.atoms = Spacegroup3D(self.atoms).refined_atoms
         coords = np.array(self.atoms.frac_coords)
         ntot = self.atoms.num_atoms
 

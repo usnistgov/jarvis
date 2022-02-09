@@ -52,11 +52,12 @@ def very_clean():
 class SuperCond(object):
     """Module to calculate Tc."""
 
-    def __init__(self, atoms=None, kp=None, qp=None):
+    def __init__(self, atoms=None, kp=None, qp=None, qe_cmd="pw.x"):
         """Initialize the class."""
         self.atoms = atoms
         self.kp = kp
         self.qp = qp
+        self.qe_cmd = qe_cmd
 
     def to_dict(self):
         """Get dictionary."""
@@ -64,6 +65,7 @@ class SuperCond(object):
         info["atoms"] = self.atoms.to_dict()
         info["kp"] = self.kp.to_dict()
         info["qp"] = self.qp.to_dict()
+        info["qe_cmd"] = self.qe_cmd
         return info
 
     @classmethod
@@ -73,6 +75,7 @@ class SuperCond(object):
             atoms=Atoms.from_dict(info["atoms"]),
             kp=Kpoints3D.from_dict(info["kp"]),
             qp=Kpoints3D.from_dict(info["qp"]),
+            qe_cmd=info["qe_cmd"],
         )
 
     def runjob(self):
@@ -122,7 +125,7 @@ class SuperCond(object):
             atoms=atoms,
             input_params=relax,
             output_file="relax.out",
-            qe_cmd="/home/knc6/Software/qe/q-e/bin/pw.x",
+            qe_cmd=self.qe_cmd,
             jobname="relax",
             kpoints=kp,
             input_file="arelax.in",
@@ -174,7 +177,7 @@ class SuperCond(object):
             atoms=final_strt,
             input_params=scf_init,
             output_file="scf_init.out",
-            qe_cmd="/home/knc6/Software/qe/q-e/bin/pw.x",
+            qe_cmd=self.qe_cmd,
             jobname="scf_init",
             kpoints=kp,
             input_file="ascf_init.in",
@@ -206,7 +209,7 @@ class SuperCond(object):
             atoms=final_strt,
             input_params=ph,
             output_file="ph.out",
-            qe_cmd="/home/knc6/Software/qe/q-e/bin/ph.x",
+            qe_cmd=self.qe_cmd.replace("pw.x", "ph.x"),
             jobname="ph",
             kpoints=None,
             input_file="aph.in",
@@ -227,7 +230,8 @@ class SuperCond(object):
             atoms=final_strt,
             input_params=qr,
             output_file="q2r.out",
-            qe_cmd="/home/knc6/Software/qe/q-e/bin/q2r.x",
+            # qe_cmd="/home/knc6/Software/qe/q-e/bin/q2r.x",
+            qe_cmd=self.qe_cmd.replace("pw.x", "q2r.x"),
             jobname="qr",
             kpoints=None,
             input_file="aqr.in",
@@ -235,6 +239,7 @@ class SuperCond(object):
 
         qejob_qr.runjob()
 
+        kpts = kp._kpoints[0]
         matdyn = {
             "input": {
                 "asr": "'simple'",
@@ -243,9 +248,9 @@ class SuperCond(object):
                 "la2F": ".true.",
                 "dos": ".true.",
                 "fldos": "'phonon.dos'",
-                "nk1": 10,
-                "nk2": 10,
-                "nk3": 10,
+                "nk1": kpts[0],
+                "nk2": kpts[1],
+                "nk3": kpts[2],
                 "ndos": 50,
             }
         }
@@ -254,7 +259,8 @@ class SuperCond(object):
             atoms=final_strt,
             input_params=matdyn,
             output_file="matdyn.out",
-            qe_cmd="/home/knc6/Software/qe/q-e/bin/matdyn.x",
+            # qe_cmd="/home/knc6/Software/qe/q-e/bin/matdyn.x",
+            qe_cmd=self.qe_cmd.replace("pw.x", "matdyn.x"),
             jobname="matdyn",
             kpoints=None,
             input_file="amatdyn.in",
