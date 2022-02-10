@@ -78,6 +78,10 @@ def prepare_jdos(
         subprocess.call(phono3py_cmd, shell=True)
 
 
+# Try to use the Phono3pyJDOS class?
+# def prepare_jdos(phonopy_obj):
+
+
 # Should add a prepare_gruneisen_quasiharmonic function as well
 
 
@@ -185,7 +189,7 @@ if __name__ == "__main__":
     # prepare_jdos(
     #     phonon_obj, poscar=pos, mesh=[11, 11, 11], scell_dim=[2, 2, 2], run=True
     # )
-    # prepare_gruneisen_FC3(
-    #     phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=True, run=True, plot=True
-    # )
+    prepare_gruneisen_FC3(
+        phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=False, run=True, plot=True
+    )
     # prepare_gruneisen_quasiharmonic("POSCAR-unitcell", 1.00335)

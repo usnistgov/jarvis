@@ -27,11 +27,13 @@ from jarvis.io.phonopy.outputs import (
     total_dos,
     get_Phonopy_obj,
     get_spectral_heat_capacity,
-    get_gv_outer_product,
 )
 import numpy as np
 import spglib
 import matplotlib.pyplot as plt
+
+from phonopy.harmonic.force_constants import similarity_transformation
+from phono3py.phonon.grid import BZGrid, get_grid_points_by_rotations
 
 
 """
@@ -87,7 +89,7 @@ class Kappa:
         self.composition = composition
         self.tags = tags
         self.n_qpoint = np.shape(f["qpoint"])[0]
-        self.total_dos = np.array(total_dos(total_dos_dat))
+        self.total_dos = total_dos_dat
         self.kappa_format = kappa_format
 
     def to_dict(self):
@@ -188,12 +190,65 @@ class JDOS:
             )  # average the ceiling and floor of the bin
         return jdos_ir
 
+    def get_gv_outer_product(self, mesh=[1, 1, 1]):
+        """
+        Returns 3x3 vg X vg matrix for each irreducible q-point
+        Inspired by the get_gv_by_gv method in Conductivity class of phono3py
+    
+        Parameters
+        ----------
+        phonon_obj : TYPE
+            DESCRIPTION.
+    
+        Returns
+        -------
+        None.
+    
+        NEED TO WORK ON THIS METHOD
+        """
+        phonon_obj = self.phonopy_obj
+        phonon_obj.run_mesh(mesh, with_group_velocities=True)
+        mesh_dict = phonon_obj.get_mesh_dict()
+        gv_obj = phonon_obj._group_velocity
+        nbranches = np.shape(mesh_dict["group_velocities"])[1]
+        gv_by_gv = np.zeros((len(mesh_dict["qpoints"]), nbranches, 3, 3))
+        gv_sum2 = np.zeros((len(mesh_dict["qpoints"]), nbranches, 6))
+
+        for qindx in range(len(mesh_dict["qpoints"])):
+            rec_lat = gv_obj._reciprocal_lattice
+            rotations_cartesian = np.array(
+                [
+                    similarity_transformation(rec_lat, r)
+                    for r in gv_obj._symmetry._pointgroup_operations
+                ],
+                dtype="double",
+                order="C",
+            )
+            gv = gv_obj.group_velocities[qindx]
+
+            for r in rotations_cartesian:
+                gv_rot = np.dot(gv, r.T)
+                gv_by_gv[qindx] += [np.outer(r_gv, r_gv) for r_gv in gv_rot]
+                bzgrid = BZGrid(
+                    phonon_obj.mesh._mesh,
+                    gv_obj._reciprocal_lattice,
+                    phonon_obj._primitive.cell,
+                )
+            rotation_map = get_grid_points_by_rotations(
+                phonon_obj._mesh.ir_grid_points[qindx], bzgrid,
+            )
+            # Need to decide if this makes sense
+            gv_by_gv[qindx] /= len(rotation_map) // len(np.unique(rotation_map))
+            gv_by_gv[qindx] /= nbranches  # Still doesn't seem required to have this
+            for j, vxv in enumerate(([0, 0], [1, 1], [2, 2], [1, 2], [0, 2], [0, 1])):
+                gv_sum2[qindx, :, j] = gv_by_gv[qindx, :, vxv[0], vxv[1]]
+        return gv_sum2
+
     # For spectral quantities that need to be scaled by DOS: kappa, Cp
     def mode_to_spectral_wtd(self, mode_prop):
         """
         Converts modal to spectral properties. Properties are weighted by
-        the phonon density-of-states. DOS-weighting is required for heat capacity
-        and thermal conductivity
+        the phonon density-of-states. DOS-weighting is required for heat capacity.
         """
         self.phonopy_obj.run_total_dos()
         # Get tetrahedron mesh object
@@ -201,12 +256,28 @@ class JDOS:
         thm.set(
             value="I", frequency_points=self.phonopy_obj._total_dos._frequency_points
         )
-        spectral_jdos = np.zeros_like(self.phonopy_obj._total_dos._frequency_points)
+        spectral_prop = np.zeros_like(self.phonopy_obj._total_dos._frequency_points)
         for i, iw in enumerate(thm):
-            spectral_jdos += np.sum(
+            spectral_prop += np.sum(
                 iw * mode_prop[i] * self.phonopy_obj._total_dos._weights[i], axis=1
             )
-        return spectral_jdos
+        return spectral_prop
+
+    def mode_to_spectral_unwtd(self, mode_prop):
+        """
+        Converts modal to spectral properties without using the weights for
+        k-point degeneracy. Required for conversion of mode_kappa.
+        """
+        self.phonopy_obj.run_total_dos()
+        # Get tetrahedron mesh object
+        thm = self.phonopy_obj._total_dos._tetrahedron_mesh
+        thm.set(
+            value="I", frequency_points=self.phonopy_obj._total_dos._frequency_points
+        )
+        spectral_prop = np.zeros_like(self.phonopy_obj._total_dos._frequency_points)
+        for i, iw in enumerate(thm):
+            spectral_prop += np.sum(iw * mode_prop[i], axis=1)
+        return spectral_prop
 
     #    For spectral quantities that do not need to be scaled by DOS: gamma, vg
     def mode_to_spectral(self, mode_prop):
@@ -260,31 +331,39 @@ class JDOS:
         """
         ij_dict = {"xx": 0, "yy": 1, "zz": 2, "yz": 3, "xz": 4, "xy": 5}
         freq_pts = self.phonopy_obj._total_dos._frequency_points
-        find_zeros = np.where(spectral_2Gamma == 0)[0]
+        find_zeros = np.argwhere(np.isnan(spectral_2Gamma))
         # freq_pts = np.delete(freq_pts, find_zeros)
 
-        mode_vg2 = get_gv_outer_product(self.phonopy_obj, self.mesh)
+        mode_vg2 = self.get_gv_outer_product(self.mesh)
         mode_vg2_ij = mode_vg2[:, :, ij_dict[component]]
         spectral_vg2 = self.mode_to_spectral(mode_vg2_ij)
-        spectral_Cp = get_spectral_heat_capacity(self.phonopy_obj, self.mesh, T)
-        spectral_2Gamma = np.delete(spectral_2Gamma, find_zeros)
-        spectral_vg2 = np.delete(spectral_vg2, find_zeros)
-        spectral_Cp = np.delete(spectral_Cp, find_zeros)
+        spectral_Cp = get_spectral_heat_capacity(
+            self.phonopy_obj, self.mesh, T, weighted=False, plot=True
+        )
+        # spectral_2Gamma = np.delete(spectral_2Gamma, find_zeros)
+        # spectral_vg2_red = np.delete(spectral_vg2, find_zeros)
+        # spectral_Cp = np.delete(spectral_Cp, find_zeros)
+        # print(spectral_Cp)
+        # print(spectral_2Gamma)
+        # print(spectral_vg2)
         spectral_kappa = (
             kappa_unit_conversion * spectral_vg2 * (1 / spectral_2Gamma) * spectral_Cp
         )
-        red_freq_pts = np.delete(freq_pts, find_zeros)
+        print(spectral_kappa)
+        #        red_freq_pts = np.delete(freq_pts, find_zeros)
         if plot:
             # Kappa
             plt.figure()
-            plt.plot(red_freq_pts, spectral_kappa)
+            plt.plot(freq_pts, spectral_kappa)
             plt.xlabel("Frequency (THz)")
             plt.ylabel(r"$\kappa$ (W/m$\cdot$K$\cdot$THz)")
             # Squared Group Velocity
             plt.figure()
-            plt.plot(red_freq_pts, spectral_vg2)
+            plt.plot(freq_pts, spectral_vg2)
+            plt.scatter(self.mesh_dict["frequencies"], mode_vg2_ij, s=2)
             plt.xlabel("Frequency (THz)")
             plt.ylabel(r"v$^2$ (THz$^2\cdot\AA^2$)")
+        return spectral_kappa
 
 
 if __name__ == "__main__":
@@ -310,4 +389,4 @@ if __name__ == "__main__":
     spectral_jdos = jdos.mode_to_spectral(jdos_ir)
 
     spectral_2Gamma = jdos.linewidth_from_jdos(spectral_jdos, atoms, vs=6084, plot=True)
-    jdos.kappa_from_linewidth(spectral_2Gamma, plot=True)
+    spectral_kappa = jdos.kappa_from_linewidth(spectral_2Gamma, plot=True)
