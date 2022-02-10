@@ -6,6 +6,7 @@ from jarvis.core.atoms import Atoms
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.io.vasp.inputs import Poscar
 import os
+from phono3py import Phono3pyJointDos
 
 # Maybe add get_gridpoints function here?
 
@@ -79,7 +80,42 @@ def prepare_jdos(
 
 
 # Try to use the Phono3pyJDOS class?
-# def prepare_jdos(phonopy_obj):
+def prepare_jdos_api(phonopy_obj, mesh = [1, 1, 1], temperatures=None,\
+    num_freq_points=201, pa=None, nac_params = None,
+    write_jdos = True):
+    '''
+    Run JDOS calculation using the Phono3pyJointDOS Class
+    Currently assumes phonopy_obj contains a force cosntants attribute
+
+    Parameters
+    ----------
+    phonopy_obj : TYPE
+        DESCRIPTION.
+     : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    '''
+    ph3_jdos = Phono3pyJointDos(phonopy_obj._supercell,\
+                                phonopy_obj._primitive,\
+                                    phonopy_obj._force_constants,\
+                                        mesh = mesh,\
+                                            temperatures = temperatures,\
+                                                nac_params = nac_params,\
+                                                    num_frequency_points = num_freq_points,\
+                                                        log_level = 1)
+    latt_vecs = phonopy_obj.get_primitive().get_cell()
+    positions = phonopy_obj.get_primitive().get_scaled_positions()
+    atom_type = phonopy_obj.get_primitive().get_atomic_numbers()
+    cell = (latt_vecs, positions, atom_type)
+    mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
+    gridpt_uids = np.unique(mapping)
+    
+    ph3_jdos.run(gridpt_uids, write_jdos = write_jdos)
+    
 
 
 # Should add a prepare_gruneisen_quasiharmonic function as well
@@ -189,7 +225,8 @@ if __name__ == "__main__":
     # prepare_jdos(
     #     phonon_obj, poscar=pos, mesh=[11, 11, 11], scell_dim=[2, 2, 2], run=True
     # )
-    prepare_gruneisen_FC3(
-        phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=False, run=True, plot=True
-    )
+    prepare_jdos_api(phonon_obj, mesh=[11, 11, 11], write_jdos = True)
+    # prepare_gruneisen_FC3(
+    #     phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=False, run=True, plot=True
+    # )
     # prepare_gruneisen_quasiharmonic("POSCAR-unitcell", 1.00335)
