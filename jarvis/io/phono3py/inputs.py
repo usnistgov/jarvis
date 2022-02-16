@@ -225,8 +225,8 @@ if __name__ == "__main__":
     # prepare_jdos(
     #     phonon_obj, poscar=pos, mesh=[11, 11, 11], scell_dim=[2, 2, 2], run=True
     # )
-    prepare_jdos_api(phonon_obj, mesh=[11, 11, 11], write_jdos = True)
-    # prepare_gruneisen_FC3(
-    #     phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=False, run=True, plot=True
-    # )
+    prepare_jdos_api(phonon_obj, mesh=[20, 20, 20], write_jdos = True)
+    prepare_gruneisen_FC3(
+        phonon_obj, poscar=pos, mesh=[11, 11, 11], band_calc=False, run=True, plot=True
+    )
     # prepare_gruneisen_quasiharmonic("POSCAR-unitcell", 1.00335)

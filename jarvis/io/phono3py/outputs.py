@@ -235,7 +235,7 @@ class JDOS:
                     phonon_obj._primitive.cell,
                 )
             rotation_map = get_grid_points_by_rotations(
-                phonon_obj._mesh.ir_grid_points[qindx], bzgrid,
+                phonon_obj._mesh.ir_grid_points[qindx], bzgrid
             )
             # Need to decide if this makes sense
             gv_by_gv[qindx] /= len(rotation_map) // len(np.unique(rotation_map))
@@ -291,7 +291,7 @@ class JDOS:
 
     # Weighted JDOS should work? Maybe write separate method?
     def linewidth_from_jdos(
-        self, spectral_jdos, atoms, vs, grun=0.8, T=300, plot=False
+        self, spectral_jdos, atoms, vs, grun=0.83, T=300, plot=False
     ):
         """
         Calculate the phonon linewidth using semi-empirical expression that
@@ -357,6 +357,8 @@ class JDOS:
             plt.plot(freq_pts, spectral_kappa)
             plt.xlabel("Frequency (THz)")
             plt.ylabel(r"$\kappa$ (W/m$\cdot$K$\cdot$THz)")
+            plt.xlim([0, 15])
+            plt.ylim([0, 30])
             # Squared Group Velocity
             plt.figure()
             plt.plot(freq_pts, spectral_vg2)
@@ -387,6 +389,14 @@ if __name__ == "__main__":
     jdos = JDOS(phonon_obj, directory=jdos_dir, mesh=[11, 11, 11])
     jdos_ir = jdos.select_jdos()
     spectral_jdos = jdos.mode_to_spectral(jdos_ir)
-
+    '''
+    Plot Spectral JDOS
+    '''
+    freq_pts = jdos.phonopy_obj._total_dos._frequency_points
+    plt.figure()
+    plt.plot(freq_pts, spectral_jdos)
+    plt.xlabel('Frequency (THz)')
+    plt.ylabel('JDOS')
+    
     spectral_2Gamma = jdos.linewidth_from_jdos(spectral_jdos, atoms, vs=6084, plot=True)
     spectral_kappa = jdos.kappa_from_linewidth(spectral_2Gamma, plot=True)
