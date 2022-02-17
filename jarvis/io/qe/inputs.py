@@ -104,6 +104,11 @@ class QEinfile(object):
         else:
             self.control_params = {}
 
+        if "inputa2f" in input_params:
+            self.inputa2f = input_params["inputa2f"]
+        else:
+            self.inputa2f = {}
+
         if "ions" in input_params:
             self.ion_params = input_params["ions"]
         else:
@@ -234,7 +239,7 @@ class QEinfile(object):
     def atomic_pos(self):
         """Obtain string for QE atomic positions."""
         line = ""
-        self.atoms = Spacegroup3D(self.atoms).refined_atoms
+        # self.atoms = Spacegroup3D(self.atoms).refined_atoms
         coords = np.array(self.atoms.frac_coords)
         ntot = self.atoms.num_atoms
 
@@ -251,6 +256,7 @@ class QEinfile(object):
         """Obtain string for QE atomic lattice parameters."""
         lat_mat = np.array(self.atoms.lattice_mat)
         if self.sanitize:
+            print("Sanitizing Atoms.")
             a_lat = np.linalg.norm(lat_mat[0, :])
             at = lat_mat / a_lat
             for i in range(3):
@@ -289,6 +295,7 @@ class QEinfile(object):
         cell = ""
         input = ""
         inputph = ""
+        inputa2f = ""
         spec = ""
         if self.control_params:
             control = (
@@ -339,6 +346,13 @@ class QEinfile(object):
                 + "/"
                 + "\n"
             )
+        if self.inputa2f:
+            inputa2f = (
+                "\n&inputa2F\n\n"
+                + self.dictionary_to_string(self.inputa2f)
+                + "/"
+                + "\n"
+            )
         if self.species:
             spec = "ATOMIC_SPECIES\n\n" + self.atomic_species_string() + "\n"
         line = (
@@ -349,6 +363,7 @@ class QEinfile(object):
             + cell
             + input
             + inputph
+            + inputa2f
             + spec
             # + "ATOMIC_SPECIES\n\n"
             # + self.atomic_species_string()

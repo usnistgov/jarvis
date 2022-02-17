@@ -8,30 +8,6 @@ import os
 from jarvis.core.utils import get_factors
 
 
-def calc_Tc(wlog=300, lamb=1.0, mu=0.1):
-    """Calculate Tc."""
-    tc = (wlog / 1.2) * np.exp(
-        -1.04 * (1 + lamb) / (lamb * (1 - 0.062 * mu) - mu)
-    )
-    return tc
-
-
-def parse_lambda(filename="lambda"):
-    """Parse lambda file."""
-    f = open(filename, "r")
-    lines = f.read().splitlines()
-    f.close()
-    for i in lines:
-        if "Broadening" in i:
-            tmp = i.split()
-            print(i.split())
-            wlog = float(tmp[-1])
-            lamb = float(tmp[3])
-            Tc = calc_Tc(wlog=wlog, lamb=lamb)
-            print("Tc", Tc)
-            print()
-
-
 def very_clean():
     """Clean files."""
     cmd = (
@@ -148,14 +124,14 @@ class SuperCond(object):
             },
             "system": {
                 "ibrav": 0,
-                "degauss": 0.01,
+                # "degauss": 0.01,
                 "nat": None,
                 "ntyp": None,
                 "ecutwfc": 45,
                 "ecutrho": 250,
-                "occupations": "'smearing'",
-                "smearing": "'mp'",
-                "la2F ": ".true.",
+                "occupations": "'tetrahedra_opt'",
+                # "smearing": "'mp'",
+                # "la2F ": ".true.",
             },
             "electrons": {
                 "diagonalization": "'david'",
@@ -177,26 +153,34 @@ class SuperCond(object):
 
         info_scf = qejob_scf_init.runjob()
         print(info_scf)
-        # kpts = kp._kpoints[0]
+        kpts = kp._kpoints[0]
         qpts = qp._kpoints[0]
         nq1 = qpts[0]  # get_factors(kpts[0])[0]
         nq2 = qpts[1]  # get_factors(kpts[1])[0]
         nq3 = qpts[2]  # get_factors(kpts[2])[0]
+        nk1 = kpts[0]
+        nk2 = kpts[1]
+        nk3 = kpts[2]
         ph = {
             "inputph": {
                 "prefix": "'QE'",
                 "fildyn": "'QE.dyn'",
                 "outdir": "'./'",
                 "ldisp": ".true.",
-                "trans": ".true.",
+                "lshift_q": ".true.",
                 "fildvscf": "'dvscf'",
-                "electron_phonon": "'interpolated'",
-                "el_ph_sigma": 0.005,
+                "fildrho": "'dvrho'",
+                # "electron_phonon": "'lambda_tetra'",
+                # "electron_phonon": "'interpolated'",
+                # "el_ph_sigma": 0.005,
                 "nq1": nq1,
                 "nq2": nq2,
                 "nq3": nq3,
-                "tr2_ph": "1.0d-12",
-            }
+                "nk1": nk1,
+                "nk2": nk2,
+                "nk3": nk3,
+                # "tr2_ph": "1.0d-12",
+            },
         }
         qejob_ph = QEjob(
             atoms=final_strt,
@@ -209,55 +193,51 @@ class SuperCond(object):
         )
 
         qejob_ph.runjob()
-        # import sys
-        # sys.exit()
-        qr = {
-            "input": {
-                "zasr": "'simple'",
+
+        nq1 = qpts[0]  # get_factors(kpts[0])[0]
+        nq2 = qpts[1]  # get_factors(kpts[1])[0]
+        nq3 = qpts[2]  # get_factors(kpts[2])[0]
+        nk1 = kpts[0]
+        nk2 = kpts[1]
+        nk3 = kpts[2]
+        ph_tetra = {
+            "inputph": {
+                "prefix": "'QE'",
                 "fildyn": "'QE.dyn'",
-                "flfrc": "'QE333.fc'",
-                "la2F": ".true.",
-            }
+                "outdir": "'./'",
+                "ldisp": ".true.",
+                "lshift_q": ".true.",
+                "fildvscf": "'dvscf'",
+                "fildrho": "'dvrho'",
+                "electron_phonon": "'lambda_tetra'",
+                # "electron_phonon": "'interpolated'",
+                # "el_ph_sigma": 0.005,
+                "nq1": nq1,
+                "nq2": nq2,
+                "nq3": nq3,
+                "nk1": nk1,
+                "nk2": nk2,
+                "nk3": nk3,
+                # "tr2_ph": "1.0d-12",
+            },
+            "inputa2f": {"nfreq": 500,},
         }
-        qejob_qr = QEjob(
+        qejob_ph_tetra = QEjob(
             atoms=final_strt,
-            input_params=qr,
-            output_file="q2r.out",
-            # qe_cmd="/home/knc6/Software/qe/q-e/bin/q2r.x",
-            qe_cmd=self.qe_cmd.replace("pw.x", "q2r.x"),
-            jobname="qr",
+            input_params=ph_tetra,
+            output_file="ph_tetra.out",
+            qe_cmd=self.qe_cmd.replace("pw.x", "ph.x"),
+            jobname="ph_tetra",
             kpoints=None,
-            input_file="aqr.in",
+            input_file="aph_tetra.in",
         )
 
-        qejob_qr.runjob()
-
-        kpts = kp._kpoints[0]
-        matdyn = {
-            "input": {
-                "asr": "'simple'",
-                "flfrc": "'QE333.fc'",
-                "flfrq": "'QE333.freq'",
-                "la2F": ".true.",
-                "dos": ".true.",
-                "fldos": "'phonon.dos'",
-                "nk1": kpts[0],
-                "nk2": kpts[1],
-                "nk3": kpts[2],
-                "ndos": 50,
-            }
-        }
-
-        qejob_matdyn = QEjob(
-            atoms=final_strt,
-            input_params=matdyn,
-            output_file="matdyn.out",
-            # qe_cmd="/home/knc6/Software/qe/q-e/bin/matdyn.x",
-            qe_cmd=self.qe_cmd.replace("pw.x", "matdyn.x"),
-            jobname="matdyn",
-            kpoints=None,
-            input_file="amatdyn.in",
+        qejob_ph_tetra.runjob()
+        cmd = (
+            self.qe_cmd.replace("pw.x", "alpha2f.x")
+            + "<"
+            + "aph_tetra.in"
+            + ">"
+            + "aph_tetra.out"
         )
-
-        qejob_matdyn.runjob()
-        parse_lambda()
+        os.system(cmd)
