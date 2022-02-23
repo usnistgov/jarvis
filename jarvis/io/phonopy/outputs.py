@@ -22,6 +22,7 @@ except Exception as exp:
 
 from math import pi as pi
 
+
 """
 Constants 
 """
@@ -317,7 +318,7 @@ if __name__ == "__main__":
     tp_dict = get_thermal_properties(
         phonon_obj, mesh=[11, 11, 11], tmin=0, tmax=300, step=100
     )
-    gv_by_gv = get_gv_outer_product(phonon_obj, mesh=[11, 11, 11])
+#    gv_by_gv = get_gv_outer_product(phonon_obj, mesh=[11, 11, 11])
 #    get_phonon_tb(fc=fc, atoms=a)
 #    cvn = Spacegroup3D(a).conventional_standard_structure
 #    w = WannierHam("phonopyTB_hr.dat")
