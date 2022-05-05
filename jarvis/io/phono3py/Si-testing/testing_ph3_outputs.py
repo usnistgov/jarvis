@@ -89,9 +89,12 @@ plt.scatter(
 # Gamma
 spectral_gamma = jdos.mode_to_spectral(np.array(kappa_Si.dict["gamma"][30, :, :]))
 plt.figure()
-plt.plot(freq_pts, 2 * spectral_gamma)
-plt.xlabel("Frequency (THz)")
-plt.ylabel(r"$2\Gamma$ (THz)")
+plt.plot(freq_pts, 2 * spectral_gamma,color = 'xkcd:black', label = 'Full DFT', linewidth = 2)
+plt.plot(freq_pts, spectral_2Gamma, color = 'xkcd:red', label = 'JDOS Model', linewidth = 2)
+plt.xlabel("Frequency (THz)", fontsize = 12)
+plt.ylabel(r"$2\Gamma$ (THz)", fontsize = 12)
+plt.legend(fontsize = 12)
+plt.savefig('Si_jdos_dft_comp.pdf', bbox_inches = 'tight')
 # plt.scatter(
 #     np.array(kappa_Si.dict["frequency"]),
 #     np.array(kappa_Si.dict["gamma"][30, :, :]),
