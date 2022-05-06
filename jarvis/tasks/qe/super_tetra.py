@@ -84,7 +84,7 @@ class SuperCond(object):
                 "diagonalization": "'david'",
                 "mixing_mode": "'local-TF'",
                 "mixing_beta": 0.3,
-                "conv_thr": "1d-9",
+                "conv_thr": "1d-10",
             },
             "ions": {"ion_dynamics": "'bfgs'"},
             "cell": {"cell_dynamics": "'bfgs'", "cell_dofree": "'all'"},
@@ -137,7 +137,7 @@ class SuperCond(object):
                 "diagonalization": "'david'",
                 "mixing_mode": "'plain'",
                 "mixing_beta": 0.7,
-                "conv_thr": "1d-9",
+                "conv_thr": "1d-10",
             },
         }
 
