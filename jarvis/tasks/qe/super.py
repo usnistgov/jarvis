@@ -6,7 +6,7 @@ from jarvis.core.kpoints import Kpoints3D
 from jarvis.tasks.qe.qe import QEjob
 import numpy as np
 import os
-from jarvis.core.utils import get_factors
+# from jarvis.core.utils import get_factors
 
 
 def calc_Tc(wlog=300, lamb=1.0, mu=0.1):

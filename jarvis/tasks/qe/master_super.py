@@ -2,14 +2,15 @@
 from jarvis.tasks.qe.super import SuperCond
 from jarvis.core.utils import get_factors
 from jarvis.core.atoms import Atoms
-from jarvis.db.figshare import data, get_jid_data
+from jarvis.db.figshare import data
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.tasks.queue_jobs import Queue
 from jarvis.db.jsonutils import dumpjson
 import os
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
-import glob
-from jarvis.db.jsonutils import loadjson
+
+# import glob
+# from jarvis.db.jsonutils import loadjson
 
 my_data = data("dft_3d")
 
@@ -51,6 +52,7 @@ def write_qejob(pyname="job.py", job_json=""):
     f.close()
 
 
+submit_job = True
 jids = ["JVASP-19821"]
 for i in jids:
     try:

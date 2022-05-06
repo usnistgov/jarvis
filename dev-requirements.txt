@@ -125,7 +125,7 @@ sphinxcontrib-serializinghtml==1.1.5
 stevedore==3.5.0
 symengine==0.8.1
 sympy==1.9
-tensorboard==2.7.1
+tensorboard==2.8.1
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.0
 tensorflow==2.8.0

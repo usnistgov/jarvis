@@ -3,9 +3,11 @@ from jarvis.io.qe.outputs import DataFileSchema
 from jarvis.core.atoms import Atoms
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.tasks.qe.qe import QEjob
-import numpy as np
+
+# import numpy as np
 import os
-from jarvis.core.utils import get_factors
+
+# from jarvis.core.utils import get_factors
 
 
 def very_clean():
@@ -220,7 +222,9 @@ class SuperCond(object):
                 "nk3": nk3,
                 # "tr2_ph": "1.0d-12",
             },
-            "inputa2f": {"nfreq": 500,},
+            "inputa2f": {
+                "nfreq": 500,
+            },
         }
         qejob_ph_tetra = QEjob(
             atoms=final_strt,
