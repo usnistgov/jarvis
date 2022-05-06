@@ -73,7 +73,7 @@ pandas==1.3.5
 pbr==5.8.0
 PennyLane==0.14.1
 #phonopy==2.10.0
-Pillow==8.4.0
+Pillow==9.0.1
 pluggy==1.0.0
 ply==3.11
 protobuf==3.19.1
@@ -127,7 +127,7 @@ sphinxcontrib-serializinghtml==1.1.5
 stevedore==3.5.0
 symengine==0.8.1
 sympy==1.9
-tensorboard==2.7.0
+tensorboard==2.7.1
 tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.0
 tensorflow==2.7.0

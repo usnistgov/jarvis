@@ -1,4 +1,5 @@
 """Module to run Tc calculation."""
+# Ref: https://arxiv.org/abs/2205.00060
 from jarvis.io.qe.outputs import DataFileSchema
 from jarvis.core.atoms import Atoms
 from jarvis.core.kpoints import Kpoints3D
@@ -44,12 +45,22 @@ def very_clean():
 class SuperCond(object):
     """Module to calculate Tc."""
 
-    def __init__(self, atoms=None, kp=None, qp=None, qe_cmd="pw.x"):
+    def __init__(
+        self,
+        atoms=None,
+        kp=None,
+        qp=None,
+        qe_cmd="pw.x",
+        relax_calc="'vc-relax'",
+        pressure=None,
+    ):
         """Initialize the class."""
         self.atoms = atoms
         self.kp = kp
         self.qp = qp
+        self.relax_calc = relax_calc
         self.qe_cmd = qe_cmd
+        self.pressure = pressure
 
     def to_dict(self):
         """Get dictionary."""
@@ -58,6 +69,8 @@ class SuperCond(object):
         info["kp"] = self.kp.to_dict()
         info["qp"] = self.qp.to_dict()
         info["qe_cmd"] = self.qe_cmd
+        info["relax_calc"] = self.relax_calc
+        info["pressure"] = self.pressure
         return info
 
     @classmethod
@@ -68,6 +81,8 @@ class SuperCond(object):
             kp=Kpoints3D.from_dict(info["kp"]),
             qp=Kpoints3D.from_dict(info["qp"]),
             qe_cmd=info["qe_cmd"],
+            pressure=info["pressure"],
+            relax_calc=info["relax_calc"],
         )
 
     def runjob(self):
@@ -79,7 +94,7 @@ class SuperCond(object):
         relax = {
             "control": {
                 # "calculation": "'scf'",
-                "calculation": "'vc-relax'",
+                "calculation": self.relax_calc,  # "'vc-relax'",
                 "restart_mode": "'from_scratch'",
                 "prefix": "'RELAX'",
                 "outdir": "'./'",
@@ -113,6 +128,8 @@ class SuperCond(object):
             "ions": {"ion_dynamics": "'bfgs'"},
             "cell": {"cell_dynamics": "'bfgs'", "cell_dofree": "'all'"},
         }
+        if self.pressure is not None:
+            relax["cell"]["press"] = self.pressure
         qejob_relax = QEjob(
             atoms=atoms,
             input_params=relax,
