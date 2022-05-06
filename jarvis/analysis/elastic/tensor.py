@@ -120,7 +120,7 @@ class ElasticTensor(object):
     def melting_temperature_metals(self):
         """Get crude Melting temp. estimate."""
         # https://doi.org/10.1016/0036-9748(84)90267-9
-        avg_mod = self.average_modulus()
+        avg_mod = self.average_modulus
         k_vrh = avg_mod[0]
         return 607 + 9.3 * k_vrh
 

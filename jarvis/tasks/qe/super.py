@@ -1,11 +1,12 @@
 """Module to run Tc calculation."""
+# Ref: https://arxiv.org/abs/2205.00060
 from jarvis.io.qe.outputs import DataFileSchema
 from jarvis.core.atoms import Atoms
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.tasks.qe.qe import QEjob
 import numpy as np
 import os
-from jarvis.core.utils import get_factors
+# from jarvis.core.utils import get_factors
 
 
 def calc_Tc(wlog=300, lamb=1.0, mu=0.1):

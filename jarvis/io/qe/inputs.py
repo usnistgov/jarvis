@@ -5,7 +5,7 @@ import requests
 import tarfile
 from jarvis.core.specie import Specie
 import numpy as np
-from jarvis.analysis.structure.spacegroup import Spacegroup3D
+# from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
 
 class QEinfile(object):
