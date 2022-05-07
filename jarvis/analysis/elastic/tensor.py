@@ -44,12 +44,93 @@ class ElasticTensor(object):
         )
         return [Kr, Gr]
 
+    def long_velocity(self, atoms=None):
+        """Longitudinal velocity using Navier equation."""
+        # density = atoms.density
+        weight = float(atoms.composition.weight)
+        volume = atoms.volume
+        mass_density = 1.6605e3 * weight / volume
+        avg_mod = self.average_modulus
+        k_vrh = avg_mod[0]
+        g_vrh = avg_mod[1]
+        # 1e9:= GPa to Pascal (kg/ms^2)
+        vel = np.sqrt(1e9 * (k_vrh + 4.0 / 3.0 * g_vrh) / mass_density)
+        return vel
+
+    def trans_velocity(self, atoms=None):
+        """Transverse velocity."""
+        avg_mod = self.average_modulus
+        g_vrh = avg_mod[1]
+        volume = atoms.volume
+        weight = float(atoms.composition.weight)
+        mass_density = 1.6605e3 * weight / volume
+        vel = np.sqrt(1e9 * g_vrh / mass_density)
+        return vel
+
+    def velocity_average(self, atoms=None):
+        """Average velocity."""
+        vt = self.trans_velocity(atoms=atoms)
+        vl = self.long_velocity(atoms=atoms)
+        return 1.0 / (
+            np.cbrt(
+                (1.0 / 3.0) * (2.0 / (vt * vt * vt) + 1.0 / (vl * vl * vl))
+            )
+        )
+
+    def debye_temperature(self, atoms=None):
+        """Debye temperature."""
+        const = 1.05457e-34 / 1.38065e-23  # (h/kb)
+        v0 = atoms.volume * 1e-30 / atoms.num_atoms
+        vl = self.long_velocity(atoms=atoms)
+        vt = self.trans_velocity(atoms=atoms)
+        vm = 3 ** (1.0 / 3.0) * (1 / vl ** 3 + 2 / vt ** 3) ** (-1.0 / 3.0)
+        theta = const * vm * (6 * np.pi ** 2 / v0) ** (1.0 / 3.0)
+        return theta
+
     @property
     def average_modulus(self):
         """Get average modulus."""
         return (
             np.array(self.voigt_modulus) + np.array(self.reuss_modulus)
         ) / 2
+
+    @property
+    def pugh_ratio_voigt(self):
+        """Get Voigt Pugh ratio."""
+        Kv, Gv = self.voigt_modulus
+        return Gv / Kv
+
+    @property
+    def pettifor_criteria(self):
+        """Get Pettifor criteria."""
+        c = self.et_tensor
+        return c[0][1] - c[3][3]
+
+    @property
+    def is_brittle(self):
+        """Check if brittle material."""
+        return self.pugh_ratio_voigt > 0.571 and self.pettifor_criteria < 0
+
+    @property
+    def is_ductile(self):
+        """Check if ductile material."""
+        return self.pugh_ratio_voigt < 0.571 and self.pettifor_criteria > 0
+
+    @property
+    def melting_temperature_metals(self):
+        """Get crude Melting temp. estimate."""
+        # https://doi.org/10.1016/0036-9748(84)90267-9
+        avg_mod = self.average_modulus
+        k_vrh = avg_mod[0]
+        return 607 + 9.3 * k_vrh
+
+    @property
+    def cauchy_pressure(self):
+        """Get Cauchy pressure."""
+        # >0 ionic bonding
+        # <0 covalent bonding
+        c = self.et_tensor
+        return c[0][1] - c[3][3]
 
     @property
     def poisson_ratio(self):
