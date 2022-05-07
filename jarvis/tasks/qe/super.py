@@ -6,6 +6,7 @@ from jarvis.core.kpoints import Kpoints3D
 from jarvis.tasks.qe.qe import QEjob
 import numpy as np
 import os
+
 # from jarvis.core.utils import get_factors
 
 
@@ -278,4 +279,3 @@ class SuperCond(object):
 
         qejob_matdyn.runjob()
         parse_lambda()
-        
