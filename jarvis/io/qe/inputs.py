@@ -4,6 +4,8 @@ import os
 import requests
 import tarfile
 from jarvis.core.specie import Specie
+import numpy as np
+# from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
 
 class QEinfile(object):
@@ -16,7 +18,14 @@ class QEinfile(object):
     """
 
     def __init__(
-        self, atoms=None, kpoints=None, psp_dir=None, input_params={}, url=None
+        self,
+        atoms=None,
+        kpoints=None,
+        psp_dir=None,
+        input_params={},
+        url=None,
+        sanitize=True,
+        sanitize_tol=2e-4,
     ):
         """Initialize input parameters for qunatum espresso."""
         if input_params == {}:
@@ -47,6 +56,8 @@ class QEinfile(object):
         self.input_params = input_params
         self.atoms = atoms
         self.kpoints = kpoints
+        self.sanitize = sanitize
+        self.sanitize_tol = sanitize_tol
         if "system" in input_params:
             self.system_params = input_params["system"]
             if (
@@ -92,6 +103,11 @@ class QEinfile(object):
                 ] = self.atoms.composition.reduced_formula
         else:
             self.control_params = {}
+
+        if "inputa2f" in input_params:
+            self.inputa2f = input_params["inputa2f"]
+        else:
+            self.inputa2f = {}
 
         if "ions" in input_params:
             self.ion_params = input_params["ions"]
@@ -187,33 +203,86 @@ class QEinfile(object):
             )
         return line
 
+    def check_frac(self, n):
+        """Check fractional coordinates or lattice parameters."""
+        items = [
+            0.0,
+            0.3333333333333333,
+            0.25,
+            0.5,
+            0.75,
+            0.6666666666666667,
+            1.0,
+            1.5,
+            2.0,
+            -0.5,
+            -2.0,
+            -1.5,
+            -1.0,
+            1.0 / 2.0 ** 0.5,
+            -1.0 / 2.0 ** 0.5,
+            3.0 ** 0.5 / 2.0,
+            -(3.0 ** 0.5) / 2.0,
+            1.0 / 3.0 ** 0.5,
+            -1.0 / 3.0 ** 0.5,
+            1.0 / 2.0 / 3 ** 0.5,
+            -1.0 / 2.0 / 3 ** 0.5,
+            1 / 6,
+            5 / 6,
+        ]
+        items = items + [(-1) * i for i in items]
+        for f in items:
+            if abs(f - n) < self.sanitize_tol:
+                return f
+        return n
+
     def atomic_pos(self):
         """Obtain string for QE atomic positions."""
         line = ""
-        for i, j in zip(self.atoms.elements, self.atoms.frac_coords):
+        # self.atoms = Spacegroup3D(self.atoms).refined_atoms
+        coords = np.array(self.atoms.frac_coords)
+        ntot = self.atoms.num_atoms
+
+        if self.sanitize:
+            for i in range(ntot):
+                for j in range(3):  # neatin
+                    coords[i, j] = self.check_frac(coords[i, j])
+
+        for i, j in zip(self.atoms.elements, coords):
             line = line + str(i) + " " + " ".join(map(str, j)) + "\n"
         return line
 
     def atomic_cell_params(self):
         """Obtain string for QE atomic lattice parameters."""
+        lat_mat = np.array(self.atoms.lattice_mat)
+        if self.sanitize:
+            print("Sanitizing Atoms.")
+            a_lat = np.linalg.norm(lat_mat[0, :])
+            at = lat_mat / a_lat
+            for i in range(3):
+                for j in range(3):
+                    at[i, j] = self.check_frac(at[i, j])
+
+            lat_mat = at * a_lat
+
         line = (
-            str(self.atoms.lattice_mat[0][0])
+            str(lat_mat[0][0])
             + " "
-            + str(self.atoms.lattice_mat[0][1])
+            + str(lat_mat[0][1])
             + " "
-            + str(self.atoms.lattice_mat[0][2])
+            + str(lat_mat[0][2])
             + "\n"
-            + str(self.atoms.lattice_mat[1][0])
+            + str(lat_mat[1][0])
             + " "
-            + str(self.atoms.lattice_mat[1][1])
+            + str(lat_mat[1][1])
             + " "
-            + str(self.atoms.lattice_mat[1][2])
+            + str(lat_mat[1][2])
             + "\n"
-            + str(self.atoms.lattice_mat[2][0])
+            + str(lat_mat[2][0])
             + " "
-            + str(self.atoms.lattice_mat[2][1])
+            + str(lat_mat[2][1])
             + " "
-            + str(self.atoms.lattice_mat[2][2])
+            + str(lat_mat[2][2])
         )
         return line
 
@@ -226,6 +295,7 @@ class QEinfile(object):
         cell = ""
         input = ""
         inputph = ""
+        inputa2f = ""
         spec = ""
         if self.control_params:
             control = (
@@ -276,6 +346,13 @@ class QEinfile(object):
                 + "/"
                 + "\n"
             )
+        if self.inputa2f:
+            inputa2f = (
+                "\n&inputa2F\n\n"
+                + self.dictionary_to_string(self.inputa2f)
+                + "/"
+                + "\n"
+            )
         if self.species:
             spec = "ATOMIC_SPECIES\n\n" + self.atomic_species_string() + "\n"
         line = (
@@ -286,6 +363,7 @@ class QEinfile(object):
             + cell
             + input
             + inputph
+            + inputa2f
             + spec
             # + "ATOMIC_SPECIES\n\n"
             # + self.atomic_species_string()

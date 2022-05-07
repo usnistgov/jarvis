@@ -870,7 +870,9 @@ class Atoms(object):
                 and nbor_info["dist"][in1][i] * nbor_info["dist"][in2][i] != 0
             ]
             ang_hist, ang_bins = np.histogram(
-                angles, bins=np.arange(1, nbins + 2, 1), density=False,
+                angles,
+                bins=np.arange(1, nbins + 2, 1),
+                density=False,
             )
             for jj, j in enumerate(angles):
                 actual_pangs[i, jj] = j
@@ -1648,13 +1650,13 @@ def pmg_to_atoms(pmg=""):
     )
 
 
-def ase_to_atoms(ase_atoms=""):
+def ase_to_atoms(ase_atoms="", cartesian=True):
     """Convert ase structure to Atoms."""
     return Atoms(
         lattice_mat=ase_atoms.get_cell(),
         elements=ase_atoms.get_chemical_symbols(),
         coords=ase_atoms.get_positions(),
-        #         pbc=True,
+        cartesian=cartesian,
     )
 
 

@@ -17,6 +17,15 @@ def xml_to_dict(fname):
     return data
 
 
+def get_factors(x, start=2):
+    """Get factors of a number."""
+    facts = []
+    for i in range(start, x + 1):
+        if x % i == 0:
+            facts.append(i)
+    return facts
+
+
 def get_counts(array=["W", "W", "Mo", "Mo", "S", "S"]):
     """
     Get number of unique elements and their counts.
@@ -266,14 +275,7 @@ def digitize_array(values=[], max_len=10):
 
 
 def bond_angle(
-    dist1,
-    dist2,
-    bondx1,
-    bondx2,
-    bondy1,
-    bondy2,
-    bondz1,
-    bondz2,
+    dist1, dist2, bondx1, bondx2, bondy1, bondy2, bondz1, bondz2,
 ):
     """Get an angle."""
     nm = dist1 * dist2
