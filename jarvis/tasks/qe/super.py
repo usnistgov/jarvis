@@ -12,7 +12,7 @@ import os
 def calc_Tc(wlog=300, lamb=1.0, mu=0.1):
     """Calculate Tc."""
     tc = (wlog / 1.2) * np.exp(
-        -1.04 * (1 + lamb) / (lamb * (1 - 0.062 * mu) - mu)
+        -1.04 * (1 + lamb) / (lamb * (1 - 0.62 * mu) - mu)
     )
     return tc
 
@@ -278,3 +278,4 @@ class SuperCond(object):
 
         qejob_matdyn.runjob()
         parse_lambda()
+        
