@@ -1913,6 +1913,34 @@ class GenericIncars(object):
             name="r2scan", incar=inc, pot_type="POT_GGA_PAW_PBE"
         )
 
+    def hse06(self):
+        """Select HSE06 functional."""
+        data = dict(
+            EDIFF="1E-6",
+            NEDOS=5000,
+            ALGO="All",
+            ISPIN=2,
+            LORBIT=11,
+            ISMEAR=0,
+            NPAR=16,
+            LHFCALC=".TRUE.",
+            HFSCREEN=0.2,
+            TIME=0.4,
+            LREAL=".FALSE.",
+            NSIM=4,
+            LPLANE=".TRUE.",
+            NELM=450,
+            LOPTICS=".FALSE.",
+            LMAXMIX=6,
+            ISTART=1,
+            LCHARG=".FALSE.",
+            LWAVE=".FALSE.",
+        )
+        inc = Incar(data)
+        return GenericIncars(
+            name="hse06", incar=inc, pot_type="POT_GGA_PAW_PBE"
+        )
+
     def lda(self):
         """Select LDA functional."""
         data = dict(
