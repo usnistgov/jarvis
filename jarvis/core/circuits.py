@@ -8,6 +8,7 @@ class QuantumCircuitLibrary(object):
     """Module for storing various quantum circuits."""
 
     def __init__(self, n_qubits=3, reps=1):
+        """Initialize class."""
         self.n_qubits = n_qubits
         self.reps = reps
 
@@ -62,16 +63,19 @@ class QuantumCircuitLibrary(object):
         return circ
 
     def circuit4(self):
+        """Generate RealAmplitudes ansatz."""
         reps = self.reps
         n_qubits = self.n_qubits
         return RealAmplitudes(num_qubits=n_qubits, reps=reps)
 
     def circuit5(self):
+        """Generate PauliTwoDesign ansatz."""
         reps = self.reps
         n_qubits = self.n_qubits
         return PauliTwoDesign(num_qubits=n_qubits, reps=reps)
 
     def circuit6(self):
+        """Generate EfficientSU2 ansatz."""
         reps = self.reps
         n_qubits = self.n_qubits
         return EfficientSU2(num_qubits=n_qubits, reps=reps)

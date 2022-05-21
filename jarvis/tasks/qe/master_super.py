@@ -30,6 +30,7 @@ run_dir = "/wrk/knc6/Super"
 
 
 def non_prime_kpoints(kpts=[]):
+    """Get non prime kpoints."""
     mem = []
     for i in kpts:
         facts = get_factors(i)
