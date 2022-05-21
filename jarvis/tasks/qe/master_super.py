@@ -107,4 +107,3 @@ for i in jids:
     except Exception as exp:
         print(exp)
         pass
-      
