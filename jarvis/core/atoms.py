@@ -6,15 +6,18 @@ from jarvis.core.lattice import Lattice, lattice_coords_transformer
 from collections import OrderedDict
 from jarvis.core.utils import get_counts
 import itertools
-from jarvis.core.utils import get_angle
 from jarvis.core.utils import (
     check_duplicate_coords,
     get_new_coord_for_xyz_sym,
+    gcd,
+    get_angle,
 )
 import os
 import math
 import tempfile
 import random
+import string
+import datetime
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
@@ -870,9 +873,7 @@ class Atoms(object):
                 and nbor_info["dist"][in1][i] * nbor_info["dist"][in2][i] != 0
             ]
             ang_hist, ang_bins = np.histogram(
-                angles,
-                bins=np.arange(1, nbins + 2, 1),
-                density=False,
+                angles, bins=np.arange(1, nbins + 2, 1), density=False,
             )
             for jj, j in enumerate(angles):
                 actual_pangs[i, jj] = j
@@ -1691,6 +1692,147 @@ def crop_square(atoms=None, csize=10):
         lattice_mat=lat_mat, elements=els, coords=coords, cartesian=True
     ).center_around_origin([0.5, 0.5, 0.5])
     return new_atoms
+
+
+class OptimadeAdaptor(object):
+    """Module to work with optimade."""
+
+    def __init__(self, atoms=None):
+        """Intialize class with Atoms object."""
+        self.atoms = atoms
+
+    def reduce(self, content={}):
+        """Reduce chemical formula."""
+        repeat = 0
+        for specie, count in content.items():
+            if repeat == 0:
+                repeat = count
+            else:
+                repeat = gcd(count, repeat)
+        reduced = {}
+        for specie, count in content.items():
+            reduced[specie] = count // repeat
+        return reduced, repeat
+
+    def optimade_reduced_formula(self, content={}, sort_alphabetical=True):
+        """Get chemical formula."""
+        if sort_alphabetical:
+            content = OrderedDict(
+                sorted(content.items(), key=lambda x: (x[0]))
+            )
+
+        form = ""
+        reduced, repeat = self.reduce(content)
+        Z = {}
+        for i, j in reduced.items():
+            Z[i] = reduced[i]
+        for specie, count in Z.items():
+            if float(count).is_integer():
+                if count == 1:
+                    form = form + specie
+                else:
+                    form = form + specie + str(int(count))
+            else:
+                form = form + specie + str(count)
+
+        return form  # .replace("1", "")
+
+    def get_optimade_prototype(self, content={}):
+        """Get chemical prototypes such as A, AB etc."""
+        reduced, repeat = self.reduce(content)
+        proto = ""
+        all_upper = string.ascii_uppercase
+        items = sorted(list(reduced.values()), reverse=True)
+        N = 0
+        # for specie, count in reduced.items():
+        for c in items:
+            proto = proto + str(all_upper[N]) + str(round(c, 3))
+            N = N + 1
+        return proto.replace("1", "")
+
+    def get_optimade_species(self):
+        """Get optimade species."""
+        atoms = self.atoms
+        elements = np.array(list(set(atoms.elements)))
+        order = np.argsort(elements)
+        elements = (elements)[order]
+        sp = []
+        for i in elements:
+            info = {}
+            info["name"] = i
+            info["chemical_symbols"] = [i]
+            info["concentration"] = [1.0]
+            info["mass"] = None
+            info["original_name"] = None
+            info["attached"] = None
+            info["nattached"] = None
+            sp.append(info)
+        return sp
+
+    def from_optimade(self, info={}):
+        """Get Atoms from optimade."""
+        lattice_mat = info["attributes"]["lattice_vectors"]
+        elements = info["attributes"]["elements"]
+        coords = info["attributes"]["cartesian_site_positions"]
+        return Atoms(
+            lattice_mat=lattice_mat,
+            elements=elements,
+            coords=coords,
+            cartesian=True,
+        )
+
+    def to_optimade(
+        self,
+        idx="x",
+        itype="structures",
+        source="JARVIS-DFT-3D",
+        reference_url="https://www.ctcms.nist.gov/~knc6/static/JARVIS-DFT/",
+        now=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    ):
+        """Get optimade format data."""
+        atoms = self.atoms
+        info = {}
+        info["id"] = idx
+        info["type"] = itype
+        info_at = {}
+        info_at["_jarvis_source"] = source
+        info_at["_jarvis_reference"] = (
+            reference_url
+            + idx
+            # + ".xml"
+        )
+        comp = atoms.composition.to_dict()
+        info_at["chemical_formula_reduced"] = self.optimade_reduced_formula(
+            comp
+        )
+        info_at["chemical_formula_anonymous"] = self.get_optimade_prototype(
+            comp
+        )
+        elements = np.array(atoms.elements)
+        order = np.argsort(elements)
+        info_at["elements"] = elements[order]
+        info_at["nelements"] = len(elements)
+        info_at["nsites"] = len(atoms.frac_coords)
+        info_at["lattice_vectors"] = atoms.lattice_mat.tolist()
+        info_at["species_at_sites"] = np.array(atoms.elements)[order]
+        info_at["cartesian_site_positions"] = atoms.cart_coords[order].tolist()
+        info_at["nperiodic_dimensions"] = 3
+        # info_at["species"] = atoms.elements
+        info_at[
+            "species"
+        ] = self.get_optimade_species()  # dict(atoms.composition.to_dict())
+        info_at["elements_ratios"] = list(
+            atoms.composition.atomic_fraction.values()
+        )
+        info_at["structure_features"] = []
+        info_at["last_modified"] = str(now)
+        # info_at["more_data_available"] = True
+        info_at[
+            "chemical_formula_descriptive"
+        ] = atoms.composition.reduced_formula
+        info_at["dimension_types"] = [1, 1, 1]
+        info["attributes"] = info_at
+        return info
 
 
 def build_xanes_poscar(
