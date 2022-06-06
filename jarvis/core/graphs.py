@@ -153,6 +153,8 @@ def build_undirected_edgedata(
                 v.append(vv)
                 r.append(dd)
 
+    u, v, r = (np.array(x) for x in (u, v, r))
+
     u = torch.tensor(u)
     v = torch.tensor(v)
     r = torch.tensor(r).type(torch.get_default_dtype())
