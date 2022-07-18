@@ -1130,12 +1130,9 @@ class Wavecar(object):
                 % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid))
             )
         else:
-            assert (
-                Gvec.shape[0] == self._nplws[ikpt - 1]
-            ), "No. of planewaves not consistent! %d %d %d" % (
-                Gvec.shape[0],
-                self._nplws[ikpt - 1],
-                np.prod(self._ngrid),
+            assert Gvec.shape[0] == self._nplws[ikpt - 1], (
+                "No. of planewaves not consistent! %d %d %d"
+                % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid),)
             )
         self._gvec = np.asarray(Gvec, dtype=int)
 
@@ -1672,9 +1669,15 @@ class Vasprun(object):
         """Get all forces."""
         forces = []
         for m in self.ionic_steps:
-            force = np.array(
-                [[float(j) for j in i.split()] for i in m["varray"][0]["v"]]
-            )
+            if self.all_structures[-1].num_atoms == 1:
+                force = np.array(m["varray"][0]["v"].split(), dtype="float")
+            else:
+                force = np.array(
+                    [
+                        [float(j) for j in i.split()]
+                        for i in m["varray"][0]["v"]
+                    ]
+                )
 
             forces.append(force)
         return np.array(forces)
