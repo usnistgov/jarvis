@@ -177,7 +177,9 @@ class Poscar(object):
         lattice_mat.append([float(i) for i in text[3].split()])
         lattice_mat.append([float(i) for i in text[4].split()])
         lattice_mat = scale * np.array(lattice_mat)
-
+        begin = 5
+        if "S" in text[7] and "s" in text[7]:
+            begin = 6
         uniq_elements = text[5].split()
         element_count = np.array([int(i) for i in text[6].split()])
         elements = []
@@ -185,13 +187,12 @@ class Poscar(object):
             for j in range(ii):
                 elements.append(uniq_elements[i])
         cartesian = True
-        if "d" in text[7] or "D" in text[7]:
+        if "d" in text[begin + 2] or "D" in text[begin + 2]:
             cartesian = False
-        # print ('cartesian poscar=',cartesian,text[7])
         num_atoms = int(np.sum(element_count))
         coords = []
         for i in range(num_atoms):
-            coords.append([float(i) for i in text[8 + i].split()[0:3]])
+            coords.append([float(i) for i in text[begin + 3 + i].split()[0:3]])
         coords = np.array(coords)
         atoms = Atoms(
             lattice_mat=lattice_mat,
