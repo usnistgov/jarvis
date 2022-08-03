@@ -6,14 +6,18 @@ from jarvis.core.lattice import Lattice, lattice_coords_transformer
 from collections import OrderedDict
 from jarvis.core.utils import get_counts
 import itertools
-from jarvis.core.utils import get_angle
 from jarvis.core.utils import (
     check_duplicate_coords,
     get_new_coord_for_xyz_sym,
+    gcd,
+    get_angle,
 )
 import os
 import math
 import tempfile
+import random
+import string
+import datetime
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
@@ -580,6 +584,12 @@ class Atoms(object):
         f = open(filename, "r")
         lines = f.read().splitlines()
         f.close()
+        try:
+            lattice_mat = np.array(lines[1].split(","), dtype="float").reshape(
+                3, 3
+            )
+        except Exception:
+            pass
         coords = []
         species = []
         natoms = int(lines[0])
@@ -764,6 +774,7 @@ class Atoms(object):
         return np.array(neighbors, dtype="object")
 
     def get_neighbors_cutoffs(self, max_cut=10, r=5, bond_tol=0.15):
+        """Get neighbors within cutoff."""
         neighbors = self.get_all_neighbors(r=r, bond_tol=bond_tol)
         dists = np.hstack(([[xx[2] for xx in yy] for yy in neighbors]))
         hist, bins = np.histogram(dists, bins=np.arange(0.1, 10.2, 0.1))
@@ -815,6 +826,7 @@ class Atoms(object):
     def atomwise_angle_and_radial_distribution(
         self, r=5, bond_tol=0.15, c_size=10, verbose=False
     ):
+        """Get atomwise distributions."""
         rcut1, rcut2, neighbors = self.get_neighbors_cutoffs(
             r=r, bond_tol=bond_tol
         )
@@ -1007,6 +1019,8 @@ class Atoms(object):
     @property
     def num_atoms(self):
         """Get number of atoms."""
+        if np.squeeze(self.coords).ndim == 1:
+            return 1
         return len(self.coords)
 
     @property
@@ -1639,13 +1653,13 @@ def pmg_to_atoms(pmg=""):
     )
 
 
-def ase_to_atoms(ase_atoms=""):
+def ase_to_atoms(ase_atoms="", cartesian=True):
     """Convert ase structure to Atoms."""
     return Atoms(
         lattice_mat=ase_atoms.get_cell(),
         elements=ase_atoms.get_chemical_symbols(),
         coords=ase_atoms.get_positions(),
-        #         pbc=True,
+        cartesian=cartesian,
     )
 
 
@@ -1682,6 +1696,147 @@ def crop_square(atoms=None, csize=10):
     return new_atoms
 
 
+class OptimadeAdaptor(object):
+    """Module to work with optimade."""
+
+    def __init__(self, atoms=None):
+        """Intialize class with Atoms object."""
+        self.atoms = atoms
+
+    def reduce(self, content={}):
+        """Reduce chemical formula."""
+        repeat = 0
+        for specie, count in content.items():
+            if repeat == 0:
+                repeat = count
+            else:
+                repeat = gcd(count, repeat)
+        reduced = {}
+        for specie, count in content.items():
+            reduced[specie] = count // repeat
+        return reduced, repeat
+
+    def optimade_reduced_formula(self, content={}, sort_alphabetical=True):
+        """Get chemical formula."""
+        if sort_alphabetical:
+            content = OrderedDict(
+                sorted(content.items(), key=lambda x: (x[0]))
+            )
+
+        form = ""
+        reduced, repeat = self.reduce(content)
+        Z = {}
+        for i, j in reduced.items():
+            Z[i] = reduced[i]
+        for specie, count in Z.items():
+            if float(count).is_integer():
+                if count == 1:
+                    form = form + specie
+                else:
+                    form = form + specie + str(int(count))
+            else:
+                form = form + specie + str(count)
+
+        return form  # .replace("1", "")
+
+    def get_optimade_prototype(self, content={}):
+        """Get chemical prototypes such as A, AB etc."""
+        reduced, repeat = self.reduce(content)
+        proto = ""
+        all_upper = string.ascii_uppercase
+        items = sorted(list(reduced.values()), reverse=True)
+        N = 0
+        # for specie, count in reduced.items():
+        for c in items:
+            proto = proto + str(all_upper[N]) + str(round(c, 3))
+            N = N + 1
+        return proto.replace("1", "")
+
+    def get_optimade_species(self):
+        """Get optimade species."""
+        atoms = self.atoms
+        elements = np.array(list(set(atoms.elements)))
+        order = np.argsort(elements)
+        elements = (elements)[order]
+        sp = []
+        for i in elements:
+            info = {}
+            info["name"] = i
+            info["chemical_symbols"] = [i]
+            info["concentration"] = [1.0]
+            info["mass"] = None
+            info["original_name"] = None
+            info["attached"] = None
+            info["nattached"] = None
+            sp.append(info)
+        return sp
+
+    def from_optimade(self, info={}):
+        """Get Atoms from optimade."""
+        lattice_mat = info["attributes"]["lattice_vectors"]
+        elements = info["attributes"]["elements"]
+        coords = info["attributes"]["cartesian_site_positions"]
+        return Atoms(
+            lattice_mat=lattice_mat,
+            elements=elements,
+            coords=coords,
+            cartesian=True,
+        )
+
+    def to_optimade(
+        self,
+        idx="x",
+        itype="structures",
+        source="JARVIS-DFT-3D",
+        reference_url="https://www.ctcms.nist.gov/~knc6/static/JARVIS-DFT/",
+        now=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    ):
+        """Get optimade format data."""
+        atoms = self.atoms
+        info = {}
+        info["id"] = idx
+        info["type"] = itype
+        info_at = {}
+        info_at["_jarvis_source"] = source
+        info_at["_jarvis_reference"] = (
+            reference_url
+            + idx
+            # + ".xml"
+        )
+        comp = atoms.composition.to_dict()
+        info_at["chemical_formula_reduced"] = self.optimade_reduced_formula(
+            comp
+        )
+        info_at["chemical_formula_anonymous"] = self.get_optimade_prototype(
+            comp
+        )
+        elements = np.array(atoms.elements)
+        order = np.argsort(elements)
+        info_at["elements"] = elements[order]
+        info_at["nelements"] = len(elements)
+        info_at["nsites"] = len(atoms.frac_coords)
+        info_at["lattice_vectors"] = atoms.lattice_mat.tolist()
+        info_at["species_at_sites"] = np.array(atoms.elements)[order]
+        info_at["cartesian_site_positions"] = atoms.cart_coords[order].tolist()
+        info_at["nperiodic_dimensions"] = 3
+        # info_at["species"] = atoms.elements
+        info_at[
+            "species"
+        ] = self.get_optimade_species()  # dict(atoms.composition.to_dict())
+        info_at["elements_ratios"] = list(
+            atoms.composition.atomic_fraction.values()
+        )
+        info_at["structure_features"] = []
+        info_at["last_modified"] = str(now)
+        # info_at["more_data_available"] = True
+        info_at[
+            "chemical_formula_descriptive"
+        ] = atoms.composition.reduced_formula
+        info_at["dimension_types"] = [1, 1, 1]
+        info["attributes"] = info_at
+        return info
+
+
 def build_xanes_poscar(
     atoms=None,
     selected_element="Si",
@@ -1692,19 +1847,29 @@ def build_xanes_poscar(
     filename_with_prefix=False,
 ):
     """Generate POSCAR file for XANES, note the element ordering."""
-    from jarvis.core.utils import rand_select
+    # from jarvis.core.utils import rand_select
     from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
     dims = get_supercell_dims(
         atoms, enforce_c_size=enforce_c_size, extend=extend
     )
+    # spg = Spacegroup3D(atoms)
+    # wyckoffs = spg._dataset["wyckoffs"]
+    # atoms.props = wyckoffs
     atoms = atoms.make_supercell_matrix(dims)
     spath = os.path.join(dir, "POSCAR-supercell.vasp")
     atoms.write_poscar(spath)
     spg = Spacegroup3D(atoms)
     wyckoffs = spg._dataset["wyckoffs"]
     atoms.props = wyckoffs
-    props = rand_select(atoms.props)
+    # print ('atoms.props',atoms.props)
+    el_props = []
+    elements = atoms.elements
+    for ii, i in enumerate(elements):
+        if i == selected_element:
+            el_props.append(ii)
+    choice = random.choice(el_props)
+    props = {atoms.props[choice]: choice}
     tmp_atoms = atoms
     for i, j in props.items():
         if tmp_atoms.elements[j] == selected_element:
@@ -1729,14 +1894,13 @@ def build_xanes_poscar(
             filename = os.path.join(dir, filename)
             added_strt.props = ["" for i in range(added_strt.num_atoms)]
             added_strt.write_poscar(filename)
-            f = open(filename, "r")
-            filedata = f.read()
-            f.close()
-
+            with open(filename, "r") as f:
+                filedata = f.read()
             newdata = filedata.replace("XANES", tmp_atoms.elements[j])
-            f = open(filename, "w")
-            f.write(newdata)
-            f.close()
+            with open(filename, "w") as f:
+                f.write(newdata)
+
+    return atoms
 
 
 # ['Mn ', 'Mn ', 'Ru ', 'U ']

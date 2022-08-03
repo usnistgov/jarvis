@@ -36,6 +36,7 @@ class Chgcar(object):
         augdiff=None,
         dim=None,
         nsets=1,
+        lines="",
     ):
         """
         Contain CHGCAR data.
@@ -65,9 +66,19 @@ class Chgcar(object):
         self.aug = aug
         self.augdiff = augdiff
         self.nsets = nsets
+        self.lines = lines
         if self.atoms is None:
-            chg = self.read_file()
-            self.chg = chg
+            if self.filename != "":
+                f = open(self.filename, "r")
+                lines = f.read()
+                chg = self.read_file(lines=lines)
+                self.chg = chg
+                f.close()
+            elif self.lines != "":
+                chg = self.read_file(lines=self.lines)
+                self.chg = chg
+            else:
+                raise ValueError("Check inputs.")
 
     def to_dict(self):
         """Convert to a dictionary."""
@@ -147,11 +158,11 @@ class Chgcar(object):
                     f.write(line)
         return chg
 
-    def read_file(self):
+    def read_file(self, lines=""):
         """Read CHGCAR."""
-        f = open(self.filename, "r")
-        lines = f.read()
-        f.close()
+        # f = open(self.filename, "r")
+        # lines = f.read()
+        # f.close()
         self.atoms = Poscar.from_string(lines).atoms
         volume = self.atoms.volume
         text = lines.splitlines()
@@ -1119,12 +1130,9 @@ class Wavecar(object):
                 % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid))
             )
         else:
-            assert (
-                Gvec.shape[0] == self._nplws[ikpt - 1]
-            ), "No. of planewaves not consistent! %d %d %d" % (
-                Gvec.shape[0],
-                self._nplws[ikpt - 1],
-                np.prod(self._ngrid),
+            assert Gvec.shape[0] == self._nplws[ikpt - 1], (
+                "No. of planewaves not consistent! %d %d %d"
+                % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid),)
             )
         self._gvec = np.asarray(Gvec, dtype=int)
 
@@ -1537,9 +1545,16 @@ class Vasprun(object):
             raise ValueError("Unknown element type")
         if len(elements) != self.num_atoms:
             ValueError("Number of atoms is  not equal to number of elements")
-        elements = [str(i) for i in elements]
-        # print ('elements',elements)
-        return elements
+        final_elements = []
+        for i in elements:
+            el = str(i)
+            if el == "X":
+                el = "Xe"
+            if el == "r":
+                el = "Zr"
+            final_elements.append(el)
+
+        return final_elements
 
     def vrun_structure_to_atoms(self, s={}):
         """Convert structure to Atoms object."""
@@ -1654,9 +1669,15 @@ class Vasprun(object):
         """Get all forces."""
         forces = []
         for m in self.ionic_steps:
-            force = np.array(
-                [[float(j) for j in i.split()] for i in m["varray"][0]["v"]]
-            )
+            if self.all_structures[-1].num_atoms == 1:
+                force = np.array(m["varray"][0]["v"].split(), dtype="float")
+            else:
+                force = np.array(
+                    [
+                        [float(j) for j in i.split()]
+                        for i in m["varray"][0]["v"]
+                    ]
+                )
 
             forces.append(force)
         return np.array(forces)
