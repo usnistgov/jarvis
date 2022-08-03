@@ -106,62 +106,65 @@ class Poscar(object):
     def write_file(self, filename):
         """Write the Poscar object to a file."""
         # TODO: Use to_string instead of re-writing the code here
-        f = open(filename, "w")
-        header = (
-            str(self.comment)
-            + str("\n1.0\n")
-            + str(self.atoms.lattice_mat[0][0])
-            + " "
-            + str(self.atoms.lattice_mat[0][1])
-            + " "
-            + str(self.atoms.lattice_mat[0][2])
-            + "\n"
-            + str(self.atoms.lattice_mat[1][0])
-            + " "
-            + str(self.atoms.lattice_mat[1][1])
-            + " "
-            + str(self.atoms.lattice_mat[1][2])
-            + "\n"
-            + str(self.atoms.lattice_mat[2][0])
-            + " "
-            + str(self.atoms.lattice_mat[2][1])
-            + " "
-            + str(self.atoms.lattice_mat[2][2])
-            + "\n"
-        )
-        # order = np.argsort(self.atoms.elements)
-        coords = self.atoms.frac_coords
-        # DO NOT USE ORDER
-        coords_ordered = np.array(coords)  # [order]
-        elements_ordered = np.array(self.atoms.elements)  # [order]
-        props_ordered = np.array(self.atoms.props)  # [order]
-        # check_selective_dynamics = False
-        counts = get_counts(elements_ordered)
-        if "T" in "".join(map(str, self.atoms.props[0])):
-            middle = (
-                " ".join(map(str, counts.keys()))
+        with open(filename, "w") as f:
+            # f = open(filename, "w")
+            header = (
+                str(self.comment)
+                + str("\n1.0\n")
+                + str(self.atoms.lattice_mat[0][0])
+                + " "
+                + str(self.atoms.lattice_mat[0][1])
+                + " "
+                + str(self.atoms.lattice_mat[0][2])
                 + "\n"
-                + " ".join(map(str, counts.values()))
-                + "\nSelective dynamics\n"
-                + "Direct\n"
-            )
-        else:
-            middle = (
-                " ".join(map(str, counts.keys()))
+                + str(self.atoms.lattice_mat[1][0])
+                + " "
+                + str(self.atoms.lattice_mat[1][1])
+                + " "
+                + str(self.atoms.lattice_mat[1][2])
                 + "\n"
-                + " ".join(map(str, counts.values()))
-                + "\ndirect\n"
+                + str(self.atoms.lattice_mat[2][0])
+                + " "
+                + str(self.atoms.lattice_mat[2][1])
+                + " "
+                + str(self.atoms.lattice_mat[2][2])
+                + "\n"
             )
-        rest = ""
-        # print ('repr',self.frac_coords, self.frac_coords.shape)
-        for ii, i in enumerate(coords_ordered):
-            p_ordered = str(props_ordered[ii])
-            rest = rest + " ".join(map(str, i)) + " " + str(p_ordered) + "\n"
+            # order = np.argsort(self.atoms.elements)
+            coords = self.atoms.frac_coords
+            # DO NOT USE ORDER
+            coords_ordered = np.array(coords)  # [order]
+            elements_ordered = np.array(self.atoms.elements)  # [order]
+            props_ordered = np.array(self.atoms.props)  # [order]
+            # check_selective_dynamics = False
+            counts = get_counts(elements_ordered)
+            if "T" in "".join(map(str, self.atoms.props[0])):
+                middle = (
+                    " ".join(map(str, counts.keys()))
+                    + "\n"
+                    + " ".join(map(str, counts.values()))
+                    + "\nSelective dynamics\n"
+                    + "Direct\n"
+                )
+            else:
+                middle = (
+                    " ".join(map(str, counts.keys()))
+                    + "\n"
+                    + " ".join(map(str, counts.values()))
+                    + "\ndirect\n"
+                )
+            rest = ""
+            # print ('repr',self.frac_coords, self.frac_coords.shape)
+            for ii, i in enumerate(coords_ordered):
+                p_ordered = str(props_ordered[ii])
+                rest = (
+                    rest + " ".join(map(str, i)) + " " + str(p_ordered) + "\n"
+                )
 
-        result = header + middle + rest
+            result = header + middle + rest
 
-        f.write(result)
-        f.close()
+            f.write(result)
+            # f.close()
 
     @staticmethod
     def from_string(lines):
@@ -174,7 +177,9 @@ class Poscar(object):
         lattice_mat.append([float(i) for i in text[3].split()])
         lattice_mat.append([float(i) for i in text[4].split()])
         lattice_mat = scale * np.array(lattice_mat)
-
+        begin = 5
+        if "S" in text[7] and "s" in text[7]:
+            begin = 6
         uniq_elements = text[5].split()
         element_count = np.array([int(i) for i in text[6].split()])
         elements = []
@@ -182,13 +187,12 @@ class Poscar(object):
             for j in range(ii):
                 elements.append(uniq_elements[i])
         cartesian = True
-        if "d" in text[7] or "D" in text[7]:
+        if "d" in text[begin + 2] or "D" in text[begin + 2]:
             cartesian = False
-        # print ('cartesian poscar=',cartesian,text[7])
         num_atoms = int(np.sum(element_count))
         coords = []
         for i in range(num_atoms):
-            coords.append([float(i) for i in text[8 + i].split()[0:3]])
+            coords.append([float(i) for i in text[begin + 3 + i].split()[0:3]])
         coords = np.array(coords)
         atoms = Atoms(
             lattice_mat=lattice_mat,

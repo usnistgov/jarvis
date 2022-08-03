@@ -82,7 +82,7 @@ def prepare_jdos(
 # Try to use the Phono3pyJDOS class?
 def prepare_jdos_api(phonopy_obj, mesh = [1, 1, 1], temperatures=None,\
     num_freq_points=201, pa=None, nac_params = None,
-    write_jdos = True):
+    write_jdos = True, log_level = 1):
     '''
     Run JDOS calculation using the Phono3pyJointDOS Class
     Currently assumes phonopy_obj contains a force cosntants attribute
@@ -106,7 +106,7 @@ def prepare_jdos_api(phonopy_obj, mesh = [1, 1, 1], temperatures=None,\
                                             temperatures = temperatures,\
                                                 nac_params = nac_params,\
                                                     num_frequency_points = num_freq_points,\
-                                                        log_level = 1)
+                                                        log_level = log_level)
     latt_vecs = phonopy_obj.get_primitive().get_cell()
     positions = phonopy_obj.get_primitive().get_scaled_positions()
     atom_type = phonopy_obj.get_primitive().get_atomic_numbers()
