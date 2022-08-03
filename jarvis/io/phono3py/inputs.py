@@ -106,15 +106,15 @@ def prepare_jdos_api(phonopy_obj, mesh = [1, 1, 1], temperatures=None,\
                                             temperatures = temperatures,\
                                                 nac_params = nac_params,\
                                                     num_frequency_points = num_freq_points,\
-                                                        log_level = 1)
-    latt_vecs = phonopy_obj.get_primitive().get_cell()
-    positions = phonopy_obj.get_primitive().get_scaled_positions()
-    atom_type = phonopy_obj.get_primitive().get_atomic_numbers()
-    cell = (latt_vecs, positions, atom_type)
-    mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
-    gridpt_uids = np.unique(mapping)
-    
-    ph3_jdos.run(gridpt_uids, write_jdos = write_jdos)
+                                                        log_level = 2)
+#    latt_vecs = phonopy_obj.get_primitive().get_cell()
+#    positions = phonopy_obj.get_primitive().get_scaled_positions()
+#    atom_type = phonopy_obj.get_primitive().get_atomic_numbers()
+#    cell = (latt_vecs, positions, atom_type)
+#    mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
+#    gridpt_uids = np.unique(mapping)
+    ga, gp, mapping = phonopy_obj.get_mesh_grid_info()    
+    ph3_jdos.run(gp, write_jdos = write_jdos)
     
 
 
