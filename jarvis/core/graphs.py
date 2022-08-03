@@ -22,10 +22,7 @@ except Exception as exp:
 
 
 def canonize_edge(
-    src_id,
-    dst_id,
-    src_image,
-    dst_image,
+    src_id, dst_id, src_image, dst_image,
 ):
     """Compute canonical edge representation.
 
@@ -49,11 +46,7 @@ def canonize_edge(
 
 
 def nearest_neighbor_edges(
-    atoms=None,
-    cutoff=8,
-    max_neighbors=12,
-    id=None,
-    use_canonize=False,
+    atoms=None, cutoff=8, max_neighbors=12, id=None, use_canonize=False,
 ):
     """Construct k-NN edge list."""
     # returns List[List[Tuple[site, distance, index, image]]]
@@ -125,8 +118,7 @@ def nearest_neighbor_edges(
 
 
 def build_undirected_edgedata(
-    atoms=None,
-    edges={},
+    atoms=None, edges={},
 ):
     """Build undirected graph data from edge set.
 
@@ -153,6 +145,7 @@ def build_undirected_edgedata(
                 v.append(vv)
                 r.append(dd)
 
+    u, v, r = (np.array(x) for x in (u, v, r))
     u = torch.tensor(u)
     v = torch.tensor(v)
     r = torch.tensor(r).type(torch.get_default_dtype())

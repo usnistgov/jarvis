@@ -6,6 +6,7 @@ from jarvis.core.specie import Specie
 
 
 def get_element_fraction_desc(formula="SiO2", max_nelements=103):
+    """Get element fraction."""
     x = np.zeros(max_nelements)
     fracs = Composition.from_string(formula).atomic_fraction
     for i, j in fracs.items():

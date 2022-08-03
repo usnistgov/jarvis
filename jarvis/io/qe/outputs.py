@@ -44,7 +44,6 @@ class QEout(object):
         energies = []
         for i in self.lines:
             if "total energy              =" in i:
-                print(i)
                 energy = float(i.split()[-2])
                 energies.append(energy)
         return float(energies[-1]) * ryd_to_ev
@@ -56,6 +55,15 @@ class QEout(object):
             if "the Fermi energy is" in i:
                 efs.append(float(i.split()[-2]))
         return efs[-1]
+
+    @property
+    def job_done(self):
+        """Check if job is completed."""
+        done = False
+        for i in self.lines:
+            if "JOB DONE." in i:
+                done = True
+        return done
 
     def get_band_enegies(self):
         """Get band energies in eV."""
@@ -109,7 +117,7 @@ class DataFileSchema(object):
 
     @property
     def num_atoms(self):
-        "Get total number of atoms." ""
+        """Get total number of atoms."""
         return self.final_structure.num_atoms
 
     @property
@@ -381,9 +389,7 @@ class ProjHamXml(object):
 
     # Adapted from https://github.com/kfgarrity/TightlyBound.jl
     def __init__(
-        self,
-        filename="projham_K.xml",
-        data=None,
+        self, filename="projham_K.xml", data=None,
     ):
         """Initialize class."""
         self.filename = filename
@@ -507,6 +513,7 @@ class ProjHamXml(object):
         self.atomdata["Bi"] = ["s", "p"]
 
     def get_crystal(self):
+        """Get crystal info."""
         tmp_tb = self.data["root"]["crystal"]
         A = np.reshape(np.array(tmp_tb["A"].split(), dtype="float"), (3, 3))
         nat = int(float(tmp_tb["nat"]))
@@ -524,7 +531,6 @@ class ProjHamXml(object):
 
     def get_tight_binding(self):
         """Get tight_binding parameters."""
-
         t = self.data["root"]["scf"]
         if t == "false":
             scf = False
@@ -573,7 +579,7 @@ class ProjHamXml(object):
         return H, S, h1, kind_arr, kweights, nonorth, grid, scf, nelec
 
     def calculate_eigenvalues(self, kpoint=None, kind=-1):
-
+        """Calculate eigenvalues."""
         if self.scf is True:
             print("warning, not accurate for scf=True")
 
@@ -605,9 +611,8 @@ class ProjHamXml(object):
             vals, vects = la.eigh(hk, b=sk)
             return vals, vects
 
-    # solve hamiltonian
     def solve_ham(self, proj=None):
-
+        """Solve hamiltonian."""
         VALS = np.zeros((self.nk, self.nwan), dtype=float)
 
         if proj is not None:
@@ -637,6 +642,7 @@ class ProjHamXml(object):
 
     # figure our correspondence between orbitals and indicies.
     def count_orbs(self):
+        """Count orbitals."""
         ORBS = []
         c = 0
         for a in range(self.nat):
@@ -671,7 +677,7 @@ class ProjHamXml(object):
 
     # figure our orbitials to project onto from inputs
     def decide_projection(self, proj_atoms=None, proj_orbs=None):
-
+        """Decide projections."""
         ORBS = self.count_orbs()
 
         if proj_atoms is None and proj_orbs is None:
@@ -741,7 +747,7 @@ class ProjHamXml(object):
         proj_orbs=None,
         do_proj=True,
     ):
-
+        """Get DOS."""
         if do_proj is False:
             proj = None
             names = None

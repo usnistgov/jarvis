@@ -58,8 +58,28 @@ JARVIS-ML related
 
 [23. Enhancing materials property prediction by leveraging computational and experimental data using deep transfer learning, Nature Commun.](https://www.nature.com/articles/s41467-019-13297-w)
 
-[24. Atomistic Line Graph Neural Network for Improved Materials Property Predictions.](https://arxiv.org/abs/2106.01829)
+[24. Atomistic Line Graph Neural Network for Improved Materials Property Predictions, npj Computational Materials 7, 1 (2021)](https://www.nature.com/articles/s41524-021-00650-1)
+
+[25. Recent advances and applications of deep learning methods in materials science, npj Computational Materials 8, 1 (2022)](https://www.nature.com/articles/s41524-022-00734-6)
+
+
+[26. Graph neural network predictions of metal organic framework CO2 adsorption properties, Comp. Mat. Sci., 210, 111388 (2022)](https://www.sciencedirect.com/science/article/pii/S092702562200163X)
+
+[27. Data-Driven Multi-Scale Modeling and Optimization for Elastic Properties of Cubic Microstructures](https://link.springer.com/article/10.1007/s40192-022-00258-3)
+
+[28. Uncertainty Prediction for Machine Learning Models of Material Properties](https://pubs.acs.org/doi/abs/10.1021/acsomega.1c03752)
+
+[29. Cross-property deep transfer learning framework for enhanced predictive analytics on small materials data](https://www.nature.com/articles/s41467-021-26921-5)
+
+[30. Prediction of the Electron Density of States for Crystalline Compounds with Atomistic Line Graph Neural Networks (ALIGNN)](https://link.springer.com/article/10.1007/s11837-022-05199-y)
+
+[31. Designing High-Tc Superconductors with BCS-inspired Screening, Density Functional Theory and Deep-learning](https://arxiv.org/abs/2205.00060)
 
 JARVIS-QC related
 -----------------------------------------------------
-[25. Quantum Computation for Predicting Electron and Phonon Properties of Solids., J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/ac1154)
+[32. Quantum Computation for Predicting Electron and Phonon Properties of Solids., J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/ac1154)
+
+
+JARVIS-QETB related
+-----------------------------------------------------
+[33. Quantum Computation for Predicting Electron and Phonon Properties of Solids., J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/ac1154)

@@ -2,7 +2,7 @@
 import pprint
 from collections import OrderedDict
 from jarvis.analysis.structure.spacegroup import Spacegroup3D
-from jarvis.core.utils import rand_select
+# from jarvis.core.utils import rand_select
 from jarvis.core.atoms import Atoms
 
 # import numpy as np
@@ -26,13 +26,9 @@ class Vacancy(object):
         Arguments are given below.
         Args:
             atoms: jarvis.core.Atoms object.
-
             defect_index: atoms index for defect.
-
             defect_structure:  Atoms with defect.
-
             wyckoff_multiplicity: Wyckoff multiplicity.
-
             symbol: Elemenyt symbol.
         """
         self._atoms = atoms
@@ -53,7 +49,11 @@ class Vacancy(object):
         )
 
     def generate_defects(
-        self, enforce_c_size=10.0, on_conventional_cell=False, extend=1
+        self,
+        enforce_c_size=10.0,
+        on_conventional_cell=False,
+        extend=1,
+        using_wyckoffs=True,
     ):
         """Provide function to generate defects."""
         atoms = self._atoms
@@ -74,13 +74,25 @@ class Vacancy(object):
             if dim3 == 0:
                 dim3 = 1
             supercell_size = [dim1, dim2, dim3]
-        spg = Spacegroup3D(atoms)
-        wyckoffs = spg._dataset["wyckoffs"]
-        atoms.props = wyckoffs
+        if using_wyckoffs:
+            spg = Spacegroup3D(atoms)
+            wyckoffs = spg._dataset["wyckoffs"]
+            atoms.props = wyckoffs
+        else:
+            wyckoffs = ["a" for i in range(atoms.num_atoms)]
+            atoms.props = wyckoffs
         supercell = atoms.make_supercell(supercell_size)
-        props = rand_select(supercell.props)
+        # props = rand_select(supercell.props)
+        new_props = {}
+        for ii, jj, kk in zip(
+            supercell.props, supercell.elements, range(supercell.num_atoms)
+        ):
+            if ii + "_" + jj not in new_props:
+                new_props[ii + "_" + jj] = kk
+        # print ('props',props)
+        # print ('newprops',new_props)
         vacs = []
-        for i, j in props.items():
+        for i, j in new_props.items():
             defect_strt = supercell.remove_site_by_index(j)
             vac = Vacancy(
                 atoms=supercell,
@@ -140,28 +152,3 @@ def generate_random_defects(n_vacs=10, atoms=None, element=None, seed=123):
         cartesian=False,
     )
     return new_atoms
-
-
-"""
-if __name__ == "__main__":
-    from jarvis.io.vasp.inputs import Poscar
-
-    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-    coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
-    elements = ["Si", "Si"]
-    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    Si = Poscar.from_file(
-        "/rk2/knc6/JARVIS-DFT/2D-bulk/mp-1143_bulk_LDA/MAIN-ELASTIC-bulk@mp_1143/POSCAR"
-    ).atoms
-    vacs = Vacancy(atoms=Si).generate_defects()
-    for i in vacs:
-        print(i)
-    spg = Spacegroup3D(Si)
-    cvn = spg.conventional_standard_structure
-    spg = Spacegroup3D(cvn)
-    props = spg._dataset["wyckoffs"]
-    Si.props = props
-    ss = Si.make_supercell([2, 2, 2])
-    props = ss.props
-    # print (rand_select(props))
-"""

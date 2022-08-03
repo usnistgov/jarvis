@@ -3,7 +3,10 @@ from jarvis.core.atoms import (
     VacuumPadding,
     get_supercell_dims,
     build_xanes_poscar,
+    OptimadeAdaptor,
 )
+
+
 import os
 from jarvis.db.figshare import get_jid_data, data
 import tarfile
@@ -51,26 +54,11 @@ poscar_path = os.path.join(
     "POSCAR",
 )
 
-cif_example = os.path.join(
-    os.path.dirname(__file__),
-    "1000052.cif",
-)
-cif_example2 = os.path.join(
-    os.path.dirname(__file__),
-    "Bacomp.cif",
-)
-cif_example3 = os.path.join(
-    os.path.dirname(__file__),
-    "mock.cif",
-)
-cif_example4 = os.path.join(
-    os.path.dirname(__file__),
-    "exp_000034.cif",
-)
-cif_example5 = os.path.join(
-    os.path.dirname(__file__),
-    "1000000.cif",
-)
+cif_example = os.path.join(os.path.dirname(__file__), "1000052.cif",)
+cif_example2 = os.path.join(os.path.dirname(__file__), "Bacomp.cif",)
+cif_example3 = os.path.join(os.path.dirname(__file__), "mock.cif",)
+cif_example4 = os.path.join(os.path.dirname(__file__), "exp_000034.cif",)
+cif_example5 = os.path.join(os.path.dirname(__file__), "1000000.cif",)
 
 
 def test_from_cif():
@@ -94,6 +82,12 @@ def test_basic_atoms():
     dim = get_supercell_dims(Si)
     build_xanes_poscar(atoms=Si, filename_with_prefix=True)
     assert dim == [3, 3, 3]
+
+    opt = OptimadeAdaptor(Si)
+    opt_info = opt.to_optimade()
+    opt = OptimadeAdaptor()
+    print(opt.from_optimade(opt_info))
+
     polar = Si.check_polar
     Si.props = ["a", "a"]
     vac_pad = VacuumPadding(Si)
