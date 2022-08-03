@@ -111,3 +111,6 @@ jarvis/io/phonopy/Si-testing/
 
 #MacOS Finder files
 .DS_Store
+
+#Downloaded zip files
+*.zip
