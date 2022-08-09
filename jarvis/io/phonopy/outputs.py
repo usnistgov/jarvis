@@ -22,7 +22,6 @@ except Exception as exp:
 
 from math import pi as pi
 
-
 """
 Constants 
 """
@@ -219,7 +218,6 @@ def get_modal_heat_capacity(phonon_obj, mesh=[1, 1, 1], T=300):
 #         plt.ylabel(r"C (eV/K$\cdot$THz)")
 #         plt.xlabel("Frequency (THz)")
 #     return spectral_C
-
 
 def get_phonon_tb(
     # phonopy_atoms=[],

@@ -13,7 +13,6 @@ Notes for inputs.py:
     tags : generate automatically from the inputs.py. Include info about
     isotope scattering, boundary scattering, etc.
 
-Add function for mode gruneisen from third order force constants
 """
 
 import h5py
@@ -132,8 +131,6 @@ class JDOS:
         def get_gridpts(self):
             """
             Generates list of gridpoint indices for JDOS calculation
-            
-            Is this compatible with mesh q-points for binary compounds?
             """
             latt_vecs = self.phonopy_obj.get_primitive().get_cell()
             positions = self.phonopy_obj.get_primitive().get_scaled_positions()
@@ -345,7 +342,7 @@ class JDOS:
 
     # Weighted JDOS should work? Maybe write separate method?
     def linewidth_from_jdos(
-        self, spectral_jdos, atoms, vs, grun=0.83, T=300, plot=False
+        self, spectral_jdos, atoms, vs, grun=0.8, T=300, plot=False
     ):
         """
         Calculate the phonon linewidth using semi-empirical expression that
@@ -455,8 +452,6 @@ class JDOS:
             plt.plot(freq_pts, spectral_kappa)
             plt.xlabel("Frequency (THz)")
             plt.ylabel(r"$\kappa$ (W/m$\cdot$K$\cdot$THz)")
-            plt.xlim([0, 15])
-            plt.ylim([0, 30])
             # Squared Group Velocity
             plt.figure()
             plt.plot(freq_pts, spectral_vg2)
