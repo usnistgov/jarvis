@@ -108,9 +108,11 @@ ENV/
 #Test files for io modules
 jarvis/io/phono3py/Si-testing/
 jarvis/io/phonopy/Si-testing/
+jarvis/io/phono3py/almaBTE_files/
 
 #MacOS Finder files
 .DS_Store
 
-#Zip files
+
+#Downloaded zip files
 *.zip
