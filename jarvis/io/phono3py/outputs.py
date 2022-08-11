@@ -132,17 +132,18 @@ class JDOS:
             """
             Generates list of gridpoint indices for JDOS calculation
             """
-            latt_vecs = self.phonopy_obj.get_primitive().get_cell()
-            positions = self.phonopy_obj.get_primitive().get_scaled_positions()
-            atom_type = self.phonopy_obj.get_primitive().get_atomic_numbers()
-            cell = (latt_vecs, positions, atom_type)
-            mapping, grid = spglib.get_ir_reciprocal_mesh(
-                self.mesh, cell, is_shift=[0, 0, 0]
-            )
-            return mapping
+            # latt_vecs = self.phonopy_obj.get_primitive().get_cell()
+            # positions = self.phonopy_obj.get_primitive().get_scaled_positions()
+            # atom_type = self.phonopy_obj.get_primitive().get_atomic_numbers()
+            # cell = (latt_vecs, positions, atom_type)
+            # mapping, grid = spglib.get_ir_reciprocal_mesh(
+            #     self.mesh, cell, is_shift=[0, 0, 0]
+            # )
+            ga, gp, mapping = self.phonopy_obj.get_mesh_grid_info()
+            return gp
 
-        gridpt_list = get_gridpts(self)
-        gridpt_uids = np.unique(gridpt_list)
+        gridpt_uids = get_gridpts(self)
+        #gridpt_uids = np.unique(gridpt_list)
         print(len(gridpt_uids))
 
         """

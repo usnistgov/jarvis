@@ -113,6 +113,7 @@ def prepare_jdos_api(phonopy_obj, mesh = [1, 1, 1], temperatures=None,\
 #    cell = (latt_vecs, positions, atom_type)
 #    mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
 #    gridpt_uids = np.unique(mapping)
+    phonopy_obj.run_mesh(mesh)
     ga, gp, mapping = phonopy_obj.get_mesh_grid_info()    
     ph3_jdos.run(gp, write_jdos = write_jdos)
     

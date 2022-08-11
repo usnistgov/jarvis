@@ -109,6 +109,7 @@ def get_Phonopy_obj(
     atoms,
     phonopy_yaml=None,
     FC_file=None,
+    scell_file=None,
     factor=None,
     symprec=1e-05,
     scell=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
@@ -118,7 +119,7 @@ def get_Phonopy_obj(
     """
     if phonopy_yaml is not None:
         phonon = load(phonopy_yaml, force_constants_filename=FC_file)
-    else:
+    elif scell_file is not None:
         unitcell = atoms.phonopy_converter()
         prim_mat = np.array(
             PhonopyInputs(atoms).prim_axis().split("=")[1].split(), dtype="float"
@@ -127,18 +128,15 @@ def get_Phonopy_obj(
             from phonopy.units import VaspToCm
 
             factor = VaspToCm
-        phonon = Phonopy(
-            unitcell,
-            scell,
-            primitive_matrix=prim_mat,
-            factor=factor,
-            dynamical_matrix_decimals=None,
-            force_constants_decimals=None,
+        phonon = load(
+            supercell_filename = scell_file,
+            force_constants_filename=FC_file,
             symprec=symprec,
             is_symmetry=True,
-            use_lapack_solver=False,
-            log_level=1,
+            log_level=2,
         )
+    else:
+        raise Exception("Invalid inputs to generate Phonopy object.")
     try:
         dim = np.array([scell[i][i] for i in range(3)])
         setattr(phonon, "scell_dim", dim)
