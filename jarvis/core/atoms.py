@@ -737,6 +737,21 @@ class Atoms(object):
         )
 
     @property
+    def get_conventional_atoms(self):
+        """Get conventional Atoms using spacegroup information."""
+        from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
+        return Spacegroup3D(self).conventional_standard_structure
+
+    @property
+    def get_spacegroup(self):
+        """Get spacegroup information."""
+        from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
+        spg = Spacegroup3D(self)
+        return [spg.space_group_number, spg.space_group_symbol]
+
+    @property
     def get_primitive_atoms(self):
         """Get primitive Atoms using spacegroup information."""
         from jarvis.analysis.structure.spacegroup import Spacegroup3D
@@ -1837,6 +1852,32 @@ class OptimadeAdaptor(object):
         return info
 
 
+def compare_atoms(atoms1=[], atoms2=[], primitive_cell=True, verbose=True):
+    """Compare atomic strutures."""
+    from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
+    if primitive_cell:
+        atoms1 = atoms1.get_primitive_atoms
+        atoms2 = atoms2.get_primitive_atoms
+    formula1 = atoms1.composition.reduced_formula
+    formula2 = atoms2.composition.reduced_formula
+    if formula1 != formula2:
+        if verbose:
+            print("Formula dont match", formula1, formula2)
+        return False
+    if atoms1.num_atoms != atoms2.num_atoms:
+        if verbose:
+            print("Num_atoms dont match", atoms1.num_atoms, atoms2.num_atoms)
+        return False
+    spg1 = Spacegroup3D(atoms1).space_group_number
+    spg2 = Spacegroup3D(atoms2).space_group_number
+    if spg1 != spg2:
+        if verbose:
+            print("Spg dont match", spg1, spg2)
+        return False
+    return True
+
+
 def build_xanes_poscar(
     atoms=None,
     selected_element="Si",
@@ -1915,68 +1956,3 @@ def build_xanes_poscar(
 #    elements=[i.strip() for i in atoms['elements']]
 #    info['elements']=elements
 #    return info
-
-"""
-if __name__ == "__main__":
-    x=Atoms.from_cif('1000000.cif')
-    f=open('1000000.cif','r')
-    lines=f.read()
-    f.close()
-    x=Atoms.from_cif(from_string=lines)
-    print (x)
-    print (x.num_atoms)
-    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-    coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
-    elements = ["Si", "Si"]
-    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    Si.write_xyz("atoms.xyz")
-    from jarvis.io.vasp.inputs import Poscar
-
-    Si = Atoms.from_poscar("/users/knc6/POSCAR")
-    Si.write_cif()
-    a = Atoms.from_cif("atoms.cif")
-    print(a)
-    fn = "/cluster/users/knc6/justback/desc_library/cod/cif/1000052.cif"
-    # fn="/cluster/users/knc6/justback/desc_library/cod/cif/1000443.cif"
-    a = Atoms.from_cif(filename=fn)
-    print (a)
-    Si.write_poscar()
-    print (Si.composition.reduced_formula)
-    #print (Si.get_string())
-    print (Si.get_primitive_atoms)
-    print (Si.raw_distance_matrix)
-    import sys
-    sys.exit()
-    #print (Si.props)
-    #print (Si.make_supercell().props)
-    d = Si.to_dict()
-    print (d)
-    a=Atoms.from_dict(d)
-    print (a)
-    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-    Si.props = ["a", "a"]
-    # spg = Spacegroup3D(Si)
-    #polar=Si.check_polar
-    #print ('polar',polar)
-    # Si = spg.conventional_standard_structure
-    # print ('center',Si.center())
-    # print ('propos',Si.props)
-    #print("Supercell\n", Si.make_supercell([2, 2, 2]))
-    # print (Si.make_supercell().props)
-    #print(Si.make_supercell([2, 2, 2]).remove_site_by_index())
-    print ('Si',Si)
-    # print ('reduced',Si.get_lll_reduced_structure())
-    # print ('pf',Si.packing_fraction,Si.make_supercell())
-    pmg = Si.pymatgen_converter()
-    pmg.make_supercell([2, 2, 2])
-    #print (pmg)
-    # print (Si.get_center_of_mass())
-    # print (Si.get_string())
-    a=Atoms.from_cif('ll.cif')
-    print(a)
-    from pymatgen.core.structure import Structure
-    s=Structure.from_file('ll.cif')
-    from pymatgen.io.vasp.inputs import Poscar
-    p=Poscar(s)
-    print (p)
-"""
