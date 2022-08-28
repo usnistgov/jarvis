@@ -62,7 +62,6 @@ JARVIS-ML related
 
 [25. Recent advances and applications of deep learning methods in materials science, npj Computational Materials 8, 1 (2022)](https://www.nature.com/articles/s41524-022-00734-6)
 
-
 [26. Graph neural network predictions of metal organic framework CO2 adsorption properties, Comp. Mat. Sci., 210, 111388 (2022)](https://www.sciencedirect.com/science/article/pii/S092702562200163X)
 
 [27. Data-Driven Multi-Scale Modeling and Optimization for Elastic Properties of Cubic Microstructures](https://link.springer.com/article/10.1007/s40192-022-00258-3)
@@ -75,11 +74,13 @@ JARVIS-ML related
 
 [31. Designing High-Tc Superconductors with BCS-inspired Screening, Density Functional Theory and Deep-learning](https://arxiv.org/abs/2205.00060)
 
+[32. Rapid Prediction of Phonon Structure and Properties using an Atomistic Line Graph Neural Network (ALIGNN)](https://arxiv.org/abs/2207.12510)
+
 JARVIS-QC related
 -----------------------------------------------------
-[32. Quantum Computation for Predicting Electron and Phonon Properties of Solids., J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/ac1154)
+[33. Quantum Computation for Predicting Electron and Phonon Properties of Solids., J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/ac1154)
 
 
 JARVIS-QETB related
 -----------------------------------------------------
-[33. Quantum Computation for Predicting Electron and Phonon Properties of Solids., J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/ac1154)
+[34. Fast and Accurate Prediction of Material Properties with Three-Body Tight-Binding Model for the Periodic Table](https://arxiv.org/abs/2112.11585)
