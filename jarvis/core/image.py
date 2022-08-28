@@ -168,6 +168,8 @@ class Image(object):
     ):
         """Crop squarre from an image."""
         # For STM image, use min_size=50
+        
+        from PIL import Image as PIL_Image
         if image_arr is not None:
             if greyscale:
                 pil_image = PIL_Image.fromarray(
@@ -206,6 +208,7 @@ class Image(object):
         suffix=".png",
     ):
         """Augment images using skimage."""
+        from skimage.transform import rotate as sk_rotate
         if image_arr is None:
             img_arr = plt.imread(image_path)
         else:
