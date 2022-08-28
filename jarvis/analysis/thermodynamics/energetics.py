@@ -1,9 +1,16 @@
-"""Get formation energy."""
+"""Get formation energy, convex hull etc.."""
 
 import os
+from scipy.spatial import ConvexHull
+import numpy as np
 from jarvis.db.figshare import data
 from jarvis.core.atoms import Atoms
 from jarvis.db.jsonutils import loadjson
+from collections import OrderedDict
+from jarvis.core.composition import Composition
+import re
+
+# import matplotlib.pyplot as plt
 
 
 def get_optb88vdw_energy():
@@ -90,6 +97,287 @@ def get_twod_defect_energy(vrun="", jid="", atom=""):
     bulk_en_pa = get_enp_jid(jid)
     Ef = fin_en - (natoms + 1) * bulk_en_pa + chem_pot
     return Ef
+
+
+class PhaseDiagram:
+    """Module for convex hull plot."""
+
+    def __init__(
+        self,
+        entries,
+        verbose=False,
+        only_plot_stable=False,
+        only_label_stable=False,
+    ):
+        """Initialize Phase-diagram."""
+        # Adapted from ASE
+        self.species = OrderedDict()
+        self.entries = []
+        self.verbose = verbose
+        self.only_plot_stable = only_plot_stable
+        self.only_label_stable = only_label_stable
+        for i in entries:
+            name = i[0]
+            energy = i[1]
+            # jid = i[2]
+            count = Composition.from_string(name).to_dict()
+
+            natoms = 0
+            for symbol, n in count.items():
+                natoms += n
+                if symbol not in self.species:
+                    self.species[symbol] = len(self.species)
+            self.entries.append((count, energy, name, natoms))
+
+        ns = len(self.species)
+        self.symbols = [None] * ns
+        for symbol, id in self.species.items():
+            self.symbols[id] = symbol
+
+        if self.verbose:
+            print("Species:", ", ".join(self.symbols))
+            print("Entries:", len(self.entries))
+            for i, (count, energy, name, natoms) in enumerate(self.entries):
+                print("{:<5}{:10}{:10.3f}".format(i, name, energy))
+
+        self.points = np.zeros((len(self.entries), ns + 1))
+        for s, (count, energy, name, natoms) in enumerate(self.entries):
+            for symbol, n in count.items():
+                self.points[s, self.species[symbol]] = n / natoms
+            self.points[s, -1] = energy  # / natoms
+
+        if len(self.points) == ns:
+            # Simple case that qhull would choke on:
+            self.simplices = np.arange(ns).reshape((1, ns))
+            self.hull = np.ones(ns, bool)
+        else:
+            # print("self.points[:, 1:]",self.points[:, 1:])
+            hull = ConvexHull(self.points[:, 1:])
+
+            # Find relevant simplices:
+            ok = hull.equations[:, -2] < 0
+            self.simplices = hull.simplices[ok]
+
+            # Create a mask for those points that are on the convex hull:
+            self.hull = np.zeros(len(self.points), bool)
+            for simplex in self.simplices:
+                self.hull[simplex] = True
+
+    def decompose(self, formula=None):
+        """Find the combination of the references with the lowest energy."""
+        kwargs = Composition.from_string(formula).to_dict()
+
+        point = np.zeros(len(self.species))
+        N = 0
+        for symbol, n in kwargs.items():
+            point[self.species[symbol]] = n
+            N += n
+
+        # Find coordinates within each simplex:
+        X = self.points[self.simplices, 1:-1] - point[1:] / N
+
+        # Find the simplex with positive coordinates that sum to
+        # less than one:
+        eps = 1e-15
+        for i, Y in enumerate(X):
+            try:
+                x = np.linalg.solve((Y[1:] - Y[:1]).T, -Y[0])
+            except np.linalg.linalg.LinAlgError:
+                continue
+            if (x > -eps).all() and x.sum() < 1 + eps:
+                break
+        else:
+            assert False, X
+
+        indices = self.simplices[i]
+        points = self.points[indices]
+
+        scaledcoefs = [1 - x.sum()]
+        scaledcoefs.extend(x)
+
+        energy = N * np.dot(scaledcoefs, points[:, -1])
+
+        coefs = []
+        results = []
+        for coef, s in zip(scaledcoefs, indices):
+            count, e, name, natoms = self.entries[s]
+            coef *= N / natoms
+            coefs.append(coef)
+            results.append((name, coef, e))
+
+        return energy, indices, np.array(coefs)
+
+    def plot(self, ax=None, dims=None, show=False, **plotkwargs):
+        """Make 2-d or 3-d plot of datapoints and convex hull.
+
+        Default is 2-d for 2- and 3-component diagrams and 3-d for a
+        4-component diagram.
+        """
+        import matplotlib.pyplot as plt
+
+        N = len(self.species)
+
+        if dims is None:
+            if N <= 3:
+                dims = 2
+            else:
+                dims = 3
+
+        if ax is None:
+            projection = None
+            if dims == 3:
+                projection = "3d"
+                from mpl_toolkits.mplot3d import Axes3D
+
+                Axes3D  # silence pyflakes
+            fig = plt.figure()
+            ax = fig.add_subplot(projection=projection)
+        else:
+            if dims == 3 and not hasattr(ax, "set_zlim"):
+                raise ValueError(
+                    "Cannot make 3d plot unless axes projection " "is 3d"
+                )
+
+        if dims == 2:
+            if N == 2:
+                self.plot2d2(ax, **plotkwargs)
+            elif N == 3:
+                self.plot2d3(ax)
+            else:
+                raise ValueError(
+                    "Can only make 2-d plots for 2 and 3 " "component systems!"
+                )
+        else:
+            if N == 3:
+                self.plot3d3(ax)
+            elif N == 4:
+                self.plot3d4(ax)
+            else:
+                raise ValueError(
+                    "Can only make 3-d plots for 3 and 4 " "component systems!"
+                )
+
+        if show:
+            plt.show()
+        return ax
+
+    def plot2d2(self, ax=None):
+        """Get 2D plot."""
+        x, e = self.points[:, 1:].T
+        names = [re.sub(r"(\d+)", r"$_{\1}$", ref[2]) for ref in self.entries]
+        hull = self.hull
+        simplices = self.simplices
+        xlabel = self.symbols[1]
+        ylabel = "energy [eV/atom]"
+        extra = -min(e) / 10
+        if ax:
+            for i, j in simplices:
+                ax.plot(x[[i, j]], e[[i, j]], "-b")
+            ax.plot(x[hull], e[hull], "sg")
+            if not self.only_plot_stable:
+                ax.plot(x[~hull], e[~hull], "or")
+
+            if self.only_plot_stable or self.only_label_stable:
+                x = x[self.hull]
+                e = e[self.hull]
+                names = [name for name, h in zip(names, self.hull) if h]
+            for a, b, name in zip(x, e, names):
+                if b <= extra:
+                    ax.text(a, b, name, ha="center", va="top")
+
+            ax.set_xlabel(xlabel)
+            ax.set_ylabel(ylabel)
+
+            ax.set_ylim([min(e) - extra, extra])
+        return (x, e, names, hull, simplices, xlabel, ylabel)
+
+    def plot2d3(self, ax=None):
+        """Get 2D plot for ternaries."""
+        x, y = self.points[:, 1:-1].T.copy()
+        x += y / 2
+        y *= 3 ** 0.5 / 2
+        names = [re.sub(r"(\d+)", r"$_{\1}$", ref[2]) for ref in self.entries]
+        hull = self.hull
+        simplices = self.simplices
+
+        if ax:
+            for i, j, k in simplices:
+                ax.plot(x[[i, j, k, i]], y[[i, j, k, i]], "-b")
+            ax.plot(x[hull], y[hull], "og")
+            if not self.only_plot_stable:
+                ax.plot(x[~hull], y[~hull], "sr")
+            if self.only_plot_stable or self.only_label_stable:
+                x = x[self.hull]
+                y = y[self.hull]
+                names = [name for name, h in zip(names, self.hull) if h]
+            for a, b, name in zip(x, y, names):
+                ax.text(a, b, name, ha="center", va="top")
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.axis("off")
+        return (x, y, names, hull, simplices)
+
+    def plot3d3(self, ax):
+        """Get 3D plot for ternaries."""
+        x, y, e = self.points[:, 1:].T
+
+        ax.scatter(x[self.hull], y[self.hull], e[self.hull], c="g", marker="o")
+        if not self.only_plot_stable:
+            ax.scatter(
+                x[~self.hull], y[~self.hull], e[~self.hull], c="r", marker="s"
+            )
+
+        for a, b, c, ref in zip(x, y, e, self.entries):
+            name = re.sub(r"(\d+)", r"$_{\1}$", ref[2])
+            ax.text(a, b, c, name, ha="center", va="bottom")
+
+        for i, j, k in self.simplices:
+            ax.plot(
+                x[[i, j, k, i]], y[[i, j, k, i]], zs=e[[i, j, k, i]], c="b"
+            )
+
+        ax.set_xlim3d(0, 1)
+        ax.set_ylim3d(0, 1)
+        ax.view_init(azim=115, elev=30)
+        ax.set_xlabel(self.symbols[1])
+        ax.set_ylabel(self.symbols[2])
+        ax.set_zlabel("energy [eV/atom]")
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.axis("off")
+
+    def plot3d4(self, ax):
+        """Get 3D plot for quaternaries."""
+        x, y, z = self.points[:, 1:-1].T
+        a = x / 2 + y + z / 2
+        b = 3 ** 0.5 * (x / 2 + y / 6)
+        c = (2 / 3) ** 0.5 * z
+
+        ax.scatter(a[self.hull], b[self.hull], c[self.hull], c="g", marker="o")
+        if not self.only_plot_stable:
+            ax.scatter(
+                a[~self.hull], b[~self.hull], c[~self.hull], c="r", marker="s"
+            )
+
+        for x, y, z, ref in zip(a, b, c, self.entries):
+            name = re.sub(r"(\d+)", r"$_{\1}$", ref[2])
+            ax.text(x, y, z, name, ha="center", va="bottom")
+
+        for i, j, k, w in self.simplices:
+            ax.plot(
+                a[[i, j, k, i, w, k, j, w]],
+                b[[i, j, k, i, w, k, j, w]],
+                zs=c[[i, j, k, i, w, k, j, w]],
+                c="b",
+            )
+
+        ax.set_xlim3d(0, 1)
+        ax.set_ylim3d(0, 1)
+        ax.set_zlim3d(0, 1)
+        ax.view_init(azim=115, elev=30)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.axis("off")
 
 
 # https://wiki.fysik.dtu.dk/ase/_modules/ase/phasediagram.html#PhaseDiagram

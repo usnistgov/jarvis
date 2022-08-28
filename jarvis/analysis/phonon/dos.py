@@ -26,8 +26,10 @@ class PhononDos(object):
         gomega = np.array(self.phonon_dos)
         integ = np.trapz(omega ** 2 * gomega, omega) / np.trapz(gomega, omega)
         prefact = 1 / kB
+        # TODO: check if np.pi / 2 is required
         moment_debye = (
-            np.pi / 2 * n ** (-1 / 3) * (prefact) * np.sqrt(5 / 3 * integ)
+            n ** (-1 / 3) * (prefact) * np.sqrt(5 / 3 * integ)
+            #np.pi / 2 * n ** (-1 / 3) * (prefact) * np.sqrt(5 / 3 * integ)
         )
         return moment_debye
 
