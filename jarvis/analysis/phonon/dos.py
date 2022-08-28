@@ -28,8 +28,10 @@ class PhononDos(object):
         prefact = 1 / kB
         # TODO: check if np.pi / 2 is required
         moment_debye = (
-            n ** (-1 / 3) * (prefact) * np.sqrt(5 / 3 * integ)
-            #np.pi / 2 * n ** (-1 / 3) * (prefact) * np.sqrt(5 / 3 * integ)
+            n ** (-1 / 3)
+            * (prefact)
+            * np.sqrt(5 / 3 * integ)
+            # np.pi / 2 * n ** (-1 / 3) * (prefact) * np.sqrt(5 / 3 * integ)
         )
         return moment_debye
 
