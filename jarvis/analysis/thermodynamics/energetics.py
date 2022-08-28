@@ -100,7 +100,7 @@ def get_twod_defect_energy(vrun="", jid="", atom=""):
 
 
 class PhaseDiagram:
-    """Module for convex hull plot."""
+    """Module for phase diagram."""
 
     def __init__(
         self,
@@ -112,11 +112,13 @@ class PhaseDiagram:
         """Initialize Phase-diagram."""
         # Adapted from ASE
         self.species = OrderedDict()
-        self.entries = []
+        # List of formula,formation energy,JID etc.
+        self.entries = entries
+        self.entries_dict = []
         self.verbose = verbose
         self.only_plot_stable = only_plot_stable
         self.only_label_stable = only_label_stable
-        for i in entries:
+        for i in self.entries:
             name = i[0]
             energy = i[1]
             # jid = i[2]
@@ -127,21 +129,23 @@ class PhaseDiagram:
                 natoms += n
                 if symbol not in self.species:
                     self.species[symbol] = len(self.species)
-            self.entries.append((count, energy, name, natoms))
+            self.entries_dict.append((count, energy, name, natoms))
 
         ns = len(self.species)
         self.symbols = [None] * ns
         for symbol, id in self.species.items():
             self.symbols[id] = symbol
 
-        if self.verbose:
+        if verbose:
             print("Species:", ", ".join(self.symbols))
-            print("Entries:", len(self.entries))
-            for i, (count, energy, name, natoms) in enumerate(self.entries):
+            print("Entries:", len(self.entries_dict))
+            for i, (count, energy, name, natoms) in enumerate(
+                self.entries_dict
+            ):
                 print("{:<5}{:10}{:10.3f}".format(i, name, energy))
 
-        self.points = np.zeros((len(self.entries), ns + 1))
-        for s, (count, energy, name, natoms) in enumerate(self.entries):
+        self.points = np.zeros((len(self.entries_dict), ns + 1))
+        for s, (count, energy, name, natoms) in enumerate(self.entries_dict):
             for symbol, n in count.items():
                 self.points[s, self.species[symbol]] = n / natoms
             self.points[s, -1] = energy  # / natoms
@@ -163,8 +167,10 @@ class PhaseDiagram:
             for simplex in self.simplices:
                 self.hull[simplex] = True
 
-    def decompose(self, formula=None):
-        """Find the combination of the references with the lowest energy."""
+    def energy_above_hull(self, entry=[]):
+        """Find energy above hull."""
+        formula = entry[0]
+        form_enp = entry[1]
         kwargs = Composition.from_string(formula).to_dict()
 
         point = np.zeros(len(self.species))
@@ -172,7 +178,7 @@ class PhaseDiagram:
         for symbol, n in kwargs.items():
             point[self.species[symbol]] = n
             N += n
-
+        # print ('N',N)
         # Find coordinates within each simplex:
         X = self.points[self.simplices, 1:-1] - point[1:] / N
 
@@ -194,20 +200,35 @@ class PhaseDiagram:
 
         scaledcoefs = [1 - x.sum()]
         scaledcoefs.extend(x)
-
-        energy = N * np.dot(scaledcoefs, points[:, -1])
+        #         print('scaledcoefs',scaledcoefs)
+        #         print('points[:, -1]',points[:, -1])
+        energy = np.dot(scaledcoefs, points[:, -1])  # *N
 
         coefs = []
         results = []
         for coef, s in zip(scaledcoefs, indices):
-            count, e, name, natoms = self.entries[s]
+            count, e, name, natoms = self.entries_dict[s]
             coef *= N / natoms
             coefs.append(coef)
             results.append((name, coef, e))
 
-        return energy, indices, np.array(coefs)
+        #         if self.verbose:
+        #             print_results(results)
+        e_above_hull = form_enp - energy
+        return e_above_hull, energy, indices, np.array(coefs)
 
-    def plot(self, ax=None, dims=None, show=False, **plotkwargs):
+    def get_ehull_all(self):
+        """Find energy above hull for all entries."""
+        info = []
+        for i in self.entries:
+            # print('ent',i)
+            ehull, energy, indices, coefs = self.energy_above_hull(
+                entry=[i[0], i[1]]
+            )
+            info.append([i, ehull])
+        return info
+
+    def plot(self, ax=None, dims=None, show=False):
         """Make 2-d or 3-d plot of datapoints and convex hull.
 
         Default is 2-d for 2- and 3-component diagrams and 3-d for a
@@ -240,7 +261,7 @@ class PhaseDiagram:
 
         if dims == 2:
             if N == 2:
-                self.plot2d2(ax, **plotkwargs)
+                self.plot2d2(ax)
             elif N == 3:
                 self.plot2d3(ax)
             else:
@@ -264,7 +285,9 @@ class PhaseDiagram:
     def plot2d2(self, ax=None):
         """Get 2D plot."""
         x, e = self.points[:, 1:].T
-        names = [re.sub(r"(\d+)", r"$_{\1}$", ref[2]) for ref in self.entries]
+        names = [
+            re.sub(r"(\d+)", r"$_{\1}$", ref[2]) for ref in self.entries_dict
+        ]
         hull = self.hull
         simplices = self.simplices
         xlabel = self.symbols[1]
@@ -296,7 +319,9 @@ class PhaseDiagram:
         x, y = self.points[:, 1:-1].T.copy()
         x += y / 2
         y *= 3 ** 0.5 / 2
-        names = [re.sub(r"(\d+)", r"$_{\1}$", ref[2]) for ref in self.entries]
+        names = [
+            re.sub(r"(\d+)", r"$_{\1}$", ref[2]) for ref in self.entries_dict
+        ]
         hull = self.hull
         simplices = self.simplices
 
@@ -327,7 +352,7 @@ class PhaseDiagram:
                 x[~self.hull], y[~self.hull], e[~self.hull], c="r", marker="s"
             )
 
-        for a, b, c, ref in zip(x, y, e, self.entries):
+        for a, b, c, ref in zip(x, y, e, self.entries_dict):
             name = re.sub(r"(\d+)", r"$_{\1}$", ref[2])
             ax.text(a, b, c, name, ha="center", va="bottom")
 
@@ -359,7 +384,7 @@ class PhaseDiagram:
                 a[~self.hull], b[~self.hull], c[~self.hull], c="r", marker="s"
             )
 
-        for x, y, z, ref in zip(a, b, c, self.entries):
+        for x, y, z, ref in zip(a, b, c, self.entries_dict):
             name = re.sub(r"(\d+)", r"$_{\1}$", ref[2])
             ax.text(x, y, z, name, ha="center", va="bottom")
 
@@ -380,31 +405,23 @@ class PhaseDiagram:
         ax.axis("off")
 
 
-# https://wiki.fysik.dtu.dk/ase/_modules/ase/phasediagram.html#PhaseDiagram
-# class EnergyConvexHull(object):
-#     def __init__(entries=None):
-#        # [array of [composition_as_dict,total_energy]]
-#        self.entries = entries
+def jid_hull(jid="", dataset=[]):
+    """Get ehull for a jid and a dataset e.g. dft_3d."""
+    for i in dataset:
+        if i["jid"] == jid:
+            system = list(set(i["atoms"]["elements"]))
+    z = []
+    for i in dataset:
+        formula = i["formula"]
+        comp = Composition.from_string(formula)
+        # atom_frac = comp.atomic_fraction
+        all_elms = list(comp.to_dict())
+        if (set(all_elms)).issubset(set(system)):
+            z.append([i["formula"], i["formation_energy_peratom"], i["jid"]])
 
-#     def chull(self):
-#        for i in self.entries:
-
-"""
-if __name__ == "__main__":
-    from jarvis.io.vasp.inputs import Poscar
-    p = Poscar.from_file(
-        "../..//POSCAR"
-    ).atoms
-    total_energy = -9.974648
-    fen = form_enp(atoms=p, total_energy=total_energy)
-    print("fen", fen)
-    x = [
-        {"comp": {"Al": 2, "O": 1}, "energy": -0.15, "id": "xyz"},
-        {"comp": {"Al": 2, "O": 3}, "energy": -16.5, "id": "xyz"},
-        {"comp": {"Al": 1, "O": 1}, "energy": -4.86, "id": "xyz"},
-    ]
-
-    # entries = [[{'Al':2,'O':1},-0.15],[{'Al':2,'O':3},
-     -16.065],[{'Al':1,'O':1},-2.8],[{'Al':1,'O':3},-4.865]]
-    print(x)
-"""
+    pdj = PhaseDiagram(z)
+    # pdj.plot()
+    info = pdj.get_ehull_all()
+    for i in info:
+        if i[0][2] == jid:
+            return i

@@ -2,14 +2,17 @@ from jarvis.analysis.thermodynamics.energetics import (
     form_enp,
     get_twod_defect_energy,
     PhaseDiagram,
+    jid_hull
 )
 from jarvis.db.figshare import data
 import os
 from jarvis.io.vasp.outputs import Vasprun
+from jarvis.core.composition import Composition
 
 tmp_xml = os.path.join(os.path.dirname(__file__), "JVASP-667_C_C_c.xml")
 vrun = Vasprun(tmp_xml)
 
+dft_3d=data('dft_3d')
 
 def test_get_twod_defect_energy():
     Ef = get_twod_defect_energy(vrun=vrun, jid="JVASP-667", atom="C")
@@ -23,17 +26,16 @@ def test_form_enp():
     print(Ef)
 
 
-def phasediag():
+def test_phasediag():
     system = ["Al", "O"]
     system = ["Bi", "Se"]
     system = ["Cu", "Au"]
     system = ["Al", "Ni"]
     system = ["Ga", "Al", "N"]
     system = ["Ni", "Al", "O"]
+    system = ["O", "Al", "Ga", "N"]
     system = ["Ni", "Fe", "Cr"]
-    system = ["O", "Al", "Ni", "Cu"]
     system=['Mo','Se']
-    dft_3d=data('dft_3d')
     x = []
     y = []
     for i in dft_3d:
@@ -45,13 +47,11 @@ def phasediag():
             x.append([i["formula"], i["formation_energy_peratom"], i["jid"]])
 
     pd = PhaseDiagram(
-        x, verbose=False, only_plot_stable=True, only_label_stable=True
+        x, verbose=True, only_plot_stable=True, only_label_stable=True
     )
-    for i in x:
-        energy, indices, coefs = pd.decompose(i[0])
 
     pd.plot()
-
-
+def test_jid_hull():
+   x=jid_hull(jid='JVASP-114723',dataset=dft_3d)
 # test_get_twod_defect_energy()
 # test_form_enp()
