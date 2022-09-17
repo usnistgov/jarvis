@@ -31,18 +31,18 @@ def nCr(n, r):
     return int(f(n) / f(r) / f(n - r))
 
 
-def test_hermitian_solver():
-    from jarvis.db.figshare import (
-        get_wann_electron,
-        get_wann_phonon,
-    )
-    from jarvis.core.circuits import QuantumCircuitLibrary
+# def test_hermitian_solver():
+#     from jarvis.db.figshare import (
+#         get_wann_electron,
+#         get_wann_phonon,
+#     )
+#     from jarvis.core.circuits import QuantumCircuitLibrary
 
-    wtbh, ef, atoms = get_wann_electron("JVASP-816")
-    hk = get_hk_tb(w=wtbh, k=[0.0, 0.0, 0.0])
-    H = HermitianSolver(hk)
-    qc = QuantumCircuitLibrary(n_qubits=3).circuit6()  # 2^3  = 8
-    en, vqe_result, vqe = H.run_vqe(mode="min_val", var_form=qc)
+#     wtbh, ef, atoms = get_wann_electron("JVASP-816")
+#     hk = get_hk_tb(w=wtbh, k=[0.0, 0.0, 0.0])
+#     H = HermitianSolver(hk)
+#     qc = QuantumCircuitLibrary(n_qubits=3).circuit6()  # 2^3  = 8
+#     en, vqe_result, vqe = H.run_vqe(mode="min_val", var_form=qc)
 
 
 def variational_circuit(num_qubits=2, reps=1):
