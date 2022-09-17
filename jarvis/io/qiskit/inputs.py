@@ -305,8 +305,8 @@ def get_dos(
     nwan = int(np.ceil(np.log2(w.nwan))) ** 2
     kpoints = generate_kgrid(grid=grid)
     nk = len(kpoints)
-    q_vals = np.zeros((nk, nwan - 1), dtype=float)
-    np_vals = np.zeros((nk, nwan - 1), dtype=float)
+    q_vals = np.zeros((nk, nwan), dtype=float)
+    np_vals = np.zeros((nk, nwan), dtype=float)
     pvals = np.zeros((nk, nwan - 1), dtype=float)
     # if use_dask:
     # def get_vqd_vals(k):

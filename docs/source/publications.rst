@@ -76,11 +76,13 @@ JARVIS-ML related
 
 [32. Rapid Prediction of Phonon Structure and Properties using an Atomistic Line Graph Neural Network (ALIGNN)](https://arxiv.org/abs/2207.12510)
 
+[33. Unified Graph Neural Network Force-field for the Periodic Table](https://arxiv.org/abs/2209.05554)
+
 JARVIS-QC related
 -----------------------------------------------------
-[33. Quantum Computation for Predicting Electron and Phonon Properties of Solids., J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/ac1154)
+[34. Quantum Computation for Predicting Electron and Phonon Properties of Solids., J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/ac1154)
 
 
 JARVIS-QETB related
 -----------------------------------------------------
-[34. Fast and Accurate Prediction of Material Properties with Three-Body Tight-Binding Model for the Periodic Table](https://arxiv.org/abs/2112.11585)
+[35. Fast and Accurate Prediction of Material Properties with Three-Body Tight-Binding Model for the Periodic Table](https://arxiv.org/abs/2112.11585)
