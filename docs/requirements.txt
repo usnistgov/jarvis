@@ -76,7 +76,7 @@ PennyLane==0.14.1
 Pillow==9.0.1
 pluggy==1.0.0
 ply==3.11
-protobuf==3.19.1
+protobuf==3.19.5
 psutil==5.8.0
 py==1.11.0
 pyasn1==0.4.8
