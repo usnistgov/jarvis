@@ -58,7 +58,7 @@ class PhononDos(object):
         n = 1 / (np.exp(x[1:]) - 1)
         S_vib = kB * ((n + 1) * np.log(n + 1) + n * np.log(n)) * dos[1:]
         S_vib = np.insert(S_vib, 0, S_vib[0])
-        return S_vib
+        return np.trapz(S_vib, omega) * e * Na
 
     def phonon_isotope_scattering(self, atoms=None):
         """
@@ -101,8 +101,12 @@ if __name__ == "__main__":
     atoms = Atoms.from_dict(dft3d_entry["atoms"])
 
     ph = PhononDos(phonon_dos=ph_dos, phonon_freq_cm=ph_freq)
+    cv = ph.heat_capacity()
+    svib = ph.vibrational_entropy()
     debye_temp = ph.debye_temperature(atoms)
     iso_scatt = ph.phonon_isotope_scattering(atoms)
 
-    print("Debye temperature:", debye_temp)
-    print("Isotope scattering rate:", iso_scatt)
+    print("Heat Capacity (J/mol/K):", cv)
+    print("Vibrational Entropy (J/mol/K):", svib)
+    print("Debye temperature (K):", debye_temp)
+    print("Isotope scattering rate (Hz):", iso_scatt)
