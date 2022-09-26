@@ -109,6 +109,7 @@ def get_Phonopy_obj(
     atoms,
     phonopy_yaml=None,
     FC_file=None,
+    unitcell_file = None,
     scell_file=None,
     factor=None,
     symprec=1e-05,
@@ -129,6 +130,9 @@ def get_Phonopy_obj(
 
             factor = VaspToCm
         phonon = load(
+            unitcell = unitcell,
+            #unitcell_filename = unitcell_file,
+            #supercell_matrix = scell,
             supercell_filename = scell_file,
             force_constants_filename=FC_file,
             symprec=symprec,
