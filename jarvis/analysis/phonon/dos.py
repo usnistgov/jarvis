@@ -45,11 +45,8 @@ class PhononDos(object):
         # Eq. 1
         dos = np.array(self.phonon_dos) / icm_to_eV
         x = (omega) / (kB * temperature)
-        Cp = (
-		kB * x[1:] ** 2 
-		* (np.exp(x[1:]) / (np.exp(x[1:]) - 1) ** 2) 
-		* dos[1:]
-	)
+        prefix = kB * x[1:] ** 2 * (np.exp(x[1:]) / (np.exp(x[1:]) - 1) ** 2) 
+	Cp = prefix * dos[1:]	
         Cp = np.insert(Cp, 0, 0)
         return np.trapz(Cp, omega) * e * Na
 
@@ -79,8 +76,8 @@ class PhononDos(object):
             for k, v in formula[0].items():
                 iso_list = isotope_data[k]
                 ave_m_n = sum([iso[2] * iso[1] for iso in iso_list])
-                gamma_n = sum([iso[2] * (iso[1] - ave_m_n) ** 2\
-		for iso in iso_list])
+                g = [iso[2] * (iso[1] - ave_m_n) ** 2 for iso in iso_list]
+		gamma_n = sum(g)
                 ave_m += ave_m_n * (v / natoms)
                 gamma += gamma_n * (v / natoms)
             return gamma / (ave_m ** 2)
