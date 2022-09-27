@@ -110,3 +110,4 @@ if __name__ == "__main__":
     print("Vibrational Entropy (J/mol/K):", svib)
     print("Debye temperature (K):", debye_temp)
     print("Isotope scattering rate (Hz):", iso_scatt)
+    
