@@ -454,20 +454,20 @@ class Standardize(torch.nn.Module):
 
 
 def prepare_dgl_batch(
-    batch: Tuple[dgl.DGLGraph, torch.Tensor], device=None, non_blocking=False
+    batch: Tuple[str, dgl.DGLGraph, torch.Tensor], device=None, non_blocking=False
 ):
     """Send batched dgl crystal graph to device."""
-    g, t = batch
-    batch = (
-        g.to(device, non_blocking=non_blocking),
-        t.to(device, non_blocking=non_blocking),
+    i, g, t = batch
+    xtpl = (
+        i,
+        g.to(device, non_blocking=non_blocking)
     )
-
-    return batch
+    y = t.to(device, non_blocking=non_blocking)
+    return xtpl, y
 
 
 def prepare_line_graph_batch(
-    batch: Tuple[Tuple[dgl.DGLGraph, dgl.DGLGraph], torch.Tensor],
+    batch: Tuple[str, Tuple[dgl.DGLGraph, dgl.DGLGraph], torch.Tensor],
     device=None,
     non_blocking=False,
 ):
@@ -475,16 +475,15 @@ def prepare_line_graph_batch(
 
     Note: the batch is a nested tuple, with the graph and line graph together
     """
-    g, lg, t = batch
-    batch = (
-        (
-            g.to(device, non_blocking=non_blocking),
-            lg.to(device, non_blocking=non_blocking),
-        ),
-        t.to(device, non_blocking=non_blocking),
+    i, g, lg, t = batch
+    xtpl = (
+        i,
+        g.to(device, non_blocking=non_blocking),
+        lg.to(device, non_blocking=non_blocking)
     )
+    y = t.to(device, non_blocking=non_blocking)
 
-    return batch
+    return xtpl, y
 
 
 # def prepare_batch(batch, device=None):
@@ -599,14 +598,15 @@ class StructureDataset(torch.utils.data.Dataset):
         """Get StructureDataset sample."""
         g = self.graphs[idx]
         label = self.labels[idx]
+        index = self.ids[idx]
 
         if self.transform:
             g = self.transform(g)
 
         if self.line_graph:
-            return g, self.line_graphs[idx], label
+            return index, g, self.line_graphs[idx], label
 
-        return g, label
+        return index, g, label
 
     def setup_standardizer(self, ids):
         """Atom-wise feature standardization transform."""
@@ -625,24 +625,24 @@ class StructureDataset(torch.utils.data.Dataset):
         )
 
     @staticmethod
-    def collate(samples: List[Tuple[dgl.DGLGraph, torch.Tensor]]):
+    def collate(samples: List[Tuple[str, dgl.DGLGraph, torch.Tensor]]):
         """Dataloader helper to batch graphs cross `samples`."""
-        graphs, labels = map(list, zip(*samples))
+        ind, graphs, labels = map(list, zip(*samples))
         batched_graph = dgl.batch(graphs)
-        return batched_graph, torch.tensor(labels)
+        return torch.tensor(ind), batched_graph, torch.tensor(labels)
 
     @staticmethod
     def collate_line_graph(
-        samples: List[Tuple[dgl.DGLGraph, dgl.DGLGraph, torch.Tensor]]
+        samples: List[Tuple[str, dgl.DGLGraph, dgl.DGLGraph, torch.Tensor]]
     ):
         """Dataloader helper to batch graphs cross `samples`."""
-        graphs, line_graphs, labels = map(list, zip(*samples))
+        ind, graphs, line_graphs, labels = map(list, zip(*samples))
         batched_graph = dgl.batch(graphs)
         batched_line_graph = dgl.batch(line_graphs)
         if len(labels[0].size()) > 0:
-            return batched_graph, batched_line_graph, torch.stack(labels)
+            return ind, batched_graph, batched_line_graph, torch.stack(labels)
         else:
-            return batched_graph, batched_line_graph, torch.tensor(labels)
+            return ind, batched_graph, batched_line_graph, torch.tensor(labels)
 
 
 """
