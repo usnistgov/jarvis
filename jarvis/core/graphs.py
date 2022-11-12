@@ -22,7 +22,10 @@ except Exception as exp:
 
 
 def canonize_edge(
-    src_id, dst_id, src_image, dst_image,
+    src_id,
+    dst_id,
+    src_image,
+    dst_image,
 ):
     """Compute canonical edge representation.
 
@@ -46,7 +49,11 @@ def canonize_edge(
 
 
 def nearest_neighbor_edges(
-    atoms=None, cutoff=8, max_neighbors=12, id=None, use_canonize=False,
+    atoms=None,
+    cutoff=8,
+    max_neighbors=12,
+    id=None,
+    use_canonize=False,
 ):
     """Construct k-NN edge list."""
     # returns List[List[Tuple[site, distance, index, image]]]
@@ -118,7 +125,8 @@ def nearest_neighbor_edges(
 
 
 def build_undirected_edgedata(
-    atoms=None, edges={},
+    atoms=None,
+    edges={},
 ):
     """Build undirected graph data from edge set.
 
@@ -454,14 +462,13 @@ class Standardize(torch.nn.Module):
 
 
 def prepare_dgl_batch(
-    batch: Tuple[str, dgl.DGLGraph, torch.Tensor], device=None, non_blocking=False
+    batch: Tuple[str, dgl.DGLGraph, torch.Tensor],
+    device=None,
+    non_blocking=False,
 ):
     """Send batched dgl crystal graph to device."""
     i, g, t = batch
-    xtpl = (
-        i,
-        g.to(device, non_blocking=non_blocking)
-    )
+    xtpl = (i, g.to(device, non_blocking=non_blocking))
     y = t.to(device, non_blocking=non_blocking)
     return xtpl, y
 
@@ -479,7 +486,7 @@ def prepare_line_graph_batch(
     xtpl = (
         i,
         g.to(device, non_blocking=non_blocking),
-        lg.to(device, non_blocking=non_blocking)
+        lg.to(device, non_blocking=non_blocking),
     )
     y = t.to(device, non_blocking=non_blocking)
 
