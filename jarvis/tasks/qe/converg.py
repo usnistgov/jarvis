@@ -13,7 +13,9 @@ def converg_kpoints(
     encut=40,
     ecutrho=250,
     tol=0.001,
+    increment=5,
     qe_cmd="/cluster/deb9/bin/mpirun -n 16 /cluster/bin/pw.x",
+    psp_dir=None,
 ):
     """Converge k-points for a material."""
     scf_init = {
@@ -54,7 +56,7 @@ def converg_kpoints(
     length1 = length
     kp_list = []
     while not convg_kp2 and not convg_kp1:
-        length1 = length1 + 5
+        length1 = length1 + increment
         print("Incrementing length", length1)
         kpoints = Kpoints().automatic_length_mesh(
             lattice_mat=atoms.lattice_mat, length=length
@@ -71,6 +73,7 @@ def converg_kpoints(
             scf_init["system"]["ntyp"] = ""
             qejob_scf_init = QEjob(
                 atoms=atoms,
+                psp_dir=psp_dir,
                 input_params=scf_init,
                 output_file="scf_init.out",
                 qe_cmd=qe_cmd,
@@ -86,7 +89,7 @@ def converg_kpoints(
                 en1 = en2
                 print("Incrementing length", length1)
                 while mesh in kp_list:
-                    length1 = length1 + 5
+                    length1 = length1 + increment
                     # Assuming you are not super unlucky
                     # kpoints = Auto_Kpoints(mat=mat, length=length1)
                     kpoints = Kpoints().automatic_length_mesh(
@@ -107,6 +110,7 @@ def converg_kpoints(
                     qejob_scf_init = QEjob(
                         atoms=atoms,
                         input_params=scf_init,
+                        psp_dir=psp_dir,
                         output_file="scf_init.out",
                         qe_cmd=qe_cmd,
                         jobname=prefix,
@@ -120,7 +124,7 @@ def converg_kpoints(
                     time.sleep(sleep)
                 else:
 
-                    length1 = length1 + 5
+                    length1 = length1 + increment
                     # Assuming you are not super unlucky
                     # kpoints = Auto_Kpoints(mat=mat, length=length1)
                     kpoints = Kpoints().automatic_length_mesh(
@@ -133,7 +137,7 @@ def converg_kpoints(
 
             # Some extra points to check
             print("Some extra points to check for KPOINTS")
-            length3 = length1 + 5
+            length3 = length1 + increment
             prefix = "KPOINTS-" + str(length3)
             scf_init["control"]["prefix"] = str('"') + prefix + str('"')
 
@@ -145,6 +149,7 @@ def converg_kpoints(
             scf_init["system"]["ntyp"] = ""
             qejob_scf_init = QEjob(
                 atoms=atoms,
+                psp_dir=psp_dir,
                 input_params=scf_init,
                 output_file="scf_init.out",
                 qe_cmd=qe_cmd,
@@ -157,7 +162,7 @@ def converg_kpoints(
             print("Energy", info_scf["total_energy"])
             time.sleep(sleep)
 
-            length4 = length3 + 5
+            length4 = length3 + increment
             prefix = "KPOINTS-" + str(length4)
             scf_init["control"]["prefix"] = str('"') + prefix + str('"')
 
@@ -169,6 +174,7 @@ def converg_kpoints(
             scf_init["system"]["ntyp"] = ""
             qejob_scf_init = QEjob(
                 atoms=atoms,
+                psp_dir=psp_dir,
                 input_params=scf_init,
                 output_file="scf_init.out",
                 qe_cmd=qe_cmd,
@@ -181,7 +187,7 @@ def converg_kpoints(
             print("Energy", info_scf["total_energy"])
             time.sleep(sleep)
 
-            length5 = length4 + 5
+            length5 = length4 + increment
             prefix = "KPOINTS-" + str(length5)
             scf_init["control"]["prefix"] = str('"') + prefix + str('"')
             kpoints = Kpoints().automatic_length_mesh(
@@ -192,6 +198,7 @@ def converg_kpoints(
             scf_init["system"]["ntyp"] = ""
             qejob_scf_init = QEjob(
                 atoms=atoms,
+                psp_dir=psp_dir,
                 input_params=scf_init,
                 output_file="scf_init.out",
                 qe_cmd=qe_cmd,
@@ -204,7 +211,7 @@ def converg_kpoints(
             print("Energy", info_scf["total_energy"])
             time.sleep(sleep)
 
-            length6 = length5 + 5
+            length6 = length5 + increment
             prefix = "KPOINTS-" + str(length6)
             scf_init["control"]["prefix"] = str('"') + prefix + str('"')
             kpoints = Kpoints().automatic_length_mesh(
@@ -216,6 +223,7 @@ def converg_kpoints(
             qejob_scf_init = QEjob(
                 atoms=atoms,
                 input_params=scf_init,
+                psp_dir=psp_dir,
                 output_file="scf_init.out",
                 qe_cmd=qe_cmd,
                 jobname=prefix,
@@ -227,7 +235,7 @@ def converg_kpoints(
             print("Energy", info_scf["total_energy"])
             time.sleep(sleep)
 
-            length7 = length6 + 5
+            length7 = length6 + increment
             prefix = "KPOINTS-" + str(length7)
             scf_init["control"]["prefix"] = str('"') + prefix + str('"')
             kpoints = Kpoints().automatic_length_mesh(
@@ -240,6 +248,7 @@ def converg_kpoints(
                 atoms=atoms,
                 input_params=scf_init,
                 output_file="scf_init.out",
+                psp_dir=psp_dir,
                 qe_cmd=qe_cmd,
                 jobname=prefix,
                 kpoints=kpoints,
@@ -301,8 +310,7 @@ def converg_kpoints(
                 length1 = length3
             else:
                 print(
-                    "KPOINTS convergence achieved for ",
-                    length1,
+                    "KPOINTS convergence achieved for ", length1,
                 )
                 convg_kp2 = True
 
@@ -315,6 +323,8 @@ def converg_cutoff(
     encut=40,
     ecutrho=250,
     tol=0.001,
+    increment=5,
+    psp_dir=None,
     qe_cmd="/cluster/deb9/bin/mpirun -n 16 /cluster/bin/pw.x",
 ):
     """Converge cutoff for a material."""
@@ -365,6 +375,7 @@ def converg_cutoff(
         scf_init["system"]["ecutwfc"] = encut
         qejob_scf_init = QEjob(
             atoms=atoms,
+            psp_dir=psp_dir,
             input_params=scf_init,
             output_file="scf_init.out",
             qe_cmd=qe_cmd,
@@ -378,7 +389,7 @@ def converg_cutoff(
         time.sleep(sleep)
         while abs(en2 - en1) > tol:
             en1 = en2
-            encut1 = encut1 + 5
+            encut1 = encut1 + increment
             print("Incrementing cutoff", encut1)
             prefix = "ENCUT-" + str(encut1)
             scf_init["control"]["prefix"] = str('"') + prefix + str('"')
@@ -387,6 +398,7 @@ def converg_cutoff(
             qejob_scf_init = QEjob(
                 atoms=atoms,
                 input_params=scf_init,
+                psp_dir=psp_dir,
                 output_file="scf_init.out",
                 qe_cmd=qe_cmd,
                 jobname=prefix,
@@ -403,7 +415,7 @@ def converg_cutoff(
 
         # Some extra points to check
         print("Some extra points to check for ENCUT")
-        encut3 = encut1 + 5
+        encut3 = encut1 + increment
         prefix = "ENCUT-" + str(encut3)
         scf_init["control"]["prefix"] = str('"') + prefix + str('"')
         scf_init["system"]["ntyp"] = ""
@@ -414,6 +426,7 @@ def converg_cutoff(
             input_params=scf_init,
             output_file="scf_init.out",
             qe_cmd=qe_cmd,
+            psp_dir=psp_dir,
             jobname=prefix,
             kpoints=kpoints,
             input_file=prefix + "_ascf_init.in",
@@ -423,7 +436,7 @@ def converg_cutoff(
         print("Energy", info_scf["total_energy"])
         time.sleep(sleep)
 
-        encut4 = encut3 + 5
+        encut4 = encut3 + increment
         prefix = "ENCUT-" + str(encut4)
         scf_init["control"]["prefix"] = str('"') + prefix + str('"')
         scf_init["system"]["ntyp"] = ""
@@ -431,6 +444,7 @@ def converg_cutoff(
         qejob_scf_init = QEjob(
             atoms=atoms,
             input_params=scf_init,
+            psp_dir=psp_dir,
             output_file="scf_init.out",
             qe_cmd=qe_cmd,
             jobname=prefix,
@@ -442,7 +456,7 @@ def converg_cutoff(
         print("Energy", info_scf["total_energy"])
         time.sleep(sleep)
 
-        encut5 = encut4 + 5
+        encut5 = encut4 + increment
         prefix = "ENCUT-" + str(encut5)
         scf_init["control"]["prefix"] = str('"') + prefix + str('"')
         scf_init["system"]["ntyp"] = ""
@@ -452,6 +466,7 @@ def converg_cutoff(
             input_params=scf_init,
             output_file="scf_init.out",
             qe_cmd=qe_cmd,
+            psp_dir=psp_dir,
             jobname=prefix,
             kpoints=kpoints,
             input_file=prefix + "_ascf_init.in",
@@ -461,7 +476,7 @@ def converg_cutoff(
         print("Energy", info_scf["total_energy"])
         time.sleep(sleep)
 
-        encut6 = encut5 + 5
+        encut6 = encut5 + increment
         prefix = "ENCUT-" + str(encut6)
         scf_init["control"]["prefix"] = str('"') + prefix + str('"')
         scf_init["system"]["ntyp"] = ""
@@ -470,6 +485,7 @@ def converg_cutoff(
             atoms=atoms,
             input_params=scf_init,
             output_file="scf_init.out",
+            psp_dir=psp_dir,
             qe_cmd=qe_cmd,
             jobname=prefix,
             kpoints=kpoints,
@@ -480,7 +496,7 @@ def converg_cutoff(
         print("Energy", info_scf["total_energy"])
         time.sleep(sleep)
 
-        encut7 = encut6 + 5
+        encut7 = encut6 + increment
         prefix = "ENCUT-" + str(encut7)
         scf_init["control"]["prefix"] = str('"') + prefix + str('"')
         scf_init["system"]["ntyp"] = ""
@@ -491,6 +507,7 @@ def converg_cutoff(
             output_file="scf_init.out",
             qe_cmd=qe_cmd,
             jobname=prefix,
+            psp_dir=psp_dir,
             kpoints=kpoints,
             input_file=prefix + "_ascf_init.in",
         )
