@@ -5,7 +5,7 @@ from jarvis.io.qe.outputs import DataFileSchema
 from jarvis.core.atoms import Atoms
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.tasks.qe.qe import QEjob
-from jarvis.tasks.converge import converg_kpoints
+from jarvis.tasks.qe.converg import converg_kpoints
 import numpy as np
 import os
 from jarvis.core.utils import get_factors
@@ -76,35 +76,22 @@ class SuperCond(object):
         self.atoms = atoms
         self.kp = kp
         self.qp = qp
-        if kp is None:
-            kp_len = converg_kpoints(
-                atoms=atoms, qe_cmd=qe_cmd, psp_dir=psp_dir
-            )
-            kp = Kpoints3D().automatic_length_mesh(
-                lattice_mat=atoms.lattice_mat, length=kp_len
-            )
-            kpts = kp._kpoints[0]
-            kpts = non_prime_kpoints(kpts)
-            kp = Kpoints3D(kpoints=[kpts])
-            print("kpts", kpts)
-
-            nq1 = get_factors(kpts[0])[0]
-            nq2 = get_factors(kpts[1])[0]
-            nq3 = get_factors(kpts[2])[0]
-            qp = Kpoints3D(kpoints=[[nq1, nq2, nq3]])
-            self.kp = kp
-            self.qp = qp
+        # self.kp = kp
+        # self.qp = qp
         self.relax_calc = relax_calc
         self.qe_cmd = qe_cmd
+        self.psp_dir = psp_dir
         self.pressure = pressure
 
     def to_dict(self):
         """Get dictionary."""
         info = {}
         info["atoms"] = self.atoms.to_dict()
+
         info["kp"] = self.kp.to_dict()
         info["qp"] = self.qp.to_dict()
         info["qe_cmd"] = self.qe_cmd
+        info["psp_dir"] = self.psp_dir
         info["relax_calc"] = self.relax_calc
         info["pressure"] = self.pressure
         return info
@@ -127,6 +114,24 @@ class SuperCond(object):
         atoms = self.atoms
         kp = self.kp
         qp = self.qp
+        if not kp._kpoints:
+            kp_len = converg_kpoints(
+                atoms=atoms, qe_cmd=self.qe_cmd, psp_dir=self.psp_dir
+            )
+            kp = Kpoints3D().automatic_length_mesh(
+                lattice_mat=atoms.lattice_mat, length=kp_len
+            )
+            kpts = kp._kpoints[0]
+            kpts = non_prime_kpoints(kpts)
+            kp = Kpoints3D(kpoints=[kpts])
+            print("kpts", kpts)
+
+        nq1 = get_factors(kpts[0])[0]
+        nq2 = get_factors(kpts[1])[0]
+        nq3 = get_factors(kpts[2])[0]
+        qp = Kpoints3D(kpoints=[[nq1, nq2, nq3]])
+        self.kp = kp
+        self.qp = qp
         relax = {
             "control": {
                 # "calculation": "'scf'",

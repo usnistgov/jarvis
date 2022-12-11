@@ -25,8 +25,10 @@ def get_jid_data(jid="JVASP-667", dataset="dft_2d"):
 
 
 qe_cmd = "mpirun -np 16 /home/kfg/codes/q-e-qe-6.5/bin/pw.x"
+qe_cmd = "/home/kfg/codes/q-e-qe-6.5/bin/pw.x"
 
 run_dir = "/wrk/knc6/Super"
+run_dir = "/wrk/knc6/CDVAE_SUP"
 
 
 def non_prime_kpoints(kpts=[]):
@@ -53,35 +55,50 @@ def write_qejob(pyname="job.py", job_json=""):
     f.close()
 
 
+jids = ["JVASP-816", "JVASP-19821"]
+jids = [
+    "POSCAR-AlN2Sc.vasp",
+    "POSCAR-CrV6Pt.vasp",
+    "POSCAR-NbNiV6.vasp",
+    "POSCAR-RuNb.vasp",
+]
 submit_job = True
-jids = ["JVASP-19821"]
+use_preconverged_kpoints = False
 for i in jids:
     try:
         print("jid", i)
+        if "POSCAR" not in i:
+            dat = get_jid_data(jid=i, dataset="dft_3d")
+            a_atoms = Atoms.from_dict(dat["atoms"])
+        else:
+            a_atoms = Atoms.from_poscar(i)
         dir_name = os.path.join(run_dir, i + "_SUPER")
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
         os.chdir(dir_name)
-        dat = get_jid_data(jid=i, dataset="dft_3d")
-        a_atoms = Atoms.from_dict(dat["atoms"])
+
         atoms = Spacegroup3D(a_atoms).refined_atoms.get_primitive_atoms
         # print (atoms)
-        kp = Kpoints3D().automatic_length_mesh(
-            # lattice_mat=atoms.lattice_mat,
-            # length=10
-            lattice_mat=atoms.lattice_mat,
-            length=dat["kpoint_length_unit"],
-        )
-        kpts = kp._kpoints[0]
-        kpts = non_prime_kpoints(kpts)
-        kp = Kpoints3D(kpoints=[kpts])
-        print("kpts", kpts)
+        if use_preconverged_kpoints:
 
-        nq1 = get_factors(kpts[0])[0]
-        nq2 = get_factors(kpts[1])[0]
-        nq3 = get_factors(kpts[2])[0]
-        qp = Kpoints3D(kpoints=[[nq1, nq2, nq3]])
+            kp = Kpoints3D().automatic_length_mesh(
+                # lattice_mat=atoms.lattice_mat,
+                # length=10
+                lattice_mat=atoms.lattice_mat,
+                length=dat["kpoint_length_unit"],
+            )
+            kpts = kp._kpoints[0]
+            kpts = non_prime_kpoints(kpts)
+            kp = Kpoints3D(kpoints=[kpts])
+            print("kpts", kpts)
 
+            nq1 = get_factors(kpts[0])[0]
+            nq2 = get_factors(kpts[1])[0]
+            nq3 = get_factors(kpts[2])[0]
+            qp = Kpoints3D(kpoints=[[nq1, nq2, nq3]])
+        else:
+            kp = Kpoints3D(kpoints=[])
+            qp = Kpoints3D(kpoints=[])
         sup = SuperCond(atoms=atoms, kp=kp, qp=qp, qe_cmd=qe_cmd).to_dict()
         dumpjson(data=sup, filename="sup.json")
         write_qejob(job_json=os.path.abspath("sup.json"))
@@ -98,7 +115,7 @@ for i in jids:
                 job_line=path,
                 jobname=i,
                 directory=os.getcwd(),
-                queue="mml",
+                # queue="mml",
                 walltime="330:0:0",
                 submit_cmd=["sbatch", "submit_job"],
             )
