@@ -61,7 +61,7 @@ def get_db_info():
         ],
         # https://doi.org/10.6084/m9.figshare.21667874
         "alignn_ff_db": [
-            "https://ndownloader.figshare.com/files/38411351",
+            "https://ndownloader.figshare.com/files/38522315",
             # "https://ndownloader.figshare.com/files/26809760",
             "id_prop.json",
             "Obtaining ALIGNN-FF training DB 300k ...",
