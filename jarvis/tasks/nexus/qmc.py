@@ -1,7 +1,8 @@
+"""Module for running QMCPack."""
 from jarvis.io.nexus.inputs import (
     get_Zeff,
     get_pseudo_dft_dict,
-    get_pseudo_qmc_dict,
+    # get_pseudo_qmc_dict,
 )
 from jarvis.io.qe.outputs import QEout
 from nexus import generate_physical_system
@@ -10,7 +11,6 @@ from nexus import settings, job, run_project, obj
 from jarvis.core.atoms import Atoms
 from jarvis.db.figshare import get_jid_data
 from nexus import read_structure
-from jarvis.core.atoms import Atoms
 from jarvis.core.kpoints import Kpoints3D
 import numpy as np
 import os
@@ -32,9 +32,10 @@ def get_energy_nexus(
     path="scf",
     machine="dobby",
     pseudo_path="/rk2/knc6/QMC/pseudopotentials",
-    results_path="/users/knc6/Software/jarvis/usnistgov/jarvis/jarvis/tasks/nexus/results",
-    runs_path="/users/knc6/Software/jarvis/usnistgov/jarvis/jarvis/tasks/nexus/runs",
+    results_path="/users/knc6/Software/jarvis/usnistgov/jarvis/results",
+    runs_path="/users/knc6/Software/jarvis/usnistgov/jarvis/runs",
 ):
+    """Get energy from Nexus+qmcpack."""
     results = results_path
     runs = runs_path
     settings(
@@ -96,6 +97,7 @@ def get_energy_nexus(
         wf_collect=False,
         **shared_qe
     )
+    print('scf', scf)
     run_project()
     out_file = os.path.join(runs, "scf", "scf.out")
     print("out_file", out_file)
