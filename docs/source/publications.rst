@@ -38,51 +38,61 @@ JARVIS-DFT related
 
 [14. Density functional theory-based electric field gradient database, Sci. Data](https://www.nature.com/articles/s41597-020-00707-8)
 
+[15. High-throughput DFT-based discovery of next generation two-dimensional (2D) superconductors](https://arxiv.org/abs/2211.05254)
+
+[16. A systematic DFT+U and Quantum Monte Carlo benchmark of magnetic two-dimensional (2D) CrX (X = I, Br, Cl, F)](https://arxiv.org/abs/2209.10379)
+
 JARVIS-ML related
 -----------------------------------------------------
-[15. Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018).](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801)
+[17. Machine learning with force-field inspired descriptors for materials: fast screening and mapping energy landscape, Phys. Rev. Mat., 2, 083801 (2018).](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.2.083801)
 
-[16. Convergence and machine learning predictions of Monkhorst-Pack k-points and plane-wave cut-off in high-throughput DFT calculations, Comp. Mat. Sci. 161, 300 (2019).](https://www.sciencedirect.com/science/article/pii/S0927025619300813?via%3Dihub)
+[18. Convergence and machine learning predictions of Monkhorst-Pack k-points and plane-wave cut-off in high-throughput DFT calculations, Comp. Mat. Sci. 161, 300 (2019).](https://www.sciencedirect.com/science/article/pii/S0927025619300813?via%3Dihub)
 
-[17. Materials science in the artificial intelligence age: high-throughput library generation, machine learning, and a pathway from correlations to the underpinning physics, MRS Comm., 1-18, 2019.](https://doi.org/10.1557/mrc.2019.95)
+[19. Materials science in the artificial intelligence age: high-throughput library generation, machine learning, and a pathway from correlations to the underpinning physics, MRS Comm., 1-18, 2019.](https://doi.org/10.1557/mrc.2019.95)
 
-[18. Enhancing materials property prediction by leveraging computational and experimental data using deep transfer learning, Nature Comm., 10, 1, (2019).](https://www.nature.com/articles/s41467-019-13297-w)
+[20. Enhancing materials property prediction by leveraging computational and experimental data using deep transfer learning, Nature Comm., 10, 1, (2019).](https://www.nature.com/articles/s41467-019-13297-w)
 
-[19. Accelerated Discovery of Efficient Solar-cell Materials using Quantum and Machine-learning Methods, Chem. Mater., 31, 5900 (2019).](https://pubs.acs.org/doi/10.1021/acs.chemmater.9b02166)
+[21. Accelerated Discovery of Efficient Solar-cell Materials using Quantum and Machine-learning Methods, Chem. Mater., 31, 5900 (2019).](https://pubs.acs.org/doi/10.1021/acs.chemmater.9b02166)
 
-[20. High-throughput Density Functional Perturbation Theory and Machine Learning Predictions of Infrared, Piezoelectric and Dielectric Responses, npj Computational Materials 6, 64 (2020).](https://www.nature.com/articles/s41524-020-0337-2)
+[22. High-throughput Density Functional Perturbation Theory and Machine Learning Predictions of Infrared, Piezoelectric and Dielectric Responses, npj Computational Materials 6, 64 (2020).](https://www.nature.com/articles/s41524-020-0337-2)
 
-[21. Data-driven Discovery of 3D and 2D Thermoelectric Materials, J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/aba06b/meta)
+[23. Data-driven Discovery of 3D and 2D Thermoelectric Materials, J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/aba06b/meta)
 
-[22. Efficient Computational Design of 2D van der Waals Heterostructures: Band-Alignment, Lattice-Mismatch, Web-app Generation and Machine-learning.](https://arxiv.org/abs/2004.03025)
+[24. Efficient Computational Design of 2D van der Waals Heterostructures: Band-Alignment, Lattice-Mismatch, Web-app Generation and Machine-learning.](https://arxiv.org/abs/2004.03025)
 
-[23. Enhancing materials property prediction by leveraging computational and experimental data using deep transfer learning, Nature Commun.](https://www.nature.com/articles/s41467-019-13297-w)
+[25. Enhancing materials property prediction by leveraging computational and experimental data using deep transfer learning, Nature Commun.](https://www.nature.com/articles/s41467-019-13297-w)
 
-[24. Atomistic Line Graph Neural Network for Improved Materials Property Predictions, npj Computational Materials 7, 1 (2021)](https://www.nature.com/articles/s41524-021-00650-1)
+[26. Atomistic Line Graph Neural Network for Improved Materials Property Predictions, npj Computational Materials 7, 1 (2021)](https://www.nature.com/articles/s41524-021-00650-1)
 
-[25. Recent advances and applications of deep learning methods in materials science, npj Computational Materials 8, 1 (2022)](https://www.nature.com/articles/s41524-022-00734-6)
+[27. Recent advances and applications of deep learning methods in materials science, npj Computational Materials 8, 1 (2022)](https://www.nature.com/articles/s41524-022-00734-6)
 
-[26. Graph neural network predictions of metal organic framework CO2 adsorption properties, Comp. Mat. Sci., 210, 111388 (2022)](https://www.sciencedirect.com/science/article/pii/S092702562200163X)
+[28. Graph neural network predictions of metal organic framework CO2 adsorption properties, Comp. Mat. Sci., 210, 111388 (2022)](https://www.sciencedirect.com/science/article/pii/S092702562200163X)
 
-[27. Data-Driven Multi-Scale Modeling and Optimization for Elastic Properties of Cubic Microstructures](https://link.springer.com/article/10.1007/s40192-022-00258-3)
+[29. Data-Driven Multi-Scale Modeling and Optimization for Elastic Properties of Cubic Microstructures](https://link.springer.com/article/10.1007/s40192-022-00258-3)
 
-[28. Uncertainty Prediction for Machine Learning Models of Material Properties](https://pubs.acs.org/doi/abs/10.1021/acsomega.1c03752)
+[30. Uncertainty Prediction for Machine Learning Models of Material Properties](https://pubs.acs.org/doi/abs/10.1021/acsomega.1c03752)
 
-[29. Cross-property deep transfer learning framework for enhanced predictive analytics on small materials data](https://www.nature.com/articles/s41467-021-26921-5)
+[31. Cross-property deep transfer learning framework for enhanced predictive analytics on small materials data](https://www.nature.com/articles/s41467-021-26921-5)
 
-[30. Prediction of the Electron Density of States for Crystalline Compounds with Atomistic Line Graph Neural Networks (ALIGNN)](https://link.springer.com/article/10.1007/s11837-022-05199-y)
+[32. Prediction of the Electron Density of States for Crystalline Compounds with Atomistic Line Graph Neural Networks (ALIGNN)](https://link.springer.com/article/10.1007/s11837-022-05199-y)
 
-[31. Designing High-Tc Superconductors with BCS-inspired Screening, Density Functional Theory and Deep-learning](https://arxiv.org/abs/2205.00060)
+[33. Designing High-Tc Superconductors with BCS-inspired Screening, Density Functional Theory and Deep-learning](https://arxiv.org/abs/2205.00060)
 
-[32. Rapid Prediction of Phonon Structure and Properties using an Atomistic Line Graph Neural Network (ALIGNN)](https://arxiv.org/abs/2207.12510)
+[34. Rapid Prediction of Phonon Structure and Properties using an Atomistic Line Graph Neural Network (ALIGNN)](https://arxiv.org/abs/2207.12510)
 
-[33. Unified Graph Neural Network Force-field for the Periodic Table](https://arxiv.org/abs/2209.05554)
+[35. Unified Graph Neural Network Force-field for the Periodic Table](https://arxiv.org/abs/2209.05554)
+
+[36. AtomVision: A machine vision library for atomistic images](https://arxiv.org/abs/2212.02586)
+
+[37. ChemNLP: A Natural Language Processing based Library for Materials Chemistry Text Data](https://arxiv.org/abs/2209.08203)
+
+[38. A critical examination of robustness and generalizability of machine learning prediction of materials properties](https://arxiv.org/abs/2210.13597)
 
 JARVIS-QC related
 -----------------------------------------------------
-[34. Quantum Computation for Predicting Electron and Phonon Properties of Solids., J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/ac1154)
+[39. Quantum Computation for Predicting Electron and Phonon Properties of Solids., J. Phys.: Cond. Matt.](https://iopscience.iop.org/article/10.1088/1361-648X/ac1154)
 
 
 JARVIS-QETB related
 -----------------------------------------------------
-[35. Fast and Accurate Prediction of Material Properties with Three-Body Tight-Binding Model for the Periodic Table](https://arxiv.org/abs/2112.11585)
+[40. Fast and Accurate Prediction of Material Properties with Three-Body Tight-Binding Model for the Periodic Table](https://arxiv.org/abs/2112.11585)

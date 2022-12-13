@@ -1,11 +1,14 @@
 """Module to run Tc calculation."""
-# Ref: https://arxiv.org/abs/2205.00060
+# Ref:
+# https://www.nature.com/articles/s41524-022-00933-1
 from jarvis.io.qe.outputs import DataFileSchema
 from jarvis.core.atoms import Atoms
 from jarvis.core.kpoints import Kpoints3D
 from jarvis.tasks.qe.qe import QEjob
+from jarvis.tasks.qe.converg import converg_kpoints
 import numpy as np
 import os
+from jarvis.core.utils import get_factors
 
 # from jarvis.core.utils import get_factors
 
@@ -34,6 +37,19 @@ def parse_lambda(filename="lambda"):
             print()
 
 
+def non_prime_kpoints(kpts=[]):
+    """Get non prime kpoints."""
+    mem = []
+    for i in kpts:
+        facts = get_factors(i)
+        if len(facts) == 1:
+            val = i + 1
+        else:
+            val = i
+        mem.append(val)
+    return mem
+
+
 def very_clean():
     """Clean files."""
     cmd = (
@@ -54,22 +70,28 @@ class SuperCond(object):
         qe_cmd="pw.x",
         relax_calc="'vc-relax'",
         pressure=None,
+        psp_dir=None,
     ):
         """Initialize the class."""
         self.atoms = atoms
         self.kp = kp
         self.qp = qp
+        # self.kp = kp
+        # self.qp = qp
         self.relax_calc = relax_calc
         self.qe_cmd = qe_cmd
+        self.psp_dir = psp_dir
         self.pressure = pressure
 
     def to_dict(self):
         """Get dictionary."""
         info = {}
         info["atoms"] = self.atoms.to_dict()
+
         info["kp"] = self.kp.to_dict()
         info["qp"] = self.qp.to_dict()
         info["qe_cmd"] = self.qe_cmd
+        info["psp_dir"] = self.psp_dir
         info["relax_calc"] = self.relax_calc
         info["pressure"] = self.pressure
         return info
@@ -92,6 +114,24 @@ class SuperCond(object):
         atoms = self.atoms
         kp = self.kp
         qp = self.qp
+        if not kp._kpoints:
+            kp_len = converg_kpoints(
+                atoms=atoms, qe_cmd=self.qe_cmd, psp_dir=self.psp_dir
+            )
+            kp = Kpoints3D().automatic_length_mesh(
+                lattice_mat=atoms.lattice_mat, length=kp_len
+            )
+            kpts = kp._kpoints[0]
+            kpts = non_prime_kpoints(kpts)
+            kp = Kpoints3D(kpoints=[kpts])
+            print("kpts", kpts)
+
+        nq1 = get_factors(kpts[0])[0]
+        nq2 = get_factors(kpts[1])[0]
+        nq3 = get_factors(kpts[2])[0]
+        qp = Kpoints3D(kpoints=[[nq1, nq2, nq3]])
+        self.kp = kp
+        self.qp = qp
         relax = {
             "control": {
                 # "calculation": "'scf'",
@@ -101,7 +141,7 @@ class SuperCond(object):
                 "outdir": "'./'",
                 "tstress": ".true.",
                 "tprnfor": ".true.",
-                "disk_io": "'low'",
+                "disk_io": "'nowf'",
                 "wf_collect": ".true.",
                 "pseudo_dir": None,
                 "verbosity": "'high'",
@@ -157,7 +197,7 @@ class SuperCond(object):
                 "outdir": "'./'",
                 "tstress": ".true.",
                 "tprnfor": ".true.",
-                "disk_io": "'low'",
+                "disk_io": "'nowf'",
                 "pseudo_dir": None,
                 "verbosity": "'high'",
                 "nstep": 100,
