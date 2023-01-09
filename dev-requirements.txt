@@ -138,7 +138,7 @@ tifffile==2021.11.2
 toml==0.10.2
 tomli==2.0.0
 toolz==0.11.2
-torch==1.10.1
+torch==1.13.1
 tornado==6.1
 tqdm==4.62.3
 tweedledum==1.1.1
