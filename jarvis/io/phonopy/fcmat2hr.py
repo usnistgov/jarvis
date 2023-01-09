@@ -31,12 +31,16 @@ def get_phonon_hr(
     nrpt_max = 51 ** 3
     # hr matrix
     norbs = num_patom * 3
-    hr_mat = np.zeros((ndim, ndim, ndim, norbs, norbs), dtype=np.complex128)
-    hr_mat0 = np.zeros((nrpt_max, norbs, norbs), dtype=np.complex128)
+    hr_mat = np.zeros((ndim, ndim, ndim, norbs, norbs), dtype="complex128")
+    # hr_mat = np.zeros((ndim, ndim, ndim, norbs, norbs), dtype=np.complex128)
+    hr_mat0 = np.zeros((nrpt_max, norbs, norbs), dtype="complex128")
+    # hr_mat0 = np.zeros((nrpt_max, norbs, norbs), dtype=np.complex128)
     # WS points
-    rpts = np.zeros((nrpt_max, 3), dtype=np.int32)
+    rpts = np.zeros((nrpt_max, 3), dtype="int32")
+    # rpts = np.zeros((nrpt_max, 3), dtype=np.int32)
     # degeneracy
-    dege = np.zeros((nrpt_max), dtype=np.int32)
+    dege = np.zeros((nrpt_max), dtype="int32")
+    # dege = np.zeros((nrpt_max), dtype=np.int32)
 
     for iatom in range(num_patom):  # atoms in primitive cell
         for jatom in range(num_patom):  # atoms in primitive cell

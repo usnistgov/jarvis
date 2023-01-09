@@ -54,7 +54,7 @@ class Lattice(object):
         >>> [round(i,2) for i in lat.lat_angles()]
         [90.0, 90.0, 90.0]
         """
-        tmp = np.array(lattice_mat, dtype=np.float64).reshape((3, 3))
+        tmp = np.array(lattice_mat, dtype="float64").reshape((3, 3))
         self._lat = np.around(tmp, decimals=round_off)
         self._inv_lat = None
         self._lll_matrix_mappings = {}
@@ -264,12 +264,12 @@ class Lattice(object):
         # Generate all possible images that could be within `r` of `center`
         mins = np.floor(pcoords - nmax)
         maxes = np.ceil(pcoords + nmax)
-        arange = np.arange(start=mins[0], stop=maxes[0], dtype=np.int)
-        brange = np.arange(start=mins[1], stop=maxes[1], dtype=np.int)
-        crange = np.arange(start=mins[2], stop=maxes[2], dtype=np.int)
-        arange = arange[:, None] * np.array([1, 0, 0], dtype=np.int)[None, :]
-        brange = brange[:, None] * np.array([0, 1, 0], dtype=np.int)[None, :]
-        crange = crange[:, None] * np.array([0, 0, 1], dtype=np.int)[None, :]
+        arange = np.arange(start=mins[0], stop=maxes[0], dtype="int")
+        brange = np.arange(start=mins[1], stop=maxes[1], dtype="int")
+        crange = np.arange(start=mins[2], stop=maxes[2], dtype="int")
+        arange = arange[:, None] * np.array([1, 0, 0], dtype="int")[None, :]
+        brange = brange[:, None] * np.array([0, 1, 0], dtype="int")[None, :]
+        crange = crange[:, None] * np.array([0, 0, 1], dtype="int")[None, :]
         tmp_cr = crange[None, None, :]
         images = arange[:, None, None] + brange[None, :, None] + tmp_cr
 
@@ -337,7 +337,7 @@ class Lattice(object):
             )
             for j, k in np.argwhere(inds):
                 scale_m = np.array(
-                    (f_a[i], f_b[j], f_c[k]), dtype=np.int
+                    (f_a[i], f_b[j], f_c[k]), dtype="int"
                 )  # type: ignore
                 if abs(np.linalg.det(scale_m)) < 1e-8:
                     continue
@@ -388,7 +388,7 @@ class Lattice(object):
 
         k = 2
 
-        mapping = np.identity(3, dtype=np.double)
+        mapping = np.identity(3, dtype="double")
         while k <= 3:
             # Size reduction.
             for i in range(k - 1, 0, -1):

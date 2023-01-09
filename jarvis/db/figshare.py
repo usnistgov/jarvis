@@ -18,9 +18,9 @@ from jarvis.io.wannier.outputs import WannierHam
 from tqdm import tqdm
 import matplotlib.image as mpimg
 from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
-import matplotlib.pyplot as plt
 
-plt.switch_backend("agg")
+# import matplotlib.pyplot as plt
+# plt.switch_backend("agg")
 
 
 def get_db_info():
@@ -296,10 +296,15 @@ def get_stm_2d_dataset():
 def get_request_data(
     js_tag="jdft_2d-4-26-2020.json",
     url="https://ndownloader.figshare.com/files/22471019",
+    store_dir=None,
 ):
     """Get data with progress bar."""
     zfile = js_tag + ".zip"
-    path = str(os.path.join(os.path.dirname(__file__), zfile))
+    if store_dir is None:
+        path = str(os.path.join(os.path.dirname(__file__), zfile))
+    else:
+        path = str(os.path.join(store_dir, zfile))
+
     # path = str(os.path.join(os.path.dirname(__file__), js_tag))
     if not os.path.isfile(path):
         # zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
@@ -329,7 +334,7 @@ def get_request_data(
     return data
 
 
-def data(dataset="dft_2d"):
+def data(dataset="dft_2d", store_dir=None):
     """Provide main function to download datasets."""
     db_info = get_db_info()
     if dataset not in list(db_info.keys()):
@@ -365,7 +370,7 @@ def data(dataset="dft_2d"):
     #        zipObj.extractall(os.path.join(os.path.dirname(__file__)))
     #    os.remove(zfile)
     # data = loadjson(path)
-    dat = get_request_data(js_tag=js_tag, url=url)
+    dat = get_request_data(js_tag=js_tag, url=url, store_dir=store_dir)
     return dat
 
 
