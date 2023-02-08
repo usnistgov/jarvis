@@ -18,7 +18,7 @@ cif2cell==2.0.0a3
 click==8.0.3
 codecov==2.1.12
 coverage==6.2
-cryptography==36.0.1
+cryptography==39.0.1
 cycler==0.11.0
 dgl==0.6.1
 dill==0.3.4
