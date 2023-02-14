@@ -185,41 +185,10 @@ def get_modal_heat_capacity(phonon_obj, mesh=[1, 1, 1], T=300):
     mesh_dict = phonon_obj.get_mesh_dict()
     omega = np.array(mesh_dict["frequencies"]) * 1e12
     x = h * omega / (kB * T)  # omega is ordinal not angular
-    mode_C = (kB / e) * (x) ** 2 * (np.exp(x) / (np.exp(x) - 1) ** 2)
+    mode_C = (kB / e) * (x) ** 2 * (np.exp(x) / ((np.exp(x) - 1) ** 2))
     return mode_C    
     
     
-    
-# def get_spectral_heat_capacity(
-#     phonon_obj, mesh=[1, 1, 1], T=300, weighted=True, plot=False
-# ):
-#     phonon_obj.run_mesh(mesh)
-#     mesh_dict = phonon_obj.get_mesh_dict()
-#     omega = np.array(mesh_dict["frequencies"]) * 1e12
-#     x = h * omega / (kB * T)  # omega is ordinal not angular
-#     mode_C = (kB / e) * (x) ** 2 * (np.exp(x) / (np.exp(x) - 1) ** 2)
-#     phonon_obj.run_total_dos()
-#     # Get tetrahedron mesh object
-#     thm = phonon_obj._total_dos._tetrahedron_mesh
-#     freq_pts = phonon_obj._total_dos._frequency_points
-#     thm.set(value="I", frequency_points=freq_pts)
-#     spectral_C = np.zeros_like(freq_pts)
-
-#     if weighted:
-#         for i, iw in enumerate(thm):
-#             spectral_C += np.sum(
-#                 iw * mode_C[i] * phonon_obj._total_dos._weights[i], axis=1
-#             )
-#     else:
-#         for i, iw in enumerate(thm):
-#             spectral_C += np.sum(iw * mode_C[i], axis=1)
-#     if plot:
-#         plt.figure()
-#         plt.plot(freq_pts, spectral_C)
-#         plt.scatter()
-#         plt.ylabel(r"C (eV/K$\cdot$THz)")
-#         plt.xlabel("Frequency (THz)")
-#     return spectral_C
 
 def get_phonon_tb(
     # phonopy_atoms=[],
