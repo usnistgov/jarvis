@@ -145,7 +145,7 @@ tweedledum==1.1.1
 typing_extensions==4.0.1
 urllib3==1.26.7
 websocket-client==1.2.3
-Werkzeug==2.0.2
+Werkzeug==2.2.3
 wrapt==1.13.3
 xmltodict==0.12.0
 yfinance==0.1.67
