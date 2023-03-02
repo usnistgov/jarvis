@@ -109,7 +109,7 @@ def get_Phonopy_obj(
     atoms,
     phonopy_yaml=None,
     FC_file=None,
-    unitcell_file = None,
+    unitcell_file=None,
     scell_file=None,
     factor=None,
     symprec=1e-05,
@@ -130,10 +130,10 @@ def get_Phonopy_obj(
 
             factor = VaspToCm
         phonon = load(
-            unitcell = unitcell,
+            unitcell=unitcell,
             #unitcell_filename = unitcell_file,
             #supercell_matrix = scell,
-            supercell_filename = scell_file,
+            supercell_filename=scell_file,
             force_constants_filename=FC_file,
             symprec=symprec,
             is_symmetry=True,
@@ -179,16 +179,14 @@ def get_thermal_properties(phonon_obj, mesh=[1, 1, 1], tmin=0, tmax=100, step=10
     return tp_dict
 
 
-
 def get_modal_heat_capacity(phonon_obj, mesh=[1, 1, 1], T=300):
     phonon_obj.run_mesh(mesh)
     mesh_dict = phonon_obj.get_mesh_dict()
     omega = np.array(mesh_dict["frequencies"]) * 1e12
     x = h * omega / (kB * T)  # omega is ordinal not angular
     mode_C = (kB / e) * (x) ** 2 * (np.exp(x) / ((np.exp(x) - 1) ** 2))
-    return mode_C    
-    
-    
+    return mode_C
+
 
 def get_phonon_tb(
     # phonopy_atoms=[],

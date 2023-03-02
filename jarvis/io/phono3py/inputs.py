@@ -11,6 +11,8 @@ from phono3py import Phono3pyJointDos
 # Maybe add get_gridpoints function here?
 
 # Should be a way to get supercell dimensions programmatically?
+
+
 def prepare_jdos(
     phonopy_obj,
     poscar="",
@@ -22,7 +24,7 @@ def prepare_jdos(
     run=False,
 ):
     """
-    
+
 
     Parameters
     ----------
@@ -80,9 +82,9 @@ def prepare_jdos(
 
 
 # Try to use the Phono3pyJDOS class?
-def prepare_jdos_api(phonopy_obj, mesh = [1, 1, 1], temperatures=None,\
-    num_freq_points=201, pa=None, nac_params = None,
-    write_jdos = True, log_level = 1):
+def prepare_jdos_api(phonopy_obj, mesh=[1, 1, 1], temperatures=None,
+                     num_freq_points=201, pa=None, nac_params=None,
+                     write_jdos=True, log_level=1):
     '''
     Run JDOS calculation using the Phono3pyJointDOS Class
     Currently assumes phonopy_obj contains a force cosntants attribute
@@ -99,14 +101,14 @@ def prepare_jdos_api(phonopy_obj, mesh = [1, 1, 1], temperatures=None,\
     None.
 
     '''
-    ph3_jdos = Phono3pyJointDos(phonopy_obj._supercell,\
-                                phonopy_obj._primitive,\
-                                    phonopy_obj._force_constants,\
-                                        mesh = mesh,\
-                                            temperatures = temperatures,\
-                                                nac_params = nac_params,\
-                                                    num_frequency_points = num_freq_points,\
-                                                        log_level = 2)
+    ph3_jdos = Phono3pyJointDos(phonopy_obj._supercell,
+                                phonopy_obj._primitive,
+                                phonopy_obj._force_constants,
+                                mesh=mesh,
+                                temperatures=temperatures,
+                                nac_params=nac_params,
+                                num_frequency_points=num_freq_points,
+                                log_level=2)
 #    latt_vecs = phonopy_obj.get_primitive().get_cell()
 #    positions = phonopy_obj.get_primitive().get_scaled_positions()
 #    atom_type = phonopy_obj.get_primitive().get_atomic_numbers()
@@ -114,9 +116,8 @@ def prepare_jdos_api(phonopy_obj, mesh = [1, 1, 1], temperatures=None,\
 #    mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
 #    gridpt_uids = np.unique(mapping)
     phonopy_obj.run_mesh(mesh)
-    ga, gp, mapping = phonopy_obj.get_mesh_grid_info()    
-    ph3_jdos.run(gp, write_jdos = write_jdos)
-    
+    ga, gp, mapping = phonopy_obj.get_mesh_grid_info()
+    ph3_jdos.run(gp, write_jdos=write_jdos)
 
 
 # Should add a prepare_gruneisen_quasiharmonic function as well
@@ -153,7 +154,7 @@ def prepare_gruneisen_FC3(
     plot=False,
 ):
     """
-    
+
 
     Parameters
     ----------
@@ -226,7 +227,7 @@ if __name__ == "__main__":
     # prepare_jdos(
     #     phonon_obj, poscar=pos, mesh=[11, 11, 11], scell_dim=[2, 2, 2], run=True
     # )
-    prepare_jdos_api(phonon_obj, mesh=[11, 11, 11], write_jdos = True)
+    prepare_jdos_api(phonon_obj, mesh=[11, 11, 11], write_jdos=True)
     # prepare_gruneisen_FC3(
     #     phonon_obj, poscar=pos, mesh=[2, 2, 2], band_calc=False, run=True, plot=True
     # )

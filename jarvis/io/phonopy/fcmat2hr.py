@@ -66,7 +66,7 @@ def get_phonon_hr(
                     rx = rx + sdim
                     ry = ry + sdim
                     rz = rz + sdim
-                    hr_mat[rx, ry, rz, idx : idx + 3, idy : idy + 3] = fcmat[
+                    hr_mat[rx, ry, rz, idx: idx + 3, idy: idy + 3] = fcmat[
                         p2s_map[iatom], katom
                     ] / (multi[katom, iatom] * mass_sqrt)
 
@@ -105,7 +105,7 @@ def get_phonon_hr(
         nl = np.int32(np.ceil(nrpt / 15.0))
         for n in range(nl):
             line = "    " + "    ".join(
-                [str(np.int32(i)) for i in dege_rpts[n * 15 : (n + 1) * 15]]
+                [str(np.int32(i)) for i in dege_rpts[n * 15: (n + 1) * 15]]
             )
             f.write(line)
             f.write("\n")

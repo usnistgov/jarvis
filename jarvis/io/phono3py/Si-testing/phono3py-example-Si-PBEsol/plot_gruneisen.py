@@ -26,7 +26,7 @@ f = h5py.File("gruneisen.hdf5", 'r')
 grun_dict = dict(f)
 
 
-plt.scatter(grun_dict['frequency'], grun_dict['gruneisen'], s = 2)
+plt.scatter(grun_dict['frequency'], grun_dict['gruneisen'], s=2)
 plt.xlabel('Frequency (THz)')
 plt.ylabel('Gruneisen')
 
