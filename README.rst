@@ -39,7 +39,7 @@
 JARVIS-Tools
 =========================================================================================
 
-The JARVIS-Tools is an open-access software package for atomistic data-driven materials desgin. JARVIS-Tools can be used for a) setting up calculations, b) analysis and informatics, c) plotting, d) database development and e) web-page development.
+The JARVIS-Tools is an open-access software package for atomistic data-driven materials design. JARVIS-Tools can be used for a) setting up calculations, b) analysis and informatics, c) plotting, d) database development and e) web-page development.
 
 JARVIS-Tools empowers NIST-JARVIS (Joint Automated Repository for Various Integrated Simulations) repository which is an integrated framework for computational science using density functional theory, classical force-field/molecular dynamics and machine-learning. The NIST-JARVIS official website is: https://jarvis.nist.gov . This project is a part of the Materials Genome Initiative (MGI) at NIST (https://mgi.nist.gov/). 
 
