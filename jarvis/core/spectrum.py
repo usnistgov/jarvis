@@ -49,9 +49,9 @@ class Spectrum(object):
             self.min_x,
             self.max_x + self.resolution,
             self.resolution,
-            dtype=np.float64,
+            dtype="float",
         )
-        spect_y = np.zeros_like(spect_x, dtype=np.float64)
+        spect_y = np.zeros_like(spect_x, dtype="float")
         for i, j, k in zip(self.x, self.y, lwidth_list):
             spect_y += lorentzian(spect_x, j, i, k)
         return spect_x, spect_y

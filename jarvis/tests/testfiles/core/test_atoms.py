@@ -1,5 +1,6 @@
 from jarvis.core.atoms import (
     Atoms,
+    compare_atoms,
     VacuumPadding,
     get_supercell_dims,
     build_xanes_poscar,
@@ -107,6 +108,9 @@ def test_basic_atoms():
     rem = (Si.make_supercell([2, 2, 2]).remove_site_by_index(site=0)).num_atoms
     prim = Si.get_primitive_atoms
     print(prim.cart_coords)
+    conv = Si.get_conventional_atoms
+    spgn=Si.get_spacegroup
+    comp=compare_atoms(atoms1=prim,atoms2=conv)
     assert round(prim.cart_coords[0][0], 2) == round(4.37815150, 2)
     # print ('raw_distance_matrix', prim.raw_distance_matrix)
     # print ('raw_distance_matrix', Si.raw_distance_matrix)

@@ -20,6 +20,8 @@ Database name            Number of data-points       Description
                                                      (Keyword:FD-ELAST)
 ``jff``                  2538                        Various 3D materials properties in JARVIS-FF database   
                                                      computed with several force-fields                     
+``alignn_ff_db``         307113                      Energy per atom, forces and stresses for ALIGNN-FF 
+                                                     trainig for 75k materials.
 ``edos_pdos``            48469                       Normalized electron and phonon density of states with 
                                                      interpolated values and fixed number of bins
 ``megnet``               69239                       Formation energy and bandgaps of 3D materials properties

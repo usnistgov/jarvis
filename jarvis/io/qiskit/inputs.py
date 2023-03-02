@@ -1,28 +1,59 @@
-"""Module to solve Hermitian Matrix."""
-# Reference: https://arxiv.org/abs/2102.11452
+"""Module to solve Hermitian Matrix and predict badstructures."""
+# Reference: https://doi.org/10.1088/1361-648X/ac1154
+
 import numpy as np
-from qiskit import aqua
-
-from jarvis.core.kpoints import generate_kgrid
+import itertools
+import functools
 from qiskit import Aer
-
-# from qiskit.circuit.library import EfficientSU2
-import matplotlib.pyplot as plt
+from qiskit.utils import QuantumInstance, algorithm_globals
+from qiskit.opflow import I, X, Y, Z
+from qiskit.algorithms import VQE
 from jarvis.core.kpoints import Kpoints3D as Kpoints
 from jarvis.db.figshare import get_hk_tb
+from jarvis.core.kpoints import generate_kgrid
+import matplotlib.pyplot as plt
 
 plt.switch_backend("agg")
+# from qiskit.algorithms.optimizers import SLSQP
+
+
+def decompose_Hamiltonian(H):
+    """Decompose Hermitian matrix into Pauli basis."""
+    # Inspired from
+    # https://github.com/PennyLaneAI/pennylane/blob/master/pennylane/utils.py#L45
+    # https://qiskit.org/documentation/tutorials/algorithms/04_vqe_advanced.html
+    x, y = H.shape
+    N = int(np.log2(len(H)))
+    if len(H) - 2 ** N != 0 or x != y:
+        raise ValueError(
+            "Hamiltonian should be in the form (2^n x 2^n), for any n>=1"
+        )
+    pauilis = [I, X, Y, Z]
+    decomposedH = 0
+    for term in itertools.product(pauilis, repeat=N):
+        matrices = [i.to_matrix() for i in term]
+        # coefficient of the pauli string = (1/2^N) * (Tr[pauliOp x H])
+        coeff = np.trace(functools.reduce(np.kron, matrices) @ H) / (2 ** N)
+        coeff = np.real_if_close(coeff).item()
+        if coeff == 0:
+            continue
+        obs = 1
+        for i in term:
+            obs = obs ^ i
+        decomposedH += coeff * obs
+    return decomposedH
 
 
 class HermitianSolver(object):
     """Solve a Hermitian matrix using quantum algorithms."""
 
-    def __init__(self, mat=[]):
+    def __init__(self, mat=[], verbose=False):
         """Initialize with a numpy Hermitian matrix."""
         N = int(np.ceil(np.log2(len(mat))))
         hk = np.zeros((2 ** N, 2 ** N), dtype="complex")
         hk[: mat.shape[0], : mat.shape[1]] = mat
         self.mat = hk
+        self.verbose = verbose
         if not self.check_hermitian():
             raise ValueError("Only implemented for Hermitian matrix.")
 
@@ -44,19 +75,27 @@ class HermitianSolver(object):
         mode="min_val",
     ):
         """Run variational quantum eigensolver."""
-        # N=int(np.ceil(np.log2(len(self.mat))))
-        # hk = np.zeros((2**N,2**N),dtype='complex')
-        # hk[:self.mat.shape[0], :self.mat.shape[1]] = self.mat
+        seed = 50
+        algorithm_globals.random_seed = seed
         N = self.n_qubits()
-        if mode == "max_val":
-            Hamil_mat = aqua.operators.MatrixOperator(-1 * self.mat)
-            # Hamil_mat = MatrixOperator(-1 * self.mat)
-        else:
-            Hamil_mat = aqua.operators.MatrixOperator(self.mat)
-            # Hamil_mat = MatrixOperator(self.mat)
-        Hamil_qop = aqua.operators.op_converter.to_weighted_pauli_operator(
-            Hamil_mat
+        qi = QuantumInstance(
+            Aer.get_backend("statevector_simulator"),
+            seed_transpiler=seed,
+            seed_simulator=seed,
         )
+        # n_qubits = self.n_qubits
+
+        if mode == "max_val":
+            Hamil_qop = decompose_Hamiltonian(-1 * self.mat)
+            np_eig = min(np.linalg.eig(-1 * self.mat)[0])
+            if self.verbose:
+                print("np_eig", np_eig)
+        else:
+            Hamil_qop = decompose_Hamiltonian(self.mat)
+            np_eig = min(np.linalg.eig(self.mat)[0])
+            if self.verbose:
+                print("np_eig", np_eig)
+
         if var_form is None:
             if reps is None:
                 reps = 2
@@ -65,46 +104,40 @@ class HermitianSolver(object):
 
             var_form = EfficientSU2(N, reps=reps)
         if optimizer is None:
-            vqe = aqua.algorithms.VQE(Hamil_qop, var_form)
-            # vqe = VQE(Hamil_qop, var_form)
+            vqe = VQE(var_form, quantum_instance=qi)
+
         else:
-            vqe = aqua.algorithms.VQE(Hamil_qop, var_form, optimizer)
-            # vqe = VQE(Hamil_qop, var_form, optimizer)
-        vqe_result = vqe.run(backend)
-        en = np.real(vqe_result["eigenvalue"])
-        # params=vqe.optimal_params
-        # circuit=vqe.construct_circuit(params)
+            vqe = VQE(var_form, optimizer=optimizer, quantum_instance=qi)
+        result = vqe.compute_minimum_eigenvalue(operator=Hamil_qop)
+        en = result.eigenvalue
+
         if mode == "max_val":
             en = -1 * en
-        # states = np.sort(
-        #    np.real(
-        #        vqe.expectation.convert(
-        #            StateFn(vqe.operator, is_measurement=True)
-        #        ).to_matrix()
-        #    )
-        # )
-        return en, vqe_result, vqe
+
+        return en, result, vqe
 
     def run_numpy(self):
         """Obtain eigenvalues and vecs using Numpy solvers."""
         return np.linalg.eigh(self.mat)
 
-    def run_qpe(self, n_ancillae=8):
-        """Run quantum phase estimations."""
-        quantum_instance = aqua.QuantumInstance(
-            backend=Aer.get_backend("statevector_simulator"), shots=1
-        )
-        Hamil_mat = aqua.operators.MatrixOperator(self.mat)
-        # Hamil_mat = MatrixOperator(self.mat)
-        Hamil_qop = aqua.operators.op_converter.to_weighted_pauli_operator(
-            Hamil_mat
-        )
-        # Hamil_qop = op_converter.to_weighted_pauli_operator(Hamil_mat)
-        qpe = aqua.algorithms.QPE(Hamil_qop, num_ancillae=n_ancillae)
-        qpe_result = qpe.run(quantum_instance)
-        # qc = qpe.construct_circuit(measurement=True)
-        print("qpe_result", qpe_result)
-        return qpe_result["eigenvalue"], qpe_result, qpe
+    # def run_qpe(self, n_ancillae=8):
+    #    """Run quantum phase estimations."""
+    #    quantum_instance = aqua.QuantumInstance(
+    #        backend=Aer.get_backend("statevector_simulator"), shots=1
+    #    )
+    #    Hamil_mat = aqua.operators.MatrixOperator(self.mat)
+    #    # Hamil_mat = MatrixOperator(self.mat)
+    #    #Hamil_qop = aqua.operators.op_converter.to_weighted_pauli_operator(
+    #    #    Hamil_mat
+    #    #)
+    #    # Hamil_qop = op_converter.to_weighted_pauli_operator(Hamil_mat)
+
+    #    Hamil_qop = decompose_Hamiltonian(self.mat)
+    #    qpe = aqua.algorithms.QPE(Hamil_qop, num_ancillae=n_ancillae)
+    #    qpe_result = qpe.run(quantum_instance)
+    #    # qc = qpe.construct_circuit(measurement=True)
+    #    print("qpe_result", qpe_result)
+    #    return qpe_result["eigenvalue"], qpe_result, qpe
 
     def run_vqd(
         self,
@@ -125,6 +158,8 @@ class HermitianSolver(object):
         )
         eigvals = [max_eigval]
         eigstates = [vqe_result.eigenstate]
+        #         eigvals = []
+        #         eigstates= []
         for r in range(len(tmp.mat) - 1):
             val, vqe_result, vqe = tmp.run_vqe(
                 backend=backend,
@@ -153,7 +188,7 @@ def get_bandstruct(
     atoms={},
     ef=0,
     line_density=1,
-    ylabel="Energy (cm-1)",
+    ylabel="eV",  # "Energy ($cm^{-1}$)",
     font=22,
     var_form=None,
     filename="bands.png",
@@ -161,13 +196,16 @@ def get_bandstruct(
     neigs=None,
     max_nk=None,
     tol=None,
+    factor=1,
+    verbose=False,
 ):
     """Compare bandstructures using quantum algos."""
     info = {}
     kpoints = Kpoints().kpath(atoms, line_density=line_density)
     labels = kpoints.to_dict()["labels"]
     kpts = kpoints.to_dict()["kpoints"]
-    print("kpts", len(kpts))
+    if verbose:
+        print("Number of kpoints:", len(kpts))
 
     eigvals_q = []
     eigvals_np = []
@@ -178,13 +216,15 @@ def get_bandstruct(
             print("breaking here", ii, max_nk)
         else:
             try:
-                print("kp=", ii, i)
+
                 hk = get_hk_tb(w=w, k=i)
                 HS = HermitianSolver(hk)
                 vqe_vals, _ = HS.run_vqd(var_form=var_form)
                 np_vals, _ = HS.run_numpy()
-                print("np_vals", np_vals)
-                print("vqe_vals", vqe_vals)
+                if verbose:
+                    print("kp=", ii, i)
+                    print("np_vals", np_vals)
+                    print("vqe_vals", vqe_vals)
                 eigvals_q.append(vqe_vals)
                 eigvals_np.append(np_vals)
                 # break
@@ -197,20 +237,20 @@ def get_bandstruct(
             except Exception as exp:
                 print(exp)
                 pass
-    eigvals_q = 3.14 * np.array(eigvals_q)
-    eigvals_np = 3.14 * np.array(eigvals_np)
+    eigvals_q = factor * np.array(eigvals_q)  # 3.14 for phonon
+    eigvals_np = factor * np.array(eigvals_np)
 
     for ii, i in enumerate(eigvals_q.T - ef):
         if ii == 0:
-            plt.plot(i, c="b", label="VQD")
+            plt.plot(i, "*", c="b", label="VQD")
         else:
-            plt.plot(i, c="b")
+            plt.plot(i, "*", c="b")
 
     for ii, i in enumerate(eigvals_np.T - ef):
         if ii == 0:
-            plt.plot(i, c="r", label="Numpy")
+            plt.plot(i, c="g", label="Numpy")
         else:
-            plt.plot(i, c="r")
+            plt.plot(i, c="g")
     new_kp = []
     new_labels = []
     count = 0
@@ -231,7 +271,8 @@ def get_bandstruct(
     info["new_kp"] = list(np.array(new_kp).tolist())
     info["new_labels"] = list(new_labels)
     info["ef"] = ef
-    print(info)
+    if verbose:
+        print(info)
     if tol is not None:
         plt.ylim([tol, np.max(eigvals_q)])
     plt.rcParams.update({"font.size": font})
@@ -266,7 +307,7 @@ def get_dos(
     nk = len(kpoints)
     q_vals = np.zeros((nk, nwan), dtype=float)
     np_vals = np.zeros((nk, nwan), dtype=float)
-    pvals = np.zeros((nk, nwan), dtype=float)
+    pvals = np.zeros((nk, nwan - 1), dtype=float)
     # if use_dask:
     # def get_vqd_vals(k):
     #    hk = get_hk_tb(w=w, k=k)
@@ -281,10 +322,10 @@ def get_dos(
         HS = HermitianSolver(hk)
         vqe_vals, _ = HS.run_vqd()
         n_vals, _ = HS.run_numpy()
+        print("np_vals", n_vals, len(n_vals), np_vals.shape)
+        print("vqe_vals", vqe_vals, len(vqe_vals), q_vals.shape)
         q_vals[i, :] = vqe_vals
         np_vals[i, :] = n_vals
-        print("np_vals", n_vals)
-        print("vqe_vals", vqe_vals)
 
     if xrange is None:
         vmin = np.min(q_vals[:])
@@ -295,9 +336,7 @@ def get_dos(
         # plt.xlim(xrange)
 
     energies = np.arange(
-        xrange[0],
-        xrange[1] + 1e-5,
-        (xrange[1] - xrange[0]) / float(nenergy),
+        xrange[0], xrange[1] + 1e-5, (xrange[1] - xrange[0]) / float(nenergy),
     )
     dos = np.zeros(np.size(energies))
     pdos = np.zeros(np.size(energies))
@@ -323,53 +362,25 @@ def get_dos(
     if proj is not None:
         print("np.sum(pdos) ", np.sum(pdos * de))
     plt.plot(energies, dos)
-    plt.savefig(filename)
-    plt.close()
+    if savefig:
+        plt.savefig(filename)
+        plt.close()
+    else:
+        plt.show()
     return energies, dos, pdos
 
 
 """
 if __name__ == "__main__":
     from jarvis.db.figshare import (
-        get_wann_phonon,
-        get_hk_tb,
         get_wann_electron,
+        get_wann_phonon,
     )
-    from jarvis.core.atoms import Atoms
-    from jarvis.db.jsonutils import dumpjson
+    from jarvis.core.circuits import QuantumCircuitLibrary
 
-    w, ef, atoms = get_wann_electron("JVASP-816")
-    info = get_bandstruct(
-        w=w,
-        line_density=5,
-        atoms=atoms,
-        ef=ef,
-        filename="Alelect.png",
-        ylabel="Energy (eV)",
-    )
-    dumpjson(data=info, filename="Alelect.json")
-    w, atoms = get_wann_phonon("JVASP-54", factor=34.3)
-    info = get_bandstruct(
-        w=w,
-        line_density=11,
-        atoms=atoms,
-        tol=0.1,
-        filename="Alphon.png",
-        ylabel="Freq.(cm$^{-1}$)",
-    )
-    # dumpjson(data=info,filename='Alphon.json')
-    hk = get_hk_tb(w=w, k=[0.0, 0.0, 0.0])
+    wtbh, ef, atoms = get_wann_electron("JVASP-816")
+    hk = get_hk_tb(w=wtbh, k=[0.0, 0.0, 0.0])
     H = HermitianSolver(hk)
-    en, vqe_result, vqe = H.run_vqe(mode="max_val")
-    print("en=", en)
-    # eigs,vecs=H.run_vqd()
-    # print(eigs)
-    # print(vecs)
-
-    # eigs, vecs = H.run_numpy()
-    # print(eigs)
-    # print(vecs)
-    # get_bandstruct(w=w, atoms=atoms, tol=0.1)
-    # get_dos(w=w)
-    # H.run_qpe()
+    qc = QuantumCircuitLibrary(n_qubits=3).circuit6()  # 2^3  = 8
+    en, vqe_result, vqe = H.run_vqe(mode="min_val", var_form=qc)
 """

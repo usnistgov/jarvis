@@ -18,9 +18,9 @@ from jarvis.io.wannier.outputs import WannierHam
 from tqdm import tqdm
 import matplotlib.image as mpimg
 from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
-import matplotlib.pyplot as plt
 
-plt.switch_backend("agg")
+# import matplotlib.pyplot as plt
+# plt.switch_backend("agg")
 
 
 def get_db_info():
@@ -28,24 +28,27 @@ def get_db_info():
     db_info = {
         # https://doi.org/10.6084/m9.figshare.6815705
         "dft_2d": [
-            "https://ndownloader.figshare.com/files/26808917",
-            "d2-3-12-2021.json",
+            "https://ndownloader.figshare.com/files/38521268",
+            "d2-12-12-2022.json",
             "Obtaining 2D dataset 1.1k ...",
-            "https://www.nature.com/articles/s41524-020-00440-1",
+            "https://www.nature.com/articles/s41524-020-00440-1"
+            + "\nOther versions:https://doi.org/10.6084/m9.figshare.6815705",
         ],
         # https://doi.org/10.6084/m9.figshare.6815699
         "dft_3d": [
-            "https://ndownloader.figshare.com/files/29204826",
-            "jdft_3d-8-18-2021.json",
-            "Obtaining 3D dataset 55k ...",
-            "https://www.nature.com/articles/s41524-020-00440-1",
+            "https://ndownloader.figshare.com/files/38521619",
+            "jdft_3d-12-12-2022.json",
+            "Obtaining 3D dataset 76k ...",
+            "https://www.nature.com/articles/s41524-020-00440-1"
+            + "\nOther versions:https://doi.org/10.6084/m9.figshare.6815699",
         ],
         # https://doi.org/10.6084/m9.figshare.6815699
         "cfid_3d": [
             "https://ndownloader.figshare.com/files/29205201",
             "cfid_3d-8-18-2021.json",
             "Obtaining 3D dataset 55k ...",
-            "https://www.nature.com/articles/s41524-020-00440-1",
+            "https://www.nature.com/articles/s41524-020-00440-1"
+            + "\nOther versions:https://doi.org/10.6084/m9.figshare.6815699",
         ],
         # https://doi.org/10.6084/m9.figshare.14213522
         "jff": [
@@ -55,6 +58,14 @@ def get_db_info():
             # "jff-3-12-2021.json",
             "Obtaining JARVIS-FF 2k ...",
             "https://www.nature.com/articles/s41524-020-00440-1",
+        ],
+        # https://doi.org/10.6084/m9.figshare.21667874
+        "alignn_ff_db": [
+            "https://ndownloader.figshare.com/files/38522315",
+            # "https://ndownloader.figshare.com/files/26809760",
+            "id_prop.json",
+            "Obtaining ALIGNN-FF training DB 300k ...",
+            "https://arxiv.org/abs/2209.05554",
         ],
         "mp_3d_2020": [
             "https://ndownloader.figshare.com/files/26791259",
@@ -203,6 +214,13 @@ def get_db_info():
             "Obtaining PDBBind dataset 11k...",
             "https://doi.org/10.1093/bioinformatics/btu626",
         ],
+        # https://doi.org/10.6084/m9.figshare.21713885
+        "snumat": [
+            "https://ndownloader.figshare.com/files/38521736",
+            "snumat.json",
+            "Obtaining SNUMAT Hybrid functional dataset 10k...",
+            "https://www.nature.com/articles/s41597-020-00723-8",
+        ],
         # https://doi.org/10.6084/m9.figshare.13215308
         "aflow2": [
             "https://ndownloader.figshare.com/files/25453265",
@@ -278,10 +296,15 @@ def get_stm_2d_dataset():
 def get_request_data(
     js_tag="jdft_2d-4-26-2020.json",
     url="https://ndownloader.figshare.com/files/22471019",
+    store_dir=None,
 ):
     """Get data with progress bar."""
     zfile = js_tag + ".zip"
-    path = str(os.path.join(os.path.dirname(__file__), zfile))
+    if store_dir is None:
+        path = str(os.path.join(os.path.dirname(__file__), zfile))
+    else:
+        path = str(os.path.join(store_dir, zfile))
+
     # path = str(os.path.join(os.path.dirname(__file__), js_tag))
     if not os.path.isfile(path):
         # zfile = str(os.path.join(os.path.dirname(__file__), "tmp.zip"))
@@ -311,7 +334,7 @@ def get_request_data(
     return data
 
 
-def data(dataset="dft_2d"):
+def data(dataset="dft_2d", store_dir=None):
     """Provide main function to download datasets."""
     db_info = get_db_info()
     if dataset not in list(db_info.keys()):
@@ -347,7 +370,7 @@ def data(dataset="dft_2d"):
     #        zipObj.extractall(os.path.join(os.path.dirname(__file__)))
     #    os.remove(zfile)
     # data = loadjson(path)
-    dat = get_request_data(js_tag=js_tag, url=url)
+    dat = get_request_data(js_tag=js_tag, url=url, store_dir=store_dir)
     return dat
 
 
