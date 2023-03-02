@@ -94,6 +94,24 @@ class ElasticTensor(object):
             np.array(self.voigt_modulus) + np.array(self.reuss_modulus)
         ) / 2
 
+
+    # def debye_temperature(self, atoms=None):
+    #     """Debye temperature."""
+    #     const = 1.05457e-34 / 1.38065e-23  # (h/kb)
+    #     amu_gm = 1.66054e-24 * 1e-3#convert to kilograms 
+    #     factor = ((3 * atoms.num_atoms * atoms.density) / (
+    #         4 * np.pi * atoms.composition.weight * amu_gm
+    #     )) ** (1/3)
+    #     theta = const * factor * self.velocity_average(atoms=atoms)
+    #     return theta
+    
+    # def debye_temperature_toberer(self, atoms=None):
+    #     const = 1.05457e-34 / 1.38065e-23  # (h/kb)
+    #     vs =self.velocity_average(atoms)
+    #     V0 = atoms.volume / sum([v for v in atoms.composition.to_dict().values()])
+    #     return (6 * np.pi**2 / (V0 * 1e-30)) ** (1/3) * vs * const
+    
+    
     @property
     def pugh_ratio_voigt(self):
         """Get Voigt Pugh ratio."""
@@ -131,6 +149,8 @@ class ElasticTensor(object):
         # <0 covalent bonding
         c = self.et_tensor
         return c[0][1] - c[3][3]
+
+
 
     @property
     def poisson_ratio(self):

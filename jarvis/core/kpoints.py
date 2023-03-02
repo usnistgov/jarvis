@@ -999,7 +999,7 @@ class HighSymmetryKpoint3DFactory(object):
         return HighSymmetryKpoint3DFactory(kpoints=kpoints, path=path)
 
 
-"""
+
 if __name__ == "__main__":
     from jarvis.core.atoms import Atoms
     box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
@@ -1009,10 +1009,11 @@ if __name__ == "__main__":
     lattice_mat = Si.lattice_mat
     kp = Kpoints3D().automatic_length_mesh(lattice_mat=lattice_mat)
     # print(kp.__repr__(0))
-    kp.write_file("KPOINTS")
+    #kp.write_file("KPOINTS")
     sym = kp.high_symm_path(Si)._path
     # print (sym)
     x, y = kp.interpolated_points(Si)
+'''
     # for i,j in zip(x,y):
     #   print (i,j)
     Si = Poscar.from_file(
@@ -1020,4 +1021,4 @@ if __name__ == "__main__":
     ).atoms
     kp = Kpoints3D().kpath(atoms=Si)
     kp.write_file("KPOINTS")
-"""
+'''

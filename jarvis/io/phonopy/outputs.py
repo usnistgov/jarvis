@@ -12,11 +12,24 @@ from jarvis.io.phonopy.fcmat2hr import get_phonon_hr
 # VaspToTHz = 15.633302300230191
 try:
     from phonopy import Phonopy
+    from phonopy import load
     from phonopy.structure.cells import determinant
     from phonopy.structure.cells import get_reduced_bases
 except Exception as exp:
     print("Phonopy is not installed.", exp)
     pass
+
+
+from math import pi as pi
+
+"""
+Constants
+"""
+kB = 1.38064852e-23
+hbar = 1.0545718e-34
+h = 6.62607004e-34
+Na = 6.0221409e23
+e = 1.60218e-19
 
 
 def bandstructure_plot(band_yaml="", plot=False):
@@ -58,27 +71,131 @@ def total_dos(tot_dos="", plot=False):
     return freq, pdos
 
 
+"""
+More generalized read_fcmethod. But need to fix.
+"""
+
+
 def read_fc(filename="FORCE_CONSTANTS"):
     """Read phonopy generated force constants."""
     f = open(filename, "r")
     lines = f.read().splitlines()
     f.close()
-    natoms = int(lines[0].split()[0])
-    fc = np.zeros((natoms, natoms, 3, 3), dtype="double")
+    n_patoms = int(lines[0].split()[0])
+    try:
+        n_satoms = int(lines[0].split()[1])
+    except BaseException:
+        n_satoms = n_patoms
+    else:
+        print("Error fetching supercell atoms.")
+    fc = np.zeros((n_patoms, n_satoms, 3, 3), dtype="double")
     # print ('natoms=',natoms)
+    patom_id = 0
+    satom_id = 0
     for ii, i in enumerate(lines):
         if ii > 0 and ii % 4 == 0:
             atoms_ids = [int(a) for a in lines[ii - 3].split()]
-            vals = (
-                str(lines[ii - 2])
-                + " "
-                + str(lines[ii - 1])
-                + " "
-                + (lines[ii])
-            )
+            print(atoms_ids)
+            vals = str(lines[ii - 2]) + " " + str(lines[ii - 1])
+            vals = vals + " " + (lines[ii])
             vals = np.array(vals.split(), dtype="double").reshape(3, 3)
-            fc[atoms_ids[0] - 1, atoms_ids[1] - 1] = vals
+            fc[patom_id, satom_id] = vals
+            satom_id += 1
+            if satom_id == n_satoms:
+                satom_id = 0
+                patom_id += 1
+    #            fc[atoms_ids[0] - 1, atoms_ids[1] - 1] = vals
     return fc
+
+
+def get_Phonopy_obj(
+    atoms,
+    phonopy_yaml=None,
+    FC_file=None,
+    unitcell_file=None,
+    scell_file=None,
+    factor=None,
+    symprec=1e-05,
+    scell=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+):
+    """
+    Create separate method for generating a Phonopy object
+    """
+    if phonopy_yaml is not None:
+        phonon = load(phonopy_yaml, force_constants_filename=FC_file)
+    elif scell_file is not None:
+        unitcell = atoms.phonopy_converter()
+        prim_mat = np.array(
+            PhonopyInputs(atoms).prim_axis().split("=")[1].split(), 
+		dtype="float"
+        ).reshape(3, 3)
+        if factor is None:
+            from phonopy.units import VaspToCm
+
+            factor = VaspToCm
+        phonon = load(
+            unitcell=unitcell,
+            # unitcell_filename = unitcell_file,
+            # supercell_matrix = scell,
+            supercell_filename=scell_file,
+            force_constants_filename=FC_file,
+            symprec=symprec,
+            is_symmetry=True,
+            log_level=2,
+        )
+    else:
+        raise Exception("Invalid inputs to generate Phonopy object.")
+    try:
+        dim = np.array([scell[i][i] for i in range(3)])
+        setattr(phonon, "scell_dim", dim)
+    except BaseException:
+        setattr(phonon, "scell_dim", None)
+    else:
+        print("Error setting supercell dimensions.")
+    return phonon
+
+
+def get_thermal_properties(phonon_obj,
+	mesh=[1, 1, 1],
+	tmin=0,
+	tmax=100,
+	step=10):
+    """
+    Returns dictionary of thermal properties, including Helmholtz free energy,
+    vibrational entropy, and heat capacity
+
+    Parameters
+    ----------
+    phonon_obj : Phonopy
+        phonopy object
+    mesh : list, optional
+        Mesh size for thermal property calculation. The default is [1, 1, 1].
+    tmin : float, optional
+        Minimum temperature. The default is 0.
+    tmax : float, optional
+        Maximum temperature. The default is 100.
+    step : float, optional
+        Temperature step size. The default is 10.
+
+    Returns
+    -------
+    tp_dict : TYPE
+        DESCRIPTION.
+
+    """
+    phonon_obj.run_mesh(mesh)
+    phonon_obj.run_thermal_properties(t_step=step, t_max=tmax, t_min=tmin)
+    tp_dict = phonon_obj.get_thermal_properties_dict()
+    return tp_dict
+
+
+def get_modal_heat_capacity(phonon_obj, mesh=[1, 1, 1], T=300):
+    phonon_obj.run_mesh(mesh)
+    mesh_dict = phonon_obj.get_mesh_dict()
+    omega = np.array(mesh_dict["frequencies"]) * 1e12
+    x = h * omega / (kB * T)  # omega is ordinal not angular
+    mode_C = (kB / e) * (x) ** 2 * (np.exp(x) / ((np.exp(x) - 1) ** 2))
+    return mode_C
 
 
 def get_phonon_tb(
@@ -108,6 +225,7 @@ def get_phonon_tb(
     num_satom = determinant(scell) * num_atom
     if fc.shape[0] != num_satom:
         print("Check Force constant matrix.")
+
     phonon = Phonopy(
         unitcell,
         scell,
@@ -120,13 +238,15 @@ def get_phonon_tb(
         use_lapack_solver=False,
         log_level=1,
     )
-
+    print("Phonopy object generated")
     supercell = phonon.get_supercell()
     primitive = phonon.get_primitive()
     # Set force constants
     phonon.set_force_constants(fc)
     phonon._set_dynamical_matrix()
+    print("here")
     dmat = phonon._dynamical_matrix
+    print(dmat)
     # rescale fcmat by THZ**2
     fcmat = dmat._force_constants * factor ** 2  # FORCE_CONSTANTS
     # fcmat = dmat._force_constants * factor ** 2  # FORCE_CONSTANTS
@@ -161,17 +281,33 @@ def get_phonon_tb(
     print("phonopy_TB.dat generated! ")
 
 
-"""
 if __name__ == "__main__":
     from phonopy.interface.vasp import read_vasp
     from jarvis.core.atoms import Atoms
-    pos = "POSCAR"
-    fc_file = "FORCE_CONSTANTS"
+
+    test_dir = "Si-testing/"
+    pos = test_dir + "POSCAR-unitcell"
+    fc_file = test_dir + "FORCE_CONSTANTS"
     a = Atoms.from_poscar(pos)
     fc = read_fc(fc_file)
     phonopy_atoms = read_vasp(pos)
-    get_phonon_tb(phonopy_atoms=phonopy_atoms, fc=fc, atoms=a)
-    cvn = Spacegroup3D(a).conventional_standard_structure
-    w = WannierHam("phonopyTB_hr.dat")
-    w.get_bandstructure_plot(atoms=cvn, yrange=[0, 550])
-"""
+    phonon_obj = get_Phonopy_obj(
+        a,
+        phonopy_yaml="Si-testing/phonopy.yaml",
+        FC_file=fc_file,
+        scell=np.array([[2, 0, 0], [0, 2, 0], [0, 0, 2]]),
+    )
+    phonon_obj.run_mesh(
+        [11, 11, 11], with_eigenvectors=True, with_group_velocities=True
+    )
+    mesh_dict = phonon_obj.get_mesh_dict()
+    phonon_obj.run_total_dos()
+    phonon_obj.plot_total_dos().show()
+    tp_dict = get_thermal_properties(
+        phonon_obj, mesh=[11, 11, 11], tmin=0, tmax=300, step=100
+    )
+#    gv_by_gv = get_gv_outer_product(phonon_obj, mesh=[11, 11, 11])
+#    get_phonon_tb(fc=fc, atoms=a)
+#    cvn = Spacegroup3D(a).conventional_standard_structure
+#    w = WannierHam("phonopyTB_hr.dat")
+#    w.get_bandstructure_plot(atoms=cvn, yrange=[0, 550])

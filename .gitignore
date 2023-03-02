@@ -104,3 +104,14 @@ ENV/
 .mypy_cache/
 
 .pytest_cache/
+
+#Test files for io modules
+jarvis/io/phono3py/Si-testing/
+jarvis/io/phonopy/Si-testing/
+jarvis/io/phono3py/almaBTE_files/
+
+#MacOS Finder files
+.DS_Store
+
+#Downloaded zip files
+*.zip
