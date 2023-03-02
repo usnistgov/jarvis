@@ -21,21 +21,21 @@ from jarvis.core.atoms import Atoms
 import numpy as np
 
 
-f = h5py.File("gruneisen.hdf5", 'r')
+f = h5py.File("gruneisen.hdf5", "r")
 
 grun_dict = dict(f)
 
 
-plt.scatter(grun_dict['frequency'], grun_dict['gruneisen'], s = 2)
-plt.xlabel('Frequency (THz)')
-plt.ylabel('Gruneisen')
+plt.scatter(grun_dict["frequency"], grun_dict["gruneisen"], s=2)
+plt.xlabel("Frequency (THz)")
+plt.ylabel("Gruneisen")
 
 
-'''
+"""
 Trying to get spectral JDOS...
-'''
+"""
 
-test_dir = ''
+test_dir = ""
 pos = test_dir + "POSCAR-unitcell"
 atoms = Atoms.from_poscar(pos)
 phonon_obj = get_Phonopy_obj(
@@ -47,4 +47,4 @@ phonon_obj = get_Phonopy_obj(
 
 jdos_dir = "../unweighted_jdos/"
 jdos = JDOS(phonon_obj, directory=jdos_dir, mesh=[11, 11, 11])
-spectral_jdos = jdos.mode_to_spectral(grun_dict['gruneisen'])
+spectral_jdos = jdos.mode_to_spectral(grun_dict["gruneisen"])

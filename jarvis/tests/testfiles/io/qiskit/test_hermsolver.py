@@ -1,5 +1,5 @@
 #
-#from qiskit.circuit.library import EfficientSU2
+# from qiskit.circuit.library import EfficientSU2
 from qiskit.circuit import QuantumCircuit
 from qiskit import circuit
 from jarvis.db.figshare import (
@@ -9,12 +9,14 @@ from jarvis.db.figshare import (
 )
 from jarvis.core.atoms import Atoms
 from jarvis.db.jsonutils import dumpjson
-from jarvis.io.qiskit.inputs import HermitianSolver,get_bandstruct,get_dos
+from jarvis.io.qiskit.inputs import HermitianSolver, get_bandstruct, get_dos
 import matplotlib.pyplot as plt
-plt.switch_backend('agg')
+
+plt.switch_backend("agg")
 from qiskit.circuit import QuantumCircuit, ParameterVector
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
-from qiskit import aqua
+
+# from qiskit import aqua
 import numpy as np
 from qiskit import Aer, execute
 
@@ -23,19 +25,38 @@ import gc
 
 gc.collect()
 
-def nCr(n,r):
-    f = math.factorial
-    return int(f(n) / f(r) / f(n-r))
 
-def variational_circuit(num_qubits = 2,reps = 1):
+def nCr(n, r):
+    f = math.factorial
+    return int(f(n) / f(r) / f(n - r))
+
+
+# def test_hermitian_solver():
+#     from jarvis.db.figshare import (
+#         get_wann_electron,
+#         get_wann_phonon,
+#     )
+#     from jarvis.core.circuits import QuantumCircuitLibrary
+
+#     wtbh, ef, atoms = get_wann_electron("JVASP-816")
+#     hk = get_hk_tb(w=wtbh, k=[0.0, 0.0, 0.0])
+#     H = HermitianSolver(hk)
+#     qc = QuantumCircuitLibrary(n_qubits=3).circuit6()  # 2^3  = 8
+#     en, vqe_result, vqe = H.run_vqe(mode="min_val", var_form=qc)
+
+
+def variational_circuit(num_qubits=2, reps=1):
     # import required qiskit libraries if additional libraries are required
     # build the variational circuit
-    #var_circuit = EfficientSU2(num_qubits=3, su2_gates= ['rx', 'ry'], entanglement='circular', reps=3)
-    #var_circuit = EfficientSU2(num_qubits=4, su2_gates= ['rx', 'ry'], entanglement='circular', reps=3)
-    
+    # var_circuit = EfficientSU2(num_qubits=3, su2_gates= ['rx', 'ry'], entanglement='circular', reps=3)
+    # var_circuit = EfficientSU2(num_qubits=4, su2_gates= ['rx', 'ry'], entanglement='circular', reps=3)
+
     # return the variational circuit which is either a VaritionalForm or QuantumCircuit object
     from qiskit.circuit import QuantumCircuit, ParameterVector
-    x = ParameterVector('x', length=num_qubits)  # creating a list of Parameters
+
+    x = ParameterVector(
+        "x", length=num_qubits
+    )  # creating a list of Parameters
     custom_circ = QuantumCircuit(num_qubits)
 
     # defining our parametric form
@@ -47,33 +68,33 @@ def variational_circuit(num_qubits = 2,reps = 1):
                 custom_circ.cx(i, j)
                 custom_circ.u1(x[i] * x[j], j)
                 custom_circ.cx(i, j)
-            
-            
-    
-                
-            
 
-qc=variational_circuit()
+
+qc = variational_circuit()
+
 
 def test_inp():
     w, ef, atoms = get_wann_electron("JVASP-816")
-#     info = get_bandstruct(
-#         w=w,
-#         line_density=1,
-#         atoms=atoms,
-#         ef=ef,
-#         filename="Alelect.png",
-#         ylabel="Energy (eV)",
-#     )
-    #dumpjson(data=info, filename="Alelect.json")
+    #     info = get_bandstruct(
+    #         w=w,
+    #         line_density=1,
+    #         atoms=atoms,
+    #         ef=ef,
+    #         filename="Alelect.png",
+    #         ylabel="Energy (eV)",
+    #     )
+    # dumpjson(data=info, filename="Alelect.json")
     w, atoms = get_wann_phonon("JVASP-816", factor=34.3)
     hk = get_hk_tb(w=w, k=[0.0, 0.0, 0.0])
-    print ('shape=',hk.shape)
+    print("shape=", hk.shape)
     H = HermitianSolver(hk)
     from jarvis.core.circuits import QuantumCircuitLibrary
-    qc=QuantumCircuitLibrary(n_qubits=2).circuit1()
-    #en, vqe_result, vqe = H.run_vqe(mode="max_val", reps=1)#,optimizer=optimizer)
-    en, vqe_result, vqe = H.run_vqe(mode="max_val", var_form=qc)#,optimizer=optimizer)
+
+    qc = QuantumCircuitLibrary(n_qubits=2).circuit1()
+    # en, vqe_result, vqe = H.run_vqe(mode="max_val", reps=1)#,optimizer=optimizer)
+    en, vqe_result, vqe = H.run_vqe(
+        mode="max_val", var_form=qc
+    )  # ,optimizer=optimizer)
     print("en=", en)
     info = get_bandstruct(
         w=w,
@@ -86,7 +107,7 @@ def test_inp():
         ylabel="Freq.(cm$^{-1}$)",
     )
     ## dumpjson(data=info,filename='Alphon.json')
-    #eigs,vecs=H.run_vqd()
+    # eigs,vecs=H.run_vqd()
     # print(eigs)
     # print(vecs)
 
@@ -94,6 +115,8 @@ def test_inp():
     print(eigs)
     # print(vecs)
     # get_bandstruct(w=w, atoms=atoms, tol=0.1)
-    get_dos(w=w,grid=[2,1,1])
-    H.run_qpe()
-#test_inp()
+    get_dos(w=w, grid=[2, 1, 1])
+    # H.run_qpe()
+
+
+# test_inp()

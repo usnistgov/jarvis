@@ -5,6 +5,7 @@ import requests
 import tarfile
 from jarvis.core.specie import Specie
 import numpy as np
+
 # from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
 
@@ -38,6 +39,8 @@ class QEinfile(object):
                     "http://www.physics.rutgers.edu/"
                     "gbrv/all_pbesol_UPF_v1.5.tar.gz"
                 )
+                print("Please cite for PSPs:")
+                print("https://doi.org/10.1016/j.commatsci.2013.08.053")
             if not os.path.exists(psp_dir):
                 print("Downloading PSPs")
                 tar_file_name = str(
