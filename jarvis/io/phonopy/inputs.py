@@ -32,7 +32,7 @@ class PhonopyInputs(object):
             if latt == "rhombohedral":
                 transf = (
                     np.array(
-			[[2, -1, -1], [1, 1, -2], [1, 1, 1]], dtype="float"i
+			[[2, -1, -1], [1, 1, -2], [1, 1, 1]], dtype="float"
 			) 
 			/ 3
                 )
@@ -47,8 +47,7 @@ class PhonopyInputs(object):
             elif "F" in sgp:
                 transf = np.array(
 			[[0, 1, 1], [1, 0, 1], [1, 1, 0]], dtype="float"
-			) 
-			/ 2
+			) / 2
             elif "A" in sgp:
                 transf = (
 			np.array([[2, 0, 0], [0, 1, -1], [0, 1, 1]], dtype="float") 
@@ -57,7 +56,7 @@ class PhonopyInputs(object):
             elif "C" in sgp:
                 if latt == "monoclinic":
                     transf = (
-                        np.array([[1, 1, 0], [-1, 1, 0], [0, 0, 2]], dtype="float") i
+                        np.array([[1, 1, 0], [-1, 1, 0], [0, 0, 2]], dtype="float")
 			/ 2
                     )
                 else:

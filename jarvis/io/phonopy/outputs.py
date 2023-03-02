@@ -86,6 +86,8 @@ def read_fc(filename="FORCE_CONSTANTS"):
         n_satoms = int(lines[0].split()[1])
     except BaseException:
         n_satoms = n_patoms
+    else:
+        print("Error fetching supercell atoms.")
     fc = np.zeros((n_patoms, n_satoms, 3, 3), dtype="double")
     # print ('natoms=',natoms)
     patom_id = 0
@@ -94,7 +96,8 @@ def read_fc(filename="FORCE_CONSTANTS"):
         if ii > 0 and ii % 4 == 0:
             atoms_ids = [int(a) for a in lines[ii - 3].split()]
             print(atoms_ids)
-            vals = str(lines[ii - 2]) + " " + str(lines[ii - 1]) + " " + (lines[ii])
+            vals = str(lines[ii - 2]) + " " + str(lines[ii - 1])
+            vals = vals + " " + (lines[ii])
             vals = np.array(vals.split(), dtype="double").reshape(3, 3)
             fc[patom_id, satom_id] = vals
             satom_id += 1
@@ -123,7 +126,8 @@ def get_Phonopy_obj(
     elif scell_file is not None:
         unitcell = atoms.phonopy_converter()
         prim_mat = np.array(
-            PhonopyInputs(atoms).prim_axis().split("=")[1].split(), dtype="float"
+            PhonopyInputs(atoms).prim_axis().split("=")[1].split(), 
+		dtype="float"
         ).reshape(3, 3)
         if factor is None:
             from phonopy.units import VaspToCm
@@ -146,10 +150,16 @@ def get_Phonopy_obj(
         setattr(phonon, "scell_dim", dim)
     except BaseException:
         setattr(phonon, "scell_dim", None)
+    else:
+        print("Error setting supercell dimensions.")
     return phonon
 
 
-def get_thermal_properties(phonon_obj, mesh=[1, 1, 1], tmin=0, tmax=100, step=10):
+def get_thermal_properties(phonon_obj,
+	mesh=[1, 1, 1],
+	tmin=0,
+	tmax=100,
+	step=10):
     """
     Returns dictionary of thermal properties, including Helmholtz free energy,
     vibrational entropy, and heat capacity
@@ -293,7 +303,6 @@ if __name__ == "__main__":
     mesh_dict = phonon_obj.get_mesh_dict()
     phonon_obj.run_total_dos()
     phonon_obj.plot_total_dos().show()
-    # C = get_spectral_heat_capacity(phonon_obj, mesh=[11, 11, 11], T=300, plot=True)
     tp_dict = get_thermal_properties(
         phonon_obj, mesh=[11, 11, 11], tmin=0, tmax=300, step=100
     )
