@@ -8,10 +8,7 @@ Created on Tue Feb  8 16:29:33 2022
 Silicon testing for the phono3py outputs file.
 """
 from jarvis.io.phono3py.outputs import Kappa, JDOS
-from jarvis.io.phonopy.outputs import (
-    total_dos,
-    get_Phonopy_obj
-)
+from jarvis.io.phonopy.outputs import total_dos, get_Phonopy_obj
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -41,12 +38,13 @@ jdos = JDOS(phonon_obj, directory=jdos_dir, mesh=[11, 11, 11])
 freq_pts = jdos.phonopy_obj._total_dos._frequency_points
 jdos_ir = jdos.select_jdos()
 mesh_dict = jdos.phonopy_obj.get_mesh_dict()
-spectral_vg = jdos.mode_to_spectral(mesh_dict['group_velocities'][:, :, 0]) * 100
+spectral_vg = jdos.mode_to_spectral(mesh_dict["group_velocities"][:, :, 0]) * 100
 spectral_jdos = jdos.mode_to_spectral(jdos_ir)
 spectral_2Gamma = jdos.linewidth_from_jdos_vg(spectral_jdos, atoms, vs=6084, plot=True)
 spectral_kappa = jdos.kappa_from_linewidth(spectral_2Gamma, plot=True)
 spectral_kappa_cheat = jdos.kappa_from_linewidth_cheat(
-    kappa_Si, spectral_2Gamma, plot=True)
+    kappa_Si, spectral_2Gamma, plot=True
+)
 
 find_nan = np.argwhere(np.isnan(spectral_kappa))
 
@@ -97,13 +95,14 @@ plt.ylim([0, 60000])
 # Gamma
 spectral_gamma = jdos.mode_to_spectral(np.array(kappa_Si.dict["gamma"][30, :, :]))
 plt.figure()
-plt.plot(freq_pts, 2 * spectral_gamma, color='xkcd:black',
-         label='Full DFT', linewidth=2)
-plt.plot(freq_pts, spectral_2Gamma, color='xkcd:red', label='JDOS Model', linewidth=2)
+plt.plot(
+    freq_pts, 2 * spectral_gamma, color="xkcd:black", label="Full DFT", linewidth=2
+)
+plt.plot(freq_pts, spectral_2Gamma, color="xkcd:red", label="JDOS Model", linewidth=2)
 plt.xlabel("Frequency (THz)", fontsize=12)
 plt.ylabel(r"$2\Gamma$ (THz)", fontsize=12)
 plt.legend(fontsize=12)
-plt.savefig('Si_jdos_dft_comp.pdf', bbox_inches='tight')
+plt.savefig("Si_jdos_dft_comp.pdf", bbox_inches="tight")
 # plt.scatter(
 #     np.array(kappa_Si.dict["frequency"]),
 #     np.array(kappa_Si.dict["gamma"][30, :, :]),
@@ -113,14 +112,16 @@ plt.savefig('Si_jdos_dft_comp.pdf', bbox_inches='tight')
 
 # Compare Kappas
 plt.figure()
-plt.plot(freq_pts, spectral_kappa_ph3, color='xkcd:black',
-         label='Full DFT', linewidth=2)
-plt.plot(freq_pts, spectral_kappa_cheat, color='xkcd:red',
-         label='JDOS Model', linewidth=2)
+plt.plot(
+    freq_pts, spectral_kappa_ph3, color="xkcd:black", label="Full DFT", linewidth=2
+)
+plt.plot(
+    freq_pts, spectral_kappa_cheat, color="xkcd:red", label="JDOS Model", linewidth=2
+)
 plt.xlabel("Frequency (THz)", fontsize=12)
 plt.ylabel(r"$2\Gamma$ (THz)", fontsize=12)
 plt.legend(fontsize=12)
-plt.savefig('Si_kappa_comp.pdf', bbox_inches='tight')
+plt.savefig("Si_kappa_comp.pdf", bbox_inches="tight")
 
 
 # Scale gruneisen based on integrated area
@@ -139,14 +140,20 @@ scale = int_kappa_dft / int_kappa_jdos
 
 # Compare Kappas Scaled
 plt.figure()
-plt.plot(freq_pts, spectral_kappa_ph3, color='xkcd:black',
-         label='Full DFT', linewidth=2)
-plt.plot(freq_pts, spectral_kappa_cheat * 2,
-         color='xkcd:red', label='JDOS Model', linewidth=2)
+plt.plot(
+    freq_pts, spectral_kappa_ph3, color="xkcd:black", label="Full DFT", linewidth=2
+)
+plt.plot(
+    freq_pts,
+    spectral_kappa_cheat * 2,
+    color="xkcd:red",
+    label="JDOS Model",
+    linewidth=2,
+)
 plt.xlabel("Frequency (THz)", fontsize=12)
 plt.ylabel(r"$2\Gamma$ (THz)", fontsize=12)
 plt.legend(fontsize=12)
-plt.savefig('Si_kappa_comp_scale.pdf', bbox_inches='tight')
+plt.savefig("Si_kappa_comp_scale.pdf", bbox_inches="tight")
 
 
 """

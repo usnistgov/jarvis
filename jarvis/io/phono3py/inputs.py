@@ -82,10 +82,17 @@ def prepare_jdos(
 
 
 # Try to use the Phono3pyJDOS class?
-def prepare_jdos_api(phonopy_obj, mesh=[1, 1, 1], temperatures=None,
-                     num_freq_points=201, pa=None, nac_params=None,
-                     write_jdos=True, log_level=1):
-    '''
+def prepare_jdos_api(
+    phonopy_obj,
+    mesh=[1, 1, 1],
+    temperatures=None,
+    num_freq_points=201,
+    pa=None,
+    nac_params=None,
+    write_jdos=True,
+    log_level=1,
+):
+    """
     Run JDOS calculation using the Phono3pyJointDOS Class
     Currently assumes phonopy_obj contains a force cosntants attribute
 
@@ -100,21 +107,23 @@ def prepare_jdos_api(phonopy_obj, mesh=[1, 1, 1], temperatures=None,
     -------
     None.
 
-    '''
-    ph3_jdos = Phono3pyJointDos(phonopy_obj._supercell,
-                                phonopy_obj._primitive,
-                                phonopy_obj._force_constants,
-                                mesh=mesh,
-                                temperatures=temperatures,
-                                nac_params=nac_params,
-                                num_frequency_points=num_freq_points,
-                                log_level=2)
-#    latt_vecs = phonopy_obj.get_primitive().get_cell()
-#    positions = phonopy_obj.get_primitive().get_scaled_positions()
-#    atom_type = phonopy_obj.get_primitive().get_atomic_numbers()
-#    cell = (latt_vecs, positions, atom_type)
-#    mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
-#    gridpt_uids = np.unique(mapping)
+    """
+    ph3_jdos = Phono3pyJointDos(
+        phonopy_obj._supercell,
+        phonopy_obj._primitive,
+        phonopy_obj._force_constants,
+        mesh=mesh,
+        temperatures=temperatures,
+        nac_params=nac_params,
+        num_frequency_points=num_freq_points,
+        log_level=2,
+    )
+    #    latt_vecs = phonopy_obj.get_primitive().get_cell()
+    #    positions = phonopy_obj.get_primitive().get_scaled_positions()
+    #    atom_type = phonopy_obj.get_primitive().get_atomic_numbers()
+    #    cell = (latt_vecs, positions, atom_type)
+    #    mapping, grid = spglib.get_ir_reciprocal_mesh(mesh, cell, is_shift=[0, 0, 0])
+    #    gridpt_uids = np.unique(mapping)
     phonopy_obj.run_mesh(mesh)
     ga, gp, mapping = phonopy_obj.get_mesh_grid_info()
     ph3_jdos.run(gp, write_jdos=write_jdos)

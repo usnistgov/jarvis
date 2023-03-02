@@ -131,8 +131,8 @@ def get_Phonopy_obj(
             factor = VaspToCm
         phonon = load(
             unitcell=unitcell,
-            #unitcell_filename = unitcell_file,
-            #supercell_matrix = scell,
+            # unitcell_filename = unitcell_file,
+            # supercell_matrix = scell,
             supercell_filename=scell_file,
             force_constants_filename=FC_file,
             symprec=symprec,
@@ -293,7 +293,7 @@ if __name__ == "__main__":
     mesh_dict = phonon_obj.get_mesh_dict()
     phonon_obj.run_total_dos()
     phonon_obj.plot_total_dos().show()
-    #C = get_spectral_heat_capacity(phonon_obj, mesh=[11, 11, 11], T=300, plot=True)
+    # C = get_spectral_heat_capacity(phonon_obj, mesh=[11, 11, 11], T=300, plot=True)
     tp_dict = get_thermal_properties(
         phonon_obj, mesh=[11, 11, 11], tmin=0, tmax=300, step=100
     )

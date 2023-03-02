@@ -20,7 +20,7 @@ from jarvis.core.specie import Specie
 from jarvis.io.phonopy.outputs import (
     total_dos,
     get_Phonopy_obj,
-    get_modal_heat_capacity
+    get_modal_heat_capacity,
 )
 import numpy as np
 import spglib
@@ -144,7 +144,7 @@ class JDOS:
             return gp
 
         gridpt_uids = get_gridpts(self)
-        #gridpt_uids = np.unique(gridpt_list)
+        # gridpt_uids = np.unique(gridpt_list)
         print(len(gridpt_uids))
 
         """
@@ -202,16 +202,17 @@ class JDOS:
         phonon_obj = self.phonopy_obj
         phonon_obj.run_mesh(mesh, with_group_velocities=True)
         mesh_dict = phonon_obj.get_mesh_dict()
-        #gv_obj = phonon_obj._group_velocity
+        # gv_obj = phonon_obj._group_velocity
         nbranches = np.shape(mesh_dict["group_velocities"])[1]
-        #gv_by_gv = np.zeros((len(mesh_dict["qpoints"]), nbranches, 3, 3))
+        # gv_by_gv = np.zeros((len(mesh_dict["qpoints"]), nbranches, 3, 3))
         gv_sum2 = np.zeros((len(mesh_dict["qpoints"]), nbranches, 6))
         rec_lat = np.linalg.inv(self.phonopy_obj.primitive.cell)
 
         def get_q_point_multiplicity(q):
             multi = 0
-            for q_rot in [np.dot(r, q) for r in
-                          self.phonopy_obj._symmetry.pointgroup_operations]:
+            for q_rot in [
+                np.dot(r, q) for r in self.phonopy_obj._symmetry.pointgroup_operations
+            ]:
                 diff = q - q_rot
                 diff -= np.rint(diff)
                 dist = np.linalg.norm(np.dot(rec_lat, diff))
@@ -321,13 +322,15 @@ class JDOS:
         mode_vg2 = self.get_gv_outer_product(self.mesh)
         mode_vg2_ij = mode_vg2[:, :, ij_dict[component]]
         spectral_vg2 = self.mode_to_spectral(mode_vg2_ij)
-        mode_Cp = get_modal_heat_capacity(
-            self.phonopy_obj, self.mesh)
+        mode_Cp = get_modal_heat_capacity(self.phonopy_obj, self.mesh)
         spectral_Cp = self.mode_to_spectral_wtd(mode_Cp)
 
         spectral_kappa = (
-            (1 / (2 * pi))**2 * kappa_unit_conversion
-            * spectral_vg2 * (1 / spectral_2Gamma) * spectral_Cp
+            (1 / (2 * pi)) ** 2
+            * kappa_unit_conversion
+            * spectral_vg2
+            * (1 / spectral_2Gamma)
+            * spectral_Cp
         )
         print(spectral_kappa)
         #        red_freq_pts = np.delete(freq_pts, find_zeros)
@@ -373,23 +376,23 @@ if __name__ == "__main__":
     jdos = JDOS(phonon_obj, directory=jdos_dir, mesh=[11, 11, 11])
     jdos_ir = jdos.select_jdos()
     spectral_jdos = jdos.mode_to_spectral(jdos_ir)
-    '''
+    """
     Plot Spectral JDOS
-    '''
+    """
     freq_pts = jdos.phonopy_obj._total_dos._frequency_points
     plt.figure()
     plt.plot(freq_pts, spectral_jdos)
-    plt.xlabel('Frequency (THz)')
-    plt.ylabel('JDOS')
+    plt.xlabel("Frequency (THz)")
+    plt.ylabel("JDOS")
 
     spectral_2Gamma = jdos.linewidth_from_jdos(spectral_jdos, atoms, vs=6084, plot=True)
     spectral_kappa = jdos.kappa_from_linewidth(spectral_2Gamma, plot=True)
 
     grun = gruneisen_approximation(5843, 8433)
 
-    '''
+    """
     Integrate spectral kappa to get scalar thermal conductivity value
-    '''
+    """
     spectral_kappa_clean = np.nan_to_num(spectral_kappa)
     freq_pts[freq_pts < 0] = 0
     RT_kappa_model = np.trapz(spectral_kappa_clean, freq_pts)

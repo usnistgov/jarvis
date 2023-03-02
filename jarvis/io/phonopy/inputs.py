@@ -31,43 +31,25 @@ class PhonopyInputs(object):
             sgp = spaceg.space_group_symbol
             if latt == "rhombohedral":
                 transf = (
-                    np.array(
-                        [[2, -1, -1], [1, 1, -2], [1, 1, 1]], dtype="float"
-                    )
-                    / 3
+                    np.array([[2, -1, -1], [1, 1, -2], [1, 1, 1]], dtype="float") / 3
                 )
             elif "I" in sgp:
                 transf = (
-                    np.array(
-                        [[-1, 1, 1], [1, -1, 1], [1, 1, -1]], dtype="float"
-                    )
-                    / 2
+                    np.array([[-1, 1, 1], [1, -1, 1], [1, 1, -1]], dtype="float") / 2
                 )
 
             elif "F" in sgp:
-                transf = (
-                    np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]], dtype="float")
-                    / 2
-                )
+                transf = np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]], dtype="float") / 2
             elif "A" in sgp:
-                transf = (
-                    np.array([[2, 0, 0], [0, 1, -1], [0, 1, 1]], dtype="float")
-                    / 2
-                )
+                transf = np.array([[2, 0, 0], [0, 1, -1], [0, 1, 1]], dtype="float") / 2
             elif "C" in sgp:
                 if latt == "monoclinic":
                     transf = (
-                        np.array(
-                            [[1, 1, 0], [-1, 1, 0], [0, 0, 2]], dtype="float"
-                        )
-                        / 2
+                        np.array([[1, 1, 0], [-1, 1, 0], [0, 0, 2]], dtype="float") / 2
                     )
                 else:
                     transf = (
-                        np.array(
-                            [[1, -1, 0], [1, 1, 0], [0, 0, 2]], dtype="float"
-                        )
-                        / 2
+                        np.array([[1, -1, 0], [1, 1, 0], [0, 0, 2]], dtype="float") / 2
                     )
         else:
             transf = np.eye(3)
