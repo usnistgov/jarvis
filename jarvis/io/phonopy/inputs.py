@@ -38,17 +38,11 @@ class PhonopyInputs(object):
                 )
             elif "I" in sgp:
                 transf = (
-                    np.array(
-                        [[-1, 1, 1], [1, -1, 1], [1, 1, -1]], dtype="float"
-                    )
-                    / 2
+                    np.array([[-1, 1, 1], [1, -1, 1], [1, 1, -1]], dtype="float") / 2
                 )
 
             elif "F" in sgp:
-                transf = (
-                    np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]], dtype="float")
-                    / 2
-                )
+                transf = np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]], dtype="float") / 2
             elif "A" in sgp:
                 transf = (
                     np.array([[2, 0, 0], [0, 1, -1], [0, 1, 1]], dtype="float")
