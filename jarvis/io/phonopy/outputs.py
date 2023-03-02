@@ -23,7 +23,7 @@ except Exception as exp:
 from math import pi as pi
 
 """
-Constants 
+Constants
 """
 kB = 1.38064852e-23
 hbar = 1.0545718e-34
@@ -84,7 +84,7 @@ def read_fc(filename="FORCE_CONSTANTS"):
     n_patoms = int(lines[0].split()[0])
     try:
         n_satoms = int(lines[0].split()[1])
-    except:
+    except BaseException:
         n_satoms = n_patoms
     fc = np.zeros((n_patoms, n_satoms, 3, 3), dtype="double")
     # print ('natoms=',natoms)
@@ -144,7 +144,7 @@ def get_Phonopy_obj(
     try:
         dim = np.array([scell[i][i] for i in range(3)])
         setattr(phonon, "scell_dim", dim)
-    except:
+    except BaseException:
         setattr(phonon, "scell_dim", None)
     return phonon
 

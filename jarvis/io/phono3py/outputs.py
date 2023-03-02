@@ -32,7 +32,7 @@ from phono3py.phonon.grid import BZGrid, get_grid_points_by_rotations
 
 
 """
-Constants 
+Constants
 """
 kB = 1.38064852e-23
 hbar = 1.0545718e-34
@@ -124,7 +124,7 @@ class JDOS:
 
     def select_jdos(self):
         """
-        Post-processing script to select JDOS values corresponding to 
+        Post-processing script to select JDOS values corresponding to
         actual phonon modes.
 
         """
@@ -263,7 +263,7 @@ class JDOS:
 
     def mode_to_spectral(self, mode_prop):
         """
-        Converts modal to spectral quanitites. 
+        Converts modal to spectral quanitites.
 
         These quantities are NOT to be scaled by the phonon DOS and must be normalized by the phonon DOS.
         """
