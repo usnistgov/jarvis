@@ -27,12 +27,17 @@ class QEinfile(object):
         url=None,
         sanitize=True,
         sanitize_tol=2e-4,
+        psp_temp_name=None,
     ):
         """Initialize input parameters for qunatum espresso."""
+        if psp_temp_name is None:
+            psp_temp_name = "QE_PSPs"
         if input_params == {}:
             input_params = GenericInputs().geometry_optimization()
         if psp_dir is None:
-            psp_dir = str(os.path.join(os.path.dirname(__file__), "QE_PSPs"))
+            psp_dir = str(
+                os.path.join(os.path.dirname(__file__), psp_temp_name)
+            )
             # Download GBRV PSPs by default
             if url is None:
                 url = (
@@ -188,7 +193,7 @@ class QEinfile(object):
         """Obtain psuedopotential for an element."""
         element = str(element).lower()
         for i in os.listdir(self.psp_dir):
-            el = str(i.split("_")[0]).lower()
+            el = str(i.split(".")[0].split("_")[0]).lower()
             if el == element:
                 return i
 

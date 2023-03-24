@@ -16,6 +16,8 @@ def converg_kpoints(
     increment=5,
     qe_cmd="/cluster/deb9/bin/mpirun -n 16 /cluster/bin/pw.x",
     psp_dir=None,
+    url=None,
+    psp_temp_name=None,
 ):
     """Converge k-points for a material."""
     scf_init = {
@@ -79,6 +81,8 @@ def converg_kpoints(
                 qe_cmd=qe_cmd,
                 jobname=prefix,
                 kpoints=kpoints,
+                psp_temp_name=psp_temp_name,
+                url=url,
                 input_file=prefix + "_ascf_init.in",
             )
             info_scf = qejob_scf_init.runjob()
@@ -115,6 +119,8 @@ def converg_kpoints(
                         qe_cmd=qe_cmd,
                         jobname=prefix,
                         kpoints=kpoints,
+                        psp_temp_name=psp_temp_name,
+                        url=url,
                         input_file=prefix + "_ascf_init.in",
                     )
 
@@ -153,6 +159,8 @@ def converg_kpoints(
                 input_params=scf_init,
                 output_file="scf_init.out",
                 qe_cmd=qe_cmd,
+                psp_temp_name=psp_temp_name,
+                url=url,
                 jobname=prefix,
                 kpoints=kpoints,
                 input_file=prefix + "_ascf_init.in",
@@ -178,6 +186,8 @@ def converg_kpoints(
                 input_params=scf_init,
                 output_file="scf_init.out",
                 qe_cmd=qe_cmd,
+                psp_temp_name=psp_temp_name,
+                url=url,
                 jobname=prefix,
                 kpoints=kpoints,
                 input_file=prefix + "_ascf_init.in",
@@ -204,6 +214,8 @@ def converg_kpoints(
                 qe_cmd=qe_cmd,
                 jobname=prefix,
                 kpoints=kpoints,
+                psp_temp_name=psp_temp_name,
+                url=url,
                 input_file=prefix + "_ascf_init.in",
             )
             info_scf = qejob_scf_init.runjob()
@@ -228,6 +240,8 @@ def converg_kpoints(
                 qe_cmd=qe_cmd,
                 jobname=prefix,
                 kpoints=kpoints,
+                psp_temp_name=psp_temp_name,
+                url=url,
                 input_file=prefix + "_ascf_init.in",
             )
             info_scf = qejob_scf_init.runjob()
@@ -252,6 +266,8 @@ def converg_kpoints(
                 qe_cmd=qe_cmd,
                 jobname=prefix,
                 kpoints=kpoints,
+                psp_temp_name=psp_temp_name,
+                url=url,
                 input_file=prefix + "_ascf_init.in",
             )
             info_scf = qejob_scf_init.runjob()
@@ -310,7 +326,8 @@ def converg_kpoints(
                 length1 = length3
             else:
                 print(
-                    "KPOINTS convergence achieved for ", length1,
+                    "KPOINTS convergence achieved for ",
+                    length1,
                 )
                 convg_kp2 = True
 
@@ -325,6 +342,8 @@ def converg_cutoff(
     tol=0.001,
     increment=5,
     psp_dir=None,
+    url=None,
+    psp_temp_name=None,
     qe_cmd="/cluster/deb9/bin/mpirun -n 16 /cluster/bin/pw.x",
 ):
     """Converge cutoff for a material."""
@@ -381,6 +400,8 @@ def converg_cutoff(
             qe_cmd=qe_cmd,
             jobname=prefix,
             kpoints=kpoints,
+            url=url,
+            psp_temp_name=psp_temp_name,
             input_file=prefix + "_ascf_init.in",
         )
         info_scf = qejob_scf_init.runjob()
@@ -403,6 +424,8 @@ def converg_cutoff(
                 qe_cmd=qe_cmd,
                 jobname=prefix,
                 kpoints=kpoints,
+                url=url,
+                psp_temp_name=psp_temp_name,
                 input_file=prefix + "_ascf_init.in",
             )
 
@@ -429,6 +452,8 @@ def converg_cutoff(
             psp_dir=psp_dir,
             jobname=prefix,
             kpoints=kpoints,
+            url=url,
+            psp_temp_name=psp_temp_name,
             input_file=prefix + "_ascf_init.in",
         )
         info_scf = qejob_scf_init.runjob()
@@ -449,6 +474,8 @@ def converg_cutoff(
             qe_cmd=qe_cmd,
             jobname=prefix,
             kpoints=kpoints,
+            url=url,
+            psp_temp_name=psp_temp_name,
             input_file=prefix + "_ascf_init.in",
         )
         info_scf = qejob_scf_init.runjob()
@@ -469,6 +496,8 @@ def converg_cutoff(
             psp_dir=psp_dir,
             jobname=prefix,
             kpoints=kpoints,
+            url=url,
+            psp_temp_name=psp_temp_name,
             input_file=prefix + "_ascf_init.in",
         )
         info_scf = qejob_scf_init.runjob()
@@ -489,6 +518,8 @@ def converg_cutoff(
             qe_cmd=qe_cmd,
             jobname=prefix,
             kpoints=kpoints,
+            url=url,
+            psp_temp_name=psp_temp_name,
             input_file=prefix + "_ascf_init.in",
         )
         info_scf = qejob_scf_init.runjob()
@@ -509,6 +540,8 @@ def converg_cutoff(
             jobname=prefix,
             psp_dir=psp_dir,
             kpoints=kpoints,
+            url=url,
+            psp_temp_name=psp_temp_name,
             input_file=prefix + "_ascf_init.in",
         )
         info_scf = qejob_scf_init.runjob()
