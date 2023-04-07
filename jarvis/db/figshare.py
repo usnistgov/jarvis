@@ -42,6 +42,20 @@ def get_db_info():
             "https://www.nature.com/articles/s41524-020-00440-1"
             + "\nOther versions:https://doi.org/10.6084/m9.figshare.6815699",
         ],
+        # https://doi.org/10.6084/m9.figshare.6815705
+        "dft_2d_2021": [
+            "https://ndownloader.figshare.com/files/26808917",
+            "d2-3-12-2021.json",
+            "Obtaining 2D dataset 1.1k ...",
+            "https://www.nature.com/articles/s41524-020-00440-1",
+        ],
+        # https://doi.org/10.6084/m9.figshare.6815699
+        "dft_3d_2021": [
+            "https://ndownloader.figshare.com/files/29204826",
+            "jdft_3d-8-18-2021.json",
+            "Obtaining 3D dataset 55k ...",
+            "https://www.nature.com/articles/s41524-020-00440-1",
+        ],
         # https://doi.org/10.6084/m9.figshare.6815699
         "cfid_3d": [
             "https://ndownloader.figshare.com/files/29205201",

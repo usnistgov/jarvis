@@ -6,9 +6,13 @@ Databases
 ====================     =========================   ======================================================= 
 Database name            Number of data-points       Description                                             
 ====================     =========================   ======================================================= 
-``dft_3d``               55723                       Various 3D materials properties in JARVIS-DFT database  
+``dft_3d``               75993                       Various 3D materials properties in JARVIS-DFT database  
                                                      computed with OptB88vdW and TBmBJ methods             
-``dft_2d``               1079                        Various 2D materials properties in JARVIS-DFT database  
+``dft_2d``               1109                        Various 2D materials properties in JARVIS-DFT database  
+                                                     computed with OptB88vdW                                
+``dft_3d_2021``          55723                       Various 3D materials properties in JARVIS-DFT database  
+                                                     computed with OptB88vdW and TBmBJ methods             
+``dft_2d_2021``          1079                        Various 2D materials properties in JARVIS-DFT database  
                                                      computed with OptB88vdW                                
 ``qe_tb``                829574                      Various 3D materials properties in JARVIS-QETB database  
 ``stm``                  1132                        2D materials STM images in JARVIS-STM database  

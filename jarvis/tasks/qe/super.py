@@ -71,6 +71,9 @@ class SuperCond(object):
         relax_calc="'vc-relax'",
         pressure=None,
         psp_dir=None,
+        url=None,
+        psp_temp_name=None,
+        clean_files=True,
     ):
         """Initialize the class."""
         self.atoms = atoms
@@ -81,7 +84,10 @@ class SuperCond(object):
         self.relax_calc = relax_calc
         self.qe_cmd = qe_cmd
         self.psp_dir = psp_dir
+        self.url = url
         self.pressure = pressure
+        self.psp_temp_name = psp_temp_name
+        self.clean_files = clean_files
 
     def to_dict(self):
         """Get dictionary."""
@@ -92,6 +98,8 @@ class SuperCond(object):
         info["qp"] = self.qp.to_dict()
         info["qe_cmd"] = self.qe_cmd
         info["psp_dir"] = self.psp_dir
+        info["psp_temp_name"] = self.psp_temp_name
+        info["url"] = self.url
         info["relax_calc"] = self.relax_calc
         info["pressure"] = self.pressure
         return info
@@ -106,6 +114,9 @@ class SuperCond(object):
             qe_cmd=info["qe_cmd"],
             pressure=info["pressure"],
             relax_calc=info["relax_calc"],
+            psp_dir=info["psp_dir"],
+            url=info["url"],
+            psp_temp_name=info["psp_temp_name"],
         )
 
     def runjob(self):
@@ -116,7 +127,11 @@ class SuperCond(object):
         qp = self.qp
         if not kp._kpoints:
             kp_len = converg_kpoints(
-                atoms=atoms, qe_cmd=self.qe_cmd, psp_dir=self.psp_dir
+                atoms=atoms,
+                qe_cmd=self.qe_cmd,
+                psp_dir=self.psp_dir,
+                url=self.url,
+                psp_temp_name=self.psp_temp_name,
             )
             kp = Kpoints3D().automatic_length_mesh(
                 lattice_mat=atoms.lattice_mat, length=kp_len
@@ -125,7 +140,10 @@ class SuperCond(object):
             kpts = non_prime_kpoints(kpts)
             kp = Kpoints3D(kpoints=[kpts])
             print("kpts", kpts)
-
+        else:
+            kpts = kp._kpoints[0]
+            kpts = non_prime_kpoints(kpts)
+        print("kpts xyz", kpts)
         nq1 = get_factors(kpts[0])[0]
         nq2 = get_factors(kpts[1])[0]
         nq3 = get_factors(kpts[2])[0]
@@ -179,6 +197,9 @@ class SuperCond(object):
             jobname="relax",
             kpoints=kp,
             input_file="arelax.in",
+            url=self.url,
+            psp_dir=self.psp_dir,
+            psp_temp_name=self.psp_temp_name,
         )
 
         info = qejob_relax.runjob()
@@ -231,6 +252,9 @@ class SuperCond(object):
             jobname="scf_init",
             kpoints=kp,
             input_file="ascf_init.in",
+            url=self.url,
+            psp_temp_name=self.psp_temp_name,
+            psp_dir=self.psp_dir,
         )
 
         info_scf = qejob_scf_init.runjob()
@@ -264,6 +288,9 @@ class SuperCond(object):
             jobname="ph",
             kpoints=None,
             input_file="aph.in",
+            url=self.url,
+            psp_temp_name=self.psp_temp_name,
+            psp_dir=self.psp_dir,
         )
 
         qejob_ph.runjob()
@@ -286,6 +313,9 @@ class SuperCond(object):
             jobname="qr",
             kpoints=None,
             input_file="aqr.in",
+            url=self.url,
+            psp_temp_name=self.psp_temp_name,
+            psp_dir=self.psp_dir,
         )
 
         qejob_qr.runjob()
@@ -315,7 +345,13 @@ class SuperCond(object):
             jobname="matdyn",
             kpoints=None,
             input_file="amatdyn.in",
+            url=self.url,
+            psp_temp_name=self.psp_temp_name,
+            psp_dir=self.psp_dir,
         )
 
         qejob_matdyn.runjob()
         parse_lambda()
+        cmd = "rm -r _ph0 *.wfc* */wfc* */*UPF */*upf */charge-density.dat"
+        if self.clean_files:
+            os.system(cmd)

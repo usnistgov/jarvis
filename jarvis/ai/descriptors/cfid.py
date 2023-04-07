@@ -139,10 +139,10 @@ def get_chem_only_descriptors(
         chem = np.mean(np.array(arr), axis=0) / sum
         names = ["Mean_" + source + "_" + str(n) for n in names]
     elif max_only:
-        chem = np.max(np.array(arr), axis=0) / sum
+        chem = np.max(np.array(arr), axis=0)  # / sum
         names = ["Max_" + source + "_" + str(n) for n in names]
     elif min_only:
-        chem = np.min(np.array(arr), axis=0) / sum
+        chem = np.min(np.array(arr), axis=0)  # / sum
         names = ["Min_" + source + "_" + str(n) for n in names]
     else:
         chem = (

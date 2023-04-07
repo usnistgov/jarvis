@@ -21,6 +21,7 @@ class QEjob(object):
         output_file="qe.out",
         input_file="qe.in",
         stderr_file="std.err",
+        psp_temp_name=None,
     ):
         """Intitialize class."""
         self.atoms = atoms
@@ -30,6 +31,7 @@ class QEjob(object):
         self.jobname = jobname
         self.psp_dir = psp_dir
         self.url = url
+        self.psp_temp_name = psp_temp_name
         self.input_file = input_file
         self.output_file = output_file
         self.stderr_file = stderr_file
@@ -39,6 +41,7 @@ class QEjob(object):
             psp_dir=self.psp_dir,
             input_params=self.input_params,
             url=self.url,
+            psp_temp_name=self.psp_temp_name,
         )
 
     def write_input(self):
