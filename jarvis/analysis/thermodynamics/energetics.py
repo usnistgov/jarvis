@@ -407,6 +407,10 @@ class PhaseDiagram:
 
 def jid_hull(jid="", dataset=[]):
     """Get ehull for a jid and a dataset e.g. dft_3d."""
+    from jarvis.db.figshare import data
+
+    if isinstance(dataset, str):
+        dataset = data(dataset)
     for i in dataset:
         if i["jid"] == jid:
             system = list(set(i["atoms"]["elements"]))
@@ -424,4 +428,36 @@ def jid_hull(jid="", dataset=[]):
     info = pdj.get_ehull_all()
     for i in info:
         if i[0][2] == jid:
+            return i
+
+
+def formula_hull(formula_energy_id=[], dataset=[]):
+    """Get ehull for a formula_energy_id pair and a dataset e.g. dft_3d."""
+    # e.g. ["Al2O3",-1.0,"JVASP-xyz"]
+    # for i in dataset:
+    #    if i["jid"] == jid:
+    #        system = list(set(i["atoms"]["elements"]))
+    from jarvis.db.figshare import data
+
+    if isinstance(dataset, str):
+        dataset = data(dataset)
+
+    c = Composition.from_string(formula_energy_id[0])
+    system = list(c.to_dict().keys())
+    z = []
+    z.append(formula_energy_id)
+
+    for i in dataset:
+        formula = i["formula"]
+        comp = Composition.from_string(formula)
+        # atom_frac = comp.atomic_fraction
+        all_elms = list(comp.to_dict())
+        if (set(all_elms)).issubset(set(system)):
+            z.append([i["formula"], i["formation_energy_peratom"], i["jid"]])
+
+    pdj = PhaseDiagram(z)
+    # pdj.plot()
+    info = pdj.get_ehull_all()
+    for i in info:
+        if i[0][2] == formula_energy_id[-1]:
             return i
