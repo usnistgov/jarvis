@@ -256,6 +256,121 @@ def get_db_info():
             "Obtaining CORD19 dataset 223k...",
             "https://github.com/usnistgov/cord19-cdcs-nist",
         ],
+        # https://doi.org/10.6084/m9.figshare.22583677
+        "ssub": [
+            "https://figshare.com/ndownloader/files/40084921",
+            "ssub.json",
+            "Obtaining SSUB dataset 1726...",
+            "https://github.com/wolverton-research-group/qmpy",
+        ],
+        # https://doi.org/10.6084/m9.figshare.22721047
+        "mlearn": [
+            "https://figshare.com/ndownloader/files/40424156",
+            "mlearn.json",
+            "Obtaining mlearn dataset 1730...",
+            "https://github.com/materialsvirtuallab/mlearn",
+        ],
+        # https://doi.org/10.6084/m9.figshare.22814318
+        "foundry_ml_exp_bandgaps": [
+            "https://figshare.com/ndownloader/files/40557743",
+            "foundry_ml_exp_bandgaps.json",
+            "Obtaining foundry_ml_exp_bandgaps dataset 2069...",
+            "https://foundry-ml.org/#/datasets/10.18126/wg3u-g8vu",
+        ],
+        # ToFix# https://doi.org/10.6084/m9.figshare.22815926
+        # "mat_scholar_ner": [
+        #    "https://figshare.com/ndownloader/files/40563593",
+        #    "mat_scholar_ner.json",
+        #    "Obtaining mat_scholar_ner dataset XYZ...",
+        #    "https://pubs.acs.org/doi/10.1021/acs.jcim.9b00470",
+        # ],
+        # https://doi.org/10.6084/m9.figshare.22817633
+        # Contains repeats
+        "ocp10k": [
+            "https://figshare.com/ndownloader/files/40566122",
+            "ocp10k.json",
+            "Obtaining OCP 10k train dataset, 59886...",
+            "https://github.com/Open-Catalyst-Project/ocp",
+        ],
+        # https://doi.org/10.6084/m9.figshare.22817651
+        "arxiv_summary": [
+            "https://figshare.com/ndownloader/files/40566137",
+            "arxiv_summary.json",
+            "Obtaining arxiv summary cond.mat dataset 137927...",
+            "https://github.com/usnistgov/chemnlp",
+        ],
+        # TODO:PubChem
+        # https://doi.org/10.6084/m9.figshare.22975787
+        "supercon_chem": [
+            "https://figshare.com/ndownloader/files/40719260",
+            "supercon_chem.json",
+            "Obtaining supercon chem dataset 16414...",
+            "https://www.nature.com/articles/s41524-018-0085-8",
+        ],
+        # https://doi.org/10.6084/m9.figshare.22976285
+        "mag2d_chem": [
+            "https://figshare.com/ndownloader/files/40720004",
+            "mag2d_chem.json",
+            "Obtaining magnetic 2D chem dataset 226...",
+            "https://doi.org/10.24435/materialscloud:2019.0020/v1",
+        ],
+        # https://doi.org/10.6084/m9.figshare.23000573
+        "vacancydb": [
+            "https://figshare.com/ndownloader/files/40750811",
+            "vacancydb.json",
+            "Obtaining vacancy dataset 464...",
+            "https://arxiv.org/abs/2205.08366",
+        ],
+        # Contains repeats
+        # https://doi.org/10.6084/m9.figshare.23206193
+        "ocp100k": [
+            "https://figshare.com/ndownloader/files/40902845",
+            "ocp100k.json",
+            "Obtaining OCP100k dataset 149886...",
+            "https://github.com/Open-Catalyst-Project/ocp",
+        ],
+        # https://doi.org/10.6084/m9.figshare.23250629
+        "ocp_all": [
+            "https://figshare.com/ndownloader/files/40974599",
+            "ocp_all.json",
+            "Obtaining OCPall dataset 510214...",
+            "https://github.com/Open-Catalyst-Project/ocp",
+        ],
+        # https://doi.org/10.6084/m9.figshare.23225687
+        "tinnet_N": [
+            "https://figshare.com/ndownloader/files/40934285",
+            "tinnet_N.json",
+            "Obtaining TinNet Nitrogen dataset 329...",
+            "https://github.com/hlxin/tinnet",
+        ],
+        # https://doi.org/10.6084/m9.figshare.23254151
+        "tinnet_O": [
+            "https://figshare.com/ndownloader/files/40978943",
+            "tinnet_O.json",
+            "Obtaining TinNet Oxygen dataset 747...",
+            "https://github.com/hlxin/tinnet",
+        ],
+        # https://doi.org/10.6084/m9.figshare.23254154
+        "tinnet_OH": [
+            "https://figshare.com/ndownloader/files/40978949",
+            "tinnet_OH.json",
+            "Obtaining TinNet OH dataset 748...",
+            "https://github.com/hlxin/tinnet",
+        ],
+        # https://doi.org/10.6084/m9.figshare.21370572
+        "supercon_3d": [
+            "https://figshare.com/ndownloader/files/38307921",
+            "jarvis_epc_data_figshare_1058.json",
+            "Obtaining supercond. Tc dataset 1058...",
+            "https://www.nature.com/articles/s41524-022-00933-1",
+        ],
+        # https://doi.org/10.6084/m9.figshare.21370572
+        "supercon_2d": [
+            "https://figshare.com/ndownloader/files/38950433",
+            "jarvis_epc_data_2d.json",
+            "Obtaining supercond. Tc dataset 161...",
+            "https://doi.org/10.1021/acs.nanolett.2c04420",
+        ],
         # https://doi.org/10.6084/m9.figshare.13154159
         "raw_files": [
             "https://ndownloader.figshare.com/files/25295732",
