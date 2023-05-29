@@ -45,6 +45,18 @@ Database name            Number of data-points       Description
 ``qmof``                 20425                       Bandgaps and total energies of metal organic frameowrks
                                                      in QMOF database
 ``hmof``                 137651                      Hypothetical MOF database
+``snumat``               10481                       Bandgaps with hybrid functional 
+``arXiv``                12500                       arXiv dataset 1.8 million title, abstract and id dataset
+``ssub``                 1726                        SSUB formation energy for chemical formula dataset
+``mlearn``               1730                        Machine learning force-field for elements datasets
+``ocp10k``               59886                       Open Catalyst 10000 training, rest validation and test dataset
+``ocp100k``              149886                      Open Catalyst 100000 training, rest validation and test dataset
+``ocp_all``              510214                      Open Catalyst 460328 training, rest validation and test dataset
+``tinnet_N``             329                         TinNet Nitrogen catalyst dataset
+``tinnet_O``             747                         TinNet Oxygen catalyst dataset
+``tinnet_OH``            748                         TinNet OH group catalyst dataset
+``supercon_3d``          1058                        3D superconductor DFT dataset
+``supercon_2d``          161                         2D superconductor DFT dataset
 ``cfid_3d``              55723                       Various 3D materials properties in JARVIS-DFT database  
                                                      computed with OptB88vdW and TBmBJ methods with CFID             
 ``raw_files``            144895                      Figshare links to download raw calculations VASP files
