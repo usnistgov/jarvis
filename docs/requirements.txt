@@ -16,7 +16,7 @@ cffi==1.15.0
 charset-normalizer==2.0.9
 cif2cell==2.0.0a3
 click==8.0.3
-codecov==2.1.12
+codecov==2.1.13
 coverage==6.2
 cryptography==36.0.1
 cycler==0.11.0
