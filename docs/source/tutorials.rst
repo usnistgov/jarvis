@@ -1,7 +1,16 @@
+.. raw:: html
+
+    <script type="text/javascript">
+    if (String(window.location).indexOf("readthedocs") !== -1) {
+        window.alert('The documentation has moved. I will redirect you to the new location.');
+        window.location.replace('https://pages.nist.gov/jarvis/tutorials/');
+    }
+    </script>
+
+
 Tutorials
 =============
 
-.. _customise-templates:
 
 
 How to analyze an atomic structure
