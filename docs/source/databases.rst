@@ -102,6 +102,7 @@ which have their own modules in ``jarvis.db.figshare``:
 JARVIS-DFT
 ------------------------------------------------
 
+Description coming soon!
 
 JARVIS-Formation energy and bandgap
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
