@@ -143,7 +143,7 @@ toolz>=0.11.2
 torch>=1.10.1
 tornado>=6.1
 tqdm>=4.62.3
-tweedledum>=1.1.1
+tweedledum==1.1.1
 typing_extensions>=4.0.1
 urllib3>=1.26.7
 websocket-client>=1.2.3
