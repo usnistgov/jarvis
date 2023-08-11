@@ -88,7 +88,7 @@ videos](https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel
     and datasets for training machine learning models.
 -   **HPC clusters**: Torque/PBS and SLURM.
 -   **Available datasets**: [Summary of several
-    datasets](https://github.com/usnistgov/jarvis/blob/master/DatasetSummary.rst)
+    datasets](https://pages.nist.gov/jarvis/databases/)
     .
 <a name="install"></a>
 ## Installation
@@ -98,9 +98,9 @@ videos](https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel
 
         bash Miniconda3-latest-Linux-x86_64.sh (for linux)
         bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
-        Download 32/64 bit python 3.8 miniconda exe and install (for windows)
+        Download 32/64 bit python 3.9 miniconda exe and install (for windows)
         Now, let's make a conda environment just for JARVIS::
-        conda create --name my_jarvis python=3.8
+        conda create --name my_jarvis python=3.9
         source activate my_jarvis
 
 -   Method-1: Installation using pip:
