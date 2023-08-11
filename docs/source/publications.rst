@@ -9,7 +9,7 @@ JARVIS-Overview
 
 [2. Recent progress in the JARVIS infrastructure for next-generation data-driven materials design, arXiv (2023).](https://arxiv.org/abs/2305.11842)
 
-[3. Large Scale Benchmark of Materials Design Methods, arXiv (2023).](https://arxiv.org/abs/2306.11688)
+[3. Large Scale Benchmark of Materials Design Methods, arXiv(2023).](https://arxiv.org/abs/2306.11688)
 
 
 JARVIS-FF
