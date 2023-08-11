@@ -1,0 +1,1123 @@
+<!--https://github.com/notenverwaltung/Notenverwaltungssoftware/blob/54aa0515f3b1b2c5db8471306eecfed18e154e7e/docs/overrides/main.html -->
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="jarvis-tools: an open-source software package for data-driven atomistic materials design. https://jarvis.nist.gov/.">
+      
+      
+        <meta name="author" content="Kamal Choudhary">
+      
+      
+        <link rel="canonical" href="https://github.com/usnistgov/jarvis/databases/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../publications/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.0-b3">
+    
+    
+      
+        <title>Databases - JARVIS-Tools</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.83068744.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.85d0ee34.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#databases" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+        <aside class="md-banner">
+          <div class="md-banner__inner md-grid md-typeset">
+            
+            
+<link rel="stylesheet" href="https://pages.nist.gov/nist-header-footer/css/nist-combined.css">
+<script src="https://code.jquery.com/jquery-3.6.2.min.js" type="text/javascript" defer="defer"></script>
+<script src="https://pages.nist.gov/nist-header-footer/js/nist-header-footer.js" type="text/javascript" defer="defer"></script>
+<!-- 
+<script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
+</script> -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Q89M6QHG7"></script> -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0HPG8D56KJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0HPG8D56KJ');
+</script>
+
+
+          </div>
+          
+        </aside>
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="JARVIS-Tools" class="md-header__button md-logo" aria-label="JARVIS-Tools" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            JARVIS-Tools
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Databases
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/usnistgov/jarvis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jarvis
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+    
+  
+  Databases
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../publications/" class="md-tabs__link">
+        
+  
+    
+  
+  Publications
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tutorials/" class="md-tabs__link">
+        
+  
+    
+  
+  Tutorials
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="JARVIS-Tools" class="md-nav__button md-logo" aria-label="JARVIS-Tools" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    JARVIS-Tools
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/usnistgov/jarvis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jarvis
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#jarvis-dft" class="md-nav__link">
+    JARVIS-DFT
+  </a>
+  
+    <nav class="md-nav" aria-label="JARVIS-DFT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-formation-energy-and-bandgap" class="md-nav__link">
+    JARVIS-Formation energy and bandgap
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-2d-exfoliation-energies" class="md-nav__link">
+    JARVIS-2D Exfoliation energies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-metagga-dielectric-function-and-slme-solar-cells" class="md-nav__link">
+    JARVIS-MetaGGA (dielectric function and SLME, solar cells)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-stm-and-stem" class="md-nav__link">
+    JARVIS-STM and STEM
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-wanniertb" class="md-nav__link">
+    JARVIS-WannierTB
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-elastic-constants" class="md-nav__link">
+    JARVIS-Elastic constants
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-topological-materials-spin-orbit-spillage" class="md-nav__link">
+    JARVIS-Topological materials (Spin-orbit Spillage)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-dfpt-piezoelectric-ir-raman-dielectric-bec" class="md-nav__link">
+    JARVIS-DFPT (Piezoelectric, IR, Raman, dielectric, BEC)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-boltztrap-thermoelectrics-coeff-eff-mass" class="md-nav__link">
+    JARVIS-BoltzTrap (Thermoelectrics coeff, eff. mass)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-magnetic-moments" class="md-nav__link">
+    JARVIS-Magnetic moments
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-dfpt-piezoelectric-ir-dielectric" class="md-nav__link">
+    JARVIS-DFPT (Piezoelectric, IR, dielectric)
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-efg" class="md-nav__link">
+    JARVIS-EFG
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-pbe0-and-hse06" class="md-nav__link">
+    JARVIS-PBE0 and HSE06
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-heterostructure" class="md-nav__link">
+    JARVIS-Heterostructure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-edos-pdos" class="md-nav__link">
+    JARVIS-EDOS-PDOS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-kpoint-and-cut-off" class="md-nav__link">
+    JARVIS-Kpoint and cut-off
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jarvis-ff" class="md-nav__link">
+    JARVIS-FF
+  </a>
+  
+    <nav class="md-nav" aria-label="JARVIS-FF">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#energetics" class="md-nav__link">
+    Energetics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#elastic-constants" class="md-nav__link">
+    Elastic constants
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vacancy-formation-energy" class="md-nav__link">
+    Vacancy formation energy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#surface-energy-and-wulff-plots" class="md-nav__link">
+    Surface energy and Wulff-plots
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phonon-dos" class="md-nav__link">
+    Phonon DOS
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#jarvis-raw-files" class="md-nav__link">
+    JARVIS-RAW Files
+  </a>
+  
+    <nav class="md-nav" aria-label="JARVIS-RAW Files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-dft-structure-relaxation" class="md-nav__link">
+    JARVIS-DFT structure relaxation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-dft-elastic-constantsfinite-difference" class="md-nav__link">
+    JARVIS-DFT Elastic constants/finite difference
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-wanniertb_1" class="md-nav__link">
+    JARVIS-WannierTB
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jarvis-stm-and-stem_1" class="md-nav__link">
+    JARVIS-STM and STEM
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#external-datasets-used-for-ml-training" class="md-nav__link">
+    External datasets used for ML training
+  </a>
+  
+    <nav class="md-nav" aria-label="External datasets used for ML training">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#materials-project-dataset" class="md-nav__link">
+    Materials project dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qm9-dataset" class="md-nav__link">
+    QM9 dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oqmd-dataset" class="md-nav__link">
+    OQMD dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aflow-dataset" class="md-nav__link">
+    AFLOW dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#polymer-genome-dataset" class="md-nav__link">
+    Polymer genome dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cod-dataset" class="md-nav__link">
+    COD dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#omdb-dataset" class="md-nav__link">
+    OMDB dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#qmof-dataset" class="md-nav__link">
+    QMOF dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c2db-dataset" class="md-nav__link">
+    C2DB dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hpov-dataset" class="md-nav__link">
+    HPOV dataset
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../publications/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Publications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="databases">Databases<a class="headerlink" href="#databases" title="Permanent link">&para;</a></h1>
+<table>
+<thead>
+<tr>
+<th>Database name</th>
+<th>Number of data-points</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dft_3d</code></td>
+<td>75993</td>
+<td>Various 3D materials properties in JARVIS-DFT database computed with OptB88vdW and TBmBJ methods</td>
+</tr>
+<tr>
+<td><code>dft_2d</code></td>
+<td>1109</td>
+<td>Various 2D materials properties in JARVIS-DFT database computed with OptB88vdW</td>
+</tr>
+<tr>
+<td><code>dft_3d_2021</code></td>
+<td>55723</td>
+<td>Various 3D materials properties in JARVIS-DFT database computed with OptB88vdW and TBmBJ methods</td>
+</tr>
+<tr>
+<td><code>dft_2d_2021</code></td>
+<td>1079</td>
+<td>Various 2D materials properties in JARVIS-DFT database computed with OptB88vdW</td>
+</tr>
+<tr>
+<td><code>qe_tb</code></td>
+<td>829574</td>
+<td>Various 3D materials properties in JARVIS-QETB database</td>
+</tr>
+<tr>
+<td><code>stm</code></td>
+<td>1132</td>
+<td>2D materials STM images in JARVIS-STM database</td>
+</tr>
+<tr>
+<td><code>wtbh_electron</code></td>
+<td>1440</td>
+<td>3D and 2D materials Wannier tight-binding Hamiltonian dtaabase for electrons with spin-orbit coupling in JARVIS-WTB (Keyword: 'WANN')</td>
+</tr>
+<tr>
+<td><code>wtbh_phonon</code></td>
+<td>15502</td>
+<td>3D and 2D materials Wannier tight-binding Hamiltonian for phonons at Gamma with finite difference (Keyword:FD-ELAST)</td>
+</tr>
+<tr>
+<td><code>jff</code></td>
+<td>2538</td>
+<td>Various 3D materials properties in JARVIS-FF database computed with several force-fields</td>
+</tr>
+<tr>
+<td><code>alignn_ff_db</code></td>
+<td>307113</td>
+<td>Energy per atom, forces and stresses for ALIGNN-FF trainig for 75k materials.</td>
+</tr>
+<tr>
+<td><code>edos_pdos</code></td>
+<td>48469</td>
+<td>Normalized electron and phonon density of states with interpolated values and fixed number of bins</td>
+</tr>
+<tr>
+<td><code>megnet</code></td>
+<td>69239</td>
+<td>Formation energy and bandgaps of 3D materials properties in Materials project database as on 2018, used in megnet</td>
+</tr>
+<tr>
+<td><code>twod_matpd</code></td>
+<td>6351</td>
+<td>Formation energy and bandgaps of 2D materials properties in 2DMatPedia database</td>
+</tr>
+<tr>
+<td><code>c2db</code></td>
+<td>3514</td>
+<td>Various properties in C2DB database</td>
+</tr>
+<tr>
+<td><code>polymer_genome</code></td>
+<td>1073</td>
+<td>Electronic bandgap and diecltric constants of crystall ine polymer in polymer genome database</td>
+</tr>
+<tr>
+<td><code>qm9_std_jctc</code></td>
+<td>130829</td>
+<td>Various properties of molecules in QM9 database</td>
+</tr>
+<tr>
+<td><code>cod</code></td>
+<td>431778</td>
+<td>Atomic structures from crystallographic open database</td>
+</tr>
+<tr>
+<td><code>oqmd_3d_no_cfid</code></td>
+<td>817636</td>
+<td>Formation energies and bandgaps of 3D materials from OQMD database</td>
+</tr>
+<tr>
+<td><code>omdb</code></td>
+<td>12500</td>
+<td>Bandgaps for organic polymers in OMDB database</td>
+</tr>
+<tr>
+<td><code>hopv</code></td>
+<td>4855</td>
+<td>Various properties of molecules in HOPV15 dataset</td>
+</tr>
+<tr>
+<td><code>pdbbind</code></td>
+<td>11189</td>
+<td>Bio-molecular complexes database from PDBBind v2015</td>
+</tr>
+<tr>
+<td><code>qmof</code></td>
+<td>20425</td>
+<td>Bandgaps and total energies of metal organic frameowrks in QMOF database</td>
+</tr>
+<tr>
+<td><code>hmof</code></td>
+<td>137651</td>
+<td>Hypothetical MOF database</td>
+</tr>
+<tr>
+<td><code>snumat</code></td>
+<td>10481</td>
+<td>Bandgaps with hybrid functional</td>
+</tr>
+<tr>
+<td><code>arXiv</code></td>
+<td>12500</td>
+<td>arXiv dataset 1.8 million title, abstract and id dataset</td>
+</tr>
+<tr>
+<td><code>ssub</code></td>
+<td>1726</td>
+<td>SSUB formation energy for chemical formula dataset</td>
+</tr>
+<tr>
+<td><code>mlearn</code></td>
+<td>1730</td>
+<td>Machine learning force-field for elements datasets</td>
+</tr>
+<tr>
+<td><code>ocp10k</code></td>
+<td>59886</td>
+<td>Open Catalyst 10000 training, rest validation and test dataset</td>
+</tr>
+<tr>
+<td><code>ocp100k</code></td>
+<td>149886</td>
+<td>Open Catalyst 100000 training, rest validation and test dataset</td>
+</tr>
+<tr>
+<td><code>ocp_all</code></td>
+<td>510214</td>
+<td>Open Catalyst 460328 training, rest validation and test dataset</td>
+</tr>
+<tr>
+<td><code>tinnet_N</code></td>
+<td>329</td>
+<td>TinNet Nitrogen catalyst dataset</td>
+</tr>
+<tr>
+<td><code>tinnet_O</code></td>
+<td>747</td>
+<td>TinNet Oxygen catalyst dataset</td>
+</tr>
+<tr>
+<td><code>tinnet_OH</code></td>
+<td>748</td>
+<td>TinNet OH group catalyst dataset</td>
+</tr>
+<tr>
+<td><code>supercon_3d</code></td>
+<td>1058</td>
+<td>3D superconductor DFT dataset</td>
+</tr>
+<tr>
+<td><code>supercon_2d</code></td>
+<td>161</td>
+<td>2D superconductor DFT dataset</td>
+</tr>
+<tr>
+<td><code>cfid_3d</code></td>
+<td>55723</td>
+<td>Various 3D materials properties in JARVIS-DFT database computed with OptB88vdW and TBmBJ methods with CFID</td>
+</tr>
+<tr>
+<td><code>raw_files</code></td>
+<td>144895</td>
+<td>Figshare links to download raw calculations VASP files from JARVIS-DFT</td>
+</tr>
+</tbody>
+</table>
+<p>All these datasets can be obtained using jarvis-tools as follows,
+exception to <code>stm</code>, <code>wtbh_electron</code>, <code>wtbh_phonon</code> which have their own
+modules in <code>jarvis.db.figshare</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.db.figshare</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="s1">&#39;dft_3d&#39;</span><span class="p">)</span> <span class="c1">#choose a name of dataset from above</span>
+<span class="c1"># See available keys</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="c1"># Dataset size</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+
+<span class="c1"># Visualize an atoms object</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;atoms&#39;</span><span class="p">])</span>
+<span class="c1">#You can visualize this in VESTA or other similar packages</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+<span class="c1"># If pandas framework needed</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="jarvis-dft">JARVIS-DFT<a class="headerlink" href="#jarvis-dft" title="Permanent link">&para;</a></h2>
+<h3 id="jarvis-formation-energy-and-bandgap">JARVIS-Formation energy and bandgap<a class="headerlink" href="#jarvis-formation-energy-and-bandgap" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-2d-exfoliation-energies">JARVIS-2D Exfoliation energies<a class="headerlink" href="#jarvis-2d-exfoliation-energies" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-metagga-dielectric-function-and-slme-solar-cells">JARVIS-MetaGGA (dielectric function and SLME, solar cells)<a class="headerlink" href="#jarvis-metagga-dielectric-function-and-slme-solar-cells" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-stm-and-stem">JARVIS-STM and STEM<a class="headerlink" href="#jarvis-stm-and-stem" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-wanniertb">JARVIS-WannierTB<a class="headerlink" href="#jarvis-wanniertb" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-elastic-constants">JARVIS-Elastic constants<a class="headerlink" href="#jarvis-elastic-constants" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-topological-materials-spin-orbit-spillage">JARVIS-Topological materials (Spin-orbit Spillage)<a class="headerlink" href="#jarvis-topological-materials-spin-orbit-spillage" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-dfpt-piezoelectric-ir-raman-dielectric-bec">JARVIS-DFPT (Piezoelectric, IR, Raman, dielectric, BEC)<a class="headerlink" href="#jarvis-dfpt-piezoelectric-ir-raman-dielectric-bec" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-boltztrap-thermoelectrics-coeff-eff-mass">JARVIS-BoltzTrap (Thermoelectrics coeff, eff. mass)<a class="headerlink" href="#jarvis-boltztrap-thermoelectrics-coeff-eff-mass" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-magnetic-moments">JARVIS-Magnetic moments<a class="headerlink" href="#jarvis-magnetic-moments" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-dfpt-piezoelectric-ir-dielectric">JARVIS-DFPT (Piezoelectric, IR, dielectric)<a class="headerlink" href="#jarvis-dfpt-piezoelectric-ir-dielectric" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-efg">JARVIS-EFG<a class="headerlink" href="#jarvis-efg" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-pbe0-and-hse06">JARVIS-PBE0 and HSE06<a class="headerlink" href="#jarvis-pbe0-and-hse06" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-heterostructure">JARVIS-Heterostructure<a class="headerlink" href="#jarvis-heterostructure" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-edos-pdos">JARVIS-EDOS-PDOS<a class="headerlink" href="#jarvis-edos-pdos" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-kpoint-and-cut-off">JARVIS-Kpoint and cut-off<a class="headerlink" href="#jarvis-kpoint-and-cut-off" title="Permanent link">&para;</a></h3>
+<h2 id="jarvis-ff">JARVIS-FF<a class="headerlink" href="#jarvis-ff" title="Permanent link">&para;</a></h2>
+<h3 id="energetics">Energetics<a class="headerlink" href="#energetics" title="Permanent link">&para;</a></h3>
+<h3 id="elastic-constants">Elastic constants<a class="headerlink" href="#elastic-constants" title="Permanent link">&para;</a></h3>
+<h3 id="vacancy-formation-energy">Vacancy formation energy<a class="headerlink" href="#vacancy-formation-energy" title="Permanent link">&para;</a></h3>
+<h3 id="surface-energy-and-wulff-plots">Surface energy and Wulff-plots<a class="headerlink" href="#surface-energy-and-wulff-plots" title="Permanent link">&para;</a></h3>
+<h3 id="phonon-dos">Phonon DOS<a class="headerlink" href="#phonon-dos" title="Permanent link">&para;</a></h3>
+<h2 id="jarvis-raw-files">JARVIS-RAW Files<a class="headerlink" href="#jarvis-raw-files" title="Permanent link">&para;</a></h2>
+<h3 id="jarvis-dft-structure-relaxation">JARVIS-DFT structure relaxation<a class="headerlink" href="#jarvis-dft-structure-relaxation" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-dft-elastic-constantsfinite-difference">JARVIS-DFT Elastic constants/finite difference<a class="headerlink" href="#jarvis-dft-elastic-constantsfinite-difference" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-wanniertb_1">JARVIS-WannierTB<a class="headerlink" href="#jarvis-wanniertb_1" title="Permanent link">&para;</a></h3>
+<h3 id="jarvis-stm-and-stem_1">JARVIS-STM and STEM<a class="headerlink" href="#jarvis-stm-and-stem_1" title="Permanent link">&para;</a></h3>
+<h2 id="external-datasets-used-for-ml-training">External datasets used for ML training<a class="headerlink" href="#external-datasets-used-for-ml-training" title="Permanent link">&para;</a></h2>
+<h3 id="materials-project-dataset">Materials project dataset<a class="headerlink" href="#materials-project-dataset" title="Permanent link">&para;</a></h3>
+<h3 id="qm9-dataset">QM9 dataset<a class="headerlink" href="#qm9-dataset" title="Permanent link">&para;</a></h3>
+<h3 id="oqmd-dataset">OQMD dataset<a class="headerlink" href="#oqmd-dataset" title="Permanent link">&para;</a></h3>
+<h3 id="aflow-dataset">AFLOW dataset<a class="headerlink" href="#aflow-dataset" title="Permanent link">&para;</a></h3>
+<h3 id="polymer-genome-dataset">Polymer genome dataset<a class="headerlink" href="#polymer-genome-dataset" title="Permanent link">&para;</a></h3>
+<h3 id="cod-dataset">COD dataset<a class="headerlink" href="#cod-dataset" title="Permanent link">&para;</a></h3>
+<h3 id="omdb-dataset">OMDB dataset<a class="headerlink" href="#omdb-dataset" title="Permanent link">&para;</a></h3>
+<h3 id="qmof-dataset">QMOF dataset<a class="headerlink" href="#qmof-dataset" title="Permanent link">&para;</a></h3>
+<h3 id="c2db-dataset">C2DB dataset<a class="headerlink" href="#c2db-dataset" title="Permanent link">&para;</a></h3>
+<h3 id="hpov-dataset">HPOV dataset<a class="headerlink" href="#hpov-dataset" title="Permanent link">&para;</a></h3>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      NIST Copyright, Kamal Choudhary
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/usnistgov/jarvis" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "toc.integrate"], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.4e31edb1.min.js"></script>
+      
+        
+          <script src="../javascripts/tablesort.min.js"></script>
+        
+      
+        
+          <script src="../javascripts/tablesort.js"></script>
+        
+      
+    
+  </body>
+</html>

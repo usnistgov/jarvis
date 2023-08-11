@@ -1,0 +1,919 @@
+<!--https://github.com/notenverwaltung/Notenverwaltungssoftware/blob/54aa0515f3b1b2c5db8471306eecfed18e154e7e/docs/overrides/main.html -->
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="jarvis-tools: an open-source software package for data-driven atomistic materials design. https://jarvis.nist.gov/.">
+      
+      
+        <meta name="author" content="Kamal Choudhary">
+      
+      
+        <link rel="canonical" href="https://github.com/usnistgov/jarvis/">
+      
+      
+      
+        <link rel="next" href="databases/">
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.0-b3">
+    
+    
+      
+        <title>JARVIS-Tools</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.83068744.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.85d0ee34.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#table-of-contents" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+        <aside class="md-banner">
+          <div class="md-banner__inner md-grid md-typeset">
+            
+            
+<link rel="stylesheet" href="https://pages.nist.gov/nist-header-footer/css/nist-combined.css">
+<script src="https://code.jquery.com/jquery-3.6.2.min.js" type="text/javascript" defer="defer"></script>
+<script src="https://pages.nist.gov/nist-header-footer/js/nist-header-footer.js" type="text/javascript" defer="defer"></script>
+<!-- 
+<script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
+</script> -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Q89M6QHG7"></script> -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0HPG8D56KJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0HPG8D56KJ');
+</script>
+
+
+          </div>
+          
+        </aside>
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="JARVIS-Tools" class="md-header__button md-logo" aria-label="JARVIS-Tools" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            JARVIS-Tools
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/usnistgov/jarvis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jarvis
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="databases/" class="md-tabs__link">
+        
+  
+    
+  
+  Databases
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="publications/" class="md-tabs__link">
+        
+  
+    
+  
+  Publications
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="tutorials/" class="md-tabs__link">
+        
+  
+    
+  
+  Tutorials
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="JARVIS-Tools" class="md-nav__button md-logo" aria-label="JARVIS-Tools" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    JARVIS-Tools
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/usnistgov/jarvis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jarvis
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="databases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="publications/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Publications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="tutorials/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<p><a href="https://pypi.org/project/jarvis-tools/"><img alt="image" src="https://badge.fury.io/py/jarvis-tools.svg" /></a>
+<a href="https://anaconda.org/conda-forge/jarvis-tools"><img alt="image" src="https://anaconda.org/conda-forge/jarvis-tools/badges/version.svg" /></a>
+<a href="https://github.com/usnistgov/jarvis"><img alt="image" src="https://img.shields.io/github/v/tag/usnistgov/jarvis" /></a>
+<a href="https://ci.appveyor.com/project/knc6/jarvis-63tl9"><img alt="image" src="https://ci.appveyor.com/api/projects/status/d8na8vyfm7ulya9p/branch/master?svg=true" /></a>
+<a href="https://github.com/usnistgov/jarvis"><img alt="image" src="https://github.com/usnistgov/jarvis/workflows/JARVIS-Tools%20github%20action/badge.svg" /></a>
+<a href="https://github.com/usnistgov/jarvis"><img alt="image" src="https://github.com/usnistgov/jarvis/workflows/JARVIS-Tools%20linting/badge.svg" /></a>
+<a href="https://codecov.io/gh/knc6/jarvis"><img alt="image" src="https://img.shields.io/codecov/c/github/knc6/jarvis" /></a>
+<a href="https://img.shields.io/pypi/dm/jarvis-tools.svg"><img alt="image" src="https://img.shields.io/pypi/dm/jarvis-tools.svg" /></a>
+<a href="https://pepy.tech/badge/jarvis-tools"><img alt="image" src="https://pepy.tech/badge/jarvis-tools" /></a>
+<a href="https://doi.org/10.5281/zenodo.3903515"><img alt="image" src="https://zenodo.org/badge/DOI/10.5281/zenodo.3903515.svg" /></a>
+<a href="https://github.com/usnistgov/jarvis"><img alt="image" src="https://img.shields.io/github/commit-activity/y/usnistgov/jarvis" /></a>
+<a href="https://github.com/usnistgov/jarvis"><img alt="image" src="https://img.shields.io/github/repo-size/usnistgov/jarvis" /></a>
+<a href="https://figshare.com/authors/Kamal_Choudhary/4445539"><img alt="image" src="https://img.shields.io/badge/JARVIS-Figshare-Green.svg" /></a>
+<a href="https://jarvis-tools.readthedocs.io"><img alt="image" src="https://img.shields.io/badge/JARVIS-ToolsDocs-Green.svg" /></a>
+<a href="https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks"><img alt="image" src="https://colab.research.google.com/assets/colab-badge.svg" /></a>
+<!-- <a href="https://travis-ci.org/usnistgov/jarvis">klzzwxh:0030</a> --></p>
+<hr />
+<h1 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h1>
+<ul>
+<li><a href="#intro">Introduction</a></li>
+<li><a href="#doc">Documentation</a></li>
+<li><a href="#cap">Capabilities</a></li>
+<li><a href="#install">Installation</a></li>
+<li><a href="#example">Example function</a></li>
+<li><a href="#cite">Citation</a></li>
+<li><a href="#refs">References</a></li>
+<li><a href="#contrib">How to contribute</a></li>
+<li><a href="#corres">Correspondence</a></li>
+<li><a href="#fund">Funding support</a></li>
+<li><a href="#conduct">Code of conduct</a></li>
+<li><a href="#module">Module structure</a></li>
+</ul>
+<p><a name="intro"></a></p>
+<h1 id="jarvis-tools-introduction">JARVIS-Tools (Introduction)<a class="headerlink" href="#jarvis-tools-introduction" title="Permanent link">&para;</a></h1>
+<p>The JARVIS-Tools is an open-access software package for atomistic
+data-driven materials design. JARVIS-Tools can be used for a) setting up
+calculations, b) analysis and informatics, c) plotting, d) database
+development and e) web-page development.</p>
+<p>JARVIS-Tools empowers NIST-JARVIS (Joint Automated Repository for
+Various Integrated Simulations) repository which is an integrated
+framework for computational science using density functional theory,
+classical force-field/molecular dynamics and machine-learning. The
+NIST-JARVIS official website is: <a href="https://jarvis.nist.gov">https://jarvis.nist.gov</a> . This
+project is a part of the Materials Genome Initiative (MGI) at NIST
+(<a href="https://mgi.nist.gov/">https://mgi.nist.gov/</a>).</p>
+<p>For more details, checkout our latest article: <a href="https://www.nature.com/articles/s41524-020-00440-1">The joint automated
+repository for various integrated simulations (JARVIS) for data-driven
+materials design</a>
+and <a href="https://www.youtube.com/watch?v=P0ZcHXOC6W0&amp;feature=emb_title&amp;ab_channel=JARVIS-repository">YouTube
+videos</a></p>
+<p align="center">
+   <a href="https://jarvis.nist.gov/"> <img src="https://www.ctcms.nist.gov/~knc6/images/logo/jarvis-mission.png" alt="jarvis" class="center"  width="600"/></a>
+</p>
+
+<p><a name="doc"></a></p>
+<h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><a href="https://jarvis-tools.readthedocs.io">https://jarvis-tools.readthedocs.io</a></p>
+</blockquote>
+<p><a name="cap"></a></p>
+<h2 id="capabilities">Capabilities<a class="headerlink" href="#capabilities" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Software workflow tasks for preprcessing, executing and
+    post-processing</strong>: VASP, Quantum Espresso, Wien2k BoltzTrap,
+    Wannier90, LAMMPS, Scikit-learn, TensorFlow, LightGBM, Qiskit,
+    Tequila, Pennylane, DGL, PyTorch.</li>
+<li><strong>Several examples</strong>: Notebooks and test scripts to explain the
+    package.</li>
+<li><strong>Several analysis tools</strong>: Atomic structure, Electronic structure,
+    Spacegroup, Diffraction, 2D materials and other vdW bonded systems,
+    Mechanical, Optoelectronic, Topological, Solar-cell, Thermoelectric,
+    Piezoelectric, Dielectric, STM, Phonon, Dark matter, Wannier tight
+    binding models, Point defects, Heterostructures, Magnetic ordering,
+    Images, Spectrum etc.</li>
+<li><strong>Database upload and download</strong>: Download JARVIS databases such as
+    JARVIS-DFT, FF, ML, WannierTB, Solar, STM and also external
+    databases such as Materials project, OQMD, AFLOW etc.</li>
+<li><strong>Access raw input/output files</strong>: Download input/ouput files for
+    JARVIS-databases to enhance reproducibility.</li>
+<li><strong>Train machine learning models</strong>: Use different descriptors, graphs
+    and datasets for training machine learning models.</li>
+<li><strong>HPC clusters</strong>: Torque/PBS and SLURM.</li>
+<li><strong>Available datasets</strong>: <a href="https://github.com/usnistgov/jarvis/blob/master/DatasetSummary.rst">Summary of several
+    datasets</a>
+    .
+<a name="install"></a></li>
+</ul>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<ul>
+<li>
+<p>We recommend installing miniconda environment from
+    <a href="https://conda.io/miniconda.html">https://conda.io/miniconda.html</a> :</p>
+<pre><code>bash Miniconda3-latest-Linux-x86_64.sh (for linux)
+bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
+Download 32/64 bit python 3.8 miniconda exe and install (for windows)
+Now, let's make a conda environment just for JARVIS::
+conda create --name my_jarvis python=3.8
+source activate my_jarvis
+</code></pre>
+</li>
+<li>
+<p>Method-1: Installation using pip:</p>
+<pre><code>pip install -U jarvis-tools
+</code></pre>
+</li>
+<li>
+<p>Method-2: Installation using conda:</p>
+<pre><code>conda install -c conda-forge jarvis-tools
+</code></pre>
+</li>
+<li>
+<p>Method-3: Installation using setup.py:</p>
+<pre><code>pip install numpy scipy matplotlib
+git clone https://github.com/usnistgov/jarvis.git
+cd jarvis
+python setup.py install
+</code></pre>
+</li>
+<li>
+<p>Note on installing additional dependencies for all modules to
+    function:</p>
+<pre><code>pip install -r dev-requirements.txt
+</code></pre>
+</li>
+</ul>
+<p><a name="example"></a></p>
+<h2 id="example-function">Example function<a class="headerlink" href="#example-function" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>from jarvis.core.atoms import Atoms
+box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
+elements = [&quot;Si&quot;, &quot;Si&quot;]
+Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
+density = round(Si.density,2)
+print (density)
+2.33
+
+from jarvis.db.figshare import data
+dft_3d = data(dataset=&#39;dft_3d&#39;)
+print (len(dft_3d))
+75993
+
+
+from jarvis.io.vasp.inputs import Poscar
+for i in dft_3d:
+    atoms = Atoms.from_dict(i[&#39;atoms&#39;])
+    poscar = Poscar(atoms)
+    jid = i[&#39;jid&#39;]
+    filename = &#39;POSCAR-&#39;+jid+&#39;.vasp&#39;
+    poscar.write_file(filename)
+dft_2d = data(dataset=&#39;dft_2d&#39;)
+print (len(dft_2d))
+1109
+
+for i in dft_2d:
+    atoms = Atoms.from_dict(i[&#39;atoms&#39;])
+    poscar = Poscar(atoms)
+    jid = i[&#39;jid&#39;]
+    filename = &#39;POSCAR-&#39;+jid+&#39;.vasp&#39;
+    poscar.write_file(filename)
+# Example to parse DOS data from JARVIS-DFT webpages
+from jarvis.db.webpages import Webpage
+from jarvis.core.spectrum import Spectrum
+import numpy as np
+new_dist=np.arange(-5, 10, 0.05)
+all_atoms = []
+all_dos_up = []
+all_jids = []
+for ii,i in enumerate(dft_3d):
+  all_jids.append(i[&#39;jid&#39;])
+  try:
+    w = Webpage(jid=i[&#39;jid&#39;])
+    edos_data = w.get_dft_electron_dos()
+    ens = np.array(edos_data[&#39;edos_energies&#39;].strip(&quot;&#39;&quot;).split(&#39;,&#39;),dtype=&#39;float&#39;)
+    tot_dos_up = np.array(edos_data[&#39;total_edos_up&#39;].strip(&quot;&#39;&quot;).split(&#39;,&#39;),dtype=&#39;float&#39;)
+    s = Spectrum(x=ens,y=tot_dos_up)
+    interp = s.get_interpolated_values(new_dist=new_dist)
+    atoms=Atoms.from_dict(i[&#39;atoms&#39;])
+    ase_atoms=atoms.ase_converter()
+    all_dos_up.append(interp)
+    all_atoms.append(atoms)
+    all_jids.append(i[&#39;jid&#39;])
+    filename=i[&#39;jid&#39;]+&#39;.cif&#39;
+    atoms.write_cif(filename)
+    break
+  except Exception as exp :
+    print (exp,i[&#39;jid&#39;])
+    pass
+</code></pre></div>
+
+<p>Find more examples at</p>
+<blockquote>
+<ol>
+<li><a href="https://jarvis-tools.readthedocs.io/en/master/tutorials.html">https://jarvis-tools.readthedocs.io/en/master/tutorials.html</a></li>
+<li><a href="https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks">https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks</a></li>
+<li><a href="https://github.com/usnistgov/jarvis/tree/master/jarvis/tests/testfiles">https://github.com/usnistgov/jarvis/tree/master/jarvis/tests/testfiles</a></li>
+</ol>
+</blockquote>
+<p><a name="cite"></a></p>
+<h2 id="citing">Citing<a class="headerlink" href="#citing" title="Permanent link">&para;</a></h2>
+<p>Please cite the following if you happen to use JARVIS-Tools for a
+publication.</p>
+<p><a href="https://www.nature.com/articles/s41524-020-00440-1">https://www.nature.com/articles/s41524-020-00440-1</a></p>
+<blockquote>
+<p>Choudhary, K. et al. The joint automated repository for various
+integrated simulations (JARVIS) for data-driven materials design. npj
+Computational Materials, 6(1), 1-13 (2020).</p>
+</blockquote>
+<p><a name="refs"></a></p>
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<p>Please see <a href="https://jarvis-tools.readthedocs.io/en/master/publications.html">Publications related to
+JARVIS-Tools</a></p>
+<p><a name="contrib"></a></p>
+<h2 id="how-to-contribute">How to contribute<a class="headerlink" href="#how-to-contribute" title="Permanent link">&para;</a></h2>
+<p><a href="http://makeapullrequest.com"><img alt="image" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" /></a></p>
+<p>For detailed instructions, please see <a href="https://github.com/usnistgov/jarvis/blob/master/Contribution.rst">Contribution
+instructions</a></p>
+<p><a name="corres"></a></p>
+<h2 id="correspondence">Correspondence<a class="headerlink" href="#correspondence" title="Permanent link">&para;</a></h2>
+<p>Please report bugs as Github issues
+(<a href="https://github.com/usnistgov/jarvis/issues">https://github.com/usnistgov/jarvis/issues</a>) or email to
+<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#107;&#97;&#109;&#97;&#108;&#46;&#99;&#104;&#111;&#117;&#100;&#104;&#97;&#114;&#121;&#64;&#110;&#105;&#115;&#116;&#46;&#103;&#111;&#118;">&#107;&#97;&#109;&#97;&#108;&#46;&#99;&#104;&#111;&#117;&#100;&#104;&#97;&#114;&#121;&#64;&#110;&#105;&#115;&#116;&#46;&#103;&#111;&#118;</a>.</p>
+<p><a name="fund"></a></p>
+<h2 id="funding-support">Funding support<a class="headerlink" href="#funding-support" title="Permanent link">&para;</a></h2>
+<p>NIST-MGI (<a href="https://www.nist.gov/mgi">https://www.nist.gov/mgi</a>).</p>
+<p><a name="conduct"></a></p>
+<h2 id="code-of-conduct">Code of conduct<a class="headerlink" href="#code-of-conduct" title="Permanent link">&para;</a></h2>
+<p>Please see <a href="https://github.com/usnistgov/jarvis/blob/master/CODE_OF_CONDUCT.md">Code of
+conduct</a></p>
+<p><a name="module"></a></p>
+<h2 id="module-structure">Module structure<a class="headerlink" href="#module-structure" title="Permanent link">&para;</a></h2>
+<pre><code>jarvis/
+├── ai
+│   ├── descriptors
+│   │   ├── cfid.py
+│   │   ├── coulomb.py
+│   ├── gcn
+│   ├── pkgs
+│   │   ├── lgbm
+│   │   │   ├── classification.py
+│   │   │   └── regression.py
+│   │   ├── sklearn
+│   │   │   ├── classification.py
+│   │   │   ├── hyper_params.py
+│   │   │   └── regression.py
+│   │   └── utils.py
+│   ├── uncertainty
+│   │   └── lgbm_quantile_uncertainty.py
+├── analysis
+│   ├── darkmatter
+│   │   └── metrics.py
+│   ├── defects
+│   │   ├── surface.py
+│   │   └── vacancy.py
+│   ├── diffraction
+│   │   └── xrd.py
+│   ├── elastic
+│   │   └── tensor.py
+│   ├── interface
+│   │   └── zur.py
+│   ├── magnetism
+│   │   └── magmom_setup.py
+│   ├── periodic
+│   │   └── ptable.py
+│   ├── phonon
+│   │   ├── force_constants.py
+│   │   └── ir.py
+│   ├── solarefficiency
+│   │   └── solar.py
+│   ├── stm
+│   │   └── tersoff_hamann.py
+│   ├── structure
+│   │   ├── neighbors.py
+│   │   ├── spacegroup.py
+│   ├── thermodynamics
+│   │   ├── energetics.py
+│   ├── topological
+│   │   └── spillage.py
+├── core
+│   ├── atoms.py
+│   ├── composition.py
+│   ├── graphs.py
+│   ├── image.py
+│   ├── kpoints.py
+│   ├── lattice.py
+│   ├── pdb_atoms.py
+│   ├── specie.py
+│   ├── spectrum.py
+│   └── utils.py
+├── db
+│   ├── figshare.py
+│   ├── jsonutils.py
+│   ├── lammps_to_xml.py
+│   ├── restapi.py
+│   ├── vasp_to_xml.py
+│   └── webpages.py
+├── examples
+│   ├── lammps
+│   │   ├── jff_test.py
+│   │   ├── Al03.eam.alloy_nist.tgz
+│   ├── vasp
+│   │   ├── dft_test.py
+│   │   ├── SiOptb88.tgz
+├── io
+│   ├── boltztrap
+│   │   ├── inputs.py
+│   │   └── outputs.py
+│   ├── calphad
+│   │   └── write_decorated_poscar.py
+│   ├── lammps
+│   │   ├── inputs.py
+│   │   └── outputs.py
+│   ├── pennylane
+│   │   ├── inputs.py
+│   ├── phonopy
+│   │   ├── fcmat2hr.py
+│   │   ├── inputs.py
+│   │   └── outputs.py
+│   ├── qe
+│   │   ├── inputs.py
+│   │   └── outputs.py
+│   ├── qiskit
+│   │   ├── inputs.py
+│   ├── tequile
+│   │   ├── inputs.py
+│   ├── vasp
+│   │   ├── inputs.py
+│   │   └── outputs.py
+│   ├── wannier
+│   │   ├── inputs.py
+│   │   └── outputs.py
+│   ├── wanniertools
+│   │   ├── inputs.py
+│   │   └── outputs.py
+│   ├── wien2k
+│   │   ├── inputs.py
+│   │   ├── outputs.py
+├── tasks
+│   ├── boltztrap
+│   │   └── run.py
+│   ├── lammps
+│   │   ├── templates
+│   │   └── lammps.py
+│   ├── phonopy
+│   │   └── run.py
+│   ├── vasp
+│   │   └── vasp.py
+│   ├── queue_jobs.py
+├── tests
+│   ├── testfiles
+│   │   ├── ai
+│   │   ├── analysis
+│   │   │   ├── darkmatter
+│   │   │   ├── defects
+│   │   │   ├── elastic
+│   │   │   ├── interface
+│   │   │   ├── magnetism
+│   │   │   ├── periodic
+│   │   │   ├── phonon
+│   │   │   ├── solar
+│   │   │   ├── stm
+│   │   │   ├── structure
+│   │   │   ├── thermodynamics
+│   │   │   ├── topological
+│   │   ├── core
+│   │   ├── db
+│   │   ├── io
+│   │   │   ├── boltztrap
+│   │   │   ├── calphad
+│   │   │   ├── lammps
+│   │   │   ├── pennylane
+│   │   │   ├── phonopy
+│   │   │   ├── qiskit
+│   │   │   ├── qe
+│   │   │   ├── tequila
+│   │   │   ├── vasp
+│   │   │   ├── wannier
+│   │   │   ├── wanniertools
+│   │   │   ├── wien2k
+│   │   ├── tasks
+│   │   │   ├── test_lammps.py
+│   │   │   └── test_vasp.py
+└── README.rst
+</code></pre>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      NIST Copyright, Kamal Choudhary
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/usnistgov/jarvis" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "toc.integrate"], "search": "assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.4e31edb1.min.js"></script>
+      
+        
+          <script src="javascripts/tablesort.min.js"></script>
+        
+      
+        
+          <script src="javascripts/tablesort.js"></script>
+        
+      
+    
+  </body>
+</html>

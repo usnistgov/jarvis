@@ -1,0 +1,1569 @@
+<!--https://github.com/notenverwaltung/Notenverwaltungssoftware/blob/54aa0515f3b1b2c5db8471306eecfed18e154e7e/docs/overrides/main.html -->
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="jarvis-tools: an open-source software package for data-driven atomistic materials design. https://jarvis.nist.gov/.">
+      
+      
+        <meta name="author" content="Kamal Choudhary">
+      
+      
+        <link rel="canonical" href="https://github.com/usnistgov/jarvis/tutorials/">
+      
+      
+        <link rel="prev" href="../publications/">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.0-b3">
+    
+    
+      
+        <title>Tutorials - JARVIS-Tools</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.83068744.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.85d0ee34.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tutorials" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+        <aside class="md-banner">
+          <div class="md-banner__inner md-grid md-typeset">
+            
+            
+<link rel="stylesheet" href="https://pages.nist.gov/nist-header-footer/css/nist-combined.css">
+<script src="https://code.jquery.com/jquery-3.6.2.min.js" type="text/javascript" defer="defer"></script>
+<script src="https://pages.nist.gov/nist-header-footer/js/nist-header-footer.js" type="text/javascript" defer="defer"></script>
+<!-- 
+<script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
+</script> -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Q89M6QHG7"></script> -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0HPG8D56KJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0HPG8D56KJ');
+</script>
+
+
+          </div>
+          
+        </aside>
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="JARVIS-Tools" class="md-header__button md-logo" aria-label="JARVIS-Tools" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            JARVIS-Tools
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Tutorials
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+            
+              <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+              </label>
+            
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+            
+              <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+              </label>
+            
+          
+        </form>
+      
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/usnistgov/jarvis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jarvis
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../databases/" class="md-tabs__link">
+        
+  
+    
+  
+  Databases
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../publications/" class="md-tabs__link">
+        
+  
+    
+  
+  Publications
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+    
+  
+  Tutorials
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="JARVIS-Tools" class="md-nav__button md-logo" aria-label="JARVIS-Tools" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    JARVIS-Tools
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/usnistgov/jarvis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jarvis
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../databases/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../publications/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Publications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-analyze-an-atomic-structure" class="md-nav__link">
+    How to analyze an atomic structure
+  </a>
+  
+    <nav class="md-nav" aria-label="How to analyze an atomic structure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-get-rdf-adf-ddf" class="md-nav__link">
+    How to get RDF, ADF, DDF
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-get-xrd-paterns" class="md-nav__link">
+    How to get XRD paterns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-make-defects" class="md-nav__link">
+    How to make defects
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-setupanalyze-dft-calculations-using-vasp" class="md-nav__link">
+    How to setup/analyze DFT calculations using VASP
+  </a>
+  
+    <nav class="md-nav" aria-label="How to setup/analyze DFT calculations using VASP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-setup-a-single-calculation" class="md-nav__link">
+    How to setup a single calculation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-setup-high-throughput-calculations" class="md-nav__link">
+    How to setup high-throughput calculations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-plot-electronic-bandstructure-and-dos" class="md-nav__link">
+    How to plot electronic bandstructure and DOS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-obtain-elastic-constants" class="md-nav__link">
+    How to obtain elastic constants
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-plot-generate-an-stmstem-image" class="md-nav__link">
+    How to plot generate an STM/STEM image
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-plot-generate-a-dielectric-function-spectra-and-solar-eff" class="md-nav__link">
+    How to plot generate a dielectric function spectra and solar eff.
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-generateuse-electronic-wannier-tight-binding-model" class="md-nav__link">
+    How to generate/use electronic Wannier tight binding model
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-generate-fermi-surfaces" class="md-nav__link">
+    How to generate Fermi-surfaces
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-run-boltztrap-for-transport-properties" class="md-nav__link">
+    How to run BoltzTrap for transport properties
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-make-heterostructuresinterfaces" class="md-nav__link">
+    How to make heterostructures/interfaces
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-get-irraman-spectra" class="md-nav__link">
+    How to get IR/Raman spectra
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-get-piezoelecticdielecrricbec-constants" class="md-nav__link">
+    How to get piezoelectic/dielecrric/BEC constants
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-get-electric-field-gradients" class="md-nav__link">
+    How to get electric field gradients
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-get-work-function-of-a-surface" class="md-nav__link">
+    How to get work-function of a surface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-get-exfoliation-energy-of-a-2d-material" class="md-nav__link">
+    How to get exfoliation energy of a 2D material
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-runanalyze-md-staticdynamic-calculation-using-lammps" class="md-nav__link">
+    How to run/analyze MD static/dynamic calculation using LAMMPS
+  </a>
+  
+    <nav class="md-nav" aria-label="How to run/analyze MD static/dynamic calculation using LAMMPS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-run-calculation" class="md-nav__link">
+    How to run calculation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-analyze-data" class="md-nav__link">
+    How to analyze data
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-runanalyze-dft-static-calculation-using-quantum-espresso" class="md-nav__link">
+    How to run/analyze DFT static calculation using Quantum espresso
+  </a>
+  
+    <nav class="md-nav" aria-label="How to run/analyze DFT static calculation using Quantum espresso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-setup-a-single-calculation_1" class="md-nav__link">
+    How to setup a single calculation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-setup-high-throughput-calculations_1" class="md-nav__link">
+    How to setup high-throughput calculations
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-traing-jarvis-cfid-ml-models-using-sklearnlightgbm" class="md-nav__link">
+    How to traing JARVIS-CFID ML models using sklearn/lightgbm
+  </a>
+  
+    <nav class="md-nav" aria-label="How to traing JARVIS-CFID ML models using sklearn/lightgbm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-train-chemical-formula-only-datasets" class="md-nav__link">
+    How to train chemical formula only datasets
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-train-regression-model" class="md-nav__link">
+    How to train regression model
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-traing-jarvis-alignn-ml-models-using-pytorch" class="md-nav__link">
+    How to traing JARVIS-ALIGNN ML models using PyTorch
+  </a>
+  
+    <nav class="md-nav" aria-label="How to traing JARVIS-ALIGNN ML models using PyTorch">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-train-regression-model_1" class="md-nav__link">
+    How to train regression model
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-use-quantum-computation-algorithms-using-qiskittequilapennylane" class="md-nav__link">
+    How to use quantum computation algorithms using Qiskit/Tequila/Pennylane
+  </a>
+  
+    <nav class="md-nav" aria-label="How to use quantum computation algorithms using Qiskit/Tequila/Pennylane">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-to-generate-circuit-model" class="md-nav__link">
+    How to generate circuit model
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-run-cals-on-simulators" class="md-nav__link">
+    How to run cals. on simulators
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-to-run-cals-on-actual-quantum-computers" class="md-nav__link">
+    How to run cals. on actual quantum computers
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="tutorials">Tutorials<a class="headerlink" href="#tutorials" title="Permanent link">&para;</a></h1>
+<h2 id="how-to-analyze-an-atomic-structure">How to analyze an atomic structure<a class="headerlink" href="#how-to-analyze-an-atomic-structure" title="Permanent link">&para;</a></h2>
+<p>Atomic structure act as an input to multiple simulations such as for
+density functional theory, molecular dyanmics, Monte Carlo, atomistic
+graph neural network etc. So, we provide a very bried introduction to
+the atomic structure here. For more general information, refer to
+solid-state physics or introduction to materials-science books.</p>
+<p>An atomic structure can consist of atomic element types, corresponding
+xyz coordinates in space (either in real or reciprocal space) and
+lattice matrix used in setting periodic boundary conditions.</p>
+<p>An example of constructing an atomic structure class using
+<code>jarvis.core.Atoms</code> is given below. After creating the Atoms class, we
+can simply print it and visualize the POSCAR format file in a software
+such as VESTA. While the examples below use Silicon elemental crystal
+creation and analysis, it can be used for multi-component systems as
+well.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="n">box</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.715</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.715</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">]]</span>
+<span class="n">coords</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]]</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Si&quot;</span><span class="p">,</span> <span class="s2">&quot;Si&quot;</span><span class="p">]</span>
+<span class="n">Si</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="n">lattice_mat</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">,</span> <span class="n">cartesian</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">Si</span><span class="p">)</span> <span class="c1"># To visualize </span>
+<span class="n">Si</span><span class="o">.</span><span class="n">write_poscar</span><span class="p">(</span><span class="s1">&#39;POSCAR.vasp&#39;</span><span class="p">)</span>
+<span class="n">Si</span><span class="o">.</span><span class="n">write_cif</span><span class="p">(</span><span class="s1">&#39;POSCAR.vasp&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The <span class="title-ref">Atoms</span> class here is created from the
+raw data, but it can also be read from different file formats such as:
+<span class="title-ref">'.cif', 'POSCAR', '.xyz', '.pdb', '.sdf',
+'.mol2'</span> etc. The Atoms class can also be written to files in
+formats such as POSCAR/.cif etc.</p>
+<p>Note that for molecular systems, we use a large vaccum padding (say 50
+Angstrom in each direction) and set lattice_mat accordingly, e.g.
+lattice_mat = [[50,0,0],[0,50,0],[0,0,50]]. Similarly, for free
+surfaces we set high vaccum in one of the crystallographic directions
+(say z) by giving a large z-comonent in the lattice matrix while keeping
+the x, y comonents intact.</p>
+<div class="highlight"><pre><span></span><code><span class="n">my_atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_poscar</span><span class="p">(</span><span class="s1">&#39;POSCAR&#39;</span><span class="p">)</span>
+<span class="n">my_atoms</span><span class="o">.</span><span class="n">write_poscar</span><span class="p">(</span><span class="s1">&#39;MyPOSCAR&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Once this Atoms class is created, several imprtant information can be
+obtained such as:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;volume&#39;</span><span class="p">,</span><span class="n">Si</span><span class="o">.</span><span class="n">volume</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;density in g/cm3&#39;</span><span class="p">,</span> <span class="n">Si</span><span class="o">.</span><span class="n">density</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;composition as dictionary&#39;</span><span class="p">,</span> <span class="n">Si</span><span class="o">.</span><span class="n">composition</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Chemical formula&#39;</span><span class="p">,</span> <span class="n">Si</span><span class="o">.</span><span class="n">composition</span><span class="o">.</span><span class="n">reduced_formula</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Spacegroup info&#39;</span><span class="p">,</span> <span class="n">Si</span><span class="o">.</span><span class="n">spacegroup</span><span class="p">())</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;lattice-parameters&#39;</span><span class="p">,</span> <span class="n">Si</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">abc</span><span class="p">,</span> <span class="n">Si</span><span class="o">.</span><span class="n">lattice</span><span class="o">.</span><span class="n">angles</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;packing fraction&#39;</span><span class="p">,</span><span class="n">Si</span><span class="o">.</span><span class="n">packing_fraction</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;number of atoms&#39;</span><span class="p">,</span><span class="n">Si</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Center of mass&#39;</span><span class="p">,</span> <span class="n">Si</span><span class="o">.</span><span class="n">get_center_of_mass</span><span class="p">())</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Atomic number list&#39;</span><span class="p">,</span> <span class="n">Si</span><span class="o">.</span><span class="n">atomic_numbers</span><span class="p">)</span>
+</code></pre></div>
+
+<p>For creating/accessing dataset(s), we use <code>Atoms.from_dict()</code> and
+<code>Atoms.to_dict()</code> methods:</p>
+<div class="highlight"><pre><span></span><code><span class="n">d</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="n">new_atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The <span class="title-ref">jarvis.core.Atoms</span> object can be
+converted back and forth to other simulation toolsets such as Pymatgen
+and ASE if insyalled, as follows</p>
+<div class="highlight"><pre><span></span><code><span class="n">pmg_struct</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">pymatgen_converter</span><span class="p">()</span>
+<span class="n">ase_atoms</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">ase_converter</span><span class="p">()</span>
+</code></pre></div>
+
+<p>In order to make supercell, the following example can be used:</p>
+<div class="highlight"><pre><span></span><code><span class="n">supercell_1</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">supercell_2</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">make_supercell_matrix</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+<span class="n">supercell_1</span><span class="o">.</span><span class="n">density</span> <span class="o">==</span> <span class="n">supercell_2</span><span class="o">.</span><span class="n">density</span>
+</code></pre></div>
+
+<h3 id="how-to-get-rdf-adf-ddf">How to get RDF, ADF, DDF<a class="headerlink" href="#how-to-get-rdf-adf-ddf" title="Permanent link">&para;</a></h3>
+<p>Nearest-neighbor analysis one of the most important tools in atomistic
+simulations. Quantities such as radial (RDF), angle (ADF) and dihedral
+(DDF) distribution functions can be obtained using
+<span class="title-ref">jarvis.analysis.structure.neighbors.NeighborsAnalysis</span>
+class as shown in the following example using the Si Atoms class
+obtained above. Different cut-off parameters for angle and sihedral
+distribution are used to narrow down the number of neighbors. For
+details, please look into respective modules.</p>
+<div class="highlight"><pre><span></span><code><span class="n">nb</span> <span class="o">=</span> <span class="n">NeighborsAnalysis</span><span class="p">(</span><span class="n">Si</span><span class="p">)</span>
+<span class="n">bins_rdf</span><span class="p">,</span> <span class="n">rdf</span><span class="p">,</span> <span class="n">nbs</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">get_rdf</span><span class="p">()</span> <span class="c1">#Global Radial distribution function</span>
+<span class="n">adfa</span><span class="p">,</span> <span class="n">bins_a</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">ang_dist_first</span><span class="p">()</span> <span class="c1">#Angular distribution function upto first neighbor</span>
+<span class="n">adfb</span><span class="p">,</span> <span class="n">bins_b</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">ang_dist_second</span><span class="p">()</span> <span class="c1">#Angular distribution function upto second neighbor</span>
+<span class="n">ddf</span><span class="p">,</span> <span class="n">bins_d</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">get_ddf</span><span class="p">()</span> <span class="c1">#Dihedral distribution function upto first neighbor</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.gridspec</span> <span class="kn">import</span> <span class="n">GridSpec</span>
+
+<span class="n">the_grid</span> <span class="o">=</span> <span class="n">GridSpec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">14</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">the_grid</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;(a) RDF&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins_rdf</span><span class="p">,</span> <span class="n">rdf</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Distance bins ($\AA$)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">the_grid</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;(b) ADF-a&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins_a</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">adfa</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Angle bins ($^\circ$)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">the_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;(c) ADF-b&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins_b</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">adfb</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Angle bins ($^\circ$)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">the_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;(d) DDF&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins_d</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">ddf</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Angle bins ($^\circ$)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+
+<h3 id="how-to-get-xrd-paterns">How to get XRD paterns<a class="headerlink" href="#how-to-get-xrd-paterns" title="Permanent link">&para;</a></h3>
+<p>X-ray diffraction patterns act as one of the most important experimental
+methods for determining atomic structure. Using Cu-K alpha wavelength,
+the theoretical XRD patterns (two-theta and d_hkl dependence) for Si
+class above can be obatined as follows.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.gridspec</span> <span class="kn">import</span> <span class="n">GridSpec</span>
+
+<span class="n">Si</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="n">lattice_mat</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">)</span>
+<span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">XRD</span><span class="p">()</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">atoms</span><span class="p">)</span>
+
+<span class="n">the_grid</span> <span class="o">=</span> <span class="n">GridSpec</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">the_grid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;2$\Theta$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;XRD intensity&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">the_grid</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;d$_</span><span class="si">{hkl}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;XRD intensity&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</code></pre></div>
+
+<h3 id="how-to-make-defects">How to make defects<a class="headerlink" href="#how-to-make-defects" title="Permanent link">&para;</a></h3>
+<p>While the above Si atomic structure generated above is perfect/defect
+free, in reality there can be several defects present in an atomic
+structure such as point defects (vacancies, interstitials,
+substituions), line defects (dislocations), surface-defects
+(free-surfaces, grain boundaries, stacking faults, interfaces),
+volume-defects (voids/pores) etc.</p>
+<p>An example of creating vacancy structures using unique Wycoff positions
+is shown below:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.analysis.defects.vacancy</span> <span class="kn">import</span> <span class="n">Vacancy</span>
+<span class="c1">#enforces cell-size to be close to 10 Angstroms</span>
+<span class="n">vacs</span> <span class="o">=</span> <span class="n">Vacancy</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">Si</span><span class="p">)</span><span class="o">.</span><span class="n">generate_defects</span><span class="p">(</span><span class="n">enforce_c_size</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">vacs</span><span class="p">),</span> <span class="n">vacs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;defect_structure&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_atoms</span>
+<span class="c1"># We find that there are only one unique point vacanc available based on Wycoff-position information</span>
+</code></pre></div>
+
+<p>Similarly, an example of creating, free surfaces is shown below:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.analysis.defects.surface</span> <span class="kn">import</span> <span class="n">wulff_normals</span><span class="p">,</span> <span class="n">Surface</span>
+
+<span class="c1"># Let&#39;s create (1,1,1) surface with three layers, and vacuum=18.0 Angstrom</span>
+<span class="c1"># We center it around origin so that it looks good during visualization</span>
+<span class="n">surface_111</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Surface</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">Si</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">layers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">vacuum</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">make_surface</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">surface_111</span><span class="p">)</span>
+</code></pre></div>
+
+<p>While the above example makes only one surface (111), we can ask
+jarvis-tools to provide all symmetrically distinct surfaces as follows:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Spacegroup3D</span><span class="p">,</span>
+    <span class="n">symmetrically_distinct_miller_indices</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">spg</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">Si</span><span class="p">)</span>
+<span class="n">cvn</span> <span class="o">=</span> <span class="n">spg</span><span class="o">.</span><span class="n">conventional_standard_structure</span>
+<span class="n">mills</span> <span class="o">=</span> <span class="n">symmetrically_distinct_miller_indices</span><span class="p">(</span><span class="n">max_index</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cvn_atoms</span><span class="o">=</span><span class="n">cvn</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mills</span><span class="p">:</span>
+    <span class="n">surf</span> <span class="o">=</span> <span class="n">Surface</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">Si</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">layers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">vacuum</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span><span class="o">.</span><span class="n">make_surface</span><span class="p">()</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Index:&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="n">surf</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Heterostructures of a film and a substrate can be created using ZSL
+algorithm as shown in the following example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.analysis.interface.zur</span> <span class="kn">import</span> <span class="n">ZSLGenerator</span><span class="p">,</span> <span class="n">mismatch_strts</span><span class="p">,</span> <span class="n">get_hetero</span><span class="p">,</span> <span class="n">make_interface</span>
+<span class="n">film</span> <span class="o">=</span> <span class="n">Surface</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">Si</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">layers</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">vacuum</span> <span class="o">=</span> <span class="mi">18</span> <span class="p">)</span><span class="o">.</span><span class="n">make_surface</span><span class="p">()</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span> 
+<span class="n">substrate</span> <span class="o">=</span> <span class="n">Surface</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">Si</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">layers</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">vacuum</span> <span class="o">=</span> <span class="mi">18</span> <span class="p">)</span><span class="o">.</span><span class="n">make_surface</span><span class="p">()</span><span class="o">.</span><span class="n">center_around_origin</span><span class="p">()</span>  
+<span class="n">info</span> <span class="o">=</span> <span class="n">make_interface</span><span class="p">(</span><span class="n">film</span><span class="o">=</span><span class="n">film</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="n">substrate</span><span class="p">)[</span><span class="s1">&#39;interface&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">vacuum</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">info</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="how-to-setupanalyze-dft-calculations-using-vasp">How to setup/analyze DFT calculations using VASP<a class="headerlink" href="#how-to-setupanalyze-dft-calculations-using-vasp" title="Permanent link">&para;</a></h2>
+<p>The Vienna Ab initio Simulation Package (VASP) is a package for
+performing ab initio quantum mechanical calculations using either
+Vanderbilt pseudopotentials, or the projector augmented wave method, and
+a plane wave basis set. Manual for VASP is available at:
+<a href="https://www.vasp.at/wiki/index.php/The_VASP_Manual">https://www.vasp.at/wiki/index.php/The_VASP_Manual</a> .</p>
+<p>Running a VASP calculation requires the following files: <code>INCAR</code>,
+<code>POSCAR</code>, <code>KPOINTS</code>, <code>POTCAR</code> as well as additional files such as
+<code>vdw_kernel.bindat</code> for specific types of calculations. While setting up
+calculations for one or a few systems/setups should be straight forward,
+setting up calculations for thousands of materials and most importantly
+making a database out of all those calculations require automated
+calculations script collections such as JARVIS-Tools.</p>
+<p>Gievn an atomic structure in 1) <code>jarvis.core.Atoms</code> format, JARVIS-Tools
+2) prepares input files such as <code>INCAR</code> etc. as mentioned above and 3)
+submits the calculations to your queuing system such as SLURM/PBS using
+<code>jarvis.tasks.vasp</code> and <code>jarvis.tasks.queue_jobs</code>. After a calculations
+get completed, 4) automated analysis can be carried out and plots and
+webpages are generated. The input file generation and output file
+parsing modules for VASP can be found in <code>jarvis.io.vasp.inputs</code> and
+<code>jarvis.io.vasp.outputs</code> modules. The automated analyis and XML
+generation for webpages can be found in <code>jarvis.db.vasp_to_xml</code> module.
+After the xml page creation they are converted using html using XSLT
+scripts.</p>
+<p>Additionally, a JSON file is created with metadata from all the XML
+pages for thousands of materials to easily use in data-analytics/machine
+learning applications.The JARVIS-DFT
+(<a href="https://jarvis.nist.gov/jarvisdft/">https://jarvis.nist.gov/jarvisdft/</a>) database primarily uses such a
+workflow. Make sure <code>VASP_PSP_DIR</code> is declared as a PATH to VASP
+pseudopotential directory i.e.</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">VASP_PSP_DIR</span><span class="o">=</span>YOUR_PATH_TO_PSUEDOPTENTIALS
+</code></pre></div>
+
+<p>in your ~/.bashrc file.</p>
+<h3 id="how-to-setup-a-single-calculation">How to setup a single calculation<a class="headerlink" href="#how-to-setup-a-single-calculation" title="Permanent link">&para;</a></h3>
+<p>We start by setting up and submitting a single VaspJob:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.tasks.vasp.vasp</span> <span class="kn">import</span> <span class="n">VaspJob</span><span class="p">,</span> <span class="n">write_vaspjob</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Potcar</span><span class="p">,</span> <span class="n">Incar</span><span class="p">,</span> <span class="n">Poscar</span>
+<span class="kn">from</span> <span class="nn">jarvis.db.jsonutils</span> <span class="kn">import</span> <span class="n">dumpjson</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">Kpoints3D</span>
+<span class="kn">from</span> <span class="nn">jarvis.tasks.queue_jobs</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Load/build crystal structure</span>
+<span class="n">mat</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s1">&#39;POSCAR&#39;</span><span class="p">)</span>
+<span class="c1"># coords = [[0, 0, 0], [0.25, 0.25, 0.25]]</span>
+<span class="c1"># elements = [&quot;Si&quot;, &quot;Si&quot;]</span>
+<span class="c1"># box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]</span>
+<span class="c1"># atoms = Atoms(lattice_mat=box, coords=coords, elements=elements)</span>
+<span class="c1"># mat = Poscar(atoms)</span>
+<span class="c1"># mat.comment = &quot;Silicon&quot;</span>
+
+<span class="c1"># Build INCAR file</span>
+<span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">PREC</span><span class="o">=</span><span class="s2">&quot;Accurate&quot;</span><span class="p">,</span>
+    <span class="n">ISMEAR</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">SIGMA</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">IBRION</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">ISIF</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">GGA</span><span class="o">=</span><span class="s2">&quot;BO&quot;</span><span class="p">,</span>
+    <span class="n">PARAM1</span><span class="o">=</span><span class="mf">0.1833333333</span><span class="p">,</span>
+    <span class="n">PARAM2</span><span class="o">=</span><span class="mf">0.2200000000</span><span class="p">,</span>
+    <span class="n">LUSE_VDW</span><span class="o">=</span><span class="s2">&quot;.TRUE.&quot;</span><span class="p">,</span>
+    <span class="n">AGGAC</span><span class="o">=</span><span class="mf">0.0000</span><span class="p">,</span>
+    <span class="n">EDIFF</span><span class="o">=</span><span class="s2">&quot;1E-7&quot;</span><span class="p">,</span>
+    <span class="n">EDIFFG</span><span class="o">=</span><span class="s2">&quot;-1E-3&quot;</span><span class="p">,</span>
+    <span class="n">NELM</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+    <span class="n">ISPIN</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">LCHARG</span><span class="o">=</span><span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
+    <span class="n">LVTOT</span><span class="o">=</span><span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
+    <span class="n">LVHAR</span><span class="o">=</span><span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
+    <span class="n">LWAVE</span><span class="o">=</span><span class="s2">&quot;.FALSE.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">inc</span> <span class="o">=</span> <span class="n">Incar</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="c1"># Build POTCAR info</span>
+<span class="c1"># export VASP_PSP_DIR = &#39;PATH_TO_YOUR_PSP&#39;</span>
+<span class="n">pot</span> <span class="o">=</span> <span class="n">Potcar</span><span class="o">.</span><span class="n">from_atoms</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+<span class="c1">#pot = Potcar(elements=mat.atoms.elements)</span>
+
+<span class="c1"># Build Kpoints info</span>
+<span class="n">kp</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
+    <span class="n">lattice_mat</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span>
+<span class="p">)</span>
+
+<span class="n">vasp_cmd</span> <span class="o">=</span> <span class="s2">&quot;PATH_TO vasp_std&quot;</span>
+<span class="n">copy_files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PATH_TO vdw_kernel.bindat&quot;</span><span class="p">]</span>
+<span class="n">jobname</span> <span class="o">=</span> <span class="s2">&quot;MAIN-RELAX@JVASP-1002&quot;</span>
+<span class="n">job</span> <span class="o">=</span> <span class="n">VaspJob</span><span class="p">(</span>
+    <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+    <span class="n">incar</span><span class="o">=</span><span class="n">inc</span><span class="p">,</span>
+    <span class="n">potcar</span><span class="o">=</span><span class="n">pot</span><span class="p">,</span>
+    <span class="n">kpoints</span><span class="o">=</span><span class="n">kp</span><span class="p">,</span>
+    <span class="n">vasp_cmd</span><span class="o">=</span><span class="n">vasp_cmd</span><span class="p">,</span>
+    <span class="n">copy_files</span><span class="o">=</span><span class="n">copy_files</span><span class="p">,</span>
+    <span class="n">jobname</span><span class="o">=</span><span class="n">jobname</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dumpjson</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;job.json&quot;</span><span class="p">)</span>
+<span class="n">write_vaspjob</span><span class="p">(</span><span class="n">pyname</span><span class="o">=</span><span class="s2">&quot;job.py&quot;</span><span class="p">,</span> <span class="n">job_json</span><span class="o">=</span><span class="s2">&quot;job.json&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The job.py can now be run on a cluster or on a PC as a python script.
+For running this job on a PBS cluster,</p>
+<div class="highlight"><pre><span></span><code><span class="n">submit_cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;qsub&quot;</span><span class="p">,</span> <span class="s2">&quot;submit_job&quot;</span><span class="p">]</span>
+<span class="c1"># Example job commands, need to change based on your cluster</span>
+<span class="n">job_line</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;source activate my_jarvis </span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="o">+</span> <span class="s2">&quot;python job.py&quot;</span>
+<span class="p">)</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;TestJob&quot;</span>
+<span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<span class="n">Queue</span><span class="o">.</span><span class="n">pbs</span><span class="p">(</span>
+    <span class="n">job_line</span><span class="o">=</span><span class="n">job_line</span><span class="p">,</span>
+    <span class="n">jobname</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+    <span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span>
+    <span class="n">submit_cmd</span><span class="o">=</span><span class="n">submit_cmd</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+
+<h3 id="how-to-setup-high-throughput-calculations">How to setup high-throughput calculations<a class="headerlink" href="#how-to-setup-high-throughput-calculations" title="Permanent link">&para;</a></h3>
+<p>Currently, JARVIS-Tools can be used to submit job with SLURM and PBS
+clusters only. For high-throughput automated submissions one can use
+pre-build <code>JobFactory</code> module that allows automatic calculations for a
+series of properties.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># List of materials to run high-throughput calculations on</span>
+<span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;POSCAR-1.vasp&#39;</span><span class="p">,</span><span class="s1">&#39;POSCAR-2.vasp&#39;</span><span class="p">,</span><span class="s1">&#39;POSCAR-3.vasp&#39;</span><span class="p">]</span>
+
+<span class="kn">from</span> <span class="nn">jarvis.tasks.vasp.vasp</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">JobFactory</span><span class="p">,</span>
+    <span class="n">VaspJob</span><span class="p">,</span>
+    <span class="n">GenericIncars</span><span class="p">,</span>
+    <span class="n">write_jobfact</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Potcar</span><span class="p">,</span> <span class="n">Incar</span><span class="p">,</span> <span class="n">Poscar</span>
+<span class="kn">from</span> <span class="nn">jarvis.db.jsonutils</span> <span class="kn">import</span> <span class="n">dumpjson</span>
+<span class="kn">from</span> <span class="nn">jarvis.db.figshare</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">jarvis.tasks.queue_jobs</span> <span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">vasp_cmd</span> <span class="o">=</span> <span class="s2">&quot;mpirun PATH_TO vasp_std&quot;</span>
+<span class="n">copy_files</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PATH_TO vdw_kernel.bindat&quot;</span><span class="p">]</span>
+<span class="n">submit_cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;qsub&quot;</span><span class="p">,</span> <span class="s2">&quot;submit_job&quot;</span><span class="p">]</span>
+
+<span class="c1"># For slurm</span>
+<span class="c1"># submit_cmd = [&quot;sbatch&quot;, &quot;submit_job&quot;]</span>
+
+<span class="n">steps</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ENCUT&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;KPLEN&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RELAX&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;BANDSTRUCT&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OPTICS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MBJOPTICS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ELASTIC&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">incs</span> <span class="o">=</span> <span class="n">GenericIncars</span><span class="p">()</span><span class="o">.</span><span class="n">optb88vdw</span><span class="p">()</span><span class="o">.</span><span class="n">incar</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+    <span class="n">mat</span> <span class="o">=</span> <span class="n">Poscar</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">cwd_home</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="n">dir_name</span> <span class="o">=</span> <span class="nb">id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.vasp&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;PBEBO&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dir_name</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">dir_name</span><span class="p">)</span>
+    <span class="n">job</span> <span class="o">=</span> <span class="n">JobFactory</span><span class="p">(</span>
+        <span class="n">vasp_cmd</span><span class="o">=</span><span class="n">vasp_cmd</span><span class="p">,</span>
+        <span class="n">poscar</span><span class="o">=</span><span class="n">mat</span><span class="p">,</span>
+        <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span>
+        <span class="n">copy_files</span><span class="o">=</span><span class="n">copy_files</span><span class="p">,</span>
+        <span class="n">use_incar_dict</span><span class="o">=</span><span class="n">incs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">dumpjson</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;job_fact.json&quot;</span><span class="p">)</span>
+    <span class="n">write_jobfact</span><span class="p">(</span>
+        <span class="n">pyname</span><span class="o">=</span><span class="s2">&quot;job_fact.py&quot;</span><span class="p">,</span>
+        <span class="n">job_json</span><span class="o">=</span><span class="s2">&quot;job_fact.json&quot;</span><span class="p">,</span>
+        <span class="n">input_arg</span><span class="o">=</span><span class="s2">&quot;v.step_flow()&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Example job commands, need to change based on your cluster</span>
+    <span class="n">job_line</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;source activate my_jarvis </span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="o">+</span> <span class="s2">&quot;python job_fact.py&quot;</span>
+    <span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="nb">id</span>
+    <span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="n">Queue</span><span class="o">.</span><span class="n">pbs</span><span class="p">(</span>
+        <span class="n">job_line</span><span class="o">=</span><span class="n">job_line</span><span class="p">,</span>
+        <span class="n">jobname</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="c1">#partition=&quot;&quot;,</span>
+        <span class="n">walltime</span><span class="o">=</span><span class="s2">&quot;24:00:00&quot;</span><span class="p">,</span>
+        <span class="c1">#account=&quot;&quot;,</span>
+        <span class="n">cores</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">,</span>
+        <span class="n">submit_cmd</span><span class="o">=</span><span class="n">submit_cmd</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">cwd_home</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # For Slurm clusters</span>
+<span class="sd">    Queue.slurm(</span>
+<span class="sd">        job_line=job_line,</span>
+<span class="sd">        jobname=name,</span>
+<span class="sd">        directory=directory,</span>
+<span class="sd">        submit_cmd=submit_cmd,</span>
+<span class="sd">    )</span>
+<span class="sd">    os.chdir(cwd_home)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+
+<p>We provide modules to convert the calculation informato to <code>XML</code> which
+can be converted to <code>HTML</code> using <code>XSLT</code>. An example is give below:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.db.vasp_to_xml</span> <span class="kn">import</span> <span class="n">VaspToApiXmlSchema</span>
+<span class="kn">from</span> <span class="nn">jarvis.db.restapi</span> <span class="kn">import</span> <span class="n">Api</span>
+<span class="n">folder</span><span class="o">=</span><span class="s2">&quot;jarvis/jarvis/examples/vasp/SiOptB88vdW&quot;</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;JVASP-1002.xml&quot;</span>
+<span class="n">VaspToApiXmlSchema</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span><span class="o">.</span><span class="n">write_xml</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="how-to-plot-electronic-bandstructure-and-dos">How to plot electronic bandstructure and DOS<a class="headerlink" href="#how-to-plot-electronic-bandstructure-and-dos" title="Permanent link">&para;</a></h3>
+<p>If you use the workflow used above, the density of states plot can be
+obtained using thr <code>vasprun.xml</code> file in MAIN-RELAX folder while the
+band-structure plot is obtained using <code>vasprun.xml</code> in MAIN-BAND folder.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.io.vasp.outputs</span> <span class="kn">import</span> <span class="n">Vasprun</span>
+<span class="n">vrun</span> <span class="o">=</span> <span class="n">Vasprun</span><span class="p">(</span><span class="s1">&#39;vasprun.xml&#39;</span><span class="p">)</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">22</span><span class="p">})</span>
+
+<span class="c1"># Bandstructure plot</span>
+<span class="n">vrun</span><span class="o">.</span><span class="n">get_bandstructure</span><span class="p">(</span><span class="n">kpoints_file_path</span><span class="o">=</span><span class="s1">&#39;KPOINTS&#39;</span><span class="p">)</span>
+
+<span class="c1"># DOS plot</span>
+<span class="n">energies</span><span class="p">,</span> <span class="n">spin_up</span><span class="p">,</span> <span class="n">spin_dn</span><span class="o">=</span><span class="n">vrun</span><span class="o">.</span><span class="n">total_dos</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">22</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span><span class="n">spin_up</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Spin-up&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span><span class="n">spin_dn</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Spin-down&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Energy(E-Ef)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;DOS(arb.unit)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</code></pre></div>
+
+<h3 id="how-to-obtain-elastic-constants">How to obtain elastic constants<a class="headerlink" href="#how-to-obtain-elastic-constants" title="Permanent link">&para;</a></h3>
+<h3 id="how-to-plot-generate-an-stmstem-image">How to plot generate an STM/STEM image<a class="headerlink" href="#how-to-plot-generate-an-stmstem-image" title="Permanent link">&para;</a></h3>
+<h3 id="how-to-plot-generate-a-dielectric-function-spectra-and-solar-eff">How to plot generate a dielectric function spectra and solar eff.<a class="headerlink" href="#how-to-plot-generate-a-dielectric-function-spectra-and-solar-eff" title="Permanent link">&para;</a></h3>
+<h3 id="how-to-generateuse-electronic-wannier-tight-binding-model">How to generate/use electronic Wannier tight binding model<a class="headerlink" href="#how-to-generateuse-electronic-wannier-tight-binding-model" title="Permanent link">&para;</a></h3>
+<h3 id="how-to-generate-fermi-surfaces">How to generate Fermi-surfaces<a class="headerlink" href="#how-to-generate-fermi-surfaces" title="Permanent link">&para;</a></h3>
+<h3 id="how-to-run-boltztrap-for-transport-properties">How to run BoltzTrap for transport properties<a class="headerlink" href="#how-to-run-boltztrap-for-transport-properties" title="Permanent link">&para;</a></h3>
+<h3 id="how-to-make-heterostructuresinterfaces">How to make heterostructures/interfaces<a class="headerlink" href="#how-to-make-heterostructuresinterfaces" title="Permanent link">&para;</a></h3>
+<h3 id="how-to-get-irraman-spectra">How to get IR/Raman spectra<a class="headerlink" href="#how-to-get-irraman-spectra" title="Permanent link">&para;</a></h3>
+<h3 id="how-to-get-piezoelecticdielecrricbec-constants">How to get piezoelectic/dielecrric/BEC constants<a class="headerlink" href="#how-to-get-piezoelecticdielecrricbec-constants" title="Permanent link">&para;</a></h3>
+<h3 id="how-to-get-electric-field-gradients">How to get electric field gradients<a class="headerlink" href="#how-to-get-electric-field-gradients" title="Permanent link">&para;</a></h3>
+<h3 id="how-to-get-work-function-of-a-surface">How to get work-function of a surface<a class="headerlink" href="#how-to-get-work-function-of-a-surface" title="Permanent link">&para;</a></h3>
+<h3 id="how-to-get-exfoliation-energy-of-a-2d-material">How to get exfoliation energy of a 2D material<a class="headerlink" href="#how-to-get-exfoliation-energy-of-a-2d-material" title="Permanent link">&para;</a></h3>
+<h2 id="how-to-runanalyze-md-staticdynamic-calculation-using-lammps">How to run/analyze MD static/dynamic calculation using LAMMPS<a class="headerlink" href="#how-to-runanalyze-md-staticdynamic-calculation-using-lammps" title="Permanent link">&para;</a></h2>
+<p>Molecular dynamics/classical force-field calculations can be carried out
+with LAMMPS software as in JARVIS-FF. An example for running LAMMPS is
+given below. Here, a <code>LammpsJob</code> module is defined with the help of
+atoms, pair-style, coefficient, and template file (*.mod file) to
+control the calculations.</p>
+<h3 id="how-to-run-calculation">How to run calculation<a class="headerlink" href="#how-to-run-calculation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.tasks.lammps.lammps</span> <span class="kn">import</span> <span class="n">LammpsJob</span><span class="p">,</span> <span class="n">JobFactory</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="kn">from</span> <span class="nn">jarvis.db.figshare</span> <span class="kn">import</span> <span class="n">get_jid_data</span>
+<span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="n">Spacegroup3D</span>
+
+
+<span class="c1"># atoms = Atoms.from_poscar(&#39;POSCAR&#39;)</span>
+<span class="c1"># Get Aluminum FCC from JARVIS-DFT database</span>
+<span class="n">tmp_dict</span> <span class="o">=</span> <span class="n">get_jid_data</span><span class="p">(</span><span class="n">jid</span><span class="o">=</span><span class="s2">&quot;JVASP-816&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="s2">&quot;dft_3d&quot;</span><span class="p">)[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span>
+<span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">tmp_dict</span><span class="p">)</span>
+
+<span class="c1"># Get conventional cell</span>
+<span class="n">spg</span> <span class="o">=</span> <span class="n">Spacegroup3D</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+<span class="n">cvn_atoms</span> <span class="o">=</span> <span class="n">spg</span><span class="o">.</span><span class="n">conventional_standard_structure</span>
+
+<span class="c1"># Set-up path to force-field/potential file, .mod file. and lammps executable</span>
+<span class="n">ff</span> <span class="o">=</span> <span class="s2">&quot;/users/knc6/Software/LAMMPS/lammps-master/potentials/Al_zhou.eam.alloy&quot;</span>
+<span class="n">mod</span> <span class="o">=</span> <span class="s2">&quot;/users/knc6/Software/Devs/jarvis/jarvis/tasks/lammps/templates/inelast.mod&quot;</span>
+<span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;/users/knc6/Software/LAMMPS/lammps-master/src/lmp_serial&lt;in.main&gt;out&quot;</span>
+<span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;pair_style&quot;</span><span class="p">:</span> <span class="s2">&quot;eam/alloy&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pair_coeff&quot;</span><span class="p">:</span> <span class="n">ff</span><span class="p">,</span>
+    <span class="s2">&quot;atom_style&quot;</span><span class="p">:</span> <span class="s2">&quot;charge&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;control_file&quot;</span><span class="p">:</span> <span class="n">mod</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c1"># Test LammpsJob</span>
+<span class="n">lmp</span> <span class="o">=</span> <span class="n">LammpsJob</span><span class="p">(</span>
+    <span class="n">atoms</span><span class="o">=</span><span class="n">cvn_atoms</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span> <span class="n">lammps_cmd</span><span class="o">=</span><span class="n">cmd</span><span class="p">,</span> <span class="n">jobname</span><span class="o">=</span><span class="s2">&quot;Test&quot;</span>
+<span class="p">)</span><span class="o">.</span><span class="n">runjob</span><span class="p">()</span>
+
+<span class="c1"># Test in a high-throughput</span>
+<span class="n">job_fact</span> <span class="o">=</span> <span class="n">JobFactory</span><span class="p">(</span><span class="n">pair_style</span><span class="o">=</span><span class="s2">&quot;eam/alloy&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_first_lammps_run&quot;</span><span class="p">)</span>
+<span class="n">job_fact</span><span class="o">.</span><span class="n">all_props_eam_alloy</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">cvn_atoms</span><span class="p">,</span> <span class="n">ff_path</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span> <span class="n">lammps_cmd</span><span class="o">=</span><span class="n">cmd</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="how-to-analyze-data">How to analyze data<a class="headerlink" href="#how-to-analyze-data" title="Permanent link">&para;</a></h3>
+<p>An example to parse LAMMPS calculation folder using the above workflow
+is shown below:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.io.lammps.outputs</span> <span class="kn">import</span> <span class="n">parse_material_calculation_folder</span>
+<span class="n">folder</span> <span class="o">=</span> <span class="s1">&#39;/home/users/knc6/Software/jarvis/jarvis/examples/lammps/Aleam&#39;</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">parse_material_calculation_folder</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The calculation data can now be converted into XML files as follows. The
+XML with the help of XSLT is converted into an HTML page.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.db.lammps_to_xml</span> <span class="kn">import</span> <span class="n">write_xml</span>
+<span class="n">write_xml</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JLMP-123.xml&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<h2 id="how-to-runanalyze-dft-static-calculation-using-quantum-espresso">How to run/analyze DFT static calculation using Quantum espresso<a class="headerlink" href="#how-to-runanalyze-dft-static-calculation-using-quantum-espresso" title="Permanent link">&para;</a></h2>
+<p>Quantum ESPRESSO is a suite for first-principles electronic-structure
+calculations and materials modeling, distributed for free and as free
+software under the GNU General Public License. It is based on
+density-functional theory, plane wave basis sets, and pseudopotentials.</p>
+<h3 id="how-to-setup-a-single-calculation_1">How to setup a single calculation<a class="headerlink" href="#how-to-setup-a-single-calculation_1" title="Permanent link">&para;</a></h3>
+<p>An example for running QE simulation is shown below:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.core.kpoints</span> <span class="kn">import</span> <span class="n">Kpoints3D</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="n">box</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.715</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.715</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">]]</span>
+<span class="n">coords</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]]</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Si&quot;</span><span class="p">,</span> <span class="s2">&quot;Si&quot;</span><span class="p">]</span>
+<span class="n">Si</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="n">lattice_mat</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Si</span><span class="p">)</span>
+<span class="n">kp</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">()</span><span class="o">.</span><span class="n">automatic_length_mesh</span><span class="p">(</span>
+    <span class="n">lattice_mat</span><span class="o">=</span><span class="n">Si</span><span class="o">.</span><span class="n">lattice_mat</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">20</span>
+<span class="p">)</span>
+<span class="n">qe</span> <span class="o">=</span> <span class="n">QEinfile</span><span class="p">(</span><span class="n">Si</span><span class="p">,</span> <span class="n">kp</span><span class="p">)</span>
+<span class="n">qe</span><span class="o">.</span><span class="n">write_file</span><span class="p">()</span>
+<span class="n">kp</span> <span class="o">=</span> <span class="n">Kpoints3D</span><span class="p">()</span><span class="o">.</span><span class="n">kpath</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">Si</span><span class="p">)</span>
+<span class="n">qe</span> <span class="o">=</span> <span class="n">QEinfile</span><span class="p">(</span><span class="n">Si</span><span class="p">,</span> <span class="n">kp</span><span class="p">)</span>
+<span class="n">qe</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="s2">&quot;qe.in2&quot;</span><span class="p">)</span>
+<span class="n">sp</span> <span class="o">=</span> <span class="n">qe</span><span class="o">.</span><span class="n">atomic_species_string</span><span class="p">()</span>
+<span class="n">sp</span> <span class="o">=</span> <span class="n">qe</span><span class="o">.</span><span class="n">atomic_cell_params</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sp&quot;</span><span class="p">,</span> <span class="n">sp</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">qe</span><span class="o">.</span><span class="n">input_params</span><span class="p">[</span><span class="s1">&#39;system_params&#39;</span><span class="p">][</span><span class="s1">&#39;nat&#39;</span><span class="p">])</span>
+<span class="err">$</span><span class="n">PATH_TO_PWSCF</span><span class="o">/</span><span class="n">pw</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span><span class="n">i</span> <span class="n">qe</span><span class="o">.</span><span class="ow">in</span>
+</code></pre></div>
+
+<h3 id="how-to-setup-high-throughput-calculations_1">How to setup high-throughput calculations<a class="headerlink" href="#how-to-setup-high-throughput-calculations_1" title="Permanent link">&para;</a></h3>
+<h2 id="how-to-traing-jarvis-cfid-ml-models-using-sklearnlightgbm">How to traing JARVIS-CFID ML models using sklearn/lightgbm<a class="headerlink" href="#how-to-traing-jarvis-cfid-ml-models-using-sklearnlightgbm" title="Permanent link">&para;</a></h2>
+<p>There are several methods to train atomistic property ML models such as
+based on hand-crafted descritprs and graph neural network. Examples of
+such methods are: JARVIS-CFID (Classical Force-Field Inspired
+Descriptors) for descriptors based training and JARVIS-ALIGNN (Atomistic
+Line Graph Neural Network) based on GNNs. In this section we discuss the
+JARVIS-CFID ( <code>jarvis.ai.descriptors.cfid</code>), which can be used for
+training models with only chemical formula or chemical formula+structure
+information.</p>
+<h3 id="how-to-train-chemical-formula-only-datasets">How to train chemical formula only datasets<a class="headerlink" href="#how-to-train-chemical-formula-only-datasets" title="Permanent link">&para;</a></h3>
+<p>For each chemical formula, we can obtain <span class="title-ref">438
+descriptors</span> consisting of features such as avergae
+electronegativity, average boiling points of elements etc. An example of
+getting descriptors isshown below:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.composition</span> <span class="kn">import</span> <span class="n">Composition</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.specie</span> <span class="kn">import</span> <span class="n">Specie</span>
+<span class="kn">from</span> <span class="nn">jarvis.ai.pkgs.lgbm.regression</span> <span class="kn">import</span> <span class="n">regression</span>
+<span class="kn">from</span> <span class="nn">jarvis.ai.descriptors.cfid</span> <span class="kn">import</span> <span class="n">get_chem_only_descriptor</span>
+
+<span class="c1"># Load a dataset, you can use pandas read_csv also to generte my_data</span>
+<span class="c1"># Here is a sample dataset</span>
+<span class="n">my_data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s2">&quot;CoAl&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;CoNi&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;CoNb2Ni5&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;Co1.2Al2.3NiRe2&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;Co&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;CoAlTi&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;CoNiTi&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;CoNb2Ni5Ti&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;Co1.2Al2.3NiRe2Ti&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;CoTi&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;CoAlFe&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;CoNiFe&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;CoNb2Ni5Fe&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;Co1.2Al2.3NiRe2Fe&quot;</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;CoFe&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
+<span class="p">]</span>
+
+
+<span class="c1"># Convert my_data to numpy array</span>
+<span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">IDs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">my_data</span><span class="p">):</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_chem_only_descriptor</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">Y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">IDs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">IDs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">IDs</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Now, we can use different ML algorithms on the descriptors and dataset
+such as linear regression, random forest, gradient boosting etc.</p>
+<p>An example, for using LightGBM with jarvis-tools wrapper code is shown
+below:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Train a LightGBM regression model</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;n_estimators&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;learning_rate&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span> <span class="s2">&quot;num_leaves&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="c1"># The regression module does feature pre-processing as well</span>
+<span class="c1"># Change config settings to improve model such as by hyper-parameter tuning</span>
+<span class="n">info</span> <span class="o">=</span> <span class="n">regression</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">jid</span><span class="o">=</span><span class="n">IDs</span><span class="p">,</span> <span class="n">feature_importance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+
+
+<span class="c1"># Print performance metrices</span>
+<span class="c1"># Print performance metrices</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s1">&#39;r2=&#39;</span><span class="p">,</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;reg_scores&quot;</span><span class="p">][</span><span class="s2">&quot;r2&quot;</span><span class="p">],</span>
+    <span class="s1">&#39;MAE=&#39;</span><span class="p">,</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;reg_scores&quot;</span><span class="p">][</span><span class="s2">&quot;mae&quot;</span><span class="p">],</span>
+    <span class="s1">&#39;RMSE=&#39;</span><span class="p">,</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;reg_scores&quot;</span><span class="p">][</span><span class="s2">&quot;rmse&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<h3 id="how-to-train-regression-model">How to train regression model<a class="headerlink" href="#how-to-train-regression-model" title="Permanent link">&para;</a></h3>
+<p>Suppose we have 60000 materials, and we get 1557 descriptor for each
+material (438 chemical as above as well as structure and charge
+descriptors), we will have a 60000x1557 matrix. Let's call this matrix
+as 'x' or input matrix. Next, we can get target ('y') data either from
+DFT, FF calculations or experiments. For example, we can choose
+formation energies of 60000 materials in the JARVIS-DFT as the dtarget
+data giving 60000x1 matrix.</p>
+<p>Now, we can use a ML/AI algorithm to establish statistical relation
+between the x and y data. Once trained we get a trained model, which can
+be stored in say pickle or joblib format.</p>
+<p>For a new material now, it can be converted into CFID i.e. 1x1557 matrix
+which when fed to the model will give 1x1 prediction hence the ML
+prediction. We can use a range of ML algorithms such as linear
+regression, decision trees, Gaussian processes etc. We find with CFID
+descriptors, gradient boosting decision trees (especially in LightGBM)
+gives one of the most accurate results. We provide tools to run with
+major ML packages such as scikit-learn, tensorflow, pytorch, lightgbm
+etc. Example-1:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># An example of JARVIS-ML training</span>
+<span class="kn">from</span> <span class="nn">jarvis.ai.pkgs.utils</span> <span class="kn">import</span> <span class="n">get_ml_data</span>
+<span class="kn">from</span> <span class="nn">jarvis.ai.pkgs.utils</span> <span class="kn">import</span> <span class="n">regr_scores</span>
+<span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">jid</span><span class="o">=</span><span class="n">get_ml_data</span><span class="p">()</span>
+<span class="c1">#Formation energy for 3D materials, you can choose other properties/dataset as well</span>
+<span class="kn">import</span> <span class="nn">lightgbm</span> <span class="k">as</span> <span class="nn">lgb</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="n">lgbm</span> <span class="o">=</span> <span class="n">lgb</span><span class="o">.</span><span class="n">LGBMRegressor</span><span class="p">(</span><span class="n">device</span><span class="o">=</span> <span class="s1">&#39;gpu&#39;</span><span class="p">,</span><span class="n">n_estimators</span><span class="o">=</span> <span class="mi">1170</span><span class="p">,</span><span class="n">learning_rate</span><span class="o">=</span> <span class="mf">0.15375236057119931</span><span class="p">,</span><span class="n">num_leaves</span><span class="o">=</span> <span class="mi">273</span><span class="p">)</span>       
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">jid_train</span><span class="p">,</span> <span class="n">jid_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">jid</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">.1</span><span class="p">)</span>
+<span class="n">lgbm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">y_train</span><span class="p">)</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">lgbm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">reg_sc</span> <span class="o">=</span> <span class="n">regr_scores</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">reg_sc</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">])</span>
+</code></pre></div>
+
+<h2 id="how-to-traing-jarvis-alignn-ml-models-using-pytorch">How to traing JARVIS-ALIGNN ML models using PyTorch<a class="headerlink" href="#how-to-traing-jarvis-alignn-ml-models-using-pytorch" title="Permanent link">&para;</a></h2>
+<h3 id="how-to-train-regression-model_1">How to train regression model<a class="headerlink" href="#how-to-train-regression-model_1" title="Permanent link">&para;</a></h3>
+<p>How to train classification model ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</p>
+<h2 id="how-to-use-quantum-computation-algorithms-using-qiskittequilapennylane">How to use quantum computation algorithms using Qiskit/Tequila/Pennylane<a class="headerlink" href="#how-to-use-quantum-computation-algorithms-using-qiskittequilapennylane" title="Permanent link">&para;</a></h2>
+<p>Quantum chemistry is one of the most attractive applications for quantum
+computations. Predicting the energy levels of a Hamiltonian is a key
+problem in quantum chemistry. Variational quantum eigen solver (VQE) is
+one of the most celebrated methods for predicting an approximate ground
+state of a Hamiltonian on a quantum computer following the variational
+principles of quantum mechanics.VQE utilizes Ritz variational principle
+where a quantum computer is used to prepare a wave function ansatz of
+the system and estimate the expectation value of its electronic
+Hamiltonian while a classical optimizer is used to adjust the quantum
+circuit parameters in order to find the ground state energy. A typical
+VQE task is carried out as follows: an ansatz/circuit model with tunable
+parameters is constructed and a quantum circuit capable of representing
+this ansatz is designed. In this section, we show a few examples to
+apply quantum algorithms for solids using Wannier-tight binding
+Hamiltonians (WTBH). WTBHs can be generated from several DFT codes.
+Here, we use JARVIS-WTBH database.</p>
+<h3 id="how-to-generate-circuit-model">How to generate circuit model<a class="headerlink" href="#how-to-generate-circuit-model" title="Permanent link">&para;</a></h3>
+<p>Developing a heuristic quantum circuit model is probably the most
+challenging part of applying quantum algorithms. Fortunately, there are
+few well-known generalized models that we can use or generate ourselves.
+There are several circuit models (for a fixed number of qubits and
+repeat units) available in <code>jarvis.core.circuits.</code>. In the following
+example, we use circuit6/EfficientSU2 model and use it to predict
+electronic energy levels (at a K-point in the Brillouin zone) of FCC
+Aluminum using a WTBH.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.db.figshare</span> <span class="kn">import</span> <span class="n">get_wann_electron</span><span class="p">,</span> <span class="n">get_wann_phonon</span><span class="p">,</span> <span class="n">get_hk_tb</span>
+<span class="kn">from</span> <span class="nn">jarvis.io.qiskit.inputs</span> <span class="kn">import</span> <span class="n">HermitianSolver</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.circuits</span> <span class="kn">import</span> <span class="n">QuantumCircuitLibrary</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">Aer</span>
+
+<span class="n">backend</span> <span class="o">=</span> <span class="n">Aer</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s2">&quot;statevector_simulator&quot;</span><span class="p">)</span>
+<span class="c1"># Aluminum JARVIS-ID: JVASP-816</span>
+<span class="n">wtbh</span><span class="p">,</span> <span class="n">Ef</span><span class="p">,</span> <span class="n">atoms</span> <span class="o">=</span> <span class="n">get_wann_electron</span><span class="p">(</span><span class="s2">&quot;JVASP-816&quot;</span><span class="p">)</span> 
+<span class="n">kpt</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span> <span class="c1"># X-point</span>
+<span class="n">hk</span> <span class="o">=</span> <span class="n">get_hk_tb</span><span class="p">(</span><span class="n">w</span><span class="o">=</span><span class="n">wtbh</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">kpt</span><span class="p">)</span>
+<span class="n">HS</span> <span class="o">=</span> <span class="n">HermitianSolver</span><span class="p">(</span><span class="n">hk</span><span class="p">)</span>
+<span class="n">n_qubits</span> <span class="o">=</span> <span class="n">HS</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">()</span>
+<span class="n">circ</span> <span class="o">=</span> <span class="n">QuantumCircuitLibrary</span><span class="p">(</span><span class="n">n_qubits</span><span class="o">=</span><span class="n">n_qubits</span><span class="p">)</span><span class="o">.</span><span class="n">circuit6</span><span class="p">()</span>
+<span class="n">en</span><span class="p">,</span> <span class="n">vqe_result</span><span class="p">,</span> <span class="n">vqe</span> <span class="o">=</span> <span class="n">HS</span><span class="o">.</span><span class="n">run_vqe</span><span class="p">(</span><span class="n">var_form</span><span class="o">=</span><span class="n">circ</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span>
+<span class="n">vals</span><span class="p">,</span><span class="n">vecs</span> <span class="o">=</span> <span class="n">HS</span><span class="o">.</span><span class="n">run_numpy</span><span class="p">()</span>
+<span class="c1"># Ef: Fermi-level</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Classical, VQE (eV):&#39;</span><span class="p">,</span> <span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">Ef</span><span class="p">,</span> <span class="n">en</span><span class="o">-</span><span class="n">Ef</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Show model</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">circ</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="how-to-run-cals-on-simulators">How to run cals. on simulators<a class="headerlink" href="#how-to-run-cals-on-simulators" title="Permanent link">&para;</a></h3>
+<p>In the above example, we run simulations on <code>statevector_simulator</code>.
+Qiskit provides several other simulators, which can also be used.</p>
+<h3 id="how-to-run-cals-on-actual-quantum-computers">How to run cals. on actual quantum computers<a class="headerlink" href="#how-to-run-cals-on-actual-quantum-computers" title="Permanent link">&para;</a></h3>
+<p>To run calculations on real quantum computers, we just replace the
+<code>backend</code> parameter above such as the following:</p>
+<div class="highlight"><pre><span></span><code><span class="n">token</span><span class="o">=</span><span class="s1">&#39;Get Token from your IBM account&#39;</span> 
+<span class="n">qiskit</span><span class="o">.</span><span class="n">IBMQ</span><span class="o">.</span><span class="n">save_account</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+<span class="n">provider</span> <span class="o">=</span> <span class="n">IBMQ</span><span class="o">.</span><span class="n">load_account</span><span class="p">()</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;ibmq_5_yorktown&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Your job will put in a queue and as the simulation complete result will
+be sent back to you. Note that there might be a lot of jobs in the queue
+already, so it might take a while. You may run simulations using IBM GUI
+or use something like Jupyter notebook/Colab notebook.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      NIST Copyright, Kamal Choudhary
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/usnistgov/jarvis" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "toc.integrate"], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.4e31edb1.min.js"></script>
+      
+        
+          <script src="../javascripts/tablesort.min.js"></script>
+        
+      
+        
+          <script src="../javascripts/tablesort.js"></script>
+        
+      
+    
+  </body>
+</html>
