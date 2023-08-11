@@ -15,8 +15,8 @@ setup(
     version="2023.08.01",
     long_description=long_d,
     install_requires=[
-        "numpy>=1.19.5",
-        "scipy>=1.4.1",
+        "numpy>=1.20.1",
+        "scipy>=1.5.0",
         "matplotlib>=3.0.0",
         "spglib>=1.14.1",
         "joblib>=0.14.1",
