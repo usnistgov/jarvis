@@ -6,12 +6,13 @@ from setuptools import setup, find_packages
 JARVIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 base_dir = os.path.dirname(__file__)
-with open(os.path.join(base_dir, "README.rst")) as f:
+# with open(os.path.join(base_dir, "README.rst")) as f:
+with open(os.path.join(base_dir, "README.md")) as f:
     long_d = f.read()
 
 setup(
     name="jarvis-tools",
-    version="2023.05.26",
+    version="2023.08.01",
     long_description=long_d,
     install_requires=[
         "numpy>=1.19.5",
@@ -23,6 +24,9 @@ setup(
         "toolz>=0.9.0",
         "xmltodict>=0.11.0",
         "tqdm>=4.41.1",
+        "mkdocs-material>=9.0.5",
+        "markdown>=3.2.1",
+        # "absl-py==1.4.0",
     ],
     package_data={
         "jarvis.core": [

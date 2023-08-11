@@ -3,7 +3,7 @@ Code to predict properties and their uncertainty.
 
 ML model used: lgbm
 """
-
+# Ref: https://doi.org/10.1021/acsomega.1c03752
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import pickle

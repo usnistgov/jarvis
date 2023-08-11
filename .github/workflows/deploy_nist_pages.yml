@@ -1,0 +1,75 @@
+#
+# This is a working example of using GitHub Actions to publish the docs
+# to the GitHub Pages (gh_pages) branch.
+#
+# Remember to have a requirements.txt file with the required dependencies.
+# This template ships with one by default.
+#
+# It is also recommendet to also copy the template with all branches, to
+# have the gh-pages branch pre-made. This prevents possible errors.
+#
+name: Deploy Site
+
+# on: [push, pull_request]
+
+on:
+  push:
+    branches:
+      - master
+      
+permissions:
+  contents: write
+
+# on:
+#   push:
+#     paths:
+#     - 'docs/**'
+#     - 'mkdocs.yml'
+#     - 'theme/**'
+#     branches:
+#     - master
+#     #
+#     # If your repository would have releases should you uncomment the below lines
+#     # in order to ignore pushes caused by newly created releases.
+#     #
+#     #tags-ignore:
+#     #- '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools
+        python setup.py develop
+        #python -m pip install -r requirements.txt
+        
+    - name: Deploy Files
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "actions@github.com"
+        # python jarvis_leaderboard/rebuild.py
+        mkdocs build
+        #rm -r /tmp/site
+        cp -r site /tmp
+        git fetch
+        git checkout nist-pages --force
+        rm -r *
+        cp -r /tmp/site/* .
+        
+        echo 'listing'
+        ls
+        echo 'listing tmp'
+        ls /tmp
+        git add * */*
+        git commit -m 'Adding files.'
+        git push origin nist-pages -f
+        #git commit -a -m "Move"
+        #git push -f origin nist-pages1
+        #mkdocs gh-deploy  

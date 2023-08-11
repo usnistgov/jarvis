@@ -357,6 +357,41 @@ def get_db_info():
             "Obtaining TinNet OH dataset 748...",
             "https://github.com/hlxin/tinnet",
         ],
+        # https://doi.org/10.6084/m9.figshare.23909478
+        "AGRA_O": [
+            "https://figshare.com/ndownloader/files/41923284",
+            "AGRA_O.json",
+            "Obtaining AGRA Oxygen dataset 1000...",
+            "https://github.com/Feugmo-Group/AGRA",
+        ],
+        # https://doi.org/10.6084/m9.figshare.23909478
+        "AGRA_OH": [
+            "https://figshare.com/ndownloader/files/41923287",
+            "AGRA_OH.json",
+            "Obtaining AGRA OH dataset 875...",
+            "https://github.com/Feugmo-Group/AGRA",
+        ],
+        # https://doi.org/10.6084/m9.figshare.23909478
+        "AGRA_CO": [
+            "https://figshare.com/ndownloader/files/41923278",
+            "AGRA_CO.json",
+            "Obtaining AGRA CO dataset 193...",
+            "https://github.com/Feugmo-Group/AGRA",
+        ],
+        # https://doi.org/10.6084/m9.figshare.23909478
+        "AGRA_CHO": [
+            "https://figshare.com/ndownloader/files/41923275",
+            "AGRA_CHO.json",
+            "Obtaining AGRA Oxygen dataset 214...",
+            "https://github.com/Feugmo-Group/AGRA",
+        ],
+        # https://doi.org/10.6084/m9.figshare.23909478
+        "AGRA_COOH": [
+            "https://figshare.com/ndownloader/files/41923281",
+            "AGRA_COOH.json",
+            "Obtaining AGRA COOH dataset 280...",
+            "https://github.com/Feugmo-Group/AGRA",
+        ],
         # https://doi.org/10.6084/m9.figshare.21370572
         "supercon_3d": [
             "https://figshare.com/ndownloader/files/38307921",
@@ -610,7 +645,7 @@ def get_hk_tb(k=np.array([0, 0, 0]), w=[]):
     hk = np.zeros((w.nwan, w.nwan), dtype=complex)
     kmat = np.tile(k, (nr, 1))
     exp_ikr = np.exp(1.0j * 2 * np.pi * np.sum(kmat * w.R, 1))
-    temp = np.zeros(w.nwan ** 2, dtype=complex)
+    temp = np.zeros(w.nwan**2, dtype=complex)
     for i in range(nr):
         temp += exp_ikr[i] * w.HR[i, :]
     hk = np.reshape(temp, (w.nwan, w.nwan))

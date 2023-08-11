@@ -83,7 +83,7 @@ pyasn1-modules==0.2.8
 pybind11==2.8.1
 PyCifRW==4.4
 pycparser==2.21
-Pygments==2.10.0
+Pygments==2.14
 pyparsing==3.0.6
 pyrsistent==0.18.0
 pytest==6.2.5

@@ -1,0 +1,41 @@
+.tabbed-set {
+  display: flex;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.tabbed-set .highlight {
+  background: #ddd;
+}
+
+.tabbed-set .tabbed-content {
+  display: none;
+  order: 99;
+  width: 100%;
+}
+
+.tabbed-set label {
+  width: auto;
+  margin: 0 0.5em;
+  padding: 0.25em;
+  font-size: 120%;
+  cursor: pointer;
+  color: #ffffff !important;
+}
+
+.tabbed-set input {
+  position: absolute;
+  opacity: 0;
+}
+
+.tabbed-set input:nth-child(n+1) {
+  color: #333333;
+}
+
+.tabbed-set input:nth-child(n+1):checked + label {
+    color: cyan !important;
+}
+
+.tabbed-set input:nth-child(n+1):checked + label + .tabbed-content {
+    display: block;
+}
