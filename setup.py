@@ -24,6 +24,9 @@ setup(
         "toolz>=0.9.0",
         "xmltodict>=0.11.0",
         "tqdm>=4.41.1",
+        "mkdocs-material>=9.0.5",
+        "markdown==3.2.1",
+        "absl-py==1.4.0",
     ],
     package_data={
         "jarvis.core": [
