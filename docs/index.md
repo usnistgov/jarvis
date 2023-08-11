@@ -1,21 +1,3 @@
-[![image](https://badge.fury.io/py/jarvis-tools.svg)](https://pypi.org/project/jarvis-tools/)
-[![image](https://anaconda.org/conda-forge/jarvis-tools/badges/version.svg)](https://anaconda.org/conda-forge/jarvis-tools)
-[![image](https://img.shields.io/github/v/tag/usnistgov/jarvis)](https://github.com/usnistgov/jarvis)
-[![image](https://ci.appveyor.com/api/projects/status/d8na8vyfm7ulya9p/branch/master?svg=true)](https://ci.appveyor.com/project/knc6/jarvis-63tl9)
-[![image](https://github.com/usnistgov/jarvis/workflows/JARVIS-Tools%20github%20action/badge.svg)](https://github.com/usnistgov/jarvis)
-[![image](https://github.com/usnistgov/jarvis/workflows/JARVIS-Tools%20linting/badge.svg)](https://github.com/usnistgov/jarvis)
-[![image](https://img.shields.io/codecov/c/github/knc6/jarvis)](https://codecov.io/gh/knc6/jarvis)
-[![image](https://img.shields.io/pypi/dm/jarvis-tools.svg)](https://img.shields.io/pypi/dm/jarvis-tools.svg)
-[![image](https://pepy.tech/badge/jarvis-tools)](https://pepy.tech/badge/jarvis-tools)
-[![image](https://zenodo.org/badge/DOI/10.5281/zenodo.3903515.svg)](https://doi.org/10.5281/zenodo.3903515)
-[![image](https://img.shields.io/github/commit-activity/y/usnistgov/jarvis)](https://github.com/usnistgov/jarvis)
-[![image](https://img.shields.io/github/repo-size/usnistgov/jarvis)](https://github.com/usnistgov/jarvis)
-[![image](https://img.shields.io/badge/JARVIS-Figshare-Green.svg)](https://figshare.com/authors/Kamal_Choudhary/4445539)
-[![image](https://img.shields.io/badge/JARVIS-ToolsDocs-Green.svg)](https://jarvis-tools.readthedocs.io)
-[![image](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks)
-<!-- [![image](https://img.shields.io/travis/usnistgov/jarvis/master.svg?label=Travis%20CI)](https://travis-ci.org/usnistgov/jarvis) -->
-------------------------------------------------------------------------
-
 # Table of Contents
 * [Introduction](#intro)
 * [Documentation](#doc)
@@ -48,8 +30,7 @@ project is a part of the Materials Genome Initiative (MGI) at NIST
 
 For more details, checkout our latest article: [The joint automated
 repository for various integrated simulations (JARVIS) for data-driven
-materials design](https://www.nature.com/articles/s41524-020-00440-1)
-and [YouTube
+materials design](https://www.nature.com/articles/s41524-020-00440-1), [other publications](https://pages.nist.gov/jarvis/publications/) and [YouTube
 videos](https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel=JARVIS-repository)
 
 
@@ -58,12 +39,30 @@ videos](https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel
 </p>
 
 
+[![image](https://badge.fury.io/py/jarvis-tools.svg)](https://pypi.org/project/jarvis-tools/)
+[![image](https://anaconda.org/conda-forge/jarvis-tools/badges/version.svg)](https://anaconda.org/conda-forge/jarvis-tools)
+[![image](https://img.shields.io/github/v/tag/usnistgov/jarvis)](https://github.com/usnistgov/jarvis)
+[![image](https://ci.appveyor.com/api/projects/status/d8na8vyfm7ulya9p/branch/master?svg=true)](https://ci.appveyor.com/project/knc6/jarvis-63tl9)
+[![image](https://github.com/usnistgov/jarvis/workflows/JARVIS-Tools%20github%20action/badge.svg)](https://github.com/usnistgov/jarvis)
+[![image](https://github.com/usnistgov/jarvis/workflows/JARVIS-Tools%20linting/badge.svg)](https://github.com/usnistgov/jarvis)
+[![image](https://img.shields.io/codecov/c/github/knc6/jarvis)](https://codecov.io/gh/knc6/jarvis)
+[![image](https://img.shields.io/pypi/dm/jarvis-tools.svg)](https://img.shields.io/pypi/dm/jarvis-tools.svg)
+[![image](https://pepy.tech/badge/jarvis-tools)](https://pepy.tech/badge/jarvis-tools)
+[![image](https://zenodo.org/badge/DOI/10.5281/zenodo.3903515.svg)](https://doi.org/10.5281/zenodo.3903515)
+[![image](https://img.shields.io/github/commit-activity/y/usnistgov/jarvis)](https://github.com/usnistgov/jarvis)
+[![image](https://img.shields.io/github/repo-size/usnistgov/jarvis)](https://github.com/usnistgov/jarvis)
+[![image](https://img.shields.io/badge/JARVIS-Figshare-Green.svg)](https://figshare.com/authors/Kamal_Choudhary/4445539)
+[![image](https://img.shields.io/badge/JARVIS-ToolsDocs-Green.svg)](https://pages.nist.gov/jarvis)
+[![image](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks)
+<!-- [![image](https://img.shields.io/travis/usnistgov/jarvis/master.svg?label=Travis%20CI)](https://travis-ci.org/usnistgov/jarvis) -->
+------------------------------------------------------------------------
+
 
 
 <a name="doc"></a>
 ## Documentation
 
-> <https://jarvis-tools.readthedocs.io>
+> <https://pages.nist.gov/jarvis>
 
 <a name="cap"></a>
 ## Capabilities
@@ -191,7 +190,7 @@ for ii,i in enumerate(dft_3d):
 
 Find more examples at
 
-> 1.  <https://jarvis-tools.readthedocs.io/en/master/tutorials.html>
+> 1.  <https://pages.nist.gov/jarvis/tutorials/>
 > 2.  <https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks>
 > 3.  <https://github.com/usnistgov/jarvis/tree/master/jarvis/tests/testfiles>
 
@@ -211,7 +210,7 @@ publication.
 ## References
 
 Please see [Publications related to
-JARVIS-Tools](https://jarvis-tools.readthedocs.io/en/master/publications.html)
+JARVIS-Tools](https://pages.nist.gov/jarvis/publications/)
 
 <a name="contrib"></a>
 ## How to contribute
