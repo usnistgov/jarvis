@@ -803,7 +803,6 @@ well.</p>
 <span class="n">Si</span><span class="o">.</span><span class="n">write_poscar</span><span class="p">(</span><span class="s1">&#39;POSCAR.vasp&#39;</span><span class="p">)</span>
 <span class="n">Si</span><span class="o">.</span><span class="n">write_cif</span><span class="p">(</span><span class="s1">&#39;POSCAR.vasp&#39;</span><span class="p">)</span>
 </code></pre></div>
-
 <p>The <span class="title-ref">Atoms</span> class here is created from the
 raw data, but it can also be read from different file formats such as:
 <span class="title-ref">'.cif', 'POSCAR', '.xyz', '.pdb', '.sdf',
@@ -818,7 +817,6 @@ the x, y comonents intact.</p>
 <div class="highlight"><pre><span></span><code><span class="n">my_atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_poscar</span><span class="p">(</span><span class="s1">&#39;POSCAR&#39;</span><span class="p">)</span>
 <span class="n">my_atoms</span><span class="o">.</span><span class="n">write_poscar</span><span class="p">(</span><span class="s1">&#39;MyPOSCAR&#39;</span><span class="p">)</span>
 </code></pre></div>
-
 <p>Once this Atoms class is created, several imprtant information can be
 obtained such as:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;volume&#39;</span><span class="p">,</span><span class="n">Si</span><span class="o">.</span><span class="n">volume</span><span class="p">)</span>
@@ -832,26 +830,22 @@ obtained such as:</p>
 <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Center of mass&#39;</span><span class="p">,</span> <span class="n">Si</span><span class="o">.</span><span class="n">get_center_of_mass</span><span class="p">())</span>
 <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Atomic number list&#39;</span><span class="p">,</span> <span class="n">Si</span><span class="o">.</span><span class="n">atomic_numbers</span><span class="p">)</span>
 </code></pre></div>
-
 <p>For creating/accessing dataset(s), we use <code>Atoms.from_dict()</code> and
 <code>Atoms.to_dict()</code> methods:</p>
 <div class="highlight"><pre><span></span><code><span class="n">d</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 <span class="n">new_atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 </code></pre></div>
-
 <p>The <span class="title-ref">jarvis.core.Atoms</span> object can be
 converted back and forth to other simulation toolsets such as Pymatgen
 and ASE if insyalled, as follows</p>
 <div class="highlight"><pre><span></span><code><span class="n">pmg_struct</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">pymatgen_converter</span><span class="p">()</span>
 <span class="n">ase_atoms</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">ase_converter</span><span class="p">()</span>
 </code></pre></div>
-
 <p>In order to make supercell, the following example can be used:</p>
 <div class="highlight"><pre><span></span><code><span class="n">supercell_1</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">make_supercell</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
 <span class="n">supercell_2</span> <span class="o">=</span> <span class="n">Si</span><span class="o">.</span><span class="n">make_supercell_matrix</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
 <span class="n">supercell_1</span><span class="o">.</span><span class="n">density</span> <span class="o">==</span> <span class="n">supercell_2</span><span class="o">.</span><span class="n">density</span>
 </code></pre></div>
-
 <h3 id="how-to-get-rdf-adf-ddf">How to get RDF, ADF, DDF<a class="headerlink" href="#how-to-get-rdf-adf-ddf" title="Permanent link">&para;</a></h3>
 <p>Nearest-neighbor analysis one of the most important tools in atomistic
 simulations. Quantities such as radial (RDF), angle (ADF) and dihedral
@@ -896,7 +890,6 @@ details, please look into respective modules.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Angle bins ($^\circ$)&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </code></pre></div>
-
 <h3 id="how-to-get-xrd-paterns">How to get XRD paterns<a class="headerlink" href="#how-to-get-xrd-paterns" title="Permanent link">&para;</a></h3>
 <p>X-ray diffraction patterns act as one of the most important experimental
 methods for determining atomic structure. Using Cu-K alpha wavelength,
@@ -922,7 +915,6 @@ class above can be obatined as follows.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;XRD intensity&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </code></pre></div>
-
 <h3 id="how-to-make-defects">How to make defects<a class="headerlink" href="#how-to-make-defects" title="Permanent link">&para;</a></h3>
 <p>While the above Si atomic structure generated above is perfect/defect
 free, in reality there can be several defects present in an atomic
@@ -938,7 +930,6 @@ is shown below:</p>
 <span class="nb">len</span><span class="p">(</span><span class="n">vacs</span><span class="p">),</span> <span class="n">vacs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()[</span><span class="s2">&quot;defect_structure&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_atoms</span>
 <span class="c1"># We find that there are only one unique point vacanc available based on Wycoff-position information</span>
 </code></pre></div>
-
 <p>Similarly, an example of creating, free surfaces is shown below:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.analysis.defects.surface</span> <span class="kn">import</span> <span class="n">wulff_normals</span><span class="p">,</span> <span class="n">Surface</span>
 
@@ -951,7 +942,6 @@ is shown below:</p>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">surface_111</span><span class="p">)</span>
 </code></pre></div>
-
 <p>While the above example makes only one surface (111), we can ask
 jarvis-tools to provide all symmetrically distinct surfaces as follows:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.analysis.structure.spacegroup</span> <span class="kn">import</span> <span class="p">(</span>
@@ -966,7 +956,6 @@ jarvis-tools to provide all symmetrically distinct surfaces as follows:</p>
     <span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Index:&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
     <span class="nb">print</span> <span class="p">(</span><span class="n">surf</span><span class="p">)</span>
 </code></pre></div>
-
 <p>Heterostructures of a film and a substrate can be created using ZSL
 algorithm as shown in the following example:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.analysis.interface.zur</span> <span class="kn">import</span> <span class="n">ZSLGenerator</span><span class="p">,</span> <span class="n">mismatch_strts</span><span class="p">,</span> <span class="n">get_hetero</span><span class="p">,</span> <span class="n">make_interface</span>
@@ -975,7 +964,6 @@ algorithm as shown in the following example:</p>
 <span class="n">info</span> <span class="o">=</span> <span class="n">make_interface</span><span class="p">(</span><span class="n">film</span><span class="o">=</span><span class="n">film</span><span class="p">,</span> <span class="n">subs</span><span class="o">=</span><span class="n">substrate</span><span class="p">)[</span><span class="s1">&#39;interface&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">vacuum</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
 <span class="nb">print</span> <span class="p">(</span><span class="n">info</span><span class="p">)</span>
 </code></pre></div>
-
 <h2 id="how-to-setupanalyze-dft-calculations-using-vasp">How to setup/analyze DFT calculations using VASP<a class="headerlink" href="#how-to-setupanalyze-dft-calculations-using-vasp" title="Permanent link">&para;</a></h2>
 <p>The Vienna Ab initio Simulation Package (VASP) is a package for
 performing ab initio quantum mechanical calculations using either
@@ -1008,7 +996,6 @@ workflow. Make sure <code>VASP_PSP_DIR</code> is declared as a PATH to VASP
 pseudopotential directory i.e.</p>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">VASP_PSP_DIR</span><span class="o">=</span>YOUR_PATH_TO_PSUEDOPTENTIALS
 </code></pre></div>
-
 <p>in your ~/.bashrc file.</p>
 <h3 id="how-to-setup-a-single-calculation">How to setup a single calculation<a class="headerlink" href="#how-to-setup-a-single-calculation" title="Permanent link">&para;</a></h3>
 <p>We start by setting up and submitting a single VaspJob:</p>
@@ -1077,7 +1064,6 @@ pseudopotential directory i.e.</p>
 <span class="n">dumpjson</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;job.json&quot;</span><span class="p">)</span>
 <span class="n">write_vaspjob</span><span class="p">(</span><span class="n">pyname</span><span class="o">=</span><span class="s2">&quot;job.py&quot;</span><span class="p">,</span> <span class="n">job_json</span><span class="o">=</span><span class="s2">&quot;job.json&quot;</span><span class="p">)</span>
 </code></pre></div>
-
 <p>The job.py can now be run on a cluster or on a PC as a python script.
 For running this job on a PBS cluster,</p>
 <div class="highlight"><pre><span></span><code><span class="n">submit_cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;qsub&quot;</span><span class="p">,</span> <span class="s2">&quot;submit_job&quot;</span><span class="p">]</span>
@@ -1095,7 +1081,6 @@ For running this job on a PBS cluster,</p>
     <span class="n">submit_cmd</span><span class="o">=</span><span class="n">submit_cmd</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
-
 <h3 id="how-to-setup-high-throughput-calculations">How to setup high-throughput calculations<a class="headerlink" href="#how-to-setup-high-throughput-calculations" title="Permanent link">&para;</a></h3>
 <p>Currently, JARVIS-Tools can be used to submit job with SLURM and PBS
 clusters only. For high-throughput automated submissions one can use
@@ -1185,7 +1170,6 @@ series of properties.</p>
 <span class="sd">    os.chdir(cwd_home)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 </code></pre></div>
-
 <p>We provide modules to convert the calculation informato to <code>XML</code> which
 can be converted to <code>HTML</code> using <code>XSLT</code>. An example is give below:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.db.vasp_to_xml</span> <span class="kn">import</span> <span class="n">VaspToApiXmlSchema</span>
@@ -1194,7 +1178,6 @@ can be converted to <code>HTML</code> using <code>XSLT</code>. An example is giv
 <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;JVASP-1002.xml&quot;</span>
 <span class="n">VaspToApiXmlSchema</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">)</span><span class="o">.</span><span class="n">write_xml</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
 </code></pre></div>
-
 <h3 id="how-to-plot-electronic-bandstructure-and-dos">How to plot electronic bandstructure and DOS<a class="headerlink" href="#how-to-plot-electronic-bandstructure-and-dos" title="Permanent link">&para;</a></h3>
 <p>If you use the workflow used above, the density of states plot can be
 obtained using thr <code>vasprun.xml</code> file in MAIN-RELAX folder while the
@@ -1218,7 +1201,6 @@ band-structure plot is obtained using <code>vasprun.xml</code> in MAIN-BAND fold
 <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 </code></pre></div>
-
 <h3 id="how-to-obtain-elastic-constants">How to obtain elastic constants<a class="headerlink" href="#how-to-obtain-elastic-constants" title="Permanent link">&para;</a></h3>
 <h3 id="how-to-plot-generate-an-stmstem-image">How to plot generate an STM/STEM image<a class="headerlink" href="#how-to-plot-generate-an-stmstem-image" title="Permanent link">&para;</a></h3>
 <h3 id="how-to-plot-generate-a-dielectric-function-spectra-and-solar-eff">How to plot generate a dielectric function spectra and solar eff.<a class="headerlink" href="#how-to-plot-generate-a-dielectric-function-spectra-and-solar-eff" title="Permanent link">&para;</a></h3>
@@ -1274,7 +1256,6 @@ control the calculations.</p>
 <span class="n">job_fact</span> <span class="o">=</span> <span class="n">JobFactory</span><span class="p">(</span><span class="n">pair_style</span><span class="o">=</span><span class="s2">&quot;eam/alloy&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_first_lammps_run&quot;</span><span class="p">)</span>
 <span class="n">job_fact</span><span class="o">.</span><span class="n">all_props_eam_alloy</span><span class="p">(</span><span class="n">atoms</span><span class="o">=</span><span class="n">cvn_atoms</span><span class="p">,</span> <span class="n">ff_path</span><span class="o">=</span><span class="n">ff</span><span class="p">,</span> <span class="n">lammps_cmd</span><span class="o">=</span><span class="n">cmd</span><span class="p">)</span>
 </code></pre></div>
-
 <h3 id="how-to-analyze-data">How to analyze data<a class="headerlink" href="#how-to-analyze-data" title="Permanent link">&para;</a></h3>
 <p>An example to parse LAMMPS calculation folder using the above workflow
 is shown below:</p>
@@ -1283,13 +1264,11 @@ is shown below:</p>
 <span class="n">data</span> <span class="o">=</span> <span class="n">parse_material_calculation_folder</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
 <span class="nb">print</span> <span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </code></pre></div>
-
 <p>The calculation data can now be converted into XML files as follows. The
 XML with the help of XSLT is converted into an HTML page.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.db.lammps_to_xml</span> <span class="kn">import</span> <span class="n">write_xml</span>
 <span class="n">write_xml</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;JLMP-123.xml&#39;</span><span class="p">)</span>
 </code></pre></div>
-
 <h2 id="how-to-runanalyze-dft-static-calculation-using-quantum-espresso">How to run/analyze DFT static calculation using Quantum espresso<a class="headerlink" href="#how-to-runanalyze-dft-static-calculation-using-quantum-espresso" title="Permanent link">&para;</a></h2>
 <p>Quantum ESPRESSO is a suite for first-principles electronic-structure
 calculations and materials modeling, distributed for free and as free
@@ -1318,7 +1297,6 @@ density-functional theory, plane wave basis sets, and pseudopotentials.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">qe</span><span class="o">.</span><span class="n">input_params</span><span class="p">[</span><span class="s1">&#39;system_params&#39;</span><span class="p">][</span><span class="s1">&#39;nat&#39;</span><span class="p">])</span>
 <span class="err">$</span><span class="n">PATH_TO_PWSCF</span><span class="o">/</span><span class="n">pw</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span><span class="n">i</span> <span class="n">qe</span><span class="o">.</span><span class="ow">in</span>
 </code></pre></div>
-
 <h3 id="how-to-setup-high-throughput-calculations_1">How to setup high-throughput calculations<a class="headerlink" href="#how-to-setup-high-throughput-calculations_1" title="Permanent link">&para;</a></h3>
 <h2 id="how-to-traing-jarvis-cfid-ml-models-using-sklearnlightgbm">How to traing JARVIS-CFID ML models using sklearn/lightgbm<a class="headerlink" href="#how-to-traing-jarvis-cfid-ml-models-using-sklearnlightgbm" title="Permanent link">&para;</a></h2>
 <p>There are several methods to train atomistic property ML models such as
@@ -1374,7 +1352,6 @@ getting descriptors isshown below:</p>
 <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">IDs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">IDs</span><span class="p">)</span>
 </code></pre></div>
-
 <p>Now, we can use different ML algorithms on the descriptors and dataset
 such as linear regression, random forest, gradient boosting etc.</p>
 <p>An example, for using LightGBM with jarvis-tools wrapper code is shown
@@ -1394,7 +1371,6 @@ below:</p>
     <span class="s1">&#39;RMSE=&#39;</span><span class="p">,</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;reg_scores&quot;</span><span class="p">][</span><span class="s2">&quot;rmse&quot;</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
-
 <h3 id="how-to-train-regression-model">How to train regression model<a class="headerlink" href="#how-to-train-regression-model" title="Permanent link">&para;</a></h3>
 <p>Suppose we have 60000 materials, and we get 1557 descriptor for each
 material (438 chemical as above as well as structure and charge
@@ -1428,7 +1404,6 @@ etc. Example-1:</p>
 <span class="n">reg_sc</span> <span class="o">=</span> <span class="n">regr_scores</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
 <span class="nb">print</span> <span class="p">(</span><span class="n">reg_sc</span><span class="p">[</span><span class="s1">&#39;mae&#39;</span><span class="p">])</span>
 </code></pre></div>
-
 <h2 id="how-to-traing-jarvis-alignn-ml-models-using-pytorch">How to traing JARVIS-ALIGNN ML models using PyTorch<a class="headerlink" href="#how-to-traing-jarvis-alignn-ml-models-using-pytorch" title="Permanent link">&para;</a></h2>
 <h3 id="how-to-train-regression-model_1">How to train regression model<a class="headerlink" href="#how-to-train-regression-model_1" title="Permanent link">&para;</a></h3>
 <p>How to train classification model ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</p>
@@ -1477,7 +1452,6 @@ Aluminum using a WTBH.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Classical, VQE (eV):&#39;</span><span class="p">,</span> <span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">Ef</span><span class="p">,</span> <span class="n">en</span><span class="o">-</span><span class="n">Ef</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Show model</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">circ</span><span class="p">)</span>
 </code></pre></div>
-
 <h3 id="how-to-run-cals-on-simulators">How to run cals. on simulators<a class="headerlink" href="#how-to-run-cals-on-simulators" title="Permanent link">&para;</a></h3>
 <p>In the above example, we run simulations on <code>statevector_simulator</code>.
 Qiskit provides several other simulators, which can also be used.</p>
@@ -1489,7 +1463,6 @@ Qiskit provides several other simulators, which can also be used.</p>
 <span class="n">provider</span> <span class="o">=</span> <span class="n">IBMQ</span><span class="o">.</span><span class="n">load_account</span><span class="p">()</span>
 <span class="n">backend</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="s1">&#39;ibmq_5_yorktown&#39;</span><span class="p">)</span>
 </code></pre></div>
-
 <p>Your job will put in a queue and as the simulation complete result will
 be sent back to you. Note that there might be a lot of jobs in the queue
 already, so it might take a while. You may run simulations using IBM GUI
