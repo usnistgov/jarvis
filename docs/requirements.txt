@@ -20,7 +20,7 @@ codecov==2.1.13
 coverage==6.2
 cryptography==36.0.1
 cycler==0.11.0
-dgl==0.6.1
+dgl>=0.6.1
 dill==0.3.4
 dlx==1.0.4
 docplex==2.22.213
