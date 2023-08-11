@@ -160,7 +160,7 @@ class DataFileSchema(object):
                 [float(j) for j in i.split()]
                 for i in line["stress"]["#text"].split("\n")
             ]
-        ) * (hartree_to_ev / bohr_to_ang ** 3)
+        ) * (hartree_to_ev / bohr_to_ang**3)
 
     @property
     def magnetization(self):
@@ -329,11 +329,31 @@ class DataFileSchema(object):
     @property
     def nbands(self):
         """Get number of bands."""
-        return int(
-            float(
-                self.data["qes:espresso"]["output"]["band_structure"]["nbnd"]
+        if self.is_spin_polarized:
+            return [
+                int(
+                    float(
+                        self.data["qes:espresso"]["output"]["band_structure"][
+                            "nbnd_up"
+                        ]
+                    )
+                ),
+                int(
+                    float(
+                        self.data["qes:espresso"]["output"]["band_structure"][
+                            "nbnd_dw"
+                        ]
+                    )
+                ),
+            ]
+        else:
+            return int(
+                float(
+                    self.data["qes:espresso"]["output"]["band_structure"][
+                        "nbnd"
+                    ]
+                )
             )
-        )
 
     @property
     def indir_gap(self):
@@ -383,13 +403,86 @@ class DataFileSchema(object):
             plt.close()
         return eigvals
 
+    def dos(self, smearing=0.2, plot=False, filename="dos.png"):
+        """Density of states."""
+        """Based on sum of gaussians with smearing as given"""
+
+        # TODO: make work nicely for spin-polarized case,
+        # with minority spins plotted negative.
+
+        nkpts = self.nkpts
+        eigvals = []
+        kweight = []
+        for i in range(nkpts):
+            eig = np.array(
+                self.data["qes:espresso"]["output"]["band_structure"][
+                    "ks_energies"
+                ][i]["eigenvalues"]["#text"].split(),
+                dtype="float",
+            )
+            eigvals.append(eig)
+            kweight.append(
+                float(
+                    self.data["qes:espresso"]["output"]["band_structure"][
+                        "ks_energies"
+                    ][i]["k_point"]["@weight"]
+                )
+            )
+
+        efermi = self.efermi
+        eigvals = np.array(eigvals) * hartree_to_ev - efermi
+        kweight = np.array(kweight)
+
+        minval = np.min(np.array(eigvals))
+        maxval = np.max(np.array(eigvals))
+
+        energies = np.arange(minval - 0.5, maxval + 0.5, 0.01)
+        # de = 0.01
+        norm = (1 / 2.0 / np.pi / smearing**2) ** 0.5
+        DOS = np.zeros(np.shape(energies)[0])
+
+        for k in range(nkpts):
+            for e in eigvals[k, :]:
+                DOS += (
+                    kweight[k]
+                    * norm
+                    * np.exp(-0.5 * (energies - e) ** 2 / smearing**2)
+                )
+
+        # print("k ", np.sum(kweight))
+        # print("DOS ", np.sum(DOS*de),
+        # " should be close to ", self.nbands * np.sum(kweight))
+
+        if plot:
+            import matplotlib.pyplot as plt
+
+            plt.plot(energies, DOS)
+            plotmin = max(-10.0, minval)
+
+            plt.plot(
+                [0.0, 0.0],
+                [0.0, np.max(DOS) * 1.1],
+                color="black",
+                linestyle="dashed",
+            )
+            plt.ylim([0, np.max(DOS) * 1.1])
+            plt.xlim([plotmin, maxval])
+            plt.ylabel("DOS (eV$^{-1}$)")
+            plt.xlabel("Energy - E$_F$ (eV)")
+            #    plt.show()
+            plt.savefig(filename)
+            plt.close()
+        return energies, DOS
+
 
 class ProjHamXml(object):
     """Module to parse projham_K.xml."""
 
     # Adapted from https://github.com/kfgarrity/TightlyBound.jl
     def __init__(
-        self, filename="projham_K.xml", data=None,
+        self,
+        filename="projham_K.xml",
+        data=None,
     ):
         """Initialize class."""
         self.filename = filename
@@ -628,7 +721,7 @@ class ProjHamXml(object):
 
             sk = self.S[:, :, k]
             if proj is not None:
-                for (ip, p) in enumerate(proj):
+                for ip, p in enumerate(proj):
                     for pind in p:
                         for a in range(self.nwan):
                             for b in range(self.nwan):
@@ -696,7 +789,6 @@ class ProjHamXml(object):
                 t = list(set(self.types))
                 proj_atoms = [t, t, t]
         else:
-
             if proj_orbs is None:
                 names = copy.copy(proj_atoms)
                 proj_atoms = []
@@ -720,7 +812,7 @@ class ProjHamXml(object):
 
                 proj_atoms = []
                 proj_orbs = []
-                for (a, o) in zip(proj_atoms_t, proj_orbs_t):
+                for a, o in zip(proj_atoms_t, proj_orbs_t):
                     names.append(a + "_" + o)
                     proj_atoms.append([a])
                     proj_orbs.append([o])
@@ -733,7 +825,7 @@ class ProjHamXml(object):
         for cp in range(num_proj):
             proj.append([])
 
-            for (c, o) in enumerate(ORBS):
+            for c, o in enumerate(ORBS):
                 if o[1] in proj_atoms[cp] and o[2] in proj_orbs[cp]:
                     proj[-1].append(c)
 
@@ -772,9 +864,9 @@ class ProjHamXml(object):
 
         W = np.tile(self.kweights, (self.nwan, 1)).T / 2.0
 
-        for (c, e) in enumerate(energies):
+        for c, e in enumerate(energies):
             dos[c] = np.sum(
-                np.exp(-0.5 * (VALS[:, :] - e) ** 2 / smearing ** 2) * W
+                np.exp(-0.5 * (VALS[:, :] - e) ** 2 / smearing**2) * W
             )
 
         dos = dos / smearing / (2.0 * np.pi) ** 0.5
@@ -784,10 +876,10 @@ class ProjHamXml(object):
             pdos = np.zeros((npts, nproj))
 
             for i in range(nproj):
-                for (c, e) in enumerate(energies):
+                for c, e in enumerate(energies):
                     pdos[c, i] = np.sum(
                         PROJ[:, :, i]
-                        * np.exp(-0.5 * (VALS[:, :] - e) ** 2 / smearing ** 2)
+                        * np.exp(-0.5 * (VALS[:, :] - e) ** 2 / smearing**2)
                         * W
                     )
 
