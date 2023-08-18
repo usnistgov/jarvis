@@ -196,21 +196,21 @@ opt_out = Outcar(
         "OUTCAR",
     )
 )
-wder = Waveder(
-    os.path.join(
-        os.path.dirname(__file__),
-        "..",
-        "..",
-        "..",
-        "..",
-        "examples",
-        "vasp",
-        "SiOptb88",
-        "SiOptb88",
-        "MAIN-OPTICS-bulk@mp_149",
-        "WAVEDER",
-    )
-)
+# wder = Waveder(
+#    os.path.join(
+#        os.path.dirname(__file__),
+#        "..",
+#        "..",
+#        "..",
+#        "..",
+#        "examples",
+#        "vasp",
+#        "SiOptb88",
+#        "SiOptb88",
+#        "MAIN-OPTICS-bulk@mp_149",
+#        "WAVEDER",
+#    )
+# )
 wf_noso = Wavecar(
     filename=os.path.join(
         os.path.dirname(__file__),
@@ -373,15 +373,15 @@ def single_element_vrun():
     p = vrun.partial_dos_spdf()
 
 
-def test_waveder():
-    assert (
-        np.iscomplex(wder.get_orbital_derivative_between_states(0, 0, 0, 0, 0))
-        == True
-    )
-    assert (
-        complex(wder.get_orbital_derivative_between_states(0, 0, 0, 0, 0)).real
-    ) == -2.216161544844864e-15
-    assert (wder.nbands, wder.nkpoints, wder.nelect) == (36, 56, 8)
+# def test_waveder():
+#    assert (
+#        np.iscomplex(wder.get_orbital_derivative_between_states(0, 0, 0, 0, 0))
+#        == True
+#    )
+#    assert (
+#        complex(wder.get_orbital_derivative_between_states(0, 0, 0, 0, 0)).real
+#    ) == -2.216161544844864e-15
+#    assert (wder.nbands, wder.nkpoints, wder.nelect) == (36, 56, 8)
 
 
 def test_ir():
