@@ -1340,6 +1340,11 @@ class Atoms(object):
           sort_order: sort by chemical properties of
                     elements. Default electronegativity.
         """
+        from jarvis.io.vasp.inputs import Poscar
+
+        return Poscar(self).to_string()
+        ### Might be a bug while sorting
+
         system = str(self.composition.formula)
         header = (
             str(system)
