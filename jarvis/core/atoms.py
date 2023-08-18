@@ -1343,7 +1343,7 @@ class Atoms(object):
         from jarvis.io.vasp.inputs import Poscar
 
         return Poscar(self).to_string()
-        ### Might be a bug while sorting
+        # Might be a bug while sorting
 
         system = str(self.composition.formula)
         header = (
