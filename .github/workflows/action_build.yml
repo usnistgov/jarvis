@@ -2,7 +2,6 @@ name: JARVIS-Tools github action
 
 on: [push, pull_request]
 
-
 jobs:
   checks:
     name: Checks
@@ -48,6 +47,49 @@ jobs:
         # cd q-e
         # ./configure
         # make pw
+
+# jobs:
+#   checks:
+#     name: Checks
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         python-version: ["3.9","3.10"]
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Setup Python ${{ matrix.python-version }}
+#       uses: actions/setup-python@v2
+#       with:
+#         python-version: ${{ matrix.python-version }}
+
+#     - uses: actions/cache@v2
+#       with:
+#         path: ${{ env.pythonLocation }}
+#         key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
+
+#     - name: Install requirements
+#       run: |
+#         python setup.py develop
+#         pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
+#         #conda install -c ambermd pytraj
+#         echo 'CONDA LIST'
+#         conda list
+
+#         echo 'PIP FREEZE'
+#         pip freeze
+
+#         #echo 'PYTEST-COV'
+#         #pytest --cov-config=.coveragerc --cov=jarvis -n 2
+
+
+#         coverage run -m pytest
+#         coverage report -m -i
+#         codecov
+#         codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
+#         # git clone https://github.com/QEF/q-e.git
+#         # cd q-e
+#         # ./configure
+#         # make pw
 
 
 
