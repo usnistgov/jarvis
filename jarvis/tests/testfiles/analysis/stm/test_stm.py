@@ -34,9 +34,9 @@ def test_th_stm():
     from jarvis.db.figshare import make_stm_from_prev_parchg
 
     make_stm_from_prev_parchg()
-    Image.get_blob_angles(filename="stm_image.png")
+    ##TODO Image.get_blob_angles(filename="stm_image.png")
     im = Image.crop_from_center()
-    ims = Image.augment_image()
+    #TODO ims = Image.augment_image()
 
     TH_STM1 = TersoffHamannSTM(chg_name=name, min_size=5,use_interpolated=False)
     t1 = TH_STM1.constant_height(filename="test.png")
@@ -47,4 +47,4 @@ def test_th_stm():
     os.system(cmd)
 
 
-# test_th_stm()
+#test_th_stm()

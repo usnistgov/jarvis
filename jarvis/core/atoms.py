@@ -300,7 +300,6 @@ class Atoms(object):
         # _atom_site_U_iso, instead of fractn_x, cartn_x
         # with non-zero _atom_site_attached_hydrogens
         try:
-
             if use_cif2cell:
                 # https://pypi.org/project/cif2cell/
                 # tested on version 2.0.0a3
@@ -781,7 +780,7 @@ class Atoms(object):
             z = (coords[:, None, :] - site_coords[None, :, :]) ** 2
             all_dists = np.sum(z, axis=-1) ** 0.5
             all_within_r = np.bitwise_and(all_dists <= r, all_dists > 1e-8)
-            for (j, d, within_r) in zip(indices, all_dists, all_within_r):
+            for j, d, within_r in zip(indices, all_dists, all_within_r):
                 for i in indices[within_r]:
                     if d[i] > bond_tol:
                         # if d[i] > bond_tol and i!=j:
@@ -888,7 +887,9 @@ class Atoms(object):
                 and nbor_info["dist"][in1][i] * nbor_info["dist"][in2][i] != 0
             ]
             ang_hist, ang_bins = np.histogram(
-                angles, bins=np.arange(1, nbins + 2, 1), density=False,
+                angles,
+                bins=np.arange(1, nbins + 2, 1),
+                density=False,
             )
             for jj, j in enumerate(angles):
                 actual_pangs[i, jj] = j
@@ -1322,7 +1323,10 @@ class Atoms(object):
 
     def __repr__(self):
         """Get representation during print statement."""
-        return self.get_string()
+        from jarvis.io.vasp.inputs import Poscar
+
+        return Poscar(self).to_string()
+        # return self.get_string()
 
     def get_string(self, cart=True, sort_order="X"):
         """
@@ -1336,6 +1340,11 @@ class Atoms(object):
           sort_order: sort by chemical properties of
                     elements. Default electronegativity.
         """
+        from jarvis.io.vasp.inputs import Poscar
+
+        return Poscar(self).to_string()
+        # Might be a bug while sorting
+
         system = str(self.composition.formula)
         header = (
             str(system)

@@ -117,7 +117,7 @@ def get_phonon_tb(
         force_constants_decimals=None,
         symprec=symprec,
         is_symmetry=True,
-        use_lapack_solver=False,
+        # use_lapack_solver=False,
         log_level=1,
     )
 
@@ -128,7 +128,7 @@ def get_phonon_tb(
     phonon._set_dynamical_matrix()
     dmat = phonon._dynamical_matrix
     # rescale fcmat by THZ**2
-    fcmat = dmat._force_constants * factor ** 2  # FORCE_CONSTANTS
+    fcmat = dmat._force_constants * factor**2  # FORCE_CONSTANTS
     # fcmat = dmat._force_constants * factor ** 2  # FORCE_CONSTANTS
     smallest_vectors = dmat._smallest_vectors
     # mass = dmat._mass

@@ -34,7 +34,8 @@
 | `qmof`            | 20425                 | Bandgaps and total energies of metal organic frameowrks in QMOF database                                                              |
 | `hmof`            | 137651                | Hypothetical MOF database                                                                                                             |
 | `snumat`          | 10481                 | Bandgaps with hybrid functional                                                                                                       |
-| `arXiv`           | 12500                 | arXiv dataset 1.8 million title, abstract and id dataset                                                                              |
+| `arxiv_summary`   | 137927                | arXiv summary dataset                                                                               |
+| `arXiv`           | 1796911               | arXiv dataset 1.8 million title, abstract and id dataset                                                                              |
 | `ssub`            | 1726                  | SSUB formation energy for chemical formula dataset                                                                                    |
 | `mlearn`          | 1730                  | Machine learning force-field for elements datasets                                                                                    |
 | `ocp10k`          | 59886                 | Open Catalyst 10000 training, rest validation and test dataset                                                                        |

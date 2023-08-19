@@ -221,7 +221,7 @@ class Locpot(Chgcar):
         cell = atoms.lattice_mat
         chg = (self.chg[-1].T) * atoms.volume
         latticelength = np.dot(cell, cell.T).diagonal()
-        latticelength = latticelength ** 0.5
+        latticelength = latticelength**0.5
         ngridpts = np.array(chg.shape)
         # totgridpts = ngridpts.prod()
 
@@ -239,7 +239,8 @@ class Locpot(Chgcar):
             idir = 2
         a = (idir + 1) % 3
         b = (idir + 2) % 3
-        average = np.zeros(ngridpts[idir], np.float)
+        average = np.zeros(ngridpts[idir], dtype=float)
+        # average = np.zeros(ngridpts[idir], np.float)
         for ipt in range(ngridpts[idir]):
             if direction == "X":
                 average[ipt] = chg[ipt, :, :].sum()
@@ -755,7 +756,6 @@ class Outcar(object):
         try:
             for i in lines:
                 if "cm-1" in i and "meV" in i:
-
                     mod = float(i.split()[-4])
                     if "f/i" in i:
                         mod = mod * -1
@@ -780,6 +780,7 @@ class Waveder(object):
     The WAVEDER contains the derivative of the orbitals with respect to k.
     """
 
+    # Use lower numpy version e.g. 1.23.5
     def __init__(self, filename, gamma_only=False):
         """Initialize with filename."""
         with open(filename, "rb") as fp:
@@ -978,12 +979,15 @@ class Wavecar(object):
         # goto the start of the file and read the first record
         self._wfc.seek(0)
         self._recl, self._nspin, self._rtag = np.array(
-            np.fromfile(self._wfc, dtype=np.float, count=3), dtype=int
+            np.fromfile(self._wfc, dtype=float, count=3),
+            dtype=int
+            # np.fromfile(self._wfc, dtype=np.float, count=3), dtype=int
         )
         self._WFPrec = self.setWFPrec()
         # the second record
         self._wfc.seek(self._recl)
-        dump = np.fromfile(self._wfc, dtype=np.float, count=12)
+        dump = np.fromfile(self._wfc, dtype=float, count=12)
+        # dump = np.fromfile(self._wfc, dtype=np.float, count=12)
 
         self._nkpts = int(dump[0])  # No. of k-points
         self._nbands = int(dump[1])  # No. of bands
@@ -1042,7 +1046,10 @@ class Wavecar(object):
                 rec = self.whereRec(ii + 1, jj + 1, 1) - 1
                 self._wfc.seek(rec * self._recl)
                 dump = np.fromfile(
-                    self._wfc, dtype=np.float, count=4 + 3 * self._nbands
+                    self._wfc,
+                    dtype=float,
+                    count=4 + 3 * self._nbands
+                    # self._wfc, dtype=np.float, count=4 + 3 * self._nbands
                 )
                 if ii == 0:
                     self._nplws[jj] = int(dump[0])
@@ -1130,9 +1137,12 @@ class Wavecar(object):
                 % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid))
             )
         else:
-            assert Gvec.shape[0] == self._nplws[ikpt - 1], (
-                "No. of planewaves not consistent! %d %d %d"
-                % (Gvec.shape[0], self._nplws[ikpt - 1], np.prod(self._ngrid),)
+            assert (
+                Gvec.shape[0] == self._nplws[ikpt - 1]
+            ), "No. of planewaves not consistent! %d %d %d" % (
+                Gvec.shape[0],
+                self._nplws[ikpt - 1],
+                np.prod(self._ngrid),
             )
         self._gvec = np.asarray(Gvec, dtype=int)
 
@@ -1305,7 +1315,7 @@ class Vasprun(object):
             * np.sqrt(2.0)
             * eV_to_recip_cm
             * energies
-            * np.sqrt(-epsilon_1 + np.sqrt(epsilon_1 ** 2 + epsilon_2 ** 2))
+            * np.sqrt(-epsilon_1 + np.sqrt(epsilon_1**2 + epsilon_2**2))
         )
         return energies, absorption
 
@@ -1476,7 +1486,7 @@ class Vasprun(object):
         k = 0
         for i, j in zip(eigs, occs):
             k += 1
-            for (eigenval, occu) in zip(i, j):
+            for eigenval, occu in zip(i, j):
                 if occu > occu_tol and eigenval > vbm:
                     vbm = eigenval
                     vbm_kpoint = k
@@ -2183,7 +2193,6 @@ class Vasprun(object):
                 for i, j in info.items():
                     if "spin" in i:
                         for m, n in j.items():
-
                             if "up" in i:
                                 plt.plot(info["energy"], n, label=m)
                             if "down" in i:

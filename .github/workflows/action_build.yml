@@ -2,14 +2,13 @@ name: JARVIS-Tools github action
 
 on: [push, pull_request]
 
-
 jobs:
   checks:
     name: Checks
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9]
+        python-version: ["3.9","3.10"]
     steps:
     - uses: actions/checkout@v2
     - name: Setup Python ${{ matrix.python-version }}
@@ -24,9 +23,17 @@ jobs:
 
     - name: Install requirements
       run: |
-        python setup.py develop
-        pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
+        pip install pycodestyle flake8 pydocstyle 
+        flake8 --ignore E203,W503 --exclude=examples,tests --statistics --count --exit-zero jarvis
+        pycodestyle --ignore E203,W503 --exclude=examples,testfiles jarvis
+        pydocstyle --match-dir=core --match-dir=io --match-dir=io --match-dir=ai --match-dir=analysis --match-dir=db --match-dir=tasks --count jarvis
+        
+        #python setup.py develop
+        #pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
         #conda install -c ambermd pytraj
+        pip install numpy scipy matplotlib
+        pip install -r dev-requirements.txt
+        pip install -e .
         echo 'CONDA LIST'
         conda list
 
@@ -45,6 +52,49 @@ jobs:
         # cd q-e
         # ./configure
         # make pw
+
+# jobs:
+#   checks:
+#     name: Checks
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         python-version: ["3.9","3.10"]
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Setup Python ${{ matrix.python-version }}
+#       uses: actions/setup-python@v2
+#       with:
+#         python-version: ${{ matrix.python-version }}
+
+#     - uses: actions/cache@v2
+#       with:
+#         path: ${{ env.pythonLocation }}
+#         key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
+
+#     - name: Install requirements
+#       run: |
+#         python setup.py develop
+#         pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
+#         #conda install -c ambermd pytraj
+#         echo 'CONDA LIST'
+#         conda list
+
+#         echo 'PIP FREEZE'
+#         pip freeze
+
+#         #echo 'PYTEST-COV'
+#         #pytest --cov-config=.coveragerc --cov=jarvis -n 2
+
+
+#         coverage run -m pytest
+#         coverage report -m -i
+#         codecov
+#         codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
+#         # git clone https://github.com/QEF/q-e.git
+#         # cd q-e
+#         # ./configure
+#         # make pw
 
 
 
