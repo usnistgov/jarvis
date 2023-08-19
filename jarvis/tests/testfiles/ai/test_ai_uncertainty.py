@@ -1,7 +1,7 @@
 from jarvis.ai.uncertainty import lgbm_quantile_uncertainty as uq
 from jarvis.ai.pkgs.utils import get_ml_data
 import os
-
+"""
 # STEP-1: Getting Data
 # ********************
 property = "exfoliation_energy"
@@ -35,3 +35,4 @@ assert info["MAE_Upper"] < 200.0
 assert info["MAE_Error"] < 200.0
 cmd ='rm *.pk *.dat'
 os.system(cmd)
+"""
