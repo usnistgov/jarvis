@@ -24,9 +24,12 @@ jobs:
 
     - name: Install requirements
       run: |
-        python setup.py develop
-        pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
+        #python setup.py develop
+        #pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
         #conda install -c ambermd pytraj
+        pip install numpy scipy matplotlib
+        pip install -r dev-requirements.txt
+        pip install -e .
         echo 'CONDA LIST'
         conda list
 
