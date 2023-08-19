@@ -10,6 +10,7 @@ from jarvis.core.utils import get_counts
 from jarvis.core.specie import Specie
 from jarvis.core.utils import update_dict
 from jarvis.db.jsonutils import loadjson
+from collections import defaultdict
 
 
 class Poscar(object):
@@ -78,29 +79,62 @@ class Poscar(object):
         elements_ordered = np.array(self.atoms.elements)  # [order]
         props_ordered = np.array(self.atoms.props)  # [order]
         # check_selective_dynamics = False
-        counts = get_counts(elements_ordered)
+        info = defaultdict(list)
+        for i, j, k in zip(elements_ordered, coords_ordered, props_ordered):
+            info[i].append([j, k])
+        elname = ""
+        elcount = ""
+        elcoords = ""
+        for i, j in info.items():
+            # print(i, len(j))
+            elname += i + " "
+            elcount += str(len(j)) + " "
+            for k in j:
+                if k[1] == "":
+                    elcoords += " ".join(map(str, k[0])) + " " + i + "\n"
+                elif isinstance(k[1], list):
+                    elcoords += (
+                        " ".join(map(str, k[0]))
+                        + " ".join(map(str, k[1]))
+                        + "\n"
+                    )
+                else:
+                    elcoords += " ".join(map(str, k[0])) + " " + k[1] + "\n"
+
         if "T" in "".join(map(str, self.atoms.props[0])):
             middle = (
-                " ".join(map(str, counts.keys()))
-                + "\n"
-                + " ".join(map(str, counts.values()))
-                + "\nSelective dynamics\n"
-                + "Direct\n"
+                elname + "\n" + elcount + "\nSelective dynamics\n" + "Direct\n"
             )
         else:
-            middle = (
-                " ".join(map(str, counts.keys()))
-                + "\n"
-                + " ".join(map(str, counts.values()))
-                + "\ndirect\n"
-            )
-        rest = ""
+            middle = elname + "\n" + elcount + "\ndirect\n"
+        rest = elcoords
+
+        # counts = get_counts(elements_ordered)
+        # if "T" in "".join(map(str, self.atoms.props[0])):
+        #    middle = (
+        #        " ".join(map(str, counts.keys()))
+        #        + "\n"
+        #        + " ".join(map(str, counts.values()))
+        #        + "\nSelective dynamics\n"
+        #        + "Direct\n"
+        #    )
+        # else:
+        #    middle = (
+        #        " ".join(map(str, counts.keys()))
+        #        + "\n"
+        #        + " ".join(map(str, counts.values()))
+        #        + "\ndirect\n"
+        #    )
+        # rest = ""
         # print ('repr',self.frac_coords, self.frac_coords.shape)
-        for ii, i in enumerate(coords_ordered):
-            p_ordered = str(props_ordered[ii])
-            rest = rest + " ".join(map(str, i)) + " " + str(p_ordered) + "\n"
+        # for ii, i in enumerate(coords_ordered):
+        #    p_ordered = str(props_ordered[ii])
+        #    rest = (
+        #        rest + " ".join(map(str, i)) + " " + str(p_ordered) + "\n"
+        #    )
 
         result = header + middle + rest
+
         return result
 
     def write_file(self, filename):
@@ -108,62 +142,7 @@ class Poscar(object):
         # TODO: Use to_string instead of re-writing the code here
         with open(filename, "w") as f:
             # f = open(filename, "w")
-            header = (
-                str(self.comment)
-                + str("\n1.0\n")
-                + str(self.atoms.lattice_mat[0][0])
-                + " "
-                + str(self.atoms.lattice_mat[0][1])
-                + " "
-                + str(self.atoms.lattice_mat[0][2])
-                + "\n"
-                + str(self.atoms.lattice_mat[1][0])
-                + " "
-                + str(self.atoms.lattice_mat[1][1])
-                + " "
-                + str(self.atoms.lattice_mat[1][2])
-                + "\n"
-                + str(self.atoms.lattice_mat[2][0])
-                + " "
-                + str(self.atoms.lattice_mat[2][1])
-                + " "
-                + str(self.atoms.lattice_mat[2][2])
-                + "\n"
-            )
-            # order = np.argsort(self.atoms.elements)
-            coords = self.atoms.frac_coords
-            # DO NOT USE ORDER
-            coords_ordered = np.array(coords)  # [order]
-            elements_ordered = np.array(self.atoms.elements)  # [order]
-            props_ordered = np.array(self.atoms.props)  # [order]
-            # check_selective_dynamics = False
-            counts = get_counts(elements_ordered)
-            if "T" in "".join(map(str, self.atoms.props[0])):
-                middle = (
-                    " ".join(map(str, counts.keys()))
-                    + "\n"
-                    + " ".join(map(str, counts.values()))
-                    + "\nSelective dynamics\n"
-                    + "Direct\n"
-                )
-            else:
-                middle = (
-                    " ".join(map(str, counts.keys()))
-                    + "\n"
-                    + " ".join(map(str, counts.values()))
-                    + "\ndirect\n"
-                )
-            rest = ""
-            # print ('repr',self.frac_coords, self.frac_coords.shape)
-            for ii, i in enumerate(coords_ordered):
-                p_ordered = str(props_ordered[ii])
-                rest = (
-                    rest + " ".join(map(str, i)) + " " + str(p_ordered) + "\n"
-                )
-
-            result = header + middle + rest
-
-            f.write(result)
+            f.write(self.to_string())
             # f.close()
 
     @staticmethod
