@@ -70,7 +70,7 @@ def variational_circuit(num_qubits=2, reps=1):
                 custom_circ.cx(i, j)
 
 
-qc = variational_circuit()
+# qc = variational_circuit()
 
 
 def test_inp():
@@ -119,4 +119,4 @@ def test_inp():
     # H.run_qpe()
 
 
-# test_inp()
+#test_inp()
