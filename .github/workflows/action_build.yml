@@ -23,6 +23,7 @@ jobs:
 
     - name: Install requirements
       run: |
+        pip install --upgrade pip
         pip install pycodestyle flake8 pydocstyle 
         flake8 --ignore E203,W503 --exclude=examples,tests --statistics --count --exit-zero jarvis
         pycodestyle --ignore E203,W503 --exclude=examples,testfiles jarvis
