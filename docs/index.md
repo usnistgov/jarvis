@@ -125,7 +125,8 @@ videos](https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel
 
 <a name="example"></a>
 ## Example function
-```
+
+``` python
 from jarvis.core.atoms import Atoms
 box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
 coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
