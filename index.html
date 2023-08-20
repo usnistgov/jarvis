@@ -98,13 +98,13 @@
 <script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c">
 </script> -->
 <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-1Q89M6QHG7"></script> -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0HPG8D56KJ"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QBKG1JE5QF"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-0HPG8D56KJ');
+  gtag('config', 'G-QBKG1JE5QF');
 </script>
 
 
@@ -587,66 +587,66 @@ python setup.py install
 </ul>
 <p><a name="example"></a></p>
 <h2 id="example-function">Example function<a class="headerlink" href="#example-function" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>from jarvis.core.atoms import Atoms
-box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
-elements = [&quot;Si&quot;, &quot;Si&quot;]
-Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
-density = round(Si.density,2)
-print (density)
-2.33
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jarvis.core.atoms</span> <span class="kn">import</span> <span class="n">Atoms</span>
+<span class="n">box</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.715</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.715</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.715</span><span class="p">]]</span>
+<span class="n">coords</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]]</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Si&quot;</span><span class="p">,</span> <span class="s2">&quot;Si&quot;</span><span class="p">]</span>
+<span class="n">Si</span> <span class="o">=</span> <span class="n">Atoms</span><span class="p">(</span><span class="n">lattice_mat</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="n">elements</span><span class="p">)</span>
+<span class="n">density</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">Si</span><span class="o">.</span><span class="n">density</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">density</span><span class="p">)</span>
+<span class="mf">2.33</span>
 
-from jarvis.db.figshare import data
-dft_3d = data(dataset=&#39;dft_3d&#39;)
-print (len(dft_3d))
-75993
+<span class="kn">from</span> <span class="nn">jarvis.db.figshare</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="n">dft_3d</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;dft_3d&#39;</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dft_3d</span><span class="p">))</span>
+<span class="mi">75993</span>
 
 
-from jarvis.io.vasp.inputs import Poscar
-for i in dft_3d:
-    atoms = Atoms.from_dict(i[&#39;atoms&#39;])
-    poscar = Poscar(atoms)
-    jid = i[&#39;jid&#39;]
-    filename = &#39;POSCAR-&#39;+jid+&#39;.vasp&#39;
-    poscar.write_file(filename)
-dft_2d = data(dataset=&#39;dft_2d&#39;)
-print (len(dft_2d))
-1109
+<span class="kn">from</span> <span class="nn">jarvis.io.vasp.inputs</span> <span class="kn">import</span> <span class="n">Poscar</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dft_3d</span><span class="p">:</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">])</span>
+    <span class="n">poscar</span> <span class="o">=</span> <span class="n">Poscar</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">jid</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;jid&#39;</span><span class="p">]</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;POSCAR-&#39;</span><span class="o">+</span><span class="n">jid</span><span class="o">+</span><span class="s1">&#39;.vasp&#39;</span>
+    <span class="n">poscar</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">dft_2d</span> <span class="o">=</span> <span class="n">data</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="s1">&#39;dft_2d&#39;</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dft_2d</span><span class="p">))</span>
+<span class="mi">1109</span>
 
-for i in dft_2d:
-    atoms = Atoms.from_dict(i[&#39;atoms&#39;])
-    poscar = Poscar(atoms)
-    jid = i[&#39;jid&#39;]
-    filename = &#39;POSCAR-&#39;+jid+&#39;.vasp&#39;
-    poscar.write_file(filename)
-# Example to parse DOS data from JARVIS-DFT webpages
-from jarvis.db.webpages import Webpage
-from jarvis.core.spectrum import Spectrum
-import numpy as np
-new_dist=np.arange(-5, 10, 0.05)
-all_atoms = []
-all_dos_up = []
-all_jids = []
-for ii,i in enumerate(dft_3d):
-  all_jids.append(i[&#39;jid&#39;])
-  try:
-    w = Webpage(jid=i[&#39;jid&#39;])
-    edos_data = w.get_dft_electron_dos()
-    ens = np.array(edos_data[&#39;edos_energies&#39;].strip(&quot;&#39;&quot;).split(&#39;,&#39;),dtype=&#39;float&#39;)
-    tot_dos_up = np.array(edos_data[&#39;total_edos_up&#39;].strip(&quot;&#39;&quot;).split(&#39;,&#39;),dtype=&#39;float&#39;)
-    s = Spectrum(x=ens,y=tot_dos_up)
-    interp = s.get_interpolated_values(new_dist=new_dist)
-    atoms=Atoms.from_dict(i[&#39;atoms&#39;])
-    ase_atoms=atoms.ase_converter()
-    all_dos_up.append(interp)
-    all_atoms.append(atoms)
-    all_jids.append(i[&#39;jid&#39;])
-    filename=i[&#39;jid&#39;]+&#39;.cif&#39;
-    atoms.write_cif(filename)
-    break
-  except Exception as exp :
-    print (exp,i[&#39;jid&#39;])
-    pass
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dft_2d</span><span class="p">:</span>
+    <span class="n">atoms</span> <span class="o">=</span> <span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">])</span>
+    <span class="n">poscar</span> <span class="o">=</span> <span class="n">Poscar</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">jid</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;jid&#39;</span><span class="p">]</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;POSCAR-&#39;</span><span class="o">+</span><span class="n">jid</span><span class="o">+</span><span class="s1">&#39;.vasp&#39;</span>
+    <span class="n">poscar</span><span class="o">.</span><span class="n">write_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<span class="c1"># Example to parse DOS data from JARVIS-DFT webpages</span>
+<span class="kn">from</span> <span class="nn">jarvis.db.webpages</span> <span class="kn">import</span> <span class="n">Webpage</span>
+<span class="kn">from</span> <span class="nn">jarvis.core.spectrum</span> <span class="kn">import</span> <span class="n">Spectrum</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">new_dist</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+<span class="n">all_atoms</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">all_dos_up</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">all_jids</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">ii</span><span class="p">,</span><span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dft_3d</span><span class="p">):</span>
+  <span class="n">all_jids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;jid&#39;</span><span class="p">])</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">Webpage</span><span class="p">(</span><span class="n">jid</span><span class="o">=</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;jid&#39;</span><span class="p">])</span>
+    <span class="n">edos_data</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">get_dft_electron_dos</span><span class="p">()</span>
+    <span class="n">ens</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">edos_data</span><span class="p">[</span><span class="s1">&#39;edos_energies&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">)</span>
+    <span class="n">tot_dos_up</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">edos_data</span><span class="p">[</span><span class="s1">&#39;total_edos_up&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">Spectrum</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ens</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">tot_dos_up</span><span class="p">)</span>
+    <span class="n">interp</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">get_interpolated_values</span><span class="p">(</span><span class="n">new_dist</span><span class="o">=</span><span class="n">new_dist</span><span class="p">)</span>
+    <span class="n">atoms</span><span class="o">=</span><span class="n">Atoms</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">])</span>
+    <span class="n">ase_atoms</span><span class="o">=</span><span class="n">atoms</span><span class="o">.</span><span class="n">ase_converter</span><span class="p">()</span>
+    <span class="n">all_dos_up</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interp</span><span class="p">)</span>
+    <span class="n">all_atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="n">all_jids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;jid&#39;</span><span class="p">])</span>
+    <span class="n">filename</span><span class="o">=</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;jid&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.cif&#39;</span>
+    <span class="n">atoms</span><span class="o">.</span><span class="n">write_cif</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">break</span>
+  <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span> <span class="p">:</span>
+    <span class="nb">print</span> <span class="p">(</span><span class="n">exp</span><span class="p">,</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;jid&#39;</span><span class="p">])</span>
+    <span class="k">pass</span>
 </code></pre></div>
 <p>Find more examples at</p>
 <blockquote>
