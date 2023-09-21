@@ -887,9 +887,7 @@ class Atoms(object):
                 and nbor_info["dist"][in1][i] * nbor_info["dist"][in2][i] != 0
             ]
             ang_hist, ang_bins = np.histogram(
-                angles,
-                bins=np.arange(1, nbins + 2, 1),
-                density=False,
+                angles, bins=np.arange(1, nbins + 2, 1), density=False,
             )
             for jj, j in enumerate(angles):
                 actual_pangs[i, jj] = j
@@ -944,7 +942,7 @@ class Atoms(object):
         """
         cell = self.lattice_mat
         p = self.cart_coords
-
+        props = self.props
         dirs = np.zeros_like(cell)
         for i in range(3):
             dirs[i] = np.cross(cell[i - 1], cell[i - 2])
@@ -998,6 +996,7 @@ class Atoms(object):
             elements=self.elements,
             coords=new_coords,
             cartesian=True,
+            props=props,
         )
         return atoms
 
@@ -1066,6 +1065,7 @@ class Atoms(object):
         lat = self.lattice_mat
         typ_sp = self.elements
         natoms = self.num_atoms
+        props = self.props
         # abc = self.lattice.lat_lengths()
         COM = self.get_origin()
         # COM = self.get_center_of_mass()
@@ -1080,7 +1080,11 @@ class Atoms(object):
             z[i] = self.frac_coords[i][2] - COM[2] + new_origin[2]
             coords.append([x[i], y[i], z[i]])
         struct = Atoms(
-            lattice_mat=lat, elements=typ_sp, coords=coords, cartesian=False
+            lattice_mat=lat,
+            elements=typ_sp,
+            coords=coords,
+            cartesian=False,
+            props=props,
         )
         return struct
 
@@ -1604,7 +1608,9 @@ def fix_pbc(atoms):
     )
 
 
-def add_atoms(top, bottom, distance=[0, 0, 1], apply_strain=False):
+def add_atoms(
+    top, bottom, distance=[0, 0, 1], apply_strain=False, add_tags=True
+):
     """
     Add top and bottom Atoms with a distance array.
 
@@ -1623,10 +1629,12 @@ def add_atoms(top, bottom, distance=[0, 0, 1], apply_strain=False):
     #  print("strain_x,strain_y", strain_x, strain_y)
     elements = []
     coords = []
+    props = []
     lattice_mat = bottom.lattice_mat
     for i, j in zip(bottom.elements, bottom.frac_coords):
         elements.append(i)
         coords.append(j)
+        props.append("bottom")
     top_cart_coords = lattice_coords_transformer(
         new_lattice_mat=top.lattice_mat,
         old_lattice_mat=bottom.lattice_mat,
@@ -1636,6 +1644,7 @@ def add_atoms(top, bottom, distance=[0, 0, 1], apply_strain=False):
     for i, j in zip(top.elements, top_frac_coords):
         elements.append(i)
         coords.append(j)
+        props.append("top")
 
     order = np.argsort(np.array(elements))
     elements = np.array(elements)[order]
@@ -1651,8 +1660,10 @@ def add_atoms(top, bottom, distance=[0, 0, 1], apply_strain=False):
         lattice_mat=lattice_mat,
         coords=coords,
         elements=elements,
+        props=props,
         cartesian=False,
     ).center_around_origin()
+    ###print('combined props',combined)
     return combined
 
 
