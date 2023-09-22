@@ -23,6 +23,3 @@ Detailed documentation available at: https://pages.nist.gov/jarvis/
 [![image](https://img.shields.io/badge/JARVIS-Figshare-Green.svg)](https://figshare.com/authors/Kamal_Choudhary/4445539)
 [![image](https://img.shields.io/badge/JARVIS-ToolsDocs-Green.svg)](https://pages.nist.gov/jarvis)
 [![image](https://colab.research.google.com/assets/colab-badge.svg)](https://github.com/JARVIS-Materials-Design/jarvis-tools-notebooks)
-
-
-
