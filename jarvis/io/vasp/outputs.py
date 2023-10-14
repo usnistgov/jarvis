@@ -281,7 +281,7 @@ class Locpot(Chgcar):
             plt.savefig(filename)
             plt.close()
 
-        print("Ef,max,wf=", Ef, avg_max, dif)
+        # print("Ef,max,wf=", Ef, avg_max, dif)
         return avg_max, dif
 
 
