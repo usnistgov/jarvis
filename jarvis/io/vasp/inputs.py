@@ -48,7 +48,7 @@ class Poscar(object):
         """Construct Poscar object from a dictionary."""
         return Poscar(atoms=Atoms.from_dict(d["atoms"]), comment=d["comment"])
 
-    def to_string(self):
+    def to_string(self, write_props=False):
         """Make the Poscar object to a string."""
         header = (
             str(self.comment)
@@ -101,7 +101,7 @@ class Poscar(object):
                 else:
                     elcoords += " ".join(map(str, k[0])) + " " + k[1] + "\n"
 
-        if "T" in "".join(map(str, self.atoms.props[0])):
+        if write_props and "T" in "".join(map(str, self.atoms.props[0])):
             middle = (
                 elname + "\n" + elcount + "\nSelective dynamics\n" + "Direct\n"
             )
