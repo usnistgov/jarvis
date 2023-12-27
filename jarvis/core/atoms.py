@@ -890,9 +890,7 @@ class Atoms(object):
                 and nbor_info["dist"][in1][i] * nbor_info["dist"][in2][i] != 0
             ]
             ang_hist, ang_bins = np.histogram(
-                angles,
-                bins=np.arange(1, nbins + 2, 1),
-                density=False,
+                angles, bins=np.arange(1, nbins + 2, 1), density=False,
             )
             for jj, j in enumerate(angles):
                 actual_pangs[i, jj] = j
