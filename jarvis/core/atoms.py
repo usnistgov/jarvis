@@ -634,13 +634,16 @@ class Atoms(object):
         """
         up = 0
         dn = 0
-        coords = np.array(self.frac_coords)
+        tol = 0.01
+        coords = np.array(self.frac_coords) % 1
         z_max = max(coords[:, 2])
         z_min = min(coords[:, 2])
-        for site, element in zip(self.frac_coords, self.elements):
-            if site[2] == z_max:
+        for site, element in zip(coords, self.elements):
+            if site[2] >= z_max - tol:
+                # if site[2] == z_max:
                 up = up + Specie(element).Z
-            if site[2] == z_min:
+            if site[2] <= z_min + tol:
+                # if site[2] == z_min:
                 dn = dn + Specie(element).Z
         polar = False
         if up != dn:
@@ -887,7 +890,9 @@ class Atoms(object):
                 and nbor_info["dist"][in1][i] * nbor_info["dist"][in2][i] != 0
             ]
             ang_hist, ang_bins = np.histogram(
-                angles, bins=np.arange(1, nbins + 2, 1), density=False,
+                angles,
+                bins=np.arange(1, nbins + 2, 1),
+                density=False,
             )
             for jj, j in enumerate(angles):
                 actual_pangs[i, jj] = j
