@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.0">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
     
     
       
@@ -29,10 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.9f615399.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.649f08f9.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -70,9 +70,6 @@
     
     <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="light-blue">
   
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -154,9 +151,9 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
     
-      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
       </label>
     
@@ -164,15 +161,18 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
     
-      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
       </label>
     
   
 </form>
       
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
     
     
@@ -362,6 +362,7 @@
   
   
   
+  
     <li class="md-nav__item">
       <a href=".." class="md-nav__link">
         
@@ -378,6 +379,7 @@
     
       
       
+  
   
   
   
@@ -400,6 +402,7 @@
   
   
   
+  
     <li class="md-nav__item">
       <a href="../publications/" class="md-nav__link">
         
@@ -419,6 +422,7 @@
   
   
     
+  
   
   
     <li class="md-nav__item md-nav__item--active">
@@ -467,7 +471,9 @@
       
         <li class="md-nav__item">
   <a href="#how-to-analyze-an-atomic-structure" class="md-nav__link">
-    How to analyze an atomic structure
+    <span class="md-ellipsis">
+      How to analyze an atomic structure
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="How to analyze an atomic structure">
@@ -475,21 +481,27 @@
         
           <li class="md-nav__item">
   <a href="#how-to-get-rdf-adf-ddf" class="md-nav__link">
-    How to get RDF, ADF, DDF
+    <span class="md-ellipsis">
+      How to get RDF, ADF, DDF
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-get-xrd-paterns" class="md-nav__link">
-    How to get XRD paterns
+    <span class="md-ellipsis">
+      How to get XRD paterns
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-make-defects" class="md-nav__link">
-    How to make defects
+    <span class="md-ellipsis">
+      How to make defects
+    </span>
   </a>
   
 </li>
@@ -501,7 +513,9 @@
       
         <li class="md-nav__item">
   <a href="#how-to-setupanalyze-dft-calculations-using-vasp" class="md-nav__link">
-    How to setup/analyze DFT calculations using VASP
+    <span class="md-ellipsis">
+      How to setup/analyze DFT calculations using VASP
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="How to setup/analyze DFT calculations using VASP">
@@ -509,105 +523,135 @@
         
           <li class="md-nav__item">
   <a href="#how-to-setup-a-single-calculation" class="md-nav__link">
-    How to setup a single calculation
+    <span class="md-ellipsis">
+      How to setup a single calculation
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-setup-high-throughput-calculations" class="md-nav__link">
-    How to setup high-throughput calculations
+    <span class="md-ellipsis">
+      How to setup high-throughput calculations
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-plot-electronic-bandstructure-and-dos" class="md-nav__link">
-    How to plot electronic bandstructure and DOS
+    <span class="md-ellipsis">
+      How to plot electronic bandstructure and DOS
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-obtain-elastic-constants" class="md-nav__link">
-    How to obtain elastic constants
+    <span class="md-ellipsis">
+      How to obtain elastic constants
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-plot-generate-an-stmstem-image" class="md-nav__link">
-    How to plot generate an STM/STEM image
+    <span class="md-ellipsis">
+      How to plot generate an STM/STEM image
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-plot-generate-a-dielectric-function-spectra-and-solar-eff" class="md-nav__link">
-    How to plot generate a dielectric function spectra and solar eff.
+    <span class="md-ellipsis">
+      How to plot generate a dielectric function spectra and solar eff.
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-generateuse-electronic-wannier-tight-binding-model" class="md-nav__link">
-    How to generate/use electronic Wannier tight binding model
+    <span class="md-ellipsis">
+      How to generate/use electronic Wannier tight binding model
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-generate-fermi-surfaces" class="md-nav__link">
-    How to generate Fermi-surfaces
+    <span class="md-ellipsis">
+      How to generate Fermi-surfaces
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-run-boltztrap-for-transport-properties" class="md-nav__link">
-    How to run BoltzTrap for transport properties
+    <span class="md-ellipsis">
+      How to run BoltzTrap for transport properties
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-make-heterostructuresinterfaces" class="md-nav__link">
-    How to make heterostructures/interfaces
+    <span class="md-ellipsis">
+      How to make heterostructures/interfaces
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-get-irraman-spectra" class="md-nav__link">
-    How to get IR/Raman spectra
+    <span class="md-ellipsis">
+      How to get IR/Raman spectra
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-get-piezoelecticdielecrricbec-constants" class="md-nav__link">
-    How to get piezoelectic/dielecrric/BEC constants
+    <span class="md-ellipsis">
+      How to get piezoelectic/dielecrric/BEC constants
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-get-electric-field-gradients" class="md-nav__link">
-    How to get electric field gradients
+    <span class="md-ellipsis">
+      How to get electric field gradients
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-get-work-function-of-a-surface" class="md-nav__link">
-    How to get work-function of a surface
+    <span class="md-ellipsis">
+      How to get work-function of a surface
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-get-exfoliation-energy-of-a-2d-material" class="md-nav__link">
-    How to get exfoliation energy of a 2D material
+    <span class="md-ellipsis">
+      How to get exfoliation energy of a 2D material
+    </span>
   </a>
   
 </li>
@@ -619,7 +663,9 @@
       
         <li class="md-nav__item">
   <a href="#how-to-runanalyze-md-staticdynamic-calculation-using-lammps" class="md-nav__link">
-    How to run/analyze MD static/dynamic calculation using LAMMPS
+    <span class="md-ellipsis">
+      How to run/analyze MD static/dynamic calculation using LAMMPS
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="How to run/analyze MD static/dynamic calculation using LAMMPS">
@@ -627,14 +673,18 @@
         
           <li class="md-nav__item">
   <a href="#how-to-run-calculation" class="md-nav__link">
-    How to run calculation
+    <span class="md-ellipsis">
+      How to run calculation
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-analyze-data" class="md-nav__link">
-    How to analyze data
+    <span class="md-ellipsis">
+      How to analyze data
+    </span>
   </a>
   
 </li>
@@ -646,7 +696,9 @@
       
         <li class="md-nav__item">
   <a href="#how-to-runanalyze-dft-static-calculation-using-quantum-espresso" class="md-nav__link">
-    How to run/analyze DFT static calculation using Quantum espresso
+    <span class="md-ellipsis">
+      How to run/analyze DFT static calculation using Quantum espresso
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="How to run/analyze DFT static calculation using Quantum espresso">
@@ -654,14 +706,18 @@
         
           <li class="md-nav__item">
   <a href="#how-to-setup-a-single-calculation_1" class="md-nav__link">
-    How to setup a single calculation
+    <span class="md-ellipsis">
+      How to setup a single calculation
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-setup-high-throughput-calculations_1" class="md-nav__link">
-    How to setup high-throughput calculations
+    <span class="md-ellipsis">
+      How to setup high-throughput calculations
+    </span>
   </a>
   
 </li>
@@ -673,7 +729,9 @@
       
         <li class="md-nav__item">
   <a href="#how-to-traing-jarvis-cfid-ml-models-using-sklearnlightgbm" class="md-nav__link">
-    How to traing JARVIS-CFID ML models using sklearn/lightgbm
+    <span class="md-ellipsis">
+      How to traing JARVIS-CFID ML models using sklearn/lightgbm
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="How to traing JARVIS-CFID ML models using sklearn/lightgbm">
@@ -681,14 +739,18 @@
         
           <li class="md-nav__item">
   <a href="#how-to-train-chemical-formula-only-datasets" class="md-nav__link">
-    How to train chemical formula only datasets
+    <span class="md-ellipsis">
+      How to train chemical formula only datasets
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-train-regression-model" class="md-nav__link">
-    How to train regression model
+    <span class="md-ellipsis">
+      How to train regression model
+    </span>
   </a>
   
 </li>
@@ -700,7 +762,9 @@
       
         <li class="md-nav__item">
   <a href="#how-to-traing-jarvis-alignn-ml-models-using-pytorch" class="md-nav__link">
-    How to traing JARVIS-ALIGNN ML models using PyTorch
+    <span class="md-ellipsis">
+      How to traing JARVIS-ALIGNN ML models using PyTorch
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="How to traing JARVIS-ALIGNN ML models using PyTorch">
@@ -708,7 +772,9 @@
         
           <li class="md-nav__item">
   <a href="#how-to-train-regression-model_1" class="md-nav__link">
-    How to train regression model
+    <span class="md-ellipsis">
+      How to train regression model
+    </span>
   </a>
   
 </li>
@@ -720,7 +786,9 @@
       
         <li class="md-nav__item">
   <a href="#how-to-use-quantum-computation-algorithms-using-qiskittequilapennylane" class="md-nav__link">
-    How to use quantum computation algorithms using Qiskit/Tequila/Pennylane
+    <span class="md-ellipsis">
+      How to use quantum computation algorithms using Qiskit/Tequila/Pennylane
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="How to use quantum computation algorithms using Qiskit/Tequila/Pennylane">
@@ -728,21 +796,27 @@
         
           <li class="md-nav__item">
   <a href="#how-to-generate-circuit-model" class="md-nav__link">
-    How to generate circuit model
+    <span class="md-ellipsis">
+      How to generate circuit model
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-run-cals-on-simulators" class="md-nav__link">
-    How to run cals. on simulators
+    <span class="md-ellipsis">
+      How to run cals. on simulators
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#how-to-run-cals-on-actual-quantum-computers" class="md-nav__link">
-    How to run cals. on actual quantum computers
+    <span class="md-ellipsis">
+      How to run cals. on actual quantum computers
+    </span>
   </a>
   
 </li>
@@ -1472,18 +1546,26 @@ or use something like Jupyter notebook/Colab notebook.</p>
 
 
 
+
+
+
+
+
+
+
                 
               </article>
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
           <button type="button" class="md-top md-icon" data-md-component="top" hidden>
-            
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
-            Back to top
-          </button>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
         
       </main>
       
@@ -1510,7 +1592,7 @@ or use something like Jupyter notebook/Colab notebook.</p>
       
     
     <a href="https://github.com/usnistgov/jarvis" target="_blank" rel="noopener" title="github.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
     </a>
   
 </div>
@@ -1524,10 +1606,11 @@ or use something like Jupyter notebook/Colab notebook.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "toc.integrate"], "search": "../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "toc.integrate"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.4e0fa4ba.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7c377c4.min.js"></script>
       
         <script src="../javascripts/tablesort.min.js"></script>
       
