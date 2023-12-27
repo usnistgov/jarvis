@@ -222,7 +222,7 @@ class Locpot(Chgcar):
 
     def vac_potential(
         self,
-        direction="Z",
+        direction="X",
         Ef=0,
         cbm=0,
         vbm=0,
