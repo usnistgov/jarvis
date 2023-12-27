@@ -48,6 +48,28 @@ class QEjob(object):
         """Write inputs."""
         self.qeinput.write_file(self.input_file)
 
+    def to_dict(self):
+        """Get dictionary."""
+        info = {}
+        info["atoms"] = self.atoms.to_dict()
+
+        info["kpoints"] = self.kpoints.to_dict()
+        info["qe_cmd"] = self.qe_cmd
+        info["psp_dir"] = self.psp_dir
+        info["url"] = self.url
+        return info
+
+    @classmethod
+    def from_dict(self, info={}):
+        """Load from a dictionary."""
+        return QEjob(
+            atoms=Atoms.from_dict(info["atoms"]),
+            kpoints=Kpoints3D.from_dict(info["kpoints"]),
+            qe_cmd=info["qe_cmd"],
+            psp_dir=info["psp_dir"],
+            url=info["url"],
+        )
+
     def runjob(self):
         """Run job and make or return a metadata file."""
         fname = self.jobname + ".json"

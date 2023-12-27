@@ -199,7 +199,14 @@ class Chgcar(object):
 
     def chg_set(self, text, start, end, volume, ng):
         """Return CHGCAR sets."""
+
         lines_0 = text[start:end]
+        # tmp = np.empty((ng))
+        # p = np.fromstring('\n'.join(lines_0),  sep=' ')
+        # for zz in range(tmp.shape[2]):
+        # for yy in range(tmp.shape[1]):
+        #    tmp[:,yy,zz] = np.fromstring(p,  sep=' ',count=tmp.shape[0])
+        #    print(np.fromstring(p,  sep=' ',count=tmp.shape[0]))
         tmp = []
         for i in lines_0:
             for j in i.split():
@@ -214,75 +221,185 @@ class Locpot(Chgcar):
     """Read LOCPOT files."""
 
     def vac_potential(
-        self, direction="X", Ef=0, filename="Avg.png", plot=True
+        self,
+        direction="X",
+        Ef=0,
+        cbm=0,
+        vbm=0,
+        filename="Avg.png",
+        use_ase=False,
+        plot=True,
     ):
         """Calculate vacuum potential used in work-function calculation."""
+
+        if use_ase:
+            from ase.calculators.vasp import VaspChargeDensity
+
+            locd = VaspChargeDensity(self.filename)
+            cell = locd.atoms[0].cell
+            latlens = np.linalg.norm(cell, axis=1)
+            vol = np.linalg.det(cell)
+            iaxis = ["x", "y", "z"].index(direction.lower())
+            axes = [0, 1, 2]
+            axes.remove(iaxis)
+            axes = tuple(axes)
+            locpot = locd.chg[0]
+            mean = np.mean(locpot, axes) * vol
+            xvals = np.linspace(0, latlens[iaxis], locpot.shape[iaxis])
+            mean -= Ef
+            avg_max = max(mean)
+            dif = float(avg_max) - float(Ef)
+            if plot:
+                plt.xlabel("Distance(A)")
+                plt.plot(xvals, mean, "-", linewidth=2, markersize=10)
+                horiz_line_data = np.array(
+                    [avg_max for i in range(len(xvals))]
+                )
+                plt.plot(xvals, horiz_line_data, "-")
+                horiz_line_data = np.array([Ef for i in range(len(xvals))])
+                plt.plot(xvals, horiz_line_data, "-")
+                plt.ylabel("Potential (eV)")
+                ax = plt.gca()
+                ax.get_yaxis().get_major_formatter().set_useOffset(False)
+                plt.title(
+                    str("Energy diff. ")
+                    + str(round(float(dif), 3))
+                    + str(" eV"),
+                    fontsize=16,
+                )
+                plt.grid(color="gray", ls="-.")
+                plt.minorticks_on()
+                plt.tight_layout()
+
+                plt.savefig(filename)
+                plt.close()
+
+            return xvals, mean
+
         atoms = self.atoms
+        vol = atoms.volume
         cell = atoms.lattice_mat
-        chg = (self.chg[-1].T) * atoms.volume
-        latticelength = np.dot(cell, cell.T).diagonal()
-        latticelength = latticelength**0.5
-        ngridpts = np.array(chg.shape)
-        # totgridpts = ngridpts.prod()
-
-        if direction == "X":
-            idir = 0
-            a = 1
-            b = 2
-        elif direction == "Y":
-            a = 0
-            idir = 1
-            b = 2
+        chg = self.chg  # (self.chg[-1]) * atoms.volume
+        latlens = np.linalg.norm(cell, axis=1)
+        iaxis = ["x", "y", "z"].index(direction.lower())
+        formula = atoms.composition.reduced_formula
+        p = chg[0]
+        ng = [p.shape[2], p.shape[0], p.shape[1]]
+        p = p.flatten().reshape(ng)
+        if iaxis == "z":
+            axes = (1, 2)
+        elif iaxis == "y":
+            # TODO: test
+            axes = (0, 1)
         else:
-            a = 0
-            b = 1
-            idir = 2
-        a = (idir + 1) % 3
-        b = (idir + 2) % 3
-        average = np.zeros(ngridpts[idir], dtype=float)
-        # average = np.zeros(ngridpts[idir], np.float)
-        for ipt in range(ngridpts[idir]):
-            if direction == "X":
-                average[ipt] = chg[ipt, :, :].sum()
-            elif direction == "Y":
-                average[ipt] = chg[:, ipt, :].sum()
-            else:
-                average[ipt] = chg[:, :, ipt].sum()
-        average /= ngridpts[a] * ngridpts[b]
-        xdiff = latticelength[idir] / float(ngridpts[idir] - 1)
-        xs = []
-        ys = []
-        for i in range(ngridpts[idir]):
-            x = i * xdiff
-            xs.append(x)
-            ys.append(average[i])
+            # TODO: test
+            axes = (0, 2)
+        axes = (1, 2)
+        mean = np.mean(p, axes) * vol
+        xvals = np.linspace(0, latlens[iaxis], p.shape[0])
+        mean -= Ef
+        avg_max = max(mean)
+        plt.plot(xvals, mean)
+        horiz_line_data = np.array([avg_max for i in range(len(xvals))])
+        plt.plot(xvals, horiz_line_data, "-")
+        horiz_line_data = np.array([Ef for i in range(len(xvals))])
+        plt.plot(xvals, horiz_line_data, "-")
+        plt.ylabel("Potential (eV)")
+        dif = float(avg_max)  # - float(efermi)
+        # vac_level = avg_max
+        cbm = cbm  # - vac_level
+        vbm = vbm  # - vac_level
+        plt.title(
+            str("WF,CBM,VBM ")
+            + str(round(float(dif), 3))
+            + ","
+            + str(round(cbm, 2))
+            + ","
+            + str(round(vbm, 2))
+            + str(" eV"),
+            fontsize=16,
+        )
+        plt.xlabel("z (Angstrom)")
+        plt.savefig(filename)
+        plt.close()
 
-        avg_max = max(average)
+        # old
+        # chg = (self.chg[-1].T) * atoms.volume
+        # print("chg", chg.shape)
+        # direction = "X"
+        # iaxis = ["x", "y", "z"].index(direction.lower())
+        # axes = [0, 1, 2]
+        # axes.remove(iaxis)
+        # axes = tuple(axes)
+        # mean = np.mean(chg, axes)
+        # latlens = np.linalg.norm(cell, axis=1)
+        # xvals = np.linspace(0, latlens[iaxis], chg.shape[iaxis])
+        # mean -= Ef
+        # print("xvals", xvals)
+        # print("mean", mean)
 
-        dif = float(avg_max) - float(Ef)
-        if plt:
-            plt.xlabel("z (Angstrom)")
-            plt.plot(xs, ys, "-", linewidth=2, markersize=10)
-            horiz_line_data = np.array([avg_max for i in range(len(xs))])
-            plt.plot(xs, horiz_line_data, "-")
-            horiz_line_data = np.array([Ef for i in range(len(xs))])
-            plt.plot(xs, horiz_line_data, "-")
-            plt.ylabel("Potential (eV)")
-            ax = plt.gca()
-            ax.get_yaxis().get_major_formatter().set_useOffset(False)
-            plt.title(
-                str("Energy difference ")
-                + str(round(float(dif), 3))
-                + str(" eV"),
-                fontsize=26,
-            )
-            plt.tight_layout()
+        # latticelength = np.dot(cell, cell.T).diagonal()
+        # latticelength = latticelength**0.5
+        # ngridpts = np.array(chg.shape)
 
-            plt.savefig(filename)
-            plt.close()
+        # if direction == "X":
+        #    idir = 0
+        #    a = 1
+        #    b = 2
+        # elif direction == "Y":
+        #    a = 0
+        #    idir = 1
+        #    b = 2
+        # else:
+        #    a = 0
+        #    b = 1
+        #    idir = 2
+        # a = (idir + 1) % 3
+        # b = (idir + 2) % 3
+        # average = np.zeros(ngridpts[idir], dtype=float)
+        # print("average", average.shape)
+        # for ipt in range(ngridpts[idir]):
+        #    if direction == "X":
+        #        average[ipt] = chg[ipt, :, :].sum()
+        #    elif direction == "Y":
+        #        average[ipt] = chg[:, ipt, :].sum()
+        #    else:
+        #        average[ipt] = chg[:, :, ipt].sum()
+        # average /= ngridpts[a] * ngridpts[b]
+        # xdiff = latticelength[idir] / float(ngridpts[idir] - 1)
+        # xs = []
+        # ys = []
+        # for i in range(ngridpts[idir]):
+        #    x = i * xdiff
+        #    xs.append(x)
+        #    ys.append(average[i])
 
-        print("Ef,max,wf=", Ef, avg_max, dif)
-        return avg_max, dif
+        # avg_max = max(average)
+
+        # dif = float(avg_max) - float(Ef)
+        # if plt:
+        #    plt.xlabel("z (Angstrom)")
+        #    plt.plot(xs, ys, "-", linewidth=2, markersize=10)
+        #    horiz_line_data = np.array([avg_max for i in range(len(xs))])
+        #    plt.plot(xs, horiz_line_data, "-")
+        #    horiz_line_data = np.array([Ef for i in range(len(xs))])
+        #    plt.plot(xs, horiz_line_data, "-")
+        #    plt.ylabel("Potential (eV)")
+        #    ax = plt.gca()
+        #    ax.get_yaxis().get_major_formatter().set_useOffset(False)
+        #    plt.title(
+        #        str("Energy difference ")
+        #        + str(round(float(dif), 3))
+        #        + str(" eV"),
+        #        fontsize=26,
+        #    )
+        #    plt.tight_layout()
+
+        #    plt.savefig(filename)
+        #    plt.close()
+
+        # print("Ef,max,wf=", Ef, avg_max, dif)
+        return mean, cbm, vbm, avg_max, Ef, formula, atoms
 
 
 class Oszicar(object):
