@@ -265,7 +265,8 @@ def get_db_info():
         ],
         # https://doi.org/10.6084/m9.figshare.22721047
         "mlearn": [
-            "https://figshare.com/ndownloader/files/40424156",
+            # "https://figshare.com/ndownloader/files/40424156",
+            "https://figshare.com/ndownloader/files/40357663",
             "mlearn.json",
             "Obtaining mlearn dataset 1730...",
             "https://github.com/materialsvirtuallab/mlearn",
