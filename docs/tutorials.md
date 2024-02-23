@@ -643,7 +643,7 @@ import numpy as np
 from jarvis.core.composition import Composition
 from jarvis.core.specie import Specie
 from jarvis.ai.pkgs.lgbm.regression import regression
-from jarvis.ai.descriptors.cfid import get_chem_only_descriptor
+from jarvis.ai.descriptors.cfid import get_chem_only_descriptors
 
 # Load a dataset, you can use pandas read_csv also to generte my_data
 # Here is a sample dataset
@@ -671,7 +671,7 @@ X = []
 Y = []
 IDs = []
 for ii, i in enumerate(my_data):
-    X.append(get_chem_only_descriptor(i[0]))
+    X.append(get_chem_only_descriptors(i[0]))
     Y.append(i[1])
     IDs.append(ii)
 
