@@ -4,7 +4,7 @@
 import numpy as np
 import itertools
 import functools
-from qiskit import Aer
+from qiskit_aer import Aer
 from qiskit.utils import QuantumInstance, algorithm_globals
 from qiskit.opflow import I, X, Y, Z
 from qiskit.algorithms import VQE
