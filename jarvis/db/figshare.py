@@ -207,6 +207,13 @@ def get_db_info():
             "Obtaining C2DB dataset 3.5k...",
             "https://iopscience.iop.org/article/10.1088/2053-1583/aacfc1",
         ],
+        #https://doi.org/10.6084/m9.figshare.25256236
+        "halide_peroskites": [
+            "https://figshare.com/ndownloader/files/44619562",
+            "halide_peroskites.json",
+            "Obtaining halide perovskite dataset229...",
+            "https://doi.org/10.1039/D1EE02971A",
+        ],       
         # https://figshare.com/account/projects/100325/articles/14962356
         "hopv": [
             "https://ndownloader.figshare.com/files/28814184",
