@@ -414,6 +414,14 @@ def get_db_info():
             "Obtaining supercond. Tc dataset 161...",
             "https://doi.org/10.1021/acs.nanolett.2c04420",
         ],
+
+        # https://doi.org/10.6084/m9.figshare.23267852
+        "m3gnet_mpf": [
+            "https://figshare.com/ndownloader/files/41009036",
+            "m3gnet_mpf.json",
+            "Obtaining m3gnet_mpf dataset 168917...",
+            "https://github.com/materialsvirtuallab/m3gnet",
+        ],
         # https://doi.org/10.6084/m9.figshare.13154159
         "raw_files": [
             "https://ndownloader.figshare.com/files/25295732",
