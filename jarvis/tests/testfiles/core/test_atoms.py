@@ -13,6 +13,12 @@ from jarvis.db.figshare import get_jid_data, data
 import tarfile
 import tempfile
 
+FIXTURES = {
+    "lattice_mat": [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]],
+    "coords": [[0, 0, 0], [0.25, 0.2, 0.25]],
+    "elements": ["Si", "Si"],
+}
+
 new_file, filename = tempfile.mkstemp()
 
 
@@ -76,10 +82,7 @@ def test_from_cif():
 
 def test_basic_atoms():
 
-    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-    coords = [[0, 0, 0], [0.25, 0.2, 0.25]]
-    elements = ["Si", "Si"]
-    Si = Atoms(lattice_mat=box, coords=coords, elements=elements)
+    Si = Atoms(lattice_mat=FIXTURES["lattice_mat"], coords=FIXTURES["coords"], elements=FIXTURES["elements"])
     dim = get_supercell_dims(Si)
     build_xanes_poscar(atoms=Si, filename_with_prefix=True)
     assert dim == [3, 3, 3]
@@ -208,6 +211,14 @@ def test_basic_atoms():
     cmd = "rm atoms.xyz POSCAR atoms.cif"
     os.system(cmd)
 
+def test_clone():
+    Si = Atoms(lattice_mat=FIXTURES["lattice_mat"], coords=FIXTURES["coords"], elements=FIXTURES["elements"])
+    Si2 = Si.clone()
+    assert (Si2.lattice_mat == Si.lattice_mat and Si2.coords == Si.coords and Si2.elements == Si.elements
+            and Si2.props == Si.props and Si2.cartesian == Si.cartesian and Si2.show_props == Si.show_props)
 
-# test_basic_atoms()
-# def test_basic_atoms():
+def test_remove_sites_by_indices():
+    Si = Atoms(lattice_mat=FIXTURES["lattice_mat"], coords=FIXTURES["coords"], elements=FIXTURES["elements"])
+    Si_supercell = Si.make_supercell([2, 2, 2])
+    Si2_supercell_without_two_atoms = Si_supercell.remove_sites_by_indices(indices=[0, 1])
+    assert (Si2_supercell_without_two_atoms.num_atoms == 14)

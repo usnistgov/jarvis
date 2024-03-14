@@ -698,14 +698,23 @@ class Atoms(object):
 
     def remove_site_by_index(self, site=0):
         """Remove an atom by its index number."""
+        return self.remove_sites_by_indices(indices=[site])
+
+    def remove_sites_by_indices(self, indices=[0], in_place=False):
+        """Remove multiple atoms by their corresponding indices number."""
         new_els = []
         new_coords = []
         new_props = []
         for ii, i in enumerate(self.frac_coords):
-            if ii != site:
+            if ii in indices:
                 new_els.append(self.elements[ii])
                 new_coords.append(self.frac_coords[ii])
                 new_props.append(self.props[ii])
+        if in_place:
+            self.elements = new_els
+            self.coords = new_coords
+            self.props = new_props
+            return self
         return Atoms(
             lattice_mat=self.lattice_mat,
             elements=new_els,
@@ -1430,6 +1439,18 @@ class Atoms(object):
 
         result = header + middle + rest
         return result
+
+    def clone(self):
+        """Clones the class instance."""
+        return Atoms(
+            lattice_mat=self.lattice_mat,
+            elements=self.elements,
+            coords=self.frac_coords,
+            props=self.props,
+            cartesian=self.cartesian,
+            show_props=self.show_props,
+        )
+
 
 
 class VacuumPadding(object):
