@@ -84,6 +84,7 @@ pyasn1-modules>=0.2.8
 pybind11>=2.8.1
 PyCifRW>=4.4
 pycparser>=2.21
+pydantic
 Pygments>=2.14
 pyparsing>=3.0.6
 pyrsistent>=0.18.0
@@ -98,6 +99,7 @@ PyWavelets>=1.2.0
 PyYAML>=6.0
 #qiskit
 qiskit==1.0.0
+#qiskit==0.41.1
 #qiskit==0.30.1
 #qiskit-aer==0.9.0
 qiskit-aer==0.13.2
