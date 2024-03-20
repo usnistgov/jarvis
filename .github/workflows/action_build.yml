@@ -1,42 +1,42 @@
 name: JARVIS-Tools github action
-
 on: [push, pull_request]
 
 jobs:
-  test:
-
-    runs-on: ubuntu-latest
-
+  miniconda:
+    name: Miniconda ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+        matrix:
+            os: ["ubuntu-latest"]
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Set up Miniconda
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        auto-update-conda: true
-        python-version: "3.10"
-        environment-file: environment.yml
-        activate-environment: my-env
-
-    - name: Install dependencies
-      run: |
-        conda env update --file environment.yml --name my-env
-        conda activate my-env
-
-    - name: Run pytest with coverage
-      run: |
-        conda activate my-env
-        python setup.py develop
-        pytest --cov=my_package tests/
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}  # Optional if your repository is public
-        file: ./coverage.xml  # Path to the coverage report
-        flags: unittests  # Optional flags, e.g., "unittests,integration"
-        name: codecov-umbrella  # Optional name for the upload
-        fail_ci_if_error: true  # Fail the CI if there's an error uploading coverage
+      - uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: test
+          environment-file: environment.yml
+          python-version: "3.10"
+          auto-activate-base: false
+      - shell: bash -l {0}
+        run: |
+          conda info
+          conda list
+      - name: Lint
+        shell: bash -l {0}
+        run: |
+            conda install flake8 pycodestyle pydocstyle
+            flake8 --ignore E203,W503 --exclude=examples,tests --statistics --count --exit-zero jarvis
+            pycodestyle --ignore E203,W503 --exclude=examples,testfiles jarvis
+            pydocstyle --match-dir=core --match-dir=io --match-dir=io --match-dir=ai --match-dir=analysis --match-dir=db --match-dir=tasks --count jarvis
+      
+      - name: Run pytest
+        shell: bash -l {0}
+        run: |
+            conda install pytest coverage
+            coverage run -m pytest
+            coverage report -m -i
+            codecov
+            codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
+            
 
 
 
