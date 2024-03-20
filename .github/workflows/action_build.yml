@@ -25,6 +25,7 @@ jobs:
       run: |
         find . -type f > before_test_files.txt
         conda env create -f environment.yml
+        conda activate my_jarvis
         conda install pandas numpy matplotlib --quiet
         pip install --upgrade pip
         pip install pycodestyle flake8 pydocstyle coverage pytest codecov
