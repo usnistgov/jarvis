@@ -31,11 +31,13 @@ jobs:
       - name: Run pytest
         shell: bash -l {0}
         run: |
-            conda install pytest coverage
+            conda install pytest coverage codecov
+            python setup.py develop
             coverage run -m pytest
             coverage report -m -i
             codecov
             codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
+            rm POSCAR* *.png
             
 
 
