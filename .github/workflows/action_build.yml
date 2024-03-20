@@ -3,70 +3,111 @@ name: JARVIS-Tools github action
 on: [push, pull_request]
 
 jobs:
-  checks:
-    name: Checks
+  test:
+
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash -l {0}
-    strategy:
-      matrix:
-        python-version: ["3.10"]
+
     steps:
     - uses: actions/checkout@v2
-    - name: Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
 
-    - uses: actions/cache@v2
+    - name: Set up Miniconda
+      uses: conda-incubator/setup-miniconda@v2
       with:
-        path: ${{ env.pythonLocation }}
-        key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
+        auto-update-conda: true
+        python-version: 3.10
+        environment-file: environment.yml
+        activate-environment: my-env
 
-    - name: Install requirements
+    - name: Install dependencies
       run: |
-        source ~/.bashrc
-        echo "begin: PATH=$PATH;"
-        find . -type f > before_test_files.txt
-        conda env create -f environment.yml
-        conda activate my_jarvis
-        conda install pandas numpy matplotlib phonopy scikit-learn --quiet
-        pip install --upgrade pip
-        pip install pycodestyle flake8 pydocstyle coverage pytest codecov qiskit==0.41.1
-        flake8 --ignore E203,W503 --exclude=examples,tests --statistics --count --exit-zero jarvis
-        pycodestyle --ignore E203,W503 --exclude=examples,testfiles jarvis
-        pydocstyle --match-dir=core --match-dir=io --match-dir=io --match-dir=ai --match-dir=analysis --match-dir=db --match-dir=tasks --count jarvis
+        conda env update --file environment.yml --name my-env
+        conda activate my-env
+
+    - name: Run pytest with coverage
+      run: |
+        conda activate my-env
+        pytest --cov=my_package tests/
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}  # Optional if your repository is public
+        file: ./coverage.xml  # Path to the coverage report
+        flags: unittests  # Optional flags, e.g., "unittests,integration"
+        name: codecov-umbrella  # Optional name for the upload
+        fail_ci_if_error: true  # Fail the CI if there's an error uploading coverage
+
+
+
+# name: JARVIS-Tools github action
+
+# on: [push, pull_request]
+
+# jobs:
+#   checks:
+#     name: Checks
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         shell: bash -l {0}
+#     strategy:
+#       matrix:
+#         python-version: ["3.10"]
+#     steps:
+#     - uses: actions/checkout@v2
+#     - name: Setup Python ${{ matrix.python-version }}
+#       uses: actions/setup-python@v2
+#       with:
+#         python-version: ${{ matrix.python-version }}
+
+#     - uses: actions/cache@v2
+#       with:
+#         path: ${{ env.pythonLocation }}
+#         key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('dev-requirements.txt') }}
+
+#     - name: Install requirements
+#       run: |
+#         source ~/.bashrc
+#         echo "begin: PATH=$PATH;"
+#         find . -type f > before_test_files.txt
+#         conda env create -f environment.yml
+#         conda activate my_jarvis
+#         conda install pandas numpy matplotlib phonopy scikit-learn --quiet
+#         pip install --upgrade pip
+#         pip install pycodestyle flake8 pydocstyle coverage pytest codecov qiskit==0.41.1
+#         flake8 --ignore E203,W503 --exclude=examples,tests --statistics --count --exit-zero jarvis
+#         pycodestyle --ignore E203,W503 --exclude=examples,testfiles jarvis
+#         pydocstyle --match-dir=core --match-dir=io --match-dir=io --match-dir=ai --match-dir=analysis --match-dir=db --match-dir=tasks --count jarvis
                 
-        #python setup.py develop
-        #pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
-        #conda install -c ambermd pytraj
-        #pip install numpy scipy matplotlib
-        #pip install -r dev-requirements.txt
+#         #python setup.py develop
+#         #pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
+#         #conda install -c ambermd pytraj
+#         #pip install numpy scipy matplotlib
+#         #pip install -r dev-requirements.txt
         
-        pip install -e .
-        echo 'CONDA LIST'
-        conda list
+#         pip install -e .
+#         echo 'CONDA LIST'
+#         conda list
 
-        echo 'PIP FREEZE'
-        pip freeze
+#         echo 'PIP FREEZE'
+#         pip freeze
 
-        #echo 'PYTEST-COV'
-        #pytest --cov-config=.coveragerc --cov=jarvis -n 2
+#         #echo 'PYTEST-COV'
+#         #pytest --cov-config=.coveragerc --cov=jarvis -n 2
 
-        coverage run -m pytest
-        coverage report -m -i
-        codecov
-        codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
-        find . -type f > after_test_files.txt
-        #comm -13 <(sort before_test_files.txt) <(sort after_test_files.txt) > new_files.txt
-        #cat new_files.txt | xargs rm
-        #rm before_test_files.txt after_test_files.txt new_files.txt
+#         coverage run -m pytest
+#         coverage report -m -i
+#         codecov
+#         codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
+#         find . -type f > after_test_files.txt
+#         #comm -13 <(sort before_test_files.txt) <(sort after_test_files.txt) > new_files.txt
+#         #cat new_files.txt | xargs rm
+#         #rm before_test_files.txt after_test_files.txt new_files.txt
 
-        # git clone https://github.com/QEF/q-e.git
-        # cd q-e
-        # ./configure
-        # make pw
+#         # git clone https://github.com/QEF/q-e.git
+#         # cd q-e
+#         # ./configure
+#         # make pw
 
 # jobs:
 #   checks:
