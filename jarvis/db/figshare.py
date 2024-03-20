@@ -207,6 +207,13 @@ def get_db_info():
             "Obtaining C2DB dataset 3.5k...",
             "https://iopscience.iop.org/article/10.1088/2053-1583/aacfc1",
         ],
+        # https://doi.org/10.6084/m9.figshare.25256236
+        "halide_peroskites": [
+            "https://figshare.com/ndownloader/files/44619562",
+            "halide_peroskites.json",
+            "Obtaining halide perovskite dataset229...",
+            "https://doi.org/10.1039/D1EE02971A",
+        ],
         # https://figshare.com/account/projects/100325/articles/14962356
         "hopv": [
             "https://ndownloader.figshare.com/files/28814184",
@@ -265,7 +272,8 @@ def get_db_info():
         ],
         # https://doi.org/10.6084/m9.figshare.22721047
         "mlearn": [
-            "https://figshare.com/ndownloader/files/40424156",
+            # "https://figshare.com/ndownloader/files/40424156",
+            "https://figshare.com/ndownloader/files/40357663",
             "mlearn.json",
             "Obtaining mlearn dataset 1730...",
             "https://github.com/materialsvirtuallab/mlearn",
@@ -405,6 +413,13 @@ def get_db_info():
             "jarvis_epc_data_2d.json",
             "Obtaining supercond. Tc dataset 161...",
             "https://doi.org/10.1021/acs.nanolett.2c04420",
+        ],
+        # https://doi.org/10.6084/m9.figshare.23267852
+        "m3gnet_mpf": [
+            "https://figshare.com/ndownloader/files/41009036",
+            "m3gnet_mpf.json",
+            "Obtaining m3gnet_mpf dataset 168917...",
+            "https://github.com/materialsvirtuallab/m3gnet",
         ],
         # https://doi.org/10.6084/m9.figshare.13154159
         "raw_files": [

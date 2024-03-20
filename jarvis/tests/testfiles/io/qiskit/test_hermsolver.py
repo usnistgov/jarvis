@@ -1,3 +1,87 @@
+from qiskit import Aer
+from qiskit.utils import QuantumInstance, algorithm_globals
+from qiskit.algorithms import VQE
+from qiskit.algorithms.optimizers import SLSQP
+import numpy as np
+import itertools, functools
+from qiskit.opflow import I, X, Y, Z
+from jarvis.db.figshare import get_wann_electron, get_wann_phonon, get_hk_tb
+from jarvis.core.circuits import QuantumCircuitLibrary
+from jarvis.io.qiskit.inputs import HermitianSolver
+from qiskit import Aer
+
+
+def decompose_Hamiltonian(H):
+    # Inspired from
+    # https://github.com/PennyLaneAI/pennylane/blob/master/pennylane/utils.py#L45
+    # https://qiskit.org/documentation/tutorials/algorithms/04_vqe_advanced.html
+    x, y = H.shape
+    N = int(np.log2(len(H)))
+    if len(H) - 2**N != 0 or x != y:
+        raise ValueError(
+            "Hamiltonian should be in the form (2^n x 2^n), for any n>=1"
+        )
+    pauilis = [I, X, Y, Z]
+    decomposedH = 0
+    for term in itertools.product(pauilis, repeat=N):
+        matrices = [i.to_matrix() for i in term]
+        # coefficient of the pauli string = (1/2^N) * (Tr[pauliOp x H])
+        coeff = np.trace(functools.reduce(np.kron, matrices) @ H) / (2**N)
+        coeff = np.real_if_close(coeff).item()
+        if coeff == 0:
+            continue
+        obs = 1
+        for i in term:
+            obs = obs ^ i
+        decomposedH += coeff * obs
+    return decomposedH
+
+
+def test_qiskit():
+    wtbh, Ef, atoms = get_wann_electron("JVASP-816")
+    kpt = [0.5, 0.0, 0.5]  # X-point
+    hk = get_hk_tb(w=wtbh, k=kpt)
+    wtbh_op = decompose_Hamiltonian(hk)
+
+    seed = 50
+    algorithm_globals.random_seed = seed
+    qi = QuantumInstance(
+        Aer.get_backend("statevector_simulator"),
+        seed_transpiler=seed,
+        seed_simulator=seed,
+    )
+    n_qubits = int(np.log2(len(hk)))
+    # ansatz = TwoLocal(rotation_blocks='ry', entanglement_blocks='cz')
+    ansatz = QuantumCircuitLibrary(n_qubits=n_qubits, reps=1).circuit6()
+    slsqp = SLSQP(maxiter=1000)
+    vqe = VQE(ansatz, optimizer=slsqp, quantum_instance=qi)
+    result = vqe.compute_minimum_eigenvalue(operator=wtbh_op)
+    np_eig = min(np.linalg.eig(hk)[0])
+    print("numpy min. eig", np_eig)
+
+    eigenvalue = result.eigenvalue
+    # print(result)
+    print("VQE eig.", eigenvalue)
+
+
+def test_statvector():
+    backend = Aer.get_backend("statevector_simulator")
+    # Aluminum JARVIS-ID: JVASP-816
+    wtbh, Ef, atoms = get_wann_electron("JVASP-816")
+    kpt = [0.5, 0.0, 0.5]  # X-point
+    hk = get_hk_tb(w=wtbh, k=kpt)
+    HS = HermitianSolver(hk)
+    n_qubits = HS.n_qubits()
+    circ = QuantumCircuitLibrary(n_qubits=n_qubits, reps=1).circuit6()
+    en, vqe_result, vqe = HS.run_vqe(var_form=circ, backend=backend)
+    vals, vecs = HS.run_numpy()
+    # Ef: Fermi-level
+    print("Classical, VQE (eV):", vals[0] - Ef, en - Ef)
+    print("Show model\n", circ)
+
+
+"""
+# Commenting due to pypi conflicts in qiskit
 #
 # from qiskit.circuit.library import EfficientSU2
 from qiskit.circuit import QuantumCircuit
@@ -120,3 +204,4 @@ def test_inp():
 
 
 #test_inp()
+"""
