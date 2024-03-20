@@ -26,6 +26,7 @@ jobs:
     - name: Run pytest with coverage
       run: |
         conda activate my-env
+        python setup.py develop
         pytest --cov=my_package tests/
 
     - name: Upload coverage to Codecov
