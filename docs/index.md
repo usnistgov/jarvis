@@ -28,9 +28,9 @@ NIST-JARVIS official website is: <https://jarvis.nist.gov> . This
 project is a part of the Materials Genome Initiative (MGI) at NIST
 (<https://mgi.nist.gov/>).
 
-For more details, checkout our latest article: [The joint automated
+For more details, checkout our latest articles: [The joint automated
 repository for various integrated simulations (JARVIS) for data-driven
-materials design](https://www.nature.com/articles/s41524-020-00440-1), [other publications](https://pages.nist.gov/jarvis/publications/) and [YouTube
+materials design](https://www.nature.com/articles/s41524-020-00440-1), [Recent progress in the JARVIS infrastructure for next-generation data-driven materials design](https://pubs.aip.org/aip/apr/article/10/4/041302/2917416), [other publications](https://pages.nist.gov/jarvis/publications/) and [YouTube
 videos](https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel=JARVIS-repository)
 
 
