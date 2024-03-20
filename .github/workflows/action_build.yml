@@ -25,8 +25,9 @@ jobs:
       run: |
         find . -type f > before_test_files.txt
         conda env create -f environment.yml
+        conda install pandas numpy matplotlib --quiet
         pip install --upgrade pip
-        pip install pycodestyle flake8 pydocstyle coverage
+        pip install pycodestyle flake8 pydocstyle coverage pytest codecov
         flake8 --ignore E203,W503 --exclude=examples,tests --statistics --count --exit-zero jarvis
         pycodestyle --ignore E203,W503 --exclude=examples,testfiles jarvis
         pydocstyle --match-dir=core --match-dir=io --match-dir=io --match-dir=ai --match-dir=analysis --match-dir=db --match-dir=tasks --count jarvis
@@ -34,10 +35,9 @@ jobs:
         #python setup.py develop
         #pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
         #conda install -c ambermd pytraj
-        conda install pandas numpy matplotlib --quiet
-        
         #pip install numpy scipy matplotlib
         #pip install -r dev-requirements.txt
+        
         pip install -e .
         echo 'CONDA LIST'
         conda list
@@ -47,7 +47,6 @@ jobs:
 
         #echo 'PYTEST-COV'
         #pytest --cov-config=.coveragerc --cov=jarvis -n 2
-
 
         coverage run -m pytest
         coverage report -m -i
