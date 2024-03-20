@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.14">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.10ba22f1.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
@@ -1390,7 +1390,7 @@ getting descriptors isshown below:</p>
 <span class="kn">from</span> <span class="nn">jarvis.core.composition</span> <span class="kn">import</span> <span class="n">Composition</span>
 <span class="kn">from</span> <span class="nn">jarvis.core.specie</span> <span class="kn">import</span> <span class="n">Specie</span>
 <span class="kn">from</span> <span class="nn">jarvis.ai.pkgs.lgbm.regression</span> <span class="kn">import</span> <span class="n">regression</span>
-<span class="kn">from</span> <span class="nn">jarvis.ai.descriptors.cfid</span> <span class="kn">import</span> <span class="n">get_chem_only_descriptor</span>
+<span class="kn">from</span> <span class="nn">jarvis.ai.descriptors.cfid</span> <span class="kn">import</span> <span class="n">get_chem_only_descriptors</span>
 
 <span class="c1"># Load a dataset, you can use pandas read_csv also to generte my_data</span>
 <span class="c1"># Here is a sample dataset</span>
@@ -1418,7 +1418,7 @@ getting descriptors isshown below:</p>
 <span class="n">Y</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">IDs</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">my_data</span><span class="p">):</span>
-    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_chem_only_descriptor</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_chem_only_descriptors</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
     <span class="n">Y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">IDs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span>
 
@@ -1607,10 +1607,10 @@ or use something like Jupyter notebook/Colab notebook.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "toc.integrate"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "toc.integrate"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      <script src="../assets/javascripts/bundle.bd41221c.min.js"></script>
       
         <script src="../javascripts/tablesort.min.js"></script>
       

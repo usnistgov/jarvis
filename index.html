@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.14">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.10ba22f1.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
@@ -493,9 +493,9 @@ classical force-field/molecular dynamics and machine-learning. The
 NIST-JARVIS official website is: <a href="https://jarvis.nist.gov">https://jarvis.nist.gov</a> . This
 project is a part of the Materials Genome Initiative (MGI) at NIST
 (<a href="https://mgi.nist.gov/">https://mgi.nist.gov/</a>).</p>
-<p>For more details, checkout our latest article: <a href="https://www.nature.com/articles/s41524-020-00440-1">The joint automated
+<p>For more details, checkout our latest articles: <a href="https://www.nature.com/articles/s41524-020-00440-1">The joint automated
 repository for various integrated simulations (JARVIS) for data-driven
-materials design</a>, <a href="https://pages.nist.gov/jarvis/publications/">other publications</a> and <a href="https://www.youtube.com/watch?v=P0ZcHXOC6W0&amp;feature=emb_title&amp;ab_channel=JARVIS-repository">YouTube
+materials design</a>, <a href="https://pubs.aip.org/aip/apr/article/10/4/041302/2917416">Recent progress in the JARVIS infrastructure for next-generation data-driven materials design</a>, <a href="https://pages.nist.gov/jarvis/publications/">other publications</a> and <a href="https://www.youtube.com/watch?v=P0ZcHXOC6W0&amp;feature=emb_title&amp;ab_channel=JARVIS-repository">YouTube
 videos</a></p>
 <p align="center">
    <a href="https://jarvis.nist.gov/"> <img src="https://www.ctcms.nist.gov/~knc6/images/logo/jarvis-mission.png" alt="jarvis" class="center"  width="600"/></a>
@@ -558,9 +558,9 @@ videos</a></p>
     <a href="https://conda.io/miniconda.html">https://conda.io/miniconda.html</a> :</p>
 <pre><code>bash Miniconda3-latest-Linux-x86_64.sh (for linux)
 bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
-Download 32/64 bit python 3.9 miniconda exe and install (for windows)
+Download 32/64 bit python 3.10 miniconda exe and install (for windows)
 Now, let's make a conda environment just for JARVIS::
-conda create --name my_jarvis python=3.9
+conda create --name my_jarvis python=3.10
 source activate my_jarvis
 </code></pre>
 </li>
@@ -579,13 +579,19 @@ source activate my_jarvis
 <pre><code>pip install numpy scipy matplotlib
 git clone https://github.com/usnistgov/jarvis.git
 cd jarvis
-python setup.py install
+python setup.py develop
 </code></pre>
 </li>
 <li>
-<p>Note on installing additional dependencies for all modules to
-    function:</p>
-<pre><code>pip install -r dev-requirements.txt
+<p>Method-4: Note on installing additional dependencies (for developers):</p>
+<pre><code>conda env create --name my_jarvis -f environment.yml
+conda activate my_jarvis
+conda install pytest coverage codecov
+git clone https://github.com/usnistgov/jarvis.git
+cd jarvis
+git checkout develop
+python setup.py develop
+coverage run -m pytest
 </code></pre>
 </li>
 </ul>
@@ -912,10 +918,10 @@ conduct</a></p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "toc.integrate"], "search": "assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.top", "toc.integrate"], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.d7c377c4.min.js"></script>
+      <script src="assets/javascripts/bundle.bd41221c.min.js"></script>
       
         <script src="javascripts/tablesort.min.js"></script>
       
