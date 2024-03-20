@@ -98,9 +98,9 @@ videos](https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel
 
         bash Miniconda3-latest-Linux-x86_64.sh (for linux)
         bash Miniconda3-latest-MacOSX-x86_64.sh (for Mac)
-        Download 32/64 bit python 3.9 miniconda exe and install (for windows)
+        Download 32/64 bit python 3.10 miniconda exe and install (for windows)
         Now, let's make a conda environment just for JARVIS::
-        conda create --name my_jarvis python=3.9
+        conda create --name my_jarvis python=3.10
         source activate my_jarvis
 
 -   Method-1: Installation using pip:
@@ -116,12 +116,19 @@ videos](https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel
         pip install numpy scipy matplotlib
         git clone https://github.com/usnistgov/jarvis.git
         cd jarvis
-        python setup.py install
+        python setup.py develop
 
--   Note on installing additional dependencies for all modules to
-    function:
+-   Method-4: Note on installing additional dependencies (for developers):
 
-        pip install -r dev-requirements.txt
+        conda env create --name my_jarvis -f environment.yml
+        conda activate my_jarvis
+        conda install pytest coverage codecov
+        git clone https://github.com/usnistgov/jarvis.git
+        git checkout develop
+        cd jarvis
+        python setup.py develop
+        coverage run -m pytest
+        
 
 <a name="example"></a>
 ## Example function
