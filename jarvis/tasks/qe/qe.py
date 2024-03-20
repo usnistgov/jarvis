@@ -1,9 +1,12 @@
 """Module to run QE jobs."""
+
 from jarvis.io.qe.inputs import QEinfile
 from jarvis.io.qe.outputs import QEout
 import os
 from jarvis.db.jsonutils import loadjson, dumpjson
 import subprocess
+from jarvis.core.atoms import Atoms
+from jarvis.core.kpoints import Kpoints3D
 
 
 class QEjob(object):

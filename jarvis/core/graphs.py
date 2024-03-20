@@ -1,4 +1,5 @@
 """Module to generate networkx graphs."""
+
 from jarvis.core.atoms import get_supercell_dims
 from jarvis.core.specie import Specie
 from jarvis.core.utils import random_colors
@@ -11,18 +12,16 @@ from jarvis.core.specie import chem_data, get_node_attributes
 # from jarvis.core.atoms import Atoms
 from collections import defaultdict
 from typing import List, Tuple, Sequence, Optional
-
-try:
-    import torch
-    from tqdm import tqdm
-    import dgl
-except Exception as exp:
-    print("dgl/torch/tqdm is not installed.", exp)
-    pass
+import torch
+from tqdm import tqdm
+import dgl
 
 
 def canonize_edge(
-    src_id, dst_id, src_image, dst_image,
+    src_id,
+    dst_id,
+    src_image,
+    dst_image,
 ):
     """Compute canonical edge representation.
 
@@ -46,7 +45,11 @@ def canonize_edge(
 
 
 def nearest_neighbor_edges(
-    atoms=None, cutoff=8, max_neighbors=12, id=None, use_canonize=False,
+    atoms=None,
+    cutoff=8,
+    max_neighbors=12,
+    id=None,
+    use_canonize=False,
 ):
     """Construct k-NN edge list."""
     # returns List[List[Tuple[site, distance, index, image]]]
@@ -118,7 +121,8 @@ def nearest_neighbor_edges(
 
 
 def build_undirected_edgedata(
-    atoms=None, edges={},
+    atoms=None,
+    edges={},
 ):
     """Build undirected graph data from edge set.
 

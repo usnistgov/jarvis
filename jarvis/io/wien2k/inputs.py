@@ -1,5 +1,8 @@
 """Module to prepare input files for WIEN2k."""
-from scipy import array, zeros, sqrt, dot
+
+from numpy import array, zeros, sqrt, dot
+
+# from scipy import array, zeros, sqrt, dot
 import os
 from jarvis.core.utils import gcd
 
