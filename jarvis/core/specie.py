@@ -418,7 +418,8 @@ def get_digitized_feats_hot_encoded(
     from sklearn.preprocessing import OneHotEncoder
     import pandas as pd
 
-    encoder = OneHotEncoder(categories="auto", sparse=False)
+    encoder = OneHotEncoder(categories="auto", sparse_output=False)
+    # encoder = OneHotEncoder(categories="auto", sparse=False)
     dat = defaultdict()
     for i, j in chem_data.items():
         tmp = defaultdict()
@@ -458,7 +459,8 @@ def get_feats_hot_encoded(feature_names=keys, filename="feats_encoded.json"):
     from sklearn.preprocessing import OneHotEncoder
     import pandas as pd
 
-    encoder = OneHotEncoder(categories="auto", sparse=False)
+    encoder = OneHotEncoder(categories="auto", sparse_output=False)
+    # encoder = OneHotEncoder(categories="auto", sparse=False)
     dat = {}
     for i, j in chem_data.items():
         tmp = []
