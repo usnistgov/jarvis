@@ -1,3 +1,5 @@
+"""
+# Commenting due to pypi conflicts in qiskit
 #
 # from qiskit.circuit.library import EfficientSU2
 from qiskit.circuit import QuantumCircuit
@@ -120,3 +122,4 @@ def test_inp():
 
 
 #test_inp()
+"""

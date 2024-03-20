@@ -1,4 +1,5 @@
-#
+"""
+# Commenting due to pypi conflict in qiskit
 from jarvis.io.pennylane.inputs import run_vqe
 from jarvis.db.figshare import (
     get_wann_phonon,
@@ -11,4 +12,4 @@ def test_inp():
     # w, atoms = get_wann_phonon("JVASP-816")
     hk = get_hk_tb(w=w, k=[0.0, 0.0, 0])
     run_vqe(mat=hk)
-
+"""
