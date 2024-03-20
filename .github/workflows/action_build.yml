@@ -24,6 +24,7 @@ jobs:
     - name: Install requirements
       run: |
         find . -type f > before_test_files.txt
+        conda env create -f environment.yml
         pip install --upgrade pip
         pip install pycodestyle flake8 pydocstyle 
         flake8 --ignore E203,W503 --exclude=examples,tests --statistics --count --exit-zero jarvis
@@ -34,7 +35,7 @@ jobs:
         #pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
         #conda install -c ambermd pytraj
         conda install pandas numpy matplotlib --quiet
-        conda env create -f environment.yml
+        
         #pip install numpy scipy matplotlib
         #pip install -r dev-requirements.txt
         pip install -e .
