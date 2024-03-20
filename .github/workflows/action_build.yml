@@ -23,17 +23,20 @@ jobs:
 
     - name: Install requirements
       run: |
+        find . -type f > before_test_files.txt
         pip install --upgrade pip
         pip install pycodestyle flake8 pydocstyle 
         flake8 --ignore E203,W503 --exclude=examples,tests --statistics --count --exit-zero jarvis
         pycodestyle --ignore E203,W503 --exclude=examples,testfiles jarvis
         pydocstyle --match-dir=core --match-dir=io --match-dir=io --match-dir=ai --match-dir=analysis --match-dir=db --match-dir=tasks --count jarvis
-        
+                
         #python setup.py develop
         #pip install --upgrade --upgrade-strategy eager -r dev-requirements.txt -e .
         #conda install -c ambermd pytraj
-        pip install numpy scipy matplotlib
-        pip install -r dev-requirements.txt
+        conda install pandas numpy matplotlib --quiet
+        conda env create -f environment.yml
+        #pip install numpy scipy matplotlib
+        #pip install -r dev-requirements.txt
         pip install -e .
         echo 'CONDA LIST'
         conda list
@@ -49,6 +52,11 @@ jobs:
         coverage report -m -i
         codecov
         codecov --token="b61081a0-39de-44a8-8a9c-97d4be82af6d"
+        find . -type f > after_test_files.txt
+        #comm -13 <(sort before_test_files.txt) <(sort after_test_files.txt) > new_files.txt
+        #cat new_files.txt | xargs rm
+        #rm before_test_files.txt after_test_files.txt new_files.txt
+
         # git clone https://github.com/QEF/q-e.git
         # cd q-e
         # ./configure
