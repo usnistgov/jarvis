@@ -124,8 +124,8 @@ videos](https://www.youtube.com/watch?v=P0ZcHXOC6W0&feature=emb_title&ab_channel
         conda activate my_jarvis
         conda install pytest coverage codecov
         git clone https://github.com/usnistgov/jarvis.git
-        git checkout develop
         cd jarvis
+        git checkout develop
         python setup.py develop
         coverage run -m pytest
         
