@@ -61,11 +61,26 @@ poscar_path = os.path.join(
     "POSCAR",
 )
 
-cif_example = os.path.join(os.path.dirname(__file__), "1000052.cif",)
-cif_example2 = os.path.join(os.path.dirname(__file__), "Bacomp.cif",)
-cif_example3 = os.path.join(os.path.dirname(__file__), "mock.cif",)
-cif_example4 = os.path.join(os.path.dirname(__file__), "exp_000034.cif",)
-cif_example5 = os.path.join(os.path.dirname(__file__), "1000000.cif",)
+cif_example = os.path.join(
+    os.path.dirname(__file__),
+    "1000052.cif",
+)
+cif_example2 = os.path.join(
+    os.path.dirname(__file__),
+    "Bacomp.cif",
+)
+cif_example3 = os.path.join(
+    os.path.dirname(__file__),
+    "mock.cif",
+)
+cif_example4 = os.path.join(
+    os.path.dirname(__file__),
+    "exp_000034.cif",
+)
+cif_example5 = os.path.join(
+    os.path.dirname(__file__),
+    "1000000.cif",
+)
 
 
 def test_from_cif():
@@ -82,7 +97,11 @@ def test_from_cif():
 
 def test_basic_atoms():
 
-    Si = Atoms(lattice_mat=FIXTURES["lattice_mat"], coords=FIXTURES["coords"], elements=FIXTURES["elements"])
+    Si = Atoms(
+        lattice_mat=FIXTURES["lattice_mat"],
+        coords=FIXTURES["coords"],
+        elements=FIXTURES["elements"],
+    )
     dim = get_supercell_dims(Si)
     build_xanes_poscar(atoms=Si, filename_with_prefix=True)
     assert dim == [3, 3, 3]
@@ -112,8 +131,8 @@ def test_basic_atoms():
     prim = Si.get_primitive_atoms
     print(prim.cart_coords)
     conv = Si.get_conventional_atoms
-    spgn=Si.get_spacegroup
-    comp=compare_atoms(atoms1=prim,atoms2=conv)
+    spgn = Si.get_spacegroup
+    comp = compare_atoms(atoms1=prim, atoms2=conv)
     assert round(prim.cart_coords[0][0], 2) == round(4.37815150, 2)
     # print ('raw_distance_matrix', prim.raw_distance_matrix)
     # print ('raw_distance_matrix', Si.raw_distance_matrix)
@@ -211,14 +230,32 @@ def test_basic_atoms():
     cmd = "rm atoms.xyz POSCAR atoms.cif"
     os.system(cmd)
 
+
 def test_clone():
-    Si = Atoms(lattice_mat=FIXTURES["lattice_mat"], coords=FIXTURES["coords"], elements=FIXTURES["elements"])
+    Si = Atoms(
+        lattice_mat=FIXTURES["lattice_mat"],
+        coords=FIXTURES["coords"],
+        elements=FIXTURES["elements"],
+    )
     Si2 = Si.clone()
-    assert (Si2.lattice_mat == Si.lattice_mat and Si2.coords == Si.coords and Si2.elements == Si.elements
-            and Si2.props == Si.props and Si2.cartesian == Si.cartesian and Si2.show_props == Si.show_props)
+    assert (
+        Si2.lattice_mat == Si.lattice_mat
+        and Si2.coords == Si.coords
+        and Si2.elements == Si.elements
+        and Si2.props == Si.props
+        and Si2.cartesian == Si.cartesian
+        and Si2.show_props == Si.show_props
+    )
+
 
 def test_remove_sites_by_indices():
-    Si = Atoms(lattice_mat=FIXTURES["lattice_mat"], coords=FIXTURES["coords"], elements=FIXTURES["elements"])
+    Si = Atoms(
+        lattice_mat=FIXTURES["lattice_mat"],
+        coords=FIXTURES["coords"],
+        elements=FIXTURES["elements"],
+    )
     Si_supercell = Si.make_supercell([2, 2, 2])
-    Si2_supercell_without_two_atoms = Si_supercell.remove_sites_by_indices(indices=[0, 1])
-    assert (Si2_supercell_without_two_atoms.num_atoms == 14)
+    Si2_supercell_without_two_atoms = Si_supercell.remove_sites_by_indices(
+        indices=[0, 1]
+    )
+    assert Si2_supercell_without_two_atoms.num_atoms == 14

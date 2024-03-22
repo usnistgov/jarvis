@@ -1,4 +1,5 @@
 """This module provides classes to specify atomic structure."""
+
 import numpy as np
 from jarvis.core.composition import Composition
 from jarvis.core.specie import Specie, atomic_numbers_to_symbols
@@ -1452,7 +1453,6 @@ class Atoms(object):
         )
 
 
-
 class VacuumPadding(object):
     """Adds vaccum padding to make 2D structure or making molecules."""
 
@@ -1881,18 +1881,18 @@ class OptimadeAdaptor(object):
         info_at["cartesian_site_positions"] = atoms.cart_coords[order].tolist()
         info_at["nperiodic_dimensions"] = 3
         # info_at["species"] = atoms.elements
-        info_at[
-            "species"
-        ] = self.get_optimade_species()  # dict(atoms.composition.to_dict())
+        info_at["species"] = (
+            self.get_optimade_species()
+        )  # dict(atoms.composition.to_dict())
         info_at["elements_ratios"] = list(
             atoms.composition.atomic_fraction.values()
         )
         info_at["structure_features"] = []
         info_at["last_modified"] = str(now)
         # info_at["more_data_available"] = True
-        info_at[
-            "chemical_formula_descriptive"
-        ] = atoms.composition.reduced_formula
+        info_at["chemical_formula_descriptive"] = (
+            atoms.composition.reduced_formula
+        )
         info_at["dimension_types"] = [1, 1, 1]
         info["attributes"] = info_at
         return info
