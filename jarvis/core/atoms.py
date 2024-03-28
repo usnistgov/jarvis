@@ -707,7 +707,7 @@ class Atoms(object):
         new_coords = []
         new_props = []
         for ii, i in enumerate(self.frac_coords):
-            if ii in indices:
+            if ii not in indices:
                 new_els.append(self.elements[ii])
                 new_coords.append(self.frac_coords[ii])
                 new_props.append(self.props[ii])
@@ -1278,49 +1278,50 @@ class Atoms(object):
         dim = np.array(dim)
         if dim.shape == (3, 3):
             dim = np.array([int(np.linalg.norm(v)) for v in dim])
-        coords = self.frac_coords
-        all_symbs = self.elements  # [i.symbol for i in s.species]
-        nat = len(coords)
+        return self.make_supercell_matrix(dim)
+        # coords = self.frac_coords
+        # all_symbs = self.elements  # [i.symbol for i in s.species]
+        # nat = len(coords)
 
-        new_nat = nat * dim[0] * dim[1] * dim[2]
-        new_coords = np.zeros((new_nat, 3))
-        new_symbs = []  # np.chararray((new_nat))
-        props = []  # self.props
+        # new_nat = nat * dim[0] * dim[1] * dim[2]
+        # new_coords = np.zeros((new_nat, 3))
+        # new_symbs = []  # np.chararray((new_nat))
+        # props = []  # self.props
 
-        ct = 0
-        for i in range(nat):
-            for j in range(dim[0]):
-                for k in range(dim[1]):
-                    for m in range(dim[2]):
-                        props.append(self.props[i])
-                        new_coords[ct][0] = (coords[i][0] + j) / float(dim[0])
-                        new_coords[ct][1] = (coords[i][1] + k) / float(dim[1])
-                        new_coords[ct][2] = (coords[i][2] + m) / float(dim[2])
-                        new_symbs.append(all_symbs[i])
-                        ct = ct + 1
+        # ct = 0
+        # for i in range(nat):
+        #    for j in range(dim[0]):
+        #        for k in range(dim[1]):
+        #            for m in range(dim[2]):
+        #                props.append(self.props[i])
+        #                new_coords[ct][0] = (coords[i][0] + j) / float(dim[0])
+        #                new_coords[ct][1] = (coords[i][1] + k) / float(dim[1])
+        #                new_coords[ct][2] = (coords[i][2] + m) / float(dim[2])
+        #                new_symbs.append(all_symbs[i])
+        #                ct = ct + 1
 
-        nat = new_nat
+        # nat = new_nat
 
-        nat = len(coords)  # int(s.composition.num_atoms)
-        lat = np.zeros((3, 3))
-        box = self.lattice_mat
-        lat[0][0] = dim[0] * box[0][0]
-        lat[0][1] = dim[0] * box[0][1]
-        lat[0][2] = dim[0] * box[0][2]
-        lat[1][0] = dim[1] * box[1][0]
-        lat[1][1] = dim[1] * box[1][1]
-        lat[1][2] = dim[1] * box[1][2]
-        lat[2][0] = dim[2] * box[2][0]
-        lat[2][1] = dim[2] * box[2][1]
-        lat[2][2] = dim[2] * box[2][2]
-        super_cell = Atoms(
-            lattice_mat=lat,
-            coords=new_coords,
-            elements=new_symbs,
-            props=props,
-            cartesian=False,
-        )
-        return super_cell
+        # nat = len(coords)  # int(s.composition.num_atoms)
+        # lat = np.zeros((3, 3))
+        # box = self.lattice_mat
+        # lat[0][0] = dim[0] * box[0][0]
+        # lat[0][1] = dim[0] * box[0][1]
+        # lat[0][2] = dim[0] * box[0][2]
+        # lat[1][0] = dim[1] * box[1][0]
+        # lat[1][1] = dim[1] * box[1][1]
+        # lat[1][2] = dim[1] * box[1][2]
+        # lat[2][0] = dim[2] * box[2][0]
+        # lat[2][1] = dim[2] * box[2][1]
+        # lat[2][2] = dim[2] * box[2][2]
+        # super_cell = Atoms(
+        #    lattice_mat=lat,
+        #    coords=new_coords,
+        #    elements=new_symbs,
+        #    props=props,
+        #    cartesian=False,
+        # )
+        # return super_cell
 
     def get_lll_reduced_structure(self):
         """Get LLL algorithm based reduced structure."""

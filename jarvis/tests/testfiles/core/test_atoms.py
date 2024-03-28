@@ -7,7 +7,7 @@ from jarvis.core.atoms import (
     OptimadeAdaptor,
 )
 
-
+import numpy as np
 import os
 from jarvis.db.figshare import get_jid_data, data
 import tarfile
@@ -238,14 +238,12 @@ def test_clone():
         elements=FIXTURES["elements"],
     )
     Si2 = Si.clone()
-    assert (
-        Si2.lattice_mat == Si.lattice_mat
-        and Si2.coords == Si.coords
-        and Si2.elements == Si.elements
-        and Si2.props == Si.props
-        and Si2.cartesian == Si.cartesian
-        and Si2.show_props == Si.show_props
-    )
+    np.testing.assert_array_equal(Si2.lattice_mat, Si.lattice_mat)
+    np.testing.assert_array_equal(Si2.coords, Si.coords)
+    assert Si2.props == Si.props
+    assert Si2.elements == Si.elements
+    assert Si2.cartesian == Si.cartesian
+    assert Si2.show_props == Si.show_props
 
 
 def test_remove_sites_by_indices():
@@ -255,7 +253,15 @@ def test_remove_sites_by_indices():
         elements=FIXTURES["elements"],
     )
     Si_supercell = Si.make_supercell([2, 2, 2])
+    print("Si_supercell", Si_supercell)
     Si2_supercell_without_two_atoms = Si_supercell.remove_sites_by_indices(
         indices=[0, 1]
     )
+    print(
+        "Si2_supercell_without_two_atoms.num_atoms",
+        Si2_supercell_without_two_atoms.num_atoms,
+    )
     assert Si2_supercell_without_two_atoms.num_atoms == 14
+
+
+# test_remove_sites_by_indices()
