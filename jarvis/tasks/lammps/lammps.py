@@ -142,11 +142,15 @@ class JobFactory(object):
         self, atoms=None, lammps_cmd="", enforce_c_size=15.0, parameters={}
     ):
         """Make Phonon calculation setup."""
-        from phonopy import Phonopy
-        from phonopy.file_IO import (
-            #    parse_FORCE_CONSTANTS,
-            write_FORCE_CONSTANTS,
-        )
+        try:
+            from phonopy import Phonopy
+            from phonopy.file_IO import (
+                #    parse_FORCE_CONSTANTS,
+                write_FORCE_CONSTANTS,
+            )
+        except Exception as exp:
+            print("Phonopy check", exp)
+            pass
 
         bulk = atoms.phonopy_converter()
 

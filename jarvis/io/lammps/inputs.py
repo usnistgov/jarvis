@@ -61,10 +61,10 @@ class LammpsData(object):
         xhi = a + xlo
         m = atoms.lattice._lat
         xy = np.dot(m[1], m[0] / a)
-        yhi = np.sqrt(b ** 2 - xy ** 2) + ylo
+        yhi = np.sqrt(b**2 - xy**2) + ylo
         xz = np.dot(m[2], m[0] / a)
         yz = (np.dot(m[1], m[2]) - xy * xz) / (yhi - ylo)
-        zhi = np.sqrt(c ** 2 - xz ** 2 - yz ** 2) + zlo
+        zhi = np.sqrt(c**2 - xz**2 - yz**2) + zlo
         rot_matrix = np.linalg.solve(
             [[xhi - xlo, 0, 0], [xy, yhi - ylo, 0], [xz, yz, zhi - zlo]], m
         )
@@ -94,7 +94,7 @@ class LammpsData(object):
         filename="lammps.data",
         element_order=[],
         potential_file="pot.mod",
-        verbose=True,
+        verbose=False,
         has_charges=True,
     ):
         """Read Lammps data file."""
@@ -179,7 +179,7 @@ class LammpsData(object):
                     y[j] = float((lines[i + j + 2]).split()[it + 2])
                     z[j] = float((lines[i + j + 2]).split()[it + 3])
                     coords.append([x[j], y[j], z[j]])
-                    print(coords[-1])
+                    # print(coords[-1])
         f.close()
         # print ("info",(typ),'coo',(coords),'latt',lat)
         typ_sp = [str(i, "utf-8") for i in typ]

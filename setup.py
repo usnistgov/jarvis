@@ -12,7 +12,7 @@ with open(os.path.join(base_dir, "README.md")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2024.3.24",
+    version="2024.3.30",
     long_description=long_d,
     install_requires=[
         "numpy>=1.20.1",
@@ -24,8 +24,8 @@ setup(
         "toolz>=0.9.0",
         "xmltodict>=0.11.0",
         "tqdm>=4.41.1",
-        "mkdocs-material>=9.0.5",
-        "markdown>=3.2.1",
+        # "mkdocs-material>=9.0.5",
+        # "markdown>=3.2.1",
         # "absl-py==1.4.0",
     ],
     package_data={
