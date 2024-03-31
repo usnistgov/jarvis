@@ -41,7 +41,7 @@ class QEinfile(object):
             # Download GBRV PSPs by default
             if url is None:
                 url = (
-                    "http://www.physics.rutgers.edu/"
+                    "https://www.physics.rutgers.edu/"
                     "gbrv/all_pbesol_UPF_v1.5.tar.gz"
                 )
                 print("Please cite for PSPs:")
