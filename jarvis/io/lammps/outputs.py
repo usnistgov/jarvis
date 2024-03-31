@@ -1,10 +1,10 @@
 """Function to analze LAMMPS output."""
+
 import numpy as np
 import glob
 import os
 from jarvis.analysis.elastic.tensor import ElasticTensor
 from jarvis.io.lammps.inputs import LammpsData
-from jarvis.io.phonopy.outputs import bandstructure_plot, total_dos
 from jarvis.core.atoms import Atoms
 
 
@@ -251,6 +251,8 @@ def parse_material_calculation_folder(
 
     with optimization, vacancy, phonon, surface etc.
     """
+    from jarvis.io.phonopy.outputs import bandstructure_plot, total_dos
+
     cwd = os.getcwd()
     jid_file = os.path.join(path, "JARVISFF-ID")
     if os.path.exists(jid_file):
@@ -375,7 +377,9 @@ def parse_material_calculation_folder(
     return info
 
 
-def parse_full_ff_folder(path="Mishin-Ni-Al-2009.eam.alloy_nist",):
+def parse_full_ff_folder(
+    path="Mishin-Ni-Al-2009.eam.alloy_nist",
+):
     """Parse complete FF calculation folder."""
     cwd = os.getcwd()
     os.chdir(path)
