@@ -1,4 +1,5 @@
 """Module to access or upload data in JARVIS-API."""
+
 import requests
 import pprint
 import os
@@ -7,6 +8,25 @@ from jarvis.db.jsonutils import dumpjson
 import string
 from collections import OrderedDict
 import json
+
+
+def jarvisdft_optimade(
+    prefix="https://jarvis.nist.gov/optimade/jarvisdft/v1/structures/?filter=",
+    query="elements HAS  ALL C,Si",
+):
+    url = prefix + query
+    vals = []
+    while True:
+        if url is not None:
+            # print('url', url)
+            response = requests.get(url)
+            data = response.json()["data"]
+            for i in data:
+                vals.append(i)
+            url = response.json()["links"]["next"]
+        else:
+            break
+    return vals
 
 
 class Api(object):
