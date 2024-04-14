@@ -1297,8 +1297,6 @@ class Atoms(object):
             # "point_group": spg.point_group_symbol,
             # "wyckoff": ", ".join(list(set(spg._dataset["wyckoffs"]))),
             "bond_distances": bond_distances,
-            # "natoms_primitive": spg.primitive_atoms.num_atoms,
-            # "natoms_conventional": spg.conventional_standard_structure.num_atoms,
         }
         if include_spg:
             struct_info["spg_number"] = spg.space_group_number
