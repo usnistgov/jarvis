@@ -19,6 +19,7 @@ import tempfile
 import random
 import string
 import datetime
+from collections import defaultdict
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
@@ -1224,6 +1225,157 @@ class Atoms(object):
         assert len(tvects) == round(abs(np.linalg.det(supercell_matrix)))
         return tvects
 
+    def describe(
+        self,
+        xrd_peaks=5,
+        xrd_round=1,
+        cutoff=4,
+        take_n_bonds=2,
+        include_spg=True,
+    ):
+        """Describe for NLP applications."""
+        from jarvis.analysis.diffraction.xrd import XRD
+
+        if include_spg:
+            from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
+            spg = Spacegroup3D(self)
+        theta, d_hkls, intens = XRD().simulate(atoms=self)
+        #     x = atoms.atomwise_angle_and_radial_distribution()
+        #     bond_distances = {}
+        #     for i, j in x[-1]["different_bond"].items():
+        #         bond_distances[i.replace("_", "-")] = ", ".join(
+        #             map(str, (sorted(list(set([round(jj, 2) for jj in j])))))
+        #         )
+        dists = defaultdict(list)
+        elements = self.elements
+        for i in self.get_all_neighbors(r=cutoff):
+            for j in i:
+                key = "-".join(sorted([elements[j[0]], elements[j[1]]]))
+                dists[key].append(j[2])
+        bond_distances = {}
+        for i, j in dists.items():
+            dist = sorted(set([round(k, 2) for k in j]))
+            if len(dist) >= take_n_bonds:
+                dist = dist[0:take_n_bonds]
+            bond_distances[i] = ", ".join(map(str, dist))
+        fracs = {}
+        for i, j in (self.composition.atomic_fraction).items():
+            fracs[i] = round(j, 3)
+        info = {}
+        chem_info = {
+            "atomic_formula": self.composition.reduced_formula,
+            "prototype": self.composition.prototype,
+            "molecular_weight": round(self.composition.weight / 2, 2),
+            "atomic_fraction": (fracs),
+            "atomic_X": ", ".join(
+                map(str, [Specie(s).X for s in self.uniq_species])
+            ),
+            "atomic_Z": ", ".join(
+                map(str, [Specie(s).Z for s in self.uniq_species])
+            ),
+        }
+        struct_info = {
+            "lattice_parameters": ", ".join(
+                map(str, [round(j, 2) for j in self.lattice.abc])
+            ),
+            "lattice_angles": ", ".join(
+                map(str, [round(j, 2) for j in self.lattice.angles])
+            ),
+            # "spg_number": spg.space_group_number,
+            # "spg_symbol": spg.space_group_symbol,
+            "top_k_xrd_peaks": ", ".join(
+                map(
+                    str,
+                    sorted(list(set([round(i, xrd_round) for i in theta])))[
+                        0:xrd_peaks
+                    ],
+                )
+            ),
+            "density": round(self.density, 3),
+            # "crystal_system": spg.crystal_system,
+            # "point_group": spg.point_group_symbol,
+            # "wyckoff": ", ".join(list(set(spg._dataset["wyckoffs"]))),
+            "bond_distances": bond_distances,
+        }
+        if include_spg:
+            struct_info["spg_number"] = spg.space_group_number
+            struct_info["spg_symbol"] = spg.space_group_symbol
+            struct_info["crystal_system"] = spg.crystal_system
+            struct_info["point_group"] = spg.point_group_symbol
+            struct_info["wyckoff"] = ", ".join(
+                list(set(spg._dataset["wyckoffs"]))
+            )
+            struct_info["natoms_primitive"] = spg.primitive_atoms.num_atoms
+            struct_info[
+                "natoms_conventional"
+            ] = spg.conventional_standard_structure.num_atoms
+        info["chemical_info"] = chem_info
+        info["structure_info"] = struct_info
+        line = "The number of atoms are: " + str(
+            self.num_atoms
+        )  # +"., The elements are: "+",".join(atoms.elements)+". "
+        for i, j in info.items():
+            if not isinstance(j, dict):
+                line += "The " + i + " is " + j + ". "
+            else:
+                # print("i",i)
+                # print("j",j)
+                for ii, jj in j.items():
+                    tmp = ""
+                    if isinstance(jj, dict):
+                        for iii, jjj in jj.items():
+                            tmp += iii + ": " + str(jjj) + " "
+                    else:
+                        tmp = jj
+                    line += "The " + ii + " is " + str(tmp) + ". "
+        line1 = line
+        # print('bond_distances', struct_info['bond_distances'])
+        tmp = ""
+        p = struct_info["bond_distances"]
+        for ii, (kk, vv) in enumerate(p.items()):
+            if ii == len(p) - 1:
+                punc = " Å."
+            else:
+                punc = " Å; "
+            tmp += kk + ": " + vv + punc
+        line2 = (
+            chem_info["atomic_formula"]
+            + " crystallizes in the "
+            + struct_info["crystal_system"]
+            + " "
+            + str(struct_info["spg_symbol"])
+            + " spacegroup, "
+            + struct_info["point_group"]
+            + " pointgroup with a prototype of "
+            + str(chem_info["prototype"])
+            # " and a molecular weight of " +
+            # str(chem_info['molecular_weight']) +
+            + ". The atomic fractions are: "
+            + str(chem_info["atomic_fraction"])
+            .replace("{", "")
+            .replace("}", "")
+            + " with electronegaticities as "
+            + str(chem_info["atomic_X"])
+            + " and atomic numbers as "
+            + str(chem_info["atomic_Z"])
+            + ". The bond distances are: "
+            + str(tmp)
+            + "The lattice lengths are: "
+            + struct_info["lattice_parameters"]
+            + " Å, and the lattice angles are: "
+            + struct_info["lattice_angles"]
+            + "º with some of the top XRD peaks at "
+            + struct_info["top_k_xrd_peaks"]
+            + "º with "
+            + "Wyckoff symbols "
+            + struct_info["wyckoff"]
+            + "."
+        )
+        info["desc_1"] = line1
+        info["desc_2"] = line2
+        return info
+
     def make_supercell_matrix(self, scaling_matrix):
         """
         Adapted from Pymatgen.
@@ -1279,49 +1431,52 @@ class Atoms(object):
         if dim.shape == (3, 3):
             dim = np.array([int(np.linalg.norm(v)) for v in dim])
         return self.make_supercell_matrix(dim)
-        # coords = self.frac_coords
-        # all_symbs = self.elements  # [i.symbol for i in s.species]
-        # nat = len(coords)
 
-        # new_nat = nat * dim[0] * dim[1] * dim[2]
-        # new_coords = np.zeros((new_nat, 3))
-        # new_symbs = []  # np.chararray((new_nat))
-        # props = []  # self.props
+    def make_supercell_old(self, dim=[2, 2, 2]):
+        """Make supercell of dimension dim using for loop."""
+        coords = self.frac_coords
+        all_symbs = self.elements  # [i.symbol for i in s.species]
+        nat = len(coords)
 
-        # ct = 0
-        # for i in range(nat):
-        #    for j in range(dim[0]):
-        #        for k in range(dim[1]):
-        #            for m in range(dim[2]):
-        #                props.append(self.props[i])
-        #                new_coords[ct][0] = (coords[i][0] + j) / float(dim[0])
-        #                new_coords[ct][1] = (coords[i][1] + k) / float(dim[1])
-        #                new_coords[ct][2] = (coords[i][2] + m) / float(dim[2])
-        #                new_symbs.append(all_symbs[i])
-        #                ct = ct + 1
+        new_nat = nat * dim[0] * dim[1] * dim[2]
+        new_coords = np.zeros((new_nat, 3))
+        new_symbs = []  # np.chararray((new_nat))
+        props = []  # self.props
 
-        # nat = new_nat
+        ct = 0
+        for i in range(nat):
+            for j in range(dim[0]):
+                for k in range(dim[1]):
+                    for m in range(dim[2]):
+                        props.append(self.props[i])
+                        new_coords[ct][0] = (coords[i][0] + j) / float(dim[0])
+                        new_coords[ct][1] = (coords[i][1] + k) / float(dim[1])
+                        new_coords[ct][2] = (coords[i][2] + m) / float(dim[2])
+                        new_symbs.append(all_symbs[i])
+                        ct = ct + 1
 
-        # nat = len(coords)  # int(s.composition.num_atoms)
-        # lat = np.zeros((3, 3))
-        # box = self.lattice_mat
-        # lat[0][0] = dim[0] * box[0][0]
-        # lat[0][1] = dim[0] * box[0][1]
-        # lat[0][2] = dim[0] * box[0][2]
-        # lat[1][0] = dim[1] * box[1][0]
-        # lat[1][1] = dim[1] * box[1][1]
-        # lat[1][2] = dim[1] * box[1][2]
-        # lat[2][0] = dim[2] * box[2][0]
-        # lat[2][1] = dim[2] * box[2][1]
-        # lat[2][2] = dim[2] * box[2][2]
-        # super_cell = Atoms(
-        #    lattice_mat=lat,
-        #    coords=new_coords,
-        #    elements=new_symbs,
-        #    props=props,
-        #    cartesian=False,
-        # )
-        # return super_cell
+        nat = new_nat
+
+        nat = len(coords)  # int(s.composition.num_atoms)
+        lat = np.zeros((3, 3))
+        box = self.lattice_mat
+        lat[0][0] = dim[0] * box[0][0]
+        lat[0][1] = dim[0] * box[0][1]
+        lat[0][2] = dim[0] * box[0][2]
+        lat[1][0] = dim[1] * box[1][0]
+        lat[1][1] = dim[1] * box[1][1]
+        lat[1][2] = dim[1] * box[1][2]
+        lat[2][0] = dim[2] * box[2][0]
+        lat[2][1] = dim[2] * box[2][1]
+        lat[2][2] = dim[2] * box[2][2]
+        super_cell = Atoms(
+            lattice_mat=lat,
+            coords=new_coords,
+            elements=new_symbs,
+            props=props,
+            cartesian=False,
+        )
+        return super_cell
 
     def get_lll_reduced_structure(self):
         """Get LLL algorithm based reduced structure."""
@@ -1882,18 +2037,18 @@ class OptimadeAdaptor(object):
         info_at["cartesian_site_positions"] = atoms.cart_coords[order].tolist()
         info_at["nperiodic_dimensions"] = 3
         # info_at["species"] = atoms.elements
-        info_at["species"] = (
-            self.get_optimade_species()
-        )  # dict(atoms.composition.to_dict())
+        info_at[
+            "species"
+        ] = self.get_optimade_species()  # dict(atoms.composition.to_dict())
         info_at["elements_ratios"] = list(
             atoms.composition.atomic_fraction.values()
         )
         info_at["structure_features"] = []
         info_at["last_modified"] = str(now)
         # info_at["more_data_available"] = True
-        info_at["chemical_formula_descriptive"] = (
-            atoms.composition.reduced_formula
-        )
+        info_at[
+            "chemical_formula_descriptive"
+        ] = atoms.composition.reduced_formula
         info_at["dimension_types"] = [1, 1, 1]
         info["attributes"] = info_at
         return info

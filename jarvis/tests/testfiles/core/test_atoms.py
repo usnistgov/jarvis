@@ -118,6 +118,8 @@ def test_basic_atoms():
     den_0d = round(vac_pad.get_effective_molecule().density, 2)
     den_lll_red = round(Si.get_lll_reduced_structure().density, 2)
     strng = Si.get_string()
+    scell_nat_old = Si.make_supercell_old([2, 2, 2]).num_atoms
+    descr = Si.describe()
     scell_nat = Si.make_supercell([2, 2, 2]).num_atoms
     scell_nat2 = Si.make_supercell_matrix(
         [[2, 0, 0], [0, 2, 0], [0, 0, 2]]

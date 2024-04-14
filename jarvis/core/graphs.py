@@ -49,7 +49,8 @@ def nearest_neighbor_edges(
     cutoff=8,
     max_neighbors=12,
     id=None,
-    use_canonize=False,
+    use_canonize=True,
+    # use_canonize=False,
 ):
     """Construct k-NN edge list."""
     # returns List[List[Tuple[site, distance, index, image]]]
@@ -200,7 +201,8 @@ class Graph(object):
         max_attempts=3,
         id: Optional[str] = None,
         compute_line_graph: bool = True,
-        use_canonize: bool = False,
+        use_canonize: bool = True,
+        # use_canonize: bool = False,
     ):
         """Obtain a DGLGraph for Atoms object."""
         if neighbor_strategy == "k-nearest":
