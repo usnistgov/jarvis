@@ -20,18 +20,25 @@ import random
 import string
 import datetime
 from collections import defaultdict
-from jarvis.db.jsonutils import loadjson
+from sklearn.metrics import mean_absolute_error
+import zipfile
+import json
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
 
-mineral_json_file = loadjson(
+with zipfile.ZipFile(
     str(
-        os.path.join(os.path.dirname(__file__), "mineral_name_prototype.json")
-        # os.path.join(os.path.dirname(__file__), "min.json")
-        # os.path.join(os.path.dirname(__file__), "mineral_dbj.json")
-    )
-)
+        os.path.join(
+            os.path.dirname(__file__), "mineral_name_prototype.json.zip"
+        )
+    ),
+    "r",
+) as z:
+    # Open the specific JSON file within the zip
+    with z.open("mineral_name_prototype.json") as file:
+        # Load the JSON data from the file
+        mineral_json_file = json.load(file)
 
 
 class Atoms(object):
@@ -1202,6 +1209,7 @@ class Atoms(object):
 
             h = model.readout.register_forward_hook(getActivation("readout"))
             out = model([g, lg])
+            del out
             h.remove()
             return activation["readout"][0]
 
@@ -1224,7 +1232,7 @@ class Atoms(object):
         h = get_val(model, g, lg)
         return h
 
-    def get_prototype_name(self, include_c_over_a=False, digits=3):
+    def get_prototype_name(self, prim=True, include_c_over_a=False, digits=3):
         from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
         spg = Spacegroup3D(self)
@@ -1253,13 +1261,36 @@ class Atoms(object):
             # name+="_"+str(com_positions)
         return name
 
-    def get_minaral_name(self):
+    def get_minaral_name(self, model=""):
         """Get mineral prototype."""
-        name = self.get_prototype_name()
-        if name in mineral_json_file:
-            return mineral_json_file[name]
+        mae = np.inf
+        feats = self.get_alignn_feats(model=model)
+        nm = self.get_prototype_name()
+        if nm in mineral_json_file:
+            for i in mineral_json_file[nm]:
+                maem = mean_absolute_error(i[1], feats)
+                if maem < mae:
+                    mae = maem
+                    name = i[0]
+                    print("name1", name, maem)
         else:
-            return None
+            # mineral = {}
+            for i, j in mineral_json_file.items():
+                for k in j:
+                    maem = mean_absolute_error(k[1], feats)
+                    # mineral[k[0]]=mean_absolute_error(k[1],feats)
+                    if maem < mae:
+                        mae = maem
+                        name = k[0]  # mineral[k[0]]
+                        print("name2", name, maem)
+            # mem=[]
+            # for i,j in mineral_json_file.items():
+            #    for k in j:
+            #      print(j[1],feats)
+            #      mem.append(j[0],np.linalg.norm(j[1],feats))
+            # print(mem)
+            # s=sorted(mem,key=1)[0]
+        return name
 
     def lattice_points_in_supercell(self, supercell_matrix):
         """
@@ -2262,20 +2293,6 @@ def build_xanes_poscar(
 
     return atoms
 
-
-if __name__ == "__main__":
-    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
-    coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
-    elements = ["Si", "Si"]
-    Si = Atoms(
-        lattice_mat=box, coords=coords, elements=elements
-    ).make_supercell_matrix([3, 3, 3])
-    # Si = Atoms.from_poscar("POSCAR")
-    print(Si.get_prototype_name())
-    print("min name", Si.get_minaral_name())
-    # afeats = Si.get_alignn_feats()
-    # print('afeats',afeats)
-    # print(Si.describe()['desc_3'])
 
 # ['Mn ', 'Mn ', 'Ru ', 'U ']
 #
