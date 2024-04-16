@@ -20,9 +20,18 @@ import random
 import string
 import datetime
 from collections import defaultdict
+from jarvis.db.jsonutils import loadjson
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
+
+mineral_json_file = loadjson(
+    str(
+        os.path.join(os.path.dirname(__file__), "mineral_name_prototype.json")
+        # os.path.join(os.path.dirname(__file__), "min.json")
+        # os.path.join(os.path.dirname(__file__), "mineral_dbj.json")
+    )
+)
 
 
 class Atoms(object):
@@ -1168,6 +1177,90 @@ class Atoms(object):
         pf = np.array([4 * np.pi * total_rad / (3 * self.volume)])
         return round(pf[0], 5)
 
+    def get_alignn_feats(
+        self,
+        model_name="jv_formation_energy_peratom_alignn",
+        max_neighbors=12,
+        neighbor_strategy="k-nearest",
+        use_canonize=True,
+        atom_features="cgcnn",
+        line_graph=True,
+        cutoff=8,
+        model="",
+    ):
+        """Get ALIGNN features."""
+
+        def get_val(model, g, lg):
+            activation = {}
+
+            def getActivation(name):
+                # the hook signature
+                def hook(model, input, output):
+                    activation[name] = output.detach()
+
+                return hook
+
+            h = model.readout.register_forward_hook(getActivation("readout"))
+            out = model([g, lg])
+            h.remove()
+            return activation["readout"][0]
+
+        from alignn.graphs import Graph
+        from alignn.pretrained import get_figshare_model
+
+        g, lg = Graph.atom_dgl_multigraph(
+            self,
+            cutoff=cutoff,
+            atom_features=atom_features,
+            max_neighbors=max_neighbors,
+            neighbor_strategy=neighbor_strategy,
+            compute_line_graph=line_graph,
+            use_canonize=use_canonize,
+        )
+        if model == "":
+            model = get_figshare_model(
+                model_name="jv_formation_energy_peratom_alignn"
+            )
+        h = get_val(model, g, lg)
+        return h
+
+    def get_prototype_name(self, include_c_over_a=False, digits=3):
+        from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
+        spg = Spacegroup3D(self)
+        number = spg.space_group_number
+        cnv_atoms = spg.conventional_standard_structure
+        n_conv = cnv_atoms.num_atoms
+        # hall_number=str(spg._dataset['hall_number'])
+        wyc = "".join(list((sorted(set(spg._dataset["wyckoffs"])))))
+        name = (
+            (self.composition.prototype)
+            + "_"
+            + str(number)
+            + "_"
+            + str(wyc)
+            + "_"
+            + str(n_conv)
+        )
+        # if include_com:
+        if include_c_over_a:
+            # print(cnv_atoms)
+            abc = cnv_atoms.lattice.abc
+            ca = round(abc[2] / abc[0], digits)
+            # com_positions = "_".join(map(str,self.get_center_of_mass()))
+            # round(np.sum(spg._dataset['std_positions']),round_digit)
+            name += "_" + str(ca)
+            # name+="_"+str(com_positions)
+        return name
+
+    def get_minaral_name(self):
+        """Get mineral prototype."""
+        name = self.get_prototype_name()
+        if name in mineral_json_file:
+            return mineral_json_file[name]
+        else:
+            return None
+
     def lattice_points_in_supercell(self, supercell_matrix):
         """
         Adapted from Pymatgen.
@@ -1236,6 +1329,7 @@ class Atoms(object):
         """Describe for NLP applications."""
         from jarvis.analysis.diffraction.xrd import XRD
 
+        min_name = self.get_minaral_name()
         if include_spg:
             from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
@@ -1264,6 +1358,7 @@ class Atoms(object):
             fracs[i] = round(j, 3)
         info = {}
         chem_info = {
+            "mineral_name": min_name,
             "atomic_formula": self.composition.reduced_formula,
             "prototype": self.composition.prototype,
             "molecular_weight": round(self.composition.weight / 2, 2),
@@ -1307,9 +1402,9 @@ class Atoms(object):
                 list(set(spg._dataset["wyckoffs"]))
             )
             struct_info["natoms_primitive"] = spg.primitive_atoms.num_atoms
-            struct_info[
-                "natoms_conventional"
-            ] = spg.conventional_standard_structure.num_atoms
+            struct_info["natoms_conventional"] = (
+                spg.conventional_standard_structure.num_atoms
+            )
         info["chemical_info"] = chem_info
         info["structure_info"] = struct_info
         line = "The number of atoms are: " + str(
@@ -1372,8 +1467,30 @@ class Atoms(object):
             + struct_info["wyckoff"]
             + "."
         )
+        if min_name is not None:
+            line3 = (
+                chem_info["atomic_formula"]
+                + " is "
+                + min_name
+                + "-derived structured and"
+                + " crystallizes in the "
+                + struct_info["crystal_system"]
+                + " "
+                + str(struct_info["spg_symbol"])
+                + " spacegroup."
+            )
+        else:
+            line3 = (
+                chem_info["atomic_formula"]
+                + " crystallizes in the "
+                + struct_info["crystal_system"]
+                + " "
+                + str(struct_info["spg_symbol"])
+                + " spacegroup."
+            )
         info["desc_1"] = line1
         info["desc_2"] = line2
+        info["desc_3"] = line3
         return info
 
     def make_supercell_matrix(self, scaling_matrix):
@@ -2037,18 +2154,18 @@ class OptimadeAdaptor(object):
         info_at["cartesian_site_positions"] = atoms.cart_coords[order].tolist()
         info_at["nperiodic_dimensions"] = 3
         # info_at["species"] = atoms.elements
-        info_at[
-            "species"
-        ] = self.get_optimade_species()  # dict(atoms.composition.to_dict())
+        info_at["species"] = (
+            self.get_optimade_species()
+        )  # dict(atoms.composition.to_dict())
         info_at["elements_ratios"] = list(
             atoms.composition.atomic_fraction.values()
         )
         info_at["structure_features"] = []
         info_at["last_modified"] = str(now)
         # info_at["more_data_available"] = True
-        info_at[
-            "chemical_formula_descriptive"
-        ] = atoms.composition.reduced_formula
+        info_at["chemical_formula_descriptive"] = (
+            atoms.composition.reduced_formula
+        )
         info_at["dimension_types"] = [1, 1, 1]
         info["attributes"] = info_at
         return info
@@ -2145,6 +2262,20 @@ def build_xanes_poscar(
 
     return atoms
 
+
+if __name__ == "__main__":
+    box = [[2.715, 2.715, 0], [0, 2.715, 2.715], [2.715, 0, 2.715]]
+    coords = [[0, 0, 0], [0.25, 0.25, 0.25]]
+    elements = ["Si", "Si"]
+    Si = Atoms(
+        lattice_mat=box, coords=coords, elements=elements
+    ).make_supercell_matrix([3, 3, 3])
+    # Si = Atoms.from_poscar("POSCAR")
+    print(Si.get_prototype_name())
+    print("min name", Si.get_minaral_name())
+    # afeats = Si.get_alignn_feats()
+    # print('afeats',afeats)
+    # print(Si.describe()['desc_3'])
 
 # ['Mn ', 'Mn ', 'Ru ', 'U ']
 #
