@@ -1367,7 +1367,7 @@ class Atoms(object):
         """Get mineral prototype."""
         mae = np.inf
         feats = self.get_alignn_feats(model=model)
-        nm = self.get_prototype_name()
+        nm = self.get_mineral_prototype_name()
         if nm in mineral_json_file:
             for i in mineral_json_file[nm]:
                 maem = mean_absolute_error(i[1], feats)

@@ -112,6 +112,7 @@ def test_basic_atoms():
     print(opt.from_optimade(opt_info))
 
     polar = Si.check_polar
+    # prot = Si.get_prototype_name()
     Si.props = ["a", "a"]
     vac_pad = VacuumPadding(Si)
     den_2d = round(vac_pad.get_effective_2d_slab().density, 2)
@@ -119,7 +120,7 @@ def test_basic_atoms():
     den_lll_red = round(Si.get_lll_reduced_structure().density, 2)
     strng = Si.get_string()
     scell_nat_old = Si.make_supercell_old([2, 2, 2]).num_atoms
-    descr = Si.describe()
+    #descr = Si.describe()
     scell_nat = Si.make_supercell([2, 2, 2]).num_atoms
     scell_nat2 = Si.make_supercell_matrix(
         [[2, 0, 0], [0, 2, 0], [0, 0, 2]]
@@ -265,5 +266,5 @@ def test_remove_sites_by_indices():
     )
     assert Si2_supercell_without_two_atoms.num_atoms == 14
 
-
+test_basic_atoms()
 # test_remove_sites_by_indices()
