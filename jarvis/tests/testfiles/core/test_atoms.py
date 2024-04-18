@@ -112,7 +112,6 @@ def test_basic_atoms():
     print(opt.from_optimade(opt_info))
 
     polar = Si.check_polar
-    # prot = Si.get_prototype_name()
     Si.props = ["a", "a"]
     vac_pad = VacuumPadding(Si)
     den_2d = round(vac_pad.get_effective_2d_slab().density, 2)
