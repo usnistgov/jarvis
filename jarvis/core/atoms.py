@@ -1055,6 +1055,106 @@ class Atoms(object):
         )
         return den
 
+    def plot_atoms(
+        self=None,
+        colors=[],
+        sizes=[],
+        cutoff=1.9,
+        opacity=0.5,
+        bond_width=2,
+        filename=None,
+    ):
+        """Plot atoms using plotly."""
+        import plotly.graph_objects as go
+
+        fig = go.Figure()
+        if not colors:
+            colors = ["blue", "green", "red"]
+
+        unique_elements = self.uniq_species
+        if len(unique_elements) > len(colors):
+            raise ValueError("Provide more colors.")
+        color_map = {}
+        size_map = {}
+        for ii, i in enumerate(unique_elements):
+            color_map[i] = colors[ii]
+            size_map[i] = Specie(i).Z * 2
+        cart_coords = self.cart_coords
+        elements = self.elements
+        atoms_arr = []
+
+        for ii, i in enumerate(cart_coords):
+            atoms_arr.append(
+                [
+                    i[0],
+                    i[1],
+                    i[2],
+                    color_map[elements[ii]],
+                    size_map[elements[ii]],
+                ]
+            )
+        # atoms = [
+        #     (0, 0, 0, 'red'),   # Atom 1
+        #     (1, 1, 1, 'blue'),  # Atom 2
+        #     (2, 0, 1, 'green')  # Atom 3
+        # ]
+
+        # Create a scatter plot for the 3D points
+        trace1 = go.Scatter3d(
+            x=[atom[0] for atom in atoms_arr],
+            y=[atom[1] for atom in atoms_arr],
+            z=[atom[2] for atom in atoms_arr],
+            mode="markers",
+            marker=dict(
+                size=[atom[4] for atom in atoms_arr],  # Marker size
+                color=[atom[3] for atom in atoms_arr],  # Marker color
+                opacity=opacity,
+            ),
+        )
+        fig.add_trace(trace1)
+
+        # Update plot layout
+        fig.update_layout(
+            title="3D Atom Coordinates",
+            scene=dict(
+                xaxis_title="X Coordinates",
+                yaxis_title="Y Coordinates",
+                zaxis_title="Z Coordinates",
+            ),
+            margin=dict(l=0, r=0, b=0, t=0),  # Tight layout
+        )
+        if bond_width is not None:
+            nbs = self.get_all_neighbors(r=5)
+            bonds = []
+            for i in nbs:
+                for j in i:
+                    if j[2] <= cutoff:
+                        bonds.append([j[0], j[1]])
+            for bond in bonds:
+                # print(bond)
+                # Extract coordinates of the first and second atom in each bond
+                x_coords = [atoms_arr[bond[0]][0], atoms_arr[bond[1]][0]]
+                y_coords = [atoms_arr[bond[0]][1], atoms_arr[bond[1]][1]]
+                z_coords = [atoms_arr[bond[0]][2], atoms_arr[bond[1]][2]]
+
+                fig.add_trace(
+                    go.Scatter3d(
+                        x=x_coords,
+                        y=y_coords,
+                        z=z_coords,
+                        mode="lines",
+                        line=dict(color="grey", width=bond_width),
+                        marker=dict(
+                            size=0.1
+                        ),  # Small marker size to make lines prominent
+                    )
+                )
+        # Show the plot
+        if filename is not None:
+            fig.write_image(filename)
+        else:
+            fig.show()
+
     @property
     def atomic_numbers(self):
         """Get list of atomic numbers of atoms in the atoms object."""
@@ -1232,7 +1332,9 @@ class Atoms(object):
         h = get_val(model, g, lg)
         return h
 
-    def get_prototype_name(self, prim=True, include_c_over_a=False, digits=3):
+    def get_mineral_prototype_name(
+        self, prim=True, include_c_over_a=False, digits=3
+    ):
         from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
         spg = Spacegroup3D(self)
@@ -1242,7 +1344,7 @@ class Atoms(object):
         # hall_number=str(spg._dataset['hall_number'])
         wyc = "".join(list((sorted(set(spg._dataset["wyckoffs"])))))
         name = (
-            (self.composition.prototype)
+            (self.composition.prototype_new)
             + "_"
             + str(number)
             + "_"
@@ -1272,24 +1374,13 @@ class Atoms(object):
                 if maem < mae:
                     mae = maem
                     name = i[0]
-                    print("name1", name, maem)
         else:
-            # mineral = {}
             for i, j in mineral_json_file.items():
                 for k in j:
                     maem = mean_absolute_error(k[1], feats)
-                    # mineral[k[0]]=mean_absolute_error(k[1],feats)
                     if maem < mae:
                         mae = maem
-                        name = k[0]  # mineral[k[0]]
-                        print("name2", name, maem)
-            # mem=[]
-            # for i,j in mineral_json_file.items():
-            #    for k in j:
-            #      print(j[1],feats)
-            #      mem.append(j[0],np.linalg.norm(j[1],feats))
-            # print(mem)
-            # s=sorted(mem,key=1)[0]
+                        name = k[0]
         return name
 
     def lattice_points_in_supercell(self, supercell_matrix):

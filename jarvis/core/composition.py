@@ -73,6 +73,23 @@ class Composition(object):
         """Get chemical prototypes such as A, AB etc."""
         proto = ""
         all_upper = string.ascii_uppercase
+
+        reduced, repeat = self.reduce()
+        N = 0
+        for specie, count in reduced.items():
+            if count != 1:
+                proto = proto + str(all_upper[N]) + str(round(count, 3))
+                N = N + 1
+            else:
+                proto = proto + str(all_upper[N])
+                N = N + 1
+        return proto  # .replace("1", "")
+
+    @property
+    def prototype_new(self):
+        """Get chemical prototypes such as A, AB etc."""
+        proto = ""
+        all_upper = string.ascii_uppercase
         # print('reduce',self.reduce())
         reduced, repeat = self.reduce()
         items = sorted(list(reduced.values()), reverse=True)
