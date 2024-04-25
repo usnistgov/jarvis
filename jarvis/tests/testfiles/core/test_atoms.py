@@ -96,7 +96,6 @@ def test_from_cif():
 
 
 def test_basic_atoms():
-
     Si = Atoms(
         lattice_mat=FIXTURES["lattice_mat"],
         coords=FIXTURES["coords"],
@@ -120,7 +119,7 @@ def test_basic_atoms():
     den_lll_red = round(Si.get_lll_reduced_structure().density, 2)
     strng = Si.get_string()
     scell_nat_old = Si.make_supercell_old([2, 2, 2]).num_atoms
-    #descr = Si.describe()
+    # descr = Si.describe()
     scell_nat = Si.make_supercell([2, 2, 2]).num_atoms
     scell_nat2 = Si.make_supercell_matrix(
         [[2, 0, 0], [0, 2, 0], [0, 0, 2]]
@@ -265,6 +264,7 @@ def test_remove_sites_by_indices():
         Si2_supercell_without_two_atoms.num_atoms,
     )
     assert Si2_supercell_without_two_atoms.num_atoms == 14
+
 
 # test_basic_atoms()
 # test_remove_sites_by_indices()

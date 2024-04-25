@@ -1524,9 +1524,9 @@ class Atoms(object):
                 list(set(spg._dataset["wyckoffs"]))
             )
             struct_info["natoms_primitive"] = spg.primitive_atoms.num_atoms
-            struct_info["natoms_conventional"] = (
-                spg.conventional_standard_structure.num_atoms
-            )
+            struct_info[
+                "natoms_conventional"
+            ] = spg.conventional_standard_structure.num_atoms
         info["chemical_info"] = chem_info
         info["structure_info"] = struct_info
         line = "The number of atoms are: " + str(
@@ -2276,18 +2276,18 @@ class OptimadeAdaptor(object):
         info_at["cartesian_site_positions"] = atoms.cart_coords[order].tolist()
         info_at["nperiodic_dimensions"] = 3
         # info_at["species"] = atoms.elements
-        info_at["species"] = (
-            self.get_optimade_species()
-        )  # dict(atoms.composition.to_dict())
+        info_at[
+            "species"
+        ] = self.get_optimade_species()  # dict(atoms.composition.to_dict())
         info_at["elements_ratios"] = list(
             atoms.composition.atomic_fraction.values()
         )
         info_at["structure_features"] = []
         info_at["last_modified"] = str(now)
         # info_at["more_data_available"] = True
-        info_at["chemical_formula_descriptive"] = (
-            atoms.composition.reduced_formula
-        )
+        info_at[
+            "chemical_formula_descriptive"
+        ] = atoms.composition.reduced_formula
         info_at["dimension_types"] = [1, 1, 1]
         info["attributes"] = info_at
         return info
