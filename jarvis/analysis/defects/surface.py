@@ -35,10 +35,11 @@ class Surface(object):
         atoms=None,
         indices=[0, 0, 1],
         layers=3,
-        thickness=25,
+        thickness=None,
         vacuum=18.0,
         tol=1e-10,
         from_conventional_structure=True,
+        use_thickness_c=True,
     ):
         """Initialize the class.
 
@@ -67,6 +68,7 @@ class Surface(object):
         self.vacuum = vacuum
         self.layers = layers
         self.thickness = thickness
+        self.use_thickness_c = use_thickness_c
         # Note thickness overwrites layers
 
     def to_dict(self):
@@ -147,24 +149,26 @@ class Surface(object):
             cartesian=True,
         )
         if self.thickness is not None and (self.thickness) > 0:
-            new_lat = new_atoms.lattice_mat  # lat_lengths()
-            a1 = new_lat[0]
-            a2 = new_lat[1]
-            a3 = new_lat[2]
-            new_lat = np.array(
-                [
-                    a1,
-                    a2,
-                    np.cross(a1, a2)
-                    * np.dot(a3, np.cross(a1, a2))
-                    / norm(np.cross(a1, a2)) ** 2,
-                ]
-            )
+            if not self.use_thickness_c:
+                new_lat = new_atoms.lattice_mat  # lat_lengths()
+                a1 = new_lat[0]
+                a2 = new_lat[1]
+                a3 = new_lat[2]
+                new_lat = np.array(
+                    [
+                        a1,
+                        a2,
+                        np.cross(a1, a2)
+                        * np.dot(a3, np.cross(a1, a2))
+                        / norm(np.cross(a1, a2)) ** 2,
+                    ]
+                )
 
-            a3 = new_lat[2]
-            self.layers = int(self.thickness / np.linalg.norm(a3)) + 1
+                a3 = new_lat[2]
+                self.layers = int(self.thickness / np.linalg.norm(a3)) + 1
+            else:
+                self.layers = int(self.thickness / new_atoms.lattice.c) + 1
             # print("self.layers", self.layers)
-            # self.layers = int(self.thickness / new_atoms.lattice.c) + 1
             # dims=get_supercell_dims(new_atoms,enforce_c_size=self.thickness)
             # print ('dims=',dims,self.layers)
             # surf_atoms = new_atoms.make_supercell_matrix([1, 1, dims[2]])
