@@ -147,7 +147,24 @@ class Surface(object):
             cartesian=True,
         )
         if self.thickness is not None and (self.thickness) > 0:
-            self.layers = int(self.thickness / new_atoms.lattice.c) + 1
+            new_lat = new_atoms.lattice_mat  # lat_lengths()
+            a1 = new_lat[0]
+            a2 = new_lat[1]
+            a3 = new_lat[2]
+            new_lat = np.array(
+                [
+                    a1,
+                    a2,
+                    np.cross(a1, a2)
+                    * np.dot(a3, np.cross(a1, a2))
+                    / norm(np.cross(a1, a2)) ** 2,
+                ]
+            )
+
+            a3 = new_lat[2]
+            self.layers = int(self.thickness / np.linalg.norm(a3)) + 1
+            # print("self.layers", self.layers)
+            # self.layers = int(self.thickness / new_atoms.lattice.c) + 1
             # dims=get_supercell_dims(new_atoms,enforce_c_size=self.thickness)
             # print ('dims=',dims,self.layers)
             # surf_atoms = new_atoms.make_supercell_matrix([1, 1, dims[2]])
