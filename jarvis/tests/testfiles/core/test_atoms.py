@@ -266,5 +266,5 @@ def test_remove_sites_by_indices():
     )
     assert Si2_supercell_without_two_atoms.num_atoms == 14
 
-test_basic_atoms()
+# test_basic_atoms()
 # test_remove_sites_by_indices()

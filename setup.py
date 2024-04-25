@@ -34,6 +34,7 @@ setup(
             "magpie.json",
             "element_charge.json",
             "atom_init.json",
+            "mineral_name_prototype.json.zip",
         ],
         "jarvis.tasks.lammps.templates": [
             "displace.mod",
