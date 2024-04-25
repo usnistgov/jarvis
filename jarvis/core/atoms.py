@@ -1,4 +1,5 @@
 """This module provides classes to specify atomic structure."""
+
 import numpy as np
 from jarvis.core.composition import Composition
 from jarvis.core.specie import Specie, atomic_numbers_to_symbols
@@ -18,9 +19,26 @@ import tempfile
 import random
 import string
 import datetime
+from collections import defaultdict
+from sklearn.metrics import mean_absolute_error
+import zipfile
+import json
 
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
+
+with zipfile.ZipFile(
+    str(
+        os.path.join(
+            os.path.dirname(__file__), "mineral_name_prototype.json.zip"
+        )
+    ),
+    "r",
+) as z:
+    # Open the specific JSON file within the zip
+    with z.open("mineral_name_prototype.json") as file:
+        # Load the JSON data from the file
+        mineral_json_file = json.load(file)
 
 
 class Atoms(object):
@@ -698,14 +716,23 @@ class Atoms(object):
 
     def remove_site_by_index(self, site=0):
         """Remove an atom by its index number."""
+        return self.remove_sites_by_indices(indices=[site])
+
+    def remove_sites_by_indices(self, indices=[0], in_place=False):
+        """Remove multiple atoms by their corresponding indices number."""
         new_els = []
         new_coords = []
         new_props = []
         for ii, i in enumerate(self.frac_coords):
-            if ii != site:
+            if ii not in indices:
                 new_els.append(self.elements[ii])
                 new_coords.append(self.frac_coords[ii])
                 new_props.append(self.props[ii])
+        if in_place:
+            self.elements = new_els
+            self.coords = new_coords
+            self.props = new_props
+            return self
         return Atoms(
             lattice_mat=self.lattice_mat,
             elements=new_els,
@@ -1028,6 +1055,106 @@ class Atoms(object):
         )
         return den
 
+    def plot_atoms(
+        self=None,
+        colors=[],
+        sizes=[],
+        cutoff=1.9,
+        opacity=0.5,
+        bond_width=2,
+        filename=None,
+    ):
+        """Plot atoms using plotly."""
+        import plotly.graph_objects as go
+
+        fig = go.Figure()
+        if not colors:
+            colors = ["blue", "green", "red"]
+
+        unique_elements = self.uniq_species
+        if len(unique_elements) > len(colors):
+            raise ValueError("Provide more colors.")
+        color_map = {}
+        size_map = {}
+        for ii, i in enumerate(unique_elements):
+            color_map[i] = colors[ii]
+            size_map[i] = Specie(i).Z * 2
+        cart_coords = self.cart_coords
+        elements = self.elements
+        atoms_arr = []
+
+        for ii, i in enumerate(cart_coords):
+            atoms_arr.append(
+                [
+                    i[0],
+                    i[1],
+                    i[2],
+                    color_map[elements[ii]],
+                    size_map[elements[ii]],
+                ]
+            )
+        # atoms = [
+        #     (0, 0, 0, 'red'),   # Atom 1
+        #     (1, 1, 1, 'blue'),  # Atom 2
+        #     (2, 0, 1, 'green')  # Atom 3
+        # ]
+
+        # Create a scatter plot for the 3D points
+        trace1 = go.Scatter3d(
+            x=[atom[0] for atom in atoms_arr],
+            y=[atom[1] for atom in atoms_arr],
+            z=[atom[2] for atom in atoms_arr],
+            mode="markers",
+            marker=dict(
+                size=[atom[4] for atom in atoms_arr],  # Marker size
+                color=[atom[3] for atom in atoms_arr],  # Marker color
+                opacity=opacity,
+            ),
+        )
+        fig.add_trace(trace1)
+
+        # Update plot layout
+        fig.update_layout(
+            title="3D Atom Coordinates",
+            scene=dict(
+                xaxis_title="X Coordinates",
+                yaxis_title="Y Coordinates",
+                zaxis_title="Z Coordinates",
+            ),
+            margin=dict(l=0, r=0, b=0, t=0),  # Tight layout
+        )
+        if bond_width is not None:
+            nbs = self.get_all_neighbors(r=5)
+            bonds = []
+            for i in nbs:
+                for j in i:
+                    if j[2] <= cutoff:
+                        bonds.append([j[0], j[1]])
+            for bond in bonds:
+                # print(bond)
+                # Extract coordinates of the first and second atom in each bond
+                x_coords = [atoms_arr[bond[0]][0], atoms_arr[bond[1]][0]]
+                y_coords = [atoms_arr[bond[0]][1], atoms_arr[bond[1]][1]]
+                z_coords = [atoms_arr[bond[0]][2], atoms_arr[bond[1]][2]]
+
+                fig.add_trace(
+                    go.Scatter3d(
+                        x=x_coords,
+                        y=y_coords,
+                        z=z_coords,
+                        mode="lines",
+                        line=dict(color="grey", width=bond_width),
+                        marker=dict(
+                            size=0.1
+                        ),  # Small marker size to make lines prominent
+                    )
+                )
+        # Show the plot
+        if filename is not None:
+            fig.write_image(filename)
+        else:
+            fig.show()
+
     @property
     def atomic_numbers(self):
         """Get list of atomic numbers of atoms in the atoms object."""
@@ -1157,6 +1284,105 @@ class Atoms(object):
         pf = np.array([4 * np.pi * total_rad / (3 * self.volume)])
         return round(pf[0], 5)
 
+    def get_alignn_feats(
+        self,
+        model_name="jv_formation_energy_peratom_alignn",
+        max_neighbors=12,
+        neighbor_strategy="k-nearest",
+        use_canonize=True,
+        atom_features="cgcnn",
+        line_graph=True,
+        cutoff=8,
+        model="",
+    ):
+        """Get ALIGNN features."""
+
+        def get_val(model, g, lg):
+            activation = {}
+
+            def getActivation(name):
+                # the hook signature
+                def hook(model, input, output):
+                    activation[name] = output.detach()
+
+                return hook
+
+            h = model.readout.register_forward_hook(getActivation("readout"))
+            out = model([g, lg])
+            del out
+            h.remove()
+            return activation["readout"][0]
+
+        from alignn.graphs import Graph
+        from alignn.pretrained import get_figshare_model
+
+        g, lg = Graph.atom_dgl_multigraph(
+            self,
+            cutoff=cutoff,
+            atom_features=atom_features,
+            max_neighbors=max_neighbors,
+            neighbor_strategy=neighbor_strategy,
+            compute_line_graph=line_graph,
+            use_canonize=use_canonize,
+        )
+        if model == "":
+            model = get_figshare_model(
+                model_name="jv_formation_energy_peratom_alignn"
+            )
+        h = get_val(model, g, lg)
+        return h
+
+    def get_mineral_prototype_name(
+        self, prim=True, include_c_over_a=False, digits=3
+    ):
+        from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
+        spg = Spacegroup3D(self)
+        number = spg.space_group_number
+        cnv_atoms = spg.conventional_standard_structure
+        n_conv = cnv_atoms.num_atoms
+        # hall_number=str(spg._dataset['hall_number'])
+        wyc = "".join(list((sorted(set(spg._dataset["wyckoffs"])))))
+        name = (
+            (self.composition.prototype_new)
+            + "_"
+            + str(number)
+            + "_"
+            + str(wyc)
+            + "_"
+            + str(n_conv)
+        )
+        # if include_com:
+        if include_c_over_a:
+            # print(cnv_atoms)
+            abc = cnv_atoms.lattice.abc
+            ca = round(abc[2] / abc[0], digits)
+            # com_positions = "_".join(map(str,self.get_center_of_mass()))
+            # round(np.sum(spg._dataset['std_positions']),round_digit)
+            name += "_" + str(ca)
+            # name+="_"+str(com_positions)
+        return name
+
+    def get_minaral_name(self, model=""):
+        """Get mineral prototype."""
+        mae = np.inf
+        feats = self.get_alignn_feats(model=model)
+        nm = self.get_mineral_prototype_name()
+        if nm in mineral_json_file:
+            for i in mineral_json_file[nm]:
+                maem = mean_absolute_error(i[1], feats)
+                if maem < mae:
+                    mae = maem
+                    name = i[0]
+        else:
+            for i, j in mineral_json_file.items():
+                for k in j:
+                    maem = mean_absolute_error(k[1], feats)
+                    if maem < mae:
+                        mae = maem
+                        name = k[0]
+        return name
+
     def lattice_points_in_supercell(self, supercell_matrix):
         """
         Adapted from Pymatgen.
@@ -1214,6 +1440,181 @@ class Atoms(object):
         assert len(tvects) == round(abs(np.linalg.det(supercell_matrix)))
         return tvects
 
+    def describe(
+        self,
+        xrd_peaks=5,
+        xrd_round=1,
+        cutoff=4,
+        take_n_bonds=2,
+        include_spg=True,
+    ):
+        """Describe for NLP applications."""
+        from jarvis.analysis.diffraction.xrd import XRD
+
+        min_name = self.get_minaral_name()
+        if include_spg:
+            from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
+            spg = Spacegroup3D(self)
+        theta, d_hkls, intens = XRD().simulate(atoms=self)
+        #     x = atoms.atomwise_angle_and_radial_distribution()
+        #     bond_distances = {}
+        #     for i, j in x[-1]["different_bond"].items():
+        #         bond_distances[i.replace("_", "-")] = ", ".join(
+        #             map(str, (sorted(list(set([round(jj, 2) for jj in j])))))
+        #         )
+        dists = defaultdict(list)
+        elements = self.elements
+        for i in self.get_all_neighbors(r=cutoff):
+            for j in i:
+                key = "-".join(sorted([elements[j[0]], elements[j[1]]]))
+                dists[key].append(j[2])
+        bond_distances = {}
+        for i, j in dists.items():
+            dist = sorted(set([round(k, 2) for k in j]))
+            if len(dist) >= take_n_bonds:
+                dist = dist[0:take_n_bonds]
+            bond_distances[i] = ", ".join(map(str, dist))
+        fracs = {}
+        for i, j in (self.composition.atomic_fraction).items():
+            fracs[i] = round(j, 3)
+        info = {}
+        chem_info = {
+            "mineral_name": min_name,
+            "atomic_formula": self.composition.reduced_formula,
+            "prototype": self.composition.prototype,
+            "molecular_weight": round(self.composition.weight / 2, 2),
+            "atomic_fraction": (fracs),
+            "atomic_X": ", ".join(
+                map(str, [Specie(s).X for s in self.uniq_species])
+            ),
+            "atomic_Z": ", ".join(
+                map(str, [Specie(s).Z for s in self.uniq_species])
+            ),
+        }
+        struct_info = {
+            "lattice_parameters": ", ".join(
+                map(str, [round(j, 2) for j in self.lattice.abc])
+            ),
+            "lattice_angles": ", ".join(
+                map(str, [round(j, 2) for j in self.lattice.angles])
+            ),
+            # "spg_number": spg.space_group_number,
+            # "spg_symbol": spg.space_group_symbol,
+            "top_k_xrd_peaks": ", ".join(
+                map(
+                    str,
+                    sorted(list(set([round(i, xrd_round) for i in theta])))[
+                        0:xrd_peaks
+                    ],
+                )
+            ),
+            "density": round(self.density, 3),
+            # "crystal_system": spg.crystal_system,
+            # "point_group": spg.point_group_symbol,
+            # "wyckoff": ", ".join(list(set(spg._dataset["wyckoffs"]))),
+            "bond_distances": bond_distances,
+        }
+        if include_spg:
+            struct_info["spg_number"] = spg.space_group_number
+            struct_info["spg_symbol"] = spg.space_group_symbol
+            struct_info["crystal_system"] = spg.crystal_system
+            struct_info["point_group"] = spg.point_group_symbol
+            struct_info["wyckoff"] = ", ".join(
+                list(set(spg._dataset["wyckoffs"]))
+            )
+            struct_info["natoms_primitive"] = spg.primitive_atoms.num_atoms
+            struct_info[
+                "natoms_conventional"
+            ] = spg.conventional_standard_structure.num_atoms
+        info["chemical_info"] = chem_info
+        info["structure_info"] = struct_info
+        line = "The number of atoms are: " + str(
+            self.num_atoms
+        )  # +"., The elements are: "+",".join(atoms.elements)+". "
+        for i, j in info.items():
+            if not isinstance(j, dict):
+                line += "The " + i + " is " + j + ". "
+            else:
+                # print("i",i)
+                # print("j",j)
+                for ii, jj in j.items():
+                    tmp = ""
+                    if isinstance(jj, dict):
+                        for iii, jjj in jj.items():
+                            tmp += iii + ": " + str(jjj) + " "
+                    else:
+                        tmp = jj
+                    line += "The " + ii + " is " + str(tmp) + ". "
+        line1 = line
+        # print('bond_distances', struct_info['bond_distances'])
+        tmp = ""
+        p = struct_info["bond_distances"]
+        for ii, (kk, vv) in enumerate(p.items()):
+            if ii == len(p) - 1:
+                punc = " Å."
+            else:
+                punc = " Å; "
+            tmp += kk + ": " + vv + punc
+        line2 = (
+            chem_info["atomic_formula"]
+            + " crystallizes in the "
+            + struct_info["crystal_system"]
+            + " "
+            + str(struct_info["spg_symbol"])
+            + " spacegroup, "
+            + struct_info["point_group"]
+            + " pointgroup with a prototype of "
+            + str(chem_info["prototype"])
+            # " and a molecular weight of " +
+            # str(chem_info['molecular_weight']) +
+            + ". The atomic fractions are: "
+            + str(chem_info["atomic_fraction"])
+            .replace("{", "")
+            .replace("}", "")
+            + " with electronegaticities as "
+            + str(chem_info["atomic_X"])
+            + " and atomic numbers as "
+            + str(chem_info["atomic_Z"])
+            + ". The bond distances are: "
+            + str(tmp)
+            + "The lattice lengths are: "
+            + struct_info["lattice_parameters"]
+            + " Å, and the lattice angles are: "
+            + struct_info["lattice_angles"]
+            + "º with some of the top XRD peaks at "
+            + struct_info["top_k_xrd_peaks"]
+            + "º with "
+            + "Wyckoff symbols "
+            + struct_info["wyckoff"]
+            + "."
+        )
+        if min_name is not None:
+            line3 = (
+                chem_info["atomic_formula"]
+                + " is "
+                + min_name
+                + "-derived structured and"
+                + " crystallizes in the "
+                + struct_info["crystal_system"]
+                + " "
+                + str(struct_info["spg_symbol"])
+                + " spacegroup."
+            )
+        else:
+            line3 = (
+                chem_info["atomic_formula"]
+                + " crystallizes in the "
+                + struct_info["crystal_system"]
+                + " "
+                + str(struct_info["spg_symbol"])
+                + " spacegroup."
+            )
+        info["desc_1"] = line1
+        info["desc_2"] = line2
+        info["desc_3"] = line3
+        return info
+
     def make_supercell_matrix(self, scaling_matrix):
         """
         Adapted from Pymatgen.
@@ -1268,6 +1669,10 @@ class Atoms(object):
         dim = np.array(dim)
         if dim.shape == (3, 3):
             dim = np.array([int(np.linalg.norm(v)) for v in dim])
+        return self.make_supercell_matrix(dim)
+
+    def make_supercell_old(self, dim=[2, 2, 2]):
+        """Make supercell of dimension dim using for loop."""
         coords = self.frac_coords
         all_symbs = self.elements  # [i.symbol for i in s.species]
         nat = len(coords)
@@ -1430,6 +1835,17 @@ class Atoms(object):
 
         result = header + middle + rest
         return result
+
+    def clone(self):
+        """Clones the class instance."""
+        return Atoms(
+            lattice_mat=self.lattice_mat,
+            elements=self.elements,
+            coords=self.frac_coords,
+            props=self.props,
+            cartesian=self.cartesian,
+            show_props=self.show_props,
+        )
 
 
 class VacuumPadding(object):
