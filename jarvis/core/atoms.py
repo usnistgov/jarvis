@@ -665,10 +665,10 @@ class Atoms(object):
                 dn = dn + Specie(element).Z
         polar = False
         if up != dn:
-            print("Seems like a polar materials.")
+            # print("Seems like a polar materials.")
             polar = True
         if up == dn:
-            print("Non-polar")
+            # print("Non-polar")
             polar = False
         return polar
 
