@@ -196,7 +196,7 @@ opt_out = Outcar(
         "OUTCAR",
     )
 )
-#TODO:
+# TODO:
 # wder = Waveder(
 #    os.path.join(
 #        os.path.dirname(__file__),
@@ -266,16 +266,16 @@ def test_locpot():
         (2, 56, 56, 56),
     )
     vac = loc.vac_potential()[0]
-    #assert round(vac, 2) == round(7.62302803577618, 2)
+    # assert round(vac, 2) == round(7.62302803577618, 2)
 
-    #td = loc.to_dict()
-    #fd = Locpot.from_dict(td)
+    # td = loc.to_dict()
+    # fd = Locpot.from_dict(td)
 
     vac = loc.vac_potential(direction="Y")[0]
-    #assert round(vac, 2) == round(7.62302803577618, 2)
+    # assert round(vac, 2) == round(7.62302803577618, 2)
 
     vac = loc.vac_potential(direction="Z")[0]
-    #assert round(vac, 2) == round(7.62302803577618, 2)
+    # assert round(vac, 2) == round(7.62302803577618, 2)
 
 
 def test_vrun():
@@ -329,6 +329,7 @@ def test_out():
     out_efg = Outcar(
         os.path.join(os.path.dirname(__file__), "OUTCAR.EFG-JVASP-12148")
     )
+    print(out_efg.all_structures())
     rl, imag = opt_out.freq_dielectric_tensor()
     nedos = opt_out.nedos
     out_efg_raw = Outcar(

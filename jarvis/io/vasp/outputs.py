@@ -514,6 +514,61 @@ class Outcar(object):
                 efermi.append(float(i.split()[2]))
         return efermi[-1]
 
+    def all_structures(self, elements=[]):
+        """Get all structure snapshots."""
+        if not elements:
+            atoms = Atoms.from_poscar(
+                self.filename.replace("OUTCAR", "POSCAR")
+            ).elements
+        nions = self.nions
+        atoms_array = []
+        energy_array = []
+        force_array = []
+        stress_array = []
+        for ii, i in enumerate(self.data):
+            if "in kB" in i:
+                stress = [
+                    float(j) for j in self.data[ii].split("in kB")[1].split()
+                ]
+                stress_array.append(stress)
+            if "VOLUME and BASIS-vectors are now :" in i:
+                tmp1 = [float(j) for j in self.data[ii + 5].split()]
+                tmp2 = [float(j) for j in self.data[ii + 6].split()]
+                tmp3 = [float(j) for j in self.data[ii + 7].split()]
+                lat_mat = [
+                    [tmp1[0], tmp1[1], tmp1[2]],
+                    [tmp2[0], tmp2[1], tmp2[2]],
+                    [tmp3[0], tmp3[1], tmp3[2]],
+                ]
+            if "  free  energy   TOTEN  =" in i:
+                energy = (
+                    self.data[ii]
+                    .split("  free  energy   TOTEN  =")[1]
+                    .split("eV")[0]
+                )
+                energy_array.append(energy)
+
+            if (
+                " POSITION                                       TOTAL-FORCE (eV/Angst)"
+                in i
+            ):
+                coords = []
+                forces = []
+                for j in range(nions):
+                    tmp = [float(k) for k in self.data[ii + 2 + j].split()]
+                    coords.append([tmp[0], tmp[1], tmp[2]])
+                    forces.append([tmp[3], tmp[4], tmp[5]])
+                    # print(tmp)
+                atoms = Atoms(
+                    lattice_mat=lat_mat,
+                    coords=coords,
+                    elements=elements,
+                    cartesian=True,
+                )
+
+                atoms_array.append(atoms)
+        return atoms_array, energy_array, force_array, stress_array
+
     @property
     def all_band_energies(self):
         """Get all band energies."""
@@ -2377,10 +2432,3 @@ def parse_raman_dat(
     info["indices"] = indices
     info["intensity"] = intensity
     return info
-
-
-"""
-kp='/users/knc6/Software/Devs/jarvis/jarvis/examples/vasp/SiOptb88/MAIN-RELAX-bulk@mp_149/KPOINT'
-kpt=Kpoints(filename=kp)
-print (kpt)
-"""
