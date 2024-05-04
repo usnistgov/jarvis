@@ -517,7 +517,7 @@ class Outcar(object):
         force_pattern = "TOTAL-FORCE (eV/Angst)"
         if not elements:
             try:
-                atoms = Atoms.from_poscar(
+                elements = Atoms.from_poscar(
                     self.filename.replace("OUTCAR", "POSCAR")
                 ).elements
             except Exception:
@@ -550,14 +550,14 @@ class Outcar(object):
                     [tmp3[0], tmp3[1], tmp3[2]],
                 ]
             if "  free  energy   TOTEN  =" in i:
-                energy = (
+                energy = float(
                     self.data[ii]
                     .split("  free  energy   TOTEN  =")[1]
                     .split("eV")[0]
                 )
                 energy_array.append(energy)
             if "  free  energy ML TOTEN  =" in i:
-                energy = (
+                energy = float(
                     self.data[ii]
                     .split("  free  energy   TOTEN  =")[1]
                     .split("eV")[0]
@@ -580,6 +580,7 @@ class Outcar(object):
                 )
 
                 atoms_array.append(atoms)
+                force_array.append(forces)
         if len(blocks) != len(atoms_array):
             print(
                 "WARNING: check OUTCAR parser", len(blocks), len(atoms_array)
