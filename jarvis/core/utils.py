@@ -249,16 +249,13 @@ def operate_affine(cart_coord=[], affine_matrix=[]):
 
 def gaussian(x, sigma):
     """Get Gaussian profile."""
-    return np.exp(-(x ** 2) / (2 * sigma ** 2))
+    return np.exp(-(x**2) / (2 * sigma**2))
 
 
 def lorentzian2(x, gamma):
     """Get Lorentziann profile."""
     return (
-        gamma
-        / 2
-        / (np.pi * (x ** 2 + (gamma / 2) ** 2))
-        / (2 / (np.pi * gamma))
+        gamma / 2 / (np.pi * (x**2 + (gamma / 2) ** 2)) / (2 / (np.pi * gamma))
     )
 
 
@@ -275,7 +272,14 @@ def digitize_array(values=[], max_len=10):
 
 
 def bond_angle(
-    dist1, dist2, bondx1, bondx2, bondy1, bondy2, bondz1, bondz2,
+    dist1,
+    dist2,
+    bondx1,
+    bondx2,
+    bondy1,
+    bondy2,
+    bondz1,
+    bondz2,
 ):
     """Get an angle."""
     nm = dist1 * dist2
@@ -324,7 +328,7 @@ def volumetric_grid_reshape(data=[], final_grid=[50, 50, 50]):
 
 def cos_formula(a, b, c):
     """Get angle between three edges for oblique triangles."""
-    res = (a ** 2 + b ** 2 - c ** 2) / (2 * a * b)
+    res = (a**2 + b**2 - c**2) / (2 * a * b)
     res = -1.0 if res < -1.0 else res
     res = 1.0 if res > 1.0 else res
     return np.arccos(res)

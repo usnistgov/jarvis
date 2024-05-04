@@ -6,12 +6,14 @@ def test_comp():
     cc = Composition(comp)
 
     assert (
-        cc.prototype,
+        cc.prototype_new,
         cc.formula,
         cc.reduced_formula,
         round(cc.weight, 4),
         cc.to_dict(),
-    ) == ("AB2", "Li2O4", "LiO2", 77.8796, comp)
+    ) == ("A2B", "Li2O4", "LiO2", 77.8796, comp)
+    # ) == ("AB2", "Li2O4", "LiO2", 77.8796, comp)
+    assert cc.prototype == "AB2"
     c = Composition.from_string("Al2O3Al5Co6O1")
     td = c.to_dict()
     fd = Composition.from_dict(td)

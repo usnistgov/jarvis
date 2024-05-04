@@ -12,7 +12,7 @@ with open(os.path.join(base_dir, "README.md")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2024.4.10",
+    version="2024.4.20",
     long_description=long_d,
     install_requires=[
         "numpy>=1.20.1",
@@ -34,6 +34,7 @@ setup(
             "magpie.json",
             "element_charge.json",
             "atom_init.json",
+            "mineral_name_prototype.json.zip",
         ],
         "jarvis.tasks.lammps.templates": [
             "displace.mod",
