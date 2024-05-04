@@ -199,7 +199,6 @@ class Chgcar(object):
 
     def chg_set(self, text, start, end, volume, ng):
         """Return CHGCAR sets."""
-
         lines_0 = text[start:end]
         # tmp = np.empty((ng))
         # p = np.fromstring('\n'.join(lines_0),  sep=' ')
@@ -231,7 +230,6 @@ class Locpot(Chgcar):
         plot=True,
     ):
         """Calculate vacuum potential used in work-function calculation."""
-
         if use_ase:
             from ase.calculators.vasp import VaspChargeDensity
 
@@ -516,10 +514,21 @@ class Outcar(object):
 
     def all_structures(self, elements=[]):
         """Get all structure snapshots."""
+        force_pattern = "TOTAL-FORCE (eV/Angst)"
         if not elements:
-            atoms = Atoms.from_poscar(
-                self.filename.replace("OUTCAR", "POSCAR")
-            ).elements
+            try:
+                atoms = Atoms.from_poscar(
+                    self.filename.replace("OUTCAR", "POSCAR")
+                ).elements
+            except Exception:
+                print("Check POSCAR exsist, or pass elements.")
+                pass
+        blocks = []
+        for ii, i in enumerate(self.data):
+            if "  free  energy   TOTEN  =" in i:
+                blocks.append(i)
+            if "  free  energy ML TOTEN  =" in i:
+                blocks.append(i)
         nions = self.nions
         atoms_array = []
         energy_array = []
@@ -547,11 +556,15 @@ class Outcar(object):
                     .split("eV")[0]
                 )
                 energy_array.append(energy)
+            if "  free  energy ML TOTEN  =" in i:
+                energy = (
+                    self.data[ii]
+                    .split("  free  energy   TOTEN  =")[1]
+                    .split("eV")[0]
+                )
+                energy_array.append(energy)
 
-            if (
-                " POSITION                                       TOTAL-FORCE (eV/Angst)"
-                in i
-            ):
+            if force_pattern in i:
                 coords = []
                 forces = []
                 for j in range(nions):
@@ -567,6 +580,10 @@ class Outcar(object):
                 )
 
                 atoms_array.append(atoms)
+        if len(blocks) != len(atoms_array):
+            print(
+                "WARNING: check OUTCAR parser", len(blocks), len(atoms_array)
+            )
         return atoms_array, energy_array, force_array, stress_array
 
     @property
