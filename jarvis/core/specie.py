@@ -28,6 +28,14 @@ chrg_data = json.load(el_chrg_json)
 el_chrg_json.close()
 cgcnn_feature_json = os.path.join(os.path.dirname(__file__), "atom_init.json")
 
+element_full_name = os.path.join(
+    os.path.dirname(__file__), "element_names.json"
+)
+
+
+def get_element_full_names():
+    return loadjson(element_full_name)
+
 
 def get_descrp_arr_name(elm="Al"):
     """
