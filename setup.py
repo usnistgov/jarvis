@@ -25,6 +25,7 @@ setup(
         "xmltodict>=0.11.0",
         "tqdm>=4.41.1",
         "scikit-learn",
+        "inflect",
         # "mkdocs-material>=9.0.5",
         # "markdown>=3.2.1",
         # "absl-py==1.4.0",
