@@ -32,6 +32,7 @@ try:
     device = "cpu"
     if torch.cuda.is_available():
         device = torch.device("cuda")
+    device = "cpu"
 except Exception:
     pass
 amu_gm = 1.66054e-24
@@ -638,11 +639,14 @@ class Atoms(object):
         return atoms
 
     @classmethod
-    def from_poscar(self, filename="POSCAR"):
+    def from_poscar(self, filename="POSCAR", string=""):
         """Read POSCAR/CONTCAR file from to make Atoms object."""
         from jarvis.io.vasp.inputs import Poscar
 
-        return Poscar.from_file(filename).atoms
+        if string != "":
+            return Poscar.from_string(string).atoms
+        else:
+            return Poscar.from_file(filename).atoms
 
     @property
     def check_polar(self):
@@ -1376,7 +1380,7 @@ class Atoms(object):
             # name+="_"+str(com_positions)
         return name
 
-    def get_basic_polyhdra_motif(self, thresh=0.5, cutoff=4):
+    def get_basic_polyhdra_motif(self, thresh=0.5, cutoff=4, extra_cutoff=4):
         """Get chemical environment around atoms."""
 
         def classify_coordination_environment(num_neighbors):
@@ -1404,22 +1408,22 @@ class Atoms(object):
                 return "Other"
 
         nbr_env = []
-        for ii, i in enumerate(self.get_all_neighbors(r=cutoff + 2)):
-            counter = Counter([round(j[2], 3) for j in i])
-            counter = dict(
-                sorted(
-                    counter.items(), key=lambda item: item[0], reverse=False
-                )
-            )
-            asc_bonds = list(counter.keys())
-            # print('asc_bonds',asc_bonds)
-            min_bond = asc_bonds[0]  # min(list(counter.keys()))
-            num_neighbors = counter[min_bond]
-            # Add second neighbors if too close
-            if min_bond + thresh >= asc_bonds[1]:
-                num_neighbors += counter[asc_bonds[1]]
+        for ii, i in enumerate(
+            self.get_all_neighbors(r=cutoff + extra_cutoff)
+        ):
+            sorted_i = sorted(i, key=lambda x: x[2])
+            num_neighbors = 0
+            min_bond = sorted_i[0][2]
+            info = []
+            for j in sorted_i:
+                if j[2] <= min_bond + thresh:
+                    info.append(self.elements[j[1]])
+            num_neighbors = len(info)
+            info_els = Counter(info)
+            tmp = Composition.from_dict(info_els).formula
             env = classify_coordination_environment(num_neighbors)
-            rep = self.elements[ii] + "X" + str(num_neighbors)
+            rep = self.elements[ii] + tmp
+            # rep = self.elements[ii] + "X" + str(num_neighbors)
             info = [self.elements[ii], env, num_neighbors, rep]
             if info not in nbr_env and env != "Other":
                 nbr_env.append(info)
@@ -1514,6 +1518,8 @@ class Atoms(object):
         model="",
         polyhedra_thresh=0.5,
         add_crystal_info=False,
+        add_wyck_descs=False,
+        add_same_el_bonds=False,
     ):
         """Describe for NLP applications."""
         from jarvis.analysis.diffraction.xrd import XRD
@@ -1583,6 +1589,18 @@ class Atoms(object):
         }
         wyck_descs = ""
         if include_spg:
+            polar_point_groups = [
+                "1",
+                "2",
+                "3",
+                "4",
+                "6",
+                "m",
+                "mm2",
+                "3m",
+                "4mm",
+                "6mm",
+            ]
             from jarvis.analysis.structure.spacegroup import (
                 get_wyckoff_position_operators,
             )
@@ -1593,13 +1611,17 @@ class Atoms(object):
             struct_info["spg_symbol"] = spg.space_group_symbol
             struct_info["crystal_system"] = spg.crystal_system
             struct_info["point_group"] = spg.point_group_symbol
+            if spg.point_group_symbol in polar_point_groups:
+                struct_info["polar"] = True
+            else:
+                struct_info["polar"] = False
             struct_info["wyckoff"] = ", ".join(
                 list(set(spg._dataset["wyckoffs"]))
             )
             struct_info["natoms_primitive"] = spg.primitive_atoms.num_atoms
-            struct_info[
-                "natoms_conventional"
-            ] = spg.conventional_standard_structure.num_atoms
+            struct_info["natoms_conventional"] = (
+                spg.conventional_standard_structure.num_atoms
+            )
             p = inflect.engine()
             # Multiplicity
             wyck_mult = get_wyckoff_position_operators(
@@ -1670,6 +1692,9 @@ class Atoms(object):
 
         p = struct_info["bond_distances"]
         for ii, (kk, vv) in enumerate(p.items()):
+            elements_in_bond = kk.split("-")
+            # if add_same_el_bonds and elements_in_bond[0]!=elements_in_bond[1]:
+            # print('kk,vv',kk,vv)
             if ii == len(p) - 1:
                 punc = " Å."
             else:
@@ -1701,7 +1726,14 @@ class Atoms(object):
                     + str(max(bnd))
                     + " Å."
                 )
-            bond_desc += txt
+            if elements_in_bond[0] != elements_in_bond[1]:
+                bond_desc += txt
+            if (
+                add_same_el_bonds
+                and elements_in_bond[0] == elements_in_bond[1]
+            ):
+
+                bond_desc += txt
         line2 = (
             chem_info["atomic_formula"]
             + " crystallizes in the "
@@ -1739,7 +1771,7 @@ class Atoms(object):
             cutoff=cutoff, thresh=polyhedra_thresh
         )
         info["motifs"] = motifs
-        motif_desc = ""
+        motif_desc = " "
         for ii, i in enumerate(motifs):
             if ii != len(motifs) - 1:
                 motif_desc += (
@@ -1770,7 +1802,7 @@ class Atoms(object):
                 + " "
                 + str(struct_info["spg_symbol"])
                 + " spacegroup."
-                + wyck_descs
+                # + wyck_descs
                 + bond_desc
                 + motif_desc
             )
@@ -1782,7 +1814,7 @@ class Atoms(object):
                 + " "
                 + str(struct_info["spg_symbol"])
                 + " spacegroup."
-                + wyck_descs
+                # + wyck_descs
                 + bond_desc
                 + motif_desc
             )
@@ -1810,6 +1842,8 @@ class Atoms(object):
         line3 = line3.replace("  ", " ")
         if add_crystal_info:
             line3 += crystal_str
+        if add_wyck_descs:
+            line3 += wyck_descs
         info["crystal_str"] = crystal_str
         info["desc_1"] = line1
         info["desc_2"] = line2
@@ -2477,18 +2511,18 @@ class OptimadeAdaptor(object):
         info_at["cartesian_site_positions"] = atoms.cart_coords[order].tolist()
         info_at["nperiodic_dimensions"] = 3
         # info_at["species"] = atoms.elements
-        info_at[
-            "species"
-        ] = self.get_optimade_species()  # dict(atoms.composition.to_dict())
+        info_at["species"] = (
+            self.get_optimade_species()
+        )  # dict(atoms.composition.to_dict())
         info_at["elements_ratios"] = list(
             atoms.composition.atomic_fraction.values()
         )
         info_at["structure_features"] = []
         info_at["last_modified"] = str(now)
         # info_at["more_data_available"] = True
-        info_at[
-            "chemical_formula_descriptive"
-        ] = atoms.composition.reduced_formula
+        info_at["chemical_formula_descriptive"] = (
+            atoms.composition.reduced_formula
+        )
         info_at["dimension_types"] = [1, 1, 1]
         info["attributes"] = info_at
         return info
@@ -2586,6 +2620,23 @@ def build_xanes_poscar(
     return atoms
 
 
+if __name__ == "__main__":
+    pos = """MgB2
+ 1.0
+ 1.5367454354207384 -2.661721209337192 0.0
+ 1.5367454354207384 2.661721209337192 0.0
+ 0.0 0.0 3.5146401326518166
+ Mg B
+ 1 2
+ Cartesian
+ 0.0 0.0 0.0
+ 1.53675 -0.8872417744799828 1.75732
+ 1.53675 0.8872417744799828 1.75732
+ """
+    atoms = Atoms.from_poscar(string=pos)
+    import pprint
+
+    pprint.pprint(atoms.describe())
 # ['Mn ', 'Mn ', 'Ru ', 'U ']
 #
 # def clear_elements(atoms=None):
