@@ -20,23 +20,14 @@ import random
 import string
 import datetime
 from collections import defaultdict
-from collections import Counter
 from sklearn.metrics import mean_absolute_error
 import zipfile
 import json
-import inflect
+from math import cos, pi, sin
 
-try:
-    import torch
-
-    device = "cpu"
-    if torch.cuda.is_available():
-        device = torch.device("cuda")
-    device = "cpu"
-except Exception:
-    pass
 amu_gm = 1.66054e-24
 ang_cm = 1e-8
+
 with zipfile.ZipFile(
     str(
         os.path.join(
@@ -639,14 +630,11 @@ class Atoms(object):
         return atoms
 
     @classmethod
-    def from_poscar(self, filename="POSCAR", string=""):
+    def from_poscar(self, filename="POSCAR"):
         """Read POSCAR/CONTCAR file from to make Atoms object."""
         from jarvis.io.vasp.inputs import Poscar
 
-        if string != "":
-            return Poscar.from_string(string).atoms
-        else:
-            return Poscar.from_file(filename).atoms
+        return Poscar.from_file(filename).atoms
 
     @property
     def check_polar(self):
@@ -879,6 +867,128 @@ class Atoms(object):
             rcut2 = rcut1
             pass
         return rcut1, rcut2, neighbors
+
+    def rotate_pos(self, phi=0.0, theta=90.0, psi=0.0, center=(0, 0, 0)):
+        """Rotate atom sites via Euler angles (in degrees).
+
+        See e.g http://mathworld.wolfram.com/EulerAngles.html for explanation.
+        Adapted from
+        https://wiki.fysik.dtu.dk/ase/_modules/ase/atoms.html#Atoms.rotate
+        center :
+            The point to rotate about. A sequence of length 3 with the
+            coordinates.
+        phi :
+            The 1st rotation angle around the z axis.
+        theta :
+            Rotation around the x axis.
+        psi :
+            2nd rotation around the z axis.
+
+        """
+        phi *= pi / 180
+        theta *= pi / 180
+        psi *= pi / 180
+
+        rcoords = self.cart_coords - center
+        D = np.array(
+            (
+                (cos(phi), sin(phi), 0.0),
+                (-sin(phi), cos(phi), 0.0),
+                (0.0, 0.0, 1.0),
+            )
+        )
+        # Second Euler rotation about x:
+        C = np.array(
+            (
+                (1.0, 0.0, 0.0),
+                (0.0, cos(theta), sin(theta)),
+                (0.0, -sin(theta), cos(theta)),
+            )
+        )
+        # Third Euler rotation, 2nd rotation about z:
+        B = np.array(
+            (
+                (cos(psi), sin(psi), 0.0),
+                (-sin(psi), cos(psi), 0.0),
+                (0.0, 0.0, 1.0),
+            )
+        )
+        # Total Euler rotation
+        A = np.dot(B, np.dot(C, D))
+        # Do the rotation
+        rcoords = np.dot(A, np.transpose(rcoords))
+        positions = np.transpose(rcoords) + center
+
+        return Atoms(
+            lattice_mat=self.lattice_mat,
+            elements=self.elements,
+            coords=positions,
+            cartesian=True,
+            props=self.props,
+        )
+
+    def rotate_cell(self, phi=0.0, theta=90.0, psi=0.0, center=(0, 0, 0)):
+        """Rotate atom cell via Euler angles (in degrees).
+
+        See e.g http://mathworld.wolfram.com/EulerAngles.html for explanation.
+        Adapted from
+        https://wiki.fysik.dtu.dk/ase/_modules/ase/atoms.html#Atoms.rotate
+        center :
+            The point to rotate about. A sequence of length 3 with the
+            coordinates.
+        phi :
+            The 1st rotation angle around the z axis.
+        theta :
+            Rotation around the x axis.
+        psi :
+            2nd rotation around the z axis.
+
+        """
+        phi *= pi / 180
+        theta *= pi / 180
+        psi *= pi / 180
+
+        # First move the molecule to the origin In contrast to MATLAB,
+        # numpy broadcasts the smaller array to the larger row-wise,
+        # so there is no need to play with the Kronecker product.
+        # rcoords = atoms.cart_coords - center
+        # First Euler rotation about z in matrix form
+        D = np.array(
+            (
+                (cos(phi), sin(phi), 0.0),
+                (-sin(phi), cos(phi), 0.0),
+                (0.0, 0.0, 1.0),
+            )
+        )
+        # Second Euler rotation about x:
+        C = np.array(
+            (
+                (1.0, 0.0, 0.0),
+                (0.0, cos(theta), sin(theta)),
+                (0.0, -sin(theta), cos(theta)),
+            )
+        )
+        # Third Euler rotation, 2nd rotation about z:
+        B = np.array(
+            (
+                (cos(psi), sin(psi), 0.0),
+                (-sin(psi), cos(psi), 0.0),
+                (0.0, 0.0, 1.0),
+            )
+        )
+        # Total Euler rotation
+        A = np.dot(B, np.dot(C, D))
+        # Do the rotation
+        r_lattice_mat = np.dot(A, self.lattice_mat)
+        # Move back to the roactation point
+        # positions = np.transpose(rcoords) + center
+        return Atoms(
+            lattice_mat=r_lattice_mat,
+            elements=self.elements,
+            coords=self.frac_coords,
+            cartesian=False,
+            props=self.props,
+        )
 
     def atomwise_angle_and_radial_distribution(
         self, r=5, bond_tol=0.15, c_size=10, verbose=False
@@ -1326,12 +1436,9 @@ class Atoms(object):
             h.remove()
             return activation["readout"][0]
 
-        try:
-            from alignn.graphs import Graph
-            from alignn.pretrained import get_figshare_model
-        except Exception:
-            print("Install alignn: conda install alignn")
-            pass
+        from alignn.graphs import Graph
+        from alignn.pretrained import get_figshare_model
+
         g, lg = Graph.atom_dgl_multigraph(
             self,
             cutoff=cutoff,
@@ -1345,13 +1452,13 @@ class Atoms(object):
             model = get_figshare_model(
                 model_name="jv_formation_energy_peratom_alignn"
             )
-            print("For multiple materials, pass a model instead.")
-        h = get_val(model.to(device), g.to(device), lg.to(device))
+        h = get_val(model, g, lg)
         return h
 
     def get_mineral_prototype_name(
         self, prim=True, include_c_over_a=False, digits=3
     ):
+        """Get mineral_prototype_name."""
         from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
         spg = Spacegroup3D(self)
@@ -1379,57 +1486,6 @@ class Atoms(object):
             name += "_" + str(ca)
             # name+="_"+str(com_positions)
         return name
-
-    def get_basic_polyhdra_motif(self, thresh=0.5, cutoff=4, extra_cutoff=4):
-        """Get chemical environment around atoms."""
-
-        def classify_coordination_environment(num_neighbors):
-            if num_neighbors == 2:
-                return "Linear"
-            elif num_neighbors == 3:
-                return "Trigonal Planar"
-                # or "Trigonal Pyramid" based on distances/angles
-            elif num_neighbors == 4:
-                return "Tetrahedral"
-                # or "Square Planar" based on distances/angles
-            elif num_neighbors == 5:
-                return "Trigonal Bipyramidal"
-                # or "Square Pyramidal" based on distances/angles
-            elif num_neighbors == 6:
-                return "Octahedral"
-            elif num_neighbors == 7:
-                return "Pentagonal Bipyramidal"
-                # or "Pentagonal Pyramid" based on distances/angles
-            elif num_neighbors == 8:
-                return "Hexagonal Bipyramidal"  # or "Cubic"
-            elif num_neighbors == 12:
-                return "Cuboctahedral"
-            else:
-                return "Other"
-
-        nbr_env = []
-        for ii, i in enumerate(
-            self.get_all_neighbors(r=cutoff + extra_cutoff)
-        ):
-            sorted_i = sorted(i, key=lambda x: x[2])
-            num_neighbors = 0
-            min_bond = sorted_i[0][2]
-            info = []
-            for j in sorted_i:
-                if j[2] <= min_bond + thresh:
-                    info.append(self.elements[j[1]])
-            num_neighbors = len(info)
-            info_els = Counter(info)
-            tmp = Composition.from_dict(info_els).formula
-            env = classify_coordination_environment(num_neighbors)
-            rep = self.elements[ii] + tmp
-            # rep = self.elements[ii] + "X" + str(num_neighbors)
-            info = [self.elements[ii], env, num_neighbors, rep]
-            if info not in nbr_env and env != "Other":
-                nbr_env.append(info)
-            # break
-        # print(nbr_env)
-        return nbr_env
 
     def get_minaral_name(self, model=""):
         """Get mineral prototype."""
@@ -1515,19 +1571,15 @@ class Atoms(object):
         cutoff=4,
         take_n_bonds=2,
         include_spg=True,
-        model="",
-        polyhedra_thresh=0.5,
-        add_crystal_info=False,
-        add_wyck_descs=False,
-        add_same_el_bonds=False,
     ):
         """Describe for NLP applications."""
         from jarvis.analysis.diffraction.xrd import XRD
 
-        min_name = self.get_minaral_name(model=model)
-        # if include_spg:
-        #    from jarvis.analysis.structure.spacegroup import Spacegroup3D
-        #    spg = Spacegroup3D(self)
+        min_name = self.get_minaral_name()
+        if include_spg:
+            from jarvis.analysis.structure.spacegroup import Spacegroup3D
+
+            spg = Spacegroup3D(self)
         theta, d_hkls, intens = XRD().simulate(atoms=self)
         #     x = atoms.atomwise_angle_and_radial_distribution()
         #     bond_distances = {}
@@ -1587,34 +1639,11 @@ class Atoms(object):
             # "wyckoff": ", ".join(list(set(spg._dataset["wyckoffs"]))),
             "bond_distances": bond_distances,
         }
-        wyck_descs = ""
         if include_spg:
-            polar_point_groups = [
-                "1",
-                "2",
-                "3",
-                "4",
-                "6",
-                "m",
-                "mm2",
-                "3m",
-                "4mm",
-                "6mm",
-            ]
-            from jarvis.analysis.structure.spacegroup import (
-                get_wyckoff_position_operators,
-            )
-            from jarvis.analysis.structure.spacegroup import Spacegroup3D
-
-            spg = Spacegroup3D(self)
             struct_info["spg_number"] = spg.space_group_number
             struct_info["spg_symbol"] = spg.space_group_symbol
             struct_info["crystal_system"] = spg.crystal_system
             struct_info["point_group"] = spg.point_group_symbol
-            if spg.point_group_symbol in polar_point_groups:
-                struct_info["polar"] = True
-            else:
-                struct_info["polar"] = False
             struct_info["wyckoff"] = ", ".join(
                 list(set(spg._dataset["wyckoffs"]))
             )
@@ -1622,50 +1651,6 @@ class Atoms(object):
             struct_info["natoms_conventional"] = (
                 spg.conventional_standard_structure.num_atoms
             )
-            p = inflect.engine()
-            # Multiplicity
-            wyck_mult = get_wyckoff_position_operators(
-                spg._dataset["hall_number"]
-            )
-            wyck_map = {}
-            for i in wyck_mult["wyckoff"]:
-                wyck_map[i["letter"]] = i["multiplicity"]
-
-            wycks = spg._dataset["wyckoffs"]
-            elements = self.elements
-            element_mult = defaultdict(list)
-            for i, j in zip(wycks, elements):
-                if wyck_map[i] not in element_mult[j]:
-                    element_mult[j].append(wyck_map[i])
-
-            wyck_desc = []
-            for element, wyck_dict in element_mult.items():
-                unique_sites = len(wyck_dict)
-                if unique_sites == 1:
-
-                    wyck_desc.append(
-                        " All "
-                        + element
-                        + " sites have equivalent multiplicity of "
-                        + str(p.number_to_words(wyck_dict[0]))
-                        + "."
-                    )
-                else:
-                    diff_mult = ", ".join(
-                        [p.number_to_words(jj) for jj in wyck_dict]
-                    )
-                    wyck_desc.append(
-                        "There are "
-                        + str(p.number_to_words(unique_sites))
-                        + " inequivalent "
-                        + element
-                        + " sites with multiplicities of "
-                        + diff_mult
-                        + "."
-                    )
-
-            wyck_descs = " ".join(wyck_desc)
-
         info["chemical_info"] = chem_info
         info["structure_info"] = struct_info
         line = "The number of atoms are: " + str(
@@ -1688,52 +1673,13 @@ class Atoms(object):
         line1 = line
         # print('bond_distances', struct_info['bond_distances'])
         tmp = ""
-        bond_desc = " "
-
         p = struct_info["bond_distances"]
         for ii, (kk, vv) in enumerate(p.items()):
-            elements_in_bond = kk.split("-")
-            # if add_same_el_bonds and elements_in_bond[0]!=elements_in_bond[1]:
-            # print('kk,vv',kk,vv)
             if ii == len(p) - 1:
                 punc = " Å."
             else:
                 punc = " Å; "
             tmp += kk + ": " + vv + punc
-            txt = ""
-            bnd = [float(bb) for bb in vv.split(",")]
-            if len(bnd) == 1:
-                txt = (
-                    " All " + kk + " bond lengths are " + str(bnd[0]) + " Å. "
-                )
-            elif len(bnd) == 2:
-                txt = (
-                    " There is one shorter ("
-                    + str(bnd[0])
-                    + " Å) and one longer ("
-                    + str(bnd[1])
-                    + " Å) "
-                    + kk
-                    + " bond lengths."
-                )
-            else:
-                txt = (
-                    " There is a spread of "
-                    + kk
-                    + " bond lengths ranging from "
-                    + str(min(bnd))
-                    + " to "
-                    + str(max(bnd))
-                    + " Å."
-                )
-            if elements_in_bond[0] != elements_in_bond[1]:
-                bond_desc += txt
-            if (
-                add_same_el_bonds
-                and elements_in_bond[0] == elements_in_bond[1]
-            ):
-
-                bond_desc += txt
         line2 = (
             chem_info["atomic_formula"]
             + " crystallizes in the "
@@ -1767,44 +1713,17 @@ class Atoms(object):
             + struct_info["wyckoff"]
             + "."
         )
-        motifs = self.get_basic_polyhdra_motif(
-            cutoff=cutoff, thresh=polyhedra_thresh
-        )
-        info["motifs"] = motifs
-        motif_desc = " "
-        for ii, i in enumerate(motifs):
-            if ii != len(motifs) - 1:
-                motif_desc += (
-                    i[0]
-                    + " is bonded in edge-sharing "
-                    + i[-1]
-                    + " "
-                    + i[1]
-                    + ", "
-                )
-            else:
-                motif_desc += (
-                    i[0]
-                    + " is bonded in edge-sharing "
-                    + i[-1]
-                    + " "
-                    + i[1]
-                    + ". "
-                )
         if min_name is not None:
             line3 = (
                 chem_info["atomic_formula"]
                 + " is "
                 + min_name
-                + "-like structured and"
+                + "-derived structured and"
                 + " crystallizes in the "
                 + struct_info["crystal_system"]
                 + " "
                 + str(struct_info["spg_symbol"])
                 + " spacegroup."
-                # + wyck_descs
-                + bond_desc
-                + motif_desc
             )
         else:
             line3 = (
@@ -1814,37 +1733,7 @@ class Atoms(object):
                 + " "
                 + str(struct_info["spg_symbol"])
                 + " spacegroup."
-                # + wyck_descs
-                + bond_desc
-                + motif_desc
             )
-        # print("bond_desc",bond_desc)
-        lengths = self.lattice.abc
-        angles = self.lattice.angles
-        atom_ids = self.elements
-        frac_coords = self.frac_coords
-
-        crystal_str = (
-            " ".join(["{0:.2f}".format(x) for x in lengths])
-            + "#\n"
-            + " ".join([str(int(x)) for x in angles])
-            + "@\n"
-            + "\n".join(
-                [
-                    str(t)
-                    + " "
-                    + " ".join(["{0:.3f}".format(x) for x in c])
-                    + "&"
-                    for t, c in zip(atom_ids, frac_coords)
-                ]
-            )
-        )
-        line3 = line3.replace("  ", " ")
-        if add_crystal_info:
-            line3 += crystal_str
-        if add_wyck_descs:
-            line3 += wyck_descs
-        info["crystal_str"] = crystal_str
         info["desc_1"] = line1
         info["desc_2"] = line2
         info["desc_3"] = line3
@@ -2620,23 +2509,6 @@ def build_xanes_poscar(
     return atoms
 
 
-if __name__ == "__main__":
-    pos = """MgB2
- 1.0
- 1.5367454354207384 -2.661721209337192 0.0
- 1.5367454354207384 2.661721209337192 0.0
- 0.0 0.0 3.5146401326518166
- Mg B
- 1 2
- Cartesian
- 0.0 0.0 0.0
- 1.53675 -0.8872417744799828 1.75732
- 1.53675 0.8872417744799828 1.75732
- """
-    atoms = Atoms.from_poscar(string=pos)
-    import pprint
-
-    pprint.pprint(atoms.describe())
 # ['Mn ', 'Mn ', 'Ru ', 'U ']
 #
 # def clear_elements(atoms=None):
