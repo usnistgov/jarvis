@@ -437,7 +437,7 @@ def get_db_info():
         ],
         # https://doi.org/10.6084/m9.figshare.26117998
         "cccbdb": [
-            "https://figshare.com/ndownloader/files/47281600",
+            "https://figshare.com/ndownloader/files/47283808",
             "cccbdb.json",
             "Obtaining CCCBDB dataset 1333...",
             "https://cccbdb.nist.gov/",
