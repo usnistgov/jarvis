@@ -421,6 +421,27 @@ def get_db_info():
             "Obtaining m3gnet_mpf dataset 168917...",
             "https://github.com/materialsvirtuallab/m3gnet",
         ],
+        # https://doi.org/10.6084/m9.figshare.23267852
+        "m3gnet_mpf_1.5mil": [
+            "https://figshare.com/ndownloader/files/47281519",
+            "id_prop.json",
+            "Obtaining m3gnet_mpf dataset 1.5mil...",
+            "https://github.com/materialsvirtuallab/m3gnet",
+        ],
+        # https://doi.org/10.6084/m9.figshare.23531523
+        "mxene275": [
+            "https://figshare.com/ndownloader/files/41266233",
+            "mxene275.json",
+            "Obtaining mxene dataset 275...",
+            "https://cmr.fysik.dtu.dk/c2db/c2db.html",
+        ],
+        # https://doi.org/10.6084/m9.figshare.26117998
+        "cccbdb": [
+            "https://figshare.com/ndownloader/files/47281600",
+            "cccbdb.json",
+            "Obtaining CCCBDB dataset 1333...",
+            "https://cccbdb.nist.gov/",
+        ],
         # https://doi.org/10.6084/m9.figshare.13154159
         "raw_files": [
             "https://ndownloader.figshare.com/files/25295732",
