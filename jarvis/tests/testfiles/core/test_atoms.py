@@ -132,6 +132,8 @@ def test_basic_atoms():
     rem = (Si.make_supercell([2, 2, 2]).remove_site_by_index(site=0)).num_atoms
     prim = Si.get_primitive_atoms
     print(prim.cart_coords)
+    #print(prim.get_pos())
+    #print(prim.get_cell())
     conv = Si.get_conventional_atoms
     spgn = Si.get_spacegroup
     comp = compare_atoms(atoms1=prim, atoms2=conv)

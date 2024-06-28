@@ -12,7 +12,7 @@ with open(os.path.join(base_dir, "README.md")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2024.4.30",
+    version="2024.5.10",
     long_description=long_d,
     install_requires=[
         "numpy>=1.20.1",
@@ -24,6 +24,8 @@ setup(
         "toolz>=0.9.0",
         "xmltodict>=0.11.0",
         "tqdm>=4.41.1",
+        "scikit-learn",
+        "inflect",
         # "mkdocs-material>=9.0.5",
         # "markdown>=3.2.1",
         # "absl-py==1.4.0",
@@ -34,6 +36,7 @@ setup(
             "magpie.json",
             "element_charge.json",
             "atom_init.json",
+            "element_names.json",
             "mineral_name_prototype.json.zip",
         ],
         "jarvis.tasks.lammps.templates": [
@@ -59,7 +62,6 @@ setup(
             "dgl",
             "keras",
             "tensorflow",
-            "scikit-learn",
             "flask",
             "pandas",
         ],

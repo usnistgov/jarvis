@@ -156,10 +156,14 @@ class Composition(object):
         form = ""
         for specie, count in self._content.items():
             if float(count).is_integer():
-                form = form + str(specie) + str(int(count))
+                # form = form + str(specie) + str(int(count))
+                if count == 1:
+                    form = form + specie
+                else:
+                    form = form + specie + str(int(count))
             else:
                 form = form + str(specie) + str(count)
-        return form.replace("1", "")
+        return form  # .replace("1", "")
 
     @property
     def atomic_fraction(self):
