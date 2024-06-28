@@ -11,3 +11,4 @@ def test(*args):
 
     path = os.path.join(os.path.split(__file__)[0], "tests")
     pytest.main(args=[path] + list(args))
+    
