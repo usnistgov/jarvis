@@ -79,7 +79,7 @@ def get_db_info():
             # "https://ndownloader.figshare.com/files/26809760",
             "id_prop.json",
             "Obtaining ALIGNN-FF training DB 300k ...",
-            "https://arxiv.org/abs/2209.05554",
+            "https://doi.org/10.1039/D2DD00096B",
         ],
         "mp_3d_2020": [
             "https://ndownloader.figshare.com/files/26791259",
