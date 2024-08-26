@@ -225,7 +225,7 @@ class Surface(object):
 
         frac_coords = new_atoms.frac_coords
 
-        frac_coords[:] = frac_coords[:] % 1
+        # frac_coords[:] = frac_coords[:] % 1
         new_atoms = Atoms(
             lattice_mat=latest_lat,
             elements=surf_atoms.elements,

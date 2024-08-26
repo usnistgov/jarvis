@@ -1,5 +1,9 @@
 # Tutorials
 
+## Quickstart with Jupyter/Google-colab notebooks: https://github.com/usnistgov/aims2024_workshop
+
+More detailed tutorials below:
+
 ## How to analyze an atomic structure
 
 Atomic structure act as an input to multiple simulations such as for

@@ -12,12 +12,13 @@ import io
 import json
 import requests
 from jarvis.db.jsonutils import loadjson
-from jarvis.io.vasp.outputs import Vasprun
-from jarvis.io.vasp.inputs import Poscar
-from jarvis.io.wannier.outputs import WannierHam
 from tqdm import tqdm
 import matplotlib.image as mpimg
-from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
+
+# from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
+# from jarvis.io.wannier.outputs import WannierHam
+# from jarvis.io.vasp.outputs import Vasprun
+# from jarvis.io.vasp.inputs import Poscar
 
 # import matplotlib.pyplot as plt
 # plt.switch_backend("agg")
@@ -79,7 +80,7 @@ def get_db_info():
             # "https://ndownloader.figshare.com/files/26809760",
             "id_prop.json",
             "Obtaining ALIGNN-FF training DB 300k ...",
-            "https://arxiv.org/abs/2209.05554",
+            "https://doi.org/10.1039/D2DD00096B",
         ],
         "mp_3d_2020": [
             "https://ndownloader.figshare.com/files/26791259",
@@ -598,6 +599,8 @@ def make_stm_from_prev_parchg(
     jid="JVASP-667", bias="Negative", filename="stm_image.png", min_size=10
 ):
     """Make STM images from previously calculated PARVHG files for 2D."""
+    from jarvis.analysis.stm.tersoff_hamann import TersoffHamannSTM
+
     fls = data("raw_files")
     for i in fls["STM"]:
         zip_name = jid + "_" + bias + ".zip"
@@ -619,6 +622,9 @@ def make_stm_from_prev_parchg(
 
 def get_wann_electron(jid="JVASP-816"):
     """Download electron WTBH if available."""
+    from jarvis.io.wannier.outputs import WannierHam
+    from jarvis.io.vasp.inputs import Poscar
+
     w = ""
     ef = ""
     fls = data("raw_files")
@@ -650,6 +656,7 @@ def get_wann_phonon(jid="JVASP-1002", factor=15.633302):
     """Download phonon WTBH if available."""
     # Requires phonopy
     from jarvis.io.phonopy.outputs import get_phonon_tb
+    from jarvis.io.vasp.outputs import Vasprun
 
     fls = data("raw_files")
 

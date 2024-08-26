@@ -1,19 +1,23 @@
 """Modules for handling crystallographic Spacegroup related operations."""
+
 from functools import reduce
 from jarvis.core.lattice import Lattice
 from jarvis.core.atoms import Atoms
-import spglib
 from jarvis.core.specie import Specie
 import numpy as np
 from numpy import sin, cos
 import itertools
-
-# from fractions import gcd
 from jarvis.core.utils import gcd
+import os
 
+try:
+    import spglib
+except Exception as exp:
+    print(exp)
+    pass
 # from numpy import gcd
 # from math import gcd
-import os
+# from fractions import gcd
 
 
 def unique_rows_2(a):
