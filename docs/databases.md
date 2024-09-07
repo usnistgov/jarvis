@@ -57,6 +57,10 @@
 | `AGRA_CO`         | 193                   | AGRA CO catalyst dataset                                                                                                              |
 | `AGRA_CHO`        | 214                   | AGRA CHO catalyst dataset                                                                                                             |
 | `AGRA_COOH`       | 280                   | AGRA COOH catalyst dataset                                                                                                            |
+| `halide_peroskites`       | 229                   | Halide perovskite dataset                                                                                                            |
+| `aflow2`       | 400k                   | AFLOW dataset                                                                                                            |
+| `mxene275`       | 275                   | MXene dataset                                                                                                            |
+| `cccbdb`       | 1333                   | CCCBDB dataset                                                                                                            |
 | `cfid_3d`         | 55723                 | Various 3D materials properties in JARVIS-DFT database computed with OptB88vdW and TBmBJ methods with CFID                            |
 | `raw_files`       | 144895                | Figshare links to download raw calculations VASP files from JARVIS-DFT                                                                |
 
