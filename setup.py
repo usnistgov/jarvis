@@ -12,7 +12,7 @@ with open(os.path.join(base_dir, "README.md")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2024.8.10",
+    version="2024.8.30",
     long_description=long_d,
     install_requires=[
         "numpy>=1.20.1",
