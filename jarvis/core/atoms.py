@@ -1776,16 +1776,19 @@ class Atoms(object):
 
         new_sites = []
         new_elements = []
-        for site, el in zip(self.cart_coords, self.elements):
+        new_props = []
+        for site, el, p in zip(self.cart_coords, self.elements, self.props):
             for v in c_lat:
                 new_elements.append(el)
                 tmp = site + v
                 new_sites.append(tmp)
+                new_props.append(p)
         return Atoms(
             lattice_mat=new_lattice.lattice(),
             elements=new_elements,
             coords=new_sites,
             cartesian=True,
+            props=new_props,
         )
 
     def make_supercell(self, dim=[2, 2, 2]):

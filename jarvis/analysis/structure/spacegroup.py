@@ -13,7 +13,7 @@ import os
 try:
     import spglib
 except Exception as exp:
-    print(exp)
+    # print(exp)
     pass
 # from numpy import gcd
 # from math import gcd

@@ -328,7 +328,21 @@ def get_db_info():
             "https://figshare.com/ndownloader/files/40750811",
             "vacancydb.json",
             "Obtaining vacancy dataset 464...",
-            "https://arxiv.org/abs/2205.08366",
+            "https://doi.org/10.1063/5.0135382",
+        ],
+        # https://doi.org/10.6084/m9.figshare.25832614
+        "surfacedb": [
+            "https://figshare.com/ndownloader/files/46355689",
+            "surface_db_dd.json",
+            "Obtaining vacancy dataset 607...",
+            "https://doi.org/10.1039/D4DD00031E",
+        ],
+        # https://doi.org/10.6084/m9.figshare.25832614
+        "interfacedb": [
+            "https://figshare.com/ndownloader/files/46355692",
+            "interface_db_dd.json",
+            "Obtaining vacancy dataset 607...",
+            "https://doi.org/10.1039/D4DD00031E",
         ],
         # Contains repeats
         # https://doi.org/10.6084/m9.figshare.23206193

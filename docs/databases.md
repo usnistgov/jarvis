@@ -6,6 +6,12 @@
 |-------------------|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------|
 | `dft_3d`          | 75993                 | Various 3D materials properties in JARVIS-DFT database computed with OptB88vdW and TBmBJ methods                                      |
 | `dft_2d`          | 1109                  | Various 2D materials properties in JARVIS-DFT database computed with OptB88vdW                                                        |
+| `supercon_3d`     | 1058                  | 3D superconductor DFT dataset                                                                                                         |
+| `supercon_2d`     | 161                   | 2D superconductor DFT dataset                                                                                                         |
+| `supercon_chem`   | 16414                 | Superconductor chemical formula dataset                                                                                               |
+| `vacancydb`       | 464                   | Vacancy formation energy dataset                                                                                                      |
+| `surfacedb`       | 607                   | Surface property dataset                                                                                                      |
+| `interfacedb`       | 593                   | Interface property dataset                                                                                                     |
 | `dft_3d_2021`     | 55723                 | Various 3D materials properties in JARVIS-DFT database computed with OptB88vdW and TBmBJ methods                                      |
 | `dft_2d_2021`     | 1079                  | Various 2D materials properties in JARVIS-DFT database computed with OptB88vdW                                                        |
 | `qe_tb`           | 829574                | Various 3D materials properties in JARVIS-QETB database                                                                               |
@@ -19,6 +25,8 @@
 | `mp_3d_2020`      | 127k                  | CFID descriptors for materials project                                                                                                |
 | `mp_3d`           | 84k                   | CFID descriptors for 84k materials project                                                                                            |
 | `megnet2`         | 133k                  | 133k materials and their formation energy in MP                                                                                       |
+| `m3gnet_mpf`        | 168k                  | 168k structures and their energy, forces and stresses in MP                                                                                       |
+| `m3gnet_mpf_1.5mil`        | 1.5 million                  | 1.5 million structures  and their energy, forces and stresses in MP                                                                                       |
 | `twod_matpd`      | 6351                  | Formation energy and bandgaps of 2D materials properties in 2DMatPedia database                                                       |
 | `c2db`            | 3514                  | Various properties in C2DB database                                                                                                   |
 | `polymer_genome`  | 1073                  | Electronic bandgap and diecltric constants of crystall ine polymer in polymer genome database                                         |
@@ -49,10 +57,10 @@
 | `AGRA_CO`         | 193                   | AGRA CO catalyst dataset                                                                                                              |
 | `AGRA_CHO`        | 214                   | AGRA CHO catalyst dataset                                                                                                             |
 | `AGRA_COOH`       | 280                   | AGRA COOH catalyst dataset                                                                                                            |
-| `supercon_3d`     | 1058                  | 3D superconductor DFT dataset                                                                                                         |
-| `supercon_2d`     | 161                   | 2D superconductor DFT dataset                                                                                                         |
-| `supercon_chem`   | 16414                 | Superconductor chemical formula dataset                                                                                               |
-| `vacancydb`       | 464                   | Vacancy formation energy dataset                                                                                                      |
+| `halide_peroskites`       | 229                   | Halide perovskite dataset                                                                                                            |
+| `aflow2`       | 400k                   | AFLOW dataset                                                                                                            |
+| `mxene275`       | 275                   | MXene dataset                                                                                                            |
+| `cccbdb`       | 1333                   | CCCBDB dataset                                                                                                            |
 | `cfid_3d`         | 55723                 | Various 3D materials properties in JARVIS-DFT database computed with OptB88vdW and TBmBJ methods with CFID                            |
 | `raw_files`       | 144895                | Figshare links to download raw calculations VASP files from JARVIS-DFT                                                                |
 
@@ -80,82 +88,4 @@ df = pd.DataFrame(d)
 print(df)
 ```
 
-## JARVIS-DFT
 
-Description coming soon!
-
-### JARVIS-Formation energy and bandgap
-
-### JARVIS-2D Exfoliation energies
-
-### JARVIS-MetaGGA (dielectric function and SLME, solar cells)
-
-### JARVIS-STM and STEM
-
-### JARVIS-WannierTB
-
-### JARVIS-Elastic constants
-
-### JARVIS-Topological materials (Spin-orbit Spillage)
-
-### JARVIS-DFPT (Piezoelectric, IR, Raman, dielectric, BEC)
-
-### JARVIS-BoltzTrap (Thermoelectrics coeff, eff. mass)
-
-### JARVIS-Magnetic moments
-
-### JARVIS-DFPT (Piezoelectric, IR, dielectric)
-
-### JARVIS-EFG
-
-### JARVIS-PBE0 and HSE06
-
-### JARVIS-Heterostructure
-
-### JARVIS-EDOS-PDOS
-
-### JARVIS-Kpoint and cut-off
-
-## JARVIS-FF
-
-### Energetics
-
-### Elastic constants 
-
-### Vacancy formation energy 
-
-### Surface energy and Wulff-plots 
-
-### Phonon DOS
-
-## JARVIS-RAW Files
-
-### JARVIS-DFT structure relaxation
-
-### JARVIS-DFT Elastic constants/finite difference
-
-### JARVIS-WannierTB
-
-### JARVIS-STM and STEM
-
-## External datasets used for ML training
-
-### Materials project dataset
-
-### QM9 dataset
-
-### OQMD dataset
-
-### AFLOW dataset
-
-### Polymer genome dataset
-
-### COD dataset
-
-### OMDB dataset
-
-### QMOF dataset
-
-### C2DB dataset
-
-### HPOV dataset
