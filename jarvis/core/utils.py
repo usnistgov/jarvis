@@ -1,7 +1,8 @@
 """Set of useful utility functions."""
 
 from collections import OrderedDict
-from collections import defaultdict
+from scipy import sparse
+from scipy.sparse.linalg import spsolve
 import random
 import numpy as np
 import math
@@ -333,6 +334,34 @@ def cos_formula(a, b, c):
     res = 1.0 if res > 1.0 else res
     return np.arccos(res)
 
+
+def baseline_als(y, lam, p, niter=10):
+    """
+    Adaptive Least Squares fitting for baseline correction
+    
+    Parameters:
+    y: array_like
+        Input signal
+    lam: float
+        Lambda (smoothness)
+    p: float
+        Asymmetry
+    niter: int, optional
+        Number of iterations
+    
+    Returns:
+    array_like
+        The estimated baseline
+    """
+    L = len(y)
+    D = sparse.diags([1,-2,1],[0,-1,-2], shape=(L,L-2))
+    w = np.ones(L)
+    for i in range(niter):
+        W = sparse.spdiags(w, 0, L, L)
+        Z = W + lam * D.dot(D.transpose())
+        z = spsolve(Z, w*y)
+        w = p * (y > z) + (1-p) * (y < z)
+    return z
 
 # def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
 #   """Check if XML is valid."""
