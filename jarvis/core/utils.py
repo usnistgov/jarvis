@@ -362,7 +362,18 @@ def baseline_als(y, lam, p, niter=10):
         z = spsolve(Z, w*y)
         w = p * (y > z) + (1-p) * (y < z)
     return z
+    
+def recast_array(x_original = [],y_original = [],x_new = np.arange(0, 90, 1),tol=0.1):
+    x_original=np.array(x_original)
+    # Initialize the new y array with NaNs or a default value
+    y_new = np.full_like(x_new, 0, dtype=np.float64)
 
+    # Fill the corresponding bins
+    for x_val, y_val in zip(x_original, y_original):
+        closest_index = np.abs(x_new - x_val).argmin()  # Find the closest x_new index
+        y_new[closest_index] = y_val
+    #y_new[y_new<tol]=0
+    return x_new, y_new
 # def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):
 #   """Check if XML is valid."""
 #   xml_file = etree.parse(xml)
