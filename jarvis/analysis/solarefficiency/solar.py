@@ -9,7 +9,11 @@ import os
 from scipy.interpolate import interp1d
 from numpy import interp
 import scipy.constants as constants
-from scipy.integrate import simps
+try:
+    from scipy.integrate import simps
+except:
+    from scipy.integrate import simpson as simps
+    pass
 import matplotlib.pyplot as plt
 
 
