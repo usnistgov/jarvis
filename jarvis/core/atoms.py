@@ -1438,6 +1438,9 @@ class Atoms(object):
 
         from alignn.graphs import Graph
         from alignn.pretrained import get_figshare_model
+        import torch
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         g, lg = Graph.atom_dgl_multigraph(
             self,
@@ -1452,6 +1455,8 @@ class Atoms(object):
             model = get_figshare_model(
                 model_name="jv_formation_energy_peratom_alignn"
             )
+        g.to(device)
+        lg.to(device)
         h = get_val(model, g, lg)
         return h
 
@@ -1571,11 +1576,15 @@ class Atoms(object):
         cutoff=4,
         take_n_bonds=2,
         include_spg=True,
+        include_mineral_name=False,
     ):
         """Describe for NLP applications."""
         from jarvis.analysis.diffraction.xrd import XRD
 
-        min_name = self.get_minaral_name()
+        if include_mineral_name:
+            min_name = self.get_minaral_name()
+        else:
+            min_name = "na"
         if include_spg:
             from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
@@ -1713,7 +1722,8 @@ class Atoms(object):
             + struct_info["wyckoff"]
             + "."
         )
-        if min_name is not None:
+        if min_name != "na":
+            # if min_name is not None:
             line3 = (
                 chem_info["atomic_formula"]
                 + " is "
