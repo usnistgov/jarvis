@@ -671,6 +671,7 @@ def get_wann_phonon(jid="JVASP-1002", factor=15.633302):
     # Requires phonopy
     from jarvis.io.phonopy.outputs import get_phonon_tb
     from jarvis.io.vasp.outputs import Vasprun
+    from jarvis.io.wannier.outputs import WannierHam
 
     fls = data("raw_files")
 
