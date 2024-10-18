@@ -2,6 +2,10 @@
 
 ## [FigShare](https://figshare.com/authors/Kamal_Choudhary/4445539) based databases
 
+[![Open in Colab]](https://colab.research.google.com/github/knc6/jarvis-tools-notebooks/blob/master/jarvis-tools-notebooks/Analyzing_data_in_the_JARVIS_DFT_dataset.ipynb)
+[![Open in SLMat]](https://deepmaterials.github.io/slmat/lab?fromURL=https://raw.githubusercontent.com/deepmaterials/slmat/main/content/Database_analysis.ipynb)
+
+
 | Database name     | Number of data-points | Description                                                                                                                           |
 |-------------------|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------|
 | `dft_3d`          | 75993                 | Various 3D materials properties in JARVIS-DFT database computed with OptB88vdW and TBmBJ methods                                      |
@@ -94,4 +98,6 @@ df = pd.DataFrame(d)
 print(df)
 ```
 
+[Open in SLMat]: https://img.shields.io/badge/Open-SLMat-blue
 
+[Open in Colab]: https://colab.research.google.com/assets/colab-badge.svg
