@@ -12,7 +12,7 @@ import os
 
 try:
     import spglib
-except Exception as exp:
+except Exception:
     # print(exp)
     pass
 # from numpy import gcd

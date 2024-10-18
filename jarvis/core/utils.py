@@ -2,6 +2,8 @@
 
 from collections import OrderedDict
 from collections import defaultdict
+from scipy import sparse
+from scipy.sparse.linalg import spsolve
 import random
 import numpy as np
 import math
@@ -332,6 +334,52 @@ def cos_formula(a, b, c):
     res = -1.0 if res < -1.0 else res
     res = 1.0 if res > 1.0 else res
     return np.arccos(res)
+
+
+def baseline_als(y, lam, p, niter=10):
+    """
+    Adaptive Least Squares fitting for baseline correction
+
+    Parameters:
+    y: array_like
+        Input signal
+    lam: float
+        Lambda (smoothness)
+    p: float
+        Asymmetry
+    niter: int, optional
+        Number of iterations
+
+    Returns:
+    array_like
+        The estimated baseline
+    """
+    L = len(y)
+    D = sparse.diags([1, -2, 1], [0, -1, -2], shape=(L, L - 2))
+    w = np.ones(L)
+    for i in range(niter):
+        W = sparse.spdiags(w, 0, L, L)
+        Z = W + lam * D.dot(D.transpose())
+        z = spsolve(Z, w * y)
+        w = p * (y > z) + (1 - p) * (y < z)
+    return z
+
+
+def recast_array(
+    x_original=[], y_original=[], x_new=np.arange(0, 90, 1), tol=0.1
+):
+    x_original = np.array(x_original)
+    # Initialize the new y array with NaNs or a default value
+    y_new = np.full_like(x_new, 0, dtype=np.float64)
+
+    # Fill the corresponding bins
+    for x_val, y_val in zip(x_original, y_original):
+        closest_index = np.abs(
+            x_new - x_val
+        ).argmin()  # Find the closest x_new index
+        y_new[closest_index] = y_val
+    # y_new[y_new<tol]=0
+    return x_new, y_new
 
 
 # def is_xml_valid(xsd="jarvisdft.xsd", xml="JVASP-1002.xml"):

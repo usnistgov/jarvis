@@ -457,6 +457,48 @@ def get_db_info():
             "Obtaining CCCBDB dataset 1333...",
             "https://cccbdb.nist.gov/",
         ],
+        # https://doi.org/10.6084/m9.figshare.27174897
+        "alex_pbe_hull": [
+            "https://figshare.com/ndownloader/files/49622718",
+            "alexandria_convex_hull_pbe_2023.12.29_jarvis_tools.json",
+            "Obtaining Alexandria_DB PBE on hull 116k...",
+            "https://alexandria.icams.rub.de/",
+        ],
+        # https://doi.org/10.6084/m9.figshare.27174897
+        "alex_pbe_3d_all": [
+            "https://figshare.com/ndownloader/files/49622946",
+            "alexandria_pbe_3d_2024.10.1_jarvis_tools.json",
+            "Obtaining Alexandria_DB PBE 3D all 5 million, large file...",
+            "https://alexandria.icams.rub.de/",
+        ],
+        # https://doi.org/10.6084/m9.figshare.27174897
+        "alex_pbe_2d_all": [
+            "https://figshare.com/ndownloader/files/49622988",
+            "alexandria_pbe_2d_2024.10.1_jarvis_tools.json",
+            "Obtaining Alexandria_DB PBE 2D all 200k...",
+            "https://alexandria.icams.rub.de/",
+        ],
+        # https://doi.org/10.6084/m9.figshare.27174897
+        "alex_pbe_1d_all": [
+            "https://figshare.com/ndownloader/files/49622991",
+            "alexandria_pbe_1d_2024.10.1_jarvis_tools.json",
+            "Obtaining Alexandria_DB PBE 1D all 100k...",
+            "https://alexandria.icams.rub.de/",
+        ],
+        # https://doi.org/10.6084/m9.figshare.27174897
+        "alex_scan_3d_all": [
+            "https://figshare.com/ndownloader/files/49623090",
+            "alexandria_scan_3d_2024.10.1_jarvis_tools.json",
+            "Obtaining Alexandria_DB SCAN 3D all 500k...",
+            "https://alexandria.icams.rub.de/",
+        ],
+        # https://doi.org/10.6084/m9.figshare.27174897
+        "alex_pbesol_3d_all": [
+            "https://figshare.com/ndownloader/files/49623096",
+            "alexandria_ps_3d_2024.10.1_jarvis_tools.json",
+            "Obtaining Alexandria_DB PBEsol 3D all 500k...",
+            "https://alexandria.icams.rub.de/",
+        ],
         # https://doi.org/10.6084/m9.figshare.13154159
         "raw_files": [
             "https://ndownloader.figshare.com/files/25295732",
@@ -671,6 +713,7 @@ def get_wann_phonon(jid="JVASP-1002", factor=15.633302):
     # Requires phonopy
     from jarvis.io.phonopy.outputs import get_phonon_tb
     from jarvis.io.vasp.outputs import Vasprun
+    from jarvis.io.wannier.outputs import WannierHam
 
     fls = data("raw_files")
 

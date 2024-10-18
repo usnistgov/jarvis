@@ -4,12 +4,19 @@ Modules for calculating theoretical solar-cell efficiency.
 Please find more detailsin:
 https://pubs.acs.org/doi/abs/10.1021/acs.chemmater.9b02166
 """
+
 import numpy as np
 import os
 from scipy.interpolate import interp1d
 from numpy import interp
 import scipy.constants as constants
-from scipy.integrate import simps
+
+try:
+    from scipy.integrate import simps
+except Exception:
+    from scipy.integrate import simpson as simps
+
+    pass
 import matplotlib.pyplot as plt
 
 
@@ -69,7 +76,7 @@ class SolarEfficiency(object):
         # units of W/(m**3), different than solar_spectra_irradiance!!! (This
         # is intentional, it is for convenience)
         blackbody_irradiance = (
-            2.0 * h * c ** 2 / (solar_spectra_wavelength_meters ** 5)
+            2.0 * h * c**2 / (solar_spectra_wavelength_meters**5)
         ) * (
             1.0
             / (
@@ -109,7 +116,7 @@ class SolarEfficiency(object):
         )
 
         bandgap_blackbody = (
-            (2.0 * h * c ** 2 / (bandgap_wavelength ** 5))
+            (2.0 * h * c**2 / (bandgap_wavelength**5))
             * (
                 1.0
                 / (
@@ -273,7 +280,7 @@ class SolarEfficiency(object):
         # units of W/(m**3), different than solar_spectra_irradiance!!! (This
         # is intentional, it is for convenience)
         blackbody_irradiance = (
-            2.0 * h * c ** 2 / (solar_spectra_wavelength_meters ** 5)
+            2.0 * h * c**2 / (solar_spectra_wavelength_meters**5)
         ) * (
             1.0
             / (
@@ -298,7 +305,7 @@ class SolarEfficiency(object):
         # units of nm
         material_wavelength_for_absorbance_data = (
             (c * h_e) / (material_energy_for_absorbance_data + 0.00000001)
-        ) * 10 ** 9
+        ) * 10**9
 
         # absorbance interpolation onto each solar spectrum wavelength
 
