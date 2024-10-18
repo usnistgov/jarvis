@@ -25,8 +25,8 @@
 | `mp_3d_2020`      | 127k                  | CFID descriptors for materials project                                                                                                |
 | `mp_3d`           | 84k                   | CFID descriptors for 84k materials project                                                                                            |
 | `megnet2`         | 133k                  | 133k materials and their formation energy in MP                                                                                       |
-| `m3gnet_mpf`        | 168k                  | 168k structures and their energy, forces and stresses in MP                                                                                       |
-| `m3gnet_mpf_1.5mil`        | 1.5 million                  | 1.5 million structures  and their energy, forces and stresses in MP                                                                                       |
+| `m3gnet_mpf`      | 168k                | 168k structures and their energy, forces and stresses in MP                                                                                       |
+| `m3gnet_mpf_1.5mil` | 1.5 million          | 1.5 million structures  and their energy, forces and stresses in MP                                                                                       |
 | `twod_matpd`      | 6351                  | Formation energy and bandgaps of 2D materials properties in 2DMatPedia database                                                       |
 | `c2db`            | 3514                  | Various properties in C2DB database                                                                                                   |
 | `polymer_genome`  | 1073                  | Electronic bandgap and diecltric constants of crystall ine polymer in polymer genome database                                         |
@@ -36,6 +36,12 @@
 | `oqmd_3d_no_cfid` | 817636                | Formation energies and bandgaps of 3D materials from OQMD database                                                                    |
 | `oqmd_3d`         | 460k                  | CFID descriptors for 460k materials in OQMD                                                                                           |
 | `omdb`            | 12500                 | Bandgaps for organic polymers in OMDB database                                                                                        |
+| `alex_pbe_hull`   | 116k                 | Alexandria DB convex hull stable materials with PBE functional                                                                                    |
+| `alex_pbe_3d_all` | 5 million            | Alexandria DB all 3D materials with PBE                                                                                   |
+| `alex_pbe_2d_all` | 200k                 | Alexandria DB all 2D materials with PBE                                                                                       |
+| `alex_pbe_1d_all` | 100k                 | Alexandria DB all 1D materials with PBE                                                                                       |
+| `alex_scan_3d_all` | 500k                 | Alexandria DB all 3D materials with SCAN                                                                                     |
+| `alex_pbesol_3d_all` | 500k                 | Alexandria DB all 3D materials with PBEsol                                                                                    |
 | `hopv`            | 4855                  | Various properties of molecules in HOPV15 dataset                                                                                     |
 | `pdbbind`         | 11189                 | Bio-molecular complexes database from PDBBind v2015                                                                                   |
 | `pdbbind_core`    | 195                   | Bio-molecular complexes database from PDBBind core                                                                                    |
