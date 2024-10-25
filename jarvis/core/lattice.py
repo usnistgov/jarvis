@@ -240,7 +240,7 @@ class Lattice(object):
         return Lattice(self.reciprocal_lattice().matrix / (2 * np.pi))
 
     def get_points_in_sphere(
-        self, frac_points, center, r, distance_vector=True
+        self, frac_points, center, r, distance_vector=False
     ):
         """
         Find all points within a sphere from the point.
