@@ -12,7 +12,7 @@ with open(os.path.join(base_dir, "README.md")) as f:
 
 setup(
     name="jarvis-tools",
-    version="2024.10.10",
+    version="2024.10.30",
     long_description=long_d,
     install_requires=[
         "numpy>=1.20.1",
@@ -81,7 +81,6 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering",
     ],
