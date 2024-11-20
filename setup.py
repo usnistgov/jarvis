@@ -81,7 +81,7 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: MIT License",
+        "License :: NIST License",
         "Operating System :: OS Independent",
         "Topic :: Scientific/Engineering",
     ],
