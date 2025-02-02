@@ -208,6 +208,70 @@ class XRD(object):
 
         return pretty_unique
 
+def baseline_als(y, lam, p, niter=10):
+    """ALS baseline correction to remove broad background trends."""
+    L = len(y)
+    D = sparse.diags([1, -2, 1], [0, -1, -2], shape=(L, L - 2))
+    w = np.ones(L)
+    for _ in range(niter):
+        W = sparse.spdiags(w, 0, L, L)
+        Z = W + lam * D.dot(D.transpose())
+        z = spsolve(Z, w * y)
+        w = p * (y > z) + (1 - p) * (y < z)
+    return z
+
+def recast_array(x_original, y_original, x_new, tol=0.1):
+    """Recast original spectrum onto a new grid, accumulating close values."""
+    x_original = np.array(x_original)
+    y_new = np.zeros_like(x_new, dtype=np.float64)
+
+    # Accumulate intensities for sharpness preservation
+    for x_val, y_val in zip(x_original, y_original):
+        closest_index = np.abs(x_new - x_val).argmin()
+        y_new[closest_index] += y_val
+
+    # Remove noise below tolerance level
+    y_new[y_new < tol] = 0
+    return x_new, y_new
+
+def sharpen_peaks(y, sigma=0.5):
+    """Sharpen peaks using a narrow Gaussian filter."""
+    # Use a very small sigma to reduce peak broadening
+    y_sharp = gaussian_filter1d(y, sigma=sigma, mode='constant')
+    return y_sharp
+
+def processed(x, y, x_range=[0, 90], intvl=0.1, sigma=.05,recast=True,tol=0.1,background_subs=True):
+    """Process the spectrum: background removal and peak sharpening."""
+    y = np.array(y,dtype='float')
+    if background_subs:
+
+      # 1. Baseline correction
+      background = baseline_als(y, lam=10000, p=0.01)
+      y_corrected = y - background
+    else:
+      y_corrected = y
+
+    # 2. Normalize the corrected spectrum
+    y_corrected = y_corrected / np.max(y_corrected)
+
+    # 3. Generate new x-axis values
+    x_new = np.arange(x_range[0], x_range[1], intvl)
+
+    # 4. Recast the spectrum onto the new grid
+    if recast:
+       x_new, y_corrected = recast_array(x, y_corrected, x_new,tol=tol)
+
+
+
+    # 5. Sharpen the peaks using Gaussian filtering
+    y_sharp = sharpen_peaks(y_corrected, sigma=sigma)
+
+    # 6. Final normalization
+    if np.max(y_sharp) > 0:
+        y_sharp = y_sharp / np.max(y_sharp)
+
+    return x_new, y_sharp
+
 
 """
 if __name__ == "__main__":
