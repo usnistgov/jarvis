@@ -272,6 +272,21 @@ def processed(x, y, x_range=[0, 90], intvl=0.1, sigma=.05,recast=True,tol=0.1,ba
 
     return x_new, y_sharp
 
+def smooth_xrd(atoms=None,thetas=[0, 90],intvl=0.5):
+    a, b, c = XRD(thetas=thetas).simulate(atoms=atoms)
+    a = np.array(a)
+    c = np.array(c)
+    c=c/np.max(c)
+    a, c = recast_array(
+        x_original=a,
+        y_original=c,
+        x_new=np.arange(thetas[0], thetas[1], intvl),
+    )
+    c=c/np.max(c)
+    #c_str = "\n".join(["{0:.3f}".format(x) for x in c])
+    c_str = "\n".join(["{0:.2f}".format(x) for x in c])
+
+    return c_str,c
 
 """
 if __name__ == "__main__":
