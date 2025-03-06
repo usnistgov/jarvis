@@ -325,7 +325,7 @@ def get_db_info():
         ],
         # https://doi.org/10.6084/m9.figshare.23000573
         "vacancydb": [
-            "https://figshare.com/ndownloader/files/52845227",
+            "https://figshare.com/ndownloader/files/52845425",
             "vacancydb.json",
             "Obtaining vacancy dataset 464...",
             "https://doi.org/10.1063/5.0135382",
