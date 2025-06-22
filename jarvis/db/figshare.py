@@ -499,6 +499,13 @@ def get_db_info():
             "Obtaining Alexandria_DB PBEsol 3D all 500k...",
             "https://alexandria.icams.rub.de/",
         ],
+        # https://doi.org/10.6084/m9.figshare.27174897
+        "alex_supercon": [
+            "https://figshare.com/ndownloader/files/55551155",
+            "alex_supercon.json",
+            "Obtaining Alexandria_SuperConDB 8253...",
+            "https://doi.org/10.1002/adfm.202404043",
+        ],
         # https://doi.org/10.6084/m9.figshare.13154159
         "raw_files": [
             "https://ndownloader.figshare.com/files/25295732",
