@@ -1,8 +1,5 @@
 # JARVIS-Tools
 
-⚠️ This repository is no longer maintained.
-For the latest updates and continued development, please visit: https://github.com/atomgptlab/jarvis-tools
-
 The JARVIS-Tools is an open-access software package for atomistic
 data-driven materials design. JARVIS-Tools can be used for a) setting up
 calculations, b) analysis and informatics, c) plotting, d) database
