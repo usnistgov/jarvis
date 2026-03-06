@@ -19,6 +19,28 @@ except Exception:
 # from math import gcd
 # from fractions import gcd
 
+def _dataset_to_dict(dataset):
+    """Convert SpglibDataset (spglib >= 2.5) or plain dict to a plain dict."""
+    if dataset is None:
+        return None
+    if isinstance(dataset, dict):
+        return dataset
+    import dataclasses
+    if dataclasses.is_dataclass(dataset):
+        return dataclasses.asdict(dataset)
+    try:
+        return dict(dataset)
+    except TypeError:
+        keys = (
+            "number", "hall_number", "international", "hall", "choice",
+            "transformation_matrix", "origin_shift", "rotations",
+            "translations", "wyckoffs", "site_symmetry_symbols",
+            "equivalent_atoms", "mapping_to_primitive",
+            "std_lattice", "std_types", "std_positions",
+            "std_rotation_matrix", "std_mapping_to_primitive", "pointgroup",
+        )
+        return {k: getattr(dataset, k, None) for k in keys}
+
 
 def unique_rows_2(a):
     """Remove duplicate rows."""
@@ -175,7 +197,7 @@ class Spacegroup3D(object):
 
             angle_tolerance: angle tolerance
         """
-        self._dataset = dataset
+        self._dataset = _dataset_to_dict(dataset)
         self._atoms = atoms
         self._symprec = symprec
         self._angle_tolerance = angle_tolerance
@@ -190,11 +212,12 @@ class Spacegroup3D(object):
             self._atoms.frac_coords,
             self._atoms.atomic_numbers,
         )
-        dataset = spglib.get_symmetry_dataset(
+        raw = spglib.get_symmetry_dataset(
             phonopy_atoms,
             symprec=self._symprec,
             angle_tolerance=self._angle_tolerance,
         )
+        dataset = _dataset_to_dict(raw)
         """
         keys = ('number',
         'hall_number',
