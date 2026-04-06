@@ -997,10 +997,10 @@ class Waveder(object):
                 return np.frombuffer(data, dtype=dtype)
 
             nbands, nelect, nk, ispin = readData(np.int32)
-            _ = readData(np.float)  # nodes_in_dielectric_function
-            _ = readData(np.float)  # wplasmon
+            _ = readData(float)  # nodes_in_dielectric_function
+            _ = readData(float)  # wplasmon
             if gamma_only:
-                cder = readData(np.float)
+                cder = readData(float)
             else:
                 cder = readData(np.complex64)
 
