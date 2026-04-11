@@ -37,8 +37,10 @@ def parse_lambda(filename="lambda"):
             print()
 
 
-def non_prime_kpoints(kpts=[]):
+def non_prime_kpoints(kpts=None):
     """Get non prime kpoints."""
+    if kpts is None:
+        kpts = []
     mem = []
     for i in kpts:
         facts = get_factors(i)
@@ -105,8 +107,10 @@ class SuperCond(object):
         return info
 
     @classmethod
-    def from_dict(self, info={}):
+    def from_dict(self, info=None):
         """Load from a dictionary."""
+        if info is None:
+            info = {}
         return SuperCond(
             atoms=Atoms.from_dict(info["atoms"]),
             kp=Kpoints3D.from_dict(info["kp"]),

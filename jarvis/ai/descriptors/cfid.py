@@ -119,13 +119,15 @@ from jarvis.core.specie import Specie
 
 def get_chem_only_descriptors(
     formula="Al2O3",
-    extra=[],
+    extra=None,
     mean_only=False,
     max_only=False,
     min_only=False,
     source="cfid",
 ):
     """Get jarvis_cfid or magpie descriptors for each formula."""
+    if extra is None:
+        extra = []
     s = Composition.from_string(formula)
     el_dict = s.to_dict()
     arr = []

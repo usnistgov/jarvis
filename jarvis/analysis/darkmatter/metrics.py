@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def peskin_schroeder_constant(bandgap=None, fermi_velocities=[], epsilon=[]):
+def peskin_schroeder_constant(bandgap=None, fermi_velocities=None, epsilon=None):
     """
     Provide Peskin Scroeder constant for a material.
 
@@ -20,6 +20,10 @@ def peskin_schroeder_constant(bandgap=None, fermi_velocities=[], epsilon=[]):
     Return:
        1/(epsion*vF)
     """
+    if fermi_velocities is None:
+        fermi_velocities = []
+    if epsilon is None:
+        epsilon = []
     return 1 / (np.array(fermi_velocities) * np.array(epsilon))
 
 

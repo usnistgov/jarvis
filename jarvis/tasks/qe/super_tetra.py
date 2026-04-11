@@ -39,8 +39,10 @@ class SuperCond(object):
         return info
 
     @classmethod
-    def from_dict(self, info={}):
+    def from_dict(self, info=None):
         """Load from a dictionary."""
+        if info is None:
+            info = {}
         return SuperCond(
             atoms=Atoms.from_dict(info["atoms"]),
             kp=Kpoints3D.from_dict(info["kp"]),

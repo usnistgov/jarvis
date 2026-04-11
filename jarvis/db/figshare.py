@@ -739,8 +739,10 @@ def get_wann_phonon(jid="JVASP-1002", factor=15.633302):
                 return w, atoms
 
 
-def get_hk_tb(k=np.array([0, 0, 0]), w=[]):
+def get_hk_tb(k=np.array([0, 0, 0]), w=None):
     """Get Wannier TB Hamiltonian."""
+    if w is None:
+        w = []
     nr = w.R.shape[0]
     hk = np.zeros((w.nwan, w.nwan), dtype=complex)
     kmat = np.tile(k, (nr, 1))

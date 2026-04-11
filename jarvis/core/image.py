@@ -22,8 +22,12 @@ plt.switch_backend("agg")
 class Image(object):
     """Module for processing image files."""
 
-    def __init__(self, values=[], pbc_params=[]):
+    def __init__(self, values=None, pbc_params=None):
         """Initialize the module."""
+        if values is None:
+            values = []
+        if pbc_params is None:
+            pbc_params = []
         # pbc_params for 2D image: a,b and gamma
         # 3D : a,b,c, alpha, beta, gamma
 

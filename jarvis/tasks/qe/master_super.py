@@ -31,8 +31,10 @@ run_dir = "/wrk/knc6/Super"
 run_dir = "/wrk/knc6/CDVAE_SUP"
 
 
-def non_prime_kpoints(kpts=[]):
+def non_prime_kpoints(kpts=None):
     """Get non prime kpoints."""
+    if kpts is None:
+        kpts = []
     mem = []
     for i in kpts:
         facts = get_factors(i)

@@ -705,8 +705,10 @@ class Atoms(object):
         return d
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Form atoms object from the dictionary."""
+        if d is None:
+            d = {}
         return Atoms(
             lattice_mat=d["lattice_mat"],
             elements=d["elements"],
@@ -743,9 +745,11 @@ class Atoms(object):
         )
 
     def add_site(
-        self, element="Si", coords=[0.1, 0.1, 0.1], props=[], index=0
+        self, element="Si", coords=[0.1, 0.1, 0.1], props=None, index=0
     ):
         """Ad an atom, coords in fractional coordinates."""
+        if props is None:
+            props = []
         new_els = list(self.elements)
         new_coords = list(self.frac_coords)
         new_props = list(self.props)
@@ -1180,14 +1184,18 @@ class Atoms(object):
 
     def plot_atoms(
         self=None,
-        colors=[],
-        sizes=[],
+        colors=None,
+        sizes=None,
         cutoff=1.9,
         opacity=0.5,
         bond_width=2,
         filename=None,
     ):
         """Plot atoms using plotly."""
+        if colors is None:
+            colors = []
+        if sizes is None:
+            sizes = []
         import plotly.graph_objects as go
 
         fig = go.Figure()
@@ -2296,8 +2304,10 @@ class OptimadeAdaptor(object):
         """Intialize class with Atoms object."""
         self.atoms = atoms
 
-    def reduce(self, content={}):
+    def reduce(self, content=None):
         """Reduce chemical formula."""
+        if content is None:
+            content = {}
         repeat = 0
         for specie, count in content.items():
             if repeat == 0:
@@ -2309,8 +2319,10 @@ class OptimadeAdaptor(object):
             reduced[specie] = count // repeat
         return reduced, repeat
 
-    def optimade_reduced_formula(self, content={}, sort_alphabetical=True):
+    def optimade_reduced_formula(self, content=None, sort_alphabetical=True):
         """Get chemical formula."""
+        if content is None:
+            content = {}
         if sort_alphabetical:
             content = OrderedDict(
                 sorted(content.items(), key=lambda x: (x[0]))
@@ -2332,8 +2344,10 @@ class OptimadeAdaptor(object):
 
         return form  # .replace("1", "")
 
-    def get_optimade_prototype(self, content={}):
+    def get_optimade_prototype(self, content=None):
         """Get chemical prototypes such as A, AB etc."""
+        if content is None:
+            content = {}
         reduced, repeat = self.reduce(content)
         proto = ""
         all_upper = string.ascii_uppercase
@@ -2364,8 +2378,10 @@ class OptimadeAdaptor(object):
             sp.append(info)
         return sp
 
-    def from_optimade(self, info={}):
+    def from_optimade(self, info=None):
         """Get Atoms from optimade."""
+        if info is None:
+            info = {}
         lattice_mat = info["attributes"]["lattice_vectors"]
         elements = info["attributes"]["elements"]
         coords = info["attributes"]["cartesian_site_positions"]
@@ -2430,8 +2446,12 @@ class OptimadeAdaptor(object):
         return info
 
 
-def compare_atoms(atoms1=[], atoms2=[], primitive_cell=True, verbose=True):
+def compare_atoms(atoms1=None, atoms2=None, primitive_cell=True, verbose=True):
     """Compare atomic strutures."""
+    if atoms1 is None:
+        atoms1 = []
+    if atoms2 is None:
+        atoms2 = []
     from jarvis.analysis.structure.spacegroup import Spacegroup3D
 
     if primitive_cell:

@@ -65,8 +65,10 @@ class WTin(object):
         return d
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Construct class from a dictionary."""
+        if d is None:
+            d = {}
         return WTin(
             atoms=Atoms.from_dict(d["atoms"]),
             nelect=d["nelect"],

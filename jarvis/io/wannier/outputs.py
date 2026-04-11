@@ -727,11 +727,15 @@ class WannierHam(object):
         vasprun_path="",
         energy_tol=0.75,
         plot=True,
-        kp_labels_points=[],
-        kp_labels=[],
+        kp_labels_points=None,
+        kp_labels=None,
         filename="compare.png",
     ):
         """Compare DFT and Wannier bands to check accuracy."""
+        if kp_labels_points is None:
+            kp_labels_points = []
+        if kp_labels is None:
+            kp_labels = []
         vrun = Vasprun(vasprun_path)
         kpoints = vrun.kpoints._kpoints
         fermi = vrun.efermi
@@ -789,7 +793,7 @@ class WannierHam(object):
 
     def dos(
         self,
-        kpoints=[],
+        kpoints=None,
         proj=None,
         efermi=0.0,
         xrange=None,
@@ -799,6 +803,8 @@ class WannierHam(object):
         show=True,
     ):
         """Get density of states."""
+        if kpoints is None:
+            kpoints = []
         # plt.clf()
 
         # kgrid = generate_kgrid(grid)

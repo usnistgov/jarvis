@@ -8,7 +8,7 @@ from numpy import gcd
 from collections import OrderedDict
 
 
-def wulff_normals(miller_indices=[], surface_energies=[]):
+def wulff_normals(miller_indices=None, surface_energies=None):
     """Obtain Wulff Normals.
 
     Args:
@@ -18,6 +18,10 @@ def wulff_normals(miller_indices=[], surface_energies=[]):
 
     Returns: Surface normals
     """
+    if miller_indices is None:
+        miller_indices = []
+    if surface_energies is None:
+        surface_energies = []
     max_s = min(surface_energies)
     normals = []
     for i, j in zip(miller_indices, surface_energies):
@@ -83,8 +87,10 @@ class Surface(object):
         return d
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Construct class from a dictionary."""
+        if d is None:
+            d = {}
         return Surface(
             atoms=Atoms.from_dict(d["atoms"]),
             indices=d["indices"],

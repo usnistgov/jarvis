@@ -93,8 +93,10 @@ class Wannier90win(object):
         return d
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Convert class from a dictionary."""
+        if d is None:
+            d = {}
         return Wannier90win(
             struct=Atoms.from_dict(d["struct"]),
             efermi=d["efermi"],

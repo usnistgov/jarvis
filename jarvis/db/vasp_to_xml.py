@@ -499,8 +499,10 @@ class VaspToApiXmlSchema(object):
         info["main_pbe0_bands_info"] = data
         return info
 
-    def get_wannier_lines(self, data={}, energy_tol=4, write_full_data=False):
+    def get_wannier_lines(self, data=None, energy_tol=4, write_full_data=False):
         """Get data for wannier- quality check."""
+        if data is None:
+            data = {}
         # Dense mesh
         line = ""
         mesh_vrun_x = []

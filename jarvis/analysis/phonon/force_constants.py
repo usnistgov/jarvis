@@ -34,8 +34,10 @@ def read_fc(filename="FORCE_CONSTANTS"):
     return fc
 
 
-def qpoint(force_constant=[], qpt=[0.0, 0.0, 0.0]):
+def qpoint(force_constant=None, qpt=[0.0, 0.0, 0.0]):
     """Get FC as natons x natons x 3 x3."""
+    if force_constant is None:
+        force_constant = []
     qpt = np.array(qpt)
     exp_iqpt = np.exp(1.0j * qpt)
     dmat = force_constant * exp_iqpt

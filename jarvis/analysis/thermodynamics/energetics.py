@@ -167,8 +167,10 @@ class PhaseDiagram:
             for simplex in self.simplices:
                 self.hull[simplex] = True
 
-    def energy_above_hull(self, entry=[]):
+    def energy_above_hull(self, entry=None):
         """Find energy above hull."""
+        if entry is None:
+            entry = []
         formula = entry[0]
         form_enp = entry[1]
         kwargs = Composition.from_string(formula).to_dict()
@@ -405,8 +407,10 @@ class PhaseDiagram:
         ax.axis("off")
 
 
-def jid_hull(jid="", dataset=[]):
+def jid_hull(jid="", dataset=None):
     """Get ehull for a jid and a dataset e.g. dft_3d."""
+    if dataset is None:
+        dataset = []
     from jarvis.db.figshare import data
 
     if isinstance(dataset, str):
@@ -431,8 +435,12 @@ def jid_hull(jid="", dataset=[]):
             return i
 
 
-def formula_hull(formula_energy_id=[], dataset=[]):
+def formula_hull(formula_energy_id=None, dataset=None):
     """Get ehull for a formula_energy_id pair and a dataset e.g. dft_3d."""
+    if formula_energy_id is None:
+        formula_energy_id = []
+    if dataset is None:
+        dataset = []
     # e.g. ["Al2O3",-1.0,"JVASP-xyz"]
     # for i in dataset:
     #    if i["jid"] == jid:

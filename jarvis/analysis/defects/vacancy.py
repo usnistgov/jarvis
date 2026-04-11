@@ -38,8 +38,10 @@ class Vacancy(object):
         self._symbol = symbol
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Load from a dictionary."""
+        if d is None:
+            d = {}
         return Vacancy(
             atoms=Atoms.from_dict(d["atoms"]),
             defect_structure=Atoms.from_dict(d["defect_structure"]),

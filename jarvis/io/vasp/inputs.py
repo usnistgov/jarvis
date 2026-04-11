@@ -44,8 +44,10 @@ class Poscar(object):
         return d
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Construct Poscar object from a dictionary."""
+        if d is None:
+            d = {}
         return Poscar(atoms=Atoms.from_dict(d["atoms"]), comment=d["comment"])
 
     def to_string(self, write_props=False):
@@ -242,8 +244,10 @@ class Poscar(object):
 class Incar(object):
     """Make VASP INCAR files as python dictionary of keys and values."""
 
-    def __init__(self, tags={}):
+    def __init__(self, tags=None):
         """Initialize with a dictionary."""
+        if tags is None:
+            tags = {}
         self._tags = tags
 
     @staticmethod
@@ -252,8 +256,10 @@ class Incar(object):
         with open(filename, "r") as f:
             return Incar.from_string(f.read())
 
-    def update(self, d={}):
+    def update(self, d=None):
         """Provide the new tags as a dictionary to update Incar object."""
+        if d is None:
+            d = {}
         # print("selftags1=", self._tags)
         if self._tags != {}:
             for i, j in self._tags.items():
@@ -277,8 +283,10 @@ class Incar(object):
         return self._tags
 
     @classmethod
-    def from_dict(self, data={}):
+    def from_dict(self, data=None):
         """Construct from dictionary."""
+        if data is None:
+            data = {}
         return Incar(tags=data)
 
     @staticmethod
@@ -311,8 +319,10 @@ class Incar(object):
 class IndividualPotcarData(object):
     """Class for individual POTCAR file handling."""
 
-    def __init__(self, data={}):
+    def __init__(self, data=None):
         """Intialize with some key info."""
+        if data is None:
+            data = {}
         self._data = data
 
     def from_string(lines):
@@ -344,10 +354,10 @@ class Potcar(object):
 
     def __init__(
         self,
-        elements=[],
+        elements=None,
         pot_type="POT_GGA_PAW_PBE",
         pot_json_path="",
-        potcar_strings=[],
+        potcar_strings=None,
     ):
         """
         Initialize the Potcar class.
@@ -367,6 +377,10 @@ class Potcar(object):
             potcar_strings: One can directly provide
             the above mentioned strings.
         """
+        if elements is None:
+            elements = []
+        if potcar_strings is None:
+            potcar_strings = []
         self._elements = elements
         self._pot_type = pot_type
         self._potcar_strings = potcar_strings
@@ -417,8 +431,10 @@ class Potcar(object):
         return potcar
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Build class from a dictionary."""
+        if d is None:
+            d = {}
         return Potcar(
             elements=d["elements"],
             pot_type=d["pot_type"],
@@ -436,9 +452,11 @@ class Potcar(object):
         return d
 
     def catenate_potcar_files(
-        self, destination_filename="POTCAR", filenames=[]
+        self, destination_filename="POTCAR", filenames=None
     ):
         """Catenate potcars of sifferent elements."""
+        if filenames is None:
+            filenames = []
         with open(destination_filename, "w") as outfile:
             for fname in filenames:
                 with open(fname) as infile:
@@ -603,9 +621,11 @@ def get_nelect(atoms=None, default_pot=None):
 
 
 def add_ldau_incar(
-    use_incar_dict={}, atoms=None, Uval=2, lsorbit=False, default_magmom=True
+    use_incar_dict=None, atoms=None, Uval=2, lsorbit=False, default_magmom=True
 ):
     """Add LDAU in incase, especially made for spillage calcs."""
+    if use_incar_dict is None:
+        use_incar_dict = {}
     info_ldau = find_ldau_magmom(
         U=Uval, atoms=atoms, lsorbit=lsorbit, default_magmom=default_magmom
     )

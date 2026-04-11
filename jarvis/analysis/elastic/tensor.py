@@ -7,8 +7,10 @@ from collections import OrderedDict
 class ElasticTensor(object):
     """Module for processing elastic tensor."""
 
-    def __init__(self, et_tensor=[]):
+    def __init__(self, et_tensor=None):
         """Initialize class."""
+        if et_tensor is None:
+            et_tensor = []
         self.et_tensor = et_tensor
 
     @property

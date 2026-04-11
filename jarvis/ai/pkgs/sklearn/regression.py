@@ -38,7 +38,7 @@ simple_regr_models = [
 ]
 
 
-def regression(X=[], Y=[], plot=False, models=simple_regr_models,
+def regression(X=None, Y=None, plot=False, models=simple_regr_models,
                preprocess=True, test_size=0.1):
     """
     Provide model as models to get accuracy.
@@ -54,6 +54,10 @@ def regression(X=[], Y=[], plot=False, models=simple_regr_models,
 
         preprocess: whether to apply standard preprocessing techniques
     """
+    if X is None:
+        X = []
+    if Y is None:
+        Y = []
     X_train, X_test, y_train, y_test = train_test_split(
         X, Y, random_state=1, test_size=test_size
     )

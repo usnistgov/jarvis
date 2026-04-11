@@ -6,8 +6,10 @@ import tequila as tq
 from jarvis.io.qiskit.inputs import HermitianSolver
 
 
-def get_eigvals(mat=[]):
+def get_eigvals(mat=None):
     """Get eigenvalues for Hermitianmatrix."""
+    if mat is None:
+        mat = []
     herm = HermitianSolver(mat)
     matrix = herm.mat
     H = tq.paulis.Zero()

@@ -345,7 +345,7 @@ class NeighborsAnalysis(object):
         # rcut_dihed=min(rcut_dihed,max_dihed)
         return rcut1, rcut2
 
-    def ang_dist(self, nbor_info={}, plot=False):
+    def ang_dist(self, nbor_info=None, plot=False):
         """
         Get  angular distribution function upto first neighbor.
 
@@ -365,6 +365,8 @@ class NeighborsAnalysis(object):
 
             ang_bins1: angle bins
         """
+        if nbor_info is None:
+            nbor_info = {}
         # rcut1,rcut2=self.get_dist_cutoffs()
         # rcut=rcut1
         # nbor_info=self.nbor_list()

@@ -268,8 +268,10 @@ class TersoffHamannSTM(object):
         print("min Z and maxZ", np.min(Z), np.max(Z))
         return data
 
-    def get_interpolated_data(self, img_data=[]):
+    def get_interpolated_data(self, img_data=None):
         """Get interpolated data after moving pixels."""
+        if img_data is None:
+            img_data = []
         x = []
         y = []
         zz = []
