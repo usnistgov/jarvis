@@ -12,13 +12,23 @@ class LammpsData(object):
 
     def __init__(
         self,
-        lammps_box=[],
-        species=[],
-        charges=[],
-        cart_coords=[],
-        element_order=[],
+        lammps_box=None,
+        species=None,
+        charges=None,
+        cart_coords=None,
+        element_order=None,
     ):
         """Provide following information."""
+        if lammps_box is None:
+            lammps_box = []
+        if species is None:
+            species = []
+        if charges is None:
+            charges = []
+        if cart_coords is None:
+            cart_coords = []
+        if element_order is None:
+            element_order = []
         self._lammps_box = lammps_box
         self._species = species
         self._charges = charges
@@ -92,12 +102,14 @@ class LammpsData(object):
     def read_data(
         self,
         filename="lammps.data",
-        element_order=[],
+        element_order=None,
         potential_file="pot.mod",
         verbose=False,
         has_charges=True,
     ):
         """Read Lammps data file."""
+        if element_order is None:
+            element_order = []
         # n_atoms = len(self._species)
         if element_order == []:
             # Reading potential file for element order
@@ -238,8 +250,10 @@ class LammpsData(object):
         return d
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Construct from a dictionary."""
+        if d is None:
+            d = {}
         return LammpsData(
             lammps_box=d["box"],
             species=d["species"],
@@ -269,8 +283,10 @@ class LammpsInput(object):
         return d
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Costruct class from a dictionary."""
+        if d is None:
+            d = {}
         return LammpsInput(
             LammpsDataObj=LammpsData.from_dict(d["LammpsDataObj"]),
             pbc=d["pbc"],
@@ -283,7 +299,7 @@ class LammpsInput(object):
         lammps_in2="in.main",
         lammps_trj=None,
         lammps_data=None,
-        parameters={},
+        parameters=None,
     ):
         """
         Write lammps input file.
@@ -306,6 +322,8 @@ class LammpsInput(object):
             parameters: input parameters
 
         """
+        if parameters is None:
+            parameters = {}
         f = open(lammps_in, "w")
         f1 = open(lammps_in1, "w")  # potential.mod
         f2 = open(lammps_in2, "w")

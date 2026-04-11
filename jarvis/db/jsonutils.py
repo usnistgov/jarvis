@@ -11,8 +11,10 @@ def loadjson(filename=""):
     return d
 
 
-def dumpjson(data=[], filename=""):
+def dumpjson(data=None, filename=""):
     """Provide helper function to write a json file."""
+    if data is None:
+        data = []
     f = open(filename, "w")
     f.write(json.dumps(data))
     f.close()

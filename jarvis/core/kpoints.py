@@ -45,20 +45,26 @@ class Kpoints3D(object):
     def __init__(
         self,
         kpoints=[[1, 1, 1]],
-        labels=[],
-        kpoints_weights=[],
+        labels=None,
+        kpoints_weights=None,
         kpoint_mode="automatic",
         header="Gamma",
     ):
         """Several types of k-points in the mesh or high-symmetry BZ."""
+        if labels is None:
+            labels = []
+        if kpoints_weights is None:
+            kpoints_weights = []
         self._kpoints = kpoints
         self._labels = labels
         self._kpoint_mode = kpoint_mode
         self._header = header
         self._kp_weights = kpoints_weights
 
-    def automatic_length_mesh(self, lattice_mat=[], length=20, header="Gamma"):
+    def automatic_length_mesh(self, lattice_mat=None, length=20, header="Gamma"):
         """Length based automatic k-points."""
+        if lattice_mat is None:
+            lattice_mat = []
         inv_lat = (
             Lattice(lattice_mat=lattice_mat)
             .reciprocal_lattice_crystallographic()
@@ -146,8 +152,10 @@ class Kpoints3D(object):
         return d
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Build class from a dictionary representation."""
+        if d is None:
+            d = {}
         return Kpoints3D(
             kpoints=d["kpoints"],
             labels=d["labels"],
@@ -343,11 +351,13 @@ class Kpoints3D(object):
         self,
         atoms,
         line_density=20,
-        weights=[],
+        weights=None,
         unique_kp_only=False,
         coords_are_cartesian=False,
     ):
         """Get k-path for bandstructure calculations."""
+        if weights is None:
+            weights = []
         k_points, labels = self.interpolated_points(
             atoms,
             line_density=line_density,
@@ -374,8 +384,12 @@ class Kpoints3D(object):
 class HighSymmetryKpoint3DFactory(object):
     """High-symmetry k-points for different crystal-systems."""
 
-    def __init__(self, kpoints=[], path=[], name=None):
+    def __init__(self, kpoints=None, path=None, name=None):
         """Require kpoints and path."""
+        if kpoints is None:
+            kpoints = []
+        if path is None:
+            path = []
         self._kpoints = kpoints
         self._path = path
         self.name = name

@@ -18,19 +18,29 @@ import scipy as sp
 
 
 def regression(
-    X=[],
-    Y=[],
-    jid=[],
+    X=None,
+    Y=None,
+    jid=None,
     test_size=0.1,
     plot=False,
     preprocess=True,
     feature_importance=True,
     save_model=False,
-    feat_names=[],
+    feat_names=None,
     model_name="my_model",
-    config={},
+    config=None,
 ):
     """Get generic regression model."""
+    if X is None:
+        X = []
+    if Y is None:
+        Y = []
+    if jid is None:
+        jid = []
+    if feat_names is None:
+        feat_names = []
+    if config is None:
+        config = {}
     lgbm = lgb.LGBMRegressor(
         n_estimators=config["n_estimators"],
         learning_rate=config["learning_rate"],

@@ -66,10 +66,10 @@ class JobFactory(object):
         self,
         name="Jobs",
         poscar=None,
-        use_incar_dict={},
+        use_incar_dict=None,
         vasp_cmd="",
         pot_type="POT_GGA_PAW_PBE",
-        copy_files=[],
+        copy_files=None,
         attempts=5,
         stderr_file="std_err.txt",
         output_file="vasp.out",
@@ -116,6 +116,10 @@ class JobFactory(object):
 
             vasp_cmd: vasp executable
         """
+        if use_incar_dict is None:
+            use_incar_dict = {}
+        if copy_files is None:
+            copy_files = []
         # TODO: Make JobFactory a superclass of VaspJob class
         self.name = name
         self.use_incar_dict = use_incar_dict
@@ -1490,8 +1494,10 @@ class JobFactory(object):
         return length1
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Load from dictionary."""
+        if d is None:
+            d = {}
         job = JobFactory(
             use_incar_dict=d["use_incar_dict"],
             pot_type=d["pot_type"],
@@ -1640,8 +1646,10 @@ class VaspJob(object):
         return info
 
     @classmethod
-    def from_dict(self, info={}):
+    def from_dict(self, info=None):
         """Load the class from a dictionary."""
+        if info is None:
+            info = {}
         return VaspJob(
             poscar=Poscar.from_dict(info["poscar"]),
             kpoints=Kpoints.from_dict(info["kpoints"]),
@@ -1827,8 +1835,10 @@ class GenericIncars(object):
     For different psuedopotentials
     """
 
-    def __init__(self, name="", incar={}, pot_type=""):
+    def __init__(self, name="", incar=None, pot_type=""):
         """Intialize with the name of func. and other parameters."""
+        if incar is None:
+            incar = {}
         self.name = name
         self.incar = incar
         self.pot_type = pot_type

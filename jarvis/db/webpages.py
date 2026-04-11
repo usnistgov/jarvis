@@ -17,8 +17,10 @@ from jarvis.core.utils import xml_to_dict
 class Webpage(object):
     """Get content of JARVIS-DFT and JARVIS-FF webpages."""
 
-    def __init__(self, data=[], jid=""):
+    def __init__(self, data=None, jid=""):
         """Initialize the class."""
+        if data is None:
+            data = []
         # JVASP- for JARVIS-DFT IDs
         # JLMP- for JARVIS-FF IDs
 

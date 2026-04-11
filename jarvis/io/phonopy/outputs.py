@@ -83,8 +83,8 @@ def read_fc(filename="FORCE_CONSTANTS"):
 
 def get_phonon_tb(
     # phonopy_atoms=[],
-    atoms=[],
-    fc=[],
+    atoms=None,
+    fc=None,
     out_file="phonopyTB_hr.dat",
     distance_to_A=1.0,
     scell=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
@@ -93,6 +93,10 @@ def get_phonon_tb(
     displacement_distance=0.01,
 ):
     """Generate phonon TB Hamiltonia, along with WannierHamn."""
+    if atoms is None:
+        atoms = []
+    if fc is None:
+        fc = []
     if factor is None:
         from phonopy.units import VaspToCm
 

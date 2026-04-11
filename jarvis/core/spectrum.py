@@ -8,8 +8,12 @@ from scipy.signal import find_peaks_cwt
 class Spectrum(object):
     """Module for spectrum like data, e.g. IR, Raman, DOS, epsilon."""
 
-    def __init__(self, x=[], y=[], linewidth=5.0, resolution=0.1):
+    def __init__(self, x=None, y=None, linewidth=5.0, resolution=0.1):
         """Initialize the class."""
+        if x is None:
+            x = []
+        if y is None:
+            y = []
         self.x = np.array(x)
         self.y = np.array(y)
         self.resolution = resolution

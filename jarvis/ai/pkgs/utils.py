@@ -121,12 +121,16 @@ def regr_scores(test, pred):
     return info
 
 
-def binary_class_dat(X=[], Y=[], tol=0.1):
+def binary_class_dat(X=None, Y=None, tol=0.1):
     """
     Categorize a continous dataset in 1/0 with a threshold "tol".
 
     TODO: replace with OneHotEncoder
     """
+    if X is None:
+        X = []
+    if Y is None:
+        Y = []
     Y1 = []
     for i, j in zip(X, Y):
         if j >= tol:

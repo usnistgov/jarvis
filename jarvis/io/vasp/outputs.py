@@ -30,7 +30,7 @@ class Chgcar(object):
         self,
         filename="",
         atoms=None,
-        chg=[],
+        chg=None,
         chgdif=None,
         aug=None,
         augdiff=None,
@@ -58,6 +58,8 @@ class Chgcar(object):
 
            nsets: number of CHG sets.
         """
+        if chg is None:
+            chg = []
         self.filename = filename
         self.atoms = atoms
         self.chg = chg
@@ -98,8 +100,10 @@ class Chgcar(object):
         return d
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Construct class from a dictionary."""
+        if d is None:
+            d = {}
         if d["atoms"] is not None:
             atoms = Atoms.from_dict(d["atoms"])
         else:
@@ -403,8 +407,10 @@ class Locpot(Chgcar):
 class Oszicar(object):
     """Construct Oszicar object."""
 
-    def __init__(self, filename, data={}):
+    def __init__(self, filename, data=None):
         """Initialize with filename."""
+        if data is None:
+            data = {}
         self.filename = filename
         self.data = data
         if self.data == {}:
@@ -414,8 +420,10 @@ class Oszicar(object):
             self.data = lines
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Construct class from a dictionary."""
+        if d is None:
+            d = {}
         return Oszicar(filename=d["filename"], data=d["data"])
 
     def to_dict(self):
@@ -457,8 +465,10 @@ class Oszicar(object):
 class Outcar(object):
     """Construct OUTCAR object."""
 
-    def __init__(self, filename, data={}):
+    def __init__(self, filename, data=None):
         """Intialize with filename."""
+        if data is None:
+            data = {}
         self.filename = filename
         self.data = data
         if self.data == {}:
@@ -468,8 +478,10 @@ class Outcar(object):
             self.data = lines
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Construct class from a dictionary."""
+        if d is None:
+            d = {}
         return Outcar(filename=d["filename"], data=d["data"])
 
     def to_dict(self):
@@ -512,8 +524,10 @@ class Outcar(object):
                 efermi.append(float(i.split()[2]))
         return efermi[-1]
 
-    def all_structures(self, elements=[]):
+    def all_structures(self, elements=None):
         """Get all structure snapshots."""
+        if elements is None:
+            elements = []
         force_pattern = "TOTAL-FORCE (eV/Angst)"
         if not elements:
             try:
@@ -616,8 +630,10 @@ class Outcar(object):
         gap = vbm - cbm
         return gap, vbm, cbm
 
-    def magnetization(self, dir="x", elements=[]):
+    def magnetization(self, dir="x", elements=None):
         """Get magnetization in x,y,z."""
+        if elements is None:
+            elements = []
         new_magt = "na"
         for i, ii in enumerate(self.data):
             if "magnetization (" + dir + ")" in ii:
@@ -636,8 +652,10 @@ class Outcar(object):
                     new_magt.append(jj)
         return new_magt
 
-    def total_charge(self, elements=[]):
+    def total_charge(self, elements=None):
         """Get total charge."""
+        if elements is None:
+            elements = []
         new_chg = "na"
         for i, ii in enumerate(self.data):
             if " total charge " in ii:
@@ -1375,8 +1393,10 @@ class Wavecar(object):
 class Vasprun(object):
     """Construct vasprun.xml handling object."""
 
-    def __init__(self, filename="vasprun.xml", data={}):
+    def __init__(self, filename="vasprun.xml", data=None):
         """Intialize with filename, or optional parameters below."""
+        if data is None:
+            data = {}
         self._filename = filename
         self._data = data
         self.ionic_steps = None
@@ -1386,8 +1406,10 @@ class Vasprun(object):
             self.xml_to_dict()
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Construct class from a dictionary."""
+        if d is None:
+            d = {}
         return Vasprun(filename=d["filename"], data=d["data"])
 
     def to_dict(self):
@@ -1756,8 +1778,10 @@ class Vasprun(object):
 
         return final_elements
 
-    def vrun_structure_to_atoms(self, s={}):
+    def vrun_structure_to_atoms(self, s=None):
         """Convert structure to Atoms object."""
+        if s is None:
+            s = {}
         tmp = s["crystal"]["varray"][0]["v"]
         lattice_mat = np.array([[float(j) for j in i.split()] for i in tmp])
         coord_info = s["varray"]["v"]

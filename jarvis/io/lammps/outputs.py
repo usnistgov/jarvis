@@ -27,7 +27,7 @@ def parse_potential_mod(mod="potential.mod"):
     return info
 
 
-def read_data(data=None, ff=None, element_order=[], has_charges=True):
+def read_data(data=None, ff=None, element_order=None, has_charges=True):
     """
     Read LAMMPS data file.
 
@@ -39,6 +39,8 @@ def read_data(data=None, ff=None, element_order=[], has_charges=True):
     Returns:
           Atoms object
     """
+    if element_order is None:
+        element_order = []
     lmp_data = LammpsData()
     return lmp_data.read_data(
         filename=data,
@@ -177,8 +179,10 @@ def parse_log(log="log.lammps"):
     return info
 
 
-def get_chem_pot(all_json_data={}):
+def get_chem_pot(all_json_data=None):
     """Get minumum energy for each elemental specie."""
+    if all_json_data is None:
+        all_json_data = {}
     all_possible_species = []
     elemental_energies = {}
     for i, j in all_json_data.items():

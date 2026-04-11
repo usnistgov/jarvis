@@ -472,9 +472,15 @@ class Lattice(object):
 
 
 def lattice_coords_transformer(
-    old_lattice_mat=[], new_lattice_mat=[], cart_coords=[]
+    old_lattice_mat=None, new_lattice_mat=None, cart_coords=None
 ):
     """Transform coords to a new lattice."""
+    if old_lattice_mat is None:
+        old_lattice_mat = []
+    if new_lattice_mat is None:
+        new_lattice_mat = []
+    if cart_coords is None:
+        cart_coords = []
     M = np.linalg.solve(new_lattice_mat, old_lattice_mat)
     #  Maintains the z-distances - kfg
     M[2, 2] = 1.0
@@ -483,8 +489,10 @@ def lattice_coords_transformer(
 
 
 # https://www2.clarku.edu/faculty/djoyce/wallpaper/seventeen.html
-def get_2d_lattice(atoms={}, round_digits=2):
+def get_2d_lattice(atoms=None, round_digits=2):
     """Get 2D lattice type."""
+    if atoms is None:
+        atoms = {}
     lattices = {
         "hexagonal": 0,
         "square": 1,

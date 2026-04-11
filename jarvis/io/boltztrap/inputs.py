@@ -16,7 +16,7 @@ class WriteInputs(object):
         dos_type="HISTO",
         tmax=1300,
         tgrid=50,
-        doping=[],
+        doping=None,
         run_type="BOLTZ",
         symprec=1e-2,
         energy_grid=0.005,
@@ -56,6 +56,8 @@ class WriteInputs(object):
         energy_span_around_fermi:
 
         """
+        if doping is None:
+            doping = []
         self.energy = energy
         self.struct = struct
         self.intrans = intrans

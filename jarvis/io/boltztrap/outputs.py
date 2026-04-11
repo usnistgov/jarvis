@@ -13,12 +13,20 @@ class BoltzTrapOutput(object):
     def __init__(
         self,
         path="",
-        outtrans_data=[],
-        intrans_data=[],
-        condtens_fixdoping=[],
-        halltens_fixdoping=[],
+        outtrans_data=None,
+        intrans_data=None,
+        condtens_fixdoping=None,
+        halltens_fixdoping=None,
     ):
         """Specify boltztrap folder  as path to analze data."""
+        if outtrans_data is None:
+            outtrans_data = []
+        if intrans_data is None:
+            intrans_data = []
+        if condtens_fixdoping is None:
+            condtens_fixdoping = []
+        if halltens_fixdoping is None:
+            halltens_fixdoping = []
         self.path = path
         if outtrans_data == []:
             outtrans_data = self.read_outputtrans()
@@ -183,8 +191,10 @@ class BoltzTrapOutput(object):
         return all_data
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Load from a dictionary."""
+        if d is None:
+            d = {}
         return BoltzTrapOutput(
             path=d["path"],
             outtrans_data=d["outtrans_data"],

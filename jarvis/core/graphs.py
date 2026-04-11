@@ -123,13 +123,15 @@ def nearest_neighbor_edges(
 
 def build_undirected_edgedata(
     atoms=None,
-    edges={},
+    edges=None,
 ):
     """Build undirected graph data from edge set.
 
     edges: dictionary mapping (src_id, dst_id) to set of dst_image
     r: cartesian displacement vector from src -> dst
     """
+    if edges is None:
+        edges = {}
     # second pass: construct *undirected* graph
     # import pprint
     u, v, r = [], [], []
@@ -163,10 +165,10 @@ class Graph(object):
 
     def __init__(
         self,
-        nodes=[],
-        node_attributes=[],
-        edges=[],
-        edge_attributes=[],
+        nodes=None,
+        node_attributes=None,
+        edges=None,
+        edge_attributes=None,
         color_map=None,
         labels=None,
     ):
@@ -184,6 +186,14 @@ class Graph(object):
             edge_attributes: attributes for each connectivity.
                              as simple as euclidean distances.
         """
+        if nodes is None:
+            nodes = []
+        if node_attributes is None:
+            node_attributes = []
+        if edges is None:
+            edges = []
+        if edge_attributes is None:
+            edge_attributes = []
         self.nodes = nodes
         self.node_attributes = node_attributes
         self.edges = edges
@@ -407,8 +417,10 @@ class Graph(object):
         return len(self.edges)
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Constuct class from a dictionary."""
+        if d is None:
+            d = {}
         return Graph(
             nodes=d["nodes"],
             edges=d["edges"],

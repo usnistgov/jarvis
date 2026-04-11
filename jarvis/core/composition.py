@@ -13,7 +13,7 @@ import numpy as np
 class Composition(object):
     """Generate composition python object."""
 
-    def __init__(self, content={}, sort=False):
+    def __init__(self, content=None, sort=False):
         """
         Initialize with a dictionary.
 
@@ -31,6 +31,8 @@ class Composition(object):
         >>> print(cc.prototype,cc.formula,cc.reduced_formula,weight)
         AB2 Li2O4 LiO2 77.8796
         """
+        if content is None:
+            content = {}
         if sort:
             content = OrderedDict(
                 sorted(content.items(), key=lambda x: (x[0]))
@@ -123,8 +125,10 @@ class Composition(object):
         return "-".join(sorted(list(self.to_dict().keys())))
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Load the class from a dictionary."""
+        if d is None:
+            d = {}
         return Composition(content=d)
 
     @property

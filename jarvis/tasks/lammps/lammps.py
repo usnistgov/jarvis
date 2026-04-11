@@ -139,9 +139,11 @@ class JobFactory(object):
     # def phonon(self):
     #     pass
     def phonons(
-        self, atoms=None, lammps_cmd="", enforce_c_size=15.0, parameters={}
+        self, atoms=None, lammps_cmd="", enforce_c_size=15.0, parameters=None
     ):
         """Make Phonon calculation setup."""
+        if parameters is None:
+            parameters = {}
         try:
             from phonopy import Phonopy
             from phonopy.file_IO import (
@@ -231,8 +233,8 @@ class LammpsJob(object):
         stderr_file="std_err.txt",
         jobname="testt",
         attempts=5,
-        copy_files=[],
-        element_order=[],
+        copy_files=None,
+        element_order=None,
     ):
         """
         Use for defining a LAMMPS job.
@@ -259,6 +261,10 @@ class LammpsJob(object):
 
             copy_files : copy certain files before a job
         """
+        if copy_files is None:
+            copy_files = []
+        if element_order is None:
+            element_order = []
         self.atoms = atoms
         self.element_order = element_order
         self.parameters = parameters
@@ -284,8 +290,10 @@ class LammpsJob(object):
         return d
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Load from a dictionary."""
+        if d is None:
+            d = {}
         return LammpsJob(
             atoms=Atoms.from_dict(d["atoms"]),
             element_order=self.element_order,

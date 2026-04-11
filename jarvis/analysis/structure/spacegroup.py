@@ -161,7 +161,7 @@ class Spacegroup3D(object):
     related information for 3D materials mainly
     """
 
-    def __init__(self, atoms=[], dataset={}, symprec=1e-2, angle_tolerance=5):
+    def __init__(self, atoms=None, dataset=None, symprec=1e-2, angle_tolerance=5):
         """
         Following information are needed for Spacegroup3D.
 
@@ -175,6 +175,10 @@ class Spacegroup3D(object):
 
             angle_tolerance: angle tolerance
         """
+        if atoms is None:
+            atoms = []
+        if dataset is None:
+            dataset = {}
         self._dataset = dataset
         self._atoms = atoms
         self._symprec = symprec
@@ -688,14 +692,20 @@ def parse_xyz_string(xyz_string):
     return parse_xyz_string(xyz_string)
 
 
-def operate_affine(cart_coord=[], affine_matrix=[]):
+def operate_affine(cart_coord=None, affine_matrix=None):
     """Operate affine method."""
+    if cart_coord is None:
+        cart_coord = []
+    if affine_matrix is None:
+        affine_matrix = []
     affine_point = np.array([cart_coord[0], cart_coord[1], cart_coord[2], 1])
     return np.dot(np.array(affine_matrix), affine_point)[0:3]
 
 
-def get_new_coord_for_xyz_sym(frac_coord=[], xyz_string=""):
+def get_new_coord_for_xyz_sym(frac_coord=None, xyz_string=""):
     """Obtain new coord from xyz string."""
+    if frac_coord is None:
+        frac_coord = []
     from jarvis.core.utils import get_new_coord_for_xyz_sym
 
     return get_new_coord_for_xyz_sym(
@@ -703,8 +713,12 @@ def get_new_coord_for_xyz_sym(frac_coord=[], xyz_string=""):
     )
 
 
-def check_duplicate_coords(coords=[], coord=[]):
+def check_duplicate_coords(coords=None, coord=None):
     """Check if a coordinate exists."""
+    if coords is None:
+        coords = []
+    if coord is None:
+        coord = []
     from jarvis.core.utils import check_duplicate_coords
 
     return check_duplicate_coords(coords=coords, coord=coord)

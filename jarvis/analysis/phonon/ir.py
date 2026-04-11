@@ -30,17 +30,27 @@ def normalize_vecs(phonon_eigenvectors, masses):
 
 
 def ir_intensity(
-    phonon_eigenvectors=[],
-    phonon_eigenvalues=[],
-    masses=[],
-    born_charges=[],
+    phonon_eigenvectors=None,
+    phonon_eigenvalues=None,
+    masses=None,
+    born_charges=None,
     factor=33.35641,
     nac=True,
-    epsilon=[],
+    epsilon=None,
     enforce_positive_freqs=True,
     smoothen=True,
 ):
     """Calculate IR intensity using DFPT."""
+    if phonon_eigenvectors is None:
+        phonon_eigenvectors = []
+    if phonon_eigenvalues is None:
+        phonon_eigenvalues = []
+    if masses is None:
+        masses = []
+    if born_charges is None:
+        born_charges = []
+    if epsilon is None:
+        epsilon = []
     # TODO:add non-analytical correction
     eigendisplacements = normalize_vecs(phonon_eigenvectors, masses)
     becDim1, becDim2, becDim3 = np.shape(born_charges)

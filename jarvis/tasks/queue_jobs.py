@@ -11,12 +11,14 @@ class Queue(object):
     def __init__(
         self,
         q_type="head_node",
-        q_parameters={},
+        q_parameters=None,
         job_sub_cmd=None,
         job_check_cmd="",
         job_id="",
     ):
         """Initialize the class."""
+        if q_parameters is None:
+            q_parameters = {}
         self.q_type = q_type
         self.q_parameters = q_parameters
         self.job_sub_cmd = job_sub_cmd
@@ -38,8 +40,10 @@ class Queue(object):
         return d
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Load from a dictionary."""
+        if d is None:
+            d = {}
         return Queue(
             q_type=d["q_type"],
             q_parameters=d["q_parameters"],

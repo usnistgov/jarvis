@@ -6,8 +6,10 @@ import numpy as np
 from jarvis.io.qiskit.inputs import HermitianSolver
 
 
-def run_vqe(mat=[], max_iterations=100, conv_tol=1e-04, step_size=0.01):
+def run_vqe(mat=None, max_iterations=100, conv_tol=1e-04, step_size=0.01):
     """Run pennylane VQE solver."""
+    if mat is None:
+        mat = []
     herm = HermitianSolver(mat)
     hk = herm.mat
     nwires = herm.n_qubits()

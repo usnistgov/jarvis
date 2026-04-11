@@ -23,13 +23,15 @@ class QEinfile(object):
         atoms=None,
         kpoints=None,
         psp_dir=None,
-        input_params={},
+        input_params=None,
         url=None,
         sanitize=True,
         sanitize_tol=2e-4,
         psp_temp_name=None,
     ):
         """Initialize input parameters for qunatum espresso."""
+        if input_params is None:
+            input_params = {}
         if psp_temp_name is None:
             psp_temp_name = "QE_PSPs"
         if input_params == {}:
@@ -152,8 +154,10 @@ class QEinfile(object):
         else:
             self.inputph = {}
 
-    def dictionary_to_string(self, tags={}):
+    def dictionary_to_string(self, tags=None):
         """Convert a dictionary to string with '=' sign."""
+        if tags is None:
+            tags = {}
         lines = ""
         for i, j in tags.items():
             if j is not None:

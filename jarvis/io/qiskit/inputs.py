@@ -47,8 +47,10 @@ def decompose_Hamiltonian(H):
 class HermitianSolver(object):
     """Solve a Hermitian matrix using quantum algorithms."""
 
-    def __init__(self, mat=[], verbose=False):
+    def __init__(self, mat=None, verbose=False):
         """Initialize with a numpy Hermitian matrix."""
+        if mat is None:
+            mat = []
         N = int(np.ceil(np.log2(len(mat))))
         hk = np.zeros((2 ** N, 2 ** N), dtype="complex")
         hk[: mat.shape[0], : mat.shape[1]] = mat
@@ -184,8 +186,8 @@ class HermitianSolver(object):
 
 
 def get_bandstruct(
-    w=[],
-    atoms={},
+    w=None,
+    atoms=None,
     ef=0,
     line_density=1,
     ylabel="eV",  # "Energy ($cm^{-1}$)",
@@ -200,6 +202,10 @@ def get_bandstruct(
     verbose=False,
 ):
     """Compare bandstructures using quantum algos."""
+    if w is None:
+        w = []
+    if atoms is None:
+        atoms = {}
     info = {}
     kpoints = Kpoints().kpath(atoms, line_density=line_density)
     labels = kpoints.to_dict()["labels"]
@@ -290,7 +296,7 @@ def get_bandstruct(
 
 
 def get_dos(
-    w=[],
+    w=None,
     grid=[2, 1, 1],
     proj=None,
     efermi=0.0,
@@ -302,6 +308,8 @@ def get_dos(
     savefig=True,
 ):
     """Get density of states."""
+    if w is None:
+        w = []
     nwan = int(np.ceil(np.log2(w.nwan))) ** 2
     kpoints = generate_kgrid(grid=grid)
     nk = len(kpoints)

@@ -39,8 +39,8 @@ simple_class_models = [
 
 
 def classify_roc_ml(
-    X=[],
-    y=[],
+    X=None,
+    y=None,
     classes=[0, 1, 2],
     names=["High val", "Low val", ""],
     n_plot=1,
@@ -68,6 +68,10 @@ def classify_roc_ml(
 
         plot: whether to plot the ROC curve
     """
+    if X is None:
+        X = []
+    if y is None:
+        y = []
     if plot:
         plt.close()
         plt.rcParams.update({"font.size": 22})
@@ -133,8 +137,8 @@ def classify_roc_ml(
 
 
 def classification(
-    X=[],
-    Y=[],
+    X=None,
+    Y=None,
     tol=100,
     plot=False,
     preprocess=True,
@@ -143,6 +147,10 @@ def classification(
     save_model=False,
 ):
     """Quickly train some of the classifcation algorithms in scikit-learn."""
+    if X is None:
+        X = []
+    if Y is None:
+        Y = []
     X_class, Y_class = binary_class_dat(X=X, Y=Y, tol=tol)
     info = defaultdict()
     for i in models:

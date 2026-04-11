@@ -4,16 +4,22 @@ from jarvis.ai.pkgs.sklearn.classification import classification as sk_cl
 
 
 def classification(
-    X=[],
-    Y=[],
+    X=None,
+    Y=None,
     tol=100,
     plot=False,
     preprocess=False,
-    models=[],
+    models=None,
     model_name="my_model",
     save_model=False,
 ):
     """Provide function for classification models."""
+    if X is None:
+        X = []
+    if Y is None:
+        Y = []
+    if models is None:
+        models = []
     info = sk_cl(
         X=X,
         Y=Y,

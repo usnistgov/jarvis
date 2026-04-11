@@ -16,7 +16,7 @@ class QEjob(object):
         self,
         atoms=None,
         kpoints=None,
-        input_params={},
+        input_params=None,
         qe_cmd="pw.x",
         jobname="test",
         psp_dir=None,
@@ -27,6 +27,8 @@ class QEjob(object):
         psp_temp_name=None,
     ):
         """Intitialize class."""
+        if input_params is None:
+            input_params = {}
         self.atoms = atoms
         self.kpoints = kpoints
         self.input_params = input_params
@@ -63,8 +65,10 @@ class QEjob(object):
         return info
 
     @classmethod
-    def from_dict(self, info={}):
+    def from_dict(self, info=None):
         """Load from a dictionary."""
+        if info is None:
+            info = {}
         return QEjob(
             atoms=Atoms.from_dict(info["atoms"]),
             kpoints=Kpoints3D.from_dict(info["kpoints"]),

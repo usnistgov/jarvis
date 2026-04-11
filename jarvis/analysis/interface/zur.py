@@ -414,8 +414,12 @@ def make_interface(
     return info
 
 
-def get_hetero_type(A={}, B={}):
+def get_hetero_type(A=None, B=None):
     """Provide heterojunction classification using Anderson rule."""
+    if A is None:
+        A = {}
+    if B is None:
+        B = {}
     stack = "na"
     int_type = "na"
     try:

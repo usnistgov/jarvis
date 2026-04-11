@@ -15,8 +15,12 @@ Na = 6.0221409e23
 class PhononDos(object):
     """Module to analyze phonon dos."""
 
-    def __init__(self, phonon_dos=[], phonon_freq_cm=[]):
+    def __init__(self, phonon_dos=None, phonon_freq_cm=None):
         """Initialize class."""
+        if phonon_dos is None:
+            phonon_dos = []
+        if phonon_freq_cm is None:
+            phonon_freq_cm = []
         self.phonon_dos = phonon_dos
         self.phonon_freq_cm = phonon_freq_cm
 

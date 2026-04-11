@@ -18,15 +18,21 @@ class XRD(object):
         self,
         wavelength=1.54184,
         thetas=[0, 180],
-        two_theta_array=[],
-        dhkl_array=[],
-        intensity_array=[],
+        two_theta_array=None,
+        dhkl_array=None,
+        intensity_array=None,
         scaling_factor=100,
         two_theta_tol=1e-5,
         intensity_tol=0.5,
         max_index=5,
     ):
         """Initialize class with incident wavelength."""
+        if two_theta_array is None:
+            two_theta_array = []
+        if dhkl_array is None:
+            dhkl_array = []
+        if intensity_array is None:
+            intensity_array = []
         self.wavelength = wavelength
         self.min2theta = np.radians(thetas[0])
         self.max2theta = np.radians(thetas[1])

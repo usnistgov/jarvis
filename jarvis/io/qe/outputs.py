@@ -28,8 +28,10 @@ class QEout(object):
             self.lines = lines
 
     @classmethod
-    def from_dict(self, d={}):
+    def from_dict(self, d=None):
         """Construct from a dictionary."""
+        if d is None:
+            d = {}
         return QEout(lines=d["lines"], filename=d["filename"])
 
     def to_dict(self):
@@ -79,8 +81,10 @@ class QEout(object):
 class DataFileSchema(object):
     """Module to parse data-file-schema.xml file."""
 
-    def __init__(self, filename="", data={}, set_key=None):
+    def __init__(self, filename="", data=None, set_key=None):
         """Initialize class."""
+        if data is None:
+            data = {}
         self.filename = filename
         self.data = data
         self.set_key = set_key

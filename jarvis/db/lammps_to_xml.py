@@ -23,8 +23,10 @@ def get_jvid(mp=""):
     return jvid
 
 
-def basic_data(data={}, source="JARVIS-FF-LAMMPS"):
+def basic_data(data=None, source="JARVIS-FF-LAMMPS"):
     """Get basic data for table."""
+    if data is None:
+        data = {}
     info = {}
     info["id"] = data["jid"]
     info["source_folder"] = data["source_folder"]
@@ -192,8 +194,10 @@ def basic_data(data={}, source="JARVIS-FF-LAMMPS"):
     return info
 
 
-def write_xml(data={}, filename="temp.xml"):
+def write_xml(data=None, filename="temp.xml"):
     """Write XML file."""
+    if data is None:
+        data = {}
     basic = basic_data(data)
     # name = data["jid"] + ".xml"
     f = open(filename, "w")

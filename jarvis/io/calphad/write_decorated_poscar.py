@@ -12,8 +12,12 @@ from collections import defaultdict
 from jarvis.core.atoms import Atoms
 
 
-def decorate_T_F(options=[], coord=[], tol=0.01):
+def decorate_T_F(options=None, coord=None, tol=0.01):
     """Freeze coordinates based on symmetry."""
+    if options is None:
+        options = []
+    if coord is None:
+        coord = []
     arr = []
     for ii, i in enumerate(coord):
         tmp = "T"

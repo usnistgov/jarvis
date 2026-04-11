@@ -179,8 +179,10 @@ class Api(object):
         """Get all XML data. Used for deleting."""
         return self.send_query(query=".xml")
 
-    def delete_chunks(self, array=[]):
+    def delete_chunks(self, array=None):
         """Delete a list of records."""
+        if array is None:
+            array = []
         # print ('array',array[0]['id'])
         for i in array:
             try:

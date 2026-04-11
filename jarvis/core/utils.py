@@ -74,8 +74,10 @@ def ext_gcd(a, b):
         return y, x - y * (a // b)
 
 
-def rand_select(x=[]):
+def rand_select(x=None):
     """Select randomly with index info."""
+    if x is None:
+        x = []
     info = {}
     for i, ii in enumerate(x):
         info.setdefault(ii, []).append(i)
@@ -140,8 +142,10 @@ def lorentzian(x, y, x0, gamma):
 
 
 # color_dict=random_colors()
-def stringdict_to_xml(d={}, enforce_string=False):
+def stringdict_to_xml(d=None, enforce_string=False):
     """Convert string dictionary to XML."""
+    if d is None:
+        d = {}
     line = ""
     for i, j in d.items():
         if enforce_string:
@@ -151,8 +155,10 @@ def stringdict_to_xml(d={}, enforce_string=False):
     return line
 
 
-def array_to_string(arr=[]):
+def array_to_string(arr=None):
     """Convert 1D arry to string."""
+    if arr is None:
+        arr = []
     return ",".join(map(str, arr))
 
 
@@ -173,8 +179,12 @@ def check_match(a, b, tol=1e-8):
     return False
 
 
-def update_dict(main={}, extra={}):
+def update_dict(main=None, extra=None):
     """Return update dictionary."""
+    if main is None:
+        main = {}
+    if extra is None:
+        extra = {}
     # Helper function for dict.update method
     tmp = main.copy()
     for i, j in extra.items():
@@ -182,16 +192,22 @@ def update_dict(main={}, extra={}):
     return tmp
 
 
-def get_new_coord_for_xyz_sym(frac_coord=[], xyz_string=""):
+def get_new_coord_for_xyz_sym(frac_coord=None, xyz_string=""):
     """Obtain new coord from xyz string."""
+    if frac_coord is None:
+        frac_coord = []
     affine_matrix = parse_xyz_string(xyz_string)
     coord = operate_affine(frac_coord, affine_matrix)
     coord = np.array([i - math.floor(i) for i in coord])
     return coord
 
 
-def check_duplicate_coords(coords=[], coord=[]):
+def check_duplicate_coords(coords=None, coord=None):
     """Check if a coordinate exists."""
+    if coords is None:
+        coords = []
+    if coord is None:
+        coord = []
     positive = False
     for i in coords:
         tmp = check_match(i, coord)
@@ -243,8 +259,12 @@ def parse_xyz_string(xyz_string):
     return affine_matrix
 
 
-def operate_affine(cart_coord=[], affine_matrix=[]):
+def operate_affine(cart_coord=None, affine_matrix=None):
     """Operate affine method."""
+    if cart_coord is None:
+        cart_coord = []
+    if affine_matrix is None:
+        affine_matrix = []
     affine_point = np.array([cart_coord[0], cart_coord[1], cart_coord[2], 1])
     return np.dot(np.array(affine_matrix), affine_point)[0:3]
 
@@ -261,8 +281,10 @@ def lorentzian2(x, gamma):
     )
 
 
-def digitize_array(values=[], max_len=10):
+def digitize_array(values=None, max_len=10):
     """Digitze an array."""
+    if values is None:
+        values = []
     has_float = False in [float(i).is_integer() for i in values]
     if has_float:
         arr = np.array([float(i) for i in values])
@@ -308,8 +330,10 @@ def check_url_exists(
         return False
 
 
-def volumetric_grid_reshape(data=[], final_grid=[50, 50, 50]):
+def volumetric_grid_reshape(data=None, final_grid=[50, 50, 50]):
     """Reshape volumetric data."""
+    if data is None:
+        data = []
     import torch
 
     data = torch.tensor(data).unsqueeze(0).unsqueeze(0)
@@ -366,8 +390,12 @@ def baseline_als(y, lam, p, niter=10):
 
 
 def recast_array(
-    x_original=[], y_original=[], x_new=np.arange(0, 90, 1), tol=0.1
+    x_original=None, y_original=None, x_new=np.arange(0, 90, 1), tol=0.1
 ):
+    if x_original is None:
+        x_original = []
+    if y_original is None:
+        y_original = []
     x_original = np.array(x_original)
     # Initialize the new y array with NaNs or a default value
     y_new = np.full_like(x_new, 0, dtype=np.float64)
