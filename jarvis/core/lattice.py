@@ -286,8 +286,7 @@ class Lattice(object):
         coords = cart_coords[:, None, None, None, :] + tmp_img
         coords -= center[None, None, None, None, :]
         dist_vect = coords
-        coords **= 2
-        d_2 = np.sum(coords, axis=4)
+        d_2 = np.sum(coords ** 2, axis=4)
 
         # Determine which points are within `r` of `center`
         within_r = np.where(d_2 <= r**2)
